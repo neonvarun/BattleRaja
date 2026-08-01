@@ -1,0 +1,19 @@
+{
+  "name": "BattleRaja.Infrastructure.Android",
+  "rootNamespace": "BattleRaja.Infrastructure.Android",
+  "references": [
+    "BattleRaja.Core.Domain",
+    "BattleRaja.Core.Application",
+    "BattleRaja.Infrastructure"
+  ],
+  "includePlatforms": [
+    "Android"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": []
+}

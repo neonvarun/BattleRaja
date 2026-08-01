@@ -1,0 +1,16 @@
+{
+  "name": "BattleRaja.Infrastructure",
+  "rootNamespace": "BattleRaja.Infrastructure",
+  "references": [
+    "BattleRaja.Core.Domain",
+    "BattleRaja.Core.Application"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": []
+}

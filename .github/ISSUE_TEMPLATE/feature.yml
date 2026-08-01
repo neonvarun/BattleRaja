@@ -1,0 +1,33 @@
+name: Feature
+description: Bounded BattleRaja feature
+title: "[BR-] "
+labels: ["feature"]
+body:
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and non-scope
+    validations:
+      required: true
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Acceptance criteria
+    validations:
+      required: true
+  - type: textarea
+    id: tests
+    attributes:
+      label: Tests and validation
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks and human review

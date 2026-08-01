@@ -1,0 +1,22 @@
+{
+  "name": "BattleRaja.Tests.EditMode",
+  "rootNamespace": "BattleRaja.Tests.EditMode",
+  "references": [
+    "BattleRaja.Core.Domain",
+    "BattleRaja.Core.Application",
+    "BattleRaja.Gameplay"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}

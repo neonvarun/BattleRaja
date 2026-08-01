@@ -1,0 +1,22 @@
+{
+  "name": "BattleRaja.Editor",
+  "rootNamespace": "BattleRaja.Editor",
+  "references": [
+    "BattleRaja.Core.Domain",
+    "BattleRaja.Core.Application",
+    "BattleRaja.Gameplay",
+    "BattleRaja.Presentation",
+    "BattleRaja.Infrastructure",
+    "Unity.RenderPipelines.Universal.Runtime"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": []
+}

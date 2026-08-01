@@ -1,0 +1,17 @@
+{
+  "name": "BattleRaja.Gameplay",
+  "rootNamespace": "BattleRaja.Gameplay",
+  "references": [
+    "BattleRaja.Core.Domain",
+    "BattleRaja.Core.Application"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": true
+}

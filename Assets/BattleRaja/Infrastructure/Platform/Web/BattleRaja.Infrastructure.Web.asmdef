@@ -1,0 +1,19 @@
+{
+  "name": "BattleRaja.Infrastructure.Web",
+  "rootNamespace": "BattleRaja.Infrastructure.Web",
+  "references": [
+    "BattleRaja.Core.Domain",
+    "BattleRaja.Core.Application",
+    "BattleRaja.Infrastructure"
+  ],
+  "includePlatforms": [
+    "WebGL"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": []
+}

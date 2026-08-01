@@ -1,0 +1,61 @@
+# Unity generated
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+.utmp/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+MemoryCaptures/
+Recordings/
+
+# IDEs
+.vs/
+.vscode/
+.idea/
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Android / signing / secrets
+*.keystore
+*.jks
+*.key
+*.pem
+*.p12
+local.properties
+**/google-services.json
+**/GoogleService-Info.plist
+.env
+.env.*
+!.env.example
+
+# Build artifacts
+*.apk
+*.aab
+*.unitypackage
+
+# Logs and reports
+*.log
+TestResults/
+CodeCoverage/
+PerformanceTestResults/
+
+# Temporary AI/tool output
+.codex/tmp/
+.cache/

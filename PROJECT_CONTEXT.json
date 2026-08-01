@@ -1,0 +1,71 @@
+{
+  "project": {
+    "working_title": "BattleRaja",
+    "owner": "Varunkumar Singh / Avinya Studios",
+    "stage": "pre-production",
+    "active_milestone": 0,
+    "primary_platform": "Android application and browser-playable Web build",
+    "secondary_platform": "Windows development build"
+  },
+  "product": {
+    "genre": "stylised top-down 3D micro battle royale",
+    "match_minutes": {
+      "min": 4,
+      "max": 6
+    },
+    "initial_combatants": 8,
+    "initial_humans": 1,
+    "initial_bots": 7,
+    "vertical_slice_fighters": [
+      "Bijli",
+      "Pehel",
+      "Maya"
+    ],
+    "signature_systems": [
+      "Jugaad Gadgets",
+      "Aandhi closing zone"
+    ],
+    "pay_to_win": false,
+    "cross_play_target": [
+      "Android",
+      "Web"
+    ]
+  },
+  "proposed_stack_to_verify": {
+    "engine": "Unity 6000.5.6f1",
+    "language": "C#",
+    "render_pipeline": "URP",
+    "multiplayer_later": "Photon Fusion 2",
+    "backend_later": "PlayFab",
+    "source_control": "GitHub + Git LFS",
+    "art": "Blender",
+    "ui": "Figma",
+    "web_target": "Unity Web / WebGL 2.0 + WebAssembly",
+    "milestone_0_status": "verified",
+    "package_baseline": {
+      "input_system": "1.20.0",
+      "urp": "17.5.0",
+      "test_framework": "1.7.0",
+      "lockfile": "Packages/packages-lock.json"
+    }
+  },
+  "hard_constraints": [
+    "Offline simulation core before networking",
+    "No Photon or PlayFab during Milestone 0",
+    "Domain layer independent of Unity presentation and external SDKs",
+    "Android performance is a first-class requirement",
+    "Original cultural inspiration without sacred or community caricature",
+    "No paid combat advantage",
+    "Current official research required for unstable technical facts",
+    "One shared Unity gameplay codebase for Android and Web",
+    "Web client cannot be trusted public-match authority",
+    "Separate Android and Web build/performance validation",
+    "Desktop browser support first; mobile Web only after validation"
+  ],
+  "authoritative_files": [
+    "Docs/MASTER_VISION.md",
+    "Docs/WEB_PLATFORM.md",
+    "AGENTS.md",
+    "PROJECT_STATUS.md"
+  ]
+}
