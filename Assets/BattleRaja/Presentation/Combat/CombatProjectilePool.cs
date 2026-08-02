@@ -70,7 +70,9 @@ namespace BattleRaja.Presentation.Combat
             objectToPool.name = "PooledProjectile";
             objectToPool.transform.SetParent(transform, false);
             objectToPool.transform.localScale = Vector3.one * 0.28f;
-            var collider = objectToPool.GetComponent<Collider>();
+            // Keep the concrete collider type referenced so IL2CPP/WebGL does not strip
+            // SphereCollider when the primitive is created through Unity's factory.
+            var collider = objectToPool.GetComponent<SphereCollider>();
             if (collider != null)
             {
                 Destroy(collider);
