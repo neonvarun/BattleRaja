@@ -57,5 +57,27 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(simulation.GetSnapshots().Count(snapshot => snapshot.Placement == 1), Is.EqualTo(1));
             yield return null;
         }
+
+        [UnityTest]
+        public IEnumerator RepeatedProductionSceneLoadsKeepOneOfflineRuntimeGraph()
+        {
+            for (var iteration = 0; iteration < 3; iteration++)
+            {
+                yield return SceneManager.LoadSceneAsync("BazaarBastion", LoadSceneMode.Single);
+                yield return null;
+                yield return null;
+
+                var matches = Object.FindObjectsByType<OfflineMatchController>(FindObjectsSortMode.None);
+                var actors = Object.FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None)
+                    .Where(agent => agent.GetComponent<CombatTarget>() != null)
+                    .ToArray();
+
+                Assert.That(matches.Length, Is.EqualTo(1), $"iteration {iteration} left duplicate match controllers");
+                Assert.That(actors.Length, Is.EqualTo(8), $"iteration {iteration} changed the authority actor count");
+                Assert.That(matches[0].Simulation, Is.Not.Null);
+                Assert.That(matches[0].Simulation.AliveCount, Is.EqualTo(8));
+                Assert.That(Time.timeScale, Is.EqualTo(1f));
+            }
+        }
     }
 }
