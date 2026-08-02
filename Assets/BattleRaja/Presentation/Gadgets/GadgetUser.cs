@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Combat;
+using BattleRaja.Presentation.Match;
 using BattleRaja.Presentation.Movement;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -13,6 +14,7 @@ namespace BattleRaja.Presentation.Gadgets
         [SerializeField] private CombatTarget combatTarget;
         [SerializeField] private CombatHealth health;
         [SerializeField] private CombatDamageResolver damageResolver;
+        [SerializeField] private OfflineMatchController match;
         [SerializeField] private bool botControlled;
         [SerializeField] private int simulationTickRate = 30;
 
@@ -39,6 +41,7 @@ namespace BattleRaja.Presentation.Gadgets
             combatTarget = combatTarget != null ? combatTarget : GetComponent<CombatTarget>();
             health = health != null ? health : GetComponent<CombatHealth>();
             damageResolver = damageResolver != null ? damageResolver : FindFirstObjectByType<CombatDamageResolver>();
+            match = match != null ? match : FindFirstObjectByType<OfflineMatchController>();
             _clock = new FixedSimulationClock(Mathf.Max(1, simulationTickRate));
         }
 
@@ -69,6 +72,20 @@ namespace BattleRaja.Presentation.Gadgets
         public bool TryPickup(ContentId id)
         {
             var accepted = _inventory.TryPickup(id);
+            if (accepted && match != null && match.Simulation != null && combatTarget != null &&
+                !match.TryAcquireGadget(combatTarget.Id, id))
+            {
+                _inventory.TryConsume(id);
+                accepted = false;
+            }
+
+            SetFeedback(accepted ? $"Picked {id.Value}" : "Gadget slot full");
+            return accepted;
+        }
+
+        public bool TryPickupFromAuthority(ContentId id)
+        {
+            var accepted = _inventory.TryPickup(id);
             SetFeedback(accepted ? $"Picked {id.Value}" : "Gadget slot full");
             return accepted;
         }
@@ -88,11 +105,22 @@ namespace BattleRaja.Presentation.Gadgets
                 new Float2(transform.position.x, transform.position.z),
                 direction,
                 NextTick());
-            var result = _runtime.TryUse(_inventory, command);
+            var result = TryUse(command, out var authoritative);
             if (!result.Used)
             {
                 SetFeedback(result.Failure.ToString());
                 return false;
+            }
+
+            if (authoritative)
+            {
+                if (!_inventory.TryConsume(command.GadgetId))
+                {
+                    SetFeedback("Authority inventory mismatch");
+                    return false;
+                }
+
+                _runtime.ApplyAuthoritativeUse(result.Effect.Definition);
             }
 
             ApplyEffect(result.Effect);
@@ -124,10 +152,24 @@ namespace BattleRaja.Presentation.Gadgets
                 new Float2(transform.position.x, transform.position.z),
                 direction,
                 NextTick());
-            var result = _runtime.TryUse(_inventory, command);
+            var result = TryUse(command, out var authoritative);
             if (!result.Used) return false;
+            if (authoritative)
+            {
+                if (!_inventory.TryConsume(command.GadgetId)) return false;
+                _runtime.ApplyAuthoritativeUse(result.Effect.Definition);
+            }
+
             ApplyEffect(result.Effect);
             return true;
+        }
+
+        private GadgetUseResult TryUse(GadgetUseCommand command, out bool authoritative)
+        {
+            authoritative = match != null && match.Simulation != null;
+            return authoritative
+                ? match.TryUseGadget(command)
+                : _runtime.TryUse(_inventory, command);
         }
 
         public int ModifyIncomingDamage(DamageRequest request)

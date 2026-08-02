@@ -399,3 +399,22 @@ Record every material choice here. Do not silently overwrite old decisions.
   `Assets/BattleRaja/Presentation/AI/BotBrain.cs`, latest Phase 1 EditMode 71/71 and
   PlayMode 27/27 test results.
 - **Owner:** Human project owner
+
+### ADR-021 — Offline authority owns gadget inventory and use validation
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the Phase 1 authority seam; effect execution remains a presentation
+  adapter until the combat-effect intent set is expanded.
+- **Context:** The offline lab's `GadgetUser` could validate and consume a gadget locally even
+  after `OfflineMatchAuthority` became responsible for pickup availability. That would allow a
+  future client or scene object to bypass authoritative inventory/cooldown decisions.
+- **Decision:** Create per-participant `GadgetInventory` and `GadgetRuntime` instances inside
+  `OfflineMatchAuthority`. Expose collection and use requests through the authority. The Unity
+  `GadgetUser` mirrors authority-approved pickup/use results and applies the immutable effect as
+  presentation; direct local setup remains an explicit request path for offline tests only.
+- **Consequences:** Duplicate gadget use is rejected by the application layer and cooldown state
+  is no longer authoritative in a MonoBehaviour. Dhol knockback and Tiffin station spawning still
+  need typed effect intents before they can be claimed as fully application-owned.
+- **Evidence/sources:** `OfflineMatchAuthority`, `GadgetUser`, `AuthorityFoundationTests`,
+  latest 72/72 EditMode and 27/27 PlayMode results.
+- **Owner:** Human project owner

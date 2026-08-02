@@ -42,6 +42,18 @@ namespace BattleRaja.Presentation.Match
         public int SimulationTick => _simulationClock != null ? _simulationClock.Tick : 0;
         public double SimulationInterpolationAlpha => _simulationClock != null ? _simulationClock.InterpolationAlpha : 0d;
 
+        public GadgetUseResult TryUseGadget(GadgetUseCommand command)
+        {
+            return _authority != null
+                ? _authority.TryUseGadget(command)
+                : new GadgetUseResult(false, GadgetUseFailure.NotHeld, default(GadgetEffect));
+        }
+
+        public bool TryAcquireGadget(CombatEntityId collectorId, ContentId gadgetId)
+        {
+            return _authority != null && _authority.TryAcquireGadget(collectorId, gadgetId);
+        }
+
         private void Awake()
         {
             damageResolver = damageResolver != null ? damageResolver : FindFirstObjectByType<CombatDamageResolver>();
@@ -254,9 +266,9 @@ namespace BattleRaja.Presentation.Match
                     if (actor.Health.Snapshot.IsDefeated || Vector3.Distance(actor.Transform.position, pickup.transform.position) > 1.3f) continue;
                     var user = actor.Transform.GetComponent<GadgetUser>();
                     if (user == null) continue;
-                    var result = _authority.TryCollectGadget(p, user.HasGadget);
+                    var result = _authority.TryCollectGadget(actor.Target.Id, p);
                     if (!result.Collected) continue;
-                    user.TryPickup(result.GadgetId);
+                    user.TryPickupFromAuthority(result.GadgetId);
                     pickup.SetAvailable(false);
                     break;
                 }

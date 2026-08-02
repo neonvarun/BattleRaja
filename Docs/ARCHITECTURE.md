@@ -134,6 +134,9 @@ Android and Web share domain, application and most presentation code. Platform-s
 - `GadgetDefinitionAsset` is the serialized content bridge for versionable M6 balance
   data. `GadgetUser`, `GadgetPickup`, `GadgetStation` and `GadgetHud` are presentation
   adapters; they route damage/healing through the existing combat health/resolver paths.
+- `OfflineMatchAuthority` owns per-participant gadget inventory, pickup collection and
+  cooldown/use validation. `GadgetUser` submits use intents and consumes the immutable effect
+  result for presentation; it does not decide whether a public-match gadget use is valid.
 - Umbrella Guard stores facing and duration state on the user; projectile hit direction
   is part of `DamageRequest` so directional mitigation is explicit. Dhol Burst uses
   CharacterController displacement and does not add a second movement authority.

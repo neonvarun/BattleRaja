@@ -248,11 +248,16 @@ namespace BattleRaja.Core.Domain
                 return new GadgetUseResult(false, GadgetUseFailure.NotHeld, default(GadgetEffect));
             }
 
-            _cooldownRemaining = definition.CooldownSeconds;
+            ApplyAuthoritativeUse(definition);
             var effectKind = definition.Kind == GadgetKind.UmbrellaGuard
                 ? GadgetEffectKind.UmbrellaGuard
                 : definition.Kind == GadgetKind.DholBurst ? GadgetEffectKind.DholBurst : GadgetEffectKind.TiffinStation;
             return new GadgetUseResult(true, GadgetUseFailure.None, new GadgetEffect(effectKind, definition, command));
+        }
+
+        public void ApplyAuthoritativeUse(GadgetDefinition definition)
+        {
+            _cooldownRemaining = Math.Max(_cooldownRemaining, definition.CooldownSeconds);
         }
     }
 

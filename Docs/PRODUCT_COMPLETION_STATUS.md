@@ -17,7 +17,7 @@ This file records evidence-backed status only. Allowed status values are: `Not s
 | Explicit fixed simulation clock | In progress | 30 Hz accumulator now also drives bot decisions/navigation/commands; timeout winner ID and next-zone centre are explicit. Full replay/input-buffer audit and broader runtime coverage remain |
 | Continuously interpolated Aandhi | Passed with evidence | Warning/closing state, next-radius preview and deterministic interpolation are exposed; EditMode 70/70 and PlayMode 27/27 pass |
 | Bot current/next-zone awareness | Passed with evidence | Bot snapshots carry explicit current/next zone centre/radius data and proactively reposition from the fixed clock; EditMode 71/71 and PlayMode 27/27 pass |
-| Authoritative rule separation | In progress | Zone damage, pickup availability/respawn, gadget collection, elimination, placement and results are application-owned; gadget effect execution and Unity presentation adapters remain |
+| Authoritative rule separation | In progress | Zone damage, pickup availability/respawn, gadget collection/inventory/use cooldown, elimination, placement and results are application-owned; Dhol/Tiffin effect execution and Unity presentation adapters remain |
 | Fighter roster, progression, and complete offline loop | In progress | Common ability/movement interfaces now select fighter-specific Pehel Charge Throw and Maya Decoy adapters; generated-scene runtime coverage, Bazaar Bastion, presentation polish, tutorial/offline loop and progression remain |
 | Real Photon multiplayer | Not started | Imported SDK is not an adapter or multiplayer validation |
 | PlayFab/backend/economy | Not started | No production backend claim |

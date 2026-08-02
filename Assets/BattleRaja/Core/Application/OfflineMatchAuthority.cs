@@ -28,6 +28,8 @@ namespace BattleRaja.Core.Application
         private GadgetPickupDefinition[] _gadgetPickupDefinitions = Array.Empty<GadgetPickupDefinition>();
         private MatchPickupRuntime[] _pickups = Array.Empty<MatchPickupRuntime>();
         private GadgetPickupRuntime[] _gadgetPickups = Array.Empty<GadgetPickupRuntime>();
+        private readonly Dictionary<CombatEntityId, GadgetInventory> _gadgetInventories = new Dictionary<CombatEntityId, GadgetInventory>();
+        private readonly Dictionary<CombatEntityId, GadgetRuntime> _gadgetRuntimes = new Dictionary<CombatEntityId, GadgetRuntime>();
         private OfflineMatchSimulation _simulation;
         private double _outsideDamageAccumulator;
 
@@ -66,6 +68,14 @@ namespace BattleRaja.Core.Application
             for (var i = 0; i < _gadgetPickupDefinitions.Length; i++)
             {
                 _gadgetPickups[i] = new GadgetPickupRuntime(_gadgetPickupDefinitions[i]);
+            }
+
+            _gadgetInventories.Clear();
+            _gadgetRuntimes.Clear();
+            for (var i = 0; i < spawns.Count; i++)
+            {
+                _gadgetInventories[spawns[i].Id] = new GadgetInventory(1);
+                _gadgetRuntimes[spawns[i].Id] = new GadgetRuntime();
             }
 
             _outsideDamageAccumulator = 0d;
@@ -132,6 +142,35 @@ namespace BattleRaja.Core.Application
             }
 
             return _gadgetPickups[pickupId].TryCollect(hasGadget);
+        }
+
+        public GadgetPickupCollectResult TryCollectGadget(CombatEntityId collectorId, int pickupId)
+        {
+            if (pickupId < 0 || pickupId >= _gadgetPickups.Length || !_gadgetInventories.TryGetValue(collectorId, out var inventory))
+            {
+                return new GadgetPickupCollectResult(false, default(ContentId));
+            }
+
+            var result = _gadgetPickups[pickupId].TryCollect(inventory.HasGadget);
+            if (result.Collected) inventory.TryPickup(result.GadgetId);
+            return result;
+        }
+
+        public GadgetUseResult TryUseGadget(GadgetUseCommand command)
+        {
+            if (!_gadgetInventories.TryGetValue(command.UserId, out var inventory) ||
+                !_gadgetRuntimes.TryGetValue(command.UserId, out var runtime))
+            {
+                return new GadgetUseResult(false, GadgetUseFailure.NotHeld, default(GadgetEffect));
+            }
+
+            return runtime.TryUse(inventory, command);
+        }
+
+        public bool TryAcquireGadget(CombatEntityId collectorId, ContentId gadgetId)
+        {
+            return _gadgetInventories.TryGetValue(collectorId, out var inventory) &&
+                GadgetCatalog.TryGet(gadgetId, out _) && inventory.TryPickup(gadgetId);
         }
 
         public bool IsGadgetPickupAvailable(int pickupId)
