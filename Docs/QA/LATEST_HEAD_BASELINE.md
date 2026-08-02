@@ -2,7 +2,7 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `1a41c09` (`docs: record gadget tutorial prompt evidence`)
+Latest validated source HEAD: `ac60062` (`fix: carry authoritative simulation ticks`)
 Latest runtime-bearing candidate: `4391f09` (`feat: add replayable tutorial arena`)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
@@ -37,6 +37,27 @@ The baseline intentionally excludes unrelated working-tree changes in `Assets/Ba
 | Web build | Latest validated development Web build — exit 0; 21 files, 132,400,579 bytes; `index.html` present | `Builds/M11/Logs/phase1-clock-2c6958a-web-build.log`, `Builds/M11/Web` |
 | Local Web serve | `python -m http.server 8020 --directory Builds/M11/Web`; `http://127.0.0.1:8020/index.html` returned HTTP 200 | local server/check output |
 | Browser smoke | Chrome loaded the latest validated build in a fresh tab; DOM exposed the Unity player controls and post-load error/warning log query returned zero entries | `Docs/QA/Visual/phase1-clock-2c6958a-web.png` |
+
+## Phase 1 authority/tick continuation (`ac60062`)
+
+The following checks were rerun after the authority-tick changes. The user-owned
+`MovementLab.unity` scene remained unstaged; the Bijli PlayMode test now places its
+fixture actor explicitly so scene-local wall edits cannot change the movement assertion.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings | command output from 2026-08-03 |
+| EditMode authority/tick suite | 83 passed, 0 failed | `Builds/M11/TestResults/phase1-authority-editmode-20260803.xml` |
+| Fixed-clock render-rate equivalence | `CoreFoundationTests.FixedClockProducesTheSameOfflineMatchStateAcrossRenderRates` passed for 30/60/90 Hz and a variable render cadence | `Builds/M11/TestResults/phase1-authority-editmode-20260803.xml` |
+| Gadget authority cooldown | `AuthorityAdvancesGadgetCooldownOnAuthoritativeTicks` passed after 300 authoritative 30 Hz ticks | `Builds/M11/TestResults/phase1-authority-editmode-20260803.xml` |
+| Aandhi intent tick identity | Authority test passed with `MatchAuthorityTick.SimulationTick == DamageRequest.SimulationTick` | `Builds/M11/TestResults/phase1-authority-editmode-20260803.xml` |
+| Isolated Bijli regression | 1 passed, 0 failed after explicit fixture placement | `Builds/M11/TestResults/phase1-authority-bijli-fixture-20260803.xml` |
+| PlayMode authority/tick suite | 33 passed, 0 failed | `Builds/M11/TestResults/phase1-authority-playmode-v2-20260803.xml` |
+
+The new authority seam is still offline-only. Presentation proximity sensing and
+gadget effect execution remain outside the application authority, and the Android
+artifact has not yet been installed on the connected Lava device for this exact
+`ac60062` source.
 
 ## Fix included in this baseline
 
