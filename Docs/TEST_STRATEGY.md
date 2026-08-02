@@ -276,3 +276,19 @@ collected.
 - M8 real two-client precondition, eight-slot Android/Web interoperability, private room
   codes, development matchmaking, browser refresh/background, server restart/failure,
   latency/jitter/loss stress, bandwidth/memory and duplicate-result checks remain blocked.
+
+## Milestone 10 progression coverage
+
+### Pure/EditMode
+
+- stable guest identity reuse on Android/Web
+- account-link conflict protection and display-name validation
+- server-validated idempotent reward retry and tampered reward rejection
+- cosmetic inventory ownership and trusted leaderboard updates
+- explicit PlayFab adapter credential/configuration blockage
+
+### Blocked external coverage
+
+- real PlayFab guest creation/linking, cross-device recovery, cache/cloud conflict,
+  browser-storage clearing, service retry/leaderboard/economy quotas, Android/Web service
+  latency, privacy/retention and no-secret release inspection remain blocked.

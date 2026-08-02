@@ -183,3 +183,15 @@ Android and Web share domain, application and most presentation code. Platform-s
 - The M9 completion gate remains blocked by the M8 real-session precondition. Do not claim
   cross-play, stress, reconnect or browser lifecycle behavior from the local preparation
   tests.
+
+## M10 backend/progression boundary
+
+- `IProgressionBackend` and the fake implementation live in Infrastructure; Domain remains
+  free of PlayFab SDK types and client credentials. Profiles, cosmetic ownership, currencies,
+  XP and leaderboard entries are snapshots, not mutable shared assets.
+- Reward writes require server-validated evidence and an idempotency key. Client-facing code
+  must not set currency, ownership, statistics or match results directly. `PlayFabBackendAdapter`
+  stays unavailable until a server-controlled title configuration exists.
+- The M10 partial gate is intentionally useful without a service: fake identity/link,
+  conflict, cache/retry and reward tests establish contracts, but no cross-device persistence
+  or account recovery claim is made.

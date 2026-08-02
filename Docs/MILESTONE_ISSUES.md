@@ -228,3 +228,14 @@ Each issue must include:
 - **Required human action:** Complete BR-M8-001 with the approved Fusion package/App ID and
   account/licence terms; approve any hosting or deployment separately.
 - **Status:** Blocked; preparation must not be represented as online gameplay.
+
+### BR-M10-001 — PlayFab title and server credentials unavailable
+
+- **Objective:** Enable secure Android/Web accounts, cross-progression, trusted rewards,
+  inventory, statistics and remote configuration.
+- **Current state:** Backend-neutral interfaces, deterministic fake and tests are complete;
+  `PlayFabBackendAdapter` is explicitly credential-blocked. No title ID, SDK or secret is in
+  the repository.
+- **Required human action:** Create/approve a PlayFab title and server-only secret delivery,
+  then approve privacy/retention and account-linking policy.
+- **Status:** Blocked; fake backend is not real service evidence.

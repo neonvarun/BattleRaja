@@ -132,3 +132,11 @@ Required next measurement: capture a short Editor, Lava and Oppo session with Un
 - No headless server process, network packet rate, Android radio usage, browser lifecycle,
   reconnect latency or eight-slot CPU/memory capture exists. These remain blocked with the
   M8 real-session precondition.
+
+## Milestone 10 progression baseline — 2026-08-02
+
+- The fake backend uses bounded in-memory accounts, identity links, reward keys, cosmetics
+  and leaderboard entries. Tests establish correctness only; they are not PlayFab latency,
+  quota, storage, bandwidth or cost measurements.
+- Real account/login, cache/cloud conflict, browser-storage recovery, service retries and
+  Android/Web memory/network captures remain unmeasured until the approved backend exists.

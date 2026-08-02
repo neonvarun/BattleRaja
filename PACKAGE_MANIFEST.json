@@ -318,8 +318,8 @@
     },
     {
       "path": "Docs/ARCHITECTURE.md",
-      "bytes": 12357,
-      "sha256": "2b8e1c552e957a075245cd812693c3491b2f92550ed0604d9d2ccaa41fec62ba"
+      "bytes": 13133,
+      "sha256": "d20eb64af47137d8979eb57e0e87fc3675fefecec3b52af3da08bf43fd59dccd"
     },
     {
       "path": "Docs/ART_BIBLE.md",
@@ -343,8 +343,8 @@
     },
     {
       "path": "Docs/DECISIONS.md",
-      "bytes": 16070,
-      "sha256": "dc35dd82ee27ff248044dee1672e0693ee0b1be7f5deee0110622b777e47c8d9"
+      "bytes": 17580,
+      "sha256": "c5199842d8b9e7c4846e7398ee6d3c872929b0c2df2e9458073afa123d4abcc1"
     },
     {
       "path": "Docs/MASTER_VISION.md",
@@ -353,8 +353,8 @@
     },
     {
       "path": "Docs/MILESTONE_ISSUES.md",
-      "bytes": 15169,
-      "sha256": "8b8ff86a6ea76253fa9dca46757ca7334d3dcb284ae741c47b7320fbba4be842"
+      "bytes": 15801,
+      "sha256": "e52d4e2c01c64d4e6555e00197b816e85a5aa06f01834fcea4a1f2fb430dfb52"
     },
     {
       "path": "Docs/NETWORK_MODEL.md",
@@ -363,8 +363,8 @@
     },
     {
       "path": "Docs/PERFORMANCE_BUDGET.md",
-      "bytes": 6869,
-      "sha256": "8811ee174fd4d485b43fea814ba0ba418b64f1c8e0770c18912514d87eb2fdaf"
+      "bytes": 7336,
+      "sha256": "e1e84209573f9e3ef4fd0f513a22dcc486e8df1658665e1d579083e7d762e489"
     },
     {
       "path": "Docs/RELEASE_CHECKLIST.md",
@@ -373,8 +373,8 @@
     },
     {
       "path": "Docs/RESEARCH_LOG.md",
-      "bytes": 19453,
-      "sha256": "b51fd5b5777012e604428f3f206d40864f1b3d29e494cbf80b3624af2ebad700"
+      "bytes": 21264,
+      "sha256": "95bc135e0b35feac42855a522cf3451b681ce0bedf2bfc33cc172da5130145e6"
     },
     {
       "path": "Docs/SECURITY.md",
@@ -383,8 +383,8 @@
     },
     {
       "path": "Docs/TEST_STRATEGY.md",
-      "bytes": 12679,
-      "sha256": "2b6f6840bbbdd7c62472d829e297b91942792fffafbb250a659e40173dce96b4"
+      "bytes": 13326,
+      "sha256": "b3e16d2adedfdfebf03d94caaae71b7aeb1adf7293ffba224bb6fdac4181e351"
     },
     {
       "path": "Docs/WEB_PLATFORM.md",
@@ -393,13 +393,13 @@
     },
     {
       "path": "PROJECT_CONTEXT.json",
-      "bytes": 2892,
-      "sha256": "28b0fe488370167a020c614d9c763f6eb7b2510fde3f5e936c20aa40b38634c7"
+      "bytes": 2950,
+      "sha256": "36591ab2558f2f3689ccd8a24645fcb6e6137b13647600fc22ad9a2d29dae3ab"
     },
     {
       "path": "PROJECT_STATUS.md",
-      "bytes": 10985,
-      "sha256": "459770cabdb12b2c703d6886bb3c8aae219d96dcda50c5daeac225ee72c0fa8e"
+      "bytes": 11690,
+      "sha256": "76e4aa84d626c08cf538fcf40bac1322e25999d6b3cb11b13c57b0e5d95385f3"
     },
     {
       "path": "PROMPTS/00_MILESTONE_0_BOOTSTRAP.md",
@@ -418,8 +418,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 2738,
-      "sha256": "aab86a6470d2dff1881e06fd4d1d2d6c3c87425f2b6a0bb824e58ed963e3ef0f"
+      "bytes": 2868,
+      "sha256": "04eaa66ea9a76e8e9c783eac47bcd82008c7b9699813f8ad21187387b452d98e"
     },
     {
       "path": "START_HERE.md",
@@ -1423,8 +1423,8 @@
     },
     {
       "path": "Docs/HUMAN_REVIEW_BACKLOG.md",
-      "bytes": 4330,
-      "sha256": "4b5baec53cb026cee0f484805a07a9ade29ed3a3e20c03cba13b1c050f274c27"
+      "bytes": 4771,
+      "sha256": "32b51eccaef0200cc471a62724e2e7ff3bcbbb3de02fa5e881bd1b9adea2e31f"
     },
     {
       "path": "PROMPTS/02_MILESTONE_2_COMBAT.md",
@@ -2298,8 +2298,33 @@
     },
     {
       "path": "Docs/MILESTONE_REPORTS/M9.md",
-      "bytes": 3319,
-      "sha256": "029f02fc2deeb1e6025da7cc7581146124212e137a266c5969b68f14c47c199b"
+      "bytes": 3271,
+      "sha256": "887b79ee1412a44c5def99398362ebf1ca8cdf9502ddf73f22c60d77dadb91e4"
+    },
+    {
+      "path": "Assets/BattleRaja/Infrastructure/Backend/ProgressionBackendProof.cs",
+      "bytes": 14711,
+      "sha256": "5a582fa7ad8fbe0a2f4de0f7216c2bda8b594f9d23d587ecee5d448ee3bb73fe"
+    },
+    {
+      "path": "Assets/BattleRaja/Infrastructure/Backend/ProgressionBackendProof.cs.meta",
+      "bytes": 59,
+      "sha256": "7ba7b728be4920f62f24c55e6c9f76031572cfce1efe35910ab4ddd0d7a7fdcc"
+    },
+    {
+      "path": "Assets/BattleRaja/Tests/EditMode/ProgressionBackendProofTests.cs",
+      "bytes": 3949,
+      "sha256": "8a109cb1d332ebfeec57b1a5ee514b4da9e6417d01cec59ee7672eab59208b25"
+    },
+    {
+      "path": "Assets/BattleRaja/Tests/EditMode/ProgressionBackendProofTests.cs.meta",
+      "bytes": 59,
+      "sha256": "8b80bf0466c118b0dc0f71497a370303c856f3bbcbf1e107d6ff30610d5e3b60"
+    },
+    {
+      "path": "Docs/MILESTONE_REPORTS/M10.md",
+      "bytes": 3732,
+      "sha256": "401189081d3ee092a8e7522ea13aea2c18a6d29daeb3840d3d50d21523c35611"
     }
   ]
 }

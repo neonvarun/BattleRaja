@@ -2,7 +2,7 @@
 
 ## Active milestone
 
-**Milestone 9 — Eight-Slot Online Alpha Preparation (blocked)**
+**Milestone 10 — Accounts and Progression Foundation (credential-blocked partial)**
 
 ## Current state
 
@@ -30,6 +30,8 @@
   blocked pending owner package/App ID/licence/account approval
 - M9: transport-independent eight-slot authoritative server/match preparation is present;
   online-alpha completion is blocked by the M8 real-session precondition
+- M10: backend-neutral identity/progression interfaces and deterministic fake are present;
+  real PlayFab integration is blocked pending title/account/secret approval
 - Backend/economy: deliberately deferred
 - Final art/audio/animation: not started
 - Git/LFS: local repository initialized and LFS configured; `origin` points to `https://github.com/neonvarun/BattleRaja.git`
@@ -122,6 +124,15 @@
   session. No online alpha, cross-play, matchmaking or headless-server result is claimed.
 - Preparation tests and any M9 regression/build evidence are recorded in
   `Docs/MILESTONE_REPORTS/M9.md`.
+
+## M10 execution evidence — 2026-08-02
+
+- `IProgressionBackend`, `FakeProgressionBackend`, `PlayFabBackendAdapter` and
+  `BackendConfiguration.LocalProof` establish guest/link/profile/reward/inventory/
+  leaderboard/remote-config contracts without SDKs or secrets.
+- M10 is **credential-blocked partial**, not a real service pass. No PlayFab title, SDK,
+  cross-device persistence, account recovery or economy deployment is claimed.
+- Evidence and test/build status are recorded in `Docs/MILESTONE_REPORTS/M10.md`.
 
 ## M0 evidence retained
 

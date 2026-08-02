@@ -263,3 +263,25 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   blocked and must be rechecked after owner approval.
 - **Recheck trigger/date:** Immediately after Photon package/App ID/account access is
   approved; before claiming M8 complete or adding public matchmaking.
+
+### M10 PlayFab identity/progression baseline
+
+- **Date checked:** 2026-08-02
+- **Primary sources:** [PlayFab authentication](https://learn.microsoft.com/en-us/gaming/playfab/identity/player-identity/authentication/),
+  [anonymous login changes](https://learn.microsoft.com/en-us/xbox/playfab/identity/player-identity/platform-specific-authentication/anonymous-login),
+  [account linking](https://learn.microsoft.com/en-us/xbox/playfab/identity/player-identity/login/quickstart),
+  [Economy v2 inventory](https://learn.microsoft.com/en-us/gaming/playfab/economy-monetization/economy-v2/inventory/items-and-inventory-overview),
+  [leaderboards](https://learn.microsoft.com/en-us/gaming/playfab/community/leaderboards/),
+  and [official REST/API references](https://learn.microsoft.com/en-us/rest/api/playfab/).
+- **Relevant claims:** PlayFab supports linked player identities; new titles disable client-side
+  anonymous account creation by default and require server-side creation; Economy v2 inventory
+  supports idempotency; leaderboards/statistics are intended to be trusted service writes.
+- **Decision impact:** Keep title secrets server-only, use a backend-neutral interface and fake,
+  require server-validated reward evidence/idempotency keys, and do not ship a client-side
+  PlayFab SDK/App ID until the owner approves the title and secret channel.
+- **Local evidence:** Five M10 fake-backend EditMode proof cases; no PlayFab account, SDK,
+  cross-device persistence or service quota evidence.
+- **Uncertainty:** Exact approved Unity SDK/API version, title configuration, account-linking
+  provider, retention/legal policy and service pricing remain unresolved.
+- **Recheck trigger/date:** After owner supplies PlayFab title/account access and before any
+  real identity, economy or leaderboard claim.

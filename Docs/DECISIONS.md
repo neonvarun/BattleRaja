@@ -69,6 +69,29 @@ Record every material choice here. Do not silently overwrite old decisions.
   tests and M9 report.
 - **Owner:** Human project owner
 
+### ADR-011 — Milestone 10 backend-neutral progression contract
+
+- **Date:** 2026-08-02
+- **Status:** Accepted for the credential-blocked partial gate; real PlayFab integration is
+  blocked.
+- **Context:** Accounts, cross-progression and rewards must be server-owned, while the PlayFab
+  title/SDK/secret configuration is unavailable. Current PlayFab guidance also changes
+  anonymous account creation and recommends idempotent Economy v2 inventory operations.
+- **Options considered:** Put PlayFab SDK calls in gameplay/UI; add a fake success path that
+  resembles a cloud account; or define a backend-neutral interface with a deterministic fake
+  and an unavailable real adapter.
+- **Decision:** Use `IProgressionBackend`, deterministic fake identity/link/profile/reward/
+  leaderboard behavior and `PlayFabBackendAdapter` returning `CredentialsRequired`. Require
+  server-validated evidence and idempotency keys for valuable writes; keep premium currency
+  ledger-only and purchases out of scope.
+- **Consequences:** Progression contracts and security regressions are testable without a
+  service. Real identity recovery, cross-device persistence, Economy v2, statistics and remote
+  config remain unverified until owner-approved server credentials exist.
+- **Evidence/sources:** Official PlayFab authentication, anonymous-login, account-linking,
+  Economy v2 inventory and leaderboard documentation logged in `Docs/RESEARCH_LOG.md`; M10
+  fake-backend tests and report.
+- **Owner:** Human project owner
+
 ### ADR-008 — Milestone 7 three-fighter alpha roster
 
 - **Date:** 2026-08-02
