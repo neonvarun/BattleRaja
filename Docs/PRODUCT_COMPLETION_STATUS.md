@@ -7,7 +7,7 @@ This file records evidence-backed status only. Allowed status values are: `Not s
 
 | Area | Status | Evidence / boundary |
 | --- | --- | --- |
-| Unity project and package baseline | Passed with evidence | Unity `6000.5.6f1`; latest validated source HEAD `579bc37` (current docs-only HEAD `4a84a12`); repository validation clean; compile succeeds |
+| Unity project and package baseline | Passed with evidence | Unity `6000.5.6f1`; latest validated source HEAD `4ecc467`; repository validation clean; compile succeeds |
 | Photon Fusion import | Passed with evidence | Fusion 2.1.1 stable build 2177 is present and imported; no public multiplayer claim |
 | EditMode and PlayMode regression baseline | Passed with evidence | Latest production-scene validation passes 72/72 EditMode and 28/28 PlayMode tests |
 | Android smoke build | Passed with evidence | Bazaar Bastion development IL2CPP APK (`150,960,195` bytes; SHA-256 `2A4AC8ACDB4A7873F07362E67B0ACA8B265C44840E66CC3A6AC8EB648B88D175`) built and launched on Lava `ST5GDW23LB004392` only; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
