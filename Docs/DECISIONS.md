@@ -493,3 +493,28 @@ Record every material choice here. Do not silently overwrite old decisions.
   `PlayerFighterSelectionPlayModeTests.cs`, 77/77 EditMode and 31/31 PlayMode results,
   `Docs/QA/Visual/Flow/` screenshots, and HEAD `2c36bbb` Android/Web build logs.
 - **Owner:** Human project owner
+
+### ADR-026 — Add a replayable tutorial as a presentation layer over real offline authority
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the tutorial/offline onboarding slice; competency certification,
+  final UX and full-loop reliability remain open.
+- **Context:** The production menu could reach the offline match but offered no guided first-run
+  route. The tutorial must teach controls and the Aandhi/gadget/combat vocabulary without creating
+  a second simulation or making prompts authoritative.
+- **Options considered:** Hard-code tutorial rules into the match controller; create a fake
+  training sandbox; or use a replayable, scene-owned overlay backed by a pure step machine while
+  keeping the real authority, HUD, pickups and controls active.
+- **Decision:** Use `TutorialStepMachine` for deterministic Movement → Aim → BasicAttack → Ability
+  → Gadget → Aandhi → Elimination → Victory → Complete progression. `TutorialOverlay` renders
+  replay/skip/menu controls and persists only local completion. `CreateTutorialArenaScene` copies
+  the tested MovementLab scene, disables BotBrain decisions but keeps eight actor spawns valid,
+  and registers `TutorialArena` in the production Android/Web build order.
+- **Consequences:** New players can reach a clear, replayable guidance loop from Main Menu, and
+  PlayMode verifies the real `OfflineMatchController` starts with eight authority participants.
+  Prompts do not certify that a player performed an action; full match reliability, performance,
+  visual review and external service gates remain independent.
+- **Evidence/sources:** `TutorialStepMachine.cs`, `TutorialOverlay.cs`, `TutorialArena.unity`,
+  `TutorialArenaPlayModeTests.cs`, 81/81 EditMode and 32/32 PlayMode results, and the 4391f09
+  Android/Web/browser evidence in `Docs/QA/LATEST_HEAD_BASELINE.md`.
+- **Owner:** Human project owner

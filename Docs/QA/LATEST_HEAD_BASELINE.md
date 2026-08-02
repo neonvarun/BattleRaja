@@ -2,7 +2,7 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `2c36bbb` (`feat: add production flow and fighter selection`)
+Latest validated source HEAD: `4391f09` (`feat: add replayable tutorial arena`)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
 ## Scope and repository note
@@ -129,3 +129,16 @@ After the authority seam commit `1a92b6c`, the runtime artifacts were rebuilt an
   stylised greybox presentation; tutorial, multi-viewport visual gate, Android Lava runtime
   check for this exact APK, performance profiling, real Photon and real PlayFab remain open
   or externally blocked.
+
+## Replayable tutorial arena validation (`4391f09`)
+
+- Source/control: pushed branch `codex/product-completion` is at `4391f09`; the existing
+  user-owned `MovementLab.unity`, Burst WASM and audit-brief files remain unstaged.
+- Compile/validation: `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` reported 0 errors and 0 warnings.
+- EditMode: 81 passed, 0 failed, 0 skipped (`Builds/M11/TestResults/tutorial-editmode-20260803.xml`). This includes the pure ordered/replayable `TutorialStepMachine` and the tutorial flow route.
+- PlayMode: 32 passed, 0 failed, 0 skipped (`Builds/M11/TestResults/tutorial-playmode-20260803.xml`). `TutorialArenaPlayModeTests` loaded the real `OfflineMatchController`, observed eight valid authority participants, verified all bot brains are disabled while actors remain in the simulation, and advanced the overlay to completion.
+- Android: development IL2CPP build succeeded under Unity 6000.5.6f1 (`Builds/M11/Logs/tutorial-android-head-4391f09.log`). Actual APK `Builds/M11/Android/BattleRaja-BazaarBastion-M11.apk` is 151,120,618 bytes; SHA-256 `5366ACE6BA99BA25370E974399D70D0D76327F07D842F3C583D8B9C9A3C7C260`. This turn did not install this exact APK on a physical device; Lava remains the only permitted device for a later runtime check.
+- Web: development build succeeded with Bootstrap, Tutorial Arena and Bazaar Bastion (`Builds/M11/Logs/tutorial-web-head-4391f09.log`), 19 files and 132,784,825 bytes. Main WASM is 120,095,092 bytes with SHA-256 `EF4548D592B4B7263B418192DBC0DBA478B1630E5AA5B30E5C28A531BEB11392`.
+- Local Web serve: `http://localhost:8123/index.html` returned HTTP 200 from `Builds/M11/Web-BazaarBastion`.
+- Browser smoke: at 1280×720, the fresh Web tab opened Main Menu → `TUTORIAL REPLAY`, rendered the real Tutorial Arena, and advanced Movement → Aim. Screenshots: `Docs/QA/Visual/Flow/web-tutorial-arena.png` and `Docs/QA/Visual/Flow/web-tutorial-aim.png`. Browser logs contained no errors; one non-fatal Unity WebGL warning reports that manual `persistentDataPath` synchronization is deprecated.
+- Boundary: tutorial prompts are replayable guidance layered over the real controls, match authority, Aandhi/HUD and pickups; they do not automatically certify player competency. Multi-viewport visual QA, Lava smoke for this exact APK, performance/soak evidence, final authored presentation, real Photon and real PlayFab remain open or externally blocked.

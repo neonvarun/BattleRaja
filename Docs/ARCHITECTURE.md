@@ -262,3 +262,19 @@ Android and Web share domain, application and most presentation code. Platform-s
   Android/Web builds. `MovementLab` remains a regression fixture. The flow is proven by pure,
   EditMode and PlayMode tests plus a 1280×720 Web smoke; responsive multi-viewport visual QA,
   tutorial replay and final authored presentation remain explicit gates.
+
+## M15 replayable tutorial boundary
+
+- `TutorialStepMachine` remains Unity-independent and owns only ordered, idempotent prompt
+  progression from movement through victory. It does not infer success, mutate match state or
+  replace human/bot commands.
+- `TutorialOverlay` is a scene-owned presentation adapter. It renders concise control, combat,
+  gadget and Aandhi guidance over the real `OfflineMatchController`, Canvas HUD and touch/mouse
+  controls. Replay/skip/completion persistence is local presentation state only.
+- `TutorialArena.unity` is generated from the tested MovementLab fixture. Bot decision components
+  are disabled while their actor GameObjects remain active, preserving eight valid authority
+  spawns for the real offline simulation. The arena is registered after Bootstrap and before
+  Bazaar Bastion in Android/Web build entrypoints.
+- Tutorial prompts are guidance, not automated competency or balance evidence. Full-length
+  offline reliability, memory/soak testing, responsive visual QA, final authored presentation,
+  real Photon and real PlayFab remain separate gates.
