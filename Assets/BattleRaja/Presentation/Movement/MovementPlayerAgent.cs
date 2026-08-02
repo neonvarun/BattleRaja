@@ -12,12 +12,13 @@ namespace BattleRaja.Presentation.Movement
         [SerializeField] private MovementTuningAsset tuningAsset;
         [SerializeField] private PlayerInputAdapter inputAdapter;
         [SerializeField] private AimDirectionIndicator aimIndicator;
-        [SerializeField] private BijliFighterController fighterController;
+        [SerializeField] private MonoBehaviour fighterController;
         [SerializeField] private bool externalCommandMode;
         [SerializeField] private int simulationTickRate = 30;
 
         private CharacterController _characterController;
         private MovementMotor _motor;
+        private IFighterMovementLock _fighterMovementLock;
         private MovementTuning _tuning;
         private FixedSimulationClock _clock;
         private MovementInputFrame _bufferedInput;
@@ -36,6 +37,7 @@ namespace BattleRaja.Presentation.Movement
             _characterController = GetComponent<CharacterController>();
             inputAdapter = inputAdapter != null ? inputAdapter : GetComponent<PlayerInputAdapter>();
             fighterController = fighterController != null ? fighterController : GetComponent<BijliFighterController>();
+            _fighterMovementLock = fighterController as IFighterMovementLock;
             _tuning = tuningAsset != null ? tuningAsset.ToDomain() : MovementTuning.Default;
             _motor = new MovementMotor();
             _clock = new FixedSimulationClock(Mathf.Max(1, simulationTickRate));
@@ -51,7 +53,7 @@ namespace BattleRaja.Presentation.Movement
                 return;
             }
 
-            if (fighterController != null && fighterController.IsMovementLocked)
+            if (_fighterMovementLock != null && _fighterMovementLock.IsMovementLocked)
             {
                 return;
             }

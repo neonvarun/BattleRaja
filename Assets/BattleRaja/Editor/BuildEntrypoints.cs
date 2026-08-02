@@ -437,7 +437,10 @@ namespace BattleRaja.Editor
             CombatDamageResolver damageResolver)
         {
             var bot = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            bot.name = $"BotBijli_{botIndex + 1}";
+            var fighterId = fighterAsset.ToDomain().FighterId;
+            var isPehel = fighterId.Equals(FighterDefinition.Pehel.FighterId);
+            var isMaya = fighterId.Equals(FighterDefinition.Maya.FighterId);
+            bot.name = $"Bot{(isPehel ? "Pehel" : isMaya ? "Maya" : "Bijli")}_{botIndex + 1}";
             bot.transform.SetParent(parent);
             bot.transform.position = position;
             bot.layer = 2;
@@ -454,7 +457,9 @@ namespace BattleRaja.Editor
             var health = bot.AddComponent<CombatHealth>();
             var target = bot.AddComponent<CombatTarget>();
             var attack = bot.AddComponent<CombatAttackController>();
-            var fighter = bot.AddComponent<BijliFighterController>();
+            var fighter = isPehel
+                ? (MonoBehaviour)bot.AddComponent<PehelFighterController>()
+                : isMaya ? bot.AddComponent<MayaFighterController>() : bot.AddComponent<BijliFighterController>();
             var perception = bot.AddComponent<BotPerceptionSensor>();
             var brain = bot.AddComponent<BotBrain>();
             var gadget = bot.AddComponent<GadgetUser>();
@@ -479,13 +484,29 @@ namespace BattleRaja.Editor
             SetObjectReference(attack, "projectilePool", projectilePool);
             SetObjectReference(fighter, "fighterDefinition", fighterAsset);
             SetObjectReference(fighter, "movementAgent", agent);
-            SetObjectReference(fighter, "characterController", controller);
-            SetObjectReference(fighter, "dashTrail", trail);
-            SetInt(fighter, "dashCollisionMask", 1);
+            if (fighter is BijliFighterController)
+            {
+                SetObjectReference(fighter, "characterController", controller);
+                SetObjectReference(fighter, "dashTrail", trail);
+                SetInt(fighter, "dashCollisionMask", 1);
+            }
+            else if (fighter is PehelFighterController)
+            {
+                SetObjectReference(fighter, "inputAdapter", null);
+                SetObjectReference(fighter, "characterController", controller);
+                SetObjectReference(fighter, "damageResolver", damageResolver);
+                SetInt(fighter, "chargeCollisionMask", 1);
+            }
+            else if (fighter is MayaFighterController)
+            {
+                SetObjectReference(fighter, "inputAdapter", null);
+                SetObjectReference(fighter, "decoyMaterial", trailMaterial);
+            }
             SetInt(perception, "actorId", actorId);
             SetObjectReference(perception, "health", health);
             SetObjectReference(perception, "selfTarget", target);
             SetInt(brain, "seed", 100 + botIndex);
+            SetObjectReference(brain, "fighterController", fighter);
             SetObjectReference(gadget, "movementAgent", agent);
             SetObjectReference(gadget, "combatTarget", target);
             SetObjectReference(gadget, "health", health);

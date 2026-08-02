@@ -7,7 +7,7 @@ namespace BattleRaja.Presentation.Combat
 {
     [DefaultExecutionOrder(-100)]
     [RequireComponent(typeof(CharacterController))]
-    public sealed class BijliFighterController : MonoBehaviour, IAbilityCommandSink
+    public sealed class BijliFighterController : MonoBehaviour, IFighterAbilityController, IFighterMovementLock
     {
         [SerializeField] private FighterDefinitionAsset fighterDefinition;
         [SerializeField] private PlayerInputAdapter inputAdapter;
@@ -30,6 +30,7 @@ namespace BattleRaja.Presentation.Combat
         private Float2 _queuedDirection = Float2.Up;
 
         public FighterDefinition Definition => _definition;
+        public ContentId AbilityId => _definition.Ability.AbilityId;
         public FighterActionState ActionState => _runtime != null ? _runtime.ActionState : FighterActionState.Ready;
         public float DashCooldownRemaining => _runtime != null ? _runtime.CooldownRemaining : 0f;
         public bool IsMovementLocked => _runtime != null && ActionState != FighterActionState.Ready && ActionState != FighterActionState.Cooldown;

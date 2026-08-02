@@ -156,6 +156,29 @@ Record every material choice here. Do not silently overwrite old decisions.
   `AuthorityFoundationTests`, 68 EditMode and 27 PlayMode tests.
 - **Owner:** Human project owner
 
+### ADR-018 — Fighter-specific ability executors behind a common command boundary
+
+- **Date:** 2026-08-02
+- **Status:** In progress for the offline alpha; generated-scene runtime coverage remains open.
+- **Context:** Pehel and Maya definitions existed, but scene actors routed every ability through
+  the Bijli dash-oriented component, making distinct kits presentation-only data.
+- **Options considered:** Keep one dash bridge and branch on IDs; add bespoke controllers with
+  duplicated input paths; or keep one command/movement contract and select fighter-specific
+  executors from data definitions.
+- **Decision:** Use `IFighterAbilityController` and `IFighterMovementLock` as the shared boundary.
+  Keep Bijli's dash controller, add fixed-tick `PehelFighterController` backed by
+  `ChargeThrowRuntime`, and add fixed-tick `MayaFighterController` backed by `DecoyRuntime`.
+  The editor generator chooses the executor from the fighter definition; all damage still goes
+  through `CombatDamageResolver` and common ability commands.
+- **Consequences:** Pehel validates enemy capture, prevents duplicate capture, emits a controlled
+  throw and central damage/knockback; Maya creates a targetable, health-bounded decoy with copied
+  movement, cooldown and destruction. Full generated-scene PlayMode evidence, VFX/audio and
+  production readability remain follow-up work.
+- **Evidence/sources:** `FighterAbilityPorts`, `ChargeThrowRuntime`, `DecoyRuntime`,
+  `PehelFighterController`, `MayaFighterController`, `BuildEntrypoints`, `VerticalSliceFighterTests`,
+  70 EditMode and 27 PlayMode tests.
+- **Owner:** Human project owner
+
 ### ADR-010 — Milestone 9 safe server/match preparation while Fusion is blocked
 
 - **Date:** 2026-08-02

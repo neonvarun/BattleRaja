@@ -145,15 +145,19 @@ Android and Web share domain, application and most presentation code. Platform-s
 ## M7 vertical-slice fighter implementation
 
 - `FighterDefinition.Pehel` and `.Maya` provide stable IDs and distinct data-driven
-  health, movement and attack baselines. `FighterSpecialDefinition` and `DecoyRuntime`
-  keep Charge Throw/Decoy timing, bounds and expiry testable without Unity.
+  health, movement and attack baselines. `FighterSpecialDefinition`, `ChargeThrowRuntime`
+  and `DecoyRuntime` keep capture/throw, targetability, cooldown and expiry rules testable
+  without Unity.
 - M7 serialized fighter/weapon assets are loaded by the editor scene generator after
   scene creation so Unity asset lifecycle cannot silently fall back to Bijli. Actors
-  still use the shared `MovementPlayerAgent`, `CombatAttackController`,
-  `BijliFighterController` bridge and bot command interfaces.
-- The shared presentation bridge is intentionally an alpha implementation: bespoke
-  Pehel throw displacement and Maya decoy visuals are not yet authoritative presentation
-  systems. This is recorded as M7 debt rather than hidden in the Domain layer.
+  still share `MovementPlayerAgent`, `CombatAttackController` and the common
+  `IFighterAbilityController`/`IFighterMovementLock` command boundary, while the editor
+  generator selects `BijliFighterController`, `PehelFighterController` or
+  `MayaFighterController` from the data definition.
+- Pehel's adapter performs fixed-tick charge/capture/throw collision and central damage;
+  Maya's adapter spawns a targetable, health-bounded decoy with copied movement and expiry.
+  Scene regeneration, bespoke VFX/audio, and runtime PlayMode coverage for those two
+  adapters remain explicit alpha debt.
 
 ## M8 networking boundary
 

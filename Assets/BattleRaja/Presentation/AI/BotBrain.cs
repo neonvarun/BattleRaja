@@ -19,7 +19,7 @@ namespace BattleRaja.Presentation.AI
         [Min(0.1f)] [SerializeField] private float stuckTimeoutSeconds = 0.7f;
         [SerializeField] private MovementPlayerAgent movementAgent;
         [SerializeField] private CombatAttackController attackController;
-        [SerializeField] private BijliFighterController fighterController;
+        [SerializeField] private MonoBehaviour fighterController;
         [SerializeField] private BotPerceptionSensor perception;
         [SerializeField] private GadgetUser gadgetUser;
 
@@ -28,6 +28,7 @@ namespace BattleRaja.Presentation.AI
         private BotNavigationRecovery _navigation;
         private SeededRandom _random;
         private BotDecision _decision;
+        private IFighterAbilityController _abilityController;
         private float _nextDecisionAt;
         private int _simulationTick;
         private bool _abilityIssued;
@@ -43,6 +44,8 @@ namespace BattleRaja.Presentation.AI
             movementAgent = movementAgent != null ? movementAgent : GetComponent<MovementPlayerAgent>();
             attackController = attackController != null ? attackController : GetComponent<CombatAttackController>();
             fighterController = fighterController != null ? fighterController : GetComponent<BijliFighterController>();
+            _abilityController = fighterController as IFighterAbilityController;
+            if (_abilityController == null) _abilityController = GetComponent<IFighterAbilityController>();
             perception = perception != null ? perception : GetComponent<BotPerceptionSensor>();
             gadgetUser = gadgetUser != null ? gadgetUser : GetComponent<GadgetUser>();
             _profile = new BotDifficultyProfile(reactionDelayTicks, aimNoise, retreatHealthFraction, preferredRange, decisionIntervalSeconds, stuckTimeoutSeconds);
@@ -97,12 +100,12 @@ namespace BattleRaja.Presentation.AI
                     true));
             }
 
-            if (fighterController != null && _decision.Ability && !_abilityIssued)
+            if (_abilityController != null && _decision.Ability && !_abilityIssued)
             {
-                fighterController.Submit(AbilityCommandFactory.Create(
+                _abilityController.Submit(AbilityCommandFactory.Create(
                     new CombatEntityId(movementAgent.ActorId),
                     _simulationTick,
-                    fighterController.Definition.Ability.AbilityId,
+                    _abilityController.AbilityId,
                     _decision.Aim,
                     true));
                 _abilityIssued = true;

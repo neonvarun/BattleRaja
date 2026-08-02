@@ -4,7 +4,8 @@ namespace BattleRaja.Core.Domain
     {
         Generic = 0,
         Projectile = 1,
-        Aandhi = 2
+        Aandhi = 2,
+        Ability = 3
     }
 
     public readonly struct DamageRequest
