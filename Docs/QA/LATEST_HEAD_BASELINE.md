@@ -2,7 +2,7 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `39149f1` (`refactor: tick tiffin authority effects`)
+Latest validated source HEAD: `d328132` (`refactor: tick umbrella authority mitigation`)
 Latest runtime-bearing candidate: `4391f09` (`feat: add replayable tutorial arena`)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
@@ -130,6 +130,26 @@ healing loop. Local non-authoritative lab stations retain their fallback behavio
 No new Android/Web artifact was built for this focused authority-only change; the
 `1437e5c` artifacts remain the latest cross-platform smoke builds. Station damage
 forwarding and Umbrella mitigation remain open.
+
+## Phase 1 gadget-authority candidate (`d328132`)
+
+Umbrella Guard duration and front-facing mitigation now run through an authority-owned
+runtime before damage reaches the presentation pipeline. Together with the Dhol and
+Tiffin continuations above, all three gadget definitions have fixed-tick application
+state for their currently implemented effects.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| EditMode suite | 86 passed, 0 failed | `Builds/M11/TestResults/phase1-umbrella-authority-editmode-v4-20260803.xml` |
+| PlayMode suite | 34 passed, 0 failed | `Builds/M11/TestResults/phase1-umbrella-authority-playmode-v2-20260803.xml` |
+| Android development smoke build | Unity exit 0; APK 151,286,644 bytes; SHA-256 `B50F74E56A3F3FA95A164834223739B3A0A2F1681DBA3D12F7B82B956F682F9B` | `Builds/M11/Logs/phase1-gadget-authority-android-20260803.log`, `Builds/M11/Android/BattleRaja-M11.apk` |
+| Web development smoke build | Unity exit 0; 21 files, 133,177,869 bytes; `Build/Web.wasm` 120,488,383 bytes; SHA-256 `6538B2ECF83940FEB7F9AE7F1B160114557E04F2E49F847048AD9795D711EB9E` | `Builds/M11/Logs/phase1-gadget-authority-web-20260803.log`, `Builds/M11/Web` |
+| Local Web serve | `curl -I http://127.0.0.1:8136/index.html` returned HTTP 200 | local server check from 2026-08-03 |
+| Build warning | Web build succeeded with a non-fatal websockify `EADDRINUSE` shutdown message on helper port 35020 | `Builds/M11/Logs/phase1-gadget-authority-web-20260803.log` |
+| Lava physical smoke | Not run: `adb devices -l` listed only Oppo `b60e53b3`; the instructed Lava serial `ST5GDW23LB004392` was absent | device-gate blocker |
+
+The fresh artifacts are development builds only. No production signing, store upload,
+real Photon room, or final visual/performance claim is made.
 
 ## Fix included in this baseline
 
