@@ -19,11 +19,15 @@ namespace BattleRaja.Presentation.Combat
         [SerializeField] private float playMinZ = -9.2f;
         [SerializeField] private float playMaxZ = 9.2f;
         [SerializeField] private LayerMask dashCollisionMask = ~0;
+        [SerializeField] private int simulationTickRate = 30;
 
         private FighterDefinition _definition;
         private FighterRuntimeState _runtime;
+        private FixedSimulationClock _clock;
         private int _simulationTick;
         private bool _abilityHeld;
+        private bool _abilityQueued;
+        private Float2 _queuedDirection = Float2.Up;
 
         public FighterDefinition Definition => _definition;
         public FighterActionState ActionState => _runtime != null ? _runtime.ActionState : FighterActionState.Ready;
@@ -39,6 +43,7 @@ namespace BattleRaja.Presentation.Combat
             characterController = characterController != null ? characterController : GetComponent<CharacterController>();
             _definition = fighterDefinition != null ? fighterDefinition.ToDomain() : FighterDefinition.Bijli;
             _runtime = new FighterRuntimeState(_definition);
+            _clock = new FixedSimulationClock(Mathf.Max(1, simulationTickRate));
             if (dashTrail != null)
             {
                 dashTrail.emitting = false;
@@ -56,29 +61,39 @@ namespace BattleRaja.Presentation.Combat
             if (abilityPressed && !_abilityHeld)
             {
                 var input = inputAdapter.ReadInput();
-                var command = AbilityCommandFactory.Create(
-                    new CombatEntityId(movementAgent != null ? movementAgent.ActorId : 1),
-                    _simulationTick,
-                    _definition.Ability.AbilityId,
-                    input.Aim,
-                    true);
-                Submit(command);
+                _queuedDirection = input.Aim;
+                _abilityQueued = true;
             }
 
             _abilityHeld = abilityPressed;
-            var availableDistance = ComputeAvailableDistance(_runtime.DashDirection);
-            var step = _runtime.Step(Time.deltaTime, availableDistance);
-            if (step.Displacement.SqrMagnitude > 0.000001f && characterController != null)
+            var steps = _clock.Consume(Time.deltaTime);
+            for (var i = 0; i < steps; i++)
             {
-                characterController.Move(new Vector3(step.Displacement.X, 0f, step.Displacement.Y));
-            }
+                _simulationTick = _clock.Tick;
+                if (_abilityQueued)
+                {
+                    var command = AbilityCommandFactory.Create(
+                        new CombatEntityId(movementAgent != null ? movementAgent.ActorId : 1),
+                        _simulationTick,
+                        _definition.Ability.AbilityId,
+                        _queuedDirection,
+                        true);
+                    Submit(command);
+                    _abilityQueued = false;
+                }
 
-            if (dashTrail != null)
-            {
-                dashTrail.emitting = ActionState == FighterActionState.Active;
-            }
+                var availableDistance = ComputeAvailableDistance(_runtime.DashDirection);
+                var step = _runtime.Step((float)_clock.StepSeconds, availableDistance);
+                if (step.Displacement.SqrMagnitude > 0.000001f && characterController != null)
+                {
+                    characterController.Move(new Vector3(step.Displacement.X, 0f, step.Displacement.Y));
+                }
 
-            _simulationTick++;
+                if (dashTrail != null)
+                {
+                    dashTrail.emitting = ActionState == FighterActionState.Active;
+                }
+            }
         }
 
         public void Submit(AbilityCommand command)
@@ -97,6 +112,7 @@ namespace BattleRaja.Presentation.Combat
         {
             _runtime?.Reset();
             _abilityHeld = false;
+            _abilityQueued = false;
             if (dashTrail != null)
             {
                 dashTrail.emitting = false;

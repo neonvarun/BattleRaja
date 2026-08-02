@@ -32,6 +32,27 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void FixedClockProducesTheSameTickCountForDifferentRenderRates()
+        {
+            var thirtyFps = new FixedSimulationClock(30);
+            var oneTwentyFps = new FixedSimulationClock(30);
+
+            for (var i = 0; i < 30; i++)
+            {
+                thirtyFps.Consume(1d / 30d);
+            }
+
+            for (var i = 0; i < 120; i++)
+            {
+                oneTwentyFps.Consume(1d / 120d);
+            }
+
+            Assert.That(thirtyFps.Tick, Is.EqualTo(oneTwentyFps.Tick));
+            Assert.That(thirtyFps.Tick, Is.EqualTo(30));
+            Assert.That(thirtyFps.AccumulatorSeconds, Is.EqualTo(oneTwentyFps.AccumulatorSeconds).Within(0.0000001d));
+        }
+
+        [Test]
         public void CommandCarriesStableActorAndSimulationIdentity()
         {
             var command = new GameplayCommand(7, 42, GameplayCommandKind.Intent, 99);

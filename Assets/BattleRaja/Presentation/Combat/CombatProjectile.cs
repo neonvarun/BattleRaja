@@ -13,6 +13,7 @@ namespace BattleRaja.Presentation.Combat
         private CombatProjectilePool _pool;
         private CombatDamageResolver _damageResolver;
         private CombatImpactFeedbackPool _impactPool;
+        private FixedSimulationClock _clock;
         private Float2 _direction;
         private bool _active;
 
@@ -39,6 +40,7 @@ namespace BattleRaja.Presentation.Combat
                 definition.ProjectileSpeed,
                 definition.MaxRange,
                 definition.LifetimeSeconds);
+            _clock = new FixedSimulationClock(30);
             _hitTracker = new ProjectileHitTracker();
             transform.position = new Vector3(command.Origin.X, pool.ProjectileHeight, command.Origin.Y);
             transform.forward = new Vector3(command.Direction.X, 0f, command.Direction.Y);
@@ -60,52 +62,58 @@ namespace BattleRaja.Presentation.Combat
                 return;
             }
 
-            var start = transform.position;
-            var step = _simulation.Step(Time.deltaTime);
-            var end = new Vector3(step.Position.X, start.y, step.Position.Y);
-            var delta = end - start;
-            var distance = delta.magnitude;
-            if (distance > 0.00001f && Physics.SphereCast(
-                    start,
-                    _definition.Radius,
-                    delta / distance,
-                    out var hit,
-                    distance,
-                    _definition.CollisionLayerMask,
-                    QueryTriggerInteraction.Ignore))
+            var steps = _clock.Consume(Time.deltaTime);
+            for (var i = 0; i < steps; i++)
             {
-                var target = hit.collider.GetComponentInParent<CombatTarget>();
-                if (target != null && target.Id != _instigatorId && _hitTracker.TryRegister(target.Id))
+                var start = transform.position;
+                var step = _simulation.Step((float)_clock.StepSeconds);
+                var end = new Vector3(step.Position.X, start.y, step.Position.Y);
+                var delta = end - start;
+                var distance = delta.magnitude;
+                if (distance > 0.00001f && Physics.SphereCast(
+                        start,
+                        _definition.Radius,
+                        delta / distance,
+                        out var hit,
+                        distance,
+                        _definition.CollisionLayerMask,
+                        QueryTriggerInteraction.Ignore))
                 {
-                    var request = new DamageRequest(
-                        _instigatorId,
-                        target.Id,
-                        _instigatorFaction,
-                        _definition.Damage,
-                        DamageType.Projectile,
-                        _direction);
-                    var result = _damageResolver.Resolve(
-                        target,
-                        request,
-                        _definition.AllowSelfHit,
-                        _definition.AllowFriendlyFire);
-                    _impactPool?.Play(hit.point, result.Applied);
-                    Despawn(ProjectileDespawnReason.Hit);
-                    return;
+                    var target = hit.collider.GetComponentInParent<CombatTarget>();
+                    if (target != null && target.Id != _instigatorId && _hitTracker.TryRegister(target.Id))
+                    {
+                        var request = new DamageRequest(
+                            _instigatorId,
+                            target.Id,
+                            _instigatorFaction,
+                            _definition.Damage,
+                            DamageType.Projectile,
+                            _direction);
+                        var result = _damageResolver.Resolve(
+                            target,
+                            request,
+                            _definition.AllowSelfHit,
+                            _definition.AllowFriendlyFire,
+                            _clock.Tick);
+                        _impactPool?.Play(hit.point, result.Applied);
+                        Despawn(ProjectileDespawnReason.Hit);
+                        return;
+                    }
+
+                    if (target == null)
+                    {
+                        _impactPool?.Play(hit.point, false);
+                        Despawn(ProjectileDespawnReason.Collision);
+                        return;
+                    }
                 }
 
-                if (target == null)
+                transform.position = end;
+                if (step.Expired)
                 {
-                    _impactPool?.Play(hit.point, false);
-                    Despawn(ProjectileDespawnReason.Collision);
+                    Despawn(step.Reason);
                     return;
                 }
-            }
-
-            transform.position = end;
-            if (step.Expired)
-            {
-                Despawn(step.Reason);
             }
         }
 

@@ -112,6 +112,29 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Evidence/sources:** `CombatDamageEvent`, `OfflineMatchSimulation.RecordDamage`, `MatchTickResult`, `WeaponCooldownState`, `CombatAttackController`, `OfflineMatchTests`, 66 EditMode and 27 PlayMode tests.
 - **Owner:** Human project owner
 
+### ADR-016 — Shared 30 Hz presentation simulation clock
+
+- **Date:** 2026-08-02
+- **Status:** Accepted for the offline foundation; full input/ability migration remains open.
+- **Context:** The offline authority already used a fixed 30 Hz clock, but player movement,
+  weapon cooldown, projectiles, fighter timing and gadget timers could still diverge with
+  rendered frame rate.
+- **Options considered:** Keep each MonoBehaviour on `Time.deltaTime`; use Unity's variable
+  `FixedUpdate` without command identity; or use explicit per-component accumulators that
+  consume render time into deterministic 30 Hz steps and carry commands across the boundary.
+- **Decision:** Use `FixedSimulationClock` at 30 Hz for the player movement agent, Bijli
+  ability presentation, combat projectile stepping, gadget timers and player attack cooldown.
+  Render-frame input is sampled into a short-lived buffer and applied on the next authoritative
+  step. Bot commands remain injectable through existing command sinks; remaining bot movement,
+  ability-runtime cooldowns and online adapters are tracked as follow-up work.
+- **Consequences:** These presentation paths now have stable simulation ticks and can be
+  compared across render rates without making Unity's render loop the authority. Physics queries
+  still occur on Unity's scene objects, and the migration is intentionally incremental.
+- **Evidence/sources:** `FixedSimulationClock`, `MovementPlayerAgent`, `BijliFighterController`,
+  `CombatProjectile`, `GadgetUser`, `CombatAttackController`, `CoreFoundationTests`, 67 EditMode
+  and 27 PlayMode tests.
+- **Owner:** Human project owner
+
 ### ADR-010 — Milestone 9 safe server/match preparation while Fusion is blocked
 
 - **Date:** 2026-08-02

@@ -14,10 +14,13 @@ namespace BattleRaja.Presentation.Movement
         [SerializeField] private AimDirectionIndicator aimIndicator;
         [SerializeField] private BijliFighterController fighterController;
         [SerializeField] private bool externalCommandMode;
+        [SerializeField] private int simulationTickRate = 30;
 
         private CharacterController _characterController;
         private MovementMotor _motor;
         private MovementTuning _tuning;
+        private FixedSimulationClock _clock;
+        private MovementInputFrame _bufferedInput;
         private int _simulationTick;
         private bool _initialized;
 
@@ -35,6 +38,8 @@ namespace BattleRaja.Presentation.Movement
             fighterController = fighterController != null ? fighterController : GetComponent<BijliFighterController>();
             _tuning = tuningAsset != null ? tuningAsset.ToDomain() : MovementTuning.Default;
             _motor = new MovementMotor();
+            _clock = new FixedSimulationClock(Mathf.Max(1, simulationTickRate));
+            _bufferedInput = new MovementInputFrame(Float2.Zero, Float2.Zero);
             _simulationTick = 0;
             _initialized = true;
         }
@@ -56,11 +61,15 @@ namespace BattleRaja.Presentation.Movement
                 return;
             }
 
-            var input = inputAdapter != null && inputAdapter.isActiveAndEnabled
+            _bufferedInput = inputAdapter != null && inputAdapter.isActiveAndEnabled
                 ? inputAdapter.ReadInput()
                 : new MovementInputFrame(Float2.Zero, Float2.Zero);
-            Submit(MovementCommandFactory.Create(actorId, _simulationTick, input, _tuning), Time.deltaTime);
-            _simulationTick++;
+            var steps = _clock.Consume(Time.deltaTime);
+            for (var step = 0; step < steps; step++)
+            {
+                _simulationTick = _clock.Tick;
+                Submit(MovementCommandFactory.Create(actorId, _simulationTick, _bufferedInput, _tuning), (float)_clock.StepSeconds);
+            }
         }
 
         public void Submit(MovementCommand command)

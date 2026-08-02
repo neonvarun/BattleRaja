@@ -14,14 +14,17 @@ namespace BattleRaja.Presentation.Gadgets
         [SerializeField] private CombatHealth health;
         [SerializeField] private CombatDamageResolver damageResolver;
         [SerializeField] private bool botControlled;
+        [SerializeField] private int simulationTickRate = 30;
 
         private readonly GadgetInventory _inventory = new GadgetInventory(1);
         private readonly GadgetRuntime _runtime = new GadgetRuntime();
+        private FixedSimulationClock _clock;
         private int _tick;
         private float _shieldRemaining;
         private Float2 _shieldDirection = Float2.Up;
         private float _feedbackRemaining;
         private string _feedback = string.Empty;
+        private bool _useQueued;
 
         public bool HasGadget => _inventory.HasGadget;
         public ContentId HeldGadget => _inventory.HeldGadget;
@@ -36,18 +39,30 @@ namespace BattleRaja.Presentation.Gadgets
             combatTarget = combatTarget != null ? combatTarget : GetComponent<CombatTarget>();
             health = health != null ? health : GetComponent<CombatHealth>();
             damageResolver = damageResolver != null ? damageResolver : FindFirstObjectByType<CombatDamageResolver>();
+            _clock = new FixedSimulationClock(Mathf.Max(1, simulationTickRate));
         }
 
         private void Update()
         {
-            _runtime.Advance(Time.deltaTime);
-            _shieldRemaining = Mathf.Max(0f, _shieldRemaining - Time.deltaTime);
-            _feedbackRemaining = Mathf.Max(0f, _feedbackRemaining - Time.deltaTime);
-            if (_feedbackRemaining <= 0f) _feedback = string.Empty;
-
             if (!botControlled && Keyboard.current != null && Keyboard.current.gKey.wasPressedThisFrame)
             {
-                UseHeld();
+                _useQueued = true;
+            }
+
+            var steps = _clock.Consume(Time.deltaTime);
+            for (var i = 0; i < steps; i++)
+            {
+                if (_useQueued)
+                {
+                    UseHeld();
+                    _useQueued = false;
+                }
+
+                var delta = (float)_clock.StepSeconds;
+                _runtime.Advance(delta);
+                _shieldRemaining = Mathf.Max(0f, _shieldRemaining - delta);
+                _feedbackRemaining = Mathf.Max(0f, _feedbackRemaining - delta);
+                if (_feedbackRemaining <= 0f) _feedback = string.Empty;
             }
         }
 
@@ -72,7 +87,7 @@ namespace BattleRaja.Presentation.Gadgets
                 _inventory.HeldGadget,
                 new Float2(transform.position.x, transform.position.z),
                 direction,
-                _tick++);
+                NextTick());
             var result = _runtime.TryUse(_inventory, command);
             if (!result.Used)
             {
@@ -108,7 +123,7 @@ namespace BattleRaja.Presentation.Gadgets
                 _inventory.HeldGadget,
                 new Float2(transform.position.x, transform.position.z),
                 direction,
-                _tick++);
+                NextTick());
             var result = _runtime.TryUse(_inventory, command);
             if (!result.Used) return false;
             ApplyEffect(result.Effect);
@@ -178,6 +193,11 @@ namespace BattleRaja.Presentation.Gadgets
         {
             _feedback = value;
             _feedbackRemaining = 2f;
+        }
+
+        private int NextTick()
+        {
+            return _clock != null ? _clock.Tick : _tick++;
         }
     }
 }
