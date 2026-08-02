@@ -340,6 +340,11 @@ namespace BattleRaja.Editor
                 }
             }
 
+            foreach (var overlay in arena.GetComponentsInChildren<BotDebugOverlay>(true))
+            {
+                SetBool(overlay, "showOverlay", false);
+            }
+
             var damageResolver = arena.GetComponentInChildren<CombatDamageResolver>();
             var projectilePool = arena.GetComponentInChildren<CombatProjectilePool>();
             var bots = UnityEngine.Object.FindObjectsByType<BotBrain>(FindObjectsSortMode.None)

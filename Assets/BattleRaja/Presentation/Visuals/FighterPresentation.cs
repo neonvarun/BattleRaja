@@ -53,6 +53,7 @@ namespace BattleRaja.Presentation.Visuals
         public AnimationState CurrentAnimation { get; private set; } = AnimationState.Idle;
         public bool IsEliminated => _eliminated;
         public bool IsVictory => _victory;
+        public bool ReducedFlashMode { get => reducedFlashMode; set => reducedFlashMode = value; }
 
         private void Awake()
         {
