@@ -2,7 +2,7 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `b7d1a60` (`fix: preserve fighter-specific bot abilities`)
+Latest validated source HEAD: `dd35f53` (`refactor: emit authoritative dhol intents`)
 Latest runtime-bearing candidate: `4391f09` (`feat: add replayable tutorial arena`)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
@@ -95,6 +95,23 @@ scene serialization omits an explicit reference.
 This is a controller-boundary correction, not proof of final fighter balance, authored
 animation/VFX/audio, human counterplay approval, or real network authority. The latest
 Android/Web artifacts remain the `1437e5c` smoke builds until a new candidate is built.
+
+## Phase 1 gadget-authority continuation (`dd35f53`)
+
+Dhol Burst now evaluates living targets from the application snapshot and returns
+per-target displacement intents. `GadgetUser` applies those intents to Unity actors; its
+actor-scan path is retained only for an isolated non-authoritative lab.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | 0 errors, 0 warnings | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` |
+| EditMode suite | 84 passed, 0 failed | `Builds/M11/TestResults/phase1-dhol-authority-editmode-20260803.xml` |
+| PlayMode suite | 34 passed, 0 failed | `Builds/M11/TestResults/phase1-dhol-authority-playmode-20260803.xml` |
+| Dhol authority rule | Dhol use emits one deterministic target displacement for the in-radius participant; duplicate command remains rejected | `Builds/M11/TestResults/phase1-dhol-authority-editmode-20260803.xml` |
+
+No new Android/Web artifact was built for this focused authority-only change; the
+`1437e5c` artifacts remain the latest cross-platform smoke builds. Tiffin station
+healing/lifetime and Umbrella mitigation are still presentation-owned.
 
 ## Fix included in this baseline
 
