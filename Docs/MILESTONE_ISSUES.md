@@ -165,3 +165,24 @@ Each issue must include:
 - **Human review gate:** Required for match pacing, zone readability, spectator flow,
   touch/results UX and low-end-device performance; not blocking provisional M6 gadget
   work.
+
+### BR-M6-001 — Jugaad gadget system
+
+- **Objective:** Add three tactical gadgets with shared pickup/use rules for the human
+  and seven bots in the offline match.
+- **Scope / non-scope:** Stable definitions/assets, one-slot inventory, spawn eligibility,
+  Umbrella Guard, Dhol Burst, Tiffin Station, central damage/healing/movement routing,
+  contextual bot use, HUD/touch feedback and tests. No additional gadgets, Pehel/Maya,
+  networking, backend, progression, monetisation or final art.
+- **Dependencies:** M5 offline match, central combat health/resolver and pinned
+  Unity/package baseline.
+- **Acceptance criteria:** Three gadgets work in offline matches; pickup/use is validated;
+  counterplay is documented; no obvious infinite shield, displacement or healing loop;
+  37 EditMode and 25 PlayMode tests plus Android/Web smoke evidence.
+- **Tests:** `Builds/M6/TestResults/editmode.xml`, `playmode.xml`, ADB runtime logs and
+  Chrome/Edge local HTTP checks.
+- **Risks:** Primitive telegraphs and station scan are grey-box; device logs retain a
+  non-fatal SphereCollider creation warning from the existing projectile pool; balance,
+  readability and low-end performance need human review.
+- **Human review gate:** HR-006 is open and required before production tuning/release;
+  it does not block provisional M7 planning.

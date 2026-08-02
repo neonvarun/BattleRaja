@@ -2,7 +2,7 @@
 
 ## Active milestone
 
-**Milestone 5 — Complete Offline Battle Royale**
+**Milestone 6 — Jugaad Gadget System**
 
 ## Current state
 
@@ -22,10 +22,10 @@
   subjective human-review debt recorded.
 - M2 report: `Docs/MILESTONE_REPORTS/M2.md`; technical gate passed provisionally with
   combat/touch/balance review debt recorded.
-- Combat/gameplay progression: M3 Bijli and M4 bot gates passed provisionally; M5
-  offline match technical gate passed provisionally. Match pacing, Aandhi, pickup,
-  spectator/results and device review remain open. Gadgets, networking, backend and
-  progression remain unimplemented.
+- Combat/gameplay progression: M3 Bijli, M4 bot, M5 offline match and M6 gadget gates
+  passed provisionally. Match pacing, Aandhi, pickup, spectator/results, gadget
+  counterplay and device review remain open. Networking, backend and progression remain
+  unimplemented.
 - Multiplayer: deliberately deferred
 - Backend/economy: deliberately deferred
 - Final art/audio/animation: not started
@@ -78,6 +78,17 @@
 - Pure soak completed 20 accelerated matches with explicit restart state cleanup.
 - Android/Web M5 builds and local/device smoke are recorded in `Docs/MILESTONE_REPORTS/M5.md`.
 
+## M6 execution evidence — 2026-08-02
+
+- Gadget tests: 37/37 EditMode and 25/25 PlayMode passed in `Builds/M6/TestResults/`.
+- The Domain gadget catalog contains stable Umbrella Guard, Dhol Burst and Tiffin
+  Station definitions with one-slot inventory, use/cooldown validation and spawn rules.
+- MovementLab contains three gadget pickups, player touch/keyboard use, HUD feedback,
+  contextual bot use, directional shield mitigation, bounded Dhol displacement and
+  finite destroyable/healing Tiffin stations.
+- Android/Web M6 builds, two-device launch smoke and Chrome/Edge local HTTP checks are
+  recorded in `Docs/MILESTONE_REPORTS/M6.md`.
+
 ## M0 evidence retained
 
 - M0 validation, tests and smoke artifacts remain under ignored `Builds/M0/`.
@@ -93,6 +104,9 @@
   authored navigation remain unmeasured.
 - Full five-minute physical match pacing, Aandhi/pickup readability, results UX and
   repeated-runtime memory/object growth remain unmeasured.
+- Gadget counterplay/readability, bot gadget value, station scale behavior and device
+  performance remain unmeasured. M6 device logs include a non-fatal SphereCollider
+  creation warning from the existing projectile pool.
 
 ## Approval gates
 

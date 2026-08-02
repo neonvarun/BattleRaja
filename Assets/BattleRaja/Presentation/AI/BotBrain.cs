@@ -1,6 +1,7 @@
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Movement;
+using BattleRaja.Presentation.Gadgets;
 using System.Diagnostics;
 using UnityEngine;
 
@@ -20,6 +21,7 @@ namespace BattleRaja.Presentation.AI
         [SerializeField] private CombatAttackController attackController;
         [SerializeField] private BijliFighterController fighterController;
         [SerializeField] private BotPerceptionSensor perception;
+        [SerializeField] private GadgetUser gadgetUser;
 
         private BotDifficultyProfile _profile;
         private BotDecisionEngine _engine;
@@ -42,6 +44,7 @@ namespace BattleRaja.Presentation.AI
             attackController = attackController != null ? attackController : GetComponent<CombatAttackController>();
             fighterController = fighterController != null ? fighterController : GetComponent<BijliFighterController>();
             perception = perception != null ? perception : GetComponent<BotPerceptionSensor>();
+            gadgetUser = gadgetUser != null ? gadgetUser : GetComponent<GadgetUser>();
             _profile = new BotDifficultyProfile(reactionDelayTicks, aimNoise, retreatHealthFraction, preferredRange, decisionIntervalSeconds, stuckTimeoutSeconds);
             _engine = new BotDecisionEngine();
             _navigation = new BotNavigationRecovery();
@@ -77,6 +80,7 @@ namespace BattleRaja.Presentation.AI
                 {
                     _abilityIssued = false;
                 }
+                gadgetUser?.UseForContext(perception.Capture());
             }
 
             var input = new MovementInputFrame(_decision.Movement, _decision.Aim);

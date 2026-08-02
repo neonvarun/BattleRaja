@@ -192,3 +192,27 @@ collected.
 - `Unity.exe -batchmode -nographics -projectPath . -runTests -testPlatform playmode -testResults Builds/M5/TestResults/playmode.xml -logFile Builds/M5/Logs/playmode.log` — 22/22 passed.
 - Pure soak covers 20 complete matches with explicit restart cleanup; no runtime
   leak measurement beyond the repeated simulation state check was collected.
+
+## Milestone 6 gadget coverage
+
+### Pure/EditMode
+
+- stable Gadget IDs and definition validation
+- one-slot pickup/replacement and use/cooldown rules
+- invalid facing and unsafe placement rejection
+- deterministic spawn eligibility/distribution and bounded balance values
+
+### PlayMode
+
+- three pickup/bootstrap objects and player inventory capacity
+- Dhol use through the shared gadget path
+- Tiffin station creation/lifetime path
+- all M1–M5 movement, combat, fighter, bot and offline-match regressions
+
+### M6 evidence (2026-08-02)
+
+- `Unity.exe -batchmode -nographics -projectPath . -runTests -testPlatform editmode -testResults Builds/M6/TestResults/editmode.xml -logFile Builds/M6/Logs/editmode.log` — 37/37 passed.
+- `Unity.exe -batchmode -nographics -projectPath . -runTests -testPlatform playmode -testResults Builds/M6/TestResults/playmode.xml -logFile Builds/M6/Logs/playmode.log` — 25/25 passed.
+- Android/Web development builds completed; authorized Lava/Oppo install/launch and
+  Chrome/Edge local HTTP bootstrap checks passed. Repeated non-fatal SphereCollider
+  creation warnings were recorded in the M6 report.

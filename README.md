@@ -41,9 +41,9 @@ The target is an Android + Web closed-alpha/release candidate. Public launch and
 
 ## Current local run
 
-Open the Unity project at the repository root with Unity `6000.5.6f1` and load `Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity`. Desktop uses WASD/arrow keys, mouse aim, left-click attack and Space dash; Android uses the two virtual sticks plus attack and dash controls. The lab now includes seven bots, Aandhi, health pickups, spectator/results overlay and rematch (`R`).
+Open the Unity project at the repository root with Unity `6000.5.6f1` and load `Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity`. Desktop uses WASD/arrow keys, mouse aim, left-click attack and Space dash; Android uses the two virtual sticks plus attack and dash controls. The lab now includes seven bots, Aandhi, health pickups, three Jugaad gadget pickups, one-slot gadget HUD/touch use, spectator/results overlay and rematch (`R`).
 
-Build commands are documented in `Tools/Build/Android/README.md` and `Tools/Build/Web/README.md`. Review `PROJECT_STATUS.md`, `Docs/MOVEMENT_LAB.md` and `Docs/MILESTONE_REPORTS/M5.md` before authorizing gadget work.
+Build commands are documented in `Tools/Build/Android/README.md` and `Tools/Build/Web/README.md`. Review `PROJECT_STATUS.md`, `Docs/MOVEMENT_LAB.md` and `Docs/MILESTONE_REPORTS/M6.md` before authorizing progression work.
 
 ## Human owner
 

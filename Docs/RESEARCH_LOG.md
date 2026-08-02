@@ -199,3 +199,24 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   pickup/readability and repeated-runtime memory profile remain open.
 - **Recheck trigger/date:** Before adding Jugaad Gadgets, online authority or changing
   match timing/zone policy.
+
+### M6 Jugaad gadget baseline
+
+- **Date checked:** 2026-08-02
+- **Question:** Can three tactical gadgets be added without bypassing the existing
+  central damage, healing, movement and bot command boundaries or adding a package?
+- **Primary source:** `PROMPTS/06_MILESTONE_6_JUGAAD_GADGETS.md`; existing
+  `DamageRequest`/`DamagePipeline`, `CombatHealth`, `MovementPlayerAgent`, `BotAI` and
+  M5 offline match implementation.
+- **Relevant claim:** M6 requires three distinct gadgets, one held item, validated
+  pickup/use, readable counters, contextual bot evaluation, finite station healing and
+  Android/Web builds; networking/backend/final art are non-scope.
+- **Decision impact:** Add pure Gadget definitions/inventory/runtime/spawn rules and
+  serialized content assets; keep effect bridges in Presentation and route mitigation,
+  healing and displacement through existing systems. No Photon, PlayFab or new package.
+- **Local evidence:** 37/37 EditMode, 25/25 PlayMode, M6 Android/Web builds, two-device
+  launch smoke and Chrome/Edge local HTTP checks.
+- **Uncertainty:** Human counterplay/readability, bot use value, station scale behavior,
+  device-tier performance and a pre-existing IL2CPP SphereCollider warning remain open.
+- **Recheck trigger/date:** Before adding progression/cosmetics or changing the gadget
+  data model for online authority.

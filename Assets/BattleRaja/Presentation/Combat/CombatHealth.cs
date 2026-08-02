@@ -61,5 +61,11 @@ namespace BattleRaja.Presentation.Combat
 
             return _state.Heal(amount);
         }
+
+        public void SetMaxHealthForGadget(int value)
+        {
+            maxHealth = Mathf.Max(1, value);
+            _state = new HealthState(maxHealth);
+        }
     }
 }

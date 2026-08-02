@@ -5,6 +5,7 @@ using BattleRaja.Presentation.AI;
 using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Match;
 using BattleRaja.Presentation.Movement;
+using BattleRaja.Presentation.Gadgets;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -30,7 +31,8 @@ namespace BattleRaja.Editor
         private const string WeaponAssetPath = "Assets/BattleRaja/Content/Weapons/M2-TrainingBolt.asset";
         private const string BijliWeaponAssetPath = "Assets/BattleRaja/Content/Weapons/M3-BijliElectricBolt.asset";
         private const string FighterAssetPath = "Assets/BattleRaja/Content/Fighters/M3-Bijli.asset";
-        private const string DevelopmentApplicationId = "com.example.battleraja.m5";
+        private const string DevelopmentApplicationId = "com.example.battleraja.m6";
+        private const string GadgetAssetFolder = "Assets/BattleRaja/Content/Gadgets";
 
         public static void CreateBootstrapScene()
         {
@@ -67,6 +69,7 @@ namespace BattleRaja.Editor
             var weaponAsset = EnsureWeaponAsset();
             var bijliWeaponAsset = EnsureBijliWeaponAsset();
             var fighterAsset = EnsureFighterAsset();
+            EnsureGadgetAssets();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             tuningAsset = AssetDatabase.LoadAssetAtPath<MovementTuningAsset>(TuningAssetPath);
@@ -127,6 +130,7 @@ namespace BattleRaja.Editor
             var attackController = player.AddComponent<CombatAttackController>();
             var fighterController = player.AddComponent<BijliFighterController>();
             var playerHealth = player.AddComponent<CombatHealth>();
+            var playerGadget = player.AddComponent<GadgetUser>();
             var dashTrail = player.AddComponent<TrailRenderer>();
             dashTrail.time = 0.24f;
             dashTrail.startWidth = 0.28f;
@@ -141,7 +145,7 @@ namespace BattleRaja.Editor
             camera.backgroundColor = new Color(0.08f, 0.10f, 0.14f, 1f);
             var cameraController = cameraObject.AddComponent<TopDownCameraController>();
 
-            var canvas = CreateTouchCanvas(out var movementStick, out var aimStick, out var attackButton, out var abilityButton);
+            var canvas = CreateTouchCanvas(out var movementStick, out var aimStick, out var attackButton, out var abilityButton, out var gadgetButton);
             var hud = CreateHud(canvas, out var hudText);
             var eventSystem = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
             eventSystem.transform.SetParent(arena.transform);
@@ -188,12 +192,16 @@ namespace BattleRaja.Editor
                     projectileMaterial,
                     tuningAsset,
                     fighterAsset,
-                    projectilePool);
+                    projectilePool,
+                    damageResolver);
             }
 
             CreatePickup("HealthPickup_A", new Vector3(-5f, 0.35f, 3f), arena.transform, impactMaterial);
             CreatePickup("HealthPickup_B", new Vector3(5f, 0.35f, 3f), arena.transform, impactMaterial);
             CreatePickup("HealthPickup_C", new Vector3(0f, 0.35f, -1f), arena.transform, impactMaterial);
+            CreateGadgetPickup("GadgetPickup_Umbrella", GadgetDefinition.UmbrellaGuard.GadgetId.Value, new Vector3(-8f, 0.35f, 0f), arena.transform, indicatorMaterial);
+            CreateGadgetPickup("GadgetPickup_Dhol", GadgetDefinition.DholBurst.GadgetId.Value, new Vector3(8f, 0.35f, 0f), arena.transform, indicatorMaterial);
+            CreateGadgetPickup("GadgetPickup_Tiffin", GadgetDefinition.TiffinStation.GadgetId.Value, new Vector3(0f, 0.35f, 6f), arena.transform, indicatorMaterial);
             var matchObject = new GameObject("OfflineMatch");
             matchObject.transform.SetParent(arena.transform);
             var matchController = matchObject.AddComponent<OfflineMatchController>();
@@ -212,6 +220,7 @@ namespace BattleRaja.Editor
             SetObjectReference(inputAdapter, "aimStick", aimStick);
             SetObjectReference(inputAdapter, "attackButton", attackButton);
             SetObjectReference(inputAdapter, "abilityButton", abilityButton);
+            SetObjectReference(gadgetButton, "user", playerGadget);
             SetObjectReference(inputAdapter, "aimOrigin", player.transform);
             SetObjectReference(attackController, "weapon", weaponAsset);
             SetObjectReference(attackController, "fighterDefinition", fighterAsset);
@@ -237,6 +246,10 @@ namespace BattleRaja.Editor
             SetObjectReference(hud, "health", playerHealth);
             SetObjectReference(hud, "attack", attackController);
             SetObjectReference(hud, "statusText", hudText);
+            SetObjectReference(playerGadget, "movementAgent", agent);
+            SetObjectReference(playerGadget, "combatTarget", playerTarget);
+            SetObjectReference(playerGadget, "health", playerHealth);
+            CreateGadgetHud(canvas, playerGadget);
             SetInt(playerHealth, "maxHealth", fighterAsset != null ? fighterAsset.ToDomain().MaxHealth : 85);
             SetObjectReference(marker, "player", agent);
             SetObjectReference(marker, "cameraController", cameraController);
@@ -303,7 +316,12 @@ namespace BattleRaja.Editor
                 throw new BuildFailedException($"Bijli fighter definition is invalid: {reason}");
             }
 
-            Debug.Log("BattleRaja Milestone 5 validation passed.");
+            if (EnsureGadgetAssets().Length != 3)
+            {
+                throw new BuildFailedException("M6 gadget definitions are incomplete.");
+            }
+
+            Debug.Log("BattleRaja Milestone 6 validation passed.");
         }
 
         public static void BuildAndroidDevelopment()
@@ -318,7 +336,7 @@ namespace BattleRaja.Editor
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel28;
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
             PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
-            Build("Builds/M5/Android/BattleRaja-M5.apk", BuildTarget.Android);
+            Build("Builds/M6/Android/BattleRaja-M6.apk", BuildTarget.Android);
         }
 
         public static void BuildWebDevelopment()
@@ -329,7 +347,7 @@ namespace BattleRaja.Editor
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WebGL, BuildTarget.WebGL);
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
-            Build("Builds/M5/Web", BuildTarget.WebGL);
+            Build("Builds/M6/Web", BuildTarget.WebGL);
         }
 
         private static void Build(string outputPath, BuildTarget target)
@@ -348,7 +366,7 @@ namespace BattleRaja.Editor
                 throw new BuildFailedException($"{target} build failed: {report.summary.result}. See the Unity build log.");
             }
 
-            Debug.Log($"{target} M5 development build succeeded: {report.summary.outputPath} ({report.summary.totalSize} bytes).");
+            Debug.Log($"{target} M6 development build succeeded: {report.summary.outputPath} ({report.summary.totalSize} bytes).");
         }
 
         private static GameObject CreateBlock(string name, Vector3 position, Vector3 scale, Material material, Transform parent)
@@ -373,6 +391,19 @@ namespace BattleRaja.Editor
             return pickupObject.AddComponent<MatchPickup>();
         }
 
+        private static GadgetPickup CreateGadgetPickup(string name, string gadgetId, Vector3 position, Transform parent, Material material)
+        {
+            var pickupObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            pickupObject.name = name;
+            pickupObject.transform.SetParent(parent);
+            pickupObject.transform.position = position;
+            pickupObject.transform.localScale = new Vector3(0.55f, 0.22f, 0.55f);
+            pickupObject.GetComponent<Renderer>().sharedMaterial = material;
+            var pickup = pickupObject.AddComponent<GadgetPickup>();
+            SetString(pickup, "gadgetId", gadgetId);
+            return pickup;
+        }
+
         private static void CreateBotActor(
             int botIndex,
             Vector3 position,
@@ -381,7 +412,8 @@ namespace BattleRaja.Editor
             Material trailMaterial,
             MovementTuningAsset tuningAsset,
             FighterDefinitionAsset fighterAsset,
-            CombatProjectilePool projectilePool)
+            CombatProjectilePool projectilePool,
+            CombatDamageResolver damageResolver)
         {
             var bot = GameObject.CreatePrimitive(PrimitiveType.Capsule);
             bot.name = $"BotBijli_{botIndex + 1}";
@@ -404,6 +436,7 @@ namespace BattleRaja.Editor
             var fighter = bot.AddComponent<BijliFighterController>();
             var perception = bot.AddComponent<BotPerceptionSensor>();
             var brain = bot.AddComponent<BotBrain>();
+            var gadget = bot.AddComponent<GadgetUser>();
             bot.AddComponent<BotDebugOverlay>();
             var trail = bot.AddComponent<TrailRenderer>();
             trail.time = 0.24f;
@@ -432,9 +465,14 @@ namespace BattleRaja.Editor
             SetObjectReference(perception, "health", health);
             SetObjectReference(perception, "selfTarget", target);
             SetInt(brain, "seed", 100 + botIndex);
+            SetObjectReference(gadget, "movementAgent", agent);
+            SetObjectReference(gadget, "combatTarget", target);
+            SetObjectReference(gadget, "health", health);
+            SetObjectReference(gadget, "damageResolver", damageResolver);
+            SetBool(gadget, "botControlled", true);
         }
 
-        private static Canvas CreateTouchCanvas(out VirtualStick movementStick, out VirtualStick aimStick, out AttackButton attackButton, out AbilityButton abilityButton)
+        private static Canvas CreateTouchCanvas(out VirtualStick movementStick, out VirtualStick aimStick, out AttackButton attackButton, out AbilityButton abilityButton, out GadgetUseButton gadgetButton)
         {
             var canvasObject = new GameObject("TouchControls", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
             var canvas = canvasObject.GetComponent<Canvas>();
@@ -456,7 +494,44 @@ namespace BattleRaja.Editor
             aimStick = CreateStick("AimStick", safeArea, new Vector2(0.83f, 0.2f), new Color(1f, 0.64f, 0.22f, 0.18f));
             attackButton = CreateAttackButton(safeArea);
             abilityButton = CreateAbilityButton(safeArea);
+            gadgetButton = CreateGadgetButton(safeArea);
             return canvas;
+        }
+
+        private static GadgetUseButton CreateGadgetButton(Transform parent)
+        {
+            var buttonObject = new GameObject("GadgetButton", typeof(RectTransform), typeof(Image), typeof(GadgetUseButton));
+            buttonObject.transform.SetParent(parent, false);
+            var rect = buttonObject.GetComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0.67f, 0.49f);
+            rect.anchorMax = new Vector2(0.67f, 0.49f);
+            rect.sizeDelta = new Vector2(120f, 120f);
+            buttonObject.GetComponent<Image>().color = new Color(0.72f, 0.32f, 0.95f, 0.30f);
+            return buttonObject.GetComponent<GadgetUseButton>();
+        }
+
+        private static void CreateGadgetHud(Canvas canvas, GadgetUser user)
+        {
+            var hudObject = new GameObject("GadgetHud", typeof(RectTransform), typeof(GadgetHud));
+            hudObject.transform.SetParent(canvas.transform, false);
+            var rect = hudObject.GetComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0.02f, 0.84f);
+            rect.anchorMax = new Vector2(0.40f, 0.93f);
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+            var textObject = new GameObject("GadgetStatus", typeof(RectTransform), typeof(Text));
+            textObject.transform.SetParent(hudObject.transform, false);
+            var textRect = textObject.GetComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = Vector2.zero;
+            textRect.offsetMax = Vector2.zero;
+            var text = textObject.GetComponent<Text>();
+            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            text.fontSize = 20;
+            text.color = Color.white;
+            SetObjectReference(hudObject.GetComponent<GadgetHud>(), "user", user);
+            SetObjectReference(hudObject.GetComponent<GadgetHud>(), "statusText", text);
         }
 
         private static AttackButton CreateAttackButton(Transform parent)
@@ -600,6 +675,36 @@ namespace BattleRaja.Editor
             return AssetDatabase.LoadAssetAtPath<FighterDefinitionAsset>(FighterAssetPath);
         }
 
+        private static GadgetDefinitionAsset[] EnsureGadgetAssets()
+        {
+            Directory.CreateDirectory(GadgetAssetFolder);
+            var definitions = new[] { GadgetDefinition.UmbrellaGuard, GadgetDefinition.DholBurst, GadgetDefinition.TiffinStation };
+            var assets = new GadgetDefinitionAsset[definitions.Length];
+            for (var i = 0; i < definitions.Length; i++)
+            {
+                var path = GadgetAssetFolder + "/M6-" + definitions[i].Kind + ".asset";
+                var asset = AssetDatabase.LoadAssetAtPath<GadgetDefinitionAsset>(path);
+                if (asset == null)
+                {
+                    asset = ScriptableObject.CreateInstance<GadgetDefinitionAsset>();
+                    AssetDatabase.CreateAsset(asset, path);
+                }
+
+                SetString(asset, "gadgetId", definitions[i].GadgetId.Value);
+                SetEnum(asset, "kind", definitions[i].Kind);
+                SetFloat(asset, "cooldownSeconds", definitions[i].CooldownSeconds);
+                SetFloat(asset, "durationSeconds", definitions[i].DurationSeconds);
+                SetFloat(asset, "radius", definitions[i].Radius);
+                SetInt(asset, "magnitude", definitions[i].Magnitude);
+                SetInt(asset, "stationHealth", definitions[i].StationHealth);
+                SetFloat(asset, "placementRadius", definitions[i].PlacementRadius);
+                assets[i] = asset;
+            }
+
+            AssetDatabase.SaveAssets();
+            return assets;
+        }
+
         private static InputActionAsset EnsureInputAsset()
         {
             var asset = AssetDatabase.LoadAssetAtPath<InputActionAsset>(InputAssetPath);
@@ -720,6 +825,24 @@ namespace BattleRaja.Editor
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
         }
 
+        private static void SetString(UnityEngine.Object target, string propertyName, string value)
+        {
+            var serializedObject = new SerializedObject(target);
+            var property = serializedObject.FindProperty(propertyName);
+            if (property == null) throw new InvalidOperationException($"Serialized property not found: {target.name}.{propertyName}");
+            property.stringValue = value;
+            serializedObject.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void SetBool(UnityEngine.Object target, string propertyName, bool value)
+        {
+            var serializedObject = new SerializedObject(target);
+            var property = serializedObject.FindProperty(propertyName);
+            if (property == null) throw new InvalidOperationException($"Serialized property not found: {target.name}.{propertyName}");
+            property.boolValue = value;
+            serializedObject.ApplyModifiedPropertiesWithoutUndo();
+        }
+
         private static void SetEnum(UnityEngine.Object target, string propertyName, System.Enum value)
         {
             var serializedObject = new SerializedObject(target);
@@ -729,7 +852,11 @@ namespace BattleRaja.Editor
                 throw new InvalidOperationException($"Serialized property not found: {target.name}.{propertyName}");
             }
 
-            property.enumValueIndex = System.Convert.ToInt32(value);
+            var names = property.enumNames;
+            var name = value.ToString();
+            var index = System.Array.IndexOf(names, name);
+            if (index < 0) throw new InvalidOperationException($"Enum value not found: {target.name}.{propertyName}={name}");
+            property.enumValueIndex = index;
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
         }
 

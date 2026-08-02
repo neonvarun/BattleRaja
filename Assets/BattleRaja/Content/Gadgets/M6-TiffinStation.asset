@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01741d87769c8514686e5b7dc2934828, type: 3}
+  m_Name: M6-TiffinStation
+  m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Gadgets.GadgetDefinitionAsset
+  gadgetId: gadget.tiffin_station
+  kind: 3
+  cooldownSeconds: 16
+  durationSeconds: 10
+  radius: 2.4
+  magnitude: 18
+  stationHealth: 45
+  placementRadius: 0.8

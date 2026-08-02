@@ -15,12 +15,24 @@ namespace BattleRaja.Core.Domain
             CombatFaction instigatorFaction,
             int rawAmount,
             DamageType damageType)
+            : this(instigatorId, targetId, instigatorFaction, rawAmount, damageType, Float2.Zero)
+        {
+        }
+
+        public DamageRequest(
+            CombatEntityId instigatorId,
+            CombatEntityId targetId,
+            CombatFaction instigatorFaction,
+            int rawAmount,
+            DamageType damageType,
+            Float2 hitDirection)
         {
             InstigatorId = instigatorId;
             TargetId = targetId;
             InstigatorFaction = instigatorFaction;
             RawAmount = rawAmount;
             DamageType = damageType;
+            HitDirection = hitDirection;
         }
 
         public CombatEntityId InstigatorId { get; }
@@ -28,6 +40,7 @@ namespace BattleRaja.Core.Domain
         public CombatFaction InstigatorFaction { get; }
         public int RawAmount { get; }
         public DamageType DamageType { get; }
+        public Float2 HitDirection { get; }
     }
 
     public enum DamageRejectionReason

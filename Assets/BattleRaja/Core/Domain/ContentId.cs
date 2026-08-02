@@ -6,7 +6,8 @@ namespace BattleRaja.Core.Domain
     {
         Fighter = 1,
         Attack = 2,
-        Ability = 3
+        Ability = 3,
+        Gadget = 4
     }
 
     public readonly struct ContentId : IEquatable<ContentId>
@@ -34,5 +35,6 @@ namespace BattleRaja.Core.Domain
         public static ContentId Fighter(string value) => new ContentId(ContentIdKind.Fighter, value);
         public static ContentId Attack(string value) => new ContentId(ContentIdKind.Attack, value);
         public static ContentId Ability(string value) => new ContentId(ContentIdKind.Ability, value);
+        public static ContentId Gadget(string value) => new ContentId(ContentIdKind.Gadget, value);
     }
 }

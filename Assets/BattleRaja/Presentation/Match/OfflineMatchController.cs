@@ -3,6 +3,7 @@ using System.Linq;
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Movement;
+using BattleRaja.Presentation.Gadgets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -13,6 +14,7 @@ namespace BattleRaja.Presentation.Match
         [SerializeField] private CombatDamageResolver damageResolver;
         [SerializeField] private TopDownCameraController cameraController;
         [SerializeField] private MatchPickup[] pickups;
+        [SerializeField] private GadgetPickup[] gadgetPickups;
         [SerializeField] private float outsideDamageTickSeconds = 1f;
         [SerializeField] private bool autoStart = true;
 
@@ -35,6 +37,7 @@ namespace BattleRaja.Presentation.Match
             damageResolver = damageResolver != null ? damageResolver : FindFirstObjectByType<CombatDamageResolver>();
             cameraController = cameraController != null ? cameraController : FindFirstObjectByType<TopDownCameraController>();
             pickups = pickups != null && pickups.Length > 0 ? pickups : FindObjectsByType<MatchPickup>(FindObjectsSortMode.None);
+            gadgetPickups = gadgetPickups != null && gadgetPickups.Length > 0 ? gadgetPickups : FindObjectsByType<GadgetPickup>(FindObjectsSortMode.None);
             CacheActors();
             if (autoStart)
             {
@@ -66,6 +69,7 @@ namespace BattleRaja.Presentation.Match
             }
 
             CollectPickups();
+            CollectGadgets();
             UpdateSpectator(tick);
             if (tick.MatchEnded)
             {
@@ -151,6 +155,23 @@ namespace BattleRaja.Presentation.Match
                     var actor = _actors[i];
                     if (actor.Health.Snapshot.IsDefeated || Vector3.Distance(actor.Transform.position, pickup.transform.position) > 1.2f) continue;
                     if (pickup.TryCollect(actor.Health)) break;
+                }
+            }
+        }
+
+        private void CollectGadgets()
+        {
+            if (gadgetPickups == null) return;
+            for (var p = 0; p < gadgetPickups.Length; p++)
+            {
+                var pickup = gadgetPickups[p];
+                if (pickup == null || !pickup.IsAvailable) continue;
+                for (var i = 0; i < _actors.Count; i++)
+                {
+                    var actor = _actors[i];
+                    if (actor.Health.Snapshot.IsDefeated || Vector3.Distance(actor.Transform.position, pickup.transform.position) > 1.3f) continue;
+                    var user = actor.Transform.GetComponent<GadgetUser>();
+                    if (pickup.TryCollect(user)) break;
                 }
             }
         }

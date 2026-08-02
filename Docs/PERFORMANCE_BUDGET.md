@@ -92,3 +92,13 @@ Required next measurement: capture a short Editor, Lava and Oppo session with Un
 - M5 development APK/Web artifact sizes and device/browser smoke are recorded in the
   M5 report. No Android CPU/GPU/GC, browser frame-time/memory or repeated-runtime
   object-count capture was collected.
+
+## Milestone 6 baseline evidence — 2026-08-02
+
+- M6 development APK is approximately 83.4 MB on disk; the Web output is approximately
+  113.5 MB locally. These are development artifacts, not release budgets.
+- Gadget inventory/runtime state is bounded to one held item per actor. Tiffin healing
+  scans active health components once per interval; this is acceptable for eight actors
+  but is not a scale claim.
+- No Android CPU/GPU/GC, browser frame-time/memory, or device-tier gadget profile was
+  captured. Human telegraph/readability and bot-use value remain unmeasured.

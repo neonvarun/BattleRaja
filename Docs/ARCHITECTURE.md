@@ -1,6 +1,6 @@
 # Architecture
 
-**Status:** Implemented and accepted for Milestones 0–5. Changes beyond these boundaries require a new decision record.
+**Status:** Implemented and accepted for Milestones 0–6. Changes beyond these boundaries require a new decision record.
 
 ## Goals
 
@@ -125,3 +125,19 @@ Android and Web share domain, application and most presentation code. Platform-s
 - The first offline lab uses the existing eight Bijli actors and grey-box arena. The
   simulation definition targets a 298-second match; accelerated deterministic tests
   cover repeated completion and restart without requiring five minutes of wall time.
+
+## M6 gadget implementation
+
+- `BattleRaja.Core.Domain.Gadgets` owns stable Gadget IDs, immutable definitions,
+  catalog lookup, one-slot inventory, use/cooldown validation, effect contracts and
+  deterministic spawn eligibility. It remains Unity/Photon/PlayFab independent.
+- `GadgetDefinitionAsset` is the serialized content bridge for versionable M6 balance
+  data. `GadgetUser`, `GadgetPickup`, `GadgetStation` and `GadgetHud` are presentation
+  adapters; they route damage/healing through the existing combat health/resolver paths.
+- Umbrella Guard stores facing and duration state on the user; projectile hit direction
+  is part of `DamageRequest` so directional mitigation is explicit. Dhol Burst uses
+  CharacterController displacement and does not add a second movement authority.
+- Tiffin Station owns finite lifetime and targetable `CombatHealth`; its scan is bounded
+  to the small offline lab and is a known scale-up task.
+- `BotBrain` calls the same `GadgetUser` use path after contextual perception; there is
+  no random or bot-only effect path. No networking/backend dependency entered the core.

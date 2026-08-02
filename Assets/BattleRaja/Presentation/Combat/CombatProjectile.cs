@@ -13,6 +13,7 @@ namespace BattleRaja.Presentation.Combat
         private CombatProjectilePool _pool;
         private CombatDamageResolver _damageResolver;
         private CombatImpactFeedbackPool _impactPool;
+        private Float2 _direction;
         private bool _active;
 
         public bool IsActive => _active;
@@ -31,6 +32,7 @@ namespace BattleRaja.Presentation.Combat
             _pool = pool;
             _damageResolver = damageResolver;
             _impactPool = impactPool;
+            _direction = command.Direction;
             _simulation = new ProjectileSimulation(
                 command.Origin,
                 command.Direction,
@@ -80,7 +82,8 @@ namespace BattleRaja.Presentation.Combat
                         target.Id,
                         _instigatorFaction,
                         _definition.Damage,
-                        DamageType.Projectile);
+                        DamageType.Projectile,
+                        _direction);
                     var result = _damageResolver.Resolve(
                         target,
                         request,

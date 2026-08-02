@@ -135,3 +135,27 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Evidence/sources:** `PROMPTS/05_MILESTONE_5_OFFLINE_BATTLE_ROYALE.md`; 31 EditMode
   and 22 PlayMode tests; M5 accelerated match/restart evidence.
 - **Owner:** Human project owner
+
+### ADR-007 — Milestone 6 data-driven Jugaad gadgets
+
+- **Date:** 2026-08-02
+- **Status:** Accepted for M6; balance/readability and device review remain open.
+- **Context:** M6 needs three tactical gadgets that work for both the human and bots
+  without bypassing the central damage, healing or movement rules.
+- **Options considered:** Gadget-specific MonoBehaviours with direct health/Transform
+  mutation; mutable ScriptableObject runtime state; pure definitions/inventory/use
+  validation bridged by presentation effects and existing combat/movement services.
+- **Decision:** Use stable Gadget content IDs and immutable Domain definitions for Umbrella
+  Guard, Dhol Burst and Tiffin Station. `GadgetInventory` has capacity one and rejects a
+  second pickup unless explicit replacement is requested. `GadgetRuntime` validates held
+  item, cooldown, facing and placement before emitting a typed effect. Umbrella mitigation
+  is applied by the central damage resolver using projectile hit direction; Dhol uses the
+  existing CharacterController; Tiffin is a finite targetable health station. Bots invoke
+  the same user path from contextual perception.
+- **Consequences:** Three gadgets can be tuned as serialized assets and exercised in pure
+  tests. The first station target scan is intentionally sized for eight actors and must
+  be replaced by a registered set before scale-up. No Photon, PlayFab or new package is
+  required.
+- **Evidence/sources:** `PROMPTS/06_MILESTONE_6_JUGAAD_GADGETS.md`; 37 EditMode and
+  25 PlayMode tests; M6 Android/Web smoke evidence.
+- **Owner:** Human project owner
