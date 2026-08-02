@@ -2,7 +2,7 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `1437e5c` (`refactor: move item collection into authority`)
+Latest validated source HEAD: `b7d1a60` (`fix: preserve fighter-specific bot abilities`)
 Latest runtime-bearing candidate: `4391f09` (`feat: add replayable tutorial arena`)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
@@ -78,6 +78,23 @@ chooses collectors by scene iteration order.
 This phase does not claim full visual/browser interaction correctness, real Photon
 multiplayer, or authoritative gadget effect execution. The previous browser bootstrap
 evidence remains the latest browser runtime evidence.
+
+## Phase 2 fighter-controller continuation (`b7d1a60`)
+
+`BotBrain` no longer defaults a missing reference to `BijliFighterController`. It resolves
+the attached `IFighterAbilityController`, preserving Pehel and Maya ability identity when
+scene serialization omits an explicit reference.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings | command output from 2026-08-03 |
+| EditMode suite | 84 passed, 0 failed | `Builds/M11/TestResults/phase2-fighter-editmode-20260803.xml` |
+| Targeted controller test | 1 passed, 0 failed; every production bot resolves the controller attached to its actor | `Builds/M11/TestResults/phase2-fighter-bot-controller-playmode-v2-20260803.xml` |
+| Full PlayMode suite | 34 passed, 0 failed | `Builds/M11/TestResults/phase2-fighter-playmode-20260803.xml` |
+
+This is a controller-boundary correction, not proof of final fighter balance, authored
+animation/VFX/audio, human counterplay approval, or real network authority. The latest
+Android/Web artifacts remain the `1437e5c` smoke builds until a new candidate is built.
 
 ## Fix included in this baseline
 
