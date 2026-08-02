@@ -15,6 +15,7 @@ namespace BattleRaja.Tests.PlayMode
         public IEnumerator LoadMovementLab()
         {
             yield return SceneManager.LoadSceneAsync("MovementLab", LoadSceneMode.Single);
+            PlayModeTestHelpers.DisableBots();
             yield return null;
         }
 
@@ -34,8 +35,8 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator AttackCommandSpawnsProjectileAndDamagesDummy()
         {
-            var player = Object.FindAnyObjectByType<MovementPlayerAgent>();
-            var attack = Object.FindAnyObjectByType<CombatAttackController>();
+            var player = PlayModeTestHelpers.FindPlayer<MovementPlayerAgent>();
+            var attack = PlayModeTestHelpers.FindPlayer<CombatAttackController>();
             var lab = Object.FindAnyObjectByType<MovementLabScene>();
             var dummy = lab.TrainingDummy.Target;
             var startHealth = dummy.Health.Snapshot.CurrentHealth;
@@ -58,8 +59,8 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator ProjectilePoolReusesObjectsAfterDespawn()
         {
-            var player = Object.FindAnyObjectByType<MovementPlayerAgent>();
-            var attack = Object.FindAnyObjectByType<CombatAttackController>();
+            var player = PlayModeTestHelpers.FindPlayer<MovementPlayerAgent>();
+            var attack = PlayModeTestHelpers.FindPlayer<CombatAttackController>();
             var pool = Object.FindAnyObjectByType<CombatProjectilePool>();
             var initialCreated = pool.CreatedCount;
             var origin = new Float2(player.transform.position.x, player.transform.position.z + 0.7f);
@@ -78,8 +79,8 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator InvalidLayerCollisionDespawnsProjectileWithoutDamage()
         {
-            var player = Object.FindAnyObjectByType<MovementPlayerAgent>();
-            var attack = Object.FindAnyObjectByType<CombatAttackController>();
+            var player = PlayModeTestHelpers.FindPlayer<MovementPlayerAgent>();
+            var attack = PlayModeTestHelpers.FindPlayer<CombatAttackController>();
             var dummy = Object.FindAnyObjectByType<TrainingDummy>();
             var startHealth = dummy.Target.Health.Snapshot.CurrentHealth;
             var origin = new Float2(player.transform.position.x, player.transform.position.z + 0.7f);

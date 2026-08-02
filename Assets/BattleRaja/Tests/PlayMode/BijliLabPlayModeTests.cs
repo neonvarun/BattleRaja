@@ -15,15 +15,16 @@ namespace BattleRaja.Tests.PlayMode
         public IEnumerator LoadMovementLab()
         {
             yield return SceneManager.LoadSceneAsync("MovementLab", LoadSceneMode.Single);
+            PlayModeTestHelpers.DisableBots();
             yield return null;
         }
 
         [UnityTest]
         public IEnumerator BijliSpawnsWithSharedCombatAndAbilityInterfaces()
         {
-            var fighter = Object.FindAnyObjectByType<BijliFighterController>();
-            var attack = Object.FindAnyObjectByType<CombatAttackController>();
-            var health = Object.FindAnyObjectByType<CombatHealth>();
+            var fighter = PlayModeTestHelpers.FindPlayer<BijliFighterController>();
+            var attack = PlayModeTestHelpers.FindPlayer<CombatAttackController>();
+            var health = PlayModeTestHelpers.FindPlayer<CombatHealth>();
             var hud = Object.FindAnyObjectByType<BijliHud>();
 
             Assert.That(fighter, Is.Not.Null);
@@ -37,8 +38,8 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator AbilityCommandMovesBijliAndEntersCooldown()
         {
-            var fighter = Object.FindAnyObjectByType<BijliFighterController>();
-            var movement = Object.FindAnyObjectByType<MovementPlayerAgent>();
+            var fighter = PlayModeTestHelpers.FindPlayer<BijliFighterController>();
+            var movement = PlayModeTestHelpers.FindPlayer<MovementPlayerAgent>();
             var start = movement.transform.position;
             var command = AbilityCommandFactory.Create(
                 new CombatEntityId(movement.ActorId),

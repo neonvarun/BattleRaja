@@ -94,3 +94,19 @@ Android and Web share domain, application and most presentation code. Platform-s
   the same `IAttackCommandSink` used by M2. `BijliHud`, `AbilityButton` and the
   `TrailRenderer` are presentation-only feedback and input surfaces.
 - No passive, bots, gadgets, match state, networking or backend concepts were added.
+
+## M4 bot implementation
+
+- `BattleRaja.Core.Domain.BotAI` owns immutable difficulty profiles, observation/value
+  contracts, seeded randomness, target scoring, imperfect aim, reaction delay and
+  navigation-stuck recovery. It consumes only perceived targets and emits the same
+  movement, attack and ability command values used by the player.
+- `BotPerceptionSensor` is a Unity adapter. It caches the current combat-target set,
+  applies an explicit world-only line-of-sight mask, and publishes a bounded snapshot;
+  hidden actors are not exposed to the decision engine.
+- `BotBrain` is a presentation/application bridge that runs decisions at a tunable
+  interval, continuously submits the current movement command, respects existing
+  attack/ability cooldowns and records debug decision cost. `BotDebugOverlay` is an
+  optional non-authoritative overlay.
+- M4 uses seven Bijli bot actors in MovementLab for stress testing. No loot, Aandhi,
+  match resolution, gadget, network or backend authority was added.

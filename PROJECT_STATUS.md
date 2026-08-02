@@ -2,7 +2,7 @@
 
 ## Active milestone
 
-**Milestone 3 — First Complete Fighter — Bijli**
+**Milestone 4 — Bot AI Laboratory**
 
 ## Current state
 
@@ -23,8 +23,9 @@
 - M2 report: `Docs/MILESTONE_REPORTS/M2.md`; technical gate passed provisionally with
   combat/touch/balance review debt recorded.
 - Combat/gameplay progression: M3 Bijli fighter technical gate passed provisionally;
-  dash/bolt/balance/touch review remains open. Bots, gadgets, match state, networking,
-  backend, and progression remain unimplemented.
+  M4 seven-bot technical gate passed provisionally. Bot fairness, device performance
+  and visual review remain open. Gadgets, match state, networking, backend and
+  progression remain unimplemented.
 - Multiplayer: deliberately deferred
 - Backend/economy: deliberately deferred
 - Final art/audio/animation: not started
@@ -55,6 +56,17 @@
 - Android: M3 IL2CPP ARM64 development APK built at `Builds/M3/Android/BattleRaja-M3.apk`, installed/launched on Lava API 34 and Oppo API 36, with zero fatal application exceptions in captured logs. Oppo `pm clear` is restricted by device policy but install/launch succeeded.
 - Web: M3 WebGL2/WebAssembly development build completed under `Builds/M3/Web`; local HTTP port 8011 returned 200 and Chrome 150/Edge 150 headless DOM checks found Unity bootstrap content.
 
+## M4 execution evidence — 2026-08-02
+
+- Pure bot tests: 26/26 EditMode tests passed in `Builds/M4/TestResults/editmode.xml`.
+- Bot integration tests: 19/19 PlayMode tests passed in `Builds/M4/TestResults/playmode.xml`.
+- Seven Bijli bots spawn with unique actor IDs, cached line-of-sight perception,
+  seeded utility decisions, aim noise, reaction delay, attack/dash commands and
+  bounded stuck recovery. Stress output measured 91 decisions in 2 seconds with a
+  maximum decision duration of 0.024 ms in the headless editor.
+- Android: M4 IL2CPP ARM64 development APK built at `Builds/M4/Android/BattleRaja-M4.apk`, installed/launched on Lava API 34 and Oppo API 36, with zero fatal application exceptions in captured logs.
+- Web: M4 WebGL2/WebAssembly development build completed under `Builds/M4/Web`; local HTTP port 8011 returned 200 and Chrome 150/Edge 150 headless DOM checks found Unity bootstrap content.
+
 ## M0 evidence retained
 
 - M0 validation, tests and smoke artifacts remain under ignored `Builds/M0/`.
@@ -66,6 +78,8 @@
 - No formal Editor Profiler, Android GPU/CPU capture or Web browser performance profile has been collected yet; values remain explicitly unmeasured in `Docs/PERFORMANCE_BUDGET.md`.
 - Physical touch interaction, safe-area variations, browser keyboard/mouse focus by manual play, and visual camera comparison still require human playtesting.
 - Bijli bolt/dash balance, HUD legibility, dash collision feel and low-end-device profiling remain unmeasured.
+- Bot fairness, debug-overlay usefulness, device-tier seven-bot frame time and
+  authored navigation remain unmeasured.
 
 ## Approval gates
 

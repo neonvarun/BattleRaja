@@ -71,3 +71,15 @@ Required next measurement: capture a short Editor, Lava and Oppo session with Un
 - No formal Editor Profiler, Android GPU/CPU capture, browser memory capture or device
   frame-time profile was collected. Dash feel, HUD readability and low-end-device
   performance remain human/measurement debt.
+
+## Milestone 4 baseline evidence — 2026-08-02
+
+- Seven-bot PlayMode stress measured 91 decisions across 2 seconds with a maximum
+  decision duration of 0.024 ms in the headless editor run. Decisions are interval-
+  scheduled; movement commands continue each rendered frame and use no per-frame
+  collection construction in the bot bridge.
+- M4 development APK is approximately 83.2 MB on disk; the Web output is approximately
+  113.2 MB locally. These development artifacts are not release budgets.
+- No Lava/Oppo CPU/GPU/GC capture, browser frame-time/memory capture or low-end-device
+  seven-bot profile was collected. Treat the stress number as a repeatable code-path
+  baseline, not a mobile performance claim.

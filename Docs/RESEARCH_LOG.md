@@ -159,3 +159,23 @@ Research current primary sources before selecting technical versions, APIs, SDKs
 - **Uncertainty:** Human kit/balance/touch review and formal profiling remain open.
 - **Recheck trigger/date:** Before adding bots, gadgets, networking or changing the
   fighter data model.
+
+### M4 offline bot implementation baseline
+
+- **Date checked:** 2026-08-02
+- **Question:** Can seven Bijli bots use the existing command boundary without a new
+  package, navigation SDK or hidden-authority shortcut?
+- **Primary source:** `PROMPTS/04_MILESTONE_4_BOTS.md`; existing Domain/Application
+  command interfaces; installed Unity 6000.5.6f1 physics/Input System baseline.
+- **Relevant claim:** Bots must separate perception/decision/output, use seeded
+  randomness, respect line of sight/cooldowns/collision and recover from stuck states;
+  Aandhi, loot, gadgets, networking and backend are non-scope.
+- **Decision impact:** Add no package or external service. Keep bot observations,
+  scoring, reaction delay, aim noise and recovery in pure Domain; keep Physics linecasts,
+  actor discovery, command submission and debug overlay in Presentation.
+- **Local evidence:** 26/26 EditMode, 19/19 PlayMode, seven-bot stress output,
+  M4 Android/Web builds, two-device ADB launch and Chrome/Edge HTTP checks.
+- **Uncertainty:** Device-tier performance, human fairness/tuning, dynamic navigation
+  and manual visual debug review remain open.
+- **Recheck trigger/date:** Before adding Aandhi/loot in M5 or replacing the lab movement
+  recovery with authored navigation.

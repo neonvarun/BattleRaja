@@ -92,3 +92,26 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Evidence/sources:** `PROMPTS/03_MILESTONE_3_BIJLI.md`; 20 EditMode and 16
   PlayMode tests; M3 Android/Web smoke evidence; `FighterRuntimeState` implementation.
 - **Owner:** Human project owner
+
+### ADR-005 — Milestone 4 fair offline bot decision loop
+
+- **Date:** 2026-08-02
+- **Status:** Accepted for M4; difficulty tuning and human fairness review remain open.
+- **Context:** M4 needs seven bots that can fight with Bijli without hidden vision,
+  perfect aim, cooldown bypasses or a second gameplay command path.
+- **Options considered:** Unity NavMesh/Animator-driven bespoke bots; per-bot direct
+  Transform/health mutation; a pure perception/decision model feeding the existing
+  movement, attack and ability command ports.
+- **Decision:** Use cached target observations with an explicit world-only line-of-sight
+  mask, deterministic seeded randomness, target utility scoring, reaction delay and
+  bounded aim noise. `BotNavigationRecovery` tracks blocked progress and emits a
+  recover state. `BotBrain` submits common commands at a configurable decision interval;
+  all combat cooldown and collision rules remain in the existing systems.
+- **Consequences:** Bots remain debuggable and testable without final art or navigation
+  assets. Dynamic target registration and authored pathfinding remain future work; the
+  current lab uses CharacterController collision and bounded explore/recover movement.
+  Seven-bot stress evidence is an editor/headless baseline, not a device performance
+  guarantee.
+- **Evidence/sources:** `PROMPTS/04_MILESTONE_4_BOTS.md`; 26 EditMode and 19 PlayMode
+  tests; M4 seven-bot stress log; Android/Web smoke evidence.
+- **Owner:** Human project owner

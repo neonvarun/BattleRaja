@@ -20,6 +20,7 @@ namespace BattleRaja.Tests.PlayMode
                 yield return SceneManager.LoadSceneAsync(SceneName, LoadSceneMode.Single);
             }
 
+            PlayModeTestHelpers.DisableBots();
             yield return null;
         }
 
@@ -39,7 +40,7 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator PlayerMovesThroughTheCommandPipeline()
         {
-            var player = Object.FindFirstObjectByType<MovementPlayerAgent>();
+            var player = PlayModeTestHelpers.FindPlayer<MovementPlayerAgent>();
             player.GetComponent<PlayerInputAdapter>().enabled = false;
             var start = player.transform.position;
             var command = MovementCommandFactory.Create(
@@ -61,7 +62,7 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator BoundaryCollisionPreventsLeavingArena()
         {
-            var player = Object.FindFirstObjectByType<MovementPlayerAgent>();
+            var player = PlayModeTestHelpers.FindPlayer<MovementPlayerAgent>();
             player.GetComponent<PlayerInputAdapter>().enabled = false;
             var command = MovementCommandFactory.Create(
                 player.ActorId,
@@ -81,7 +82,7 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator InputReleaseDeceleratesWithoutPersistentSliding()
         {
-            var player = Object.FindFirstObjectByType<MovementPlayerAgent>();
+            var player = PlayModeTestHelpers.FindPlayer<MovementPlayerAgent>();
             player.GetComponent<PlayerInputAdapter>().enabled = false;
             var command = MovementCommandFactory.Create(
                 player.ActorId,
@@ -109,7 +110,7 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator AimDirectionAndIndicatorPersistAfterAimRelease()
         {
-            var player = Object.FindFirstObjectByType<MovementPlayerAgent>();
+            var player = PlayModeTestHelpers.FindPlayer<MovementPlayerAgent>();
             player.GetComponent<PlayerInputAdapter>().enabled = false;
             var aimCommand = MovementCommandFactory.Create(
                 player.ActorId,

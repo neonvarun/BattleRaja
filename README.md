@@ -4,9 +4,9 @@ BattleRaja is an Android-app and browser-Web stylised top-down 3D micro battle r
 
 ## Current status
 
-**Pre-production / Milestone 3 Bijli fighter complete provisionally; Milestone 4 is next**
+**Pre-production / Milestone 4 bot AI laboratory complete provisionally; Milestone 5 is next**
 
-Movement, aiming, the central projectile combat loop and a data-driven Bijli bolt-and-dash fighter are implemented as a grey-box laboratory. Bots, gadgets, networking, backend, economy and final art are not implemented yet.
+Movement, aiming, the central projectile combat loop, a data-driven Bijli bolt-and-dash fighter and seven fair/debuggable Bijli bots are implemented as a grey-box laboratory. Gadgets, match lifecycle, networking, backend, economy and final art are not implemented yet.
 
 ## Source of truth
 
@@ -41,9 +41,9 @@ The target is an Android + Web closed-alpha/release candidate. Public launch and
 
 ## Current local run
 
-Open the Unity project at the repository root with Unity `6000.5.6f1` and load `Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity`. Desktop uses WASD/arrow keys, mouse aim, left-click attack and Space dash; Android uses the two virtual sticks plus attack and dash controls.
+Open the Unity project at the repository root with Unity `6000.5.6f1` and load `Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity`. Desktop uses WASD/arrow keys, mouse aim, left-click attack and Space dash; Android uses the two virtual sticks plus attack and dash controls. Seven Bijli bots run in the same lab for offline AI stress testing.
 
-Build commands are documented in `Tools/Build/Android/README.md` and `Tools/Build/Web/README.md`. Review `PROJECT_STATUS.md`, `Docs/MOVEMENT_LAB.md` and `Docs/MILESTONE_REPORTS/M3.md` before authorizing bot work.
+Build commands are documented in `Tools/Build/Android/README.md` and `Tools/Build/Web/README.md`. Review `PROJECT_STATUS.md`, `Docs/MOVEMENT_LAB.md` and `Docs/MILESTONE_REPORTS/M4.md` before authorizing the offline match loop.
 
 ## Human owner
 

@@ -13,6 +13,7 @@ namespace BattleRaja.Presentation.Movement
         [SerializeField] private PlayerInputAdapter inputAdapter;
         [SerializeField] private AimDirectionIndicator aimIndicator;
         [SerializeField] private BijliFighterController fighterController;
+        [SerializeField] private bool externalCommandMode;
 
         private CharacterController _characterController;
         private MovementMotor _motor;
@@ -25,6 +26,7 @@ namespace BattleRaja.Presentation.Movement
         public Float2 Velocity => _motor != null ? _motor.Velocity : Float2.Zero;
         public MovementTuning Tuning => _tuning;
         public bool IsInitialized => _initialized;
+        public bool ExternalCommandMode { get => externalCommandMode; set => externalCommandMode = value; }
 
         private void Awake()
         {
@@ -45,6 +47,11 @@ namespace BattleRaja.Presentation.Movement
             }
 
             if (fighterController != null && fighterController.IsMovementLocked)
+            {
+                return;
+            }
+
+            if (externalCommandMode)
             {
                 return;
             }

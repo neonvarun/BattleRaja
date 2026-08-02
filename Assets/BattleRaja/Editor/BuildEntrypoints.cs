@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using BattleRaja.Core.Domain;
+using BattleRaja.Presentation.AI;
 using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Movement;
 using UnityEditor;
@@ -28,7 +29,7 @@ namespace BattleRaja.Editor
         private const string WeaponAssetPath = "Assets/BattleRaja/Content/Weapons/M2-TrainingBolt.asset";
         private const string BijliWeaponAssetPath = "Assets/BattleRaja/Content/Weapons/M3-BijliElectricBolt.asset";
         private const string FighterAssetPath = "Assets/BattleRaja/Content/Fighters/M3-Bijli.asset";
-        private const string DevelopmentApplicationId = "com.example.battleraja.m3";
+        private const string DevelopmentApplicationId = "com.example.battleraja.m4";
 
         public static void CreateBootstrapScene()
         {
@@ -161,6 +162,34 @@ namespace BattleRaja.Editor
             var dummyFlash = dummy.AddComponent<CombatHitFlash>();
             var trainingDummy = dummy.AddComponent<TrainingDummy>();
 
+            var playerTarget = player.AddComponent<CombatTarget>();
+            SetObjectReference(playerTarget, "health", playerHealth);
+            SetInt(playerTarget, "entityId", 1);
+            SetEnum(playerTarget, "faction", CombatFaction.Player);
+
+            var botPositions = new[]
+            {
+                new Vector3(-10f, 1f, -7f),
+                new Vector3(-6f, 1f, -1f),
+                new Vector3(6f, 1f, -1f),
+                new Vector3(10f, 1f, -7f),
+                new Vector3(-10f, 1f, 7f),
+                new Vector3(0f, 1f, 7f),
+                new Vector3(10f, 1f, 7f)
+            };
+            for (var botIndex = 0; botIndex < botPositions.Length; botIndex++)
+            {
+                CreateBotActor(
+                    botIndex,
+                    botPositions[botIndex],
+                    arena.transform,
+                    obstacleMaterial,
+                    projectileMaterial,
+                    tuningAsset,
+                    fighterAsset,
+                    projectilePool);
+            }
+
             SetObjectReference(agent, "tuningAsset", tuningAsset);
             SetObjectReference(agent, "inputAdapter", inputAdapter);
             SetObjectReference(agent, "aimIndicator", indicator);
@@ -262,7 +291,7 @@ namespace BattleRaja.Editor
                 throw new BuildFailedException($"Bijli fighter definition is invalid: {reason}");
             }
 
-            Debug.Log("BattleRaja Milestone 3 validation passed.");
+            Debug.Log("BattleRaja Milestone 4 validation passed.");
         }
 
         public static void BuildAndroidDevelopment()
@@ -277,7 +306,7 @@ namespace BattleRaja.Editor
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel28;
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
             PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
-            Build("Builds/M3/Android/BattleRaja-M3.apk", BuildTarget.Android);
+            Build("Builds/M4/Android/BattleRaja-M4.apk", BuildTarget.Android);
         }
 
         public static void BuildWebDevelopment()
@@ -288,7 +317,7 @@ namespace BattleRaja.Editor
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WebGL, BuildTarget.WebGL);
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
-            Build("Builds/M3/Web", BuildTarget.WebGL);
+            Build("Builds/M4/Web", BuildTarget.WebGL);
         }
 
         private static void Build(string outputPath, BuildTarget target)
@@ -307,7 +336,7 @@ namespace BattleRaja.Editor
                 throw new BuildFailedException($"{target} build failed: {report.summary.result}. See the Unity build log.");
             }
 
-            Debug.Log($"{target} M3 development build succeeded: {report.summary.outputPath} ({report.summary.totalSize} bytes).");
+            Debug.Log($"{target} M4 development build succeeded: {report.summary.outputPath} ({report.summary.totalSize} bytes).");
         }
 
         private static GameObject CreateBlock(string name, Vector3 position, Vector3 scale, Material material, Transform parent)
@@ -319,6 +348,67 @@ namespace BattleRaja.Editor
             block.transform.localScale = scale;
             block.GetComponent<Renderer>().sharedMaterial = material;
             return block;
+        }
+
+        private static void CreateBotActor(
+            int botIndex,
+            Vector3 position,
+            Transform parent,
+            Material material,
+            Material trailMaterial,
+            MovementTuningAsset tuningAsset,
+            FighterDefinitionAsset fighterAsset,
+            CombatProjectilePool projectilePool)
+        {
+            var bot = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            bot.name = $"BotBijli_{botIndex + 1}";
+            bot.transform.SetParent(parent);
+            bot.transform.position = position;
+            bot.layer = 2;
+            bot.GetComponent<Renderer>().sharedMaterial = material;
+            UnityEngine.Object.DestroyImmediate(bot.GetComponent<Collider>());
+
+            var controller = bot.AddComponent<CharacterController>();
+            controller.height = 1.8f;
+            controller.radius = 0.42f;
+            controller.center = Vector3.zero;
+            controller.stepOffset = 0.25f;
+            controller.slopeLimit = 45f;
+            var agent = bot.AddComponent<MovementPlayerAgent>();
+            var health = bot.AddComponent<CombatHealth>();
+            var target = bot.AddComponent<CombatTarget>();
+            var attack = bot.AddComponent<CombatAttackController>();
+            var fighter = bot.AddComponent<BijliFighterController>();
+            var perception = bot.AddComponent<BotPerceptionSensor>();
+            var brain = bot.AddComponent<BotBrain>();
+            bot.AddComponent<BotDebugOverlay>();
+            var trail = bot.AddComponent<TrailRenderer>();
+            trail.time = 0.24f;
+            trail.startWidth = 0.22f;
+            trail.endWidth = 0.02f;
+            trail.sharedMaterial = trailMaterial;
+
+            var actorId = 10 + botIndex;
+            SetInt(agent, "actorId", actorId);
+            SetObjectReference(agent, "tuningAsset", tuningAsset);
+            SetObjectReference(agent, "fighterController", fighter);
+            SetInt(health, "maxHealth", fighterAsset.ToDomain().MaxHealth);
+            SetInt(target, "entityId", actorId);
+            SetEnum(target, "faction", CombatFaction.Enemy);
+            SetObjectReference(target, "health", health);
+            SetInt(attack, "actorId", actorId);
+            SetEnum(attack, "faction", CombatFaction.Enemy);
+            SetObjectReference(attack, "fighterDefinition", fighterAsset);
+            SetObjectReference(attack, "projectilePool", projectilePool);
+            SetObjectReference(fighter, "fighterDefinition", fighterAsset);
+            SetObjectReference(fighter, "movementAgent", agent);
+            SetObjectReference(fighter, "characterController", controller);
+            SetObjectReference(fighter, "dashTrail", trail);
+            SetInt(fighter, "dashCollisionMask", 1);
+            SetInt(perception, "actorId", actorId);
+            SetObjectReference(perception, "health", health);
+            SetObjectReference(perception, "selfTarget", target);
+            SetInt(brain, "seed", 100 + botIndex);
         }
 
         private static Canvas CreateTouchCanvas(out VirtualStick movementStick, out VirtualStick aimStick, out AttackButton attackButton, out AbilityButton abilityButton)
@@ -604,6 +694,19 @@ namespace BattleRaja.Editor
             }
 
             property.floatValue = value;
+            serializedObject.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void SetEnum(UnityEngine.Object target, string propertyName, System.Enum value)
+        {
+            var serializedObject = new SerializedObject(target);
+            var property = serializedObject.FindProperty(propertyName);
+            if (property == null)
+            {
+                throw new InvalidOperationException($"Serialized property not found: {target.name}.{propertyName}");
+            }
+
+            property.enumValueIndex = System.Convert.ToInt32(value);
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
         }
 

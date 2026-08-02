@@ -144,3 +144,27 @@ collected.
   fighter scene spawn, end-to-end dash movement and HUD state publication.
 - Android/Web development builds completed; Android install/launch smoke passed on
   Lava API 34 and Oppo API 36; local Web HTTP/Chrome/Edge bootstrap checks passed.
+
+### M4 bot coverage
+
+### Pure/EditMode
+
+- profile validation and stable seeded decision output
+- line-of-sight target eligibility and target scoring
+- retreat threshold and aim-noise normalization
+- reaction delay and navigation stuck recovery
+- independent per-bot runtime state
+
+### PlayMode
+
+- seven unique Bijli bot actors and command IDs
+- perception/decision activity after scene load
+- seven-bot stress run and bounded decision timing
+- all M1–M3 movement, combat and fighter regressions
+
+### M4 evidence (2026-08-02)
+
+- `Unity.exe -batchmode -nographics -projectPath . -runTests -testPlatform editmode -testResults Builds/M4/TestResults/editmode.xml -logFile Builds/M4/Logs/editmode.log` — 26/26 passed.
+- `Unity.exe -batchmode -nographics -projectPath . -runTests -testPlatform playmode -testResults Builds/M4/TestResults/playmode.xml -logFile Builds/M4/Logs/playmode.log` — 19/19 passed.
+- Seven-bot stress output: `elapsed=2.000s decisions=91 maxDecisionMs=0.024` in
+  `Builds/M4/Logs/playmode.log`; this is a headless editor measurement only.

@@ -126,7 +126,24 @@ Each issue must include:
 
 ### BR-M4-001 — Offline bots
 
-Perception, navigation, seeded decisions and profiling. Depends on M3; not part of this execution.
+- **Objective:** Add fair, deterministic and debuggable Bijli bot opponents using the
+  common human command interfaces.
+- **Scope / non-scope:** Cached perception with world line of sight, utility target
+  selection, reaction delay, aim noise, attack/dash command output, explore/engage/
+  retreat/recover states, seven-bot stress setup and debug overlay. No Aandhi, loot,
+  gadgets, match resolution, Pehel/Maya, Photon, PlayFab or final art.
+- **Dependencies:** M3 Bijli fighter and pinned Unity/package baseline.
+- **Acceptance criteria:** Seven bots spawn and fight, never read hidden actors,
+  respect cooldown/collision, recover from stuck movement, remain intentionally
+  imperfect, and have measured stress evidence plus Android/Web smoke builds.
+- **Tests:** 26 EditMode and 19 PlayMode tests; seven-bot stress timing in the M4 log.
+- **Expected subsystem/files:** `Core/Domain/BotAI.cs`, `Presentation/AI`, MovementLab
+  bot generator, M4 build wrappers/report and docs.
+- **Risks:** Lab navigation is bounded CharacterController recovery rather than authored
+  pathfinding; performance evidence is headless-editor only; visual fairness requires
+  human review.
+- **Human review gate:** Required for bot fairness/readability and low-end-device
+  performance; not blocking provisional M5 offline match work.
 
 ### BR-M5-001 — Offline micro battle royale
 
