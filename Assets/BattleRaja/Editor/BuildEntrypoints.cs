@@ -360,10 +360,32 @@ namespace BattleRaja.Editor
             Build("Builds/M11/Android/BattleRaja-M11.apk", BuildTarget.Android);
         }
 
+        public static void BuildAndroidCurrentSceneDevelopment()
+        {
+            ValidateProject();
+
+            EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
+            PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, DevelopmentApplicationId);
+            PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
+            PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel28;
+            PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
+            PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
+            Build("Builds/M11/Android/BattleRaja-M11.apk", BuildTarget.Android);
+        }
+
         public static void BuildWebDevelopment()
         {
             CreateBootstrapScene();
             CreateMovementLabScene();
+            ValidateProject();
+
+            EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WebGL, BuildTarget.WebGL);
+            PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
+            Build("Builds/M11/Web", BuildTarget.WebGL);
+        }
+
+        public static void BuildWebCurrentSceneDevelopment()
+        {
             ValidateProject();
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WebGL, BuildTarget.WebGL);
