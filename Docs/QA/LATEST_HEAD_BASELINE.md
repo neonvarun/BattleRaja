@@ -42,3 +42,11 @@ The baseline intentionally excludes unrelated working-tree changes in `Assets/Ba
 - The screenshots are technical smoke evidence, not visual-approval evidence. The current scene is still a greybox/prototype with overlapping HUD text and has not passed visual QA.
 - Only the connected Lava phone was used, per project instruction. The connected Oppo device was intentionally not used.
 - No public deployment, store submission, production signing, service credential handling, or multiplayer claim was made.
+
+## Post-checkpoint runtime revalidation
+
+After the authority seam commit `1a92b6c`, the runtime artifacts were rebuilt and smoke-tested again:
+
+- Web: 21 files, 132,170,851 bytes; local HTTP `200`; Chrome fresh-tab smoke reported 0 JavaScript errors. Updated screenshot: `Docs/QA/Visual/latest-head-web.png`.
+- Android: 150,813,125 bytes; SHA-256 `A6176D2BCE8A7856555F512B56C9A2679590E601B93F670CAC5FCD8AD4DDA455`; installed/launched on Lava `ST5GDW23LB004392` only (PID `23626`) with the Unity game activity focused. No fatal, crash, SphereCollider or AndroidRuntime matches were found in the post-launch log sample. Updated screenshot: `Docs/QA/Visual/latest-head-android.png`.
+- Authority regression: 62 EditMode and 27 PlayMode tests pass after the seam extraction.
