@@ -21,10 +21,12 @@ namespace BattleRaja.Tests.EditMode
             authority.Advance(8f);
             var tick = authority.Advance(1f);
 
+            Assert.That(tick.SimulationTick, Is.EqualTo(1));
             Assert.That(tick.Result.OutsideDamagePerSecond, Is.EqualTo(5));
             Assert.That(tick.OutsideDamageRequests, Has.Length.EqualTo(1));
             Assert.That(tick.OutsideDamageRequests[0].TargetId.Value, Is.EqualTo(1));
             Assert.That(tick.OutsideDamageRequests[0].DamageType, Is.EqualTo(DamageType.Aandhi));
+            Assert.That(tick.OutsideDamageRequests[0].SimulationTick, Is.EqualTo(tick.SimulationTick));
         }
 
         [Test]
@@ -78,6 +80,31 @@ namespace BattleRaja.Tests.EditMode
             Assert.That(used.Effect.Kind, Is.EqualTo(GadgetEffectKind.DholBurst));
             Assert.That(duplicate.Used, Is.False);
             Assert.That(duplicate.Failure, Is.EqualTo(GadgetUseFailure.NotHeld));
+        }
+
+        [Test]
+        public void AuthorityAdvancesGadgetCooldownOnAuthoritativeTicks()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(4f, 0f), 100)
+            });
+
+            var gadgetId = GadgetDefinition.DholBurst.GadgetId;
+            Assert.That(authority.TryAcquireGadget(new CombatEntityId(1), gadgetId), Is.True);
+            var first = new GadgetUseCommand(new CombatEntityId(1), gadgetId, Float2.Zero, Float2.Up, 1);
+            Assert.That(authority.TryUseGadget(first).Used, Is.True);
+
+            Assert.That(authority.TryAcquireGadget(new CombatEntityId(1), gadgetId), Is.True);
+            var blocked = authority.TryUseGadget(new GadgetUseCommand(new CombatEntityId(1), gadgetId, Float2.Zero, Float2.Up, 2));
+            Assert.That(blocked.Failure, Is.EqualTo(GadgetUseFailure.Cooldown));
+
+            for (var tick = 1; tick <= 300; tick++) authority.Advance(tick, 1f / 30f);
+
+            var second = authority.TryUseGadget(new GadgetUseCommand(new CombatEntityId(1), gadgetId, Float2.Zero, Float2.Up, 301));
+            Assert.That(second.Used, Is.True);
         }
     }
 }

@@ -92,7 +92,7 @@ namespace BattleRaja.Presentation.Match
                     _authority.SyncHealth(actor.Target.Id, actor.Health.Snapshot.CurrentHealth);
                 }
 
-                var authorityTick = _authority.Advance((float)_simulationClock.StepSeconds);
+                var authorityTick = _authority.Advance(_simulationClock.Tick, (float)_simulationClock.StepSeconds);
                 var tick = authorityTick.Result;
                 ZoneCenter = tick.ZoneCenter;
                 NextZoneCenter = tick.NextZoneCenter;
@@ -214,7 +214,7 @@ namespace BattleRaja.Presentation.Match
                 var request = authorityTick.OutsideDamageRequests[i];
                 var actor = _actors.FirstOrDefault(binding => binding.Target.Id == request.TargetId);
                 if (actor == null || actor.Health.Snapshot.IsDefeated) continue;
-                damageResolver?.Resolve(actor.Target, request, allowSelfHit: true, allowFriendlyFire: true);
+                damageResolver?.Resolve(actor.Target, request, allowSelfHit: true, allowFriendlyFire: true, authorityTick.SimulationTick);
             }
         }
 

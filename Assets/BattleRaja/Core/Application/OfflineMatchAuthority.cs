@@ -7,11 +7,18 @@ namespace BattleRaja.Core.Application
     public readonly struct MatchAuthorityTick
     {
         public MatchAuthorityTick(MatchTickResult result, DamageRequest[] outsideDamageRequests)
+            : this(0, result, outsideDamageRequests)
         {
+        }
+
+        public MatchAuthorityTick(int simulationTick, MatchTickResult result, DamageRequest[] outsideDamageRequests)
+        {
+            SimulationTick = simulationTick;
             Result = result;
             OutsideDamageRequests = outsideDamageRequests ?? Array.Empty<DamageRequest>();
         }
 
+        public int SimulationTick { get; }
         public MatchTickResult Result { get; }
         public DamageRequest[] OutsideDamageRequests { get; }
     }
@@ -32,6 +39,7 @@ namespace BattleRaja.Core.Application
         private readonly Dictionary<CombatEntityId, GadgetRuntime> _gadgetRuntimes = new Dictionary<CombatEntityId, GadgetRuntime>();
         private OfflineMatchSimulation _simulation;
         private double _outsideDamageAccumulator;
+        private int _lastSimulationTick = -1;
 
         public OfflineMatchAuthority(OfflineMatchDefinition definition, float outsideDamageTickSeconds = 1f)
         {
@@ -79,6 +87,7 @@ namespace BattleRaja.Core.Application
             }
 
             _outsideDamageAccumulator = 0d;
+            _lastSimulationTick = -1;
         }
 
         public bool SetPosition(CombatEntityId id, Float2 position) => RequireSimulation().SetPosition(id, position);
@@ -87,19 +96,36 @@ namespace BattleRaja.Core.Application
 
         public MatchAuthorityTick Advance(float fixedDeltaSeconds)
         {
+            return Advance(_lastSimulationTick + 1, fixedDeltaSeconds);
+        }
+
+        public MatchAuthorityTick Advance(int simulationTick, float fixedDeltaSeconds)
+        {
+            if (simulationTick < 0 || simulationTick <= _lastSimulationTick)
+            {
+                throw new ArgumentOutOfRangeException(nameof(simulationTick), "Simulation ticks must increase monotonically.");
+            }
+
+            if (fixedDeltaSeconds <= 0f || float.IsNaN(fixedDeltaSeconds) || float.IsInfinity(fixedDeltaSeconds))
+            {
+                throw new ArgumentOutOfRangeException(nameof(fixedDeltaSeconds));
+            }
+
+            _lastSimulationTick = simulationTick;
             var simulation = RequireSimulation();
             for (var i = 0; i < _pickups.Length; i++) _pickups[i].Advance(fixedDeltaSeconds);
+            foreach (var runtime in _gadgetRuntimes.Values) runtime.Advance(fixedDeltaSeconds);
             var result = simulation.Advance(fixedDeltaSeconds);
             if (result.OutsideDamagePerSecond <= 0)
             {
                 _outsideDamageAccumulator = 0d;
-                return new MatchAuthorityTick(result, Array.Empty<DamageRequest>());
+                return new MatchAuthorityTick(simulationTick, result, Array.Empty<DamageRequest>());
             }
 
             _outsideDamageAccumulator += fixedDeltaSeconds;
             if (_outsideDamageAccumulator < _outsideDamageTickSeconds)
             {
-                return new MatchAuthorityTick(result, Array.Empty<DamageRequest>());
+                return new MatchAuthorityTick(simulationTick, result, Array.Empty<DamageRequest>());
             }
 
             var requests = new List<DamageRequest>(result.OutsideCount);
@@ -116,11 +142,13 @@ namespace BattleRaja.Core.Application
                         snapshot.Id,
                         CombatFaction.Neutral,
                         result.OutsideDamagePerSecond,
-                        DamageType.Aandhi));
+                        DamageType.Aandhi,
+                        Float2.Zero,
+                        simulationTick));
                 }
             }
 
-            return new MatchAuthorityTick(result, requests.ToArray());
+            return new MatchAuthorityTick(simulationTick, result, requests.ToArray());
         }
 
         public MatchPickupCollectResult TryCollectPickup(int pickupId, int currentHealth, int maxHealth)

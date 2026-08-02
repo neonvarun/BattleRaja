@@ -62,5 +62,62 @@ namespace BattleRaja.Tests.EditMode
             Assert.That(command.Kind, Is.EqualTo(GameplayCommandKind.Intent));
             Assert.That(command.Payload, Is.EqualTo(99));
         }
+
+        [Test]
+        public void FixedClockProducesTheSameOfflineMatchStateAcrossRenderRates()
+        {
+            var thirtyFps = RunMatch(new[] { 1d / 30d }, 180);
+            var sixtyFps = RunMatch(new[] { 1d / 60d }, 360);
+            var ninetyFps = RunMatch(new[] { 1d / 90d }, 540);
+            var variable = RunMatch(new[] { 1d / 120d, 1d / 60d, 1d / 40d, 1d / 120d, 1d / 60d, 1d / 40d }, 60);
+
+            var expected = thirtyFps.Advance(0f);
+            Assert.That(expected.Phase, Is.EqualTo(MatchPhase.SpawnProtection));
+            Assert.That(expected.ZoneRadius, Is.EqualTo(sixtyFps.Advance(0f).ZoneRadius).Within(0.0001f));
+            Assert.That(expected.ZoneRadius, Is.EqualTo(ninetyFps.Advance(0f).ZoneRadius).Within(0.0001f));
+            Assert.That(expected.ZoneRadius, Is.EqualTo(variable.Advance(0f).ZoneRadius).Within(0.0001f));
+            Assert.That(thirtyFps.ElapsedSeconds, Is.EqualTo(sixtyFps.ElapsedSeconds).Within(0.0001f));
+            Assert.That(thirtyFps.ElapsedSeconds, Is.EqualTo(ninetyFps.ElapsedSeconds).Within(0.0001f));
+            Assert.That(thirtyFps.ElapsedSeconds, Is.EqualTo(variable.ElapsedSeconds).Within(0.0001f));
+
+            var expectedSnapshots = thirtyFps.GetSnapshots();
+            AssertSnapshotsEqual(expectedSnapshots, sixtyFps.GetSnapshots());
+            AssertSnapshotsEqual(expectedSnapshots, ninetyFps.GetSnapshots());
+            AssertSnapshotsEqual(expectedSnapshots, variable.GetSnapshots());
+        }
+
+        private static OfflineMatchSimulation RunMatch(double[] renderFrameDurations, int repetitions)
+        {
+            var simulation = new OfflineMatchSimulation(OfflineMatchDefinition.SoloRaja);
+            simulation.Start(new[]
+            {
+                new MatchSpawn(new CombatEntityId(1), new Float2(-8f, 0f), 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(8f, 0f), 100)
+            });
+            var clock = new FixedSimulationClock(30);
+            for (var repeat = 0; repeat < repetitions; repeat++)
+            {
+                for (var frame = 0; frame < renderFrameDurations.Length; frame++)
+                {
+                    var steps = clock.Consume(renderFrameDurations[frame]);
+                    for (var step = 0; step < steps; step++) simulation.Advance((float)clock.StepSeconds);
+                }
+            }
+
+            return simulation;
+        }
+
+        private static void AssertSnapshotsEqual(MatchParticipantSnapshot[] expected, MatchParticipantSnapshot[] actual)
+        {
+            Assert.That(actual, Has.Length.EqualTo(expected.Length));
+            for (var i = 0; i < expected.Length; i++)
+            {
+                Assert.That(actual[i].Id, Is.EqualTo(expected[i].Id));
+                Assert.That(actual[i].CurrentHealth, Is.EqualTo(expected[i].CurrentHealth));
+                Assert.That(actual[i].Placement, Is.EqualTo(expected[i].Placement));
+                Assert.That(actual[i].Alive, Is.EqualTo(expected[i].Alive));
+                Assert.That(actual[i].SurvivalTimeSeconds, Is.EqualTo(expected[i].SurvivalTimeSeconds).Within(0.0001f));
+            }
+        }
     }
 }

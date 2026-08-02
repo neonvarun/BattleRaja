@@ -130,7 +130,8 @@ namespace BattleRaja.Presentation.Combat
                     faction,
                     _special.Magnitude,
                     DamageType.Ability,
-                    _runtime.Direction);
+                    _runtime.Direction,
+                    _clock.Tick);
                 damageResolver?.Resolve(target, request, false, false, _clock.Tick);
                 var targetController = target.GetComponent<CharacterController>();
                 targetController?.Move(new Vector3(_runtime.Direction.X, 0f, _runtime.Direction.Y) * (_special.Magnitude * 0.25f));

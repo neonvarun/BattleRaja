@@ -88,7 +88,8 @@ namespace BattleRaja.Presentation.Combat
                             _instigatorFaction,
                             _definition.Damage,
                             DamageType.Projectile,
-                            _direction);
+                            _direction,
+                            _clock.Tick);
                         var result = _damageResolver.Resolve(
                             target,
                             request,

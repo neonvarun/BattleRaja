@@ -27,7 +27,8 @@ namespace BattleRaja.Presentation.Combat
                 if (mitigated != request.RawAmount)
                 {
                     request = new DamageRequest(request.InstigatorId, request.TargetId,
-                        request.InstigatorFaction, mitigated, request.DamageType, request.HitDirection);
+                        request.InstigatorFaction, mitigated, request.DamageType, request.HitDirection,
+                        request.SimulationTick);
                 }
             }
 

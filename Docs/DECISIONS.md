@@ -518,3 +518,27 @@ Record every material choice here. Do not silently overwrite old decisions.
   `TutorialArenaPlayModeTests.cs`, 81/81 EditMode and 32/32 PlayMode results, and the 4391f09
   Android/Web/browser evidence in `Docs/QA/LATEST_HEAD_BASELINE.md`.
 - **Owner:** Human project owner
+
+### ADR-027 — Carry authoritative simulation ticks through damage and gadget intents
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the Phase 1 authority/fixed-clock continuation; transport-specific
+  prediction and replay remain open.
+- **Context:** The offline authority already advanced at a fixed step, but Aandhi damage
+  requests carried no tick identity and authoritative gadget runtimes were never advanced.
+  That weakened auditability and could leave a server-owned gadget cooldown permanently active.
+- **Options considered:** Infer intent timing from render callbacks; keep cooldowns in the
+  presentation `GadgetUser`; or carry the authoritative tick through application intents and
+  advance all application-owned runtimes from the same fixed step.
+- **Decision:** Add `SimulationTick` to `DamageRequest` and `MatchAuthorityTick`, require
+  monotonic ticks on the explicit authority overload, advance authoritative gadget runtimes
+  on every fixed step, and preserve the tick through projectile, Pehel and Aandhi damage paths.
+  Keep the float overload as a compatibility helper for pure offline callers; production
+  presentation passes the shared match clock tick explicitly.
+- **Consequences:** Damage attribution can be ordered and replayed by tick, and gadget
+  cooldowns no longer depend on a scene-local timer. The authority still delegates proximity
+  sensing and effect rendering to Unity adapters, and real Fusion transport remains blocked.
+- **Evidence/sources:** `DamageRequest`, `OfflineMatchAuthority`,
+  `OfflineMatchController`, `AuthorityFoundationTests`, and the fixed-clock render-rate
+  equivalence test in `CoreFoundationTests`.
+- **Owner:** Human project owner
