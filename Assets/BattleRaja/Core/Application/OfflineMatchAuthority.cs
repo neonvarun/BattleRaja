@@ -151,35 +151,87 @@ namespace BattleRaja.Core.Application
             return new MatchAuthorityTick(simulationTick, result, requests.ToArray());
         }
 
+        /// <summary>
+        /// Resolves pickup proximity and collector selection from the authoritative
+        /// simulation snapshot. Unity only applies the returned intents to its views.
+        /// </summary>
+        public MatchAuthorityCollections CollectNearby()
+        {
+            var simulation = RequireSimulation();
+            var snapshots = simulation.GetSnapshots();
+            var pickupCollections = new List<MatchPickupCollectionIntent>(_pickups.Length);
+            var gadgetCollections = new List<GadgetPickupCollectionIntent>(_gadgetPickups.Length);
+
+            for (var i = 0; i < _pickups.Length; i++)
+            {
+                var runtime = _pickups[i];
+                if (!runtime.IsAvailable) continue;
+                var definition = runtime.Definition;
+                if (!TrySelectCollector(snapshots, definition.Position, definition.CollectionRadius, true, out var collector)) continue;
+                var result = runtime.TryCollect(collector.CurrentHealth, collector.MaxHealth);
+                if (result.Collected)
+                {
+                    pickupCollections.Add(new MatchPickupCollectionIntent(
+                        definition.PickupId,
+                        collector.Id,
+                        result.HealAmount));
+                }
+            }
+
+            for (var i = 0; i < _gadgetPickups.Length; i++)
+            {
+                var runtime = _gadgetPickups[i];
+                if (!runtime.IsAvailable) continue;
+                var definition = runtime.Definition;
+                if (!TrySelectCollector(snapshots, definition.Position, definition.CollectionRadius, false, out var collector) ||
+                    !_gadgetInventories.TryGetValue(collector.Id, out var inventory) || inventory.HasGadget) continue;
+                var result = runtime.TryCollect(false);
+                if (result.Collected && inventory.TryPickup(result.GadgetId))
+                {
+                    gadgetCollections.Add(new GadgetPickupCollectionIntent(
+                        definition.PickupId,
+                        collector.Id,
+                        result.GadgetId));
+                }
+            }
+
+            return new MatchAuthorityCollections(pickupCollections.ToArray(), gadgetCollections.ToArray());
+        }
+
         public MatchPickupCollectResult TryCollectPickup(int pickupId, int currentHealth, int maxHealth)
         {
-            if (pickupId < 0 || pickupId >= _pickups.Length) return new MatchPickupCollectResult(false, 0);
-            return _pickups[pickupId].TryCollect(currentHealth, maxHealth);
+            var index = FindPickupIndex(pickupId);
+            return index < 0
+                ? new MatchPickupCollectResult(false, 0)
+                : _pickups[index].TryCollect(currentHealth, maxHealth);
         }
 
         public bool IsPickupAvailable(int pickupId)
         {
-            return pickupId >= 0 && pickupId < _pickups.Length && _pickups[pickupId].IsAvailable;
+            var index = FindPickupIndex(pickupId);
+            return index >= 0 && _pickups[index].IsAvailable;
         }
 
         public GadgetPickupCollectResult TryCollectGadget(int pickupId, bool hasGadget)
         {
-            if (pickupId < 0 || pickupId >= _gadgetPickups.Length)
+            var index = FindGadgetPickupIndex(pickupId);
+            if (index < 0)
             {
                 return new GadgetPickupCollectResult(false, default(ContentId));
             }
 
-            return _gadgetPickups[pickupId].TryCollect(hasGadget);
+            return _gadgetPickups[index].TryCollect(hasGadget);
         }
 
         public GadgetPickupCollectResult TryCollectGadget(CombatEntityId collectorId, int pickupId)
         {
-            if (pickupId < 0 || pickupId >= _gadgetPickups.Length || !_gadgetInventories.TryGetValue(collectorId, out var inventory))
+            var index = FindGadgetPickupIndex(pickupId);
+            if (index < 0 || !_gadgetInventories.TryGetValue(collectorId, out var inventory))
             {
                 return new GadgetPickupCollectResult(false, default(ContentId));
             }
 
-            var result = _gadgetPickups[pickupId].TryCollect(inventory.HasGadget);
+            var result = _gadgetPickups[index].TryCollect(inventory.HasGadget);
             if (result.Collected) inventory.TryPickup(result.GadgetId);
             return result;
         }
@@ -203,7 +255,8 @@ namespace BattleRaja.Core.Application
 
         public bool IsGadgetPickupAvailable(int pickupId)
         {
-            return pickupId >= 0 && pickupId < _gadgetPickups.Length && _gadgetPickups[pickupId].IsAvailable;
+            var index = FindGadgetPickupIndex(pickupId);
+            return index >= 0 && _gadgetPickups[index].IsAvailable;
         }
 
         private static T[] Copy<T>(IReadOnlyList<T> source)
@@ -211,6 +264,51 @@ namespace BattleRaja.Core.Application
             var copy = new T[source.Count];
             for (var i = 0; i < source.Count; i++) copy[i] = source[i];
             return copy;
+        }
+
+        private static bool TrySelectCollector(
+            MatchParticipantSnapshot[] snapshots,
+            Float2 position,
+            float collectionRadius,
+            bool requireHealth,
+            out MatchParticipantSnapshot selected)
+        {
+            selected = default(MatchParticipantSnapshot);
+            var found = false;
+            var radiusSquared = collectionRadius * collectionRadius;
+            for (var i = 0; i < snapshots.Length; i++)
+            {
+                var candidate = snapshots[i];
+                if (!candidate.Alive || candidate.Position.SqrMagnitudeFrom(position) > radiusSquared ||
+                    (requireHealth && candidate.CurrentHealth >= candidate.MaxHealth)) continue;
+                if (!found || candidate.Id.Value < selected.Id.Value)
+                {
+                    selected = candidate;
+                    found = true;
+                }
+            }
+
+            return found;
+        }
+
+        private int FindPickupIndex(int pickupId)
+        {
+            for (var i = 0; i < _pickups.Length; i++)
+            {
+                if (_pickups[i].Definition.PickupId == pickupId) return i;
+            }
+
+            return -1;
+        }
+
+        private int FindGadgetPickupIndex(int pickupId)
+        {
+            for (var i = 0; i < _gadgetPickups.Length; i++)
+            {
+                if (_gadgetPickups[i].Definition.PickupId == pickupId) return i;
+            }
+
+            return -1;
         }
 
         private OfflineMatchSimulation RequireSimulation()

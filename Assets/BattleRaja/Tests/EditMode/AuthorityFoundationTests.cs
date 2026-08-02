@@ -106,5 +106,40 @@ namespace BattleRaja.Tests.EditMode
             var second = authority.TryUseGadget(new GadgetUseCommand(new CombatEntityId(1), gadgetId, Float2.Zero, Float2.Up, 301));
             Assert.That(second.Used, Is.True);
         }
+
+        [Test]
+        public void AuthoritySelectsDeterministicNearbyCollectorsAndOwnsRangeRules()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            authority.ConfigureItems(
+                new[]
+                {
+                    new MatchPickupDefinition(0, MatchPickupKind.Health, 25, 12f, Float2.Zero, 4f)
+                },
+                new[]
+                {
+                    new GadgetPickupDefinition(0, GadgetDefinition.DholBurst.GadgetId, Float2.Zero, 4f)
+                });
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(3f, 0f), 100)
+            });
+            authority.SyncHealth(new CombatEntityId(1), 50);
+            authority.SyncHealth(new CombatEntityId(2), 50);
+
+            var collections = authority.CollectNearby();
+
+            Assert.That(collections.PickupCollections, Has.Length.EqualTo(1));
+            Assert.That(collections.PickupCollections[0].CollectorId.Value, Is.EqualTo(1));
+            Assert.That(collections.PickupCollections[0].HealAmount, Is.EqualTo(25));
+            Assert.That(collections.GadgetCollections, Has.Length.EqualTo(1));
+            Assert.That(collections.GadgetCollections[0].CollectorId.Value, Is.EqualTo(1));
+            Assert.That(collections.GadgetCollections[0].GadgetId, Is.EqualTo(GadgetDefinition.DholBurst.GadgetId));
+            Assert.That(authority.IsPickupAvailable(0), Is.False);
+            Assert.That(authority.IsGadgetPickupAvailable(0), Is.False);
+            Assert.That(authority.CollectNearby().PickupCollections, Is.Empty);
+            Assert.That(authority.CollectNearby().GadgetCollections, Is.Empty);
+        }
     }
 }

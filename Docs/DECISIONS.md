@@ -542,3 +542,28 @@ Record every material choice here. Do not silently overwrite old decisions.
   `OfflineMatchController`, `AuthorityFoundationTests`, and the fixed-clock render-rate
   equivalence test in `CoreFoundationTests`.
 - **Owner:** Human project owner
+
+### ADR-028 — Resolve item proximity and collector selection in application authority
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the Phase 1 authority continuation; network transport and
+  presentation effect execution remain open.
+- **Context:** Pickup respawn/inventory state was application-owned, but the presentation
+  controller still chose collectors using hard-coded distances and actor iteration order.
+  That made a public-match outcome depend on scene callback order and left non-contiguous
+  scene pickup IDs fragile.
+- **Options considered:** Keep proximity checks in `OfflineMatchController`; add a physics
+  service to the scene; or pass authored item positions into application definitions and
+  emit deterministic collection intents from the authority.
+- **Decision:** Store item position and collection radius in validated domain definitions.
+  `OfflineMatchAuthority.CollectNearby` selects the lowest-ID eligible living participant,
+  applies the pure pickup/inventory runtime, and returns immutable heal/gadget collection
+  intents. Unity applies those intents to health, `GadgetUser` and visual availability only.
+  Authority lookup uses authored pickup IDs rather than assuming contiguous arrays.
+- **Consequences:** Offline collection outcomes are deterministic and testable without a
+  scene, while physics-backed actor positioning and visual effect application remain
+  presentation responsibilities. Real Fusion authority still requires a later adapter.
+- **Evidence/sources:** `MatchItems`, `MatchCollectionIntents`, `OfflineMatchAuthority`,
+  `OfflineMatchController`, `AuthorityFoundationTests`, and the Phase 1 Android/Web smoke
+  builds recorded in `Docs/QA/LATEST_HEAD_BASELINE.md`.
+- **Owner:** Human project owner

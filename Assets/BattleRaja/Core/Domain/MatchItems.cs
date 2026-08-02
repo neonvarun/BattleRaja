@@ -10,22 +10,40 @@ namespace BattleRaja.Core.Domain
     public readonly struct MatchPickupDefinition
     {
         public MatchPickupDefinition(int pickupId, MatchPickupKind kind, int value, float respawnSeconds)
+            : this(pickupId, kind, value, respawnSeconds, Float2.Zero, 1.2f)
+        {
+        }
+
+        public MatchPickupDefinition(
+            int pickupId,
+            MatchPickupKind kind,
+            int value,
+            float respawnSeconds,
+            Float2 position,
+            float collectionRadius)
         {
             PickupId = pickupId;
             Kind = kind;
             Value = value;
             RespawnSeconds = respawnSeconds;
+            Position = position;
+            CollectionRadius = collectionRadius;
         }
 
         public int PickupId { get; }
         public MatchPickupKind Kind { get; }
         public int Value { get; }
         public float RespawnSeconds { get; }
+        public Float2 Position { get; }
+        public float CollectionRadius { get; }
 
         public bool IsValid(out string reason)
         {
             if (PickupId < 0 || Kind != MatchPickupKind.Health || Value <= 0 || RespawnSeconds <= 0f ||
-                float.IsNaN(RespawnSeconds) || float.IsInfinity(RespawnSeconds))
+                float.IsNaN(RespawnSeconds) || float.IsInfinity(RespawnSeconds) || CollectionRadius <= 0f ||
+                float.IsNaN(CollectionRadius) || float.IsInfinity(CollectionRadius) ||
+                float.IsNaN(Position.X) || float.IsInfinity(Position.X) ||
+                float.IsNaN(Position.Y) || float.IsInfinity(Position.Y))
             {
                 reason = "Pickup identity, health value and respawn duration must be valid.";
                 return false;
@@ -90,17 +108,29 @@ namespace BattleRaja.Core.Domain
     public readonly struct GadgetPickupDefinition
     {
         public GadgetPickupDefinition(int pickupId, ContentId gadgetId)
+            : this(pickupId, gadgetId, Float2.Zero, 1.3f)
+        {
+        }
+
+        public GadgetPickupDefinition(int pickupId, ContentId gadgetId, Float2 position, float collectionRadius)
         {
             PickupId = pickupId;
             GadgetId = gadgetId;
+            Position = position;
+            CollectionRadius = collectionRadius;
         }
 
         public int PickupId { get; }
         public ContentId GadgetId { get; }
+        public Float2 Position { get; }
+        public float CollectionRadius { get; }
 
         public bool IsValid(out string reason)
         {
-            if (PickupId < 0 || !GadgetId.IsValid || GadgetId.Kind != ContentIdKind.Gadget)
+            if (PickupId < 0 || !GadgetId.IsValid || GadgetId.Kind != ContentIdKind.Gadget || CollectionRadius <= 0f ||
+                float.IsNaN(CollectionRadius) || float.IsInfinity(CollectionRadius) ||
+                float.IsNaN(Position.X) || float.IsInfinity(Position.X) ||
+                float.IsNaN(Position.Y) || float.IsInfinity(Position.Y))
             {
                 reason = "Gadget pickup identity and gadget content ID must be valid.";
                 return false;

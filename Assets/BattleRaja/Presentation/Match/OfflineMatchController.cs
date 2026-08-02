@@ -105,8 +105,7 @@ namespace BattleRaja.Presentation.Match
                     ApplyOutsideDamage(authorityTick);
                 }
 
-                CollectPickups();
-                CollectGadgets();
+                CollectNearbyItems();
                 UpdateSpectator(tick);
                 if (tick.MatchEnded)
                 {
@@ -133,7 +132,9 @@ namespace BattleRaja.Presentation.Match
                         i,
                         MatchPickupKind.Health,
                         pickup.Value,
-                        pickup.RespawnSeconds));
+                        pickup.RespawnSeconds,
+                        new Float2(pickup.transform.position.x, pickup.transform.position.z),
+                        1.2f));
                 }
             }
 
@@ -143,7 +144,14 @@ namespace BattleRaja.Presentation.Match
                 for (var i = 0; i < gadgetPickups.Length; i++)
                 {
                     var pickup = gadgetPickups[i];
-                    if (pickup != null) gadgetDefinitions.Add(new GadgetPickupDefinition(i, pickup.GadgetId));
+                    if (pickup != null)
+                    {
+                        gadgetDefinitions.Add(new GadgetPickupDefinition(
+                            i,
+                            pickup.GadgetId,
+                            new Float2(pickup.transform.position.x, pickup.transform.position.z),
+                            1.3f));
+                    }
                 }
             }
 
@@ -218,59 +226,51 @@ namespace BattleRaja.Presentation.Match
             }
         }
 
-        private void CollectPickups()
+        private void CollectNearbyItems()
         {
-            if (pickups == null) return;
-            for (var p = 0; p < pickups.Length; p++)
+            var collections = _authority.CollectNearby();
+            for (var i = 0; i < collections.PickupCollections.Length; i++)
             {
-                var pickup = pickups[p];
-                if (pickup == null || !_authority.IsPickupAvailable(p))
+                var collection = collections.PickupCollections[i];
+                var actor = _actors.FirstOrDefault(binding => binding.Target.Id == collection.CollectorId);
+                if (actor != null)
                 {
-                    pickup?.SetAvailable(false);
-                    continue;
+                    actor.Health.Heal(collection.HealAmount);
                 }
-
-                pickup.SetAvailable(true);
-                for (var i = 0; i < _actors.Count; i++)
+                if (pickups != null && collection.PickupId >= 0 && collection.PickupId < pickups.Length)
                 {
-                    var actor = _actors[i];
-                    if (actor.Health.Snapshot.IsDefeated || Vector3.Distance(actor.Transform.position, pickup.transform.position) > 1.2f) continue;
-                    var result = _authority.TryCollectPickup(
-                        p,
-                        actor.Health.Snapshot.CurrentHealth,
-                        actor.Health.MaxHealth);
-                    if (!result.Collected) continue;
-                    actor.Health.Heal(result.HealAmount);
-                    pickup.SetAvailable(false);
-                    break;
+                    pickups[collection.PickupId]?.SetAvailable(false);
                 }
             }
-        }
 
-        private void CollectGadgets()
-        {
-            if (gadgetPickups == null) return;
-            for (var p = 0; p < gadgetPickups.Length; p++)
+            for (var i = 0; i < collections.GadgetCollections.Length; i++)
             {
-                var pickup = gadgetPickups[p];
-                if (pickup == null || !_authority.IsGadgetPickupAvailable(p))
+                var collection = collections.GadgetCollections[i];
+                var actor = _actors.FirstOrDefault(binding => binding.Target.Id == collection.CollectorId);
+                var user = actor?.Transform.GetComponent<GadgetUser>();
+                if (user != null)
                 {
-                    pickup?.SetAvailable(false);
-                    continue;
+                    user.TryPickupFromAuthority(collection.GadgetId);
                 }
-
-                pickup.SetAvailable(true);
-                for (var i = 0; i < _actors.Count; i++)
+                if (gadgetPickups != null && collection.PickupId >= 0 && collection.PickupId < gadgetPickups.Length)
                 {
-                    var actor = _actors[i];
-                    if (actor.Health.Snapshot.IsDefeated || Vector3.Distance(actor.Transform.position, pickup.transform.position) > 1.3f) continue;
-                    var user = actor.Transform.GetComponent<GadgetUser>();
-                    if (user == null) continue;
-                    var result = _authority.TryCollectGadget(actor.Target.Id, p);
-                    if (!result.Collected) continue;
-                    user.TryPickupFromAuthority(result.GadgetId);
-                    pickup.SetAvailable(false);
-                    break;
+                    gadgetPickups[collection.PickupId]?.SetAvailable(false);
+                }
+            }
+
+            if (pickups != null)
+            {
+                for (var i = 0; i < pickups.Length; i++)
+                {
+                    pickups[i]?.SetAvailable(_authority.IsPickupAvailable(i));
+                }
+            }
+
+            if (gadgetPickups != null)
+            {
+                for (var i = 0; i < gadgetPickups.Length; i++)
+                {
+                    gadgetPickups[i]?.SetAvailable(_authority.IsGadgetPickupAvailable(i));
                 }
             }
         }
