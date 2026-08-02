@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BattleRaja.Core.Application;
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Movement;
@@ -21,19 +22,18 @@ namespace BattleRaja.Presentation.Match
         [SerializeField] private bool autoStart = true;
 
         private readonly List<MatchActorBinding> _actors = new List<MatchActorBinding>(8);
-        private OfflineMatchSimulation _simulation;
+        private OfflineMatchAuthority _authority;
         private FixedSimulationClock _simulationClock;
-        private double _outsideDamageAccumulator;
         private bool _playerSpectating;
         private bool _resultsShown;
 
-        public OfflineMatchSimulation Simulation => _simulation;
-        public MatchPhase CurrentPhase => _simulation != null ? _simulation.Phase : MatchPhase.LoadWarmup;
+        public OfflineMatchSimulation Simulation => _authority != null ? _authority.Simulation : null;
+        public MatchPhase CurrentPhase => Simulation != null ? Simulation.Phase : MatchPhase.LoadWarmup;
         public float ZoneRadius { get; private set; }
         public Float2 ZoneCenter { get; private set; }
         public Float2 NextZoneCenter { get; private set; }
         public float NextZoneRadius { get; private set; }
-        public int AliveCount => _simulation != null ? _simulation.AliveCount : 0;
+        public int AliveCount => Simulation != null ? Simulation.AliveCount : 0;
         public bool PlayerSpectating => _playerSpectating;
         public bool ResultsShown => _resultsShown;
         public MatchParticipantSnapshot[] Results { get; private set; }
@@ -55,7 +55,7 @@ namespace BattleRaja.Presentation.Match
 
         private void Update()
         {
-            if (_simulation == null || _simulation.IsEnded)
+            if (Simulation == null || Simulation.IsEnded)
             {
                 return;
             }
@@ -66,20 +66,19 @@ namespace BattleRaja.Presentation.Match
                 for (var i = 0; i < _actors.Count; i++)
                 {
                     var actor = _actors[i];
-                    _simulation.SetPosition(actor.Target.Id, new Float2(actor.Transform.position.x, actor.Transform.position.z));
-                    _simulation.SyncHealth(actor.Target.Id, actor.Health.Snapshot.CurrentHealth);
+                    _authority.SetPosition(actor.Target.Id, new Float2(actor.Transform.position.x, actor.Transform.position.z));
+                    _authority.SyncHealth(actor.Target.Id, actor.Health.Snapshot.CurrentHealth);
                 }
 
-                var tick = _simulation.Advance((float)_simulationClock.StepSeconds);
+                var authorityTick = _authority.Advance((float)_simulationClock.StepSeconds);
+                var tick = authorityTick.Result;
                 ZoneCenter = tick.ZoneCenter;
                 NextZoneCenter = tick.ZoneCenter;
                 ZoneRadius = tick.ZoneRadius;
                 NextZoneRadius = tick.NextZoneRadius;
-                _outsideDamageAccumulator += _simulationClock.StepSeconds;
-                if (_outsideDamageAccumulator >= outsideDamageTickSeconds && tick.OutsideDamagePerSecond > 0)
+                if (authorityTick.OutsideDamageRequests.Length > 0)
                 {
-                    _outsideDamageAccumulator -= outsideDamageTickSeconds;
-                    ApplyOutsideDamage(tick);
+                    ApplyOutsideDamage(authorityTick);
                 }
 
                 CollectPickups();
@@ -87,7 +86,7 @@ namespace BattleRaja.Presentation.Match
                 UpdateSpectator(tick);
                 if (tick.MatchEnded)
                 {
-                    Results = _simulation.GetSnapshots();
+                    Results = Simulation.GetSnapshots();
                     _resultsShown = true;
                     break;
                 }
@@ -98,14 +97,13 @@ namespace BattleRaja.Presentation.Match
         {
             CacheActors();
             var spawns = _actors.Select(actor => new MatchSpawn(actor.Target.Id, new Float2(actor.Transform.position.x, actor.Transform.position.z), actor.Health.MaxHealth)).ToList();
-            _simulation = new OfflineMatchSimulation(OfflineMatchDefinition.SoloRaja);
-            _simulation.Start(spawns);
+            _authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja, outsideDamageTickSeconds);
+            _authority.Start(spawns);
             _simulationClock = new FixedSimulationClock(Math.Max(1, simulationTickRate));
             ZoneCenter = Float2.Zero;
             NextZoneCenter = Float2.Zero;
             ZoneRadius = 0f;
             NextZoneRadius = 0f;
-            _outsideDamageAccumulator = 0f;
             _playerSpectating = false;
             _resultsShown = false;
             Results = null;
@@ -118,12 +116,12 @@ namespace BattleRaja.Presentation.Match
 
         public void CycleSpectator()
         {
-            if (!_playerSpectating || _simulation == null || cameraController == null)
+            if (!_playerSpectating || Simulation == null || cameraController == null)
             {
                 return;
             }
 
-            var snapshots = _simulation.GetSnapshots();
+            var snapshots = Simulation.GetSnapshots();
             var next = SpectatorTargetSelector.SelectNext(snapshots, cameraController.FollowTarget != null
                 ? cameraController.FollowTarget.GetComponent<CombatTarget>()?.Id ?? default
                 : default);
@@ -146,21 +144,14 @@ namespace BattleRaja.Presentation.Match
             }
         }
 
-        private void ApplyOutsideDamage(MatchTickResult tick)
+        private void ApplyOutsideDamage(MatchAuthorityTick authorityTick)
         {
-            for (var i = 0; i < _actors.Count; i++)
+            for (var i = 0; i < authorityTick.OutsideDamageRequests.Length; i++)
             {
-                var actor = _actors[i];
-                if (actor.Health.Snapshot.IsDefeated || Float2.Distance(new Float2(actor.Transform.position.x, actor.Transform.position.z), tick.ZoneCenter) <= tick.ZoneRadius)
-                {
-                    continue;
-                }
-
-                damageResolver?.Resolve(
-                    actor.Target,
-                    new DamageRequest(new CombatEntityId(-99), actor.Target.Id, CombatFaction.Neutral, tick.OutsideDamagePerSecond, DamageType.Aandhi),
-                    allowSelfHit: true,
-                    allowFriendlyFire: true);
+                var request = authorityTick.OutsideDamageRequests[i];
+                var actor = _actors.FirstOrDefault(binding => binding.Target.Id == request.TargetId);
+                if (actor == null || actor.Health.Snapshot.IsDefeated) continue;
+                damageResolver?.Resolve(actor.Target, request, allowSelfHit: true, allowFriendlyFire: true);
             }
         }
 
@@ -205,7 +196,7 @@ namespace BattleRaja.Presentation.Match
             {
                 _playerSpectating = true;
                 player.Input?.ReleasePointerFocus();
-                var next = SpectatorTargetSelector.SelectNext(_simulation.GetSnapshots(), player.Target.Id);
+                var next = SpectatorTargetSelector.SelectNext(Simulation.GetSnapshots(), player.Target.Id);
                 var actor = _actors.FirstOrDefault(binding => binding.Target.Id == next);
                 if (actor != null) cameraController?.SetFollowTarget(actor.Transform);
             }

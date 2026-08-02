@@ -16,7 +16,7 @@ This file records evidence-backed status only. Allowed status values are: `Not s
 | Explicit fixed simulation clock | Passed with evidence | 30 Hz accumulator integrated into offline match controller; clock EditMode 60/60 and PlayMode 27/27 pass |
 | Continuously interpolated Aandhi | Passed with evidence | Zone radius interpolates between phase radii; EditMode 60/60 and PlayMode 27/27 pass |
 | Bot current/next-zone awareness | Passed with evidence | Bot snapshots carry current/next zone data and proactively reposition; EditMode 61/61 and PlayMode 27/27 pass |
-| Authoritative rule separation | In progress | Presentation controller still owns part of offline match authority; refactor remains |
+| Authoritative rule separation | In progress | Zone-damage cadence/intents now live in `OfflineMatchAuthority`; pickup/gadget collection and presentation adapters remain to be extracted |
 | Fighter roster, progression, and complete offline loop | Not started | Later milestone scope; no completion claim |
 | Real Photon multiplayer | Not started | Imported SDK is not an adapter or multiplayer validation |
 | PlayFab/backend/economy | Not started | No production backend claim |

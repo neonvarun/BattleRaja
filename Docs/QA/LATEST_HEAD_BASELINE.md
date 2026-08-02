@@ -23,6 +23,7 @@ The baseline intentionally excludes unrelated working-tree changes in `Assets/Ba
 | Fixed-clock integration | 30 Hz accumulator separates render frames from authoritative match steps; EditMode 60/60 and PlayMode 27/27 pass | `Builds/M11/TestResults/clock-editmode.xml`, `Builds/M11/TestResults/clock-playmode.xml` |
 | Aandhi interpolation | Zone radius is continuous across opening/pressure transitions; EditMode 60/60 and PlayMode 27/27 pass | `Builds/M11/TestResults/aandhi-editmode.xml`, `Builds/M11/TestResults/aandhi-playmode.xml` |
 | Bot zone awareness | Bot perception includes current/next zone and the decision engine repositions proactively; EditMode 61/61 and PlayMode 27/27 pass | `Builds/M11/TestResults/botzone-editmode.xml`, `Builds/M11/TestResults/botzone-playmode.xml` |
+| Authority seam | `OfflineMatchAuthority` owns zone-damage cadence and emits immutable `DamageRequest` intents; EditMode 62/62 and PlayMode 27/27 pass | `Builds/M11/TestResults/authority-editmode.xml`, `Builds/M11/TestResults/authority-playmode.xml` |
 | Android build | Development IL2CPP APK — exit 0 | `Builds/M11/Logs/android-build.log` |
 | Android artifact | 150,735,210 bytes; SHA-256 `22B55FCD3B82EB641F6B04EF02BF3572301D4DEB119EDC193D6BFE834AE5ECE9` | `Builds/M11/Android/BattleRaja-M11.apk` |
 | Android device smoke | Installed and launched on Lava `ST5GDW23LB004392` only; focused activity `com.example.battleraja.m11/com.unity3d.player.UnityPlayerGameActivity`; process `22867` observed | `Docs/QA/Visual/latest-head-android.png`; ADB/logcat output |

@@ -90,6 +90,17 @@ Record every material choice here. Do not silently overwrite old decisions.
   and 27/27 PlayMode tests; `PhotonAppSettings.asset` App ID configuration.
 - **Owner:** Human project owner
 
+### ADR-014 — Offline match authority boundary
+
+- **Date:** 2026-08-02
+- **Status:** Accepted for the offline foundation; pickup/gadget extraction remains open.
+- **Context:** `OfflineMatchController` was coordinating the fixed clock, match simulation, zone-damage cadence and Unity damage application in one presentation object.
+- **Options considered:** Keep scene timing as the authority; duplicate the rules in a future network adapter; or isolate transport-independent match ticking and damage intents in Core/Application while leaving Unity as an adapter.
+- **Decision:** Use `OfflineMatchAuthority` to own the offline simulation reference, fixed-step zone-damage cadence and immutable `DamageRequest` intents. `OfflineMatchController` consumes those intents through the existing central damage resolver. Pickup/gadget proximity and spectator/UI behavior remain presentation adapters until their domain contracts are defined.
+- **Consequences:** Zone damage and match resolution have a reusable pure/application seam for future server or Fusion adapters. Unity remains responsible for object lookup, damage presentation and pickup effects. The authority boundary is intentionally partial and is not a real multiplayer claim.
+- **Evidence/sources:** `OfflineMatchAuthority`, `OfflineMatchController`, `AuthorityFoundationTests`, 62 EditMode and 27 PlayMode tests.
+- **Owner:** Human project owner
+
 ### ADR-010 — Milestone 9 safe server/match preparation while Fusion is blocked
 
 - **Date:** 2026-08-02
