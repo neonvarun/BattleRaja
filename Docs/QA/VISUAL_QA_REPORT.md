@@ -2,7 +2,7 @@
 
 Date: 2026-08-03  
 Runtime-bearing candidate: `4391f09` (`feat: add replayable tutorial arena`)  
-Current source HEAD: `511f2f4` (the later change only adds a PlayMode cleanup regression test and documentation)  
+Current source HEAD: `0699980` (visual QA evidence/documentation follow-up commits after the runtime-bearing candidate)  
 Unity: `6000.5.6f1`  
 Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://localhost:8124/index.html`
 
@@ -21,7 +21,7 @@ The Playwright CLI loaded the WebGL candidate and exercised the required desktop
 | Match opening | Observed | `playwright-1920x1080-match-opening.png`, `playwright-1440x900-match-opening.png`, `playwright-1280x720-match-opening.png` and `playwright-1024x768-match-opening.png`; actors, HUD, controls and arena render without desktop clipping. |
 | Active combat | Observed | `playwright-1280x720-active-pressure.png`; fighters, projectiles/telegraphs and HUD remain visible during live pressure. |
 | Aandhi pressure | Observed | `playwright-1280x720-aandhi-pressure.png`; the HUD reports `CLOSING` and the zone values change. |
-| Gadget pickup/use | Not verified | The smoke path continued to show `GADGET [G] empty`; no successful pickup/use was captured. |
+| Gadget pickup/use | Not verified | `playwright-1280x720-gadget-prompt.png` captures the honest tutorial prompt, but the smoke path continued to show `GADGET [G] empty`; no successful pickup/use was captured. |
 | Pause/settings | Observed | `playwright-1280x720-settings.png`; the overlay is readable but covers a substantial portion of the arena. |
 | Spectator | Observed | `playwright-1280x720-spectator.png`; the player was eliminated during the run and the spectator surface was entered through the real `SPECTATE` control. |
 | Results/rematch | Not verified | The run reached `MATCH RESOLUTION` with one survivor but did not reach a results/rematch surface; no fake result was produced. |
