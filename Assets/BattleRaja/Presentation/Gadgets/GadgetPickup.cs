@@ -15,15 +15,19 @@ namespace BattleRaja.Presentation.Gadgets
         {
             if (!available || user == null) return false;
             if (!user.TryPickup(GadgetId)) return false;
-            available = false;
-            gameObject.SetActive(false);
+            SetAvailable(false);
             return true;
         }
 
         public void ResetPickup()
         {
-            available = true;
-            gameObject.SetActive(true);
+            SetAvailable(true);
+        }
+
+        public void SetAvailable(bool value)
+        {
+            available = value;
+            gameObject.SetActive(value);
         }
     }
 }

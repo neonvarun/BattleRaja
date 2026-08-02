@@ -18,13 +18,14 @@ namespace BattleRaja.Presentation.Match
 
         public bool IsAvailable => _respawnAt < 0f;
         public MatchPickupType PickupType => pickupType;
+        public int Value => value;
+        public float RespawnSeconds => respawnSeconds;
 
         private void Update()
         {
             if (_respawnAt > 0f && Time.time >= _respawnAt)
             {
-                _respawnAt = -1f;
-                gameObject.SetActive(true);
+                SetAvailable(true);
             }
         }
 
@@ -44,6 +45,12 @@ namespace BattleRaja.Presentation.Match
             _respawnAt = Time.time + respawnSeconds;
             gameObject.SetActive(false);
             return true;
+        }
+
+        public void SetAvailable(bool available)
+        {
+            _respawnAt = available ? -1f : float.PositiveInfinity;
+            gameObject.SetActive(available);
         }
     }
 }

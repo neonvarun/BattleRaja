@@ -110,6 +110,32 @@ namespace BattleRaja.Presentation.Match
             CacheActors();
             var spawns = _actors.Select(actor => new MatchSpawn(actor.Target.Id, new Float2(actor.Transform.position.x, actor.Transform.position.z), actor.Health.MaxHealth)).ToList();
             _authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja, outsideDamageTickSeconds);
+            var pickupDefinitions = new List<MatchPickupDefinition>(pickups != null ? pickups.Length : 0);
+            if (pickups != null)
+            {
+                for (var i = 0; i < pickups.Length; i++)
+                {
+                    var pickup = pickups[i];
+                    if (pickup == null) continue;
+                    pickupDefinitions.Add(new MatchPickupDefinition(
+                        i,
+                        MatchPickupKind.Health,
+                        pickup.Value,
+                        pickup.RespawnSeconds));
+                }
+            }
+
+            var gadgetDefinitions = new List<GadgetPickupDefinition>(gadgetPickups != null ? gadgetPickups.Length : 0);
+            if (gadgetPickups != null)
+            {
+                for (var i = 0; i < gadgetPickups.Length; i++)
+                {
+                    var pickup = gadgetPickups[i];
+                    if (pickup != null) gadgetDefinitions.Add(new GadgetPickupDefinition(i, pickup.GadgetId));
+                }
+            }
+
+            _authority.ConfigureItems(pickupDefinitions, gadgetDefinitions);
             _authority.Start(spawns);
             _simulationClock = new FixedSimulationClock(Math.Max(1, simulationTickRate));
             ZoneCenter = Float2.Zero;
@@ -186,12 +212,25 @@ namespace BattleRaja.Presentation.Match
             for (var p = 0; p < pickups.Length; p++)
             {
                 var pickup = pickups[p];
-                if (pickup == null || !pickup.IsAvailable) continue;
+                if (pickup == null || !_authority.IsPickupAvailable(p))
+                {
+                    pickup?.SetAvailable(false);
+                    continue;
+                }
+
+                pickup.SetAvailable(true);
                 for (var i = 0; i < _actors.Count; i++)
                 {
                     var actor = _actors[i];
                     if (actor.Health.Snapshot.IsDefeated || Vector3.Distance(actor.Transform.position, pickup.transform.position) > 1.2f) continue;
-                    if (pickup.TryCollect(actor.Health)) break;
+                    var result = _authority.TryCollectPickup(
+                        p,
+                        actor.Health.Snapshot.CurrentHealth,
+                        actor.Health.MaxHealth);
+                    if (!result.Collected) continue;
+                    actor.Health.Heal(result.HealAmount);
+                    pickup.SetAvailable(false);
+                    break;
                 }
             }
         }
@@ -202,13 +241,24 @@ namespace BattleRaja.Presentation.Match
             for (var p = 0; p < gadgetPickups.Length; p++)
             {
                 var pickup = gadgetPickups[p];
-                if (pickup == null || !pickup.IsAvailable) continue;
+                if (pickup == null || !_authority.IsGadgetPickupAvailable(p))
+                {
+                    pickup?.SetAvailable(false);
+                    continue;
+                }
+
+                pickup.SetAvailable(true);
                 for (var i = 0; i < _actors.Count; i++)
                 {
                     var actor = _actors[i];
                     if (actor.Health.Snapshot.IsDefeated || Vector3.Distance(actor.Transform.position, pickup.transform.position) > 1.3f) continue;
                     var user = actor.Transform.GetComponent<GadgetUser>();
-                    if (pickup.TryCollect(user)) break;
+                    if (user == null) continue;
+                    var result = _authority.TryCollectGadget(p, user.HasGadget);
+                    if (!result.Collected) continue;
+                    user.TryPickup(result.GadgetId);
+                    pickup.SetAvailable(false);
+                    break;
                 }
             }
         }

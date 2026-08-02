@@ -135,6 +135,27 @@ Record every material choice here. Do not silently overwrite old decisions.
   and 27 PlayMode tests.
 - **Owner:** Human project owner
 
+### ADR-017 — Application-owned match item collection
+
+- **Date:** 2026-08-02
+- **Status:** Accepted for the offline foundation; gadget effect execution remains an adapter concern.
+- **Context:** Scene `MatchPickup` and `GadgetPickup` components previously decided availability,
+  respawn and collection directly while `OfflineMatchController` scanned actors.
+- **Options considered:** Keep item state inside scene components; duplicate pickup rules in a
+  future online adapter; or move availability/respawn/collection decisions into pure runtimes
+  and let Unity apply only accepted health/inventory effects.
+- **Decision:** `OfflineMatchAuthority` owns configured `MatchPickupRuntime` and
+  `GadgetPickupRuntime` instances. Collection receives health/inventory observations and returns
+  typed results; `OfflineMatchController` supplies proximity and applies those results to Unity
+  components. Gadget effect execution remains behind the existing `GadgetUser` presentation
+  adapter until effect events have a dedicated application contract.
+- **Consequences:** Duplicate collection and respawn rules cannot be accepted by a future client
+  path, and item behavior can be tested without a scene. Scene objects remain visual adapters and
+  are not the public-match authority.
+- **Evidence/sources:** `MatchItems`, `OfflineMatchAuthority`, `OfflineMatchController`,
+  `AuthorityFoundationTests`, 68 EditMode and 27 PlayMode tests.
+- **Owner:** Human project owner
+
 ### ADR-010 — Milestone 9 safe server/match preparation while Fusion is blocked
 
 - **Date:** 2026-08-02

@@ -24,6 +24,10 @@ namespace BattleRaja.Core.Application
     {
         private readonly OfflineMatchDefinition _definition;
         private readonly float _outsideDamageTickSeconds;
+        private MatchPickupDefinition[] _pickupDefinitions = Array.Empty<MatchPickupDefinition>();
+        private GadgetPickupDefinition[] _gadgetPickupDefinitions = Array.Empty<GadgetPickupDefinition>();
+        private MatchPickupRuntime[] _pickups = Array.Empty<MatchPickupRuntime>();
+        private GadgetPickupRuntime[] _gadgetPickups = Array.Empty<GadgetPickupRuntime>();
         private OfflineMatchSimulation _simulation;
         private double _outsideDamageAccumulator;
 
@@ -40,10 +44,30 @@ namespace BattleRaja.Core.Application
 
         public OfflineMatchSimulation Simulation => _simulation;
 
+        public void ConfigureItems(
+            IReadOnlyList<MatchPickupDefinition> pickups,
+            IReadOnlyList<GadgetPickupDefinition> gadgetPickups)
+        {
+            _pickupDefinitions = pickups != null ? Copy(pickups) : Array.Empty<MatchPickupDefinition>();
+            _gadgetPickupDefinitions = gadgetPickups != null ? Copy(gadgetPickups) : Array.Empty<GadgetPickupDefinition>();
+        }
+
         public void Start(IReadOnlyList<MatchSpawn> spawns)
         {
             _simulation = new OfflineMatchSimulation(_definition);
             _simulation.Start(spawns);
+            _pickups = new MatchPickupRuntime[_pickupDefinitions.Length];
+            for (var i = 0; i < _pickupDefinitions.Length; i++)
+            {
+                _pickups[i] = new MatchPickupRuntime(_pickupDefinitions[i]);
+            }
+
+            _gadgetPickups = new GadgetPickupRuntime[_gadgetPickupDefinitions.Length];
+            for (var i = 0; i < _gadgetPickupDefinitions.Length; i++)
+            {
+                _gadgetPickups[i] = new GadgetPickupRuntime(_gadgetPickupDefinitions[i]);
+            }
+
             _outsideDamageAccumulator = 0d;
         }
 
@@ -54,6 +78,7 @@ namespace BattleRaja.Core.Application
         public MatchAuthorityTick Advance(float fixedDeltaSeconds)
         {
             var simulation = RequireSimulation();
+            for (var i = 0; i < _pickups.Length; i++) _pickups[i].Advance(fixedDeltaSeconds);
             var result = simulation.Advance(fixedDeltaSeconds);
             if (result.OutsideDamagePerSecond <= 0)
             {
@@ -86,6 +111,39 @@ namespace BattleRaja.Core.Application
             }
 
             return new MatchAuthorityTick(result, requests.ToArray());
+        }
+
+        public MatchPickupCollectResult TryCollectPickup(int pickupId, int currentHealth, int maxHealth)
+        {
+            if (pickupId < 0 || pickupId >= _pickups.Length) return new MatchPickupCollectResult(false, 0);
+            return _pickups[pickupId].TryCollect(currentHealth, maxHealth);
+        }
+
+        public bool IsPickupAvailable(int pickupId)
+        {
+            return pickupId >= 0 && pickupId < _pickups.Length && _pickups[pickupId].IsAvailable;
+        }
+
+        public GadgetPickupCollectResult TryCollectGadget(int pickupId, bool hasGadget)
+        {
+            if (pickupId < 0 || pickupId >= _gadgetPickups.Length)
+            {
+                return new GadgetPickupCollectResult(false, default(ContentId));
+            }
+
+            return _gadgetPickups[pickupId].TryCollect(hasGadget);
+        }
+
+        public bool IsGadgetPickupAvailable(int pickupId)
+        {
+            return pickupId >= 0 && pickupId < _gadgetPickups.Length && _gadgetPickups[pickupId].IsAvailable;
+        }
+
+        private static T[] Copy<T>(IReadOnlyList<T> source)
+        {
+            var copy = new T[source.Count];
+            for (var i = 0; i < source.Count; i++) copy[i] = source[i];
+            return copy;
         }
 
         private OfflineMatchSimulation RequireSimulation()
