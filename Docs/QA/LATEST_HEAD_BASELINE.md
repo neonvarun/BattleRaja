@@ -2,7 +2,7 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `511f2f4` (`test: verify repeated offline scene cleanup`)
+Latest validated source HEAD: `1a41c09` (`docs: record gadget tutorial prompt evidence`)
 Latest runtime-bearing candidate: `4391f09` (`feat: add replayable tutorial arena`)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
@@ -158,3 +158,15 @@ After the authority seam commit `1a92b6c`, the runtime artifacts were rebuilt an
 - Desktop menu, mode, fighter, match, pressure, spectator, settings and online-error surfaces were visually inspected. Evidence is under `Docs/QA/Visual/Phase7/playwright-*.png` and summarized in `Docs/QA/VISUAL_QA_REPORT.md`.
 - Portrait menu fits, but portrait gameplay is horizontally cropped and the tutorial overlay is clipped. Gadget pickup/use, a distinct loading surface and results/rematch were not captured through the honest run.
 - This remains an **In progress** visual gate and does not establish final art quality, mobile-Web readiness, physical Lava ergonomics, or human approval.
+
+## Fresh latest-HEAD rebaseline (`1a41c09`)
+
+- Repository validation: `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` returned 0 errors and 0 warnings.
+- Unity compile/import: Unity `6000.5.6f1` completed the batchmode import/compile path with exit code 0. Photon Fusion editor import emitted a non-fatal custom-dependency scheduling warning; no compiler error was observed.
+- EditMode: 81 passed, 0 failed, 0 skipped (`Builds/M11/TestResults/rebaseline-20260803-editmode-v4.xml`).
+- PlayMode: 33 passed, 0 failed, 0 skipped (`Builds/M11/TestResults/rebaseline-20260803-playmode-v1.xml`).
+- Android: fresh development IL2CPP build succeeded (`Builds/M11/Logs/rebaseline-20260803-android-v1.log`). `Builds/M11/Android/BattleRaja-M11.apk` is 151,120,318 bytes; SHA-256 `1B74943F56D3474238320819F853D2C21DF5AB2648CDB0DC88929F85E328393E`. This exact APK was not installed; the Lava-only physical-device gate remains open.
+- Web: fresh development build succeeded (`Builds/M11/Logs/rebaseline-20260803-web-v1.log`). The output contains 19 build files (excluding the two older DOM-check text files) totaling 132,773,639 bytes; `Build/Web.wasm` is 120,109,688 bytes with SHA-256 `EF4548D592B4B7263B418192DBC0DBA478B1630E5AA5B30E5C28A531BEB11392`.
+- Local Web serve: `python -m http.server 8130` from `Builds/M11/Web`; `http://127.0.0.1:8130/index.html` returned HTTP 200.
+- Browser bootstrap: Playwright loaded the fresh URL in Chromium; the Unity player title and controls appeared, and the console reported 0 errors and 0 warnings. This is bootstrap evidence, not visual gameplay approval.
+- Build warnings/limitations: existing obsolete Unity `FindObjectsByType` API warnings and non-fatal licensing/Fusion/native-extension messages remain. The build's internal websockify helper also logged an `EADDRINUSE` shutdown warning while the player build itself reported success. Build-generated changes to `Bootstrap.unity` and `TutorialArena.unity` were restored because those files were clean before the baseline.

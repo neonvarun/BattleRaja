@@ -7,11 +7,11 @@ This file records evidence-backed status only. Allowed status values are: `Not s
 
 | Area | Status | Evidence / boundary |
 | --- | --- | --- |
-| Unity project and package baseline | Passed with evidence | Unity `6000.5.6f1`; latest validated source HEAD `511f2f4` (runtime-bearing candidate `4391f09`); repository validation clean; compile succeeds |
+| Unity project and package baseline | Passed with evidence | Unity `6000.5.6f1`; latest validated source HEAD `1a41c09` (runtime-bearing candidate `4391f09`); repository validation clean; fresh Photon-import compile path succeeds; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
 | Photon Fusion import | Passed with evidence | Fusion 2.1.1 stable build 2177 is present and imported; no public multiplayer claim |
 | EditMode and PlayMode regression baseline | Passed with evidence | Latest tutorial/cleanup validation passes 81/81 EditMode and 33/33 PlayMode tests; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
-| Android smoke build | Passed with evidence | HEAD `4391f09` Bazaar Bastion development IL2CPP APK (`151,120,618` bytes; SHA-256 `5366ACE6BA99BA25370E974399D70D0D76327F07D842F3C583D8B9C9A3C7C260`) built; Lava-only physical install for this exact artifact remains the next runtime check; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
-| Web smoke build | Passed with evidence | HEAD `4391f09` Bootstrap/Tutorial/Bazaar Web build (`19` files; `132,784,825` bytes) served locally and the Tutorial Replay route visually inspected at 1280×720; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
+| Android smoke build | Passed with evidence | Fresh HEAD `1a41c09` development IL2CPP APK (`151,120,318` bytes; SHA-256 `1B74943F56D3474238320819F853D2C21DF5AB2648CDB0DC88929F85E328393E`) built; Lava-only physical install for this exact artifact remains the next runtime check; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
+| Web smoke build | Passed with evidence | Fresh HEAD `1a41c09` Web build (`19` build files; `132,773,639` bytes; main WASM SHA-256 `EF4548D592B4B7263B418192DBC0DBA478B1630E5AA5B30E5C28A531BEB11392`) served locally and Chromium bootstrap returned 0 errors/0 warnings; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
 | Timeout/winner correctness | Passed with evidence | Deterministic timeout ranking and complete placements implemented; phase-1 EditMode 59/59 and PlayMode 27/27 pass |
 | Eliminations and match statistics | Passed with evidence | Instigator-aware combat events now record damage dealt, eliminations, survival time and duplicate-credit prevention; EditMode 70/70 and PlayMode 27/27 pass |
 | Explicit fixed simulation clock | In progress | 30 Hz accumulator now also drives bot decisions/navigation/commands; timeout winner ID and next-zone centre are explicit. Full replay/input-buffer audit and broader runtime coverage remain |
