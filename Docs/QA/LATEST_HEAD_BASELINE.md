@@ -2,7 +2,7 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `380781b` (`feat: add canvas match UI foundation`)
+Latest validated source HEAD: `2c36bbb` (`feat: add production flow and fighter selection`)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
 ## Scope and repository note
@@ -100,3 +100,32 @@ After the authority seam commit `1a92b6c`, the runtime artifacts were rebuilt an
   controller rebinding, functional aim assist, final authored UI and human visual review
   remain open. The scene and screenshots are still stylised greybox evidence, not a
   release or store-readiness claim.
+
+## Production flow and fighter selection validation (`2c36bbb`)
+
+- Source/control: pushed branch `codex/product-completion` is at `2c36bbb`; the user-owned
+  dirty `MovementLab.unity` and Burst WASM files were explicitly excluded from the commit.
+- Compile/validation: `BattleRaja.Editor.BuildEntrypoints.ValidateProject` exited 0 and
+  `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe`
+  reported 0 errors and 0 warnings (`Builds/M11/Logs/flow-compile-20260803c.log`).
+- EditMode: 77 passed, 0 failed (`Builds/M11/TestResults/flow-editmode-final-20260803.xml`).
+- PlayMode: 31 passed, 0 failed (`Builds/M11/TestResults/flow-playmode-final-20260803.xml`).
+  This includes Bootstrap main-menu/offline/online-error routing and the Bazaar runtime
+  Pehel controller-binding test.
+- Android: development IL2CPP build succeeded with Bootstrap and Bazaar scenes in build
+  order (`Builds/M11/Logs/flow-android-head-2c36bbb.log`). Actual APK size is 151,092,503
+  bytes; SHA-256 is `B664BD85DAD93C6151A93E3C93DEE7640A077F395C2246E71AB3E802BBE83856`.
+  No install or physical-device claim was made in this flow turn.
+- Web: development build succeeded with Bootstrap and Bazaar scenes
+  (`Builds/M11/Logs/flow-web-head-2c36bbb.log`), 19 files and 132,757,798 bytes. Main WASM
+  is 120,095,092 bytes with SHA-256
+  `8FAE0E0063B46B97CCC5579010E52BF1076C8839E9089DD3723F7A2EC41E7CBF`.
+- Web runtime: local HTTP `http://127.0.0.1:8123/index.html` returned 200. At 1280×720,
+  browser inspection showed Main Menu, Mode Selection, Fighter Selection (including Maya),
+  Settings and the main-menu Online path's explicit Photon-unavailable error. Screenshots
+  are stored under `Docs/QA/Visual/Flow/`. Browser logs contained no errors/warnings in
+  the final HEAD smoke.
+- Boundary: this is production-flow evidence, not final visual QA. The UI remains original
+  stylised greybox presentation; tutorial, multi-viewport visual gate, Android Lava runtime
+  check for this exact APK, performance profiling, real Photon and real PlayFab remain open
+  or externally blocked.

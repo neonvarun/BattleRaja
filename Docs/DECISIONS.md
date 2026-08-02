@@ -463,3 +463,33 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Evidence/sources:** `OfflineMatchHud.cs`, `FighterPresentation.cs`, phase-5 EditMode
   72/72 and PlayMode 29/29 results, Lava Android and Chrome Web smoke screenshots.
 - **Owner:** Human project owner
+
+### ADR-025 — Keep production flow pure and bind the selected fighter at the scene boundary
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the first production-flow slice; tutorial, final UX and real
+  service gates remain open.
+- **Context:** The Canvas match HUD was usable only after opening a gameplay scene directly.
+  A product-facing build needs a deterministic bootstrap/menu/mode/fighter/loading/error path,
+  while the selected fighter must change the real actor rather than remain a decorative menu
+  choice.
+- **Options considered:** Put flow state in a Unity MonoBehaviour; make the menu load a
+  fixed Bijli scene; or keep transitions in a pure application state machine and apply the
+  persisted fighter choice through an explicit presentation boundary on actor 1.
+- **Decision:** `ProductionFlowMachine` owns only deterministic flow state, mode/fighter intent
+  and error transitions in `BattleRaja.Core.Application`. `ProductionFlowController` renders
+  that state in a runtime Canvas, persists local presentation preferences with `PlayerPrefs`,
+  asynchronously loads `BazaarBastion`, and reports online/Fusion unavailability without
+  fabricating a room. `PlayerFighterSelection` then enables the selected first-party
+  `BijliFighterController`, `PehelFighterController` or `MayaFighterController`, updates the
+  shared movement-lock and attack definition seams, and leaves bots/match authority unchanged.
+- **Consequences:** Bootstrap is first in Android/Web build settings, the production scenes
+  are loadable by name, and menu/fighter routing is testable without Unity. Local preferences
+  are not authoritative progression or network state. Scene generation must be rerun through
+  the editor entrypoint after fixture/content changes; the final authored UI and tutorial are
+  still follow-up work.
+- **Evidence/sources:** `ProductionFlowMachine.cs`, `ProductionFlowController.cs`,
+  `PlayerFighterSelection.cs`, `BootstrapPlayModeTests.cs`,
+  `PlayerFighterSelectionPlayModeTests.cs`, 77/77 EditMode and 31/31 PlayMode results,
+  `Docs/QA/Visual/Flow/` screenshots, and HEAD `2c36bbb` Android/Web build logs.
+- **Owner:** Human project owner

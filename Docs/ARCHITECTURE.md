@@ -241,3 +241,24 @@ Android and Web share domain, application and most presentation code. Platform-s
   safe-area/device review and Web responsive review remain explicit follow-up gates.
   Main-menu/bootstrap flow, complete offline/tutorial progression, localization assets,
   controller rebinding and final authored UI remain outside this foundation slice.
+
+## M14 production flow and selected-fighter boundary
+
+- `BattleRaja.Core.Application.ProductionFlowMachine` is a Unity-independent state machine
+  for Bootstrap, MainMenu, ModeSelection, FighterSelection, MatchLoading, Gameplay,
+  Paused, Settings, Spectator, Results and Error. It carries local mode/fighter intent and
+  explicit error codes; it does not own match outcomes, credentials or network authority.
+- `BattleRaja.Presentation.Flow.ProductionFlowController` creates the Bootstrap Canvas,
+  safe-area root and EventSystem, renders the menu/mode/fighter/loading/settings/error
+  surfaces, persists only local presentation preferences, and loads the production scene
+  asynchronously. The online path is deliberately an honest unavailable state until the
+  approved Fusion account/session gate exists.
+- `PlayerFighterSelection` is the explicit scene-boundary adapter for actor 1. It selects
+  one of the existing first-party fighter ability controllers, refreshes the shared movement
+  lock and attack definition seams, and never writes authoritative match state. Bots remain
+  statically configured by the production-scene generator. `OfflineMatchHud` adds pause/
+  menu cleanup and local settings persistence without moving simulation rules into UI.
+- Build entrypoints register `Bootstrap.unity` before `BazaarBastion.unity` for production
+  Android/Web builds. `MovementLab` remains a regression fixture. The flow is proven by pure,
+  EditMode and PlayMode tests plus a 1280×720 Web smoke; responsive multi-viewport visual QA,
+  tutorial replay and final authored presentation remain explicit gates.
