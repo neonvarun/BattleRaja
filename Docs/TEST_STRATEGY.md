@@ -236,3 +236,28 @@ collected.
 - Android/Web builds and authorized device/Chrome/Edge bootstrap smoke passed.
 - Final UI/tutorial/accessibility, art/audio and device-tier performance are explicitly
   untested and tracked in HR-007.
+
+## Milestone 8 networking coverage
+
+### Pure/EditMode
+
+- protocol/topology/tick configuration bounds and version mismatch
+- two-client join/room-full/leave behavior
+- shared input-frame replication and authoritative snapshot ticks
+- server-owned damage/elimination idempotence
+- deterministic packet-loss diagnostics
+- explicit Photon adapter credential-blocked behavior without package references
+
+### PlayMode and external gate
+
+- Existing 27-test PlayMode regression suite remains green; no real Photon session is
+  claimed. After credentials are approved, add two-client Lava Android + desktop Web tests
+  for prediction/reconciliation/interpolation, authority, reconnect, room/version errors,
+  and controlled good/moderate/poor latency, jitter and loss.
+
+### M8 evidence (2026-08-02)
+
+- `Unity.exe -batchmode -nographics -projectPath . -runTests -testPlatform editmode -testResults Builds/M8/TestResults/editmode.xml -logFile Builds/M8/Logs/editmode.log` — 44/44 passed.
+- `Unity.exe -batchmode -nographics -projectPath . -runTests -testPlatform playmode -testResults Builds/M8/TestResults/playmode.xml -logFile Builds/M8/Logs/playmode.log` — 27/27 passed.
+- Photon Fusion package/App ID/account access is unavailable; real two-client transport,
+  prediction/reconciliation/interpolation and reconnect evidence are blocked.

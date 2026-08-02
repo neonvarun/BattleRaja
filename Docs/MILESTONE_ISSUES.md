@@ -203,3 +203,18 @@ Each issue must include:
   and non-fatal IL2CPP SphereCollider warning require follow-up.
 - **Human review gate:** HR-007 is open and required before release-quality claims;
   it does not block provisional M8 networking work.
+
+### BR-M8-001 — Photon Fusion access is unavailable
+
+- **Objective:** Complete a real two-client Android/Web networking proof with authoritative
+  snapshots, prediction/reconciliation and transport-condition validation.
+- **Current state:** Compile-safe Infrastructure contracts, deterministic mock and tests are
+  complete. No Photon Fusion package, App ID, license/account approval or runtime session
+  credentials are available, so the real gate is blocked.
+- **Required human action:** Approve/create the Photon Fusion application and provide the
+  package/version plus non-secret local configuration through an approved channel. Never
+  commit App IDs/secrets.
+- **Unblocking evidence:** One Lava Android client and one desktop Web client join the same
+  room, exchange shared commands, observe server-owned snapshots/damage, and pass controlled
+  latency/jitter/loss and reconnect checks with logs.
+- **Status:** Blocked; mock-only technical pass is not a real online pass.

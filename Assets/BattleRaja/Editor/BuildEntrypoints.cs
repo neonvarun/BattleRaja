@@ -6,6 +6,7 @@ using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Match;
 using BattleRaja.Presentation.Movement;
 using BattleRaja.Presentation.Gadgets;
+using BattleRaja.Infrastructure.Networking;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -35,7 +36,7 @@ namespace BattleRaja.Editor
         private const string MayaFighterAssetPath = "Assets/BattleRaja/Content/Fighters/M7-Maya.asset";
         private const string PehelWeaponAssetPath = "Assets/BattleRaja/Content/Weapons/M7-PehelSweep.asset";
         private const string MayaWeaponAssetPath = "Assets/BattleRaja/Content/Weapons/M7-MayaShard.asset";
-        private const string DevelopmentApplicationId = "com.example.battleraja.m7";
+        private const string DevelopmentApplicationId = "com.example.battleraja.m8";
         private const string GadgetAssetFolder = "Assets/BattleRaja/Content/Gadgets";
 
         public static void CreateBootstrapScene()
@@ -333,10 +334,15 @@ namespace BattleRaja.Editor
                 AssetDatabase.LoadAssetAtPath<FighterDefinitionAsset>(PehelFighterAssetPath) == null ||
                 AssetDatabase.LoadAssetAtPath<FighterDefinitionAsset>(MayaFighterAssetPath) == null)
             {
-                throw new BuildFailedException("M7 fighter/gadget definitions are incomplete.");
+                throw new BuildFailedException("M8 fighter/gadget/network-proof definitions are incomplete.");
             }
 
-            Debug.Log("BattleRaja Milestone 7 validation passed.");
+            if (!NetworkSessionConfig.Proof.IsValid(out var networkReason))
+            {
+                throw new BuildFailedException($"M8 network proof configuration is invalid: {networkReason}");
+            }
+
+            Debug.Log("BattleRaja Milestone 8 validation passed (Photon adapter remains credential-blocked).");
         }
 
         public static void BuildAndroidDevelopment()
@@ -351,7 +357,7 @@ namespace BattleRaja.Editor
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel28;
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
             PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
-            Build("Builds/M7/Android/BattleRaja-M7.apk", BuildTarget.Android);
+            Build("Builds/M8/Android/BattleRaja-M8.apk", BuildTarget.Android);
         }
 
         public static void BuildWebDevelopment()
@@ -362,7 +368,7 @@ namespace BattleRaja.Editor
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WebGL, BuildTarget.WebGL);
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
-            Build("Builds/M7/Web", BuildTarget.WebGL);
+            Build("Builds/M8/Web", BuildTarget.WebGL);
         }
 
         private static void Build(string outputPath, BuildTarget target)
@@ -381,7 +387,7 @@ namespace BattleRaja.Editor
                 throw new BuildFailedException($"{target} build failed: {report.summary.result}. See the Unity build log.");
             }
 
-            Debug.Log($"{target} M7 development build succeeded: {report.summary.outputPath} ({report.summary.totalSize} bytes).");
+            Debug.Log($"{target} M8 development build succeeded: {report.summary.outputPath} ({report.summary.totalSize} bytes).");
         }
 
         private static GameObject CreateBlock(string name, Vector3 position, Vector3 scale, Material material, Transform parent)

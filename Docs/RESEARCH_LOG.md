@@ -239,3 +239,27 @@ Research current primary sources before selecting technical versions, APIs, SDKs
 - **Uncertainty:** Bespoke special visuals, full UI/tutorial/accessibility, human balance,
   cultural/art review and device/browser performance remain open.
 - **Recheck trigger/date:** Before online authority work or a final art/UI pass.
+
+### M8 Photon Fusion networking proof baseline
+
+- **Date checked:** 2026-08-02
+- **Primary sources:** [Photon Fusion Network Runner](https://doc.photonengine.com/fusion/current/manual/network-runner),
+  [network topologies](https://doc.photonengine.com/fusion/current/manual/network-topologies),
+  [fixed-tick/network simulation loop](https://doc.photonengine.com/fusion/current/concepts-and-patterns/network-simulation-loop),
+  [network-condition simulation](https://doc.photonengine.com/fusion/v2/manual/testing-and-tooling/simulating-network-conditions),
+  and [Fusion getting started](https://doc.photonengine.com/fusion/v2/tutorials/shared-mode-basics/1-getting-started).
+- **Relevant claims:** Fusion sessions are hosted through a NetworkRunner; topology and
+  tick/simulation choices affect authority and replication; controlled latency/jitter/loss
+  simulation is available for testing. These claims were checked against current official
+  Photon docs before selecting the M8 seam.
+- **Decision impact:** Keep Photon outside Domain/Application, use client-server as the
+  proof topology, represent player actions as shared command/input intent, and test local
+  authority semantics with a deterministic mock until the approved Fusion package/App ID
+  exists. Do not fabricate a cloud session or put secrets in the repository.
+- **Local evidence:** 44/44 EditMode and 27/27 PlayMode tests; M8 adapter/mock source;
+  no real Fusion client evidence.
+- **Uncertainty:** Package version/licence, App ID, exact API wiring, real prediction,
+  reconciliation, interpolation, reconnect and Android/Web cross-platform behavior remain
+  blocked and must be rechecked after owner approval.
+- **Recheck trigger/date:** Immediately after Photon package/App ID/account access is
+  approved; before claiming M8 complete or adding public matchmaking.

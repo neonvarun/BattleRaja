@@ -112,3 +112,15 @@ Required next measurement: capture a short Editor, Lava and Oppo session with Un
   was collected.
 - Final art/audio overdraw, tutorial/menu UI, accessibility settings and low-end device
   stability remain unmeasured and are tracked in HR-007.
+
+## Milestone 8 networking baseline evidence — 2026-08-02
+
+- The deterministic network mock uses bounded two-client state, one input frame per
+  submitted tick and explicit diagnostics counters. Its packet-loss profiles are a
+  correctness harness, not a transport or frame-time claim.
+- No Photon transport, prediction/reconciliation, interpolation, reconnect, Android
+  radio profile or Web memory/frame-time capture was collected because the external Fusion
+  package/App ID gate is unavailable.
+- When unblocked, capture authoritative tick drift, input/snapshot rate, reconnect time,
+  packet loss/jitter behavior and device/browser CPU/GC/memory on Lava plus desktop Chrome
+  and Edge before calling the online budget established.

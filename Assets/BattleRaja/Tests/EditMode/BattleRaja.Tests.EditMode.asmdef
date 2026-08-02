@@ -4,7 +4,8 @@
   "references": [
     "BattleRaja.Core.Domain",
     "BattleRaja.Core.Application",
-    "BattleRaja.Gameplay"
+    "BattleRaja.Gameplay",
+    "BattleRaja.Infrastructure"
   ],
   "includePlatforms": [
     "Editor"

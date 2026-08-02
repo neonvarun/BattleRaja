@@ -26,6 +26,29 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Evidence/sources:** Unity 6000.5.6f1 release notes; Unity 6000.5 Android dependency table; Google Play target API policy; Unity Package Registry snapshot and live package resolution in `Packages/packages-lock.json`; live toolchain evidence recorded in `Docs/RESEARCH_LOG.md`; owner instruction in the current task; `Docs/MILESTONE_0_EXECUTION_PLAN.md`.
 - **Owner:** Human project owner
 
+### ADR-009 — Milestone 8 authoritative networking seam
+
+- **Date:** 2026-08-02
+- **Status:** Accepted for the credential-blocked M8 proof; real Fusion integration is blocked.
+- **Context:** Online work must preserve the pure command/domain boundary and cannot make a
+  browser tab the trusted authority. Fusion package/App ID/account access is not available
+  in this workspace.
+- **Options considered:** Put Photon types in Domain; add an unverified package and fake
+  cloud-room evidence; isolate transport behind Infrastructure and prove semantics with a
+  deterministic mock until approved credentials exist.
+- **Decision:** Use client-server topology as the proof baseline with a two-client,
+  30-tick configuration. Keep `NetworkInputFrame` as intent, snapshots/damage as
+  authoritative outputs, and expose a compile-safe `PhotonFusionAdapter` that returns an
+  explicit credential failure. Use deterministic packet-loss profiles for local tests.
+- **Consequences:** Core gameplay remains transport-independent and testable. The mock
+  validates room/version/authority semantics but cannot establish real prediction,
+  reconciliation, interpolation or cross-platform transport behavior. A human must approve
+  the Fusion package, App ID and account/licence terms before the full gate.
+- **Evidence/sources:** Official Photon Fusion Network Runner, topology, fixed-tick and
+  network-condition simulation documentation logged in `Docs/RESEARCH_LOG.md`; 44 EditMode
+  and 27 PlayMode tests; M8 report.
+- **Owner:** Human project owner
+
 ### ADR-008 — Milestone 7 three-fighter alpha roster
 
 - **Date:** 2026-08-02

@@ -154,3 +154,19 @@ Android and Web share domain, application and most presentation code. Platform-s
 - The shared presentation bridge is intentionally an alpha implementation: bespoke
   Pehel throw displacement and Maya decoy visuals are not yet authoritative presentation
   systems. This is recorded as M7 debt rather than hidden in the Domain layer.
+
+## M8 networking boundary
+
+- `BattleRaja.Infrastructure.Networking` owns transport-facing contracts only:
+  `NetworkSessionConfig`, `NetworkInputFrame`, `NetworkActorSnapshot`, diagnostics and
+  `INetworkSessionAdapter`. `BattleRaja.Core.Domain` and `BattleRaja.Core.Application`
+  remain free of Photon/Fusion references.
+- `NetworkSessionMock` is a deterministic correctness harness for two clients, protocol
+  versions, room capacity, input delivery, authoritative damage/elimination and seeded
+  packet loss. It is not a production server and must not be presented as online evidence.
+- `PhotonFusionAdapter` is an explicit compile-safe seam that reports credential blockage
+  until the approved Fusion package/App ID/configuration is supplied. A browser client is
+  never treated as trusted public-match authority; client inputs remain intents and the
+  server/host must own snapshots, damage, cooldowns and results in the real integration.
+- Real prediction, reconciliation, interpolation, reconnect and latency/jitter/loss
+  behavior require the external Fusion gate and two-client Android/Web validation.

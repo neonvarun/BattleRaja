@@ -2,7 +2,7 @@
 
 ## Active milestone
 
-**Milestone 7 — Three-Fighter Vertical Slice**
+**Milestone 8 — Networking Proof (credential-blocked partial)**
 
 ## Current state
 
@@ -26,7 +26,8 @@
   three-fighter roster gates passed provisionally. Match pacing, Aandhi, pickup,
   spectator/results, gadget counterplay, fighter feel, alpha UI/accessibility and device
   review remain open. Networking, backend and progression remain unimplemented.
-- Multiplayer: deliberately deferred
+- Multiplayer: M8 adapter/mock proof implemented; real Photon Fusion two-client gate is
+  blocked pending owner package/App ID/licence/account approval
 - Backend/economy: deliberately deferred
 - Final art/audio/animation: not started
 - Git/LFS: local repository initialized and LFS configured; `origin` points to `https://github.com/neonvarun/BattleRaja.git`
@@ -97,6 +98,19 @@
 - Android/Web M7 builds, two-device launch and Chrome/Edge local HTTP checks are recorded
   in `Docs/MILESTONE_REPORTS/M7.md`.
 
+## M8 execution evidence — 2026-08-02
+
+- `BattleRaja.Infrastructure.Networking` contains compile-safe session contracts, a
+  deterministic two-client mock and an explicit credential-blocked Photon adapter seam;
+  no Photon/PlayFab dependency or secret entered the repository.
+- EditMode: 44/44 passed in `Builds/M8/TestResults/editmode.xml`.
+- PlayMode: 27/27 passed in `Builds/M8/TestResults/playmode.xml`.
+- Android/Web M8 build and desktop-browser smoke are recorded in
+  `Docs/MILESTONE_REPORTS/M8.md`; Android validation from this point forward uses only the
+  connected Lava phone per owner instruction.
+- M8 full gate is **blocked**, not complete, until a real Fusion package/App ID/account
+  configuration enables one Lava Android client and one desktop Web client to share a room.
+
 ## M0 evidence retained
 
 - M0 validation, tests and smoke artifacts remain under ignored `Builds/M0/`.
@@ -127,3 +141,5 @@ Review is required before:
 3. Changing the pinned editor/package baseline or final branding/trademarks.
 4. Human review remains required for movement/combat feel, touch ergonomics, camera
    choice, balance, cultural sensitivity, legal/privacy, and release approval.
+5. Photon Fusion package/App ID/licence/account approval is required before real online
+   session testing; never commit secrets or treat the mock as production networking.
