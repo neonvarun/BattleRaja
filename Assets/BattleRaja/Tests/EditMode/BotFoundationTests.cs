@@ -44,6 +44,23 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void ZoneAwarenessRepositionsInsideCurrentButOutsideNextZone()
+        {
+            var target = new[]
+            {
+                new BotObservedTarget(new CombatEntityId(2), CombatFaction.Player, new Float2(0f, 4f), 100, true)
+            };
+            var zone = new BotZoneObservation(Float2.Zero, 4f, Float2.Zero, 3f);
+            var snapshot = new BotPerceptionSnapshot(new CombatEntityId(10), new Float2(3.5f, 0f), 100, 100, target, -1, zone);
+            var decision = new BotDecisionEngine().Decide(snapshot, 0, BotDifficultyProfile.FairDefault, new SeededRandom(11), false);
+
+            Assert.That(decision.State, Is.EqualTo(BotDecisionState.Reposition));
+            Assert.That(decision.TargetId.Value, Is.EqualTo(0));
+            Assert.That(decision.Movement.X, Is.LessThan(0f));
+            Assert.That(decision.Attack, Is.False);
+        }
+
+        [Test]
         public void AimNoiseStaysBoundedAndReactionDelayIsHonoured()
         {
             var target = new[]

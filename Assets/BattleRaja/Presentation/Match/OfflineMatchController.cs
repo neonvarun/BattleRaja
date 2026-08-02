@@ -30,6 +30,9 @@ namespace BattleRaja.Presentation.Match
         public OfflineMatchSimulation Simulation => _simulation;
         public MatchPhase CurrentPhase => _simulation != null ? _simulation.Phase : MatchPhase.LoadWarmup;
         public float ZoneRadius { get; private set; }
+        public Float2 ZoneCenter { get; private set; }
+        public Float2 NextZoneCenter { get; private set; }
+        public float NextZoneRadius { get; private set; }
         public int AliveCount => _simulation != null ? _simulation.AliveCount : 0;
         public bool PlayerSpectating => _playerSpectating;
         public bool ResultsShown => _resultsShown;
@@ -68,7 +71,10 @@ namespace BattleRaja.Presentation.Match
                 }
 
                 var tick = _simulation.Advance((float)_simulationClock.StepSeconds);
+                ZoneCenter = tick.ZoneCenter;
+                NextZoneCenter = tick.ZoneCenter;
                 ZoneRadius = tick.ZoneRadius;
+                NextZoneRadius = tick.NextZoneRadius;
                 _outsideDamageAccumulator += _simulationClock.StepSeconds;
                 if (_outsideDamageAccumulator >= outsideDamageTickSeconds && tick.OutsideDamagePerSecond > 0)
                 {
@@ -95,6 +101,10 @@ namespace BattleRaja.Presentation.Match
             _simulation = new OfflineMatchSimulation(OfflineMatchDefinition.SoloRaja);
             _simulation.Start(spawns);
             _simulationClock = new FixedSimulationClock(Math.Max(1, simulationTickRate));
+            ZoneCenter = Float2.Zero;
+            NextZoneCenter = Float2.Zero;
+            ZoneRadius = 0f;
+            NextZoneRadius = 0f;
             _outsideDamageAccumulator = 0f;
             _playerSpectating = false;
             _resultsShown = false;

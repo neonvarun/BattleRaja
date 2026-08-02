@@ -15,6 +15,12 @@ namespace BattleRaja.Core.Domain
         public float SqrMagnitude => (X * X) + (Y * Y);
         public float Magnitude => MathF.Sqrt(SqrMagnitude);
 
+        public float SqrMagnitudeFrom(Float2 origin)
+        {
+            var delta = this - origin;
+            return delta.SqrMagnitude;
+        }
+
         public Float2 Normalized
         {
             get

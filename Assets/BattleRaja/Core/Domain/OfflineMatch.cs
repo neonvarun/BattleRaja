@@ -103,11 +103,12 @@ namespace BattleRaja.Core.Domain
 
     public readonly struct MatchTickResult
     {
-        public MatchTickResult(MatchPhase phase, Float2 zoneCenter, float zoneRadius, int outsideDamagePerSecond, int outsideCount, bool matchEnded, CombatEntityId winnerId)
+        public MatchTickResult(MatchPhase phase, Float2 zoneCenter, float zoneRadius, float nextZoneRadius, int outsideDamagePerSecond, int outsideCount, bool matchEnded, CombatEntityId winnerId)
         {
             Phase = phase;
             ZoneCenter = zoneCenter;
             ZoneRadius = zoneRadius;
+            NextZoneRadius = nextZoneRadius;
             OutsideDamagePerSecond = outsideDamagePerSecond;
             OutsideCount = outsideCount;
             MatchEnded = matchEnded;
@@ -117,6 +118,7 @@ namespace BattleRaja.Core.Domain
         public MatchPhase Phase { get; }
         public Float2 ZoneCenter { get; }
         public float ZoneRadius { get; }
+        public float NextZoneRadius { get; }
         public int OutsideDamagePerSecond { get; }
         public int OutsideCount { get; }
         public bool MatchEnded { get; }
@@ -192,6 +194,7 @@ namespace BattleRaja.Core.Domain
 
             var phaseDefinition = GetCurrentPhaseDefinition();
             var zoneRadius = GetInterpolatedZoneRadius();
+            var nextZoneRadius = GetNextZoneRadius();
             var outside = 0;
             for (var i = 0; i < _participants.Count; i++)
             {
@@ -203,7 +206,7 @@ namespace BattleRaja.Core.Domain
             }
 
             var winner = FindWinner();
-            return new MatchTickResult(_phase, _definition.ZoneCenter, zoneRadius, phaseDefinition.OutsideDamagePerSecond, outside, IsEnded, winner);
+            return new MatchTickResult(_phase, _definition.ZoneCenter, zoneRadius, nextZoneRadius, phaseDefinition.OutsideDamagePerSecond, outside, IsEnded, winner);
         }
 
         public bool SyncHealth(CombatEntityId id, int currentHealth)
@@ -278,6 +281,18 @@ namespace BattleRaja.Core.Domain
                 ? MathF.Max(0f, MathF.Min(1f, (_elapsed - phaseStart) / phase.DurationSeconds))
                 : 1f;
             return phase.Radius + ((next.Radius - phase.Radius) * progress);
+        }
+
+        private float GetNextZoneRadius()
+        {
+            if (_definition.Phases.Length == 0) return 0f;
+            var phaseIndex = FindPhaseIndex(_elapsed);
+            if (phaseIndex < 0 || phaseIndex + 1 >= _definition.Phases.Length)
+            {
+                return _definition.Phases[_definition.Phases.Length - 1].Radius;
+            }
+
+            return _definition.Phases[phaseIndex + 1].Radius;
         }
 
         private int FindPhaseIndex(float elapsedSeconds)

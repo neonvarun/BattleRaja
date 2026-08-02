@@ -15,7 +15,7 @@ This file records evidence-backed status only. Allowed status values are: `Not s
 | Timeout/winner correctness | Passed with evidence | Deterministic timeout ranking and complete placements implemented; phase-1 EditMode 59/59 and PlayMode 27/27 pass |
 | Explicit fixed simulation clock | Passed with evidence | 30 Hz accumulator integrated into offline match controller; clock EditMode 60/60 and PlayMode 27/27 pass |
 | Continuously interpolated Aandhi | Passed with evidence | Zone radius interpolates between phase radii; EditMode 60/60 and PlayMode 27/27 pass |
-| Bot current/next-zone awareness | In progress | Audit identifies missing zone observations; bot perception/decision work remains |
+| Bot current/next-zone awareness | Passed with evidence | Bot snapshots carry current/next zone data and proactively reposition; EditMode 61/61 and PlayMode 27/27 pass |
 | Authoritative rule separation | In progress | Presentation controller still owns part of offline match authority; refactor remains |
 | Fighter roster, progression, and complete offline loop | Not started | Later milestone scope; no completion claim |
 | Real Photon multiplayer | Not started | Imported SDK is not an adapter or multiplayer validation |
