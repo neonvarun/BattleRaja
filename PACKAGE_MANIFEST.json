@@ -398,8 +398,8 @@
     },
     {
       "path": "PROJECT_STATUS.md",
-      "bytes": 12381,
-      "sha256": "0808efa8ea4da3bc7cf3f59b776662dd094511dde22d0fdc3f27e163f420d2e1"
+      "bytes": 12474,
+      "sha256": "fadfeea89303f1e6af499d47fdf30ea72005abcaf8589e334a8d7843f2552309"
     },
     {
       "path": "PROMPTS/00_MILESTONE_0_BOOTSTRAP.md",
@@ -418,8 +418,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 2984,
-      "sha256": "c58db805af0c93848f480037860c46a63775774d98860c2d7eff04bd8a971854"
+      "bytes": 3081,
+      "sha256": "e9d73abb36473dd6caab0eb0a19a04fa492a93e70113aa5043da2f4b011d5a5f"
     },
     {
       "path": "START_HERE.md",
@@ -1413,8 +1413,8 @@
     },
     {
       "path": "Docs/EXTERNAL_SERVICE_GATES.md",
-      "bytes": 1102,
-      "sha256": "2f7b8df0ba28ee6b5c6b2d3c8389ccc713dee0598b42adf696c5dad0bbc40c92"
+      "bytes": 2336,
+      "sha256": "d792d74475cb4eb9a4c1782f09905918e8b75003b323c5484c5b67bca48a55d0"
     },
     {
       "path": "Docs/FULL_BUILD_RUNBOOK.md",
@@ -2353,8 +2353,8 @@
     },
     {
       "path": "Docs/MILESTONE_REPORTS/M11.md",
-      "bytes": 4202,
-      "sha256": "805fe9f9dab10a67b9d6d7860daa30c58a57c4e562eda1eeef4c22df0a06b06f"
+      "bytes": 4265,
+      "sha256": "472fc61237d8aec49d45c04d99d8bca0c31c2af78fce9a80aa829b6d73b91db5"
     },
     {
       "path": "Docs/PRIVACY_DATA_SAFETY_WORKSHEET.md",

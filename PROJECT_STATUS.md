@@ -144,6 +144,7 @@
 - M11 artifact, test and smoke evidence is recorded in `Docs/MILESTONE_REPORTS/M11.md`.
 - No public publication, store submission, signing-key use, paid service, legal acceptance or
   final approval is claimed.
+- External blockers and exact owner actions are tracked in `Docs/EXTERNAL_SERVICE_GATES.md`.
 
 ## M0 evidence retained
 

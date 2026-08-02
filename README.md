@@ -28,6 +28,8 @@ Read these files in order:
 6. `Docs/RESEARCH_LOG.md`
 7. `Docs/MILESTONE_0_EXECUTION_PLAN.md`
 
+External service blockers and approval actions are tracked in `Docs/EXTERNAL_SERVICE_GATES.md`.
+
 ## Initial product target
 
 - Android application and browser-playable Web build
