@@ -32,6 +32,16 @@ namespace BattleRaja.Presentation.Movement
         public bool IsInitialized => _initialized;
         public bool ExternalCommandMode { get => externalCommandMode; set => externalCommandMode = value; }
 
+        /// <summary>
+        /// Updates the ability controller used for movement locks when a production match
+        /// applies the player's locally selected fighter after scene load.
+        /// </summary>
+        public void SetFighterController(MonoBehaviour controller)
+        {
+            fighterController = controller;
+            _fighterMovementLock = controller as IFighterMovementLock;
+        }
+
         private void Awake()
         {
             _characterController = GetComponent<CharacterController>();

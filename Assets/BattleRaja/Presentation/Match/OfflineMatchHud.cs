@@ -1,6 +1,7 @@
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Visuals;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace BattleRaja.Presentation.Match
@@ -26,6 +27,8 @@ namespace BattleRaja.Presentation.Match
         private BattleRajaAudioDirector _audio;
         private bool _highContrast;
         private bool _leftHanded;
+        private bool _reducedFlashes;
+        private bool _paused;
 
         private void Awake()
         {
@@ -43,7 +46,15 @@ namespace BattleRaja.Presentation.Match
             }
 
             _audio = FindFirstObjectByType<BattleRajaAudioDirector>();
+            LoadPreferences();
             BuildCanvasUi();
+            ApplyHandedLayout();
+            ApplyReducedFlashes();
+        }
+
+        private void OnDestroy()
+        {
+            if (_paused) Time.timeScale = 1f;
         }
 
         private void Update()
@@ -104,22 +115,27 @@ namespace BattleRaja.Presentation.Match
 
             _resultsPanel = CreatePanel(root.transform, "ResultsPanel", new Vector2(0.27f, 0.30f), new Vector2(0.73f, 0.72f), new Color(0.04f, 0.08f, 0.13f, 0.94f));
             _resultsText = CreateText(_resultsPanel.transform, "ResultsText", new Vector2(0.08f, 0.40f), new Vector2(0.92f, 0.92f), 28, TextAnchor.MiddleCenter);
-            CreateButton(_resultsPanel.transform, "Rematch", "REMATCH", new Vector2(0.28f, 0.06f), new Vector2(0.72f, 0.22f), Rematch);
+            CreateButton(_resultsPanel.transform, "Rematch", "REMATCH", new Vector2(0.08f, 0.06f), new Vector2(0.48f, 0.22f), Rematch);
+            CreateButton(_resultsPanel.transform, "Menu", "MENU", new Vector2(0.52f, 0.06f), new Vector2(0.92f, 0.22f), ReturnToMenu);
             _resultsPanel.SetActive(false);
 
             _settingsPanel = CreatePanel(root.transform, "SettingsPanel", new Vector2(0.58f, 0.16f), new Vector2(0.96f, 0.86f), new Color(0.03f, 0.06f, 0.1f, 0.97f));
             CreateText(_settingsPanel.transform, "SettingsTitle", new Vector2(0.08f, 0.84f), new Vector2(0.92f, 0.96f), 26, TextAnchor.MiddleCenter).text = "SETTINGS";
-            CreateButton(_settingsPanel.transform, "CloseSettings", "CLOSE", new Vector2(0.68f, 0.04f), new Vector2(0.92f, 0.16f), ToggleSettings);
-            CreateButton(_settingsPanel.transform, "LeftHanded", "LEFT-HANDED", new Vector2(0.08f, 0.62f), new Vector2(0.92f, 0.73f), ToggleLeftHanded);
-            CreateButton(_settingsPanel.transform, "ReducedFlashes", "REDUCED FLASHES", new Vector2(0.08f, 0.46f), new Vector2(0.92f, 0.57f), ToggleReducedFlashes);
-            CreateButton(_settingsPanel.transform, "HighContrast", "HIGH CONTRAST", new Vector2(0.08f, 0.30f), new Vector2(0.92f, 0.41f), ToggleHighContrast);
-            CreateButton(_settingsPanel.transform, "AimAssist", "AIM ASSIST (READY)", new Vector2(0.08f, 0.14f), new Vector2(0.92f, 0.25f), () => { });
+            CreateButton(_settingsPanel.transform, "CloseSettings", "CLOSE", new Vector2(0.52f, 0.04f), new Vector2(0.92f, 0.16f), ToggleSettings);
+            CreateButton(_settingsPanel.transform, "ReturnToMenu", "RETURN TO MENU", new Vector2(0.08f, 0.04f), new Vector2(0.48f, 0.16f), ReturnToMenu);
+            CreateButton(_settingsPanel.transform, "LeftHanded", "LEFT-HANDED", new Vector2(0.08f, 0.65f), new Vector2(0.92f, 0.76f), ToggleLeftHanded);
+            CreateButton(_settingsPanel.transform, "ReducedFlashes", "REDUCED FLASHES", new Vector2(0.08f, 0.50f), new Vector2(0.92f, 0.61f), ToggleReducedFlashes);
+            CreateButton(_settingsPanel.transform, "HighContrast", "HIGH CONTRAST", new Vector2(0.08f, 0.35f), new Vector2(0.92f, 0.46f), ToggleHighContrast);
+            CreateButton(_settingsPanel.transform, "AimAssist", "AIM ASSIST (READY)", new Vector2(0.08f, 0.20f), new Vector2(0.92f, 0.31f), () => { });
             _settingsPanel.SetActive(false);
         }
 
         private void ToggleSettings()
         {
-            if (_settingsPanel != null) _settingsPanel.SetActive(!_settingsPanel.activeSelf);
+            if (_settingsPanel == null) return;
+            _settingsPanel.SetActive(!_settingsPanel.activeSelf);
+            _paused = _settingsPanel.activeSelf;
+            Time.timeScale = _paused ? 0f : 1f;
             _audio?.StartFromUserGesture();
         }
 
@@ -133,9 +149,23 @@ namespace BattleRaja.Presentation.Match
             match?.RestartMatch();
         }
 
+        private void ReturnToMenu()
+        {
+            Time.timeScale = 1f;
+            _paused = false;
+            SceneManager.LoadScene("Bootstrap", LoadSceneMode.Single);
+        }
+
         private void ToggleLeftHanded()
         {
             _leftHanded = !_leftHanded;
+            PlayerPrefs.SetInt("battleraja.settings.left_handed", _leftHanded ? 1 : 0);
+            PlayerPrefs.Save();
+            ApplyHandedLayout();
+        }
+
+        private void ApplyHandedLayout()
+        {
             var movement = GameObject.Find("MovementStick")?.GetComponent<RectTransform>();
             var aim = GameObject.Find("AimStick")?.GetComponent<RectTransform>();
             if (movement == null || aim == null) return;
@@ -147,15 +177,32 @@ namespace BattleRaja.Presentation.Match
 
         private void ToggleReducedFlashes()
         {
+            _reducedFlashes = !_reducedFlashes;
+            PlayerPrefs.SetInt("battleraja.settings.reduced_flashes", _reducedFlashes ? 1 : 0);
+            PlayerPrefs.Save();
+            ApplyReducedFlashes();
+        }
+
+        private void ApplyReducedFlashes()
+        {
             foreach (var presentation in FindObjectsByType<FighterPresentation>(FindObjectsSortMode.None))
             {
-                presentation.ReducedFlashMode = !presentation.ReducedFlashMode;
+                presentation.ReducedFlashMode = _reducedFlashes;
             }
         }
 
         private void ToggleHighContrast()
         {
             _highContrast = !_highContrast;
+            PlayerPrefs.SetInt("battleraja.settings.high_contrast", _highContrast ? 1 : 0);
+            PlayerPrefs.Save();
+        }
+
+        private void LoadPreferences()
+        {
+            _leftHanded = PlayerPrefs.GetInt("battleraja.settings.left_handed", 0) != 0;
+            _reducedFlashes = PlayerPrefs.GetInt("battleraja.settings.reduced_flashes", 0) != 0;
+            _highContrast = PlayerPrefs.GetInt("battleraja.settings.high_contrast", 0) != 0;
         }
 
         private static GameObject CreatePanel(Transform parent, string name, Vector2 min, Vector2 max, Color color)

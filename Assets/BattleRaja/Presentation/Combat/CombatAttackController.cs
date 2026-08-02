@@ -27,6 +27,15 @@ namespace BattleRaja.Presentation.Combat
             ? _cooldown.RemainingSeconds(_clock.Tick, _clock.TickRate)
             : 0f;
 
+        public void ConfigureFighter(FighterDefinitionAsset definition)
+        {
+            fighterDefinition = definition;
+            if (definition != null)
+            {
+                _definition = definition.ToDomain().BasicAttack;
+            }
+        }
+
         private void Awake()
         {
             inputAdapter = inputAdapter != null ? inputAdapter : GetComponent<PlayerInputAdapter>();
