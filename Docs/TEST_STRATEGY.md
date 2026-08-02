@@ -292,3 +292,19 @@ collected.
 - real PlayFab guest creation/linking, cross-device recovery, cache/cloud conflict,
   browser-storage clearing, service retry/leaderboard/economy quotas, Android/Web service
   latency, privacy/retention and no-secret release inspection remain blocked.
+
+## Milestone 11 release-candidate coverage
+
+### Automated
+
+- bounded non-PII analytics schema/buffer
+- unavailable crash adapter behavior
+- secret/admin-tool release configuration guard
+- full M1–M10 regression suite
+
+### Manual/availability matrix
+
+- Exact M11 APK install/launch/background-resume on Lava only
+- Exact M11 Web HTTP/Chrome/Edge bootstrap, focus and refresh smoke
+- Firefox/Safari/mobile Web, second-device Android, online services, account recovery,
+  thermal/battery, accessibility, cultural, legal and store checks remain open.

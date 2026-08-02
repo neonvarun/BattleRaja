@@ -4,7 +4,7 @@ BattleRaja is an Android-app and browser-Web stylised top-down 3D micro battle r
 
 ## Current status
 
-**Pre-production / M10 accounts foundation credential-blocked partial**
+**Pre-production / M11 closed-test release-candidate preparation**
 
 Movement, aiming, the central projectile combat loop, a data-driven three-fighter alpha
 roster, seven fair/debuggable bots, gadgets and an offline eight-combatant match loop with
@@ -13,7 +13,8 @@ proof seam and deterministic mock; real Photon Fusion networking remains blocked
 package/App ID/account approval. M9 adds a transport-independent eight-slot authoritative
 server/match preparation seam, but no online alpha or public deployment is claimed. M10
 adds backend-neutral progression interfaces and a deterministic fake; real PlayFab remains
-blocked pending title/account/secret approval.
+blocked pending title/account/secret approval. M11 adds release-candidate, tester, rollback
+and privacy/data-safety drafts without publishing or accepting legal terms.
 
 ## Source of truth
 
@@ -51,7 +52,7 @@ The target is an Android + Web closed-alpha/release candidate. Public launch and
 Open the Unity project at the repository root with Unity `6000.5.6f1` and load `Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity`. Desktop uses WASD/arrow keys, mouse aim, left-click attack and Space dash; Android uses the two virtual sticks plus attack and dash controls. The lab now includes seven bots across Bijli, Pehel and Maya, Aandhi, health pickups, three Jugaad gadget pickups, one-slot gadget HUD/touch use, spectator/results overlay and rematch (`R`).
 
 Build commands are documented in `Tools/Build/Android/README.md` and `Tools/Build/Web/README.md`.
-Review `PROJECT_STATUS.md`, `Docs/MOVEMENT_LAB.md` and `Docs/MILESTONE_REPORTS/M10.md` before
+Review `PROJECT_STATUS.md`, `Docs/MOVEMENT_LAB.md` and `Docs/MILESTONE_REPORTS/M11.md` before
 authorizing real networking work. Android smoke testing from M8 onward uses the connected
 Lava phone only.
 

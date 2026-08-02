@@ -26,6 +26,25 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Evidence/sources:** Unity 6000.5.6f1 release notes; Unity 6000.5 Android dependency table; Google Play target API policy; Unity Package Registry snapshot and live package resolution in `Packages/packages-lock.json`; live toolchain evidence recorded in `Docs/RESEARCH_LOG.md`; owner instruction in the current task; `Docs/MILESTONE_0_EXECUTION_PLAN.md`.
 - **Owner:** Human project owner
 
+### ADR-012 — Milestone 11 truthful release-candidate preparation
+
+- **Date:** 2026-08-02
+- **Status:** Accepted for a local closed-test candidate; publication/signing/legal gates
+  remain open.
+- **Context:** The candidate must be testable without claiming unavailable online services,
+  crash infrastructure, browser/device coverage or store/legal approval.
+- **Options considered:** Present the offline lab as a release-ready online game; add
+  unauthorised services/keys; or ship a development candidate with compile-safe analytics/
+  crash/release seams and explicit draft checklists.
+- **Decision:** Use a bounded non-PII development analytics sink, unavailable crash adapter,
+  secret/admin guard, local Android/Web artifacts and truthful closed-test/rollback/privacy
+  documents. Keep publication, signing, external services and human/legal approval explicit.
+- **Consequences:** The exact candidate can be installed and browser-smoked without secrets,
+  but it is not a public release, online cross-play candidate or legal compliance claim.
+- **Evidence/sources:** M11 prompt, 57 EditMode and 27 PlayMode tests, M11 Android/Web
+  artifacts, Lava/Chrome/Edge smoke and release documents.
+- **Owner:** Human project owner
+
 ### ADR-009 — Milestone 8 authoritative networking seam
 
 - **Date:** 2026-08-02

@@ -2,7 +2,7 @@
 
 ## Active milestone
 
-**Milestone 10 — Accounts and Progression Foundation (credential-blocked partial)**
+**Milestone 11 — Closed-Test Release Candidate Preparation (external gates open)**
 
 ## Current state
 
@@ -32,6 +32,8 @@
   online-alpha completion is blocked by the M8 real-session precondition
 - M10: backend-neutral identity/progression interfaces and deterministic fake are present;
   real PlayFab integration is blocked pending title/account/secret approval
+- M11: release-candidate preparation, analytics/crash/release seams and truthful draft docs
+  are present; publication, signing, online services and human/legal gates remain open
 - Backend/economy: deliberately deferred
 - Final art/audio/animation: not started
 - Git/LFS: local repository initialized and LFS configured; `origin` points to `https://github.com/neonvarun/BattleRaja.git`
@@ -133,6 +135,15 @@
 - M10 is **credential-blocked partial**, not a real service pass. No PlayFab title, SDK,
   cross-device persistence, account recovery or economy deployment is claimed.
 - Evidence and test/build status are recorded in `Docs/MILESTONE_REPORTS/M10.md`.
+
+## M11 execution evidence — 2026-08-02
+
+- Release candidate configuration rejects admin tools/secrets; bounded development analytics
+  and unavailable crash adapter are compile-safe and service-neutral.
+- Closed-test, rollback/support, store-draft and privacy/data-safety worksheets are in `Docs/`.
+- M11 artifact, test and smoke evidence is recorded in `Docs/MILESTONE_REPORTS/M11.md`.
+- No public publication, store submission, signing-key use, paid service, legal acceptance or
+  final approval is claimed.
 
 ## M0 evidence retained
 

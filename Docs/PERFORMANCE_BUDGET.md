@@ -140,3 +140,13 @@ Required next measurement: capture a short Editor, Lava and Oppo session with Un
   quota, storage, bandwidth or cost measurements.
 - Real account/login, cache/cloud conflict, browser-storage recovery, service retries and
   Android/Web memory/network captures remain unmeasured until the approved backend exists.
+
+## Milestone 11 candidate baseline — 2026-08-02
+
+- M11 development APK is 83,561,850 bytes on disk; Web output is 113,899,365 bytes
+  uncompressed. These are development baselines, not store/download budgets.
+- Local smoke covers Lava, Chrome 150 and Edge 150 only. No formal CPU/GPU/GC/memory,
+  thermal/battery, repeat-cache, Firefox/Safari/mobile-Web or eight-slot online profile was
+  collected.
+- Before distribution, capture cold/warm load, repeated-match object growth, frame-time and
+  memory on approved device/browser tiers and document Web compression/MIME/cache headers.

@@ -195,3 +195,12 @@ Android and Web share domain, application and most presentation code. Platform-s
 - The M10 partial gate is intentionally useful without a service: fake identity/link,
   conflict, cache/retry and reward tests establish contracts, but no cross-device persistence
   or account recovery claim is made.
+
+## M11 release-candidate boundary
+
+- `ReleaseProof.cs` contains only bounded development analytics, an unavailable crash adapter
+  and a release-candidate safety guard. It does not collect identity/PII, enable admin tools,
+  or add a third-party reporting SDK.
+- Store copy, privacy/data-safety worksheet, closed-test instructions and rollback guidance
+  are documentation drafts. They are not legal declarations, store submissions or public
+  deployment automation.

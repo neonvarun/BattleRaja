@@ -239,3 +239,14 @@ Each issue must include:
 - **Required human action:** Create/approve a PlayFab title and server-only secret delivery,
   then approve privacy/retention and account-linking policy.
 - **Status:** Blocked; fake backend is not real service evidence.
+
+### BR-M11-001 — Release gates remain human/external
+
+- **Objective:** Produce a closed-test Android/Web release candidate with reliable online
+  services, performance evidence, accessibility, legal/privacy and publication readiness.
+- **Current state:** Local development APK/Web artifacts, automated tests and draft support/
+  privacy/store documents exist. No signing, public hosting, Photon/PlayFab service,
+  Firefox/Safari/mobile-Web or broad device/performance review is available.
+- **Required human action:** Approve the candidate scope, run human/cultural/accessibility
+  review, supply external services/signing if desired, and approve any publication separately.
+- **Status:** Open; no public release is claimed.

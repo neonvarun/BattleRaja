@@ -169,7 +169,7 @@ PlayerSettings:
   androidMaxAspectRatio: 2.4
   androidMinAspectRatio: 1
   applicationIdentifier:
-    Android: com.example.battleraja.m8
+    Android: com.example.battleraja.m11
   buildNumber:
     Standalone: 0
     VisionOS: 0
