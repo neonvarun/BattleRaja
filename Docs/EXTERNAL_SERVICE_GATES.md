@@ -5,7 +5,7 @@ as complete, and no secret is stored in the repository.
 
 | Gate | Current state | Exact owner action | Unblocking evidence |
 |---|---|---|---|
-| Photon Fusion 2 | Blocked; no approved package, App ID, licence/account configuration | Create/approve the Fusion application, provide the authorized package/version and non-secret local App ID configuration, and approve terms | Real two-client Lava Android + desktop Web room with authority, prediction/reconciliation, reconnect and controlled latency/loss logs |
+| Photon Fusion 2 | Local package/App ID setup complete; real-session gate remains blocked | Approve account/licence terms and complete the real two-client session/integration validation | Real two-client Lava Android + desktop Web room with authority, prediction/reconciliation, reconnect and controlled latency/loss logs |
 | Eight-slot online alpha | Blocked by the Photon real-session precondition | Complete the M8 real-session gate; separately approve any hosting/paid infrastructure | Stable 1–8 client/bot matches, room/backfill, disconnect grace, bot takeover, reconnect and stress evidence |
 | PlayFab identity/progression | Blocked; no title ID, SDK, account or server secret channel | Create/approve a PlayFab title/environment, select the authorized API/SDK, configure server-only secret delivery, and approve privacy/retention/linking policy | Real Android/Web guest/link/cross-progression/reward/inventory/leaderboard tests with no client secret |
 | Release signing / Google Play | Not authorised; no signing key or store submission | Owner approves signing identity, key storage, store/legal review and submission plan | Signed AAB/APK verification and explicit store approval; no public upload from this run |

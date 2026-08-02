@@ -68,6 +68,28 @@ Record every material choice here. Do not silently overwrite old decisions.
   and 27 PlayMode tests; M8 report.
 - **Owner:** Human project owner
 
+### ADR-013 — Photon Fusion 2.1.1 local setup checkpoint
+
+- **Date:** 2026-08-02
+- **Status:** Accepted for local integration preparation; the real-session gate remains open.
+- **Context:** The owner supplied the official Fusion 2.1.1 Build 2177 package and created a
+  Fusion 2 application. The repository needs a reproducible local SDK/App ID setup without
+  putting secrets in source control.
+- **Options considered:** Keep the package entirely outside the repository; import an
+  unverified SDK; or import the owner-supplied package, record its version, and configure
+  only the non-secret App ID while retaining the transport seam.
+- **Decision:** Import `Photon-Fusion-2.1.1-Stable-2177.unitypackage` into `Assets/Photon`,
+  accept the package-managed `com.unity.nuget.mono-cecil` dependency and Fusion scripting
+  defines, and configure `AppIdFusion` in `PhotonAppSettings.asset`. Do not add Photon
+  account passwords, secret keys or fabricated real-session evidence.
+- **Consequences:** Fusion assemblies are available for compile-time integration work and
+  the App ID is ready for a runtime test. Unity `6000.5.6f1` compatibility and the actual
+  two-client room remain to be validated; M8/M9 are not reclassified as complete.
+- **Evidence/sources:** Official Photon SDK/download and Fusion quickstart documentation;
+  local package import exit code 0; Unity compile validation exit code 0; 57/57 EditMode
+  and 27/27 PlayMode tests; `PhotonAppSettings.asset` App ID configuration.
+- **Owner:** Human project owner
+
 ### ADR-010 — Milestone 9 safe server/match preparation while Fusion is blocked
 
 - **Date:** 2026-08-02

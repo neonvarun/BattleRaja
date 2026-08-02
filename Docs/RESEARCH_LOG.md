@@ -79,6 +79,16 @@ Research current primary sources before selecting technical versions, APIs, SDKs
 - **Uncertainty:** The 6000.3 template and generated `packages-lock.json` remain authoritative; registry metadata can change.
 - **Recheck trigger/date:** At Unity project creation and whenever a deferred package is introduced.
 
+### Photon Fusion local integration setup
+
+- **Date checked:** 2026-08-02
+- **Question:** Which Photon Fusion package and project configuration should be used for the first real-session preparation step?
+- **Primary source:** https://doc.photonengine.com/fusion/current/getting-started/sdk-download ; https://doc.photonengine.com/fusion/current/game-samples/br200/quickstart
+- **Relevant claim:** Photon lists Fusion SDK 2.1.1 Stable Build 2177, requires a Fusion 2 App ID and text asset serialization, and configures the App ID through `Tools/Fusion/Realtime Settings`; Android and WebGL are supported platforms. The main SDK page explicitly lists Unity 6.0.x and 6.3.x, so Unity `6000.5.6f1` compatibility remains an integration risk to validate.
+- **Decision impact:** Import the owner-downloaded 2.1.1 Build 2177 `.unitypackage`, retain the package-managed Mono Cecil dependency and Fusion scripting defines, and configure only the non-secret Fusion App ID in `Assets/Photon/Fusion/Resources/PhotonAppSettings.asset`. Keep the real-session gate blocked until runtime validation.
+- **Uncertainty:** No two-client Fusion room, prediction/reconciliation, reconnection or controlled-loss run has been executed; no claim of M8 completion is made.
+- **Recheck trigger/date:** Before the first real Photon session and before changing the pinned Unity editor or Fusion package.
+
 ### Live Unity installation recheck
 
 - **Date checked:** 2026-08-02

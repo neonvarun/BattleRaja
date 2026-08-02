@@ -26,8 +26,9 @@
   three-fighter roster gates passed provisionally. Match pacing, Aandhi, pickup,
   spectator/results, gadget counterplay, fighter feel, alpha UI/accessibility and device
   review remain open. Networking, backend and progression remain unimplemented.
-- Multiplayer: M8 adapter/mock proof implemented; real Photon Fusion two-client gate is
-  blocked pending owner package/App ID/licence/account approval
+- Multiplayer: M8 adapter/mock proof implemented; Photon Fusion 2.1.1 package and non-secret
+  App ID are configured locally; the real two-client gate remains blocked pending runtime
+  integration, terms approval and transport evidence
 - M9: transport-independent eight-slot authoritative server/match preparation is present;
   online-alpha completion is blocked by the M8 real-session precondition
 - M10: backend-neutral identity/progression interfaces and deterministic fake are present;
