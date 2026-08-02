@@ -81,7 +81,7 @@ namespace BattleRaja.Presentation.Movement
 
         public void Submit(MovementCommand command, float deltaSeconds)
         {
-            if (!_initialized)
+            if (!_initialized || (_fighterMovementLock != null && _fighterMovementLock.IsMovementLocked))
             {
                 return;
             }

@@ -118,6 +118,7 @@ namespace BattleRaja.Tests.EditMode
 
             var snapshots = simulation.GetSnapshots();
             Assert.That(simulation.IsEnded, Is.True);
+            Assert.That(simulation.Advance(0f).WinnerId.Value, Is.EqualTo(2));
             Assert.That(snapshots[1].Placement, Is.EqualTo(1));
             Assert.That(snapshots[0].Placement, Is.EqualTo(2));
             Assert.That(snapshots[2].Placement, Is.EqualTo(3));
@@ -141,6 +142,18 @@ namespace BattleRaja.Tests.EditMode
             Assert.That(snapshots[2].Placement, Is.EqualTo(2));
             Assert.That(snapshots[0].Placement, Is.EqualTo(3));
             Assert.That(snapshots[1].Id.Value, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void TickPublishesExplicitNextZoneCenter()
+        {
+            var simulation = new OfflineMatchSimulation(OfflineMatchDefinition.SoloRaja);
+            simulation.Start(CreateSpawns(2));
+
+            var tick = simulation.Advance(8f);
+
+            Assert.That(tick.NextZoneCenter, Is.EqualTo(tick.ZoneCenter));
+            Assert.That(tick.NextZoneRadius, Is.EqualTo(8f).Within(0.0001f));
         }
 
         [Test]

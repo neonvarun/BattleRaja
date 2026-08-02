@@ -29,7 +29,9 @@ namespace BattleRaja.Presentation.AI
         private SeededRandom _random;
         private BotDecision _decision;
         private IFighterAbilityController _abilityController;
-        private float _nextDecisionAt;
+        private FixedSimulationClock _clock;
+        private int _nextDecisionTick;
+        private int _decisionIntervalTicks;
         private int _simulationTick;
         private bool _abilityIssued;
         private readonly Stopwatch _decisionTimer = new Stopwatch();
@@ -49,6 +51,8 @@ namespace BattleRaja.Presentation.AI
             perception = perception != null ? perception : GetComponent<BotPerceptionSensor>();
             gadgetUser = gadgetUser != null ? gadgetUser : GetComponent<GadgetUser>();
             _profile = new BotDifficultyProfile(reactionDelayTicks, aimNoise, retreatHealthFraction, preferredRange, decisionIntervalSeconds, stuckTimeoutSeconds);
+            _clock = new FixedSimulationClock(30);
+            _decisionIntervalTicks = Mathf.Max(1, Mathf.CeilToInt(_profile.DecisionIntervalSeconds * _clock.TickRate));
             _engine = new BotDecisionEngine();
             _navigation = new BotNavigationRecovery();
             _random = new SeededRandom((uint)seed);
@@ -66,28 +70,34 @@ namespace BattleRaja.Presentation.AI
                 return;
             }
 
+            var steps = _clock.Consume(Time.deltaTime);
+            for (var step = 0; step < steps; step++) SimulateTick(_clock.Tick);
+        }
+
+        private void SimulateTick(int simulationTick)
+        {
+            _simulationTick = simulationTick;
+            var fixedDeltaSeconds = (float)_clock.StepSeconds;
             var stuck = _navigation.Observe(
                 new Float2(transform.position.x, transform.position.z),
                 _decision.Movement,
-                Time.deltaTime,
+                fixedDeltaSeconds,
                 _profile.StuckTimeoutSeconds);
-            if (Time.time >= _nextDecisionAt)
+            if (_simulationTick >= _nextDecisionTick)
             {
                 _decisionTimer.Restart();
-                _decision = _engine.Decide(perception.Capture(), _simulationTick, _profile, _random, stuck);
+                var snapshot = perception.Capture();
+                _decision = _engine.Decide(snapshot, _simulationTick, _profile, _random, stuck);
                 _decisionTimer.Stop();
                 DecisionCount++;
                 MaxDecisionMilliseconds = Mathf.Max((float)MaxDecisionMilliseconds, (float)_decisionTimer.Elapsed.TotalMilliseconds);
-                _nextDecisionAt = Time.time + _profile.DecisionIntervalSeconds;
-                if (!_decision.Ability)
-                {
-                    _abilityIssued = false;
-                }
-                gadgetUser?.UseForContext(perception.Capture());
+                _nextDecisionTick = _simulationTick + _decisionIntervalTicks;
+                if (!_decision.Ability) _abilityIssued = false;
+                gadgetUser?.UseForContext(snapshot);
             }
 
             var input = new MovementInputFrame(_decision.Movement, _decision.Aim);
-            movementAgent.Submit(MovementCommandFactory.Create(movementAgent.ActorId, _simulationTick, input, movementAgent.Tuning), Time.deltaTime);
+            movementAgent.Submit(MovementCommandFactory.Create(movementAgent.ActorId, _simulationTick, input, movementAgent.Tuning), fixedDeltaSeconds);
 
             if (attackController != null && _decision.Attack)
             {
@@ -111,12 +121,7 @@ namespace BattleRaja.Presentation.AI
                 _abilityIssued = true;
             }
 
-            if (!_navigation.IsStuck && _decision.StuckRecovery)
-            {
-                _engine.Reset();
-            }
-
-            _simulationTick++;
+            if (!_navigation.IsStuck && _decision.StuckRecovery) _engine.Reset();
         }
     }
 }

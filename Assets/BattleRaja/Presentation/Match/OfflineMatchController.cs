@@ -83,7 +83,7 @@ namespace BattleRaja.Presentation.Match
                 var authorityTick = _authority.Advance((float)_simulationClock.StepSeconds);
                 var tick = authorityTick.Result;
                 ZoneCenter = tick.ZoneCenter;
-                NextZoneCenter = tick.ZoneCenter;
+                NextZoneCenter = tick.NextZoneCenter;
                 ZoneRadius = tick.ZoneRadius;
                 NextZoneRadius = tick.NextZoneRadius;
                 AandhiState = tick.AandhiState;

@@ -376,3 +376,26 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Evidence/sources:** `PROMPTS/06_MILESTONE_6_JUGAAD_GADGETS.md`; 37 EditMode and
   25 PlayMode tests; M6 Android/Web smoke evidence.
 - **Owner:** Human project owner
+
+### ADR-020 — Latest-head fixed-tick bot and result-snapshot seam
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the Phase 1 authority/fixed-clock continuation; broader
+  replay/input buffering and runtime coverage remain open.
+- **Context:** The fixed simulation clock had reached movement, combat, gadgets and fighter
+  abilities, but bot decisions still used render-frame timing. The match tick also exposed a
+  next radius without an explicit next-zone centre, and the reported winner could fall back to
+  participant-list order after timeout.
+- **Decision:** Run `BotBrain` decisions, navigation progress, movement commands and bot combat
+  commands from a 30 Hz `FixedSimulationClock`. Expose `NextZoneCenter` in the immutable
+  `MatchTickResult` and consume it in presentation. Select the participant with placement 1 as
+  the winner after resolution, with deterministic ranking fallback before resolution. Movement
+  command sinks reject commands while a fighter's shared movement-lock port is active.
+- **Consequences:** Bot behaviour and result IDs no longer depend on render FPS or actor/list
+  order. A future moving-zone definition can populate the explicit next centre without changing
+  the bot observation contract. Full client input buffering/replay and physical runtime coverage
+  remain required before claiming network-ready authority.
+- **Evidence/sources:** `Assets/BattleRaja/Core/Domain/OfflineMatch.cs`,
+  `Assets/BattleRaja/Presentation/AI/BotBrain.cs`, latest Phase 1 EditMode 71/71 and
+  PlayMode 27/27 test results.
+- **Owner:** Human project owner

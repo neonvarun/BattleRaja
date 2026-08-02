@@ -131,6 +131,7 @@ namespace BattleRaja.Core.Domain
         public MatchTickResult(
             MatchPhase phase,
             Float2 zoneCenter,
+            Float2 nextZoneCenter,
             float zoneRadius,
             float nextZoneRadius,
             AandhiState aandhiState,
@@ -142,6 +143,7 @@ namespace BattleRaja.Core.Domain
         {
             Phase = phase;
             ZoneCenter = zoneCenter;
+            NextZoneCenter = nextZoneCenter;
             ZoneRadius = zoneRadius;
             NextZoneRadius = nextZoneRadius;
             AandhiState = aandhiState;
@@ -154,6 +156,7 @@ namespace BattleRaja.Core.Domain
 
         public MatchPhase Phase { get; }
         public Float2 ZoneCenter { get; }
+        public Float2 NextZoneCenter { get; }
         public float ZoneRadius { get; }
         public float NextZoneRadius { get; }
         public AandhiState AandhiState { get; }
@@ -253,6 +256,7 @@ namespace BattleRaja.Core.Domain
             var winner = FindWinner();
             return new MatchTickResult(
                 _phase,
+                _definition.ZoneCenter,
                 _definition.ZoneCenter,
                 zoneRadius,
                 nextZoneRadius,
@@ -462,10 +466,18 @@ namespace BattleRaja.Core.Domain
         {
             for (var i = 0; i < _participants.Count; i++)
             {
-                if (_participants[i].Alive) return _participants[i].Id;
+                if (_participants[i].Placement == 1) return _participants[i].Id;
             }
 
-            return default;
+            ParticipantState best = null;
+            for (var i = 0; i < _participants.Count; i++)
+            {
+                var candidate = _participants[i];
+                if (!candidate.Alive) continue;
+                if (best == null || CompareTimeoutRanking(candidate, best) < 0) best = candidate;
+            }
+
+            return best != null ? best.Id : default;
         }
 
         private ParticipantState Find(CombatEntityId id)
