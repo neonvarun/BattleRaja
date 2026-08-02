@@ -7,18 +7,18 @@ This file records evidence-backed status only. Allowed status values are: `Not s
 
 | Area | Status | Evidence / boundary |
 | --- | --- | --- |
-| Unity project and package baseline | Passed with evidence | Unity `6000.5.6f1`; repository validation clean; compile succeeds |
+| Unity project and package baseline | Passed with evidence | Unity `6000.5.6f1`; latest HEAD `745280c`; repository validation clean; compile succeeds |
 | Photon Fusion import | Passed with evidence | Fusion 2.1.1 stable build 2177 is present and imported; no public multiplayer claim |
 | EditMode and PlayMode regression baseline | Passed with evidence | 70/70 EditMode and 27/27 PlayMode tests pass |
-| Android smoke build | Passed with evidence | Current IL2CPP APK built and launched on Lava `ST5GDW23LB004392` only; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
-| Web smoke build | Passed with evidence | Current Web build served locally and loaded in Chrome with zero post-fix JavaScript errors |
+| Android smoke build | Passed with evidence | Latest-head IL2CPP APK (`150,921,967` bytes; SHA-256 `2015A59FFCBD5BEE73A1AC27A6CD860648A57BDC604550681B717B169DD20E8D`) built and launched on Lava `ST5GDW23LB004392` only; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
+| Web smoke build | Passed with evidence | Latest-head Web build (`21` files; `132,170,851` bytes) served locally and loaded in Chrome with zero post-fix JavaScript error entries; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
 | Timeout/winner correctness | Passed with evidence | Deterministic timeout ranking and complete placements implemented; phase-1 EditMode 59/59 and PlayMode 27/27 pass |
 | Eliminations and match statistics | Passed with evidence | Instigator-aware combat events now record damage dealt, eliminations, survival time and duplicate-credit prevention; EditMode 70/70 and PlayMode 27/27 pass |
-| Explicit fixed simulation clock | In progress | 30 Hz accumulator is integrated into offline match authority and weapon attack cooldown; input buffering, movement, projectiles, gadgets and fighter abilities still need fixed-tick migration |
+| Explicit fixed simulation clock | In progress | 30 Hz accumulator is integrated into offline match authority, movement, projectiles, gadgets, weapon cooldown, and fighter ability adapters; full replay/input-buffer audit and broader runtime coverage remain |
 | Continuously interpolated Aandhi | Passed with evidence | Warning/closing state, next-radius preview and deterministic interpolation are exposed; EditMode 70/70 and PlayMode 27/27 pass |
 | Bot current/next-zone awareness | Passed with evidence | Bot snapshots carry current/next zone data and proactively reposition; EditMode 61/61 and PlayMode 27/27 pass |
 | Authoritative rule separation | In progress | Zone damage, pickup availability/respawn, gadget collection, elimination, placement and results are application-owned; gadget effect execution and Unity presentation adapters remain |
-| Fighter roster, progression, and complete offline loop | In progress | Common ability/movement interfaces now select fighter-specific Pehel Charge Throw and Maya Decoy adapters; scene regeneration, runtime fighter PlayMode coverage, presentation polish and progression remain |
+| Fighter roster, progression, and complete offline loop | In progress | Common ability/movement interfaces now select fighter-specific Pehel Charge Throw and Maya Decoy adapters; generated-scene runtime coverage, Bazaar Bastion, presentation polish, tutorial/offline loop and progression remain |
 | Real Photon multiplayer | Not started | Imported SDK is not an adapter or multiplayer validation |
 | PlayFab/backend/economy | Not started | No production backend claim |
 | Performance, soak, multi-browser, and release gates | Not started | No measured release evidence yet |

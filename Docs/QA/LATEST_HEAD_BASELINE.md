@@ -2,7 +2,7 @@
 
 Date: 2026-08-02
 Branch: `codex/product-completion`
-Starting HEAD: `afbbe2d297900c9cb6afd6d7e52d55a47b978f54` (`chore: add Photon Fusion 2.1.1 setup`)
+Starting HEAD: `745280c` (`chore: add non-regenerating smoke build entrypoints`)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
 ## Scope and repository note
@@ -16,9 +16,9 @@ The baseline intentionally excludes unrelated working-tree changes in `Assets/Ba
 | Check | Command/result | Evidence |
 | --- | --- | --- |
 | Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings | command output from 2026-08-02 |
-| Unity compile | Unity batchmode compile — exit 0; no `error CS`, `Exception`, or `Failed to compile` matches | `Builds/M11/Logs/latest-head-compile.log` |
-| EditMode tests | 70 passed, 0 failed | `Builds/M11/TestResults/fighter-final-editmode.xml` |
-| PlayMode tests | 27 passed, 0 failed | `Builds/M11/TestResults/latest-head-playmode.xml` |
+| Unity compile | Unity batchmode compile — exit 0; no compiler failure markers | `Builds/M11/Logs/latest-head-745280c-compile.log` |
+| EditMode tests | 70 passed, 0 failed | `Builds/M11/TestResults/latest-head-745280c-editmode.xml` |
+| PlayMode tests | 27 passed, 0 failed | `Builds/M11/TestResults/latest-head-745280c-playmode.xml` |
 | Phase 1 timeout regression | Deterministic health/distance/id ranking; complete placements; EditMode 59/59 and PlayMode 27/27 pass | `Builds/M11/TestResults/phase1-editmode.xml`, `Builds/M11/TestResults/phase1-playmode.xml` |
 | Fixed-clock integration | 30 Hz accumulator separates render frames from authoritative match steps; EditMode 60/60 and PlayMode 27/27 pass | `Builds/M11/TestResults/clock-editmode.xml`, `Builds/M11/TestResults/clock-playmode.xml` |
 | Aandhi interpolation | Zone radius is continuous across opening/pressure transitions; EditMode 60/60 and PlayMode 27/27 pass | `Builds/M11/TestResults/aandhi-editmode.xml`, `Builds/M11/TestResults/aandhi-playmode.xml` |
@@ -29,13 +29,13 @@ The baseline intentionally excludes unrelated working-tree changes in `Assets/Ba
 | Tick-based presentation timing | Player movement, Bijli ability, projectile stepping, gadget timers and weapon attack cooldown consume a 30 Hz clock; EditMode 70/70 and PlayMode 27/27 pass | `Builds/M11/TestResults/fighter-final-editmode.xml`, `Builds/M11/TestResults/fighter-final-playmode.xml` |
 | Authority item collection | Pickup availability/respawn and gadget collection are decided in `OfflineMatchAuthority`; EditMode 70/70 and PlayMode 27/27 pass | `Assets/BattleRaja/Core/Domain/MatchItems.cs`, `Builds/M11/TestResults/fighter-final-editmode.xml`, `Builds/M11/TestResults/fighter-final-playmode.xml` |
 | Fighter-specific ability boundary | `IFighterAbilityController` selects fixed-tick Pehel charge/capture/throw and Maya targetable decoy adapters; domain tests pass, but regenerated-scene runtime coverage is still open | `Assets/BattleRaja/Presentation/Combat/PehelFighterController.cs`, `Assets/BattleRaja/Presentation/Combat/MayaFighterController.cs`, `Builds/M11/TestResults/fighter-final-editmode.xml` |
-| Android build | Development IL2CPP APK — exit 0 | `Builds/M11/Logs/android-build.log` |
-| Android artifact | 150,735,210 bytes; SHA-256 `22B55FCD3B82EB641F6B04EF02BF3572301D4DEB119EDC193D6BFE834AE5ECE9` | `Builds/M11/Android/BattleRaja-M11.apk` |
-| Android device smoke | Installed and launched on Lava `ST5GDW23LB004392` only; focused activity `com.example.battleraja.m11/com.unity3d.player.UnityPlayerGameActivity`; process `22867` observed | `Docs/QA/Visual/latest-head-android.png`; ADB/logcat output |
+| Android build | Latest-head development IL2CPP APK — exit 0; Unity build report succeeded | `Builds/M11/Logs/latest-head-745280c-android-build.log` |
+| Android artifact | 150,921,967 bytes; SHA-256 `2015A59FFCBD5BEE73A1AC27A6CD860648A57BDC604550681B717B169DD20E8D` | `Builds/M11/Android/BattleRaja-M11.apk` |
+| Android device smoke | Installed and launched on Lava `ST5GDW23LB004392` only; focused activity `com.example.battleraja.m11/com.unity3d.player.UnityPlayerGameActivity`; process `25747` observed | `Docs/QA/Visual/latest-head-745280c-android.png`; `Builds/M11/Logs/latest-head-745280c-android-logcat.txt` |
 | Android runtime scan | No `FATAL EXCEPTION`, `SIGSEGV`, `AndroidRuntime`, `Can't add component`, or `SphereCollider` matches in the post-install log sample | ADB logcat sample after launch |
-| Web build | Development Web build — exit 0; 21 files, 132,058,830 bytes; `index.html` present | `Builds/M11/Logs/web-build.log`, `Builds/M11/Web` |
+| Web build | Latest-head development Web build — exit 0; 21 files, 132,170,851 bytes; `index.html` present | `Builds/M11/Logs/latest-head-745280c-web-build.log`, `Builds/M11/Web` |
 | Local Web serve | `python -m http.server 8020 --directory Builds/M11/Web`; `http://127.0.0.1:8020/index.html` returned HTTP 200 | local server/check output |
-| Browser smoke | Chrome loaded the local build; post-fix fresh tab reported zero JavaScript error entries | `Docs/QA/Visual/latest-head-web.png` |
+| Browser smoke | Chrome loaded the latest-head build in a fresh tab; DOM exposed the Unity player controls and post-load error/warning log query returned zero entries | `Docs/QA/Visual/latest-head-745280c-web.png` |
 
 ## Fix included in this baseline
 
@@ -49,6 +49,13 @@ The baseline intentionally excludes unrelated working-tree changes in `Assets/Ba
 - No public deployment, store submission, production signing, service credential handling, or multiplayer claim was made.
 
 ## Post-checkpoint runtime revalidation
+
+The current latest-head revalidation supersedes the earlier post-authority artifact values above:
+
+- HEAD: `745280c` (`chore: add non-regenerating smoke build entrypoints`).
+- Compile: exit 0; EditMode 70/70; PlayMode 27/27.
+- Android: `Builds/M11/Android/BattleRaja-M11.apk`, 150,921,967 bytes, SHA-256 `2015A59FFCBD5BEE73A1AC27A6CD860648A57BDC604550681B717B169DD20E8D`; installed/launched on Lava `ST5GDW23LB004392` only; no fatal/crash/AndroidRuntime/SphereCollider markers in the captured logcat sample.
+- Web: 21 files, 132,170,851 bytes; local HTTP 200; fresh Chrome tab loaded with zero captured error/warning entries; screenshot `Docs/QA/Visual/latest-head-745280c-web.png`.
 
 After the authority seam commit `1a92b6c`, the runtime artifacts were rebuilt and smoke-tested again:
 
