@@ -1,6 +1,7 @@
 using BattleRaja.Core.Application;
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Movement;
+using BattleRaja.Presentation.Visuals;
 using UnityEngine;
 
 namespace BattleRaja.Presentation.Combat
@@ -69,7 +70,10 @@ namespace BattleRaja.Presentation.Combat
             var intervalTicks = Mathf.Max(1, Mathf.CeilToInt(_definition.FireIntervalSeconds * _clock.TickRate));
             if (_cooldown.TryConsume(command.SimulationTick, intervalTicks))
             {
-                projectilePool.Spawn(command, _definition, faction);
+                if (projectilePool.Spawn(command, _definition, faction) != null)
+                {
+                    GetComponent<FighterPresentation>()?.NotifyAttack();
+                }
             }
         }
 

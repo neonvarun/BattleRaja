@@ -1,5 +1,6 @@
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Movement;
+using BattleRaja.Presentation.Visuals;
 using UnityEngine;
 
 namespace BattleRaja.Presentation.Combat
@@ -89,6 +90,7 @@ namespace BattleRaja.Presentation.Combat
                 return;
             }
 
+            GetComponent<FighterPresentation>()?.NotifyAbility();
             SpawnDecoyObject();
         }
 

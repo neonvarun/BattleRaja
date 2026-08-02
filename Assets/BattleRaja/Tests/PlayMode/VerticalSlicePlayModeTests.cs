@@ -3,6 +3,7 @@ using System.Linq;
 using BattleRaja.Presentation.AI;
 using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Match;
+using BattleRaja.Presentation.Visuals;
 using BattleRaja.Presentation.Gadgets;
 using NUnit.Framework;
 using UnityEngine;
@@ -46,6 +47,16 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(Object.FindObjectsByType<MayaFighterController>(FindObjectsSortMode.None), Has.Length.GreaterThanOrEqualTo(1));
             Assert.That(GameObject.Find("BazaarBastion"), Is.Not.Null);
             Assert.That(GameObject.Find("BazaarArchitecture"), Is.Not.Null);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ProductionSceneHasReadableFighterAndAudioPresentation()
+        {
+            Assert.That(Object.FindObjectsByType<FighterPresentation>(FindObjectsSortMode.None), Has.Length.GreaterThanOrEqualTo(8));
+            Assert.That(Object.FindObjectsByType<BattleRajaAudioDirector>(FindObjectsSortMode.None), Has.Length.EqualTo(1));
+            var visual = Object.FindFirstObjectByType<FighterPresentation>();
+            Assert.That(visual.CurrentAnimation, Is.EqualTo(FighterPresentation.AnimationState.Idle).Or.EqualTo(FighterPresentation.AnimationState.Locomotion));
             yield return null;
         }
 

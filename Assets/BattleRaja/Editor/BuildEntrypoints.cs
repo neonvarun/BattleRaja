@@ -7,6 +7,7 @@ using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Match;
 using BattleRaja.Presentation.Movement;
 using BattleRaja.Presentation.Gadgets;
+using BattleRaja.Presentation.Visuals;
 using BattleRaja.Infrastructure.Networking;
 using UnityEditor;
 using UnityEditor.Build;
@@ -146,6 +147,7 @@ namespace BattleRaja.Editor
             var fighterController = player.AddComponent<BijliFighterController>();
             var playerHealth = player.AddComponent<CombatHealth>();
             var playerGadget = player.AddComponent<GadgetUser>();
+            player.AddComponent<FighterPresentation>();
             var dashTrail = player.AddComponent<TrailRenderer>();
             dashTrail.time = 0.24f;
             dashTrail.startWidth = 0.28f;
@@ -170,6 +172,10 @@ namespace BattleRaja.Editor
             var damageResolver = combatSystems.AddComponent<CombatDamageResolver>();
             var impactPool = combatSystems.AddComponent<CombatImpactFeedbackPool>();
             var projectilePool = combatSystems.AddComponent<CombatProjectilePool>();
+            var audioObject = new GameObject("AudioDirector");
+            audioObject.transform.SetParent(arena.transform, false);
+            audioObject.AddComponent<AudioSource>();
+            audioObject.AddComponent<BattleRajaAudioDirector>();
 
             var dummy = GameObject.CreatePrimitive(PrimitiveType.Capsule);
             dummy.name = "TrainingDummy";
@@ -317,6 +323,22 @@ namespace BattleRaja.Editor
             var mayaMaterial = EnsureMaterial("BazaarBastionMaya", new Color(0.72f, 0.32f, 0.86f, 1f));
             ApplyBazaarPalette(arena.transform, floor, wall, stall);
             CreateBazaarDecor(arena.transform, wall, stall);
+            if (arena.GetComponentInChildren<BattleRajaAudioDirector>(true) == null)
+            {
+                var audioObject = new GameObject("AudioDirector");
+                audioObject.transform.SetParent(arena.transform, false);
+                audioObject.AddComponent<AudioSource>();
+                audioObject.AddComponent<BattleRajaAudioDirector>();
+            }
+
+            var presentationAgents = arena.GetComponentsInChildren<MovementPlayerAgent>(true);
+            for (var i = 0; i < presentationAgents.Length; i++)
+            {
+                if (presentationAgents[i].GetComponent<FighterPresentation>() == null)
+                {
+                    presentationAgents[i].gameObject.AddComponent<FighterPresentation>();
+                }
+            }
 
             var damageResolver = arena.GetComponentInChildren<CombatDamageResolver>();
             var projectilePool = arena.GetComponentInChildren<CombatProjectilePool>();
@@ -568,6 +590,7 @@ namespace BattleRaja.Editor
             var perception = bot.AddComponent<BotPerceptionSensor>();
             var brain = bot.AddComponent<BotBrain>();
             var gadget = bot.AddComponent<GadgetUser>();
+            bot.AddComponent<FighterPresentation>();
             bot.AddComponent<BotDebugOverlay>();
             var trail = bot.AddComponent<TrailRenderer>();
             trail.time = 0.24f;

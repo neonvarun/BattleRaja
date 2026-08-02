@@ -1,5 +1,6 @@
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Movement;
+using BattleRaja.Presentation.Visuals;
 using UnityEngine;
 
 namespace BattleRaja.Presentation.Combat
@@ -89,7 +90,10 @@ namespace BattleRaja.Presentation.Combat
             if (_runtime == null) return;
             var movement = inputAdapter != null ? inputAdapter.ReadInput().Movement : Float2.Zero;
             var facing = movementAgent != null ? movementAgent.AimDirection : Float2.Up;
-            _runtime.TryStart(command, movement, facing);
+            if (_runtime.TryStart(command, movement, facing))
+            {
+                GetComponent<FighterPresentation>()?.NotifyAbility();
+            }
         }
 
         public void ResetFighterState()

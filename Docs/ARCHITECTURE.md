@@ -213,3 +213,16 @@ Android and Web share domain, application and most presentation code. Platform-s
 - Store copy, privacy/data-safety worksheet, closed-test instructions and rollback guidance
   are documentation drafts. They are not legal declarations, store submissions or public
   deployment automation.
+
+## M12 presentation foundation
+
+- `FighterPresentation` is a replaceable Unity presentation adapter. It creates gameplay
+  colour rings, health/status bars, attack/ability telegraphs and code-driven idle,
+  locomotion, attack, ability, hit and elimination states without storing gameplay rules.
+  Hit timing remains driven by combat results, not animation events.
+- `BattleRajaAudioDirector` owns original procedural placeholder cues, effects/music volume
+  controls, optional `AudioMixer`/group references and user-gesture-gated startup for Web.
+  It is scene-owned and does not introduce a global singleton or external audio dependency.
+- Final imported animation clips, authored VFX, licensed/original production audio and
+  visual approval remain human-review gates. The current presentation is an explicit
+  replaceable stylised greybox.

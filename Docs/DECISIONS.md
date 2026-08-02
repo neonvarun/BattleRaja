@@ -429,3 +429,14 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Consequences:** Android/Web smoke builds and PlayMode tests exercise the same production scene. The current result is a deliberate stylised greybox with palette blocks and stalls, not final art; scene regeneration must be rerun through the editor entrypoint after fixture or content changes.
 - **Evidence/sources:** `Assets/BattleRaja/Editor/BuildEntrypoints.cs`, `Assets/BattleRaja/Scenes/Gameplay/BazaarBastion.unity`, `Assets/BattleRaja/Tests/PlayMode/VerticalSlicePlayModeTests.cs`, Bazaar Bastion Android/Web smoke logs and screenshots.
 - **Owner:** Human project owner
+
+### ADR-023 — Use replaceable code-driven presentation primitives before final art
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the presentation foundation; final art/audio approval remains open.
+- **Context:** The vertical slice needed readable silhouettes, gameplay state communication and platform-safe feedback, but no licensed production art or audio was available. Animation-event timing would also risk coupling authoritative combat to presentation.
+- **Options considered:** Wait for final art; add unlicensed reference assets; or provide original, replaceable primitives and procedural cues behind presentation-only adapters.
+- **Decision:** Add `FighterPresentation` for colour rings, health bars, telegraphs, code-driven action states and hit/elimination readability. Add scene-owned `BattleRajaAudioDirector` with generated original tones, optional mixer-group hooks and Web user-gesture gating. Combat controllers notify these adapters after accepted commands; authoritative hit/ability results remain independent of animation/audio.
+- **Consequences:** Android/Web and PlayMode tests now exercise readable presentation scaffolding without external asset licensing or autoplay failures. The scene remains a stylised greybox; imported animation, VFX, music, authored SFX, quality tiers and final review are follow-up work.
+- **Evidence/sources:** `FighterPresentation.cs`, `BattleRajaAudioDirector.cs`, combat controller integrations, `VerticalSlicePlayModeTests`, phase-4 Android/Web smoke logs and screenshots.
+- **Owner:** Human project owner
