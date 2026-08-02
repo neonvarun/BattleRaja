@@ -418,3 +418,14 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Evidence/sources:** `OfflineMatchAuthority`, `GadgetUser`, `AuthorityFoundationTests`,
   latest 72/72 EditMode and 27/27 PlayMode results.
 - **Owner:** Human project owner
+
+### ADR-022 — Bazaar Bastion is a controlled production-scene copy
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the M7 vertical slice; final art, audio, UI and content review remain open.
+- **Context:** The technical MovementLab fixture proves the simulation and presentation seams but is not an acceptable production-facing arena. M7 needs one authored-feeling scene while preserving the regression fixture and avoiding hand-edited Unity YAML.
+- **Options considered:** Mutate MovementLab in place; hand-author a new scene YAML; or use a deterministic editor generator to copy the fixture, apply palette/architecture content and select data-driven fighter adapters.
+- **Decision:** Generate `Assets/BattleRaja/Scenes/Gameplay/BazaarBastion.unity` from the on-disk MovementLab scene through `BuildEntrypoints.CreateBazaarBastionScene`. Keep MovementLab unchanged as the technical fixture, register Bazaar Bastion first in build settings, and configure Pehel/Maya through their shared command and movement-lock boundaries. The generator owns repeatability; the scene asset is committed as the build/test artifact.
+- **Consequences:** Android/Web smoke builds and PlayMode tests exercise the same production scene. The current result is a deliberate stylised greybox with palette blocks and stalls, not final art; scene regeneration must be rerun through the editor entrypoint after fixture or content changes.
+- **Evidence/sources:** `Assets/BattleRaja/Editor/BuildEntrypoints.cs`, `Assets/BattleRaja/Scenes/Gameplay/BazaarBastion.unity`, `Assets/BattleRaja/Tests/PlayMode/VerticalSlicePlayModeTests.cs`, Bazaar Bastion Android/Web smoke logs and screenshots.
+- **Owner:** Human project owner

@@ -159,8 +159,10 @@ Android and Web share domain, application and most presentation code. Platform-s
   `MayaFighterController` from the data definition.
 - Pehel's adapter performs fixed-tick charge/capture/throw collision and central damage;
   Maya's adapter spawns a targetable, health-bounded decoy with copied movement and expiry.
-  Scene regeneration, bespoke VFX/audio, and runtime PlayMode coverage for those two
-  adapters remain explicit alpha debt.
+  `BuildEntrypoints.CreateBazaarBastionScene` regenerates a controlled production-scene
+  copy from the MovementLab fixture, applies the Bazaar palette/architecture and selects
+  the fighter-specific adapters without mutating the lab fixture. Bespoke VFX/audio,
+  final UI, and full offline/tutorial progression remain explicit alpha debt.
 
 ## M8 networking boundary
 

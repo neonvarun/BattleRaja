@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.AI;
 using BattleRaja.Presentation.Combat;
@@ -26,6 +27,7 @@ namespace BattleRaja.Editor
         private const string ExpectedUnityVersion = "6000.5.6f1";
         private const string BootstrapScenePath = "Assets/BattleRaja/Scenes/Bootstrap/Bootstrap.unity";
         private const string MovementLabScenePath = "Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity";
+        private const string BazaarBastionScenePath = "Assets/BattleRaja/Scenes/Gameplay/BazaarBastion.unity";
         private const string MovementAssetFolder = "Assets/BattleRaja/Content/Movement";
         private const string TuningAssetPath = MovementAssetFolder + "/M1-MovementTuning.asset";
         private const string InputAssetPath = MovementAssetFolder + "/BattleRajaMovement.inputactions";
@@ -282,6 +284,61 @@ namespace BattleRaja.Editor
             AssetDatabase.Refresh();
         }
 
+        /// <summary>
+        /// Creates the first production-facing arena from the technical lab as a controlled
+        /// scene copy. The lab stays the regression fixture; only the copy is decorated and
+        /// converted to fighter-specific bot controllers.
+        /// </summary>
+        public static void CreateBazaarBastionScene()
+        {
+            EnsureUrpAsset();
+            Directory.CreateDirectory("Assets/BattleRaja/Scenes/Gameplay");
+            Directory.CreateDirectory(MovementAssetFolder);
+
+            var tuningAsset = EnsureTuningAsset();
+            var pehelWeapon = EnsureVariantWeaponAsset(PehelWeaponAssetPath, FighterDefinition.Pehel.BasicAttack);
+            var mayaWeapon = EnsureVariantWeaponAsset(MayaWeaponAssetPath, FighterDefinition.Maya.BasicAttack);
+            var pehelAsset = EnsureFighterVariantAsset(PehelFighterAssetPath, "fighter.pehel", "Pehel", FighterDefinition.Pehel, pehelWeapon);
+            var mayaAsset = EnsureFighterVariantAsset(MayaFighterAssetPath, "fighter.maya", "Maya", FighterDefinition.Maya, mayaWeapon);
+            EnsureGadgetAssets();
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+
+            var sourceScene = EditorSceneManager.OpenScene(MovementLabScenePath, OpenSceneMode.Single);
+            EditorSceneManager.SaveScene(sourceScene, BazaarBastionScenePath);
+            var arena = GameObject.Find("MovementLab");
+            if (arena == null) throw new BuildFailedException("MovementLab root was not found while creating Bazaar Bastion.");
+            arena.name = "BazaarBastion";
+
+            var floor = EnsureMaterial("BazaarBastionFloor", new Color(0.32f, 0.24f, 0.19f, 1f));
+            var wall = EnsureMaterial("BazaarBastionTeal", new Color(0.12f, 0.34f, 0.36f, 1f));
+            var stall = EnsureMaterial("BazaarBastionTerracotta", new Color(0.62f, 0.24f, 0.14f, 1f));
+            var pehelMaterial = EnsureMaterial("BazaarBastionPehel", new Color(0.92f, 0.39f, 0.16f, 1f));
+            var mayaMaterial = EnsureMaterial("BazaarBastionMaya", new Color(0.72f, 0.32f, 0.86f, 1f));
+            ApplyBazaarPalette(arena.transform, floor, wall, stall);
+            CreateBazaarDecor(arena.transform, wall, stall);
+
+            var damageResolver = arena.GetComponentInChildren<CombatDamageResolver>();
+            var projectilePool = arena.GetComponentInChildren<CombatProjectilePool>();
+            var bots = UnityEngine.Object.FindObjectsByType<BotBrain>(FindObjectsSortMode.None)
+                .OrderBy(bot => bot.GetComponent<MovementPlayerAgent>() != null ? bot.GetComponent<MovementPlayerAgent>().ActorId : int.MaxValue)
+                .ToArray();
+            if (bots.Length < 4) throw new BuildFailedException("Bazaar Bastion requires at least four bot actors in the copied lab.");
+            ConfigureProductionBot(bots[1], pehelAsset, pehelMaterial, null, damageResolver, projectilePool);
+            ConfigureProductionBot(bots[2], mayaAsset, mayaMaterial, mayaMaterial, damageResolver, projectilePool);
+
+            EditorSceneManager.MarkSceneDirty(sourceScene);
+            EditorSceneManager.SaveScene(sourceScene, BazaarBastionScenePath);
+            EditorBuildSettings.scenes = new[]
+            {
+                new EditorBuildSettingsScene(BazaarBastionScenePath, true),
+                new EditorBuildSettingsScene(MovementLabScenePath, true),
+                new EditorBuildSettingsScene(BootstrapScenePath, true)
+            };
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
         public static void ValidateProject()
         {
             if (!string.Equals(Application.unityVersion, ExpectedUnityVersion, StringComparison.Ordinal))
@@ -393,11 +450,37 @@ namespace BattleRaja.Editor
             Build("Builds/M11/Web", BuildTarget.WebGL);
         }
 
-        private static void Build(string outputPath, BuildTarget target)
+        public static void BuildAndroidBazaarBastionDevelopment()
+        {
+            CreateBootstrapScene();
+            CreateBazaarBastionScene();
+            ValidateProject();
+
+            EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
+            PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, DevelopmentApplicationId);
+            PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
+            PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel28;
+            PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
+            PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
+            Build("Builds/M11/Android/BattleRaja-BazaarBastion-M11.apk", BuildTarget.Android, BazaarBastionScenePath);
+        }
+
+        public static void BuildWebBazaarBastionDevelopment()
+        {
+            CreateBootstrapScene();
+            CreateBazaarBastionScene();
+            ValidateProject();
+
+            EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WebGL, BuildTarget.WebGL);
+            PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
+            Build("Builds/M11/Web-BazaarBastion", BuildTarget.WebGL, BazaarBastionScenePath);
+        }
+
+        private static void Build(string outputPath, BuildTarget target, string scenePath = MovementLabScenePath)
         {
             var options = new BuildPlayerOptions
             {
-                scenes = new[] { MovementLabScenePath },
+                scenes = new[] { scenePath },
                 locationPathName = outputPath,
                 target = target,
                 options = BuildOptions.Development | BuildOptions.AllowDebugging
@@ -534,6 +617,95 @@ namespace BattleRaja.Editor
             SetObjectReference(gadget, "health", health);
             SetObjectReference(gadget, "damageResolver", damageResolver);
             SetBool(gadget, "botControlled", true);
+        }
+
+        private static void ConfigureProductionBot(
+            BotBrain brain,
+            FighterDefinitionAsset fighterAsset,
+            Material fighterMaterial,
+            Material decoyMaterial,
+            CombatDamageResolver damageResolver,
+            CombatProjectilePool projectilePool)
+        {
+            var bot = brain.gameObject;
+            var oldFighter = bot.GetComponent<BijliFighterController>();
+            if (oldFighter != null) UnityEngine.Object.DestroyImmediate(oldFighter);
+
+            var domain = fighterAsset.ToDomain();
+            var fighter = domain.FighterId.Equals(FighterDefinition.Pehel.FighterId)
+                ? (MonoBehaviour)bot.AddComponent<PehelFighterController>()
+                : bot.AddComponent<MayaFighterController>();
+            var agent = bot.GetComponent<MovementPlayerAgent>();
+            var attack = bot.GetComponent<CombatAttackController>();
+            var target = bot.GetComponent<CombatTarget>();
+            var health = bot.GetComponent<CombatHealth>();
+            var controller = bot.GetComponent<CharacterController>();
+            var renderer = bot.GetComponent<Renderer>();
+            if (renderer != null) renderer.sharedMaterial = fighterMaterial;
+
+            SetObjectReference(agent, "fighterController", fighter);
+            SetObjectReference(attack, "fighterDefinition", fighterAsset);
+            SetObjectReference(attack, "projectilePool", projectilePool);
+            SetObjectReference(fighter, "fighterDefinition", fighterAsset);
+            SetObjectReference(fighter, "movementAgent", agent);
+            SetObjectReference(brain, "fighterController", fighter);
+            SetInt(health, "maxHealth", domain.MaxHealth);
+
+            if (fighter is PehelFighterController)
+            {
+                SetObjectReference(fighter, "inputAdapter", null);
+                SetObjectReference(fighter, "characterController", controller);
+                SetObjectReference(fighter, "damageResolver", damageResolver);
+                SetInt(fighter, "chargeCollisionMask", 1);
+            }
+            else
+            {
+                SetObjectReference(fighter, "inputAdapter", null);
+                SetObjectReference(fighter, "decoyMaterial", decoyMaterial);
+            }
+
+            SetObjectReference(target, "health", health);
+        }
+
+        private static void ApplyBazaarPalette(Transform arena, Material floor, Material wall, Material stall)
+        {
+            var renderers = arena.GetComponentsInChildren<Renderer>(true);
+            for (var i = 0; i < renderers.Length; i++)
+            {
+                var name = renderers[i].gameObject.name;
+                if (name.IndexOf("ArenaFloor", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    renderers[i].sharedMaterial = floor;
+                }
+                else if (name.IndexOf("Boundary", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                         name.IndexOf("NarrowLane", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                         name.IndexOf("CornerWall", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    renderers[i].sharedMaterial = wall;
+                }
+                else if (name.IndexOf("Obstacle", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    renderers[i].sharedMaterial = stall;
+                }
+            }
+        }
+
+        private static void CreateBazaarDecor(Transform arena, Material wall, Material stall)
+        {
+            var decor = new GameObject("BazaarArchitecture");
+            decor.transform.SetParent(arena, false);
+            CreateBlock("BazaarArchLeft", new Vector3(-6f, 1.8f, 8.8f), new Vector3(0.8f, 3.6f, 0.8f), wall, decor.transform);
+            CreateBlock("BazaarArchRight", new Vector3(6f, 1.8f, 8.8f), new Vector3(0.8f, 3.6f, 0.8f), wall, decor.transform);
+            CreateBlock("BazaarArchLintel", new Vector3(0f, 3.4f, 8.8f), new Vector3(12.8f, 0.8f, 0.8f), wall, decor.transform);
+            CreateMarketStall("BazaarStallWest", new Vector3(-10f, 0.8f, 1.5f), stall, decor.transform);
+            CreateMarketStall("BazaarStallEast", new Vector3(10f, 0.8f, 1.5f), stall, decor.transform);
+            CreateBlock("BazaarPlazaMarker", new Vector3(0f, 0.08f, 0f), new Vector3(5f, 0.16f, 5f), wall, decor.transform);
+        }
+
+        private static void CreateMarketStall(string name, Vector3 position, Material material, Transform parent)
+        {
+            CreateBlock(name + "Counter", position, new Vector3(2.4f, 1.6f, 1.2f), material, parent);
+            CreateBlock(name + "Roof", position + new Vector3(0f, 1.8f, 0f), new Vector3(2.8f, 0.25f, 1.6f), material, parent);
         }
 
         private static Canvas CreateTouchCanvas(out VirtualStick movementStick, out VirtualStick aimStick, out AttackButton attackButton, out AbilityButton abilityButton, out GadgetUseButton gadgetButton)
