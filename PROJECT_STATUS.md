@@ -20,7 +20,7 @@
 - Multiplayer: deliberately deferred
 - Backend/economy: deliberately deferred
 - Final art/audio/animation: not started
-- Git/LFS: local repository initialized and LFS configured; no remote configured locally
+- Git/LFS: local repository initialized and LFS configured; `origin` points to `https://github.com/neonvarun/BattleRaja.git`
 
 ## M1 execution evidence — 2026-08-02
 
