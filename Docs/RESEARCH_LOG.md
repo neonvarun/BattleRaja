@@ -220,3 +220,22 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   device-tier performance and a pre-existing IL2CPP SphereCollider warning remain open.
 - **Recheck trigger/date:** Before adding progression/cosmetics or changing the gadget
   data model for online authority.
+
+### M7 three-fighter vertical-slice baseline
+
+- **Date checked:** 2026-08-02
+- **Question:** Can Pehel and Maya join the offline lab with distinct data and stable
+  IDs while preserving the existing shared commands and no external services?
+- **Primary source:** `PROMPTS/07_MILESTONE_7_VERTICAL_SLICE.md`; existing fighter,
+  combat, movement, gadget and offline-match assemblies.
+- **Relevant claim:** M7 requires three distinct fighters, original alpha identity,
+  shared commands, tutorial/accessibility/performance review and Android/Web builds;
+  networking/backend/release are non-scope.
+- **Decision impact:** Add pure Pehel/Maya definitions and bounded special runtime plus
+  serialized weapon/fighter assets. Keep the current shared presentation bridge as an
+  explicit alpha implementation; do not add protected or downloaded art/audio.
+- **Local evidence:** 40/40 EditMode, 27/27 PlayMode, M7 Android/Web builds, two-device
+  launch and Chrome/Edge local bootstrap checks.
+- **Uncertainty:** Bespoke special visuals, full UI/tutorial/accessibility, human balance,
+  cultural/art review and device/browser performance remain open.
+- **Recheck trigger/date:** Before online authority work or a final art/UI pass.

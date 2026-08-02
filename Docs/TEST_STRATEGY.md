@@ -216,3 +216,23 @@ collected.
 - Android/Web development builds completed; authorized Lava/Oppo install/launch and
   Chrome/Edge local HTTP bootstrap checks passed. Repeated non-fatal SphereCollider
   creation warnings were recorded in the M6 report.
+
+## Milestone 7 vertical-slice coverage
+
+### Pure/EditMode
+
+- three stable fighter definitions and distinct tuning
+- Pehel charge bounds, Maya decoy movement/expiry and cross-fighter identity
+
+### PlayMode
+
+- generated MovementLab references for Bijli, Pehel and Maya
+- offline match/gadget regression coverage with the three-fighter actor mix
+
+### M7 evidence (2026-08-02)
+
+- EditMode: 40/40 passed in `Builds/M7/TestResults/editmode.xml`.
+- PlayMode: 27/27 passed in `Builds/M7/TestResults/playmode.xml`.
+- Android/Web builds and authorized device/Chrome/Edge bootstrap smoke passed.
+- Final UI/tutorial/accessibility, art/audio and device-tier performance are explicitly
+  untested and tracked in HR-007.

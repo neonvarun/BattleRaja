@@ -26,6 +26,27 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Evidence/sources:** Unity 6000.5.6f1 release notes; Unity 6000.5 Android dependency table; Google Play target API policy; Unity Package Registry snapshot and live package resolution in `Packages/packages-lock.json`; live toolchain evidence recorded in `Docs/RESEARCH_LOG.md`; owner instruction in the current task; `Docs/MILESTONE_0_EXECUTION_PLAN.md`.
 - **Owner:** Human project owner
 
+### ADR-008 — Milestone 7 three-fighter alpha roster
+
+- **Date:** 2026-08-02
+- **Status:** Accepted for M7 alpha slice; bespoke specials, final art/audio and human
+  balance review remain open.
+- **Context:** The offline lab needs a recognizable three-fighter roster without
+  duplicating movement/combat authorities or importing unproven third-party art.
+- **Options considered:** Bespoke controller per fighter with direct scene mutation;
+  mutable shared assets; stable Domain fighter/special definitions plus serialized
+  weapon/fighter assets feeding the existing command bridges.
+- **Decision:** Add Pehel and Maya as stable data definitions/assets with distinct health,
+  movement and attack tuning. Keep special timing/expiry in pure `FighterSpecialDefinition`
+  and `DecoyRuntime`; let the current shared Unity bridge carry alpha presentation while
+  bespoke charge/throw/decoy visuals remain future work.
+- **Consequences:** Three actors can be selected/spawned in the same offline match and
+  tested without a new package or external service. Visual identity, tutorial,
+  accessibility and bespoke special presentation remain explicit debt.
+- **Evidence/sources:** `PROMPTS/07_MILESTONE_7_VERTICAL_SLICE.md`; 40 EditMode and
+  27 PlayMode tests; M7 Android/Web smoke evidence.
+- **Owner:** Human project owner
+
 ### ADR-003 — Milestone 2 central projectile combat laboratory
 
 - **Date:** 2026-08-02

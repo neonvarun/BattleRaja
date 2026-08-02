@@ -186,3 +186,20 @@ Each issue must include:
   readability and low-end performance need human review.
 - **Human review gate:** HR-006 is open and required before production tuning/release;
   it does not block provisional M7 planning.
+
+### BR-M7-001 — Three-fighter vertical slice
+
+- **Objective:** Make Bijli, Pehel and Maya a cohesive offline alpha roster while
+  preserving shared command and simulation boundaries.
+- **Scope / non-scope:** Stable fighter/special data, distinct weapon/movement tuning,
+  serialized assets, scene roster and tests. Final art/audio, full bespoke special
+  presentation, tutorial, menus, accessibility, networking, backend and monetisation
+  remain outside the implemented checkpoint.
+- **Dependencies:** M6 gadgets, M5 offline match and pinned Unity/package baseline.
+- **Acceptance criteria:** Three distinct definitions/assets are playable in the lab;
+  offline match/gadgets remain stable; Android/Web builds and smoke evidence exist.
+- **Tests:** 40 EditMode and 27 PlayMode tests in M7 result XML.
+- **Risks:** Grey-box identity, shared alpha special bridge, missing tutorial/accessibility
+  and non-fatal IL2CPP SphereCollider warning require follow-up.
+- **Human review gate:** HR-007 is open and required before release-quality claims;
+  it does not block provisional M8 networking work.

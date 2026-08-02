@@ -31,7 +31,11 @@ namespace BattleRaja.Editor
         private const string WeaponAssetPath = "Assets/BattleRaja/Content/Weapons/M2-TrainingBolt.asset";
         private const string BijliWeaponAssetPath = "Assets/BattleRaja/Content/Weapons/M3-BijliElectricBolt.asset";
         private const string FighterAssetPath = "Assets/BattleRaja/Content/Fighters/M3-Bijli.asset";
-        private const string DevelopmentApplicationId = "com.example.battleraja.m6";
+        private const string PehelFighterAssetPath = "Assets/BattleRaja/Content/Fighters/M7-Pehel.asset";
+        private const string MayaFighterAssetPath = "Assets/BattleRaja/Content/Fighters/M7-Maya.asset";
+        private const string PehelWeaponAssetPath = "Assets/BattleRaja/Content/Weapons/M7-PehelSweep.asset";
+        private const string MayaWeaponAssetPath = "Assets/BattleRaja/Content/Weapons/M7-MayaShard.asset";
+        private const string DevelopmentApplicationId = "com.example.battleraja.m7";
         private const string GadgetAssetFolder = "Assets/BattleRaja/Content/Gadgets";
 
         public static void CreateBootstrapScene()
@@ -69,6 +73,8 @@ namespace BattleRaja.Editor
             var weaponAsset = EnsureWeaponAsset();
             var bijliWeaponAsset = EnsureBijliWeaponAsset();
             var fighterAsset = EnsureFighterAsset();
+            var pehelAsset = EnsureFighterVariantAsset(PehelFighterAssetPath, "fighter.pehel", "Pehel", FighterDefinition.Pehel, EnsureVariantWeaponAsset(PehelWeaponAssetPath, FighterDefinition.Pehel.BasicAttack));
+            var mayaAsset = EnsureFighterVariantAsset(MayaFighterAssetPath, "fighter.maya", "Maya", FighterDefinition.Maya, EnsureVariantWeaponAsset(MayaWeaponAssetPath, FighterDefinition.Maya.BasicAttack));
             EnsureGadgetAssets();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -77,10 +83,16 @@ namespace BattleRaja.Editor
             weaponAsset = AssetDatabase.LoadAssetAtPath<ProjectileWeaponAsset>(WeaponAssetPath);
             bijliWeaponAsset = AssetDatabase.LoadAssetAtPath<ProjectileWeaponAsset>(BijliWeaponAssetPath);
             fighterAsset = AssetDatabase.LoadAssetAtPath<FighterDefinitionAsset>(FighterAssetPath);
+            AssetDatabase.ImportAsset(PehelFighterAssetPath, ImportAssetOptions.ForceUpdate);
+            AssetDatabase.ImportAsset(MayaFighterAssetPath, ImportAssetOptions.ForceUpdate);
+            pehelAsset = AssetDatabase.LoadAssetAtPath<FighterDefinitionAsset>(PehelFighterAssetPath);
+            mayaAsset = AssetDatabase.LoadAssetAtPath<FighterDefinitionAsset>(MayaFighterAssetPath);
             SetObjectReference(fighterAsset, "movementTuning", tuningAsset);
             SetObjectReference(fighterAsset, "basicAttack", bijliWeaponAsset);
 
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            pehelAsset = AssetDatabase.LoadAssetAtPath<FighterDefinitionAsset>(PehelFighterAssetPath);
+            mayaAsset = AssetDatabase.LoadAssetAtPath<FighterDefinitionAsset>(MayaFighterAssetPath);
             RenderSettings.ambientLight = new Color(0.28f, 0.31f, 0.38f, 1f);
 
             var arena = new GameObject("MovementLab");
@@ -184,6 +196,7 @@ namespace BattleRaja.Editor
             };
             for (var botIndex = 0; botIndex < botPositions.Length; botIndex++)
             {
+                var botFighter = botIndex < 2 ? fighterAsset : botIndex < 5 ? pehelAsset : mayaAsset;
                 CreateBotActor(
                     botIndex,
                     botPositions[botIndex],
@@ -191,7 +204,7 @@ namespace BattleRaja.Editor
                     obstacleMaterial,
                     projectileMaterial,
                     tuningAsset,
-                    fighterAsset,
+                    botFighter,
                     projectilePool,
                     damageResolver);
             }
@@ -316,12 +329,14 @@ namespace BattleRaja.Editor
                 throw new BuildFailedException($"Bijli fighter definition is invalid: {reason}");
             }
 
-            if (EnsureGadgetAssets().Length != 3)
+            if (EnsureGadgetAssets().Length != 3 ||
+                AssetDatabase.LoadAssetAtPath<FighterDefinitionAsset>(PehelFighterAssetPath) == null ||
+                AssetDatabase.LoadAssetAtPath<FighterDefinitionAsset>(MayaFighterAssetPath) == null)
             {
-                throw new BuildFailedException("M6 gadget definitions are incomplete.");
+                throw new BuildFailedException("M7 fighter/gadget definitions are incomplete.");
             }
 
-            Debug.Log("BattleRaja Milestone 6 validation passed.");
+            Debug.Log("BattleRaja Milestone 7 validation passed.");
         }
 
         public static void BuildAndroidDevelopment()
@@ -336,7 +351,7 @@ namespace BattleRaja.Editor
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel28;
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
             PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
-            Build("Builds/M6/Android/BattleRaja-M6.apk", BuildTarget.Android);
+            Build("Builds/M7/Android/BattleRaja-M7.apk", BuildTarget.Android);
         }
 
         public static void BuildWebDevelopment()
@@ -347,7 +362,7 @@ namespace BattleRaja.Editor
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WebGL, BuildTarget.WebGL);
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
-            Build("Builds/M6/Web", BuildTarget.WebGL);
+            Build("Builds/M7/Web", BuildTarget.WebGL);
         }
 
         private static void Build(string outputPath, BuildTarget target)
@@ -366,7 +381,7 @@ namespace BattleRaja.Editor
                 throw new BuildFailedException($"{target} build failed: {report.summary.result}. See the Unity build log.");
             }
 
-            Debug.Log($"{target} M6 development build succeeded: {report.summary.outputPath} ({report.summary.totalSize} bytes).");
+            Debug.Log($"{target} M7 development build succeeded: {report.summary.outputPath} ({report.summary.totalSize} bytes).");
         }
 
         private static GameObject CreateBlock(string name, Vector3 position, Vector3 scale, Material material, Transform parent)
@@ -673,6 +688,61 @@ namespace BattleRaja.Editor
 
             AssetDatabase.SaveAssets();
             return AssetDatabase.LoadAssetAtPath<FighterDefinitionAsset>(FighterAssetPath);
+        }
+
+        private static ProjectileWeaponAsset EnsureVariantWeaponAsset(string path, ProjectileWeaponDefinition definition)
+        {
+            Directory.CreateDirectory("Assets/BattleRaja/Content/Weapons");
+            var asset = AssetDatabase.LoadAssetAtPath<ProjectileWeaponAsset>(path);
+            if (asset == null)
+            {
+                asset = ScriptableObject.CreateInstance<ProjectileWeaponAsset>();
+                AssetDatabase.CreateAsset(asset, path);
+            }
+
+            SetInt(asset, "damage", definition.Damage);
+            SetFloat(asset, "fireIntervalSeconds", definition.FireIntervalSeconds);
+            SetFloat(asset, "projectileSpeed", definition.ProjectileSpeed);
+            SetFloat(asset, "maxRange", definition.MaxRange);
+            SetFloat(asset, "lifetimeSeconds", definition.LifetimeSeconds);
+            SetFloat(asset, "radius", definition.Radius);
+            SetInt(asset, "collisionLayers", definition.CollisionLayerMask);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+            return AssetDatabase.LoadAssetAtPath<ProjectileWeaponAsset>(path);
+        }
+
+        private static FighterDefinitionAsset EnsureFighterVariantAsset(
+            string path,
+            string fighterId,
+            string displayName,
+            FighterDefinition definition,
+            ProjectileWeaponAsset weapon)
+        {
+            Directory.CreateDirectory("Assets/BattleRaja/Content/Fighters");
+            var asset = AssetDatabase.LoadAssetAtPath<FighterDefinitionAsset>(path);
+            if (asset == null)
+            {
+                asset = ScriptableObject.CreateInstance<FighterDefinitionAsset>();
+                AssetDatabase.CreateAsset(asset, path);
+            }
+
+            var tuning = AssetDatabase.LoadAssetAtPath<MovementTuningAsset>(TuningAssetPath);
+            SetString(asset, "fighterId", fighterId);
+            SetString(asset, "displayName", displayName);
+            SetInt(asset, "maxHealth", definition.MaxHealth);
+            SetObjectReference(asset, "movementTuning", tuning);
+            SetObjectReference(asset, "basicAttack", weapon);
+            SetString(asset, "abilityId", definition.Ability.AbilityId.Value);
+            SetFloat(asset, "abilityCooldownSeconds", definition.Ability.CooldownSeconds);
+            SetFloat(asset, "dashDistance", definition.Ability.Distance);
+            SetFloat(asset, "startupSeconds", definition.Ability.StartupSeconds);
+            SetFloat(asset, "activeSeconds", definition.Ability.ActiveSeconds);
+            SetFloat(asset, "recoverySeconds", definition.Ability.RecoverySeconds);
+            SetFloat(asset, "collisionRadius", definition.Ability.CollisionRadius);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+            return AssetDatabase.LoadAssetAtPath<FighterDefinitionAsset>(path);
         }
 
         private static GadgetDefinitionAsset[] EnsureGadgetAssets()

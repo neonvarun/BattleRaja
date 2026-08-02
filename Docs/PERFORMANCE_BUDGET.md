@@ -102,3 +102,13 @@ Required next measurement: capture a short Editor, Lava and Oppo session with Un
   but is not a scale claim.
 - No Android CPU/GPU/GC, browser frame-time/memory, or device-tier gadget profile was
   captured. Human telegraph/readability and bot-use value remain unmeasured.
+
+## Milestone 7 baseline evidence — 2026-08-02
+
+- M7 development APK is approximately 83.6 MB on disk; Web output is approximately
+  113.5 MB locally. These are development artifacts, not release budgets.
+- The three-fighter actor mix remains eight actors with bounded gadget state and pooled
+  projectile effects. No formal Android CPU/GPU/GC or browser frame-time/memory capture
+  was collected.
+- Final art/audio overdraw, tutorial/menu UI, accessibility settings and low-end device
+  stability remain unmeasured and are tracked in HR-007.

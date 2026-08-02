@@ -2,7 +2,7 @@
 
 ## Active milestone
 
-**Milestone 6 — Jugaad Gadget System**
+**Milestone 7 — Three-Fighter Vertical Slice**
 
 ## Current state
 
@@ -22,10 +22,10 @@
   subjective human-review debt recorded.
 - M2 report: `Docs/MILESTONE_REPORTS/M2.md`; technical gate passed provisionally with
   combat/touch/balance review debt recorded.
-- Combat/gameplay progression: M3 Bijli, M4 bot, M5 offline match and M6 gadget gates
-  passed provisionally. Match pacing, Aandhi, pickup, spectator/results, gadget
-  counterplay and device review remain open. Networking, backend and progression remain
-  unimplemented.
+- Combat/gameplay progression: M3 Bijli, M4 bot, M5 offline match, M6 gadget and M7
+  three-fighter roster gates passed provisionally. Match pacing, Aandhi, pickup,
+  spectator/results, gadget counterplay, fighter feel, alpha UI/accessibility and device
+  review remain open. Networking, backend and progression remain unimplemented.
 - Multiplayer: deliberately deferred
 - Backend/economy: deliberately deferred
 - Final art/audio/animation: not started
@@ -89,6 +89,14 @@
 - Android/Web M6 builds, two-device launch smoke and Chrome/Edge local HTTP checks are
   recorded in `Docs/MILESTONE_REPORTS/M6.md`.
 
+## M7 execution evidence — 2026-08-02
+
+- Fighter tests: 40/40 EditMode and 27/27 PlayMode passed in `Builds/M7/TestResults/`.
+- Stable Pehel and Maya fighter/special definitions and serialized M7 assets are present;
+  MovementLab now contains a two-Bijli, three-Pehel, two-Maya bot mix plus the player.
+- Android/Web M7 builds, two-device launch and Chrome/Edge local HTTP checks are recorded
+  in `Docs/MILESTONE_REPORTS/M7.md`.
+
 ## M0 evidence retained
 
 - M0 validation, tests and smoke artifacts remain under ignored `Builds/M0/`.
@@ -107,6 +115,8 @@
 - Gadget counterplay/readability, bot gadget value, station scale behavior and device
   performance remain unmeasured. M6 device logs include a non-fatal SphereCollider
   creation warning from the existing projectile pool.
+- M7 bespoke specials, final art/audio, tutorial/menu/accessibility UI, fighter balance
+  and performance remain unmeasured; the same non-fatal SphereCollider warning persists.
 
 ## Approval gates
 

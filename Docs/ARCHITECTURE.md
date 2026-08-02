@@ -141,3 +141,16 @@ Android and Web share domain, application and most presentation code. Platform-s
   to the small offline lab and is a known scale-up task.
 - `BotBrain` calls the same `GadgetUser` use path after contextual perception; there is
   no random or bot-only effect path. No networking/backend dependency entered the core.
+
+## M7 vertical-slice fighter implementation
+
+- `FighterDefinition.Pehel` and `.Maya` provide stable IDs and distinct data-driven
+  health, movement and attack baselines. `FighterSpecialDefinition` and `DecoyRuntime`
+  keep Charge Throw/Decoy timing, bounds and expiry testable without Unity.
+- M7 serialized fighter/weapon assets are loaded by the editor scene generator after
+  scene creation so Unity asset lifecycle cannot silently fall back to Bijli. Actors
+  still use the shared `MovementPlayerAgent`, `CombatAttackController`,
+  `BijliFighterController` bridge and bot command interfaces.
+- The shared presentation bridge is intentionally an alpha implementation: bespoke
+  Pehel throw displacement and Maya decoy visuals are not yet authoritative presentation
+  systems. This is recorded as M7 debt rather than hidden in the Domain layer.
