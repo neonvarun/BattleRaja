@@ -2,7 +2,7 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated HEAD: `579bc37` (`feat: add Bazaar Bastion production vertical slice`)
+Latest validated source HEAD: `579bc37` (`feat: add Bazaar Bastion production vertical slice`); current docs-only HEAD: `4a84a12`
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
 ## Scope and repository note
