@@ -72,3 +72,34 @@ Every practical bug fix should receive a regression test.
 - Python local HTTP server returned 200 for `index.html`; Chrome 150 and Edge 150 headless DOM dumps both contained Unity bootstrap content.
 
 Unity batch logs include resolved licensing-handshake warnings and intentional empty-boundary-assembly warnings. These did not produce test failures. WebGL also reports that `AllowDebugging` is ignored; browser automation, console inspection and production hosting remain outside M0 evidence.
+
+## Milestone 1 movement coverage
+
+### Pure/EditMode
+
+- diagonal and normalised movement input
+- independent dead zones and sensitivity
+- invalid tuning rejection
+- acceleration, deceleration and maximum speed
+- aim-direction persistence after aim input stops
+- equal elapsed-time frame-step behavior
+
+### PlayMode
+
+- MovementLab player and camera references
+- command-pipeline movement integration
+- CharacterController collision with the arena boundary
+- deceleration after input release
+- aim indicator response and aim persistence
+- two touch sticks and reset behavior
+- Bootstrap lifecycle smoke test
+
+### M1 evidence (2026-08-02)
+
+- `Unity.exe -batchmode -nographics -projectPath . -runTests -testPlatform editmode -testResults Builds/M1/TestResults/editmode.xml -logFile Builds/M1/Logs/editmode.log` — 8/8 passed.
+- `Unity.exe -batchmode -nographics -projectPath . -runTests -testPlatform playmode -testResults Builds/M1/TestResults/playmode.xml -logFile Builds/M1/Logs/playmode.log` — 7/7 passed.
+- `Tools/Build/Web/build.ps1 ...` — M1 WebGL2/WebAssembly build succeeded under `Builds/M1/Web`.
+- `Tools/Build/Android/build.ps1 ...` — M1 Android IL2CPP ARM64 APK succeeded under `Builds/M1/Android`; installation and launch succeeded on both authorized devices.
+- Python local HTTP server returned 200 for the M1 page; Chrome 150 and Edge 150 DOM checks found Unity bootstrap content.
+
+Physical touch gestures, multiple safe-area/aspect-ratio layouts, deliberate browser canvas focus/scroll behavior, and formal performance profiling remain manual follow-up coverage.

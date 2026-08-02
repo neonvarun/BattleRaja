@@ -2,52 +2,51 @@
 
 ## Active milestone
 
-**Milestone 0 — Repository and Research Foundation**
+**Milestone 1 — Cross-Platform Movement Laboratory**
 
 ## Current state
 
 - Product vision: drafted
-- Root agent rules: drafted
-- Milestone 0 execution plan: present in `Docs/MILESTONE_0_EXECUTION_PLAN.md`
-- Unity project: bootstrapped and verified at the repository root with URP, Bootstrap scene and pinned package lock
-- Unity version: owner-approved and installed `6000.5.6f1`
-- Android toolchain: Unity-managed SDK/NDK/OpenJDK modules installed and verified; SDK platform/Build Tools 36.0.0, NDK r27c `27.2.12479018`, OpenJDK 17.0.18, embedded ADB 36.0.0
-- Unity Web build support: present and used successfully in `6000.5.6f1`
+- Root agent rules: active
+- Milestone 0: complete and committed locally
+- Unity project: verified at the repository root with URP and MovementLab scenes
+- Unity version: `6000.5.6f1`
+- Android toolchain: Unity-managed SDK/NDK/OpenJDK modules installed and verified; SDK/Build Tools 36.0.0, NDK r27c `27.2.12479018`, OpenJDK 17.0.18, embedded ADB 36.0.0
+- Unity Web build support: present and used successfully
 - Browser test environment: Chrome 150 and Edge 150 available; Firefox/Playwright/WebDriver unavailable
-- Gameplay: not started
+- Packages: Input System `1.20.0`, uGUI `2.5.0`, URP `17.5.0`, Test Framework `1.7.0`; lockfile is authoritative
+- Movement laboratory: implemented with grey-box arena, placeholder player, independent movement/aim, orthographic camera, aim indicator, desktop bindings and safe-area touch sticks
+- Combat/gameplay progression: not started; movement prototype only
 - Multiplayer: deliberately deferred
-- Backend: deliberately deferred
-- Final art/audio: not started
-- Git/LFS: Git 2.53.0 and Git LFS 3.7.1 installed; local repository initialized and LFS configured, with no remote configured
-- Repository remote: not configured
+- Backend/economy: deliberately deferred
+- Final art/audio/animation: not started
+- Git/LFS: local repository initialized and LFS configured; no remote configured locally
 
-## Evidence and blockers
+## M1 execution evidence — 2026-08-02
 
-- Milestone 0 project conversion, package resolution, assembly boundaries and build tooling are complete.
-- No active M0 blocker remains. Unity licensing handshake warnings appeared in batch logs, but entitlement resolution completed and validation/builds succeeded.
-- Deliberately untested or deferred: production signing/hosting, Firefox/Safari/mobile Web, automated WebDriver, compression/CDN behavior, performance profiling, public networking, Photon, PlayFab and store submission.
+- Pure movement tests: 8/8 EditMode tests passed in `Builds/M1/TestResults/editmode.xml`.
+- Movement integration tests: 7/7 PlayMode tests passed in `Builds/M1/TestResults/playmode.xml`.
+- Editor validation: `BattleRaja.Editor.BuildEntrypoints.ValidateProject` passed.
+- Android: M1 IL2CPP ARM64 development APK built with min API 28/target API 36, installed and launched on Lava LXX508 (Android 14/API 34) and Oppo CPH2487 (Android 16/API 36). Artifact: `Builds/M1/Android/BattleRaja-M1.apk`.
+- Web: M1 WebGL2/WebAssembly development build completed under `Builds/M1/Web`, served over local HTTP on port 8001, and returned HTTP 200. Chrome 150 and Edge 150 DOM checks found Unity bootstrap content.
+- Android runtime smoke found no M1 application exception after serializing the aim-indicator material. Unity still logs the known Play Asset Delivery `AssetPackManager` class-probe warning on a development APK.
 
-## Milestone 0 execution evidence — 2026-08-02
+## M0 evidence retained
 
-- Approved editor: Unity `6000.5.6f1`; Hub `3.20.0`.
-- Embedded Android dependencies: SDK platforms 34/36/37, Build Tools 36.0.0, platform-tools/ADB 36.0.0, NDK r27c `27.2.12479018`, OpenJDK Temurin 17.0.18.
-- Packages: Input System `1.20.0`, URP family `17.5.0`, built-in Test Framework `1.7.0`; exact transitive resolution is pinned in `Packages/packages-lock.json`.
-- Project validation: `Tools/Validation/validate.ps1 -RequireUnityProject` passed with 0 errors and 0 warnings; editor `ValidateProject` passed.
-- EditMode tests: 2/2 passed in `Builds/M0/TestResults/editmode.xml`.
-- PlayMode tests: 1/1 passed in `Builds/M0/TestResults/playmode.xml`.
-- Android: development IL2CPP ARM64 APK built for min API 28/target API 36, installed and launched on Lava LXX508 (Android 14/API 34) and Oppo CPH2487 (Android 16/API 36).
-- Web: WebGL2/WebAssembly development build served over local HTTP; Chrome 150 and Edge 150 both returned a DOM containing Unity bootstrap content.
-- Artifacts remain under ignored `Builds/M0/`; source control contains only project/configuration/tests/tooling and documentation.
+- M0 validation, tests and smoke artifacts remain under ignored `Builds/M0/`.
+- The M0 foundation commit is preserved as the parent of the current working changes.
 
-## Milestone 0 objective
+## Performance and limitations
 
-Establish a verified local toolchain, approved Unity version and package plan, clean architecture boundaries, tests, command-line validation and minimal Android and browser Web development builds.
+- Movement hot paths use cached component references, value types and no per-frame LINQ/managed collection creation.
+- No formal Editor Profiler, Android GPU/CPU capture or Web browser performance profile has been collected yet; values remain explicitly unmeasured in `Docs/PERFORMANCE_BUDGET.md`.
+- Physical touch interaction, safe-area variations, browser keyboard/mouse focus by manual play, and visual camera comparison still require human playtesting.
 
-## Human approval gates
+## Approval gates
 
-The owner explicitly approved Unity `6000.5.6f1`, installation of required modules/packages, root conversion, and Milestone 0 validation in the current task. Review is still required before:
+Review is required before:
 
-1. Beginning Milestone 1 gameplay implementation.
+1. Beginning Milestone 2 combat implementation.
 2. Adding Photon, PlayFab, monetisation or paid infrastructure.
 3. Publishing, deploying, signing for release or submitting to stores.
 4. Changing the pinned editor/package baseline or final branding/trademarks.

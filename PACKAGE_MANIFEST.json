@@ -23,8 +23,8 @@
     },
     {
       "path": ".gitattributes",
-      "bytes": 920,
-      "sha256": "bb3eb9e0aed43b6aed94c7bccb0578657bfb96e3768aaab30c197730a688836e"
+      "bytes": 953,
+      "sha256": "1abd60411aadfc78a8ee2806cbd62c76e41f1db686d4d4e8ed94bba15c3f1eec"
     },
     {
       "path": ".github/ISSUE_TEMPLATE/bug.yml",
@@ -318,8 +318,8 @@
     },
     {
       "path": "Docs/ARCHITECTURE.md",
-      "bytes": 2818,
-      "sha256": "1720e98ff657a3c553c114de7f6877ce3141490a8c27367a2f96c462d8107c9b"
+      "bytes": 4124,
+      "sha256": "399a6ece771a4fbbe263c5a8cb97d126b8bfab30a90bf4430e2a1a03327f6cc9"
     },
     {
       "path": "Docs/ART_BIBLE.md",
@@ -343,8 +343,8 @@
     },
     {
       "path": "Docs/DECISIONS.md",
-      "bytes": 3031,
-      "sha256": "01e46fa7dfd42ff23efd58c6a0c82f13d7717c475043de0ab042b4874596bfac"
+      "bytes": 4502,
+      "sha256": "944ec649a7dad1da478ded1b7f6c3f347c98b81ddf048ecdeb43a2d67997608d"
     },
     {
       "path": "Docs/MASTER_VISION.md",
@@ -353,8 +353,8 @@
     },
     {
       "path": "Docs/MILESTONE_ISSUES.md",
-      "bytes": 4877,
-      "sha256": "55831d645e4b8e269b335631a8a99af0412791e6eb97e34397e2c65c2bd35b67"
+      "bytes": 6167,
+      "sha256": "2cd145d5d9a505e3230c73323cf446e2e75f3da0bc1436844cb0b1ef38a0cbf9"
     },
     {
       "path": "Docs/NETWORK_MODEL.md",
@@ -363,8 +363,8 @@
     },
     {
       "path": "Docs/PERFORMANCE_BUDGET.md",
-      "bytes": 880,
-      "sha256": "e077069d30fc5677aa489a77a60b840690607352ca68bed0fd4ea9024b16a162"
+      "bytes": 1933,
+      "sha256": "5288314d1d49326e67a569395552111b6f5de4101972f6e137d46b45c74aa087"
     },
     {
       "path": "Docs/RELEASE_CHECKLIST.md",
@@ -373,8 +373,8 @@
     },
     {
       "path": "Docs/RESEARCH_LOG.md",
-      "bytes": 9231,
-      "sha256": "64fb180a4327da99921bf1717955edf67d6570c8dd3898d6fd8a9ff86f666961"
+      "bytes": 10243,
+      "sha256": "a964127ecde5cebc02e86c0055205041b76ababd050f8cdb518e12121184b514"
     },
     {
       "path": "Docs/SECURITY.md",
@@ -383,23 +383,23 @@
     },
     {
       "path": "Docs/TEST_STRATEGY.md",
-      "bytes": 3118,
-      "sha256": "b55891d0d587fd940970412799ab19ea488df5a268c376c25ac70e51a791893c"
+      "bytes": 4701,
+      "sha256": "b084f9fc80bcf2ddd3311fb309183c6a8e0f2b3ca5bab60aaffc43ee600456b6"
     },
     {
       "path": "Docs/WEB_PLATFORM.md",
-      "bytes": 3272,
-      "sha256": "9ff50b2997d14d9bba1d6a66b188d0ff64fa6091cc6b34ed93e15ef02db2357d"
+      "bytes": 4124,
+      "sha256": "b0bd5fc6dddb4ef1c67ad26e9601d6adf407b5713cc9279b73288cfb1d88b413"
     },
     {
       "path": "PROJECT_CONTEXT.json",
-      "bytes": 2128,
-      "sha256": "f6f78e50e4339ea4bbf48e8f248b8ec93aa8d6e5265bc7de69273ec956fdf4e7"
+      "bytes": 2359,
+      "sha256": "9245d40e00efde634cdc0c79428595e86280c7657fe85227942bfefb0ef5ae4c"
     },
     {
       "path": "PROJECT_STATUS.md",
-      "bytes": 3436,
-      "sha256": "61c44bc15db8b30179d5a7c48101f9ae6f4b070c01660e2fc27ab3009f07383e"
+      "bytes": 3167,
+      "sha256": "7788cce79afcd48bc90325a7164c8d78053ca53bc2692ec699163625905b9ec0"
     },
     {
       "path": "PROMPTS/00_MILESTONE_0_BOOTSTRAP.md",
@@ -418,8 +418,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 1310,
-      "sha256": "ba03fa70f1ba960831e91acb694296d8f991605baf60bac09f150eae3b8fe0db"
+      "bytes": 1632,
+      "sha256": "f989b44aab93facf1d74d905516b64768b544b3cb3c01addaf05ba361ca73d94"
     },
     {
       "path": "START_HERE.md",
@@ -428,18 +428,18 @@
     },
     {
       "path": "Tools/Build/Android/README.md",
-      "bytes": 322,
-      "sha256": "bab371bd2586d57944de6af4a87a0ff7d6e3d5d183912ee297c1c3fd19268142"
+      "bytes": 340,
+      "sha256": "0c6ed4dcb66eb9e7ec5d6c182cf2a2f12f06b67f60af07faf01292175da2aa59"
     },
     {
       "path": "Tools/Build/README.md",
-      "bytes": 554,
-      "sha256": "de6db8d8511235b232ca5e7addfc0f54a4deaad8a21866ecdd5b31d07bca70e6"
+      "bytes": 472,
+      "sha256": "100ae087e980191c481eb3a5d69907de76b750ae86de35b7e1a1dc2762930cc5"
     },
     {
       "path": "Tools/Build/Web/README.md",
-      "bytes": 377,
-      "sha256": "ddd41a67f0be0ae9fd015265c0af92d716c49c9d773122b5b655c4f3e140d4fa"
+      "bytes": 395,
+      "sha256": "83452aa58b988d9a9db393e7ed0ce972fe38ee041a9c71ad55ebbe44bb129e35"
     },
     {
       "path": "Tools/Content/README.md",
@@ -469,12 +469,12 @@
     {
       "path": "Tools/Build/Android/build.ps1",
       "bytes": 1795,
-      "sha256": "f5682f02a3d98d6e74cfef50a709d9247a7e92a5655eff95d2c2dd700a7fa513"
+      "sha256": "ba9ed539462df17d2e190c640f508d1b23896e4633825b2831dbccfc61376527"
     },
     {
       "path": "Tools/Build/Web/build.ps1",
       "bytes": 1768,
-      "sha256": "f8ffe81f7d916e6bf5d3651982973a11a3bc8afba132419636580cfe779ba250"
+      "sha256": "4a0b86abb1a0a8d33dce802e723a7669d21c1bede624f899a8dc24dc64a96c08"
     },
     {
       "path": "Assets/BattleRaja.meta",
@@ -588,8 +588,8 @@
     },
     {
       "path": "Assets/BattleRaja/Core/Application/CommandPorts.cs",
-      "bytes": 173,
-      "sha256": "90a533e1e370ac5d16f0d27478e5f09ae5b02514c66a4355f3263dc47cdee059"
+      "bytes": 274,
+      "sha256": "4e9d79befaf5b6a6a9f7efdb22d63bef04d4c9c803fa5bb973d6e68a07fbd547"
     },
     {
       "path": "Assets/BattleRaja/Core/Application/CommandPorts.cs.meta",
@@ -663,8 +663,8 @@
     },
     {
       "path": "Assets/BattleRaja/Editor/BattleRaja.Editor.asmdef",
-      "bytes": 534,
-      "sha256": "7f1b88e61fe01939b25e9163d01a2e49adba72b6c8525b8503d1a9b2ae51976e"
+      "bytes": 559,
+      "sha256": "e5f77e242f06eab642c366b9c91a48a66f6d03a293a54203313a256d44a7688f"
     },
     {
       "path": "Assets/BattleRaja/Editor/BattleRaja.Editor.asmdef.meta",
@@ -673,8 +673,8 @@
     },
     {
       "path": "Assets/BattleRaja/Editor/BuildEntrypoints.cs",
-      "bytes": 7302,
-      "sha256": "7536eab8f23ab53c3aaa7468522a27c7555cb1f46c4f4da6d8bd00f2cd0e95b1"
+      "bytes": 19670,
+      "sha256": "9d9d9d444c4e1a34fe04cbaee0906473bf790e95d7a8cb692c7999fa4b9b11e9"
     },
     {
       "path": "Assets/BattleRaja/Editor/BuildEntrypoints.cs.meta",
@@ -833,8 +833,8 @@
     },
     {
       "path": "Assets/BattleRaja/Presentation/BattleRaja.Presentation.asmdef",
-      "bytes": 419,
-      "sha256": "47b154894ab50c08698c21894613e155ebe5c69bde3c3cec9fa0b6742cb960d0"
+      "bytes": 444,
+      "sha256": "11bbce48750f1067be2f498dfc9d0faf68b6e9f87083f6c6159f9312a845d26a"
     },
     {
       "path": "Assets/BattleRaja/Presentation/BattleRaja.Presentation.asmdef.meta",
@@ -1003,13 +1003,13 @@
     },
     {
       "path": "Packages/manifest.json",
-      "bytes": 1715,
-      "sha256": "639a838349d539eae090a3548e7321042d3b969a2c20d6a3fc5b60c1943fdb45"
+      "bytes": 1746,
+      "sha256": "c842a7f57315c8bdeb1d10703be503c23cd8c378e8d8371a68a57eab3bbe0ec9"
     },
     {
       "path": "Packages/packages-lock.json",
-      "bytes": 10414,
-      "sha256": "175ae84abdc8149b60d0d9c5740a8fab8e0ccc439675b199fde39af42729d186"
+      "bytes": 10770,
+      "sha256": "57f9eec19c25ecb3fbd2e565f9783efd8164038e562da07b2ea23a249bc26fda"
     },
     {
       "path": "ProjectSettings/AudioManager.asset",
@@ -1028,8 +1028,8 @@
     },
     {
       "path": "ProjectSettings/EditorBuildSettings.asset",
-      "bytes": 276,
-      "sha256": "0e5b2f4d8b795aa579b14cb81ec04dc6a376db0bbdab50345b403e217b280a16"
+      "bytes": 399,
+      "sha256": "ae569413c6eb5dbf55b7d30d71b26f24d8de07a5294a6691b939699992f3f935"
     },
     {
       "path": "ProjectSettings/EditorSettings.asset",
@@ -1084,7 +1084,7 @@
     {
       "path": "ProjectSettings/ProjectSettings.asset",
       "bytes": 22435,
-      "sha256": "856df41d74392f9c0e7e455133841a4ebc94ec0d42e331dacbb7c022f235aeb7"
+      "sha256": "fb61ff78e4256b33d7da0e85b4ce96d99f631b2efa1a4f9127e8e23c94c2a569"
     },
     {
       "path": "ProjectSettings/ProjectVersion.txt",
@@ -1130,6 +1130,276 @@
       "path": "ProjectSettings/VFXManager.asset",
       "bytes": 525,
       "sha256": "2973a6af930e142f62cde00076beda8a3cc3a66d9bfcde7a58ba7d4be2251c26"
+    },
+    {
+      "path": "Assets/BattleRaja/Content/Movement.meta",
+      "bytes": 172,
+      "sha256": "3738e31f4acd111e840ab70ceb841db3fdd07e6f6c95bd909ed6963bd087f1be"
+    },
+    {
+      "path": "Assets/BattleRaja/Content/Movement/BattleRajaMovement.inputactions",
+      "bytes": 7752,
+      "sha256": "4f512ea91a1fba469a56e30ef314b5c87f0c9aee3572bce93992b2966458eabb"
+    },
+    {
+      "path": "Assets/BattleRaja/Content/Movement/BattleRajaMovement.inputactions.meta",
+      "bytes": 376,
+      "sha256": "2e7d4fa29c2bb661236c18f0f69de2f3e877a94b2da54117fa2d9a7ac42c22fa"
+    },
+    {
+      "path": "Assets/BattleRaja/Content/Movement/M1-MovementTuning.asset",
+      "bytes": 625,
+      "sha256": "5365d9338368b56936ffb7a2352d8497dd40ff404cb51b2f896549b5e3038d49"
+    },
+    {
+      "path": "Assets/BattleRaja/Content/Movement/M1-MovementTuning.asset.meta",
+      "bytes": 189,
+      "sha256": "2979fabd32bd9f6c09943a7ee04c20d0e5fa0872d749c0d06036041175d5e032"
+    },
+    {
+      "path": "Assets/BattleRaja/Content/Movement/MovementLabFloor.mat",
+      "bytes": 3805,
+      "sha256": "effa4892c716746d541084c1144da1a4804247f84aa5deb1873ed5239b419be3"
+    },
+    {
+      "path": "Assets/BattleRaja/Content/Movement/MovementLabFloor.mat.meta",
+      "bytes": 188,
+      "sha256": "47a8121a0f79c843e6015ea6ddda57dab473c867f36088d402442023aadb74a2"
+    },
+    {
+      "path": "Assets/BattleRaja/Content/Movement/MovementLabIndicator.mat",
+      "bytes": 3805,
+      "sha256": "19d70d8c48d9996c5db71172a6081d18e83ac871b54a759439274444e4ebf3a8"
+    },
+    {
+      "path": "Assets/BattleRaja/Content/Movement/MovementLabIndicator.mat.meta",
+      "bytes": 188,
+      "sha256": "3e630c1a9d160da540ffff683f300b43a837990f3b0bf6d26114d385196f0037"
+    },
+    {
+      "path": "Assets/BattleRaja/Content/Movement/MovementLabObstacles.mat",
+      "bytes": 3810,
+      "sha256": "425eaaca28d3dc930ad82d586011fe4881743a52a984476cbf03df62ffa9ae1b"
+    },
+    {
+      "path": "Assets/BattleRaja/Content/Movement/MovementLabObstacles.mat.meta",
+      "bytes": 188,
+      "sha256": "dc7798205b44ad691fa8c88dfd697deb53ad84e2a99679ec7c389d14476d5497"
+    },
+    {
+      "path": "Assets/BattleRaja/Content/Movement/MovementLabPlayer.mat",
+      "bytes": 3808,
+      "sha256": "3af83ca44a359e82277c5d13f088a9c1596096288a37e0fe6e80c7b5327818fb"
+    },
+    {
+      "path": "Assets/BattleRaja/Content/Movement/MovementLabPlayer.mat.meta",
+      "bytes": 188,
+      "sha256": "8b3658c80bee852273bb9a8babdcd33acd881f68260eb18f5668148bf8114288"
+    },
+    {
+      "path": "Assets/BattleRaja/Content/Movement/MovementLabWalls.mat",
+      "bytes": 3807,
+      "sha256": "b8c73f4959466231c92fb70231d16bf50200e3a2d03d63a605991f2e57f9bd66"
+    },
+    {
+      "path": "Assets/BattleRaja/Content/Movement/MovementLabWalls.mat.meta",
+      "bytes": 188,
+      "sha256": "82a228174fea647c8ced1b38c04fb9f97f49eb31effcf24ae279c83825f6ddc5"
+    },
+    {
+      "path": "Assets/BattleRaja/Core/Domain/Float2.cs",
+      "bytes": 2028,
+      "sha256": "39b012bc1e424cc69ff268236c9b9a0669992a8153a5fa98a09d9ccc8520b9f1"
+    },
+    {
+      "path": "Assets/BattleRaja/Core/Domain/Float2.cs.meta",
+      "bytes": 59,
+      "sha256": "b2bddea96d71abc9650d4b0c4e1638a151799d2b20d660515ad43f65b83c7bc7"
+    },
+    {
+      "path": "Assets/BattleRaja/Core/Domain/MovementCommand.cs",
+      "bytes": 659,
+      "sha256": "0a4c7b253a5fd4977f91f8d994599ec6ee1a9a752aa062dd2cafa773d4997ccd"
+    },
+    {
+      "path": "Assets/BattleRaja/Core/Domain/MovementCommand.cs.meta",
+      "bytes": 59,
+      "sha256": "d10ccfe6decfd5c0bf57027618da0ffaeb093f988cb05771a38558f8938216c4"
+    },
+    {
+      "path": "Assets/BattleRaja/Core/Domain/MovementCommandFactory.cs",
+      "bytes": 997,
+      "sha256": "bb3c73995d5e6cab740c3de77e4e797543742dbf27153dde969ddbd9853dd713"
+    },
+    {
+      "path": "Assets/BattleRaja/Core/Domain/MovementCommandFactory.cs.meta",
+      "bytes": 59,
+      "sha256": "7b611d95812d174bebf3f94c37ec91c9fc24642e9657afd8f64e75f1314966fe"
+    },
+    {
+      "path": "Assets/BattleRaja/Core/Domain/MovementInputFrame.cs",
+      "bytes": 310,
+      "sha256": "8adced01dbaca3c07bc14ce12651e3a00356489d02d0f1695198c4cddf6fe11c"
+    },
+    {
+      "path": "Assets/BattleRaja/Core/Domain/MovementInputFrame.cs.meta",
+      "bytes": 59,
+      "sha256": "d0035bceda87965817dcdae4941cdb79ba5dc8394df1c908ae572b25e0f3af26"
+    },
+    {
+      "path": "Assets/BattleRaja/Core/Domain/MovementMotor.cs",
+      "bytes": 2160,
+      "sha256": "6aaeedbb4000f8b4d36d527de657ccf7f26ea4baa5d90170af7953ba49c4b323"
+    },
+    {
+      "path": "Assets/BattleRaja/Core/Domain/MovementMotor.cs.meta",
+      "bytes": 59,
+      "sha256": "3800b032e985f34fdc00d309502637ab21f7c43c08e2a5bd1229c4c6a598c408"
+    },
+    {
+      "path": "Assets/BattleRaja/Core/Domain/MovementTuning.cs",
+      "bytes": 3143,
+      "sha256": "b5388b0c4b54eb8db9ebbc8fa0a0497931b534bdd0808854168453d593e132c3"
+    },
+    {
+      "path": "Assets/BattleRaja/Core/Domain/MovementTuning.cs.meta",
+      "bytes": 59,
+      "sha256": "4731a2e452ca4662d01f7b46903242641a33ffd85e991aebbe4e99453654eedd"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Movement.meta",
+      "bytes": 172,
+      "sha256": "2564050388aae0823cea054d530afa71f2bfddd8b3761761136afa7096c41bfe"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Movement/AimDirectionIndicator.cs",
+      "bytes": 1781,
+      "sha256": "298766d96e1f6c1b203cb597455eda357634c09dfcda0f8d35f90b80237cea71"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Movement/AimDirectionIndicator.cs.meta",
+      "bytes": 59,
+      "sha256": "e93401df0a7468c93e5d57b98f6a8386c19b494a49872d21b47c6941dd779b1e"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Movement/InputFocusController.cs",
+      "bytes": 792,
+      "sha256": "39332c7c95f2db370211921ac46fe97912e8f58755bd3c48705b56b6952c6028"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Movement/InputFocusController.cs.meta",
+      "bytes": 59,
+      "sha256": "3f39b420b2396383119fd9767a23c8c4040e7fe10de7d02cc3a0d2ecac6633f2"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Movement/MovementLabScene.cs",
+      "bytes": 403,
+      "sha256": "e195d37fce90afafb07cb6735483e6e5bcf6c1a1e108d6431b6603ee2254a858"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Movement/MovementLabScene.cs.meta",
+      "bytes": 59,
+      "sha256": "5527e3242cc9e77b96dd68f3241142e100c00061ebe5197d5abc8b8aa3d5f90d"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Movement/MovementPlayerAgent.cs",
+      "bytes": 2996,
+      "sha256": "892df8d621442a33108e5f729770215c6dcf1a34d9ac3d1736207fb97e3649dc"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Movement/MovementPlayerAgent.cs.meta",
+      "bytes": 59,
+      "sha256": "711dc87783bc3582fef3d23012c78fbd361ca8713310473e95574417cf931c01"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Movement/MovementTuningAsset.cs",
+      "bytes": 1778,
+      "sha256": "67cfb2dce2bba1ba583cdb3691e7d1c61a3058d03b488e4d2214594fe681e2b6"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Movement/MovementTuningAsset.cs.meta",
+      "bytes": 59,
+      "sha256": "9c72e8e978263563da40a637b96487beb02f4af0afa79531313d39190083f7c9"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Movement/PlayerInputAdapter.cs",
+      "bytes": 4280,
+      "sha256": "d9f884decb2eb7e78d24077fb466e8a656d9b495470166b24f8a27b954eedacd"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Movement/PlayerInputAdapter.cs.meta",
+      "bytes": 59,
+      "sha256": "942ae1b082396dfb7b4eaafe2f57d51aede75bd5215fcae4ffde7368b8adc236"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Movement/SafeAreaPanel.cs",
+      "bytes": 1091,
+      "sha256": "28b8970ef8bbf3ab6f148ccca654659b02d3c9218286c5fac826461b5322ed37"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Movement/SafeAreaPanel.cs.meta",
+      "bytes": 59,
+      "sha256": "a76aaf5b194c1173b8fcb9003bed7381693db8f42d9b0312d04cc563c08d6c5c"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Movement/TopDownCameraController.cs",
+      "bytes": 2823,
+      "sha256": "10b2e76b73a2466215198d18f0edd2d4ab4b71f19531106720fe194cdb24786b"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Movement/TopDownCameraController.cs.meta",
+      "bytes": 59,
+      "sha256": "6246f965c440398cce4479a86a1155e584814265e5cac963a9b408086063e59d"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Movement/VirtualStick.cs",
+      "bytes": 2874,
+      "sha256": "33159e2ab06deff564084fcf87c631e08b157ae6428d08d5eb227e6ec022c137"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Movement/VirtualStick.cs.meta",
+      "bytes": 59,
+      "sha256": "798fcc47ef4a1e84066a74a76ad063b6cf8419f66f5a451ab64f3b3abcd46345"
+    },
+    {
+      "path": "Assets/BattleRaja/Scenes/MovementLab.meta",
+      "bytes": 172,
+      "sha256": "d5bb2b46b4c9adf5b5b1424aa9e5fedab24dbf54c2236a441d052a5bb4e5ea2c"
+    },
+    {
+      "path": "Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity",
+      "bytes": 69001,
+      "sha256": "58e07ef85d9e0daf0785822ac53d717d099198e8840be7aad6cf30e4c82addb5"
+    },
+    {
+      "path": "Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity.meta",
+      "bytes": 155,
+      "sha256": "59730c665f26dda6fb45e50de3fc8f19da7aa1c20268c2db815c35c990a5f6e4"
+    },
+    {
+      "path": "Assets/BattleRaja/Tests/EditMode/MovementFoundationTests.cs",
+      "bytes": 4080,
+      "sha256": "ad056f6e2e9b6d3b50d302541993ab8f3e8b98acddddeebbae3e23b1d223768c"
+    },
+    {
+      "path": "Assets/BattleRaja/Tests/EditMode/MovementFoundationTests.cs.meta",
+      "bytes": 59,
+      "sha256": "f8c7cbd311d197d19a4e9007caaa4a0c6011cb01cc724285d9b4d21d458737c3"
+    },
+    {
+      "path": "Assets/BattleRaja/Tests/PlayMode/MovementLabPlayModeTests.cs",
+      "bytes": 5153,
+      "sha256": "faee864377dd0566ab740072b934a05bf639dca48d42676df404747d5c71d9db"
+    },
+    {
+      "path": "Assets/BattleRaja/Tests/PlayMode/MovementLabPlayModeTests.cs.meta",
+      "bytes": 59,
+      "sha256": "eeee06bf4c01162dadad08122d802694c99926d4860fac88e8882b143b0bd69b"
+    },
+    {
+      "path": "Docs/MOVEMENT_LAB.md",
+      "bytes": 3573,
+      "sha256": "66819fce46f7d649c2ec9bdefd135eacc7005e3d34ebd470ef971d7964b19014"
     }
   ]
 }

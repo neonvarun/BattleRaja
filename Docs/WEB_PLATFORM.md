@@ -46,6 +46,14 @@ BattleRaja will ship as an Android application and as a browser-playable Unity W
 - The build uses uncompressed development output for readable local diagnostics. Unity reports that `BuildOptions.AllowDebugging` is ignored on WebGL; this is expected and not a release configuration.
 - Not validated: canvas rendering by visual inspection, browser console cleanliness, Firefox/Safari, mobile Web, automated WebDriver, compression/MIME/cache headers on a real host, HTTPS, CDN, or background-tab behavior.
 
+## Milestone 1 movement-lab evidence (2026-08-02)
+
+- The MovementLab WebGL2/WebAssembly build completed under `Builds/M1/Web` with the grey-box arena, orthographic camera, player and touch-control UI.
+- Python local HTTP serving on port 8001 returned HTTP 200 for the M1 `index.html`.
+- Chrome 150 and Edge 150 headless DOM checks both found Unity bootstrap content. This validates page delivery/bootstrap only; it does not replace a human keyboard/mouse canvas playtest.
+- The browser input action asset includes configurable WASD, arrow-key, mouse-position and gamepad-stick bindings. Escape releases pointer focus and clears input state.
+- Not validated: browser visual canvas behavior, console cleanliness under deliberate play, Firefox/Safari/mobile Web, automated WebDriver, production compression/CDN/HTTPS, or touch input in a mobile browser.
+
 ## Official sources checked 2026-08-02
 
 - https://docs.unity3d.com/6000.5/Documentation/Manual/webgl-browsercompatibility.html

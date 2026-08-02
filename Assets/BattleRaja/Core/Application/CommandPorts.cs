@@ -6,4 +6,9 @@ namespace BattleRaja.Core.Application
     {
         void Submit(GameplayCommand command);
     }
+
+    public interface IMovementCommandSink
+    {
+        void Submit(MovementCommand command);
+    }
 }

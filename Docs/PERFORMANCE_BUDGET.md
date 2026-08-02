@@ -1,6 +1,6 @@
 # Android and Web Performance Budget
 
-**Status:** Unmeasured hypotheses only until device evidence exists.
+**Status:** M1 movement path has been implemented with allocation-avoidance constraints, but formal frame-time/profiler budgets remain unmeasured.
 
 ## Target classes
 
@@ -36,3 +36,12 @@ Never claim optimisation without profiling evidence.
 - CDN compression/MIME/cache-header validation
 
 Report Android and Web results separately.
+
+## Milestone 1 baseline evidence — 2026-08-02
+
+- Editor: 8 EditMode and 7 PlayMode tests passed; no profiler capture was collected.
+- Android: M1 development APK built at approximately 82.9 MB on disk, installed/launched on Lava API 34 and Oppo API 36; no frame-time or GPU capture was collected.
+- Web: M1 WebGL build completed at approximately 112.8 MB uncompressed; Chrome/Edge local HTTP bootstrap checks passed; no browser frame-time or WebAssembly memory capture was collected.
+- Movement hot paths use cached references, value-type command/state data, no per-frame LINQ, no repeated component searches and no per-frame managed collection construction by design. This is an implementation constraint, not a measured optimization claim.
+
+Required next measurement: capture a short Editor, Lava and Oppo session with Unity Profiler/Android profiling, plus Chrome and Edge frame/memory observations, before setting numeric M1 budgets or claiming performance readiness.

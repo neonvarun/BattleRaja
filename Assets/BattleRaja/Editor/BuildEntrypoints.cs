@@ -1,13 +1,17 @@
 using System;
 using System.IO;
+using BattleRaja.Presentation.Movement;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace BattleRaja.Editor
 {
@@ -15,7 +19,11 @@ namespace BattleRaja.Editor
     {
         private const string ExpectedUnityVersion = "6000.5.6f1";
         private const string BootstrapScenePath = "Assets/BattleRaja/Scenes/Bootstrap/Bootstrap.unity";
-        private const string DevelopmentApplicationId = "com.example.battleraja.m0";
+        private const string MovementLabScenePath = "Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity";
+        private const string MovementAssetFolder = "Assets/BattleRaja/Content/Movement";
+        private const string TuningAssetPath = MovementAssetFolder + "/M1-MovementTuning.asset";
+        private const string InputAssetPath = MovementAssetFolder + "/BattleRajaMovement.inputactions";
+        private const string DevelopmentApplicationId = "com.example.battleraja.m1";
 
         public static void CreateBootstrapScene()
         {
@@ -40,9 +48,87 @@ namespace BattleRaja.Editor
 
                 EditorSceneManager.SaveScene(scene, BootstrapScenePath);
             }
+        }
 
+        public static void CreateMovementLabScene()
+        {
+            EnsureUrpAsset();
+            Directory.CreateDirectory(MovementAssetFolder);
+            Directory.CreateDirectory("Assets/BattleRaja/Scenes/MovementLab");
+            var tuningAsset = EnsureTuningAsset();
+            var inputAsset = EnsureInputAsset();
+
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            RenderSettings.ambientLight = new Color(0.28f, 0.31f, 0.38f, 1f);
+
+            var arena = new GameObject("MovementLab");
+            var marker = arena.AddComponent<MovementLabScene>();
+
+            var floorMaterial = EnsureMaterial("MovementLabFloor", new Color(0.20f, 0.24f, 0.29f, 1f));
+            var wallMaterial = EnsureMaterial("MovementLabWalls", new Color(0.42f, 0.48f, 0.56f, 1f));
+            var obstacleMaterial = EnsureMaterial("MovementLabObstacles", new Color(0.56f, 0.38f, 0.23f, 1f));
+            var playerMaterial = EnsureMaterial("MovementLabPlayer", new Color(0.19f, 0.64f, 0.92f, 1f));
+            var indicatorMaterial = EnsureMaterial("MovementLabIndicator", new Color(1f, 0.78f, 0.16f, 1f));
+
+            CreateBlock("ArenaFloor", new Vector3(0f, -0.25f, 0f), new Vector3(28f, 0.5f, 20f), floorMaterial, arena.transform);
+            CreateBlock("BoundaryWest", new Vector3(-14f, 1f, 0f), new Vector3(0.5f, 2f, 20f), wallMaterial, arena.transform);
+            CreateBlock("BoundaryEast", new Vector3(14f, 1f, 0f), new Vector3(0.5f, 2f, 20f), wallMaterial, arena.transform);
+            CreateBlock("BoundaryNorth", new Vector3(0f, 1f, 10f), new Vector3(28f, 2f, 0.5f), wallMaterial, arena.transform);
+            CreateBlock("BoundarySouth", new Vector3(0f, 1f, -10f), new Vector3(28f, 2f, 0.5f), wallMaterial, arena.transform);
+            CreateBlock("NarrowLaneWest", new Vector3(-3f, 1f, 3f), new Vector3(0.45f, 2f, 10f), wallMaterial, arena.transform);
+            CreateBlock("NarrowLaneEast", new Vector3(3f, 1f, 3f), new Vector3(0.45f, 2f, 10f), wallMaterial, arena.transform);
+            CreateBlock("CornerWallHorizontal", new Vector3(7f, 1f, 3f), new Vector3(6f, 2f, 0.45f), wallMaterial, arena.transform);
+            CreateBlock("CornerWallVertical", new Vector3(10f, 1f, 6f), new Vector3(0.45f, 2f, 6f), wallMaterial, arena.transform);
+            CreateBlock("ObstacleNorthWest", new Vector3(-8f, 1f, 5f), new Vector3(2f, 2f, 2f), obstacleMaterial, arena.transform);
+            CreateBlock("ObstacleSouthWest", new Vector3(-8f, 1f, -5f), new Vector3(2f, 2f, 2f), obstacleMaterial, arena.transform);
+            CreateBlock("ObstacleSouthEast", new Vector3(8f, 1f, -5f), new Vector3(2f, 2f, 2f), obstacleMaterial, arena.transform);
+
+            var player = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            player.name = "MovementLabPlayer";
+            player.transform.SetParent(arena.transform);
+            player.transform.position = new Vector3(0f, 1f, -6f);
+            player.GetComponent<Renderer>().sharedMaterial = playerMaterial;
+            UnityEngine.Object.DestroyImmediate(player.GetComponent<Collider>());
+            var controller = player.AddComponent<CharacterController>();
+            controller.height = 1.8f;
+            controller.radius = 0.42f;
+            controller.center = Vector3.zero;
+            controller.stepOffset = 0.25f;
+            controller.slopeLimit = 45f;
+            var inputAdapter = player.AddComponent<PlayerInputAdapter>();
+            player.AddComponent<InputFocusController>();
+            var agent = player.AddComponent<MovementPlayerAgent>();
+            var indicator = player.AddComponent<AimDirectionIndicator>();
+
+            var cameraObject = new GameObject("MovementLabCamera");
+            cameraObject.tag = "MainCamera";
+            cameraObject.transform.position = player.transform.position + new Vector3(0f, 12f, -8f);
+            var camera = cameraObject.AddComponent<Camera>();
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = new Color(0.08f, 0.10f, 0.14f, 1f);
+            var cameraController = cameraObject.AddComponent<TopDownCameraController>();
+
+            var canvas = CreateTouchCanvas(out var movementStick, out var aimStick);
+            var eventSystem = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
+            eventSystem.transform.SetParent(arena.transform);
+
+            SetObjectReference(agent, "tuningAsset", tuningAsset);
+            SetObjectReference(agent, "inputAdapter", inputAdapter);
+            SetObjectReference(agent, "aimIndicator", indicator);
+            SetObjectReference(indicator, "indicatorMaterial", indicatorMaterial);
+            SetObjectReference(inputAdapter, "actionsAsset", inputAsset);
+            SetObjectReference(inputAdapter, "worldCamera", camera);
+            SetObjectReference(inputAdapter, "movementStick", movementStick);
+            SetObjectReference(inputAdapter, "aimStick", aimStick);
+            SetObjectReference(inputAdapter, "aimOrigin", player.transform);
+            SetObjectReference(cameraController, "followTarget", player.transform);
+            SetObjectReference(marker, "player", agent);
+            SetObjectReference(marker, "cameraController", cameraController);
+
+            EditorSceneManager.SaveScene(scene, MovementLabScenePath);
             EditorBuildSettings.scenes = new[]
             {
+                new EditorBuildSettingsScene(MovementLabScenePath, true),
                 new EditorBuildSettingsScene(BootstrapScenePath, true)
             };
             AssetDatabase.SaveAssets();
@@ -61,7 +147,6 @@ namespace BattleRaja.Editor
             RequireText(manifest, "com.unity.inputsystem", "Packages/manifest.json");
             RequireText(manifest, "com.unity.render-pipelines.universal", "Packages/manifest.json");
             RequireText(manifest, "com.unity.test-framework", "Packages/manifest.json");
-            RequireText(lockFile, "com.unity.render-pipelines.universal", "Packages/packages-lock.json");
             RequireText(lockFile, "\"version\": \"17.5.0\"", "Packages/packages-lock.json URP version");
             RequireText(lockFile, "\"version\": \"1.20.0\"", "Packages/packages-lock.json Input System version");
             RequireText(lockFile, "\"version\": \"1.7.0\"", "Packages/packages-lock.json Test Framework version");
@@ -69,12 +154,12 @@ namespace BattleRaja.Editor
             if (manifest.IndexOf("photon", StringComparison.OrdinalIgnoreCase) >= 0 ||
                 manifest.IndexOf("playfab", StringComparison.OrdinalIgnoreCase) >= 0)
             {
-                throw new BuildFailedException("Photon and PlayFab are prohibited in Milestone 0.");
+                throw new BuildFailedException("Photon and PlayFab are prohibited before their approved milestones.");
             }
 
-            if (!File.Exists(BootstrapScenePath))
+            if (!File.Exists(BootstrapScenePath) || !File.Exists(MovementLabScenePath))
             {
-                throw new BuildFailedException($"Bootstrap scene is missing: {BootstrapScenePath}");
+                throw new BuildFailedException("Both Bootstrap and MovementLab scenes must exist.");
             }
 
             if (GraphicsSettings.defaultRenderPipeline == null)
@@ -82,12 +167,13 @@ namespace BattleRaja.Editor
                 throw new BuildFailedException("The URP render pipeline is not assigned in GraphicsSettings.");
             }
 
-            Debug.Log("BattleRaja Milestone 0 validation passed.");
+            Debug.Log("BattleRaja Milestone 1 validation passed.");
         }
 
         public static void BuildAndroidDevelopment()
         {
             CreateBootstrapScene();
+            CreateMovementLabScene();
             ValidateProject();
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
@@ -96,30 +182,25 @@ namespace BattleRaja.Editor
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel28;
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
             PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
-
-            var outputPath = "Builds/M0/Android/BattleRaja-M0.apk";
-            Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
-            Build(outputPath, BuildTarget.Android);
+            Build("Builds/M1/Android/BattleRaja-M1.apk", BuildTarget.Android);
         }
 
         public static void BuildWebDevelopment()
         {
             CreateBootstrapScene();
+            CreateMovementLabScene();
             ValidateProject();
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WebGL, BuildTarget.WebGL);
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
-
-            var outputPath = "Builds/M0/Web";
-            Directory.CreateDirectory(outputPath);
-            Build(outputPath, BuildTarget.WebGL);
+            Build("Builds/M1/Web", BuildTarget.WebGL);
         }
 
         private static void Build(string outputPath, BuildTarget target)
         {
             var options = new BuildPlayerOptions
             {
-                scenes = new[] { BootstrapScenePath },
+                scenes = new[] { MovementLabScenePath },
                 locationPathName = outputPath,
                 target = target,
                 options = BuildOptions.Development | BuildOptions.AllowDebugging
@@ -131,7 +212,145 @@ namespace BattleRaja.Editor
                 throw new BuildFailedException($"{target} build failed: {report.summary.result}. See the Unity build log.");
             }
 
-            Debug.Log($"{target} development build succeeded: {report.summary.outputPath} ({report.summary.totalSize} bytes).");
+            Debug.Log($"{target} M1 development build succeeded: {report.summary.outputPath} ({report.summary.totalSize} bytes).");
+        }
+
+        private static GameObject CreateBlock(string name, Vector3 position, Vector3 scale, Material material, Transform parent)
+        {
+            var block = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            block.name = name;
+            block.transform.SetParent(parent);
+            block.transform.position = position;
+            block.transform.localScale = scale;
+            block.GetComponent<Renderer>().sharedMaterial = material;
+            return block;
+        }
+
+        private static Canvas CreateTouchCanvas(out VirtualStick movementStick, out VirtualStick aimStick)
+        {
+            var canvasObject = new GameObject("TouchControls", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+            var canvas = canvasObject.GetComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            var scaler = canvasObject.GetComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.matchWidthOrHeight = 0.5f;
+
+            var safeAreaObject = new GameObject("SafeArea", typeof(RectTransform), typeof(SafeAreaPanel));
+            safeAreaObject.transform.SetParent(canvasObject.transform, false);
+            var safeArea = safeAreaObject.GetComponent<RectTransform>();
+            safeArea.anchorMin = Vector2.zero;
+            safeArea.anchorMax = Vector2.one;
+            safeArea.offsetMin = Vector2.zero;
+            safeArea.offsetMax = Vector2.zero;
+
+            movementStick = CreateStick("MovementStick", safeArea, new Vector2(0.17f, 0.2f), new Color(0.25f, 0.70f, 1f, 0.18f));
+            aimStick = CreateStick("AimStick", safeArea, new Vector2(0.83f, 0.2f), new Color(1f, 0.64f, 0.22f, 0.18f));
+            return canvas;
+        }
+
+        private static VirtualStick CreateStick(string name, Transform parent, Vector2 anchor, Color color)
+        {
+            var stickObject = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(VirtualStick));
+            stickObject.transform.SetParent(parent, false);
+            var rect = stickObject.GetComponent<RectTransform>();
+            rect.anchorMin = anchor;
+            rect.anchorMax = anchor;
+            rect.sizeDelta = new Vector2(220f, 220f);
+            var image = stickObject.GetComponent<Image>();
+            image.color = color;
+            image.raycastTarget = true;
+
+            var knobObject = new GameObject("Knob", typeof(RectTransform), typeof(Image));
+            knobObject.transform.SetParent(stickObject.transform, false);
+            var knobRect = knobObject.GetComponent<RectTransform>();
+            knobRect.anchorMin = new Vector2(0.5f, 0.5f);
+            knobRect.anchorMax = new Vector2(0.5f, 0.5f);
+            knobRect.sizeDelta = new Vector2(94f, 94f);
+            knobObject.GetComponent<Image>().color = new Color(color.r, color.g, color.b, 0.72f);
+
+            var stick = stickObject.GetComponent<VirtualStick>();
+            SetObjectReference(stick, "knob", knobRect);
+            return stick;
+        }
+
+        private static MovementTuningAsset EnsureTuningAsset()
+        {
+            var asset = AssetDatabase.LoadAssetAtPath<MovementTuningAsset>(TuningAssetPath);
+            if (asset == null)
+            {
+                asset = ScriptableObject.CreateInstance<MovementTuningAsset>();
+                AssetDatabase.CreateAsset(asset, TuningAssetPath);
+            }
+
+            return asset;
+        }
+
+        private static InputActionAsset EnsureInputAsset()
+        {
+            var asset = AssetDatabase.LoadAssetAtPath<InputActionAsset>(InputAssetPath);
+            if (asset != null)
+            {
+                return asset;
+            }
+
+            asset = ScriptableObject.CreateInstance<InputActionAsset>();
+            var map = asset.AddActionMap("Player");
+            var move = map.AddAction("Move", InputActionType.Value, expectedControlLayout: "Vector2");
+            move.AddCompositeBinding("2DVector", "WASD")
+                .With("Up", "<Keyboard>/w")
+                .With("Down", "<Keyboard>/s")
+                .With("Left", "<Keyboard>/a")
+                .With("Right", "<Keyboard>/d");
+            move.AddCompositeBinding("2DVector", "Arrows")
+                .With("Up", "<Keyboard>/upArrow")
+                .With("Down", "<Keyboard>/downArrow")
+                .With("Left", "<Keyboard>/leftArrow")
+                .With("Right", "<Keyboard>/rightArrow");
+            move.AddBinding("<Gamepad>/leftStick");
+
+            var mouse = map.AddAction("MousePosition", InputActionType.Value, expectedControlLayout: "Vector2");
+            mouse.AddBinding("<Mouse>/position");
+            var aimStick = map.AddAction("AimStick", InputActionType.Value, expectedControlLayout: "Vector2");
+            aimStick.AddBinding("<Gamepad>/rightStick");
+
+            asset.AddControlScheme("KeyboardMouse")
+                .WithRequiredDevice("<Keyboard>")
+                .WithRequiredDevice("<Mouse>");
+            asset.AddControlScheme("Gamepad").WithRequiredDevice("<Gamepad>");
+            File.WriteAllText(InputAssetPath, asset.ToJson());
+            AssetDatabase.ImportAsset(InputAssetPath, ImportAssetOptions.ForceUpdate);
+            return AssetDatabase.LoadAssetAtPath<InputActionAsset>(InputAssetPath);
+        }
+
+        private static Material EnsureMaterial(string name, Color color)
+        {
+            var path = MovementAssetFolder + "/" + name + ".mat";
+            var material = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (material == null)
+            {
+                material = new Material(Shader.Find("Universal Render Pipeline/Lit"))
+                {
+                    name = name,
+                    color = color
+                };
+                AssetDatabase.CreateAsset(material, path);
+            }
+
+            return material;
+        }
+
+        private static void SetObjectReference(UnityEngine.Object target, string propertyName, UnityEngine.Object value)
+        {
+            var serializedObject = new SerializedObject(target);
+            var property = serializedObject.FindProperty(propertyName);
+            if (property == null)
+            {
+                throw new InvalidOperationException($"Serialized property not found: {target.name}.{propertyName}");
+            }
+
+            property.objectReferenceValue = value;
+            serializedObject.ApplyModifiedPropertiesWithoutUndo();
         }
 
         private static void RequireText(string content, string expected, string source)

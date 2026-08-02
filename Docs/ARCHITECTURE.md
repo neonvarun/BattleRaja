@@ -1,6 +1,6 @@
 # Architecture
 
-**Status:** Implemented and accepted for Milestone 0. Changes beyond these boundaries require a new decision record.
+**Status:** Implemented and accepted for Milestones 0–1. Changes beyond these boundaries require a new decision record.
 
 ## Goals
 
@@ -42,6 +42,17 @@ Human and bot inputs use the same immutable gameplay-command model. Runtime stat
 - Content validation implementation after Unity project creation
 
 The M0 assembly names, inward dependency direction and `noEngineReferences` rules are accepted. Empty feature/infrastructure boundary assemblies are intentional until their first milestone-specific implementation.
+
+## M1 movement implementation
+
+- `BattleRaja.Core.Domain` owns `Float2`, `MovementTuning`, `MovementInputFrame`, `MovementCommand`, `MovementCommandFactory`, `MovementMotor` and `MovementStep`. These are Unity-independent and are testable without a scene.
+- `BattleRaja.Core.Application` exposes `IMovementCommandSink`; `MovementPlayerAgent` implements it so future bot/network producers can submit the same command type.
+- `BattleRaja.Presentation.Movement.PlayerInputAdapter` translates Input System actions and virtual-stick values into domain input frames. It never writes a Transform.
+- `BattleRaja.Presentation.Movement.MovementPlayerAgent` owns the Unity `CharacterController` bridge and applies domain displacement/rotation. Runtime velocity and aim state are not stored in the tuning asset.
+- `TopDownCameraController`, `AimDirectionIndicator`, `VirtualStick`, `SafeAreaPanel` and `InputFocusController` are presentation/lifecycle components only.
+- `Assets/BattleRaja/Editor/BuildEntrypoints.cs` creates the MovementLab scene and serialized assets through controlled editor automation; scene YAML is not hand-authored.
+
+No external networking/backend SDK or combat authority was added. The command and agent boundary is deliberately compatible with later bot and network command producers.
 
 ## Platform boundary
 

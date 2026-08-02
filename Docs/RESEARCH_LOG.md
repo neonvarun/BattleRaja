@@ -109,3 +109,13 @@ Research current primary sources before selecting technical versions, APIs, SDKs
 - **Local evidence:** `validate.ps1` passed; EditMode 2/2 and PlayMode 1/1 passed; Android IL2CPP ARM64 APK installed/launched on Lava API 34 and Oppo API 36; Web output returned HTTP 200 and Unity bootstrap DOM content in Chrome 150 and Edge 150.
 - **Uncertainty:** Browser visual rendering, console cleanliness, mobile Web, Firefox/Safari, production hosting headers, signing and store submission remain untested.
 - **Recheck trigger/date:** Before M1 platform work and before any production build.
+
+### M1 Input System and uGUI baseline
+
+- **Date checked:** 2026-08-02
+- **Question:** Which installed Unity packages are needed for configurable desktop/gamepad input and Android virtual sticks?
+- **Primary source:** Unity 6000.5 builtin package metadata at the installed editor's `Data/Resources/PackageManager/BuiltInPackages`; Unity Input System package source and documentation in the resolved package cache.
+- **Relevant claim:** Unity 6000.5 provides Input System `1.20.0` and builtin uGUI `2.5.0`; uGUI supplies the EventSystem, Canvas, GraphicRaycaster and pointer interfaces required for virtual sticks.
+- **Decision impact:** Add only builtin `com.unity.ugui` `2.5.0` to the direct M1 package manifest. Keep raw input in Presentation and convert it into pure movement commands.
+- **Uncertainty:** Physical touch behavior and browser canvas focus remain device/manual validation items.
+- **Recheck trigger/date:** Before changing input bindings, adding UI packages, or supporting additional platforms.

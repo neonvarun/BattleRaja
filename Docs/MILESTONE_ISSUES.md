@@ -58,7 +58,7 @@ Each issue must include:
 - **Tests:** CLI tests, ADB smoke, local Chrome/Edge smoke.
 - **Expected subsystem/files:** `Tools/Validation`, `Tools/Build/Android`, `Tools/Build/Web`.
 - **Risks:** Missing modules, device availability, browser coverage.
-- **Human review gate:** Evidence captured; owner review remains required before M1.
+- **Human review gate:** Completed; M1 work is now active and remains reviewable before M2.
 
 ### BR-M0-005 — Record M0 evidence and handoff
 
@@ -69,11 +69,18 @@ Each issue must include:
 - **Tests:** `git diff --check`, validation summary and artifact review.
 - **Expected subsystem/files:** `PROJECT_STATUS.md`, relevant `Docs/` files, package inventory.
 - **Risks:** Overclaiming unverified runtime behavior.
-- **Human review gate:** Required before M1.
+- **Human review gate:** Completed for M1 start; review is required before M2.
 
 ### BR-M1-001 — Movement and camera lab
 
-Offline movement commands, camera framing and input abstraction. Depends on accepted M0; not part of this execution.
+- **Objective:** Deliver a cross-platform grey-box movement laboratory with independent movement/aim, camera experiment, desktop bindings and Android touch controls.
+- **Scope / non-scope:** Code-driven locomotion, command pipeline, aim indicator, orthographic/perspective camera modes, safe-area virtual sticks, arena geometry and tests. No combat, bots, networking, progression or final content.
+- **Dependencies:** Accepted M0 project, Input System/uGUI package baseline, Unity Android/Web modules.
+- **Acceptance criteria:** MovementLab is playable in Editor; 8 EditMode and 7 PlayMode tests pass; Android and Web M1 builds succeed; devices install/launch; local Web smoke page returns HTTP 200 in available browsers; camera decision and tuning are documented.
+- **Tests:** Pure movement/aim tests, PlayMode spawn/integration/collision/release/indicator/touch reset tests, Android ADB smoke, Chrome/Edge local HTTP smoke.
+- **Expected subsystem/files:** `Assets/BattleRaja/Core/Domain`, `Assets/BattleRaja/Presentation/Movement`, `Assets/BattleRaja/Scenes/MovementLab`, `Docs/MOVEMENT_LAB.md`, M1 build tooling/evidence.
+- **Risks:** Human touch feel and safe-area coverage remain unverified; formal performance captures are pending; Unity emits known empty-boundary-assembly/licensing warnings.
+- **Human review gate:** Required before Milestone 2 combat work.
 
 ### BR-M2-001 — Combat foundation
 

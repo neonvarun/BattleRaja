@@ -4,9 +4,9 @@ BattleRaja is an Android-app and browser-Web stylised top-down 3D micro battle r
 
 ## Current status
 
-**Pre-production / Milestone 0 complete; Milestone 1 not approved**
+**Pre-production / Milestone 1 movement laboratory complete; Milestone 2 not approved**
 
-No gameplay, networking, backend, economy or final art is approved yet.
+Movement and aiming are implemented as a grey-box laboratory. Combat, networking, backend, economy and final art are not approved yet.
 
 ## Source of truth
 
@@ -33,9 +33,11 @@ Read these files in order:
 - Offline simulation core before Photon or PlayFab
 - Android–Web cross-play as an online-alpha target
 
-## First Codex task (completed)
+## Current local run
 
-The Milestone 0 bootstrap prompt has been completed. Review `Docs/MILESTONE_0_EXECUTION_PLAN.md` and `PROJECT_STATUS.md` before authorizing Milestone 1.
+Open the Unity project at the repository root with Unity `6000.5.6f1` and load `Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity`. Desktop uses WASD/arrow keys and mouse aim; Android uses the two virtual sticks.
+
+Build commands are documented in `Tools/Build/Android/README.md` and `Tools/Build/Web/README.md`. Review `PROJECT_STATUS.md` and `Docs/MOVEMENT_LAB.md` before authorizing Milestone 2.
 
 ## Human owner
 
