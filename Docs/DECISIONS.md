@@ -108,8 +108,8 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Context:** Health polling could establish alive/current-health state but could not attribute damage, eliminations or survival time, and the safe-zone result exposed only a radius.
 - **Options considered:** Infer results from presentation polling; add ad hoc UI counters; or emit typed combat events into the pure match simulation and expose warning/preview data in immutable tick results.
 - **Decision:** Emit `CombatDamageEvent` with instigator, target, applied amount, post-hit health, defeat state and tick. `OfflineMatchSimulation` owns damage dealt, elimination credit, survival time and deterministic timeout ranking. `MatchTickResult` exposes Aandhi warning/closing state, warning time and next radius; Unity renders the data.
-- **Consequences:** Results are reusable for future server authority and duplicate elimination credit is rejected. Assists are not yet attributed, and frame-bound weapon/fighter presentation timing remains a separate fixed-tick task.
-- **Evidence/sources:** `CombatDamageEvent`, `OfflineMatchSimulation.RecordDamage`, `MatchTickResult`, `OfflineMatchTests`, 65 EditMode and 27 PlayMode tests.
+- **Consequences:** Results are reusable for future server authority and duplicate elimination credit is rejected. Assists are not yet attributed; weapon attack cooldown now uses the shared 30 Hz tick, while input buffering, movement, projectiles, gadgets and fighter abilities remain separate fixed-tick tasks.
+- **Evidence/sources:** `CombatDamageEvent`, `OfflineMatchSimulation.RecordDamage`, `MatchTickResult`, `WeaponCooldownState`, `CombatAttackController`, `OfflineMatchTests`, 66 EditMode and 27 PlayMode tests.
 - **Owner:** Human project owner
 
 ### ADR-010 — Milestone 9 safe server/match preparation while Fusion is blocked

@@ -76,6 +76,21 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void TickCooldownEnforcesDeterministicIntervals()
+        {
+            var cooldown = new WeaponCooldownState();
+
+            Assert.That(cooldown.TryConsume(0, 15), Is.True);
+            Assert.That(cooldown.TryConsume(14, 15), Is.False);
+            Assert.That(cooldown.RemainingTicks(14), Is.EqualTo(1));
+            Assert.That(cooldown.TryConsume(15, 15), Is.True);
+            Assert.That(cooldown.RemainingSeconds(15, 30), Is.EqualTo(0.5f));
+            cooldown.Reset();
+            Assert.That(cooldown.RemainingTicks(0), Is.EqualTo(0));
+            Assert.That(cooldown.TryConsume(0, 1), Is.True);
+        }
+
+        [Test]
         public void ProjectileTravelStopsAtRangeOrLifetime()
         {
             var rangeProjectile = new ProjectileSimulation(new Float2(0f, 0f), Float2.Up, 10f, 2f, 5f);
