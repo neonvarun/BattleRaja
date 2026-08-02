@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BattleRaja.Core.Domain;
@@ -16,11 +17,13 @@ namespace BattleRaja.Presentation.Match
         [SerializeField] private MatchPickup[] pickups;
         [SerializeField] private GadgetPickup[] gadgetPickups;
         [SerializeField] private float outsideDamageTickSeconds = 1f;
+        [SerializeField] private int simulationTickRate = 30;
         [SerializeField] private bool autoStart = true;
 
         private readonly List<MatchActorBinding> _actors = new List<MatchActorBinding>(8);
         private OfflineMatchSimulation _simulation;
-        private float _outsideDamageAccumulator;
+        private FixedSimulationClock _simulationClock;
+        private double _outsideDamageAccumulator;
         private bool _playerSpectating;
         private bool _resultsShown;
 
@@ -31,6 +34,8 @@ namespace BattleRaja.Presentation.Match
         public bool PlayerSpectating => _playerSpectating;
         public bool ResultsShown => _resultsShown;
         public MatchParticipantSnapshot[] Results { get; private set; }
+        public int SimulationTick => _simulationClock != null ? _simulationClock.Tick : 0;
+        public double SimulationInterpolationAlpha => _simulationClock != null ? _simulationClock.InterpolationAlpha : 0d;
 
         private void Awake()
         {
@@ -52,29 +57,34 @@ namespace BattleRaja.Presentation.Match
                 return;
             }
 
-            for (var i = 0; i < _actors.Count; i++)
+            var simulationSteps = _simulationClock.Consume(Time.deltaTime);
+            for (var step = 0; step < simulationSteps; step++)
             {
-                var actor = _actors[i];
-                _simulation.SetPosition(actor.Target.Id, new Float2(actor.Transform.position.x, actor.Transform.position.z));
-                _simulation.SyncHealth(actor.Target.Id, actor.Health.Snapshot.CurrentHealth);
-            }
+                for (var i = 0; i < _actors.Count; i++)
+                {
+                    var actor = _actors[i];
+                    _simulation.SetPosition(actor.Target.Id, new Float2(actor.Transform.position.x, actor.Transform.position.z));
+                    _simulation.SyncHealth(actor.Target.Id, actor.Health.Snapshot.CurrentHealth);
+                }
 
-            var tick = _simulation.Advance(Time.deltaTime);
-            ZoneRadius = tick.ZoneRadius;
-            _outsideDamageAccumulator += Time.deltaTime;
-            if (_outsideDamageAccumulator >= outsideDamageTickSeconds && tick.OutsideDamagePerSecond > 0)
-            {
-                _outsideDamageAccumulator = 0f;
-                ApplyOutsideDamage(tick);
-            }
+                var tick = _simulation.Advance((float)_simulationClock.StepSeconds);
+                ZoneRadius = tick.ZoneRadius;
+                _outsideDamageAccumulator += _simulationClock.StepSeconds;
+                if (_outsideDamageAccumulator >= outsideDamageTickSeconds && tick.OutsideDamagePerSecond > 0)
+                {
+                    _outsideDamageAccumulator -= outsideDamageTickSeconds;
+                    ApplyOutsideDamage(tick);
+                }
 
-            CollectPickups();
-            CollectGadgets();
-            UpdateSpectator(tick);
-            if (tick.MatchEnded)
-            {
-                Results = _simulation.GetSnapshots();
-                _resultsShown = true;
+                CollectPickups();
+                CollectGadgets();
+                UpdateSpectator(tick);
+                if (tick.MatchEnded)
+                {
+                    Results = _simulation.GetSnapshots();
+                    _resultsShown = true;
+                    break;
+                }
             }
         }
 
@@ -84,6 +94,7 @@ namespace BattleRaja.Presentation.Match
             var spawns = _actors.Select(actor => new MatchSpawn(actor.Target.Id, new Float2(actor.Transform.position.x, actor.Transform.position.z), actor.Health.MaxHealth)).ToList();
             _simulation = new OfflineMatchSimulation(OfflineMatchDefinition.SoloRaja);
             _simulation.Start(spawns);
+            _simulationClock = new FixedSimulationClock(Math.Max(1, simulationTickRate));
             _outsideDamageAccumulator = 0f;
             _playerSpectating = false;
             _resultsShown = false;

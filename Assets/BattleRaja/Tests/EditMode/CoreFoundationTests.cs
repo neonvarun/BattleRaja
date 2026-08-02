@@ -19,6 +19,19 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void FixedClockConsumesRenderTimeWithoutChangingTheAuthoritativeRate()
+        {
+            var clock = new FixedSimulationClock(30);
+
+            Assert.That(clock.Consume(1d / 60d), Is.EqualTo(0));
+            Assert.That(clock.Consume(1d / 60d), Is.EqualTo(1));
+            Assert.That(clock.Tick, Is.EqualTo(1));
+            Assert.That(clock.Consume(1d / 30d), Is.EqualTo(1));
+            Assert.That(clock.Tick, Is.EqualTo(2));
+            Assert.That(clock.InterpolationAlpha, Is.InRange(0d, 1d));
+        }
+
+        [Test]
         public void CommandCarriesStableActorAndSimulationIdentity()
         {
             var command = new GameplayCommand(7, 42, GameplayCommandKind.Intent, 99);
