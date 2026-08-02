@@ -2,7 +2,7 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `dd35f53` (`refactor: emit authoritative dhol intents`)
+Latest validated source HEAD: `39149f1` (`refactor: tick tiffin authority effects`)
 Latest runtime-bearing candidate: `4391f09` (`feat: add replayable tutorial arena`)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
@@ -111,7 +111,25 @@ actor-scan path is retained only for an isolated non-authoritative lab.
 
 No new Android/Web artifact was built for this focused authority-only change; the
 `1437e5c` artifacts remain the latest cross-platform smoke builds. Tiffin station
-healing/lifetime and Umbrella mitigation are still presentation-owned.
+damage forwarding and Umbrella mitigation remain presentation-owned.
+
+## Phase 1 Tiffin-authority continuation (`39149f1`)
+
+Tiffin station healing cadence and lifetime now run in the pure authority runtime.
+Authority ticks emit target healing intents and station-expiry IDs; authority-driven
+Unity station objects render the result without running a duplicate `Time.deltaTime`
+healing loop. Local non-authoritative lab stations retain their fallback behavior.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | 0 errors, 0 warnings | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` |
+| EditMode suite | 85 passed, 0 failed | `Builds/M11/TestResults/phase1-tiffin-authority-editmode-20260803.xml` |
+| PlayMode suite | 34 passed, 0 failed | `Builds/M11/TestResults/phase1-tiffin-authority-playmode-20260803.xml` |
+| Tiffin authority rule | Pure test observes healing intent at fixed cadence and expiry by the configured lifetime | `Builds/M11/TestResults/phase1-tiffin-authority-editmode-20260803.xml` |
+
+No new Android/Web artifact was built for this focused authority-only change; the
+`1437e5c` artifacts remain the latest cross-platform smoke builds. Station damage
+forwarding and Umbrella mitigation remain open.
 
 ## Fix included in this baseline
 
