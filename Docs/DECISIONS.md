@@ -605,3 +605,23 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Evidence/sources:** `Gadgets`, `OfflineMatchAuthority`, `GadgetUser`, and the Dhol
   displacement assertion in `AuthorityFoundationTests`.
 - **Owner:** Human project owner
+
+### ADR-031 — Tick Tiffin healing and lifetime in application authority
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the Phase 1 authority continuation; station damage and
+  network transport remain open.
+- **Context:** Tiffin healing and expiry were driven by `GadgetStation.Update` using
+  `Time.deltaTime` and a scene-wide health scan. In a public match that would make
+  healing cadence and lifetime presentation-owned.
+- **Decision:** Add a pure `GadgetStationRuntime` owned by `OfflineMatchAuthority`.
+  Accepted Tiffin uses receive a station ID; fixed authority ticks emit immutable
+  healing intents and station-expiry IDs. Unity renders the station and applies those
+  intents to actor health. Authority-driven station views no longer run their own
+  healing/lifetime loop; isolated local-lab stations retain the fallback loop.
+- **Consequences:** Tiffin healing cadence and expiry are deterministic and testable
+  without a scene. Station damage forwarding and authoritative Umbrella mitigation are
+  still required before claiming complete gadget rule separation.
+- **Evidence/sources:** `Gadgets`, `OfflineMatchAuthority`, `GadgetStation`,
+  `OfflineMatchController`, `AuthorityFoundationTests` and the 85/34 Phase 1 results.
+- **Owner:** Human project owner

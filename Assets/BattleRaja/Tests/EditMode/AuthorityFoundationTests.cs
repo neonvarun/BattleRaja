@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using BattleRaja.Core.Application;
 using BattleRaja.Core.Domain;
 using NUnit.Framework;
@@ -143,6 +144,41 @@ namespace BattleRaja.Tests.EditMode
             Assert.That(authority.IsGadgetPickupAvailable(0), Is.False);
             Assert.That(authority.CollectNearby().PickupCollections, Is.Empty);
             Assert.That(authority.CollectNearby().GadgetCollections, Is.Empty);
+        }
+
+        [Test]
+        public void AuthorityTicksTiffinHealingAndExpiry()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(4f, 0f), 100)
+            });
+            authority.SyncHealth(new CombatEntityId(1), 50);
+            var gadgetId = GadgetDefinition.TiffinStation.GadgetId;
+            Assert.That(authority.TryAcquireGadget(new CombatEntityId(1), gadgetId), Is.True);
+
+            var use = authority.TryUseGadget(new GadgetUseCommand(
+                new CombatEntityId(1),
+                gadgetId,
+                Float2.Zero,
+                Float2.Up,
+                1));
+            Assert.That(use.Used, Is.True);
+            Assert.That(use.Effect.StationId, Is.GreaterThan(0));
+
+            var healed = false;
+            var expired = false;
+            for (var tick = 1; tick <= 300; tick++)
+            {
+                var result = authority.Advance(tick, 1f / 30f);
+                healed |= result.GadgetHealingIntents.Any(intent => intent.TargetId.Value == 1 && intent.Amount == GadgetDefinition.TiffinStation.Magnitude);
+                expired |= result.ExpiredStationIds.Contains(use.Effect.StationId);
+            }
+
+            Assert.That(healed, Is.True);
+            Assert.That(expired, Is.True);
         }
     }
 }

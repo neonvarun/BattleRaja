@@ -7,20 +7,34 @@ namespace BattleRaja.Core.Application
     public readonly struct MatchAuthorityTick
     {
         public MatchAuthorityTick(MatchTickResult result, DamageRequest[] outsideDamageRequests)
-            : this(0, result, outsideDamageRequests)
+            : this(0, result, outsideDamageRequests, Array.Empty<GadgetHealingIntent>(), Array.Empty<int>())
         {
         }
 
         public MatchAuthorityTick(int simulationTick, MatchTickResult result, DamageRequest[] outsideDamageRequests)
+            : this(simulationTick, result, outsideDamageRequests, Array.Empty<GadgetHealingIntent>(), Array.Empty<int>())
+        {
+        }
+
+        public MatchAuthorityTick(
+            int simulationTick,
+            MatchTickResult result,
+            DamageRequest[] outsideDamageRequests,
+            GadgetHealingIntent[] gadgetHealingIntents,
+            int[] expiredStationIds)
         {
             SimulationTick = simulationTick;
             Result = result;
             OutsideDamageRequests = outsideDamageRequests ?? Array.Empty<DamageRequest>();
+            GadgetHealingIntents = gadgetHealingIntents ?? Array.Empty<GadgetHealingIntent>();
+            ExpiredStationIds = expiredStationIds ?? Array.Empty<int>();
         }
 
         public int SimulationTick { get; }
         public MatchTickResult Result { get; }
         public DamageRequest[] OutsideDamageRequests { get; }
+        public GadgetHealingIntent[] GadgetHealingIntents { get; }
+        public int[] ExpiredStationIds { get; }
     }
 
     /// <summary>
@@ -37,9 +51,11 @@ namespace BattleRaja.Core.Application
         private GadgetPickupRuntime[] _gadgetPickups = Array.Empty<GadgetPickupRuntime>();
         private readonly Dictionary<CombatEntityId, GadgetInventory> _gadgetInventories = new Dictionary<CombatEntityId, GadgetInventory>();
         private readonly Dictionary<CombatEntityId, GadgetRuntime> _gadgetRuntimes = new Dictionary<CombatEntityId, GadgetRuntime>();
+        private readonly Dictionary<int, GadgetStationRuntime> _stations = new Dictionary<int, GadgetStationRuntime>();
         private OfflineMatchSimulation _simulation;
         private double _outsideDamageAccumulator;
         private int _lastSimulationTick = -1;
+        private int _nextStationId = 1;
 
         public OfflineMatchAuthority(OfflineMatchDefinition definition, float outsideDamageTickSeconds = 1f)
         {
@@ -80,6 +96,7 @@ namespace BattleRaja.Core.Application
 
             _gadgetInventories.Clear();
             _gadgetRuntimes.Clear();
+            _stations.Clear();
             for (var i = 0; i < spawns.Count; i++)
             {
                 _gadgetInventories[spawns[i].Id] = new GadgetInventory(1);
@@ -88,6 +105,7 @@ namespace BattleRaja.Core.Application
 
             _outsideDamageAccumulator = 0d;
             _lastSimulationTick = -1;
+            _nextStationId = 1;
         }
 
         public bool SetPosition(CombatEntityId id, Float2 position) => RequireSimulation().SetPosition(id, position);
@@ -116,16 +134,29 @@ namespace BattleRaja.Core.Application
             for (var i = 0; i < _pickups.Length; i++) _pickups[i].Advance(fixedDeltaSeconds);
             foreach (var runtime in _gadgetRuntimes.Values) runtime.Advance(fixedDeltaSeconds);
             var result = simulation.Advance(fixedDeltaSeconds);
+            var healingIntents = new List<GadgetHealingIntent>();
+            var expiredStationIds = new List<int>();
+            AdvanceStations(fixedDeltaSeconds, simulation.GetSnapshots(), healingIntents, expiredStationIds);
             if (result.OutsideDamagePerSecond <= 0)
             {
                 _outsideDamageAccumulator = 0d;
-                return new MatchAuthorityTick(simulationTick, result, Array.Empty<DamageRequest>());
+                return new MatchAuthorityTick(
+                    simulationTick,
+                    result,
+                    Array.Empty<DamageRequest>(),
+                    healingIntents.ToArray(),
+                    expiredStationIds.ToArray());
             }
 
             _outsideDamageAccumulator += fixedDeltaSeconds;
             if (_outsideDamageAccumulator < _outsideDamageTickSeconds)
             {
-                return new MatchAuthorityTick(simulationTick, result, Array.Empty<DamageRequest>());
+                return new MatchAuthorityTick(
+                    simulationTick,
+                    result,
+                    Array.Empty<DamageRequest>(),
+                    healingIntents.ToArray(),
+                    expiredStationIds.ToArray());
             }
 
             var requests = new List<DamageRequest>(result.OutsideCount);
@@ -148,7 +179,12 @@ namespace BattleRaja.Core.Application
                 }
             }
 
-            return new MatchAuthorityTick(simulationTick, result, requests.ToArray());
+            return new MatchAuthorityTick(
+                simulationTick,
+                result,
+                requests.ToArray(),
+                healingIntents.ToArray(),
+                expiredStationIds.ToArray());
         }
 
         /// <summary>
@@ -245,29 +281,45 @@ namespace BattleRaja.Core.Application
             }
 
             var result = runtime.TryUse(inventory, command);
-            if (!result.Used || result.Effect.Kind != GadgetEffectKind.DholBurst)
+            if (!result.Used)
             {
                 return result;
             }
 
-            var snapshots = RequireSimulation().GetSnapshots();
-            var displacements = new List<GadgetDisplacementIntent>(snapshots.Length);
-            for (var i = 0; i < snapshots.Length; i++)
+            var effect = result.Effect;
+            if (effect.Kind == GadgetEffectKind.DholBurst)
             {
-                var snapshot = snapshots[i];
-                if (!snapshot.Alive || snapshot.Id == command.UserId) continue;
-                var delta = snapshot.Position - command.Origin;
-                if (delta.SqrMagnitude > result.Effect.Definition.Radius * result.Effect.Definition.Radius) continue;
-                displacements.Add(new GadgetDisplacementIntent(
-                    snapshot.Id,
-                    delta.Normalized * (result.Effect.Definition.Magnitude * 0.08f)));
+                var snapshots = RequireSimulation().GetSnapshots();
+                var displacements = new List<GadgetDisplacementIntent>(snapshots.Length);
+                for (var i = 0; i < snapshots.Length; i++)
+                {
+                    var snapshot = snapshots[i];
+                    if (!snapshot.Alive || snapshot.Id == command.UserId) continue;
+                    var delta = snapshot.Position - command.Origin;
+                    if (delta.SqrMagnitude > effect.Definition.Radius * effect.Definition.Radius) continue;
+                    displacements.Add(new GadgetDisplacementIntent(
+                        snapshot.Id,
+                        delta.Normalized * (effect.Definition.Magnitude * 0.08f)));
+                }
+
+                effect = new GadgetEffect(
+                    effect.Kind,
+                    effect.Definition,
+                    effect.Command,
+                    displacements.ToArray());
+            }
+            else if (effect.Kind == GadgetEffectKind.TiffinStation)
+            {
+                var stationId = _nextStationId++;
+                _stations[stationId] = new GadgetStationRuntime(stationId, command.Origin, effect.Definition);
+                effect = new GadgetEffect(
+                    effect.Kind,
+                    effect.Definition,
+                    effect.Command,
+                    effect.Displacements,
+                    stationId);
             }
 
-            var effect = new GadgetEffect(
-                result.Effect.Kind,
-                result.Effect.Definition,
-                result.Effect.Command,
-                displacements.ToArray());
             return new GadgetUseResult(true, GadgetUseFailure.None, effect);
         }
 
@@ -281,6 +333,28 @@ namespace BattleRaja.Core.Application
         {
             var index = FindGadgetPickupIndex(pickupId);
             return index >= 0 && _gadgetPickups[index].IsAvailable;
+        }
+
+        private void AdvanceStations(
+            float fixedDeltaSeconds,
+            MatchParticipantSnapshot[] snapshots,
+            List<GadgetHealingIntent> healingIntents,
+            List<int> expiredStationIds)
+        {
+            if (_stations.Count == 0) return;
+            var expired = new List<int>();
+            foreach (var pair in _stations)
+            {
+                var step = pair.Value.Advance(fixedDeltaSeconds, snapshots);
+                for (var i = 0; i < step.Healing.Length; i++) healingIntents.Add(step.Healing[i]);
+                if (step.Expired) expired.Add(pair.Key);
+            }
+
+            for (var i = 0; i < expired.Count; i++)
+            {
+                _stations.Remove(expired[i]);
+                expiredStationIds.Add(expired[i]);
+            }
         }
 
         private static T[] Copy<T>(IReadOnlyList<T> source)

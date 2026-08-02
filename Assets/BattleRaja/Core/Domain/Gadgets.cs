@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace BattleRaja.Core.Domain
 {
@@ -199,17 +200,125 @@ namespace BattleRaja.Core.Domain
             GadgetDefinition definition,
             GadgetUseCommand command,
             GadgetDisplacementIntent[] displacements)
+            : this(kind, definition, command, displacements, -1)
+        {
+        }
+
+        public GadgetEffect(
+            GadgetEffectKind kind,
+            GadgetDefinition definition,
+            GadgetUseCommand command,
+            GadgetDisplacementIntent[] displacements,
+            int stationId)
         {
             Kind = kind;
             Definition = definition;
             Command = command;
             Displacements = displacements ?? Array.Empty<GadgetDisplacementIntent>();
+            StationId = stationId;
         }
 
         public GadgetEffectKind Kind { get; }
         public GadgetDefinition Definition { get; }
         public GadgetUseCommand Command { get; }
         public GadgetDisplacementIntent[] Displacements { get; }
+        public int StationId { get; }
+    }
+
+    public readonly struct GadgetHealingIntent
+    {
+        public GadgetHealingIntent(int stationId, CombatEntityId targetId, int amount)
+        {
+            StationId = stationId;
+            TargetId = targetId;
+            Amount = amount;
+        }
+
+        public int StationId { get; }
+        public CombatEntityId TargetId { get; }
+        public int Amount { get; }
+    }
+
+    public readonly struct GadgetStationStep
+    {
+        public GadgetStationStep(int stationId, GadgetHealingIntent[] healing, bool expired)
+        {
+            StationId = stationId;
+            Healing = healing ?? Array.Empty<GadgetHealingIntent>();
+            Expired = expired;
+        }
+
+        public int StationId { get; }
+        public GadgetHealingIntent[] Healing { get; }
+        public bool Expired { get; }
+    }
+
+    public sealed class GadgetStationRuntime
+    {
+        private const float HealIntervalSeconds = 1f;
+        private readonly GadgetDefinition _definition;
+        private float _remaining;
+        private float _healAccumulator;
+        private int _health;
+
+        public GadgetStationRuntime(int stationId, Float2 position, GadgetDefinition definition)
+        {
+            if (stationId <= 0 || definition.Kind != GadgetKind.TiffinStation || !definition.IsValid(out var reason))
+            {
+                throw new ArgumentException("A Tiffin station definition and positive station ID are required.", nameof(definition));
+            }
+
+            StationId = stationId;
+            Position = position;
+            _definition = definition;
+            _remaining = definition.DurationSeconds;
+            _health = definition.StationHealth;
+        }
+
+        public int StationId { get; }
+        public Float2 Position { get; }
+        public float RemainingSeconds => Math.Max(0f, _remaining);
+        public int CurrentHealth => Math.Max(0, _health);
+        public bool IsActive => _remaining > 0f && _health > 0;
+
+        public GadgetStationStep Advance(float deltaSeconds, MatchParticipantSnapshot[] snapshots)
+        {
+            if (deltaSeconds < 0f || float.IsNaN(deltaSeconds) || float.IsInfinity(deltaSeconds))
+            {
+                throw new ArgumentOutOfRangeException(nameof(deltaSeconds));
+            }
+
+            if (!IsActive)
+            {
+                return new GadgetStationStep(StationId, Array.Empty<GadgetHealingIntent>(), true);
+            }
+
+            _remaining = Math.Max(0f, _remaining - deltaSeconds);
+            _healAccumulator += deltaSeconds;
+            var healing = new List<GadgetHealingIntent>();
+            while (_healAccumulator + 0.000001f >= HealIntervalSeconds && IsActive)
+            {
+                _healAccumulator -= HealIntervalSeconds;
+                if (snapshots == null) continue;
+                var radiusSquared = _definition.Radius * _definition.Radius;
+                for (var i = 0; i < snapshots.Length; i++)
+                {
+                    var snapshot = snapshots[i];
+                    if (!snapshot.Alive || snapshot.CurrentHealth >= snapshot.MaxHealth ||
+                        snapshot.Position.SqrMagnitudeFrom(Position) > radiusSquared) continue;
+                    healing.Add(new GadgetHealingIntent(StationId, snapshot.Id, _definition.Magnitude));
+                }
+            }
+
+            return new GadgetStationStep(StationId, healing.ToArray(), _remaining <= 0f || _health <= 0);
+        }
+
+        public bool TryDamage(int amount)
+        {
+            if (!IsActive || amount <= 0) return false;
+            _health = Math.Max(0, _health - amount);
+            return true;
+        }
     }
 
     public readonly struct GadgetUseResult

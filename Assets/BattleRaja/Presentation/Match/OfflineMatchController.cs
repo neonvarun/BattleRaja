@@ -105,6 +105,8 @@ namespace BattleRaja.Presentation.Match
                     ApplyOutsideDamage(authorityTick);
                 }
 
+                ApplyGadgetAuthorityIntents(authorityTick);
+
                 CollectNearbyItems();
                 UpdateSpectator(tick);
                 if (tick.MatchEnded)
@@ -223,6 +225,31 @@ namespace BattleRaja.Presentation.Match
                 var actor = _actors.FirstOrDefault(binding => binding.Target.Id == request.TargetId);
                 if (actor == null || actor.Health.Snapshot.IsDefeated) continue;
                 damageResolver?.Resolve(actor.Target, request, allowSelfHit: true, allowFriendlyFire: true, authorityTick.SimulationTick);
+            }
+        }
+
+        private void ApplyGadgetAuthorityIntents(MatchAuthorityTick authorityTick)
+        {
+            for (var i = 0; i < authorityTick.GadgetHealingIntents.Length; i++)
+            {
+                var intent = authorityTick.GadgetHealingIntents[i];
+                var actor = _actors.FirstOrDefault(binding => binding.Target.Id == intent.TargetId);
+                actor?.Health.Heal(intent.Amount);
+            }
+
+            if (authorityTick.ExpiredStationIds.Length == 0) return;
+            var stations = FindObjectsByType<GadgetStation>(FindObjectsSortMode.None);
+            for (var i = 0; i < authorityTick.ExpiredStationIds.Length; i++)
+            {
+                var stationId = authorityTick.ExpiredStationIds[i];
+                for (var stationIndex = 0; stationIndex < stations.Length; stationIndex++)
+                {
+                    if (stations[stationIndex] != null && stations[stationIndex].StationId == stationId)
+                    {
+                        stations[stationIndex].ExpireFromAuthority();
+                        break;
+                    }
+                }
             }
         }
 

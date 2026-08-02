@@ -247,7 +247,7 @@ namespace BattleRaja.Presentation.Gadgets
             station.transform.position = new Vector3(effect.Command.Origin.X, 0.5f, effect.Command.Origin.Y);
             station.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
             var component = station.AddComponent<GadgetStation>();
-            component.Configure(effect.Definition);
+            component.Configure(effect.Definition, effect.StationId);
             var target = station.AddComponent<CombatTarget>();
             var stationHealth = station.GetComponent<CombatHealth>();
             target.enabled = true;
