@@ -1,6 +1,6 @@
 # Architecture
 
-**Status:** Implemented and accepted for Milestones 0–1. Changes beyond these boundaries require a new decision record.
+**Status:** Implemented and accepted for Milestones 0–2. Changes beyond these boundaries require a new decision record.
 
 ## Goals
 
@@ -53,6 +53,26 @@ The M0 assembly names, inward dependency direction and `noEngineReferences` rule
 - `Assets/BattleRaja/Editor/BuildEntrypoints.cs` creates the MovementLab scene and serialized assets through controlled editor automation; scene YAML is not hand-authored.
 
 No external networking/backend SDK or combat authority was added. The command and agent boundary is deliberately compatible with later bot and network command producers.
+
+## M2 combat implementation
+
+- `BattleRaja.Core.Domain` owns `CombatEntityId`, factions, damage requests/results,
+  `HealthState`, `DamagePipeline`, projectile weapon definitions, cooldown state,
+  attack commands, projectile travel and duplicate-hit tracking. These types do not
+  reference UnityEngine and are usable by future bots and network authority.
+- `BattleRaja.Presentation.Combat.ProjectileWeaponAsset` stores attack configuration;
+  `CombatAttackController` converts shared player input into `AttackCommand` values
+  and submits them to `CombatProjectilePool`.
+- `CombatDamageResolver` is the only presentation entry point that applies a damage
+  request to `CombatHealth`; `CombatHealth` delegates mutation to the pure
+  `DamagePipeline` and raises result notifications for feedback.
+- `CombatProjectile` uses an explicit layer mask, speed, radius, range, lifetime,
+  despawn reason, faction policy and per-projectile `ProjectileHitTracker`. It never
+  mutates target health directly and returns to the bounded pool after hit, collision,
+  range or lifetime expiry.
+- `TrainingDummy`, `CombatHitFlash`, `CombatImpactFeedbackPool` and `AttackButton`
+  are presentation feedback/input components. They do not add named fighter, bot,
+  gadget, match, networking, backend or progression concepts.
 
 ## Platform boundary
 

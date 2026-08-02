@@ -1,0 +1,61 @@
+namespace BattleRaja.Core.Domain
+{
+    public readonly struct ProjectileWeaponDefinition
+    {
+        public ProjectileWeaponDefinition(
+            int damage,
+            float fireIntervalSeconds,
+            float projectileSpeed,
+            float maxRange,
+            float lifetimeSeconds,
+            float radius,
+            int collisionLayerMask,
+            bool allowSelfHit,
+            bool allowFriendlyFire)
+        {
+            Damage = damage;
+            FireIntervalSeconds = fireIntervalSeconds;
+            ProjectileSpeed = projectileSpeed;
+            MaxRange = maxRange;
+            LifetimeSeconds = lifetimeSeconds;
+            Radius = radius;
+            CollisionLayerMask = collisionLayerMask;
+            AllowSelfHit = allowSelfHit;
+            AllowFriendlyFire = allowFriendlyFire;
+        }
+
+        public int Damage { get; }
+        public float FireIntervalSeconds { get; }
+        public float ProjectileSpeed { get; }
+        public float MaxRange { get; }
+        public float LifetimeSeconds { get; }
+        public float Radius { get; }
+        public int CollisionLayerMask { get; }
+        public bool AllowSelfHit { get; }
+        public bool AllowFriendlyFire { get; }
+
+        public bool IsValid(out string reason)
+        {
+            if (Damage <= 0) { reason = "Damage must be positive."; return false; }
+            if (FireIntervalSeconds <= 0f) { reason = "Fire interval must be positive."; return false; }
+            if (ProjectileSpeed <= 0f) { reason = "Projectile speed must be positive."; return false; }
+            if (MaxRange <= 0f) { reason = "Maximum range must be positive."; return false; }
+            if (LifetimeSeconds <= 0f) { reason = "Lifetime must be positive."; return false; }
+            if (Radius <= 0f) { reason = "Projectile radius must be positive."; return false; }
+            if (CollisionLayerMask == 0) { reason = "At least one collision layer is required."; return false; }
+            reason = string.Empty;
+            return true;
+        }
+
+        public static ProjectileWeaponDefinition TrainingBolt => new ProjectileWeaponDefinition(
+            damage: 25,
+            fireIntervalSeconds: 0.35f,
+            projectileSpeed: 12f,
+            maxRange: 18f,
+            lifetimeSeconds: 1.5f,
+            radius: 0.16f,
+            collisionLayerMask: ~0,
+            allowSelfHit: false,
+            allowFriendlyFire: false);
+    }
+}

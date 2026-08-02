@@ -84,7 +84,24 @@ Each issue must include:
 
 ### BR-M2-001 — Combat foundation
 
-Health, damage, projectiles, cooldowns and pooling. Depends on M1; not part of this execution.
+- **Objective:** Add one configurable straight-line projectile, central health/damage
+  pipeline, resettable training dummy, cooldowns, collision/faction filtering,
+  pooling and shared desktop/Android attack input.
+- **Scope / non-scope:** Combat laboratory only; no named fighters, abilities, bots,
+  gadgets, Aandhi, match state, Photon, PlayFab, progression or final assets.
+- **Dependencies:** M1 movement laboratory and pinned Unity/package baseline.
+- **Acceptance criteria:** One playable projectile-to-damage loop; central health
+  mutation path; explicit range/lifetime/radius/layer/despawn policy; duplicate-hit
+  prevention; bounded pooling; 15 EditMode and 13 PlayMode tests; Android/Web smoke
+  builds and authorized device/browser launch evidence.
+- **Tests:** `Builds/M2/TestResults/editmode.xml`, `playmode.xml`, ADB runtime logs,
+  Chrome/Edge local HTTP checks.
+- **Expected subsystem/files:** `Core/Domain` combat rules, `Core/Application`
+  attack port, `Presentation/Combat`, MovementLab scene/build entrypoints, M2 report.
+- **Risks:** Placeholder balance/feedback and manual touch/focus review remain open;
+  development APK retains Unity's non-fatal AssetPackManager probe warning.
+- **Human review gate:** Technical gate passed provisionally; subjective combat
+  feel and damage tuning require human review before production combat work.
 
 ### BR-M3-001 — Bijli kit and shared command API
 

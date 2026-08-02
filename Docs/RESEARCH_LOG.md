@@ -119,3 +119,24 @@ Research current primary sources before selecting technical versions, APIs, SDKs
 - **Decision impact:** Add only builtin `com.unity.ugui` `2.5.0` to the direct M1 package manifest. Keep raw input in Presentation and convert it into pure movement commands.
 - **Uncertainty:** Physical touch behavior and browser canvas focus remain device/manual validation items.
 - **Recheck trigger/date:** Before changing input bindings, adding UI packages, or supporting additional platforms.
+
+### M2 combat implementation baseline
+
+- **Date checked:** 2026-08-02
+- **Question:** Does the M2 combat laboratory require a new package or external SDK?
+- **Primary source:** `PROMPTS/02_MILESTONE_2_COMBAT.md`; installed Unity 6000.5.6f1
+  package lock; existing Unity physics/Input System/uGUI documentation and local
+  build/test evidence.
+- **Relevant claim:** M2 can use pure C# rules, Unity physics queries, existing Input
+  System/uGUI controls and bounded presentation pools; Photon, PlayFab and named
+  fighter systems are explicitly out of scope.
+- **Decision impact:** Add no package and no external service. Keep attack commands,
+  health/damage, cooldown, projectile travel, faction eligibility and duplicate-hit
+  rules in the existing Domain/Application boundary; keep collision/feedback/input
+  adapters in Presentation.
+- **Local evidence:** 15/15 EditMode, 13/13 PlayMode, M2 Android/Web builds,
+  authorized Lava/Oppo launches and Chrome/Edge local HTTP bootstrap checks.
+- **Uncertainty:** Human combat feel/balance, formal profiling, browser console review,
+  and release signing remain unverified.
+- **Recheck trigger/date:** Before adding fighter abilities, networking, backend
+  services, packages or production combat assets.

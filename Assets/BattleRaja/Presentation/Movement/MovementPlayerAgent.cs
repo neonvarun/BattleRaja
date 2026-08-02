@@ -41,7 +41,9 @@ namespace BattleRaja.Presentation.Movement
                 return;
             }
 
-            var input = inputAdapter != null ? inputAdapter.ReadInput() : new MovementInputFrame(Float2.Zero, Float2.Zero);
+            var input = inputAdapter != null && inputAdapter.isActiveAndEnabled
+                ? inputAdapter.ReadInput()
+                : new MovementInputFrame(Float2.Zero, Float2.Zero);
             Submit(MovementCommandFactory.Create(actorId, _simulationTick, input, _tuning), Time.deltaTime);
             _simulationTick++;
         }

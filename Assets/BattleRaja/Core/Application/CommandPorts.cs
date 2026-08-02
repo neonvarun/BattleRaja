@@ -11,4 +11,9 @@ namespace BattleRaja.Core.Application
     {
         void Submit(MovementCommand command);
     }
+
+    public interface IAttackCommandSink
+    {
+        void Submit(AttackCommand command);
+    }
 }

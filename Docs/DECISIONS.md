@@ -26,6 +26,29 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Evidence/sources:** Unity 6000.5.6f1 release notes; Unity 6000.5 Android dependency table; Google Play target API policy; Unity Package Registry snapshot and live package resolution in `Packages/packages-lock.json`; live toolchain evidence recorded in `Docs/RESEARCH_LOG.md`; owner instruction in the current task; `Docs/MILESTONE_0_EXECUTION_PLAN.md`.
 - **Owner:** Human project owner
 
+### ADR-003 — Milestone 2 central projectile combat laboratory
+
+- **Date:** 2026-08-02
+- **Status:** Accepted for M2; damage balance and feedback remain subject to human playtest.
+- **Context:** M2 requires one complete projectile-to-damage loop without prematurely
+  hard-coding a named fighter, bots, gadgets, battle-royale state or network SDK.
+- **Options considered:** Direct MonoBehaviour health mutation versus a pure damage
+  request/pipeline; Rigidbody projectile simulation versus code-driven travel with
+  presentation collision queries; unbounded Instantiate/Destroy versus a bounded pool.
+- **Decision:** Use typed `CombatEntityId`/faction values, validated immutable
+  `DamageRequest` values, a pure `DamagePipeline`/`HealthState`, and a configurable
+  `ProjectileWeaponDefinition`. The Unity layer owns a bounded projectile and impact
+  pool, performs explicit layer-filtered sphere casts, and sends collision results to
+  `CombatDamageResolver`. The training dummy resets after defeat for laboratory use.
+- **Consequences:** Health mutation has one auditable path and can be reused by bots
+  and future authoritative networking. Projectile collision remains a Unity physics
+  concern, while travel/range/lifetime/cooldown/eligibility rules are EditMode-testable.
+  The temporary Android application ID is `com.example.battleraja.m2`; this is not a
+  store identity. No Photon, PlayFab or named fighter architecture enters M2.
+- **Evidence/sources:** `PROMPTS/02_MILESTONE_2_COMBAT.md`; 15 EditMode and 13 PlayMode
+  tests; M2 Android/Web build logs; Lava/Oppo ADB smoke; Chrome/Edge local HTTP smoke.
+- **Owner:** Human project owner
+
 ### ADR-001 — Android modules for the approved editor
 
 - **Date:** 2026-08-02

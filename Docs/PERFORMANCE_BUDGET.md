@@ -45,3 +45,17 @@ Report Android and Web results separately.
 - Movement hot paths use cached references, value-type command/state data, no per-frame LINQ, no repeated component searches and no per-frame managed collection construction by design. This is an implementation constraint, not a measured optimization claim.
 
 Required next measurement: capture a short Editor, Lava and Oppo session with Unity Profiler/Android profiling, plus Chrome and Edge frame/memory observations, before setting numeric M1 budgets or claiming performance readiness.
+
+## Milestone 2 baseline evidence — 2026-08-02
+
+- Editor: 15 EditMode and 13 PlayMode tests passed.
+- Android: M2 development IL2CPP ARM64 APK built at approximately 83.0 MB on disk;
+  Unity's build report serialized approximately 1.22 GB before packaging. The APK
+  installed/launched on Lava API 34 and Oppo API 36; no formal CPU/GPU/GC capture was
+  collected.
+- Web: M2 WebGL2/WebAssembly build succeeded with approximately 113.0 MB reported
+  build output; local Chrome/Edge DOM bootstrap checks passed. No frame-time,
+  WebAssembly-memory or cached-load capture was collected.
+- Combat projectiles and impact feedback are bounded pools; cooldown, travel and
+  damage rules do not allocate per frame. This is an implementation constraint, not
+  a measured performance claim.

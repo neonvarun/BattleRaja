@@ -2,8 +2,8 @@
   "project": {
     "working_title": "BattleRaja",
     "owner": "Varunkumar Singh / Avinya Studios",
-    "stage": "pre-production",
-    "active_milestone": 1,
+  "stage": "pre-production",
+    "active_milestone": 3,
     "primary_platform": "Android application and browser-playable Web build",
     "secondary_platform": "Windows development build"
   },
@@ -42,7 +42,9 @@
     "ui": "Figma",
     "web_target": "Unity Web / WebGL 2.0 + WebAssembly",
     "milestone_0_status": "verified",
-    "milestone_1_status": "implemented_pending_review",
+    "milestone_1_status": "provisional_pass_pending_human_review",
+    "milestone_2_status": "provisional_pass_pending_human_review",
+    "milestone_3_status": "in_progress",
     "movement_lab_scene": "Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity",
     "movement_tuning_asset": "Assets/BattleRaja/Content/Movement/M1-MovementTuning.asset",
     "package_baseline": {

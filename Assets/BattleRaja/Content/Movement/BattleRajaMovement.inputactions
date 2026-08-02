@@ -35,6 +35,16 @@
                     "interactions": "",
                     "initialStateCheck": true,
                     "priority": 0
+                },
+                {
+                    "name": "Attack",
+                    "type": "Button",
+                    "id": "c40ecb47-b43b-4cfb-9a33-5b0d9d04d2ca",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
                 }
             ],
             "bindings": [
@@ -42,7 +52,7 @@
                     "name": "2DVector",
                     "id": "5a8f3345-e7bc-4782-9e28-d976405ac95d",
                     "path": "2DVector",
-                    "interactions": "WASD",
+                    "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Move",
@@ -97,7 +107,7 @@
                     "name": "2DVector",
                     "id": "d032b2f5-0a48-4d5d-a407-e277878d1bdc",
                     "path": "2DVector",
-                    "interactions": "Arrows",
+                    "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Move",
@@ -178,6 +188,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "AimStick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f6d0f4a8-2b2c-40de-9985-6f2f6ca50024",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardMouse",
+                    "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c1a4f902-d1fd-4506-a34a-1be5e5f40568",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

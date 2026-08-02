@@ -103,3 +103,34 @@ Unity batch logs include resolved licensing-handshake warnings and intentional e
 - Python local HTTP server returned 200 for the M1 page; Chrome 150 and Edge 150 DOM checks found Unity bootstrap content.
 
 Physical touch gestures, multiple safe-area/aspect-ratio layouts, deliberate browser canvas focus/scroll behavior, and formal performance profiling remain manual follow-up coverage.
+
+## Milestone 2 combat coverage
+
+### Pure/EditMode
+
+- health clamping, zero-health and already-defeated results
+- explicit self-hit/friendly-fire policy
+- invalid projectile-weapon configuration
+- cooldown/fire-rate enforcement and reset
+- projectile range/lifetime expiry
+- duplicate-hit tracking and reuse
+
+### PlayMode
+
+- combat systems, pool and resettable dummy spawn
+- attack command projectile spawn and projectile-to-damage loop
+- bounded pool reuse after despawn
+- collision filtering without target damage
+- dummy defeat/reset
+- focus-reset attack input path
+- all M1 movement/lab regressions
+
+### M2 evidence (2026-08-02)
+
+- `Unity.exe -batchmode -nographics -projectPath . -runTests -testPlatform editmode -testResults Builds/M2/TestResults/editmode.xml -logFile Builds/M2/Logs/editmode.log` — 15/15 passed.
+- `Unity.exe -batchmode -nographics -projectPath . -runTests -testPlatform playmode -testResults Builds/M2/TestResults/playmode.xml -logFile Builds/M2/Logs/playmode.log` — 13/13 passed.
+- Android and Web smoke builds completed; authorized Lava/Oppo install/launch and Chrome/Edge local HTTP checks passed.
+
+Batch-mode PlayMode waits use game-time waits because frame duration is not a stable
+wall-clock proxy in headless Unity. No formal device/browser profiler capture was
+collected.
