@@ -7,7 +7,7 @@ This file records evidence-backed status only. Allowed status values are: `Not s
 
 | Area | Status | Evidence / boundary |
 | --- | --- | --- |
-| Unity project and package baseline | Passed with evidence | Unity `6000.5.6f1`; latest validated source HEAD `4391f09`; repository validation clean; compile succeeds |
+| Unity project and package baseline | Passed with evidence | Unity `6000.5.6f1`; latest validated source HEAD `511f2f4` (runtime-bearing candidate `4391f09`); repository validation clean; compile succeeds |
 | Photon Fusion import | Passed with evidence | Fusion 2.1.1 stable build 2177 is present and imported; no public multiplayer claim |
 | EditMode and PlayMode regression baseline | Passed with evidence | Latest tutorial/cleanup validation passes 81/81 EditMode and 33/33 PlayMode tests; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
 | Android smoke build | Passed with evidence | HEAD `4391f09` Bazaar Bastion development IL2CPP APK (`151,120,618` bytes; SHA-256 `5366ACE6BA99BA25370E974399D70D0D76327F07D842F3C583D8B9C9A3C7C260`) built; Lava-only physical install for this exact artifact remains the next runtime check; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
@@ -23,6 +23,7 @@ This file records evidence-backed status only. Allowed status values are: `Not s
 | Visual/audio placeholder foundation | Passed with evidence | `FighterPresentation` supplies replaceable colour rings, health bars, code-driven action states, attack/ability telegraphs and hit/elimination feedback; `BattleRajaAudioDirector` supplies original procedural cues, volume hooks and Web gesture-gated startup. Final art, animation clips, VFX, authored audio and visual approval remain open |
 | Canvas match UI foundation | Passed with evidence | `OfflineMatchHud` provides anchored match/zone status, pause/settings, spectator, results/rematch and locally persisted presentation settings. Functional aim assist, localization assets, controller rebinding and human UI approval remain open; see ADR-024 and latest-head evidence |
 | Production flow and fighter selection | Passed with evidence | `ProductionFlowMachine` is pure/application-owned and covered by 81 EditMode tests. Bootstrap Canvas navigation covers main menu, offline/online mode selection, fighter selection, async match loading, explicit service error/retry, settings and safe-area/focus behavior. `TutorialStepMachine` and `TutorialArenaPlayModeTests` cover the replayable tutorial route; Web screenshots in `Docs/QA/Visual/Flow/` show the 1280×720 route. Full match-loop reliability, Lava smoke for the exact APK and final authored UX remain open |
+| Visual and interaction QA | In progress | `Docs/QA/VISUAL_QA_REPORT.md` records 1280×720 screenshots for menu, mode, fighters, loading, match opening, combat, Aandhi, pause/settings and online error. The available browser cannot resize to the required desktop/portrait viewports; successful gadget use, spectator, results/rematch and final human approval remain unverified |
 | Real Photon multiplayer | Not started | Imported SDK is not an adapter or multiplayer validation |
 | PlayFab/backend/economy | Not started | No production backend claim |
 | Performance, soak, multi-browser, and release gates | Not started | No measured release evidence yet |

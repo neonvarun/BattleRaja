@@ -2,7 +2,8 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `4391f09` (`feat: add replayable tutorial arena`)
+Latest validated source HEAD: `511f2f4` (`test: verify repeated offline scene cleanup`)
+Latest runtime-bearing candidate: `4391f09` (`feat: add replayable tutorial arena`)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
 ## Scope and repository note
@@ -142,3 +143,10 @@ After the authority seam commit `1a92b6c`, the runtime artifacts were rebuilt an
 - Local Web serve: `http://localhost:8123/index.html` returned HTTP 200 from `Builds/M11/Web-BazaarBastion`.
 - Browser smoke: at 1280×720, the fresh Web tab opened Main Menu → `TUTORIAL REPLAY`, rendered the real Tutorial Arena, and advanced Movement → Aim. Screenshots: `Docs/QA/Visual/Flow/web-tutorial-arena.png` and `Docs/QA/Visual/Flow/web-tutorial-aim.png`. Browser logs contained no errors; one non-fatal Unity WebGL warning reports that manual `persistentDataPath` synchronization is deprecated.
 - Boundary: tutorial prompts are replayable guidance layered over the real controls, match authority, Aandhi/HUD and pickups; they do not automatically certify player competency. Multi-viewport visual QA, Lava smoke for this exact APK, performance/soak evidence, final authored presentation, real Photon and real PlayFab remain open or externally blocked.
+
+## Visual and interaction QA validation (`511f2f4` source / `4391f09` runtime)
+
+- Local Web candidate served successfully at `http://localhost:8123/index.html` and was inspected in a fresh in-app browser tab at `1280×720`.
+- Captured states include main menu, mode selection, fighter selection, match loading/opening, active combat, Aandhi closing pressure, pause/settings and the explicit online/Fusion error. Evidence is stored under `Docs/QA/Visual/Phase7/` and summarized in `Docs/QA/VISUAL_QA_REPORT.md`.
+- The available browser surface did not expose viewport resizing, so 1920×1080, 1440×900, 1024×768 and portrait checks were not claimed. Successful gadget pickup/use, spectator, results/rematch and final visual approval were not reached through the honest smoke path.
+- This is an **In progress** visual gate. The screenshots show a stylised greybox/prototype with dense HUD coverage; they are not final visual approval.
