@@ -179,3 +179,23 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   and manual visual debug review remain open.
 - **Recheck trigger/date:** Before adding Aandhi/loot in M5 or replacing the lab movement
   recovery with authored navigation.
+
+### M5 offline match baseline
+
+- **Date checked:** 2026-08-02
+- **Question:** Can the first complete match remain deterministic and service-free while
+  sharing the existing combat actors and command systems?
+- **Primary source:** `PROMPTS/05_MILESTONE_5_OFFLINE_BATTLE_ROYALE.md`; existing Domain
+  damage pipeline and M1–M4 scene actors.
+- **Relevant claim:** M5 requires explicit match phases, Aandhi, separation, elimination,
+  placement, spectator/results/rematch and 20-match soak; gadgets, networking, accounts
+  and progression are non-scope.
+- **Decision impact:** Add pure `OfflineMatchSimulation` and a Unity controller bridge;
+  no package or external service. Use a 298-second data definition and accelerated pure
+  tests for soak.
+- **Local evidence:** 31/31 EditMode, 22/22 PlayMode, M5 Android/Web builds and smoke
+  evidence.
+- **Uncertainty:** Full five-minute physical playthrough, device-tier stability,
+  pickup/readability and repeated-runtime memory profile remain open.
+- **Recheck trigger/date:** Before adding Jugaad Gadgets, online authority or changing
+  match timing/zone policy.

@@ -83,3 +83,12 @@ Required next measurement: capture a short Editor, Lava and Oppo session with Un
 - No Lava/Oppo CPU/GPU/GC capture, browser frame-time/memory capture or low-end-device
   seven-bot profile was collected. Treat the stress number as a repeatable code-path
   baseline, not a mobile performance claim.
+
+## Milestone 5 baseline evidence — 2026-08-02
+
+- The offline match simulation uses bounded eight-participant state and an explicit
+  298-second phase definition. Twenty accelerated matches completed in EditMode; this
+  is correctness/soak evidence, not wall-clock performance evidence.
+- M5 development APK/Web artifact sizes and device/browser smoke are recorded in the
+  M5 report. No Android CPU/GPU/GC, browser frame-time/memory or repeated-runtime
+  object-count capture was collected.

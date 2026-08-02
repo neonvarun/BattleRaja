@@ -51,5 +51,15 @@ namespace BattleRaja.Presentation.Combat
 
             _state.Reset();
         }
+
+        public int Heal(int amount)
+        {
+            if (_state == null)
+            {
+                _state = new HealthState(maxHealth);
+            }
+
+            return _state.Heal(amount);
+        }
     }
 }

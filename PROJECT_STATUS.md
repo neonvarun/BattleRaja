@@ -2,7 +2,7 @@
 
 ## Active milestone
 
-**Milestone 4 — Bot AI Laboratory**
+**Milestone 5 — Complete Offline Battle Royale**
 
 ## Current state
 
@@ -22,9 +22,9 @@
   subjective human-review debt recorded.
 - M2 report: `Docs/MILESTONE_REPORTS/M2.md`; technical gate passed provisionally with
   combat/touch/balance review debt recorded.
-- Combat/gameplay progression: M3 Bijli fighter technical gate passed provisionally;
-  M4 seven-bot technical gate passed provisionally. Bot fairness, device performance
-  and visual review remain open. Gadgets, match state, networking, backend and
+- Combat/gameplay progression: M3 Bijli and M4 bot gates passed provisionally; M5
+  offline match technical gate passed provisionally. Match pacing, Aandhi, pickup,
+  spectator/results and device review remain open. Gadgets, networking, backend and
   progression remain unimplemented.
 - Multiplayer: deliberately deferred
 - Backend/economy: deliberately deferred
@@ -67,6 +67,17 @@
 - Android: M4 IL2CPP ARM64 development APK built at `Builds/M4/Android/BattleRaja-M4.apk`, installed/launched on Lava API 34 and Oppo API 36, with zero fatal application exceptions in captured logs.
 - Web: M4 WebGL2/WebAssembly development build completed under `Builds/M4/Web`; local HTTP port 8011 returned 200 and Chrome 150/Edge 150 headless DOM checks found Unity bootstrap content.
 
+## M5 execution evidence — 2026-08-02
+
+- Offline match tests: 31/31 EditMode tests passed in `Builds/M5/TestResults/editmode.xml`.
+- Match integration tests: 22/22 PlayMode tests passed in `Builds/M5/TestResults/playmode.xml`.
+- `OfflineMatchSimulation` owns a 298-second phase definition, Aandhi radius/damage,
+  separated spawns, idempotent elimination, placement, winner and spectator selection;
+  MovementLab now contains eight actors, three neutral health pickups and results/rematch
+  presentation.
+- Pure soak completed 20 accelerated matches with explicit restart state cleanup.
+- Android/Web M5 builds and local/device smoke are recorded in `Docs/MILESTONE_REPORTS/M5.md`.
+
 ## M0 evidence retained
 
 - M0 validation, tests and smoke artifacts remain under ignored `Builds/M0/`.
@@ -80,6 +91,8 @@
 - Bijli bolt/dash balance, HUD legibility, dash collision feel and low-end-device profiling remain unmeasured.
 - Bot fairness, debug-overlay usefulness, device-tier seven-bot frame time and
   authored navigation remain unmeasured.
+- Full five-minute physical match pacing, Aandhi/pickup readability, results UX and
+  repeated-runtime memory/object growth remain unmeasured.
 
 ## Approval gates
 

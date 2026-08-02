@@ -3,6 +3,7 @@ using System.IO;
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.AI;
 using BattleRaja.Presentation.Combat;
+using BattleRaja.Presentation.Match;
 using BattleRaja.Presentation.Movement;
 using UnityEditor;
 using UnityEditor.Build;
@@ -29,7 +30,7 @@ namespace BattleRaja.Editor
         private const string WeaponAssetPath = "Assets/BattleRaja/Content/Weapons/M2-TrainingBolt.asset";
         private const string BijliWeaponAssetPath = "Assets/BattleRaja/Content/Weapons/M3-BijliElectricBolt.asset";
         private const string FighterAssetPath = "Assets/BattleRaja/Content/Fighters/M3-Bijli.asset";
-        private const string DevelopmentApplicationId = "com.example.battleraja.m4";
+        private const string DevelopmentApplicationId = "com.example.battleraja.m5";
 
         public static void CreateBootstrapScene()
         {
@@ -190,6 +191,17 @@ namespace BattleRaja.Editor
                     projectilePool);
             }
 
+            CreatePickup("HealthPickup_A", new Vector3(-5f, 0.35f, 3f), arena.transform, impactMaterial);
+            CreatePickup("HealthPickup_B", new Vector3(5f, 0.35f, 3f), arena.transform, impactMaterial);
+            CreatePickup("HealthPickup_C", new Vector3(0f, 0.35f, -1f), arena.transform, impactMaterial);
+            var matchObject = new GameObject("OfflineMatch");
+            matchObject.transform.SetParent(arena.transform);
+            var matchController = matchObject.AddComponent<OfflineMatchController>();
+            var matchHud = matchObject.AddComponent<OfflineMatchHud>();
+            SetObjectReference(matchController, "damageResolver", damageResolver);
+            SetObjectReference(matchController, "cameraController", cameraController);
+            SetObjectReference(matchHud, "match", matchController);
+
             SetObjectReference(agent, "tuningAsset", tuningAsset);
             SetObjectReference(agent, "inputAdapter", inputAdapter);
             SetObjectReference(agent, "aimIndicator", indicator);
@@ -291,7 +303,7 @@ namespace BattleRaja.Editor
                 throw new BuildFailedException($"Bijli fighter definition is invalid: {reason}");
             }
 
-            Debug.Log("BattleRaja Milestone 4 validation passed.");
+            Debug.Log("BattleRaja Milestone 5 validation passed.");
         }
 
         public static void BuildAndroidDevelopment()
@@ -306,7 +318,7 @@ namespace BattleRaja.Editor
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel28;
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
             PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
-            Build("Builds/M4/Android/BattleRaja-M4.apk", BuildTarget.Android);
+            Build("Builds/M5/Android/BattleRaja-M5.apk", BuildTarget.Android);
         }
 
         public static void BuildWebDevelopment()
@@ -317,7 +329,7 @@ namespace BattleRaja.Editor
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WebGL, BuildTarget.WebGL);
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
-            Build("Builds/M4/Web", BuildTarget.WebGL);
+            Build("Builds/M5/Web", BuildTarget.WebGL);
         }
 
         private static void Build(string outputPath, BuildTarget target)
@@ -336,7 +348,7 @@ namespace BattleRaja.Editor
                 throw new BuildFailedException($"{target} build failed: {report.summary.result}. See the Unity build log.");
             }
 
-            Debug.Log($"{target} M4 development build succeeded: {report.summary.outputPath} ({report.summary.totalSize} bytes).");
+            Debug.Log($"{target} M5 development build succeeded: {report.summary.outputPath} ({report.summary.totalSize} bytes).");
         }
 
         private static GameObject CreateBlock(string name, Vector3 position, Vector3 scale, Material material, Transform parent)
@@ -348,6 +360,17 @@ namespace BattleRaja.Editor
             block.transform.localScale = scale;
             block.GetComponent<Renderer>().sharedMaterial = material;
             return block;
+        }
+
+        private static MatchPickup CreatePickup(string name, Vector3 position, Transform parent, Material material)
+        {
+            var pickupObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            pickupObject.name = name;
+            pickupObject.transform.SetParent(parent);
+            pickupObject.transform.position = position;
+            pickupObject.transform.localScale = new Vector3(0.45f, 0.18f, 0.45f);
+            pickupObject.GetComponent<Renderer>().sharedMaterial = material;
+            return pickupObject.AddComponent<MatchPickup>();
         }
 
         private static void CreateBotActor(

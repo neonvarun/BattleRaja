@@ -168,3 +168,27 @@ collected.
 - `Unity.exe -batchmode -nographics -projectPath . -runTests -testPlatform playmode -testResults Builds/M4/TestResults/playmode.xml -logFile Builds/M4/Logs/playmode.log` — 19/19 passed.
 - Seven-bot stress output: `elapsed=2.000s decisions=91 maxDecisionMs=0.024` in
   `Builds/M4/Logs/playmode.log`; this is a headless editor measurement only.
+
+### M5 offline match coverage
+
+### Pure/EditMode
+
+- separated spawn validation
+- phase/radius/outside-damage timing
+- idempotent elimination, stable placement and winner resolution
+- spectator target selection
+- 20 accelerated complete matches and restart state cleanup
+
+### PlayMode
+
+- eight actor match bootstrap and separated spawn count
+- phase/zone/pickup presentation state
+- accelerated result/winner transition
+- all M1–M4 movement, combat, fighter and bot regressions
+
+### M5 evidence (2026-08-02)
+
+- `Unity.exe -batchmode -nographics -projectPath . -runTests -testPlatform editmode -testResults Builds/M5/TestResults/editmode.xml -logFile Builds/M5/Logs/editmode.log` — 31/31 passed.
+- `Unity.exe -batchmode -nographics -projectPath . -runTests -testPlatform playmode -testResults Builds/M5/TestResults/playmode.xml -logFile Builds/M5/Logs/playmode.log` — 22/22 passed.
+- Pure soak covers 20 complete matches with explicit restart cleanup; no runtime
+  leak measurement beyond the repeated simulation state check was collected.

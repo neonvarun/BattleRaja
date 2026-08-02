@@ -43,6 +43,14 @@ namespace BattleRaja.Core.Domain
             return new DamageResult(true, applied, _currentHealth == 0, DamageRejectionReason.None);
         }
 
+        public int Heal(int amount)
+        {
+            if (amount <= 0 || _currentHealth <= 0) return 0;
+            var applied = System.Math.Min(amount, _maxHealth - _currentHealth);
+            _currentHealth += applied;
+            return applied;
+        }
+
         public void Reset()
         {
             _currentHealth = _maxHealth;

@@ -3,7 +3,8 @@ namespace BattleRaja.Core.Domain
     public enum DamageType
     {
         Generic = 0,
-        Projectile = 1
+        Projectile = 1,
+        Aandhi = 2
     }
 
     public readonly struct DamageRequest

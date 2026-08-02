@@ -115,3 +115,23 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Evidence/sources:** `PROMPTS/04_MILESTONE_4_BOTS.md`; 26 EditMode and 19 PlayMode
   tests; M4 seven-bot stress log; Android/Web smoke evidence.
 - **Owner:** Human project owner
+
+### ADR-006 — Milestone 5 local authoritative match and Aandhi
+
+- **Date:** 2026-08-02
+- **Status:** Accepted for M5; full human match-flow review remains open.
+- **Context:** M5 needs one complete eight-combatant offline match before any online
+  service is introduced.
+- **Options considered:** Scene-only timers and UI-owned phase state; a Unity singleton
+  match manager; a pure deterministic match simulation bridged by a scene controller.
+- **Decision:** Use `OfflineMatchSimulation` with data-driven phase durations, zone
+  radii and outside damage. Scene actors sync position/health into the simulation;
+  Aandhi damage is applied only through the central damage resolver. Placement,
+  elimination and winner state are simulation-owned. A simple health pickup and
+  spectator camera bridge complete the lab loop.
+- **Consequences:** The 298-second Solo Raja definition can be accelerated in tests
+  without changing gameplay rules. Scene restart is the rematch boundary. Loot,
+  gadgets, economy, online authority and production UI remain deferred.
+- **Evidence/sources:** `PROMPTS/05_MILESTONE_5_OFFLINE_BATTLE_ROYALE.md`; 31 EditMode
+  and 22 PlayMode tests; M5 accelerated match/restart evidence.
+- **Owner:** Human project owner

@@ -59,6 +59,11 @@ namespace BattleRaja.Presentation.Movement
             ApplyProjection();
         }
 
+        public void SetFollowTarget(Transform target)
+        {
+            followTarget = target;
+        }
+
         private void ApplyProjection()
         {
             if (_camera == null)

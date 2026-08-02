@@ -147,4 +147,21 @@ Each issue must include:
 
 ### BR-M5-001 — Offline micro battle royale
 
-Match lifecycle, elimination, zone, placement, restart and spectator flow. Depends on M4; not part of this execution.
+- **Objective:** Deliver one complete offline eight-combatant Solo Raja match with
+  Aandhi pressure, elimination, placement, spectator/results and rematch.
+- **Scope / non-scope:** Pure match phases/zone/placement, separated spawns, central
+  outside-zone damage, simple neutral health pickups, seven-bot actor integration,
+  results HUD and scene restart. No gadgets, Pehel/Maya, networking, accounts,
+  progression, monetisation or production release.
+- **Dependencies:** M4 bots, M3 combat/fighter layers and pinned toolchain.
+- **Acceptance criteria:** The data definition targets 4–6 minutes; eight actors start
+  separated; Aandhi phases and damage are authoritative; eliminations are idempotent;
+  winner/placement/spectator/rematch state works; 20 accelerated matches complete.
+- **Tests:** 31 EditMode and 22 PlayMode tests; accelerated 20-match soak evidence.
+- **Expected subsystem/files:** `Core/Domain/OfflineMatch.cs`, `Presentation/Match`,
+  MovementLab generator, M5 build wrappers/report and docs.
+- **Risks:** Match controller is a grey-box bridge; pickup/results readability and
+  full five-minute physical playthrough remain open; no formal memory capture.
+- **Human review gate:** Required for match pacing, zone readability, spectator flow,
+  touch/results UX and low-end-device performance; not blocking provisional M6 gadget
+  work.

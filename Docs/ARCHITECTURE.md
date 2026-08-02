@@ -1,6 +1,6 @@
 # Architecture
 
-**Status:** Implemented and accepted for Milestones 0–3. Changes beyond these boundaries require a new decision record.
+**Status:** Implemented and accepted for Milestones 0–5. Changes beyond these boundaries require a new decision record.
 
 ## Goals
 
@@ -110,3 +110,18 @@ Android and Web share domain, application and most presentation code. Platform-s
   optional non-authoritative overlay.
 - M4 uses seven Bijli bot actors in MovementLab for stress testing. No loot, Aandhi,
   match resolution, gadget, network or backend authority was added.
+
+## M5 offline match implementation
+
+- `OfflineMatchSimulation` owns the local authoritative phase, Aandhi radius/damage
+  data, spawn validation, participant health snapshots, idempotent elimination,
+  placement and winner state. It has no Unity or presentation dependency.
+- `OfflineMatchController` bridges scene actors into the simulation, applies Aandhi
+  damage through `CombatDamageResolver`, disables player input on elimination and
+  retargets the camera through the spectator selector. `OfflineMatchHud` is a
+  presentation-only phase/zone/results overlay.
+- `MatchPickup` is a small neutral health resource with respawn timing. It does not
+  own combat authority or progression rewards.
+- The first offline lab uses the existing eight Bijli actors and grey-box arena. The
+  simulation definition targets a 298-second match; accelerated deterministic tests
+  cover repeated completion and restart without requiring five minutes of wall time.
