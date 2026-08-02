@@ -2,7 +2,7 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `ac60062` (`fix: carry authoritative simulation ticks`)
+Latest validated source HEAD: `1437e5c` (`refactor: move item collection into authority`)
 Latest runtime-bearing candidate: `4391f09` (`feat: add replayable tutorial arena`)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
@@ -54,10 +54,30 @@ fixture actor explicitly so scene-local wall edits cannot change the movement as
 | Isolated Bijli regression | 1 passed, 0 failed after explicit fixture placement | `Builds/M11/TestResults/phase1-authority-bijli-fixture-20260803.xml` |
 | PlayMode authority/tick suite | 33 passed, 0 failed | `Builds/M11/TestResults/phase1-authority-playmode-v2-20260803.xml` |
 
-The new authority seam is still offline-only. Presentation proximity sensing and
-gadget effect execution remain outside the application authority, and the Android
-artifact has not yet been installed on the connected Lava device for this exact
-`ac60062` source.
+The new authority seam is still offline-only. Presentation gadget effect execution
+remains outside the application authority, and the Android artifact has not yet been
+installed on the connected Lava device for this exact `1437e5c` source.
+
+## Phase 1 authority collection continuation (`1437e5c`)
+
+Item proximity and collector selection now run in `OfflineMatchAuthority` from
+validated domain positions/radii. The controller applies returned collection intents
+to Unity health/inventory components and synchronizes view availability; it no longer
+chooses collectors by scene iteration order.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| EditMode collection suite | 84 passed, 0 failed | `Builds/M11/TestResults/phase1-authority-collection-editmode-v2-20260803.xml` |
+| PlayMode collection regression | 33 passed, 0 failed | `Builds/M11/TestResults/phase1-authority-collection-playmode-v2-20260803.xml` |
+| Authority collection rule | Deterministic lowest-ID eligible collector, health/full-health filtering, authored position/radius and non-contiguous pickup-ID lookup covered by `AuthorityFoundationTests` | `Assets/BattleRaja/Core/Application/OfflineMatchAuthority.cs`, `Assets/BattleRaja/Tests/EditMode/AuthorityFoundationTests.cs` |
+| Android development smoke build | Unity exit 0; APK 151,198,767 bytes; SHA-256 `360A4A0F4A595E5714B579226D6A157E06AA7992F1B3285DF7C4C26C7A43438C` | `Builds/M11/Logs/phase1-authority-collection-android-20260803.log`, `Builds/M11/Android/BattleRaja-M11.apk` |
+| Web development smoke build | Unity exit 0; 21 files, 132,979,355 bytes; `Build/Web.wasm` 120,294,960 bytes; SHA-256 `E957A343680D4C0205BFB2806946C0CEB5F95FD868AFA61D9FEA1199B9D048D1` | `Builds/M11/Logs/phase1-authority-collection-web-20260803.log`, `Builds/M11/Web` |
+| Local Web serve | `python -m http.server 8136 --bind 127.0.0.1 --directory Builds/M11/Web`; `curl -I http://127.0.0.1:8136/index.html` returned HTTP 200 | local server check from 2026-08-03 |
+| Lava physical smoke | Not run: `adb devices -l` listed only Oppo `b60e53b3`; the instructed Lava serial `ST5GDW23LB004392` was absent, so no other device was used | device-gate blocker |
+
+This phase does not claim full visual/browser interaction correctness, real Photon
+multiplayer, or authoritative gadget effect execution. The previous browser bootstrap
+evidence remains the latest browser runtime evidence.
 
 ## Fix included in this baseline
 
