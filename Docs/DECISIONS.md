@@ -567,3 +567,21 @@ Record every material choice here. Do not silently overwrite old decisions.
   `OfflineMatchController`, `AuthorityFoundationTests`, and the Phase 1 Android/Web smoke
   builds recorded in `Docs/QA/LATEST_HEAD_BASELINE.md`.
 - **Owner:** Human project owner
+
+### ADR-029 — Resolve bot abilities from the configured fighter controller
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the Phase 2 fighter continuation.
+- **Context:** `BotBrain` used `BijliFighterController` as its missing-reference fallback.
+  A production bot whose serialized reference was absent could therefore silently issue
+  the dash ability even when its actor carried Pehel or Maya.
+- **Decision:** Resolve the configured `IFighterAbilityController` directly, or discover
+  the interface on the same actor. Do not select a fighter-specific fallback by name.
+  Expose the resolved controller for diagnostics and assert in the production PlayMode
+  suite that each bot resolves the controller actually attached to its actor.
+- **Consequences:** Missing scene references fail safely instead of changing fighter
+  identity; authored scene configuration remains responsible for attaching one controller.
+  The networked fighter adapter and server-side ability authority remain future work.
+- **Evidence/sources:** `BotBrain`, `VerticalSlicePlayModeTests` and the Phase 2 full
+  PlayMode result recorded in `Docs/QA/LATEST_HEAD_BASELINE.md`.
+- **Owner:** Human project owner

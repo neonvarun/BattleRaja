@@ -37,6 +37,7 @@ namespace BattleRaja.Presentation.AI
         private readonly Stopwatch _decisionTimer = new Stopwatch();
 
         public BotDecision CurrentDecision => _decision;
+        public IFighterAbilityController AbilityController => _abilityController;
         public int DecisionCount { get; private set; }
         public double MaxDecisionMilliseconds { get; private set; }
         public string DebugSummary => $"{_decision.State} target={_decision.TargetId.Value} utility={_decision.UtilityScore:0.0} threats={_decision.PerceivedThreats} stuck={_decision.StuckRecovery}";
@@ -45,7 +46,9 @@ namespace BattleRaja.Presentation.AI
         {
             movementAgent = movementAgent != null ? movementAgent : GetComponent<MovementPlayerAgent>();
             attackController = attackController != null ? attackController : GetComponent<CombatAttackController>();
-            fighterController = fighterController != null ? fighterController : GetComponent<BijliFighterController>();
+            // Do not default to Bijli: production bots may carry a fighter-specific
+            // controller, and a missing serialized reference must not silently replace
+            // Pehel or Maya with the dash bridge.
             _abilityController = fighterController as IFighterAbilityController;
             if (_abilityController == null) _abilityController = GetComponent<IFighterAbilityController>();
             perception = perception != null ? perception : GetComponent<BotPerceptionSensor>();

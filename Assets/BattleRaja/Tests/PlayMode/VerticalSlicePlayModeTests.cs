@@ -51,6 +51,26 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator ProductionBotsResolveTheirOwnFighterAbilityControllers()
+        {
+            var brains = Object.FindObjectsByType<BotBrain>(FindObjectsSortMode.None);
+            Assert.That(brains, Has.Length.GreaterThanOrEqualTo(1));
+            for (var i = 0; i < brains.Length; i++)
+            {
+                Assert.That(brains[i].AbilityController, Is.Not.Null, brains[i].name);
+                var pehel = brains[i].GetComponent<PehelFighterController>();
+                var maya = brains[i].GetComponent<MayaFighterController>();
+                var bijli = brains[i].GetComponent<BijliFighterController>();
+                var expected = pehel != null
+                    ? (IFighterAbilityController)pehel
+                    : maya != null ? maya : bijli;
+                Assert.That(brains[i].AbilityController, Is.SameAs(expected), brains[i].name);
+            }
+
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator ProductionSceneHasReadableFighterAndAudioPresentation()
         {
             Assert.That(Object.FindObjectsByType<FighterPresentation>(FindObjectsSortMode.None), Has.Length.GreaterThanOrEqualTo(8));
