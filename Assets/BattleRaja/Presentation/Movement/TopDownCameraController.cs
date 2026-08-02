@@ -17,7 +17,7 @@ namespace BattleRaja.Presentation.Movement
         [SerializeField] private float followSmoothTime = 0.08f;
         [SerializeField] private float orthographicSize = 9.5f;
         [SerializeField] private float perspectiveFieldOfView = 48f;
-        [SerializeField] private LayerMask obstructionMask;
+        [SerializeField] private LayerMask obstructionMask = 1;
         [SerializeField] private float obstructionPadding = 0.25f;
 
         private Camera _camera;

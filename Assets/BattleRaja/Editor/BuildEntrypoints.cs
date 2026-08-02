@@ -124,6 +124,7 @@ namespace BattleRaja.Editor
             SetObjectReference(cameraController, "followTarget", player.transform);
             SetObjectReference(marker, "player", agent);
             SetObjectReference(marker, "cameraController", cameraController);
+            SetInt(cameraController, "obstructionMask", 1);
 
             EditorSceneManager.SaveScene(scene, MovementLabScenePath);
             EditorBuildSettings.scenes = new[]
@@ -350,6 +351,19 @@ namespace BattleRaja.Editor
             }
 
             property.objectReferenceValue = value;
+            serializedObject.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void SetInt(UnityEngine.Object target, string propertyName, int value)
+        {
+            var serializedObject = new SerializedObject(target);
+            var property = serializedObject.FindProperty(propertyName);
+            if (property == null)
+            {
+                throw new InvalidOperationException($"Serialized property not found: {target.name}.{propertyName}");
+            }
+
+            property.intValue = value;
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
         }
 

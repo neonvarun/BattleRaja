@@ -29,3 +29,6 @@
 *.unity whitespace=-trailing-space
 *.mat whitespace=-trailing-space
 Docs/MASTER_VISION.md whitespace=-trailing-space
+
+# Preserve imported prompt files that intentionally end with a blank line.
+*.md whitespace=-blank-at-eof

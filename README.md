@@ -33,6 +33,12 @@ Read these files in order:
 - Offline simulation core before Photon or PlayFab
 - Android–Web cross-play as an online-alpha target
 
+- Use `PROMPTS/99_AUTOPILOT_M1_TO_M11.md` for one long Goal-mode run.
+- Use numbered prompts for safer milestone-by-milestone execution.
+- Read `COPY_INTO_EXISTING_PROJECT.md` first.
+
+The target is an Android + Web closed-alpha/release candidate. Public launch and real external services still require credentials, approvals and human review.
+
 ## Current local run
 
 Open the Unity project at the repository root with Unity `6000.5.6f1` and load `Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity`. Desktop uses WASD/arrow keys and mouse aim; Android uses the two virtual sticks.

@@ -23,8 +23,8 @@
     },
     {
       "path": ".gitattributes",
-      "bytes": 953,
-      "sha256": "1abd60411aadfc78a8ee2806cbd62c76e41f1db686d4d4e8ed94bba15c3f1eec"
+      "bytes": 1059,
+      "sha256": "cc2e74aedd396134caeedb235813e28d2bea6a5f7bdb218bfcf46899ace01f03"
     },
     {
       "path": ".github/ISSUE_TEMPLATE/bug.yml",
@@ -418,8 +418,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 1632,
-      "sha256": "f989b44aab93facf1d74d905516b64768b544b3cb3c01addaf05ba361ca73d94"
+      "bytes": 1976,
+      "sha256": "6face24b7b09aeea5a1f54e160119f87b879cbc5a46b967c8fa7472e39d9e7ef"
     },
     {
       "path": "START_HERE.md",
@@ -673,8 +673,8 @@
     },
     {
       "path": "Assets/BattleRaja/Editor/BuildEntrypoints.cs",
-      "bytes": 19670,
-      "sha256": "9d9d9d444c4e1a34fe04cbaee0906473bf790e95d7a8cb692c7999fa4b9b11e9"
+      "bytes": 20268,
+      "sha256": "804a60a0ee73618a3f1408cabc8f2c55ba688871dcb2a6904062eaa2e965b101"
     },
     {
       "path": "Assets/BattleRaja/Editor/BuildEntrypoints.cs.meta",
@@ -1343,8 +1343,8 @@
     },
     {
       "path": "Assets/BattleRaja/Presentation/Movement/TopDownCameraController.cs",
-      "bytes": 2823,
-      "sha256": "10b2e76b73a2466215198d18f0edd2d4ab4b71f19531106720fe194cdb24786b"
+      "bytes": 2827,
+      "sha256": "9f3de54ae04ba065b76119ed40522efa3bce5f7a853418132c0de25a0623baff"
     },
     {
       "path": "Assets/BattleRaja/Presentation/Movement/TopDownCameraController.cs.meta",
@@ -1368,8 +1368,8 @@
     },
     {
       "path": "Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity",
-      "bytes": 69001,
-      "sha256": "58e07ef85d9e0daf0785822ac53d717d099198e8840be7aad6cf30e4c82addb5"
+      "bytes": 69055,
+      "sha256": "eff2070d97b859b57e66906150b28633911676a37c9d903d20d33c32cc77487d"
     },
     {
       "path": "Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity.meta",
@@ -1400,6 +1400,86 @@
       "path": "Docs/MOVEMENT_LAB.md",
       "bytes": 3573,
       "sha256": "66819fce46f7d649c2ec9bdefd135eacc7005e3d34ebd470ef971d7964b19014"
+    },
+    {
+      "path": "BattleRaja_M1_to_M11_GOALS.md",
+      "bytes": 65639,
+      "sha256": "0e9af826ec33be1bc407d0954c195d9570573398cd4209c7e1129e641c0bfe16"
+    },
+    {
+      "path": "COPY_INTO_EXISTING_PROJECT.md",
+      "bytes": 910,
+      "sha256": "53c9bcde4c9b001b16b44618159a262efba56ee25978f0097b38e99086f07e0e"
+    },
+    {
+      "path": "Docs/EXTERNAL_SERVICE_GATES.md",
+      "bytes": 1102,
+      "sha256": "2f7b8df0ba28ee6b5c6b2d3c8389ccc713dee0598b42adf696c5dad0bbc40c92"
+    },
+    {
+      "path": "Docs/FULL_BUILD_RUNBOOK.md",
+      "bytes": 1308,
+      "sha256": "723ccabf0d0ef5deaa6ad93dd3fcf22180ed88f1a585ff75a2fe698cf9001082"
+    },
+    {
+      "path": "Docs/HUMAN_REVIEW_BACKLOG.md",
+      "bytes": 413,
+      "sha256": "15fdd00c1633d05a5673b102403176456368af39b0df5dcac5bc334b7458cf90"
+    },
+    {
+      "path": "PROMPTS/02_MILESTONE_2_COMBAT.md",
+      "bytes": 5307,
+      "sha256": "412fe4f0a6f931adbe0b1b2c9781b4f478b3cfdb680bd45e5d07d452e7349beb"
+    },
+    {
+      "path": "PROMPTS/03_MILESTONE_3_BIJLI.md",
+      "bytes": 5398,
+      "sha256": "dfb57b36b860e8215219850670746f719f3e875bb976d712686a752830e1300b"
+    },
+    {
+      "path": "PROMPTS/04_MILESTONE_4_BOTS.md",
+      "bytes": 4927,
+      "sha256": "e1dddad09d99146dabf5991ace6de33687907dfd2e194657811b2cb891ffc36b"
+    },
+    {
+      "path": "PROMPTS/05_MILESTONE_5_OFFLINE_BATTLE_ROYALE.md",
+      "bytes": 5027,
+      "sha256": "c10a7283571aa39bcc8f2ace9047c8dec0acff5e471c3c8582b9eb79df3a0456"
+    },
+    {
+      "path": "PROMPTS/06_MILESTONE_6_JUGAAD_GADGETS.md",
+      "bytes": 5304,
+      "sha256": "f9ffe4cb823eda339936bd7b8b80ed9220434218a19c5b1ea35907ca3ab7a4c8"
+    },
+    {
+      "path": "PROMPTS/07_MILESTONE_7_VERTICAL_SLICE.md",
+      "bytes": 6549,
+      "sha256": "6e75f425f14fb1a0fd35d46613d600331d95589960bcca6bdfa0ca613d15e043"
+    },
+    {
+      "path": "PROMPTS/08_MILESTONE_8_TWO_CLIENT_NETWORKING.md",
+      "bytes": 5194,
+      "sha256": "bf6b09bf201be9bebb50aeb52878d504b6ceb73a6b1a367c17de8cf4f4c328d1"
+    },
+    {
+      "path": "PROMPTS/09_MILESTONE_9_ONLINE_ALPHA.md",
+      "bytes": 5139,
+      "sha256": "bea06b4dddaf207d3ae28c07ef036fb0d7511d5bd08eaa424c854884c8771555"
+    },
+    {
+      "path": "PROMPTS/10_MILESTONE_10_ACCOUNTS_PROGRESSION.md",
+      "bytes": 5309,
+      "sha256": "508f895925e1574176ec443f7edc0eea2d6443887e15f5c00022054c07ff907c"
+    },
+    {
+      "path": "PROMPTS/11_MILESTONE_11_CLOSED_TEST_RELEASE_CANDIDATE.md",
+      "bytes": 5870,
+      "sha256": "15cab2b6c71d191727cefc40951022fe846be336b2617e83de451ef824e6f28b"
+    },
+    {
+      "path": "PROMPTS/99_AUTOPILOT_M1_TO_M11.md",
+      "bytes": 6139,
+      "sha256": "de6fe3949cad73aeb381162fbd94f2b28a49b42a5633e2848409aa49269cd307"
     }
   ]
 }
