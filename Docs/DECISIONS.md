@@ -585,3 +585,23 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Evidence/sources:** `BotBrain`, `VerticalSlicePlayModeTests` and the Phase 2 full
   PlayMode result recorded in `Docs/QA/LATEST_HEAD_BASELINE.md`.
 - **Owner:** Human project owner
+
+### ADR-030 — Emit authoritative Dhol displacement intents
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the Phase 1 authority continuation; full network transport
+  and other gadget effects remain open.
+- **Context:** Dhol Burst use and cooldown were validated by the authority, but the
+  presentation `GadgetUser` independently scanned every movement actor and selected
+  knockback targets. That made target selection and displacement scene-order dependent.
+- **Decision:** When the authority accepts a Dhol command, it evaluates living
+  participants from the application snapshot and returns immutable per-target
+  `GadgetDisplacementIntent` values. Unity applies those impulses to matching
+  `CharacterController` views. A local non-authoritative lab fallback remains for
+  isolated gadget testing only.
+- **Consequences:** Public-match target selection is deterministic and testable without
+  Physics queries; actual collision movement and VFX remain presentation adapters. Tiffin
+  healing/station lifetime and Umbrella mitigation still require the same treatment.
+- **Evidence/sources:** `Gadgets`, `OfflineMatchAuthority`, `GadgetUser`, and the Dhol
+  displacement assertion in `AuthorityFoundationTests`.
+- **Owner:** Human project owner

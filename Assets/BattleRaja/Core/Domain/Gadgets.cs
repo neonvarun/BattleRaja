@@ -175,18 +175,41 @@ namespace BattleRaja.Core.Domain
         TiffinStation = 3
     }
 
+    public readonly struct GadgetDisplacementIntent
+    {
+        public GadgetDisplacementIntent(CombatEntityId targetId, Float2 displacement)
+        {
+            TargetId = targetId;
+            Displacement = displacement;
+        }
+
+        public CombatEntityId TargetId { get; }
+        public Float2 Displacement { get; }
+    }
+
     public readonly struct GadgetEffect
     {
         public GadgetEffect(GadgetEffectKind kind, GadgetDefinition definition, GadgetUseCommand command)
+            : this(kind, definition, command, Array.Empty<GadgetDisplacementIntent>())
+        {
+        }
+
+        public GadgetEffect(
+            GadgetEffectKind kind,
+            GadgetDefinition definition,
+            GadgetUseCommand command,
+            GadgetDisplacementIntent[] displacements)
         {
             Kind = kind;
             Definition = definition;
             Command = command;
+            Displacements = displacements ?? Array.Empty<GadgetDisplacementIntent>();
         }
 
         public GadgetEffectKind Kind { get; }
         public GadgetDefinition Definition { get; }
         public GadgetUseCommand Command { get; }
+        public GadgetDisplacementIntent[] Displacements { get; }
     }
 
     public readonly struct GadgetUseResult

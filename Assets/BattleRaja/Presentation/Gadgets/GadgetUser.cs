@@ -207,6 +207,28 @@ namespace BattleRaja.Presentation.Gadgets
 
         private void ApplyDholBurst(GadgetEffect effect)
         {
+            if (effect.Displacements != null && effect.Displacements.Length > 0)
+            {
+                var targets = FindObjectsByType<CombatTarget>(FindObjectsSortMode.None);
+                for (var i = 0; i < effect.Displacements.Length; i++)
+                {
+                    var displacement = effect.Displacements[i];
+                    for (var targetIndex = 0; targetIndex < targets.Length; targetIndex++)
+                    {
+                        var target = targets[targetIndex];
+                        if (target == null || target.Id != displacement.TargetId) continue;
+                        target.GetComponent<CharacterController>()?.Move(new Vector3(
+                            displacement.Displacement.X,
+                            0f,
+                            displacement.Displacement.Y));
+                        break;
+                    }
+                }
+
+                return;
+            }
+
+            // Local lab fallback when no match authority is active.
             var agents = FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None);
             for (var i = 0; i < agents.Length; i++)
             {

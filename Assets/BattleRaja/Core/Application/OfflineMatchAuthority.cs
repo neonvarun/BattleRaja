@@ -244,7 +244,31 @@ namespace BattleRaja.Core.Application
                 return new GadgetUseResult(false, GadgetUseFailure.NotHeld, default(GadgetEffect));
             }
 
-            return runtime.TryUse(inventory, command);
+            var result = runtime.TryUse(inventory, command);
+            if (!result.Used || result.Effect.Kind != GadgetEffectKind.DholBurst)
+            {
+                return result;
+            }
+
+            var snapshots = RequireSimulation().GetSnapshots();
+            var displacements = new List<GadgetDisplacementIntent>(snapshots.Length);
+            for (var i = 0; i < snapshots.Length; i++)
+            {
+                var snapshot = snapshots[i];
+                if (!snapshot.Alive || snapshot.Id == command.UserId) continue;
+                var delta = snapshot.Position - command.Origin;
+                if (delta.SqrMagnitude > result.Effect.Definition.Radius * result.Effect.Definition.Radius) continue;
+                displacements.Add(new GadgetDisplacementIntent(
+                    snapshot.Id,
+                    delta.Normalized * (result.Effect.Definition.Magnitude * 0.08f)));
+            }
+
+            var effect = new GadgetEffect(
+                result.Effect.Kind,
+                result.Effect.Definition,
+                result.Effect.Command,
+                displacements.ToArray());
+            return new GadgetUseResult(true, GadgetUseFailure.None, effect);
         }
 
         public bool TryAcquireGadget(CombatEntityId collectorId, ContentId gadgetId)

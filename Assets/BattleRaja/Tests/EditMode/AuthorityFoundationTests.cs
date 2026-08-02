@@ -68,7 +68,7 @@ namespace BattleRaja.Tests.EditMode
             authority.Start(new List<MatchSpawn>
             {
                 new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
-                new MatchSpawn(new CombatEntityId(2), new Float2(4f, 0f), 100)
+                new MatchSpawn(new CombatEntityId(2), new Float2(3f, 0f), 100)
             });
 
             Assert.That(authority.TryCollectGadget(new CombatEntityId(1), 0).Collected, Is.True);
@@ -78,6 +78,9 @@ namespace BattleRaja.Tests.EditMode
 
             Assert.That(used.Used, Is.True);
             Assert.That(used.Effect.Kind, Is.EqualTo(GadgetEffectKind.DholBurst));
+            Assert.That(used.Effect.Displacements, Has.Length.EqualTo(1));
+            Assert.That(used.Effect.Displacements[0].TargetId.Value, Is.EqualTo(2));
+            Assert.That(used.Effect.Displacements[0].Displacement.X, Is.EqualTo(0.32f).Within(0.0001f));
             Assert.That(duplicate.Used, Is.False);
             Assert.That(duplicate.Failure, Is.EqualTo(GadgetUseFailure.NotHeld));
         }
