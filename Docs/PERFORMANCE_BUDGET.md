@@ -124,3 +124,11 @@ Required next measurement: capture a short Editor, Lava and Oppo session with Un
 - When unblocked, capture authoritative tick drift, input/snapshot rate, reconnect time,
   packet loss/jitter behavior and device/browser CPU/GC/memory on Lava plus desktop Chrome
   and Edge before calling the online budget established.
+
+## Milestone 9 preparation baseline — 2026-08-02
+
+- `AuthoritativeMatchServer` uses bounded eight-slot dictionaries and a pure offline match
+  snapshot; local proof tests measure correctness only, not server throughput or bandwidth.
+- No headless server process, network packet rate, Android radio usage, browser lifecycle,
+  reconnect latency or eight-slot CPU/memory capture exists. These remain blocked with the
+  M8 real-session precondition.

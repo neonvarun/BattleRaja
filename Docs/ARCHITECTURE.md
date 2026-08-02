@@ -170,3 +170,16 @@ Android and Web share domain, application and most presentation code. Platform-s
   server/host must own snapshots, damage, cooldowns and results in the real integration.
 - Real prediction, reconciliation, interpolation, reconnect and latency/jitter/loss
   behavior require the external Fusion gate and two-client Android/Web validation.
+
+## M9 online-alpha preparation boundary
+
+- `AuthoritativeMatchServer` is a transport-independent preparation seam around the pure
+  `OfflineMatchSimulation`. It owns eight-slot configuration, separated spawns, bot
+  backfill, bounded movement input, authoritative health/elimination calls and disconnect
+  grace/reconnect/bot-takeover state.
+- This class is not a deployed headless server and does not provide matchmaking, a room
+  service or public authority until Photon Fusion and deployment approvals exist. It must
+  remain behind Infrastructure; no client/UI or browser code may become authoritative.
+- The M9 completion gate remains blocked by the M8 real-session precondition. Do not claim
+  cross-play, stress, reconnect or browser lifecycle behavior from the local preparation
+  tests.

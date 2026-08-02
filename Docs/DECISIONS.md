@@ -49,6 +49,26 @@ Record every material choice here. Do not silently overwrite old decisions.
   and 27 PlayMode tests; M8 report.
 - **Owner:** Human project owner
 
+### ADR-010 — Milestone 9 safe server/match preparation while Fusion is blocked
+
+- **Date:** 2026-08-02
+- **Status:** Accepted as preparation only; M9 completion is blocked by the M8 real-session
+  precondition.
+- **Context:** The online-alpha prompt requires eight slots, bot backfill, reconnect and
+  server authority, but the approved Fusion package/App ID/account gate is unavailable.
+- **Options considered:** Add a fake cloud-room implementation; move network assumptions
+  into Domain; or prepare a transport-independent Infrastructure server seam around the
+  existing pure offline simulation.
+- **Decision:** Use `AuthoritativeMatchServer` with an eight-slot/30-tick config, bounded
+  reconnect grace, explicit slot states, deterministic bot backfill and server-owned
+  snapshot/health paths. Keep it local and un-deployed until Fusion access exists.
+- **Consequences:** Server authority and disconnect policy can be tested without Unity UI or
+  an external SDK, while real rooms, cross-play, stress, browser lifecycle and deployment
+  remain unverified. No public or paid infrastructure is introduced.
+- **Evidence/sources:** M9 prompt, M8 ADR-009, `OfflineMatchSimulation`, M9 EditMode proof
+  tests and M9 report.
+- **Owner:** Human project owner
+
 ### ADR-008 — Milestone 7 three-fighter alpha roster
 
 - **Date:** 2026-08-02

@@ -2,7 +2,7 @@
 
 ## Active milestone
 
-**Milestone 8 — Networking Proof (credential-blocked partial)**
+**Milestone 9 — Eight-Slot Online Alpha Preparation (blocked)**
 
 ## Current state
 
@@ -28,6 +28,8 @@
   review remain open. Networking, backend and progression remain unimplemented.
 - Multiplayer: M8 adapter/mock proof implemented; real Photon Fusion two-client gate is
   blocked pending owner package/App ID/licence/account approval
+- M9: transport-independent eight-slot authoritative server/match preparation is present;
+  online-alpha completion is blocked by the M8 real-session precondition
 - Backend/economy: deliberately deferred
 - Final art/audio/animation: not started
 - Git/LFS: local repository initialized and LFS configured; `origin` points to `https://github.com/neonvarun/BattleRaja.git`
@@ -110,6 +112,16 @@
   connected Lava phone per owner instruction.
 - M8 full gate is **blocked**, not complete, until a real Fusion package/App ID/account
   configuration enables one Lava Android client and one desktop Web client to share a room.
+
+## M9 execution evidence — 2026-08-02
+
+- `AuthoritativeMatchServer` preparation covers eight slots, bot backfill, bounded input,
+  server-owned health/elimination, disconnect grace, reconnect and bot takeover without
+  Photon/PlayFab or deployment.
+- M9 is **blocked**, not complete, because M8 has no validated real two-client Fusion
+  session. No online alpha, cross-play, matchmaking or headless-server result is claimed.
+- Preparation tests and any M9 regression/build evidence are recorded in
+  `Docs/MILESTONE_REPORTS/M9.md`.
 
 ## M0 evidence retained
 

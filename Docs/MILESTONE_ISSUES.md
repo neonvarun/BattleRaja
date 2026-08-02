@@ -218,3 +218,13 @@ Each issue must include:
   room, exchange shared commands, observe server-owned snapshots/damage, and pass controlled
   latency/jitter/loss and reconnect checks with logs.
 - **Status:** Blocked; mock-only technical pass is not a real online pass.
+
+### BR-M9-001 — Online-alpha precondition remains blocked
+
+- **Objective:** Deliver the eight-slot Android/Web cross-play alpha with trusted server
+  authority, rooms, bot backfill, reconnect and stress evidence.
+- **Current state:** `AuthoritativeMatchServer` preparation is complete and tested without
+  transport. M9 cannot pass because M8 has no validated real two-client Fusion session.
+- **Required human action:** Complete BR-M8-001 with the approved Fusion package/App ID and
+  account/licence terms; approve any hosting or deployment separately.
+- **Status:** Blocked; preparation must not be represented as online gameplay.

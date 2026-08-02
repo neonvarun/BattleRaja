@@ -261,3 +261,18 @@ collected.
 - `Unity.exe -batchmode -nographics -projectPath . -runTests -testPlatform playmode -testResults Builds/M8/TestResults/playmode.xml -logFile Builds/M8/Logs/playmode.log` — 27/27 passed.
 - Photon Fusion package/App ID/account access is unavailable; real two-client transport,
   prediction/reconciliation/interpolation and reconnect evidence are blocked.
+
+## Milestone 9 preparation coverage
+
+### Pure/EditMode
+
+- eight-slot config/room start and bot backfill
+- authoritative movement clamp and stale-input rejection
+- disconnect grace, reconnect and bot-takeover state transitions
+- server-owned damage/elimination idempotence
+
+### Blocked external coverage
+
+- M8 real two-client precondition, eight-slot Android/Web interoperability, private room
+  codes, development matchmaking, browser refresh/background, server restart/failure,
+  latency/jitter/loss stress, bandwidth/memory and duplicate-result checks remain blocked.
