@@ -182,8 +182,9 @@ namespace BattleRaja.Core.Domain
             if (_phase != MatchPhase.Resolution)
             {
                 _elapsed += deltaSeconds;
-                UpdatePhase();
-                if (AliveCount <= 1 || _elapsed >= _definition.TargetDurationSeconds)
+                var timedOut = _elapsed >= _definition.TargetDurationSeconds;
+                if (!timedOut) UpdatePhase();
+                if (AliveCount <= 1 || timedOut)
                 {
                     ResolveWinner();
                 }
@@ -273,13 +274,38 @@ namespace BattleRaja.Core.Domain
         private void ResolveWinner()
         {
             if (_phase == MatchPhase.Resolution) return;
+
+            // Timeout results must never depend on spawn/list order. Living participants
+            // are ranked by the documented deterministic rule, then receive every
+            // remaining placement. Eliminated placements were already assigned by
+            // Eliminate, so the ranges cannot overlap.
+            var living = new List<ParticipantState>();
             for (var i = 0; i < _participants.Count; i++)
             {
-                if (_participants[i].Alive && AliveCount > 1) continue;
-                if (_participants[i].Alive) _participants[i].Placement = 1;
+                if (_participants[i].Alive) living.Add(_participants[i]);
             }
 
+            living.Sort(CompareTimeoutRanking);
+            for (var i = 0; i < living.Count; i++) living[i].Placement = i + 1;
+
             _phase = MatchPhase.Resolution;
+        }
+
+        private int CompareTimeoutRanking(ParticipantState left, ParticipantState right)
+        {
+            // Timeout ranking order: alive status (all candidates are alive here),
+            // current-health percentage, eliminations, distance to the final zone
+            // centre, then ascending entity id as the deterministic final tie-break.
+            var leftHealth = (long)left.CurrentHealth * right.MaxHealth;
+            var rightHealth = (long)right.CurrentHealth * left.MaxHealth;
+            if (leftHealth != rightHealth) return leftHealth > rightHealth ? -1 : 1;
+            if (left.Eliminations != right.Eliminations) return right.Eliminations.CompareTo(left.Eliminations);
+
+            var leftDistance = Float2.Distance(left.Position, _definition.ZoneCenter);
+            var rightDistance = Float2.Distance(right.Position, _definition.ZoneCenter);
+            var distanceComparison = leftDistance.CompareTo(rightDistance);
+            if (distanceComparison != 0) return distanceComparison;
+            return left.Id.Value.CompareTo(right.Id.Value);
         }
 
         private void Eliminate(ParticipantState participant)

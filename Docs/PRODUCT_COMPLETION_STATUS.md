@@ -12,7 +12,7 @@ This file records evidence-backed status only. Allowed status values are: `Not s
 | EditMode and PlayMode regression baseline | Passed with evidence | 57/57 EditMode and 27/27 PlayMode tests pass |
 | Android smoke build | Passed with evidence | Current IL2CPP APK built and launched on Lava `ST5GDW23LB004392` only; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
 | Web smoke build | Passed with evidence | Current Web build served locally and loaded in Chrome with zero post-fix JavaScript errors |
-| Timeout/winner correctness | In progress | Audit identifies arbitrary-winner behavior; domain fix and regression tests remain |
+| Timeout/winner correctness | Passed with evidence | Deterministic timeout ranking and complete placements implemented; phase-1 EditMode 59/59 and PlayMode 27/27 pass |
 | Explicit fixed simulation clock | In progress | Audit identifies Unity frame-time coupling; fixed-clock integration remains |
 | Continuously interpolated Aandhi | In progress | Audit identifies phase jumps; domain/presentation correction remains |
 | Bot current/next-zone awareness | In progress | Audit identifies missing zone observations; bot perception/decision work remains |

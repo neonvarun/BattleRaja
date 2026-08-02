@@ -19,6 +19,7 @@ The baseline intentionally excludes unrelated working-tree changes in `Assets/Ba
 | Unity compile | Unity batchmode compile — exit 0; no `error CS`, `Exception`, or `Failed to compile` matches | `Builds/M11/Logs/latest-head-compile.log` |
 | EditMode tests | 57 passed, 0 failed | `Builds/M11/TestResults/latest-head-editmode.xml` |
 | PlayMode tests | 27 passed, 0 failed | `Builds/M11/TestResults/latest-head-playmode.xml` |
+| Phase 1 timeout regression | Deterministic health/distance/id ranking; complete placements; EditMode 59/59 and PlayMode 27/27 pass | `Builds/M11/TestResults/phase1-editmode.xml`, `Builds/M11/TestResults/phase1-playmode.xml` |
 | Android build | Development IL2CPP APK — exit 0 | `Builds/M11/Logs/android-build.log` |
 | Android artifact | 150,735,210 bytes; SHA-256 `22B55FCD3B82EB641F6B04EF02BF3572301D4DEB119EDC193D6BFE834AE5ECE9` | `Builds/M11/Android/BattleRaja-M11.apk` |
 | Android device smoke | Installed and launched on Lava `ST5GDW23LB004392` only; focused activity `com.example.battleraja.m11/com.unity3d.player.UnityPlayerGameActivity`; process `22867` observed | `Docs/QA/Visual/latest-head-android.png`; ADB/logcat output |
