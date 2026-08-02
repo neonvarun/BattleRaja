@@ -14,7 +14,7 @@ This file records evidence-backed status only. Allowed status values are: `Not s
 | Web smoke build | Passed with evidence | Current Web build served locally and loaded in Chrome with zero post-fix JavaScript errors |
 | Timeout/winner correctness | Passed with evidence | Deterministic timeout ranking and complete placements implemented; phase-1 EditMode 59/59 and PlayMode 27/27 pass |
 | Explicit fixed simulation clock | Passed with evidence | 30 Hz accumulator integrated into offline match controller; clock EditMode 60/60 and PlayMode 27/27 pass |
-| Continuously interpolated Aandhi | In progress | Audit identifies phase jumps; domain/presentation correction remains |
+| Continuously interpolated Aandhi | Passed with evidence | Zone radius interpolates between phase radii; EditMode 60/60 and PlayMode 27/27 pass |
 | Bot current/next-zone awareness | In progress | Audit identifies missing zone observations; bot perception/decision work remains |
 | Authoritative rule separation | In progress | Presentation controller still owns part of offline match authority; refactor remains |
 | Fighter roster, progression, and complete offline loop | Not started | Later milestone scope; no completion claim |

@@ -35,13 +35,17 @@ namespace BattleRaja.Tests.EditMode
             Assert.That(simulation.Advance(3.1f).Phase, Is.EqualTo(MatchPhase.SpawnProtection));
             var opening = simulation.Advance(5f);
             Assert.That(opening.Phase, Is.EqualTo(MatchPhase.Opening));
-            Assert.That(opening.ZoneRadius, Is.EqualTo(14f));
+            Assert.That(opening.ZoneRadius, Is.InRange(13.9f, 14f));
             simulation.SetPosition(new CombatEntityId(1), new Float2(14.5f, 0f));
-            var pressure = simulation.Advance(90f);
+            var openingMidpoint = simulation.Advance(45f);
+            Assert.That(openingMidpoint.ZoneRadius, Is.InRange(10.9f, 11f));
+            var pressure = simulation.Advance(45f);
             Assert.That(pressure.Phase, Is.EqualTo(MatchPhase.Pressure));
-            Assert.That(pressure.ZoneRadius, Is.EqualTo(8f));
+            Assert.That(pressure.ZoneRadius, Is.InRange(7.9f, 8f));
             Assert.That(pressure.OutsideCount, Is.GreaterThanOrEqualTo(1));
             Assert.That(pressure.OutsideDamagePerSecond, Is.EqualTo(10));
+            var pressureMidpoint = simulation.Advance(60f);
+            Assert.That(pressureMidpoint.ZoneRadius, Is.InRange(5.6f, 5.75f));
         }
 
         [Test]

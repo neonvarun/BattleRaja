@@ -191,18 +191,19 @@ namespace BattleRaja.Core.Domain
             }
 
             var phaseDefinition = GetCurrentPhaseDefinition();
+            var zoneRadius = GetInterpolatedZoneRadius();
             var outside = 0;
             for (var i = 0; i < _participants.Count; i++)
             {
                 var participant = _participants[i];
-                if (participant.Alive && Float2.Distance(participant.Position, _definition.ZoneCenter) > phaseDefinition.Radius)
+                if (participant.Alive && Float2.Distance(participant.Position, _definition.ZoneCenter) > zoneRadius)
                 {
                     outside++;
                 }
             }
 
             var winner = FindWinner();
-            return new MatchTickResult(_phase, _definition.ZoneCenter, phaseDefinition.Radius, phaseDefinition.OutsideDamagePerSecond, outside, IsEnded, winner);
+            return new MatchTickResult(_phase, _definition.ZoneCenter, zoneRadius, phaseDefinition.OutsideDamagePerSecond, outside, IsEnded, winner);
         }
 
         public bool SyncHealth(CombatEntityId id, int currentHealth)
@@ -245,19 +246,8 @@ namespace BattleRaja.Core.Domain
 
         private void UpdatePhase()
         {
-            var elapsed = 0f;
-            var next = MatchPhase.Resolution;
-            for (var i = 0; i < _definition.Phases.Length; i++)
-            {
-                elapsed += _definition.Phases[i].DurationSeconds;
-                if (_elapsed < elapsed)
-                {
-                    next = _definition.Phases[i].Phase;
-                    break;
-                }
-            }
-
-            _phase = next;
+            var phaseIndex = FindPhaseIndex(_elapsed);
+            _phase = phaseIndex >= 0 ? _definition.Phases[phaseIndex].Phase : MatchPhase.Resolution;
         }
 
         private MatchPhaseDefinition GetCurrentPhaseDefinition()
@@ -269,6 +259,38 @@ namespace BattleRaja.Core.Domain
             }
 
             return _definition.Phases[_definition.Phases.Length - 1];
+        }
+
+        private float GetInterpolatedZoneRadius()
+        {
+            if (_definition.Phases.Length == 0) return 0f;
+
+            var phaseIndex = FindPhaseIndex(_elapsed);
+            if (phaseIndex < 0) return _definition.Phases[_definition.Phases.Length - 1].Radius;
+
+            var phase = _definition.Phases[phaseIndex];
+            var next = phaseIndex + 1 < _definition.Phases.Length
+                ? _definition.Phases[phaseIndex + 1]
+                : phase;
+            var phaseStart = 0f;
+            for (var i = 0; i < phaseIndex; i++) phaseStart += _definition.Phases[i].DurationSeconds;
+            var progress = phase.DurationSeconds > 0f
+                ? MathF.Max(0f, MathF.Min(1f, (_elapsed - phaseStart) / phase.DurationSeconds))
+                : 1f;
+            return phase.Radius + ((next.Radius - phase.Radius) * progress);
+        }
+
+        private int FindPhaseIndex(float elapsedSeconds)
+        {
+            var phaseStart = 0f;
+            for (var i = 0; i < _definition.Phases.Length; i++)
+            {
+                var phaseEnd = phaseStart + _definition.Phases[i].DurationSeconds;
+                if (elapsedSeconds < phaseEnd) return i;
+                phaseStart = phaseEnd;
+            }
+
+            return -1;
         }
 
         private void ResolveWinner()
