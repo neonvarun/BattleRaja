@@ -150,3 +150,11 @@ After the authority seam commit `1a92b6c`, the runtime artifacts were rebuilt an
 - Captured states include main menu, mode selection, fighter selection, match loading/opening, active combat, Aandhi closing pressure, pause/settings and the explicit online/Fusion error. Evidence is stored under `Docs/QA/Visual/Phase7/` and summarized in `Docs/QA/VISUAL_QA_REPORT.md`.
 - The available browser surface did not expose viewport resizing, so 1920×1080, 1440×900, 1024×768 and portrait checks were not claimed. Successful gadget pickup/use, spectator, results/rematch and final visual approval were not reached through the honest smoke path.
 - This is an **In progress** visual gate. The screenshots show a stylised greybox/prototype with dense HUD coverage; they are not final visual approval.
+
+## Visual and interaction QA Playwright revalidation (`511f2f4` source / `4391f09` runtime)
+
+- The same `Builds/M11/Web-BazaarBastion` candidate was served at `http://localhost:8124/index.html` and exercised with the Playwright CLI.
+- Required desktop viewports were captured: `1920×1080`, `1440×900`, `1280×720` and `1024×768`. Main-menu evidence exists for all four; match-opening evidence exists for all four. Portrait `390×844` was also captured because the browser supports resizing.
+- Desktop menu, mode, fighter, match, pressure, spectator, settings and online-error surfaces were visually inspected. Evidence is under `Docs/QA/Visual/Phase7/playwright-*.png` and summarized in `Docs/QA/VISUAL_QA_REPORT.md`.
+- Portrait menu fits, but portrait gameplay is horizontally cropped and the tutorial overlay is clipped. Gadget pickup/use, a distinct loading surface and results/rematch were not captured through the honest run.
+- This remains an **In progress** visual gate and does not establish final art quality, mobile-Web readiness, physical Lava ergonomics, or human approval.
