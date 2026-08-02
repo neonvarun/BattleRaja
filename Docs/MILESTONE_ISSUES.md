@@ -105,7 +105,24 @@ Each issue must include:
 
 ### BR-M3-001 — Bijli kit and shared command API
 
-Data-driven fighter, weapon, gadget and status composition. Depends on M2; not part of this execution.
+- **Objective:** Implement a reusable fighter definition/runtime boundary and the
+  first complete Bijli bolt-and-dash kit.
+- **Scope / non-scope:** Stable fighter/attack/ability IDs, immutable content asset,
+  pure dash state machine, shared attack/ability commands, placeholder HUD/trail,
+  collision/bounds checks and tests. No passive, Pehel, Maya, bots, gadgets, match
+  loop, networking, backend or final art.
+- **Dependencies:** M2 combat laboratory and pinned Unity/package baseline.
+- **Acceptance criteria:** Bijli is spawnable in MovementLab; bolt and dash work end
+  to end; startup/active/recovery/cooldown are not Animator-dependent; invalid and
+  concurrent actions are rejected; Android/Web builds and smoke evidence exist.
+- **Tests:** 20 EditMode and 16 PlayMode tests in M3 result XML; ADB and browser logs.
+- **Expected subsystem/files:** `Core/Domain` fighter/ability contracts,
+  `Presentation/Combat` fighter bridge/HUD/input, Bijli assets, MovementLab generator,
+  M3 report/build wrappers.
+- **Risks:** Placeholder balance/feedback, physical touch and formal performance
+  review remain open; development APK keeps Unity's non-fatal warnings.
+- **Human review gate:** Required for dash feel, bolt balance, HUD/touch ergonomics and
+  final release; not blocking the provisional M4 bot implementation.
 
 ### BR-M4-001 — Offline bots
 

@@ -12,6 +12,7 @@ namespace BattleRaja.Presentation.Combat
 
         public event Action<DamageResult> DamageResolved;
         public HealthSnapshot Snapshot => _state != null ? _state.Snapshot : new HealthSnapshot(maxHealth, maxHealth);
+        public int MaxHealth => maxHealth;
 
         private void Awake()
         {

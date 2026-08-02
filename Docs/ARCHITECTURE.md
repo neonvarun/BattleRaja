@@ -1,6 +1,6 @@
 # Architecture
 
-**Status:** Implemented and accepted for Milestones 0–2. Changes beyond these boundaries require a new decision record.
+**Status:** Implemented and accepted for Milestones 0–3. Changes beyond these boundaries require a new decision record.
 
 ## Goals
 
@@ -77,3 +77,20 @@ No external networking/backend SDK or combat authority was added. The command an
 ## Platform boundary
 
 Android and Web share domain, application and most presentation code. Platform-specific identity, storage, haptics, fullscreen, deep links, purchases, browser lifecycle and hosting integration belong in infrastructure adapters.
+
+## M3 fighter implementation
+
+- `BattleRaja.Core.Domain` owns stable `ContentId` values, immutable `FighterDefinition`
+  and `DashAbilityDefinition` data, `AbilityCommand`, and `FighterRuntimeState`.
+  Dash startup/active/recovery/cooldown transitions, direction fallback and bounded
+  displacement are pure C# rules.
+- `FighterDefinitionAsset` composes immutable content references for movement and the
+  Bijli electric bolt; runtime state is instantiated per fighter and never written back
+  into the asset.
+- `BijliFighterController` is the Unity bridge. It converts the shared input adapter
+  into an `AbilityCommand`, performs physics/bounds availability checks, applies the
+  pure dash displacement through `CharacterController`, and exposes presentation state.
+- `CombatAttackController` consumes the fighter definition's basic-attack data through
+  the same `IAttackCommandSink` used by M2. `BijliHud`, `AbilityButton` and the
+  `TrailRenderer` are presentation-only feedback and input surfaces.
+- No passive, bots, gadgets, match state, networking or backend concepts were added.

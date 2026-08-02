@@ -1,5 +1,6 @@
 using BattleRaja.Core.Application;
 using BattleRaja.Core.Domain;
+using BattleRaja.Presentation.Combat;
 using UnityEngine;
 
 namespace BattleRaja.Presentation.Movement
@@ -11,6 +12,7 @@ namespace BattleRaja.Presentation.Movement
         [SerializeField] private MovementTuningAsset tuningAsset;
         [SerializeField] private PlayerInputAdapter inputAdapter;
         [SerializeField] private AimDirectionIndicator aimIndicator;
+        [SerializeField] private BijliFighterController fighterController;
 
         private CharacterController _characterController;
         private MovementMotor _motor;
@@ -28,6 +30,7 @@ namespace BattleRaja.Presentation.Movement
         {
             _characterController = GetComponent<CharacterController>();
             inputAdapter = inputAdapter != null ? inputAdapter : GetComponent<PlayerInputAdapter>();
+            fighterController = fighterController != null ? fighterController : GetComponent<BijliFighterController>();
             _tuning = tuningAsset != null ? tuningAsset.ToDomain() : MovementTuning.Default;
             _motor = new MovementMotor();
             _simulationTick = 0;
@@ -37,6 +40,11 @@ namespace BattleRaja.Presentation.Movement
         private void Update()
         {
             if (!_initialized)
+            {
+                return;
+            }
+
+            if (fighterController != null && fighterController.IsMovementLocked)
             {
                 return;
             }

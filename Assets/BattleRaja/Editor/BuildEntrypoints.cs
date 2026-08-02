@@ -26,7 +26,9 @@ namespace BattleRaja.Editor
         private const string TuningAssetPath = MovementAssetFolder + "/M1-MovementTuning.asset";
         private const string InputAssetPath = MovementAssetFolder + "/BattleRajaMovement.inputactions";
         private const string WeaponAssetPath = "Assets/BattleRaja/Content/Weapons/M2-TrainingBolt.asset";
-        private const string DevelopmentApplicationId = "com.example.battleraja.m2";
+        private const string BijliWeaponAssetPath = "Assets/BattleRaja/Content/Weapons/M3-BijliElectricBolt.asset";
+        private const string FighterAssetPath = "Assets/BattleRaja/Content/Fighters/M3-Bijli.asset";
+        private const string DevelopmentApplicationId = "com.example.battleraja.m3";
 
         public static void CreateBootstrapScene()
         {
@@ -61,11 +63,17 @@ namespace BattleRaja.Editor
             var tuningAsset = EnsureTuningAsset();
             var inputAsset = EnsureInputAsset();
             var weaponAsset = EnsureWeaponAsset();
+            var bijliWeaponAsset = EnsureBijliWeaponAsset();
+            var fighterAsset = EnsureFighterAsset();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             tuningAsset = AssetDatabase.LoadAssetAtPath<MovementTuningAsset>(TuningAssetPath);
             inputAsset = AssetDatabase.LoadAssetAtPath<InputActionAsset>(InputAssetPath);
             weaponAsset = AssetDatabase.LoadAssetAtPath<ProjectileWeaponAsset>(WeaponAssetPath);
+            bijliWeaponAsset = AssetDatabase.LoadAssetAtPath<ProjectileWeaponAsset>(BijliWeaponAssetPath);
+            fighterAsset = AssetDatabase.LoadAssetAtPath<FighterDefinitionAsset>(FighterAssetPath);
+            SetObjectReference(fighterAsset, "movementTuning", tuningAsset);
+            SetObjectReference(fighterAsset, "basicAttack", bijliWeaponAsset);
 
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             RenderSettings.ambientLight = new Color(0.28f, 0.31f, 0.38f, 1f);
@@ -115,6 +123,13 @@ namespace BattleRaja.Editor
             var agent = player.AddComponent<MovementPlayerAgent>();
             var indicator = player.AddComponent<AimDirectionIndicator>();
             var attackController = player.AddComponent<CombatAttackController>();
+            var fighterController = player.AddComponent<BijliFighterController>();
+            var playerHealth = player.AddComponent<CombatHealth>();
+            var dashTrail = player.AddComponent<TrailRenderer>();
+            dashTrail.time = 0.24f;
+            dashTrail.startWidth = 0.28f;
+            dashTrail.endWidth = 0.02f;
+            dashTrail.sharedMaterial = projectileMaterial;
 
             var cameraObject = new GameObject("MovementLabCamera");
             cameraObject.tag = "MainCamera";
@@ -124,7 +139,8 @@ namespace BattleRaja.Editor
             camera.backgroundColor = new Color(0.08f, 0.10f, 0.14f, 1f);
             var cameraController = cameraObject.AddComponent<TopDownCameraController>();
 
-            var canvas = CreateTouchCanvas(out var movementStick, out var aimStick, out var attackButton);
+            var canvas = CreateTouchCanvas(out var movementStick, out var aimStick, out var attackButton, out var abilityButton);
+            var hud = CreateHud(canvas, out var hudText);
             var eventSystem = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
             eventSystem.transform.SetParent(arena.transform);
 
@@ -154,8 +170,10 @@ namespace BattleRaja.Editor
             SetObjectReference(inputAdapter, "movementStick", movementStick);
             SetObjectReference(inputAdapter, "aimStick", aimStick);
             SetObjectReference(inputAdapter, "attackButton", attackButton);
+            SetObjectReference(inputAdapter, "abilityButton", abilityButton);
             SetObjectReference(inputAdapter, "aimOrigin", player.transform);
             SetObjectReference(attackController, "weapon", weaponAsset);
+            SetObjectReference(attackController, "fighterDefinition", fighterAsset);
             SetObjectReference(attackController, "inputAdapter", inputAdapter);
             SetObjectReference(attackController, "movementAgent", agent);
             SetObjectReference(attackController, "projectilePool", projectilePool);
@@ -167,6 +185,18 @@ namespace BattleRaja.Editor
             SetObjectReference(trainingDummy, "target", dummyTarget);
             SetObjectReference(trainingDummy, "hitFlash", dummyFlash);
             SetObjectReference(cameraController, "followTarget", player.transform);
+            SetObjectReference(agent, "fighterController", fighterController);
+            SetObjectReference(fighterController, "fighterDefinition", fighterAsset);
+            SetObjectReference(fighterController, "inputAdapter", inputAdapter);
+            SetObjectReference(fighterController, "movementAgent", agent);
+            SetObjectReference(fighterController, "characterController", controller);
+            SetObjectReference(fighterController, "dashTrail", dashTrail);
+            SetInt(fighterController, "dashCollisionMask", 1);
+            SetObjectReference(hud, "fighter", fighterController);
+            SetObjectReference(hud, "health", playerHealth);
+            SetObjectReference(hud, "attack", attackController);
+            SetObjectReference(hud, "statusText", hudText);
+            SetInt(playerHealth, "maxHealth", fighterAsset != null ? fighterAsset.ToDomain().MaxHealth : 85);
             SetObjectReference(marker, "player", agent);
             SetObjectReference(marker, "cameraController", cameraController);
             SetObjectReference(marker, "trainingDummy", trainingDummy);
@@ -216,12 +246,23 @@ namespace BattleRaja.Editor
                 throw new BuildFailedException("The URP render pipeline is not assigned in GraphicsSettings.");
             }
 
-            if (!File.Exists(WeaponAssetPath))
+            if (!File.Exists(WeaponAssetPath) || !File.Exists(BijliWeaponAssetPath) || !File.Exists(FighterAssetPath))
             {
-                throw new BuildFailedException("M2 projectile weapon asset is missing.");
+                throw new BuildFailedException("M2/M3 projectile or Bijli fighter asset is missing.");
             }
 
-            Debug.Log("BattleRaja Milestone 2 validation passed.");
+            var fighter = AssetDatabase.LoadAssetAtPath<FighterDefinitionAsset>(FighterAssetPath);
+            if (fighter == null)
+            {
+                throw new BuildFailedException("Bijli fighter definition asset is missing.");
+            }
+
+            if (!fighter.ToDomain().IsValid(out var reason))
+            {
+                throw new BuildFailedException($"Bijli fighter definition is invalid: {reason}");
+            }
+
+            Debug.Log("BattleRaja Milestone 3 validation passed.");
         }
 
         public static void BuildAndroidDevelopment()
@@ -236,7 +277,7 @@ namespace BattleRaja.Editor
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel28;
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
             PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
-            Build("Builds/M2/Android/BattleRaja-M2.apk", BuildTarget.Android);
+            Build("Builds/M3/Android/BattleRaja-M3.apk", BuildTarget.Android);
         }
 
         public static void BuildWebDevelopment()
@@ -247,7 +288,7 @@ namespace BattleRaja.Editor
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WebGL, BuildTarget.WebGL);
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
-            Build("Builds/M2/Web", BuildTarget.WebGL);
+            Build("Builds/M3/Web", BuildTarget.WebGL);
         }
 
         private static void Build(string outputPath, BuildTarget target)
@@ -266,7 +307,7 @@ namespace BattleRaja.Editor
                 throw new BuildFailedException($"{target} build failed: {report.summary.result}. See the Unity build log.");
             }
 
-            Debug.Log($"{target} M2 development build succeeded: {report.summary.outputPath} ({report.summary.totalSize} bytes).");
+            Debug.Log($"{target} M3 development build succeeded: {report.summary.outputPath} ({report.summary.totalSize} bytes).");
         }
 
         private static GameObject CreateBlock(string name, Vector3 position, Vector3 scale, Material material, Transform parent)
@@ -280,7 +321,7 @@ namespace BattleRaja.Editor
             return block;
         }
 
-        private static Canvas CreateTouchCanvas(out VirtualStick movementStick, out VirtualStick aimStick, out AttackButton attackButton)
+        private static Canvas CreateTouchCanvas(out VirtualStick movementStick, out VirtualStick aimStick, out AttackButton attackButton, out AbilityButton abilityButton)
         {
             var canvasObject = new GameObject("TouchControls", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
             var canvas = canvasObject.GetComponent<Canvas>();
@@ -301,6 +342,7 @@ namespace BattleRaja.Editor
             movementStick = CreateStick("MovementStick", safeArea, new Vector2(0.17f, 0.2f), new Color(0.25f, 0.70f, 1f, 0.18f));
             aimStick = CreateStick("AimStick", safeArea, new Vector2(0.83f, 0.2f), new Color(1f, 0.64f, 0.22f, 0.18f));
             attackButton = CreateAttackButton(safeArea);
+            abilityButton = CreateAbilityButton(safeArea);
             return canvas;
         }
 
@@ -316,6 +358,45 @@ namespace BattleRaja.Editor
             image.color = new Color(1f, 0.36f, 0.18f, 0.28f);
             image.raycastTarget = true;
             return buttonObject.GetComponent<AttackButton>();
+        }
+
+        private static AbilityButton CreateAbilityButton(Transform parent)
+        {
+            var buttonObject = new GameObject("AbilityButton", typeof(RectTransform), typeof(Image), typeof(AbilityButton));
+            buttonObject.transform.SetParent(parent, false);
+            var rect = buttonObject.GetComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0.79f, 0.49f);
+            rect.anchorMax = new Vector2(0.79f, 0.49f);
+            rect.sizeDelta = new Vector2(140f, 140f);
+            var image = buttonObject.GetComponent<Image>();
+            image.color = new Color(0.36f, 0.78f, 1f, 0.30f);
+            image.raycastTarget = true;
+            return buttonObject.GetComponent<AbilityButton>();
+        }
+
+        private static BijliHud CreateHud(Canvas canvas, out Text statusText)
+        {
+            var hudObject = new GameObject("BijliHud", typeof(RectTransform), typeof(BijliHud));
+            hudObject.transform.SetParent(canvas.transform, false);
+            var rect = hudObject.GetComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0.02f, 0.94f);
+            rect.anchorMax = new Vector2(0.40f, 0.99f);
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+
+            var textObject = new GameObject("Status", typeof(RectTransform), typeof(Text));
+            textObject.transform.SetParent(hudObject.transform, false);
+            var textRect = textObject.GetComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = Vector2.zero;
+            textRect.offsetMax = Vector2.zero;
+            statusText = textObject.GetComponent<Text>();
+            statusText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            statusText.fontSize = 24;
+            statusText.alignment = TextAnchor.UpperLeft;
+            statusText.color = Color.white;
+            return hudObject.GetComponent<BijliHud>();
         }
 
         private static VirtualStick CreateStick(string name, Transform parent, Vector2 anchor, Color color)
@@ -370,6 +451,42 @@ namespace BattleRaja.Editor
             return AssetDatabase.LoadAssetAtPath<ProjectileWeaponAsset>(WeaponAssetPath);
         }
 
+        private static ProjectileWeaponAsset EnsureBijliWeaponAsset()
+        {
+            Directory.CreateDirectory("Assets/BattleRaja/Content/Weapons");
+            var asset = AssetDatabase.LoadAssetAtPath<ProjectileWeaponAsset>(BijliWeaponAssetPath);
+            if (asset == null)
+            {
+                asset = ScriptableObject.CreateInstance<ProjectileWeaponAsset>();
+                AssetDatabase.CreateAsset(asset, BijliWeaponAssetPath);
+            }
+
+            var definition = ProjectileWeaponDefinition.BijliElectricBolt;
+            SetInt(asset, "damage", definition.Damage);
+            SetFloat(asset, "fireIntervalSeconds", definition.FireIntervalSeconds);
+            SetFloat(asset, "projectileSpeed", definition.ProjectileSpeed);
+            SetFloat(asset, "maxRange", definition.MaxRange);
+            SetFloat(asset, "lifetimeSeconds", definition.LifetimeSeconds);
+            SetFloat(asset, "radius", definition.Radius);
+            SetInt(asset, "collisionLayers", definition.CollisionLayerMask);
+            AssetDatabase.SaveAssets();
+            return AssetDatabase.LoadAssetAtPath<ProjectileWeaponAsset>(BijliWeaponAssetPath);
+        }
+
+        private static FighterDefinitionAsset EnsureFighterAsset()
+        {
+            Directory.CreateDirectory("Assets/BattleRaja/Content/Fighters");
+            var asset = AssetDatabase.LoadAssetAtPath<FighterDefinitionAsset>(FighterAssetPath);
+            if (asset == null)
+            {
+                asset = ScriptableObject.CreateInstance<FighterDefinitionAsset>();
+                AssetDatabase.CreateAsset(asset, FighterAssetPath);
+            }
+
+            AssetDatabase.SaveAssets();
+            return AssetDatabase.LoadAssetAtPath<FighterDefinitionAsset>(FighterAssetPath);
+        }
+
         private static InputActionAsset EnsureInputAsset()
         {
             var asset = AssetDatabase.LoadAssetAtPath<InputActionAsset>(InputAssetPath);
@@ -381,6 +498,15 @@ namespace BattleRaja.Editor
                     var existingAttack = existingMap.AddAction("Attack", InputActionType.Button);
                     existingAttack.AddBinding("<Mouse>/leftButton", groups: "KeyboardMouse");
                     existingAttack.AddBinding("<Gamepad>/buttonSouth", groups: "Gamepad");
+                    File.WriteAllText(InputAssetPath, asset.ToJson());
+                    AssetDatabase.ImportAsset(InputAssetPath, ImportAssetOptions.ForceUpdate);
+                }
+
+                if (existingMap != null && existingMap.FindAction("Ability", throwIfNotFound: false) == null)
+                {
+                    var existingAbility = existingMap.AddAction("Ability", InputActionType.Button);
+                    existingAbility.AddBinding("<Keyboard>/space", groups: "KeyboardMouse");
+                    existingAbility.AddBinding("<Gamepad>/buttonEast", groups: "Gamepad");
                     File.WriteAllText(InputAssetPath, asset.ToJson());
                     AssetDatabase.ImportAsset(InputAssetPath, ImportAssetOptions.ForceUpdate);
                 }
@@ -410,6 +536,9 @@ namespace BattleRaja.Editor
             var attack = map.AddAction("Attack", InputActionType.Button);
             attack.AddBinding("<Mouse>/leftButton", groups: "KeyboardMouse");
             attack.AddBinding("<Gamepad>/buttonSouth", groups: "Gamepad");
+            var ability = map.AddAction("Ability", InputActionType.Button);
+            ability.AddBinding("<Keyboard>/space", groups: "KeyboardMouse");
+            ability.AddBinding("<Gamepad>/buttonEast", groups: "Gamepad");
 
             asset.AddControlScheme("KeyboardMouse")
                 .WithRequiredDevice("<Keyboard>")
@@ -462,6 +591,19 @@ namespace BattleRaja.Editor
             }
 
             property.intValue = value;
+            serializedObject.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void SetFloat(UnityEngine.Object target, string propertyName, float value)
+        {
+            var serializedObject = new SerializedObject(target);
+            var property = serializedObject.FindProperty(propertyName);
+            if (property == null)
+            {
+                throw new InvalidOperationException($"Serialized property not found: {target.name}.{propertyName}");
+            }
+
+            property.floatValue = value;
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
         }
 

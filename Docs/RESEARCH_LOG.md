@@ -140,3 +140,22 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   and release signing remain unverified.
 - **Recheck trigger/date:** Before adding fighter abilities, networking, backend
   services, packages or production combat assets.
+
+### M3 fighter implementation baseline
+
+- **Date checked:** 2026-08-02
+- **Question:** Can Bijli use the existing package/toolchain baseline without a new
+  SDK or package while keeping ability timing network-compatible?
+- **Primary source:** `PROMPTS/03_MILESTONE_3_BIJLI.md`; installed Unity 6000.5.6f1
+  package lock; existing Input System/uGUI and CharacterController documentation.
+- **Relevant claim:** M3 requires stable content IDs, immutable definitions, per-fighter
+  runtime state, common command interfaces, collision-safe dash behavior and Android/Web
+  smoke builds; passive and later services are non-scope.
+- **Decision impact:** Add no package or external service. Keep IDs, dash phases,
+  fallback, cooldown and bounded displacement in Domain; keep input, physics, trail and
+  HUD in Presentation.
+- **Local evidence:** 20/20 EditMode, 16/16 PlayMode, M3 Android/Web builds, two-device
+  ADB launch and Chrome/Edge local bootstrap checks.
+- **Uncertainty:** Human kit/balance/touch review and formal profiling remain open.
+- **Recheck trigger/date:** Before adding bots, gadgets, networking or changing the
+  fighter data model.

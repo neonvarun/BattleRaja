@@ -59,3 +59,15 @@ Required next measurement: capture a short Editor, Lava and Oppo session with Un
 - Combat projectiles and impact feedback are bounded pools; cooldown, travel and
   damage rules do not allocate per frame. This is an implementation constraint, not
   a measured performance claim.
+
+## Milestone 3 baseline evidence — 2026-08-02
+
+- Bijli dash uses value-type domain state and a bounded `TrailRenderer`; no runtime
+  Instantiate/Destroy or per-frame managed collection is introduced by the fighter
+  controller or HUD.
+- M3 development APK is approximately 83.1 MB on disk; the Web output is approximately
+  113 MB as reported by Unity. These are development-build baselines, not release
+  budgets.
+- No formal Editor Profiler, Android GPU/CPU capture, browser memory capture or device
+  frame-time profile was collected. Dash feel, HUD readability and low-end-device
+  performance remain human/measurement debt.

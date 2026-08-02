@@ -57,5 +57,16 @@ namespace BattleRaja.Core.Domain
             collisionLayerMask: ~0,
             allowSelfHit: false,
             allowFriendlyFire: false);
+
+        public static ProjectileWeaponDefinition BijliElectricBolt => new ProjectileWeaponDefinition(
+            damage: 18,
+            fireIntervalSeconds: 0.42f,
+            projectileSpeed: 14f,
+            maxRange: 16f,
+            lifetimeSeconds: 1.2f,
+            radius: 0.14f,
+            collisionLayerMask: ~0,
+            allowSelfHit: false,
+            allowFriendlyFire: false);
     }
 }

@@ -70,3 +70,25 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Consequences:** Movement is frame-step independent and testable without a scene; collision remains a Unity presentation concern; runtime state cannot leak into the shared tuning asset. Touch controls require uGUI and safe-area/pointer reset handling. Perspective remains available for human comparison but is not the M1 default.
 - **Evidence/sources:** `Docs/MOVEMENT_LAB.md`; 8 EditMode and 7 PlayMode tests; Unity 6000.5.6f1 package lock; Android and Web M1 development smoke builds; human playtest questions remain open.
 - **Owner:** Human project owner
+
+### ADR-004 — Milestone 3 data-driven Bijli fighter and dash state machine
+
+- **Date:** 2026-08-02
+- **Status:** Accepted for M3; tuning and physical playtest remain open.
+- **Context:** M3 requires one complete fighter without duplicating fighter-specific
+  classes or making ability timing depend on Animator/VFX state.
+- **Options considered:** A bespoke `BijliController` with hard-coded constants;
+  mutable ScriptableObject runtime state; a pure runtime state machine composed from
+  stable content IDs and immutable definitions.
+- **Decision:** Use `FighterDefinition`/`FighterDefinitionAsset` composition with
+  stable fighter, attack and ability IDs. `FighterRuntimeState` owns per-instance
+  action phases, cooldown and dash distance. `AbilityCommand` is the bot/network-safe
+  input boundary. Unity physics and play-space checks provide an available-distance
+  budget; pure C# applies the final bounded displacement. No passive is included.
+- **Consequences:** Later fighters can reuse the same definition/runtime/command
+  interfaces. Dash collision remains a presentation query, but timing, fallback,
+  cooldown and collision truncation are EditMode-testable. The M3 app ID remains
+  provisional (`com.example.battleraja.m3`).
+- **Evidence/sources:** `PROMPTS/03_MILESTONE_3_BIJLI.md`; 20 EditMode and 16
+  PlayMode tests; M3 Android/Web smoke evidence; `FighterRuntimeState` implementation.
+- **Owner:** Human project owner

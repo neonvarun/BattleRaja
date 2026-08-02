@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b44cc90c8c0cf794eb6ace693a8bfa84, type: 3}
+  m_Name: M3-Bijli
+  m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Combat.FighterDefinitionAsset
+  fighterId: fighter.bijli
+  displayName: Bijli
+  maxHealth: 85
+  movementTuning: {fileID: 11400000, guid: 0894189ebf233444eb346f28e831a800, type: 2}
+  basicAttack: {fileID: 11400000, guid: e8335a607a351d549a36817b4daeebd0, type: 2}
+  abilityId: ability.bijli.electric_dash
+  abilityCooldownSeconds: 2.2
+  dashDistance: 4.2
+  startupSeconds: 0.08
+  activeSeconds: 0.16
+  recoverySeconds: 0.24
+  collisionRadius: 0.38

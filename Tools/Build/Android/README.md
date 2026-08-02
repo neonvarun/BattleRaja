@@ -6,4 +6,4 @@ Run from the repository root after Unity bootstrap:
 pwsh -File Tools/Build/Android/build.ps1
 ```
 
-The wrapper produces the M2 combat-lab development APK through the editor build entrypoint and records logs under `Builds/M2/Logs`. Device installation and launch are separate evidence steps using ADB.
+The wrapper produces the M3 Bijli development APK through the editor build entrypoint and records logs under `Builds/M3/Logs`. Device installation and launch are separate evidence steps using ADB.

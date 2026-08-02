@@ -44,7 +44,7 @@
     "milestone_0_status": "verified",
     "milestone_1_status": "provisional_pass_pending_human_review",
     "milestone_2_status": "provisional_pass_pending_human_review",
-    "milestone_3_status": "in_progress",
+    "milestone_3_status": "provisional_pass_pending_human_review",
     "movement_lab_scene": "Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity",
     "movement_tuning_asset": "Assets/BattleRaja/Content/Movement/M1-MovementTuning.asset",
     "package_baseline": {

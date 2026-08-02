@@ -12,6 +12,7 @@ namespace BattleRaja.Presentation.Movement
         [SerializeField] private VirtualStick movementStick;
         [SerializeField] private VirtualStick aimStick;
         [SerializeField] private AttackButton attackButton;
+        [SerializeField] private AbilityButton abilityButton;
         [SerializeField] private Transform aimOrigin;
 
         private InputActionMap _playerMap;
@@ -19,10 +20,12 @@ namespace BattleRaja.Presentation.Movement
         private InputAction _mousePositionAction;
         private InputAction _aimStickAction;
         private InputAction _attackAction;
+        private InputAction _abilityAction;
         private bool _hasFocus = true;
 
         public bool HasFocus => _hasFocus;
         public bool IsAttackHeld => _hasFocus && ((_attackAction != null && _attackAction.IsPressed()) || (attackButton != null && attackButton.IsPressed));
+        public bool IsAbilityPressed => _hasFocus && ((_abilityAction != null && _abilityAction.IsPressed()) || (abilityButton != null && abilityButton.IsPressed));
 
         private void Awake()
         {
@@ -34,6 +37,7 @@ namespace BattleRaja.Presentation.Movement
                 _mousePositionAction = _playerMap?.FindAction("MousePosition", throwIfNotFound: false);
                 _aimStickAction = _playerMap?.FindAction("AimStick", throwIfNotFound: false);
                 _attackAction = _playerMap?.FindAction("Attack", throwIfNotFound: false);
+                _abilityAction = _playerMap?.FindAction("Ability", throwIfNotFound: false);
             }
         }
 
@@ -88,6 +92,7 @@ namespace BattleRaja.Presentation.Movement
             movementStick?.ResetStick();
             aimStick?.ResetStick();
             attackButton?.ResetButton();
+            abilityButton?.ResetButton();
         }
 
         private Vector2 ReadMovement()

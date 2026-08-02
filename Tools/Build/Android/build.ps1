@@ -19,8 +19,8 @@ if (-not (Test-Path -LiteralPath (Join-Path $ProjectRoot 'ProjectSettings\Projec
     throw 'The repository is not yet a Unity project: ProjectSettings\ProjectVersion.txt is missing.'
 }
 
-$artifactRoot = Join-Path $ProjectRoot 'Builds\M2\Android'
-$logRoot = Join-Path $ProjectRoot 'Builds\M2\Logs'
+$artifactRoot = Join-Path $ProjectRoot 'Builds\M3\Android'
+$logRoot = Join-Path $ProjectRoot 'Builds\M3\Logs'
 New-Item -ItemType Directory -Force -Path $artifactRoot, $logRoot | Out-Null
 $logPath = Join-Path $logRoot 'android-build.log'
 $unityArguments = @(

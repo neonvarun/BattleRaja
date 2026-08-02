@@ -22,8 +22,9 @@
   subjective human-review debt recorded.
 - M2 report: `Docs/MILESTONE_REPORTS/M2.md`; technical gate passed provisionally with
   combat/touch/balance review debt recorded.
-- Combat/gameplay progression: M3 Bijli fighter work is active. Bots, gadgets, match
-  state, networking, backend, and progression remain unimplemented.
+- Combat/gameplay progression: M3 Bijli fighter technical gate passed provisionally;
+  dash/bolt/balance/touch review remains open. Bots, gadgets, match state, networking,
+  backend, and progression remain unimplemented.
 - Multiplayer: deliberately deferred
 - Backend/economy: deliberately deferred
 - Final art/audio/animation: not started
@@ -46,6 +47,14 @@
 - Web: M2 WebGL2/WebAssembly development build completed under `Builds/M2/Web`, served over local HTTP port 8002, returned HTTP 200, and exposed Unity bootstrap content in Chrome 150 and Edge 150.
 - Combat runtime: serialized weapon/input/tuning references were verified in the generated scene; projectile hit, despawn, pooling, collision filtering and dummy reset passed PlayMode coverage.
 
+## M3 execution evidence — 2026-08-02
+
+- Pure fighter/ability tests: 20/20 EditMode tests passed in `Builds/M3/TestResults/editmode.xml`.
+- Fighter integration tests: 16/16 PlayMode tests passed in `Builds/M3/TestResults/playmode.xml`.
+- Bijli is spawnable in MovementLab with stable fighter/attack/ability IDs, a data-driven electric bolt, directional dash, explicit startup/active/recovery/cooldown states, collision/bounds truncation, a touch ability button and a health/cooldown HUD.
+- Android: M3 IL2CPP ARM64 development APK built at `Builds/M3/Android/BattleRaja-M3.apk`, installed/launched on Lava API 34 and Oppo API 36, with zero fatal application exceptions in captured logs. Oppo `pm clear` is restricted by device policy but install/launch succeeded.
+- Web: M3 WebGL2/WebAssembly development build completed under `Builds/M3/Web`; local HTTP port 8011 returned 200 and Chrome 150/Edge 150 headless DOM checks found Unity bootstrap content.
+
 ## M0 evidence retained
 
 - M0 validation, tests and smoke artifacts remain under ignored `Builds/M0/`.
@@ -56,6 +65,7 @@
 - Movement hot paths use cached component references, value types and no per-frame LINQ/managed collection creation.
 - No formal Editor Profiler, Android GPU/CPU capture or Web browser performance profile has been collected yet; values remain explicitly unmeasured in `Docs/PERFORMANCE_BUDGET.md`.
 - Physical touch interaction, safe-area variations, browser keyboard/mouse focus by manual play, and visual camera comparison still require human playtesting.
+- Bijli bolt/dash balance, HUD legibility, dash collision feel and low-end-device profiling remain unmeasured.
 
 ## Approval gates
 

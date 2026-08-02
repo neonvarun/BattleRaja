@@ -16,4 +16,9 @@ namespace BattleRaja.Core.Application
     {
         void Submit(AttackCommand command);
     }
+
+    public interface IAbilityCommandSink
+    {
+        void Submit(AbilityCommand command);
+    }
 }

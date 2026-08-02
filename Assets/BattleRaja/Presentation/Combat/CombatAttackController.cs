@@ -10,6 +10,7 @@ namespace BattleRaja.Presentation.Combat
         [SerializeField] private int actorId = 1;
         [SerializeField] private CombatFaction faction = CombatFaction.Player;
         [SerializeField] private ProjectileWeaponAsset weapon;
+        [SerializeField] private FighterDefinitionAsset fighterDefinition;
         [SerializeField] private PlayerInputAdapter inputAdapter;
         [SerializeField] private MovementPlayerAgent movementAgent;
         [SerializeField] private CombatProjectilePool projectilePool;
@@ -19,13 +20,16 @@ namespace BattleRaja.Presentation.Combat
         private int _simulationTick;
 
         public int ActiveProjectileCount => projectilePool != null ? projectilePool.ActiveCount : 0;
+        public float CooldownRemaining => _cooldown != null ? _cooldown.Remaining(Time.time) : 0f;
 
         private void Awake()
         {
             inputAdapter = inputAdapter != null ? inputAdapter : GetComponent<PlayerInputAdapter>();
             movementAgent = movementAgent != null ? movementAgent : GetComponent<MovementPlayerAgent>();
             projectilePool = projectilePool != null ? projectilePool : FindFirstObjectByType<CombatProjectilePool>();
-            _definition = weapon != null ? weapon.ToDomain() : ProjectileWeaponDefinition.TrainingBolt;
+            _definition = fighterDefinition != null
+                ? fighterDefinition.ToDomain().BasicAttack
+                : (weapon != null ? weapon.ToDomain() : ProjectileWeaponDefinition.TrainingBolt);
             _cooldown = new WeaponCooldownState();
         }
 

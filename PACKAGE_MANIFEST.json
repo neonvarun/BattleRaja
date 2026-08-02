@@ -318,8 +318,8 @@
     },
     {
       "path": "Docs/ARCHITECTURE.md",
-      "bytes": 5431,
-      "sha256": "1767e659c907b7b3bbce726c44f0c66d258d1d61ce06fb191dc501b99cf3d01d"
+      "bytes": 6521,
+      "sha256": "b476707d7544ce401f8c7435edccb8608ed80fb73c875e3aadc3c58e3d6453fb"
     },
     {
       "path": "Docs/ART_BIBLE.md",
@@ -343,8 +343,8 @@
     },
     {
       "path": "Docs/DECISIONS.md",
-      "bytes": 6155,
-      "sha256": "6ec56dc350396f44dcdb0c3c273a0103807f90612590deea15dc2f646af33d70"
+      "bytes": 7596,
+      "sha256": "6b4fd3e241e0f230560abb3be8d28cd44a30ac5986a0d541d8e2fa447e363976"
     },
     {
       "path": "Docs/MASTER_VISION.md",
@@ -353,8 +353,8 @@
     },
     {
       "path": "Docs/MILESTONE_ISSUES.md",
-      "bytes": 7436,
-      "sha256": "0448bb0bb20e98a428e538a1ae104cc8125a1ce6614c90a21699f5f85484a560"
+      "bytes": 8658,
+      "sha256": "1379b65e8be1701f3523c2bc1f0ec3bff02c97d9f1d3c8265b52e94d1e7b87e7"
     },
     {
       "path": "Docs/NETWORK_MODEL.md",
@@ -363,8 +363,8 @@
     },
     {
       "path": "Docs/PERFORMANCE_BUDGET.md",
-      "bytes": 2715,
-      "sha256": "981f29720ad193b40369859bb9c454312fa1b35506e71ff8637fdbdc3e07a340"
+      "bytes": 3347,
+      "sha256": "65d06496ccd13a386be4123ab4ee6ed0cc4f82a2df2486f7ea8e92053c5aaec4"
     },
     {
       "path": "Docs/RELEASE_CHECKLIST.md",
@@ -373,8 +373,8 @@
     },
     {
       "path": "Docs/RESEARCH_LOG.md",
-      "bytes": 11496,
-      "sha256": "11824213a6eee85335f758e6fc40b4e623ad1235797d67f08cfb2ea05d7cdd93"
+      "bytes": 12644,
+      "sha256": "0767192ae0082222cc1363d27d6d3cf031a249a354b734b7148eb7b91307e3f9"
     },
     {
       "path": "Docs/SECURITY.md",
@@ -383,8 +383,8 @@
     },
     {
       "path": "Docs/TEST_STRATEGY.md",
-      "bytes": 6010,
-      "sha256": "e08ebda74e18abe65cd97165d73ecfb9d6acbd12b23057304bf13c02d2483bd7"
+      "bytes": 6823,
+      "sha256": "50c0ec3aacf3ec160b07e3bec3009563778984a3cc67da99e36ce4bb42216fa6"
     },
     {
       "path": "Docs/WEB_PLATFORM.md",
@@ -393,13 +393,13 @@
     },
     {
       "path": "PROJECT_CONTEXT.json",
-      "bytes": 2476,
-      "sha256": "3590f6b15f8b311b2b1efae9a2b4b680ab8514779712983507ed025fe49da763"
+      "bytes": 2502,
+      "sha256": "3d9db88e1096f8c3c0562e7378dd46108a4c0c25653ec704e7feda4fbaa56f0d"
     },
     {
       "path": "PROJECT_STATUS.md",
-      "bytes": 4600,
-      "sha256": "9075ae08f147a9e260a55db09a0b5d0abe15aac93879d01544cce043dd4de10a"
+      "bytes": 5735,
+      "sha256": "d71a615729078e872435b330683db9ce621d92884dc8d0a8b5b53b9e09b04b68"
     },
     {
       "path": "PROMPTS/00_MILESTONE_0_BOOTSTRAP.md",
@@ -418,8 +418,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 2129,
-      "sha256": "2e928fbd3b5eeba4f553380000b5c8c36b3eddbcb5742cdf16a1adc13b3f3010"
+      "bytes": 2158,
+      "sha256": "995fa76a976a841943a01e2252867a90a635f317063d112eb6f4af1309ae2696"
     },
     {
       "path": "START_HERE.md",
@@ -428,8 +428,8 @@
     },
     {
       "path": "Tools/Build/Android/README.md",
-      "bytes": 338,
-      "sha256": "1cc0f7609ba5db9c10de8f8555d8f18a3ec94e08268cab09a19070b8aa831ae5"
+      "bytes": 333,
+      "sha256": "8ac9dba77f9bb8c158e662e70d2aec2391815015c7ee70a743fb944f548c881b"
     },
     {
       "path": "Tools/Build/README.md",
@@ -438,8 +438,8 @@
     },
     {
       "path": "Tools/Build/Web/README.md",
-      "bytes": 393,
-      "sha256": "5a63997e177cf41b6b2f5e3bac6ca94ddfea525b4f21695d78c8dba6091d1d7b"
+      "bytes": 388,
+      "sha256": "b67dc7ba3beeccbed30b56907b5a1c41fa6dcce5e98a7318b562bfec8381836a"
     },
     {
       "path": "Tools/Content/README.md",
@@ -469,12 +469,12 @@
     {
       "path": "Tools/Build/Android/build.ps1",
       "bytes": 1795,
-      "sha256": "09516d6a254bf79dfc953d2ef8944d410701037bfeefc5822a58f5a2a082a045"
+      "sha256": "8ba6caaac684231ab06d06139716972b88f3565b29384914c39f39d955a71867"
     },
     {
       "path": "Tools/Build/Web/build.ps1",
       "bytes": 1768,
-      "sha256": "68493ddbb96cd6d6b5235e22967dbeb59699d7e349a9c5f118897b3818c769f7"
+      "sha256": "c0498fad33e0213d41abbbc71ed59c948e7d86702fe9d50bf1ae9ecae5501289"
     },
     {
       "path": "Assets/BattleRaja.meta",
@@ -588,8 +588,8 @@
     },
     {
       "path": "Assets/BattleRaja/Core/Application/CommandPorts.cs",
-      "bytes": 371,
-      "sha256": "c50999788c53aa6570a6f1749227ce602b1cf3a898cc41712726f757a9526b67"
+      "bytes": 470,
+      "sha256": "b79fa82dbfb68735ae489f72682feef246e8cd5577109a9183861e38f2cc447e"
     },
     {
       "path": "Assets/BattleRaja/Core/Application/CommandPorts.cs.meta",
@@ -673,8 +673,8 @@
     },
     {
       "path": "Assets/BattleRaja/Editor/BuildEntrypoints.cs",
-      "bytes": 26371,
-      "sha256": "6e5d988479dae7efd42f96fa6980bf863010a8f36ecdfeaa3196f8502a492ff7"
+      "bytes": 34411,
+      "sha256": "5815bf445b785167e5f6e244a4c1852a7f21aba3e9314b10ccd9ea433abd33f9"
     },
     {
       "path": "Assets/BattleRaja/Editor/BuildEntrypoints.cs.meta",
@@ -994,7 +994,7 @@
     {
       "path": "Data/Plugins/lib_burst_generated.wasm",
       "bytes": 1934355,
-      "sha256": "b231a0ad0af5dc87442098e8ba110ae328118dba648fa6191aa2a9ee34749e2b"
+      "sha256": "382130c59c5b43fb7206cf86a9706ded4fb7dc44666baae1d28de2dd1955c355"
     },
     {
       "path": "Docs/AI/UnityProjectContext.md",
@@ -1084,7 +1084,7 @@
     {
       "path": "ProjectSettings/ProjectSettings.asset",
       "bytes": 22435,
-      "sha256": "a87611cde73c790b5fe2e1126dea9a5ee2696f992707b3860e223c7ed57370e4"
+      "sha256": "bce0b17d1007e84411e0de8e5517b8f67e7d37ef7f6d66ab749115aea757e134"
     },
     {
       "path": "ProjectSettings/ProjectVersion.txt",
@@ -1138,8 +1138,8 @@
     },
     {
       "path": "Assets/BattleRaja/Content/Movement/BattleRajaMovement.inputactions",
-      "bytes": 9010,
-      "sha256": "794d93864fe21d3465bb1037ded5e246301db64be87e0e1453c9d806090e3366"
+      "bytes": 10270,
+      "sha256": "8a0359ac46978214d3bed2a38d5780a4b3ee6e6c64d970fabdc67ccb6ca9fb7a"
     },
     {
       "path": "Assets/BattleRaja/Content/Movement/BattleRajaMovement.inputactions.meta",
@@ -1303,8 +1303,8 @@
     },
     {
       "path": "Assets/BattleRaja/Presentation/Movement/MovementPlayerAgent.cs",
-      "bytes": 3063,
-      "sha256": "62e9398b64f1072773768b149716865605fdd1526fe65a5ef4e7dfba01ae744f"
+      "bytes": 3430,
+      "sha256": "5d6225dd5bd0e871a25165fec3ac9523ba844c16ab5dcebb392a862f00d1d5d1"
     },
     {
       "path": "Assets/BattleRaja/Presentation/Movement/MovementPlayerAgent.cs.meta",
@@ -1323,8 +1323,8 @@
     },
     {
       "path": "Assets/BattleRaja/Presentation/Movement/PlayerInputAdapter.cs",
-      "bytes": 4709,
-      "sha256": "93e3c8f362f74f9967753602c6ddd204a35611ce5e7ead8723a35f7cb3e125d0"
+      "bytes": 5114,
+      "sha256": "c4fa9214bf0ad04e0a99e7d893be5e5b69b1d49805abe10be889e89660e6c29c"
     },
     {
       "path": "Assets/BattleRaja/Presentation/Movement/PlayerInputAdapter.cs.meta",
@@ -1368,8 +1368,8 @@
     },
     {
       "path": "Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity",
-      "bytes": 80366,
-      "sha256": "62c87ffc041c6f9659fe2b7fb8db9f81eaed63138b08d90171e1af98a22a6682"
+      "bytes": 91064,
+      "sha256": "0a7c9655d7ca486fc3668a50bf442ba404694a9f73cc73a02bada22327f2aabe"
     },
     {
       "path": "Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity.meta",
@@ -1423,8 +1423,8 @@
     },
     {
       "path": "Docs/HUMAN_REVIEW_BACKLOG.md",
-      "bytes": 821,
-      "sha256": "d9340520f766e5ad9618e2f32d19c1d8be27c56f2c692b2b7edbc48295fca51b"
+      "bytes": 1280,
+      "sha256": "274abfea28f136e115a42d5f92f99a409b38d421e76357587e0f51fa74eb27d5"
     },
     {
       "path": "PROMPTS/02_MILESTONE_2_COMBAT.md",
@@ -1593,8 +1593,8 @@
     },
     {
       "path": "Assets/BattleRaja/Core/Domain/ProjectileWeaponDefinition.cs",
-      "bytes": 2444,
-      "sha256": "724009157e724c1be520c3c206cc39ae9b5e4c74cfc1073666ee69e7dc319f71"
+      "bytes": 2842,
+      "sha256": "f82a90879c80927d1874d876933b10a54f5274ddf6d368fa2ddce78446da7df1"
     },
     {
       "path": "Assets/BattleRaja/Core/Domain/ProjectileWeaponDefinition.cs.meta",
@@ -1603,8 +1603,8 @@
     },
     {
       "path": "Assets/BattleRaja/Core/Domain/WeaponCooldownState.cs",
-      "bytes": 510,
-      "sha256": "ac39d57a67df36e36c8fb8b61d590991b0b7e98b4f315dc9438e96963b54b212"
+      "bytes": 652,
+      "sha256": "de95fc99aa151beb13e2b35c8bba863278f7a573a89d5be2f61223e533826d62"
     },
     {
       "path": "Assets/BattleRaja/Core/Domain/WeaponCooldownState.cs.meta",
@@ -1628,8 +1628,8 @@
     },
     {
       "path": "Assets/BattleRaja/Presentation/Combat/CombatAttackController.cs",
-      "bytes": 2528,
-      "sha256": "a4c9a9a27f360b41c88aff5295055fd136c83a31bfd037a20804b580862a0e71"
+      "bytes": 2807,
+      "sha256": "8288c3288e64989e12491d466bf6082092cdd2520537a2bb6af7fb0d182ef04a"
     },
     {
       "path": "Assets/BattleRaja/Presentation/Combat/CombatAttackController.cs.meta",
@@ -1648,8 +1648,8 @@
     },
     {
       "path": "Assets/BattleRaja/Presentation/Combat/CombatHealth.cs",
-      "bytes": 1387,
-      "sha256": "dd4d90823f921a87d192aef90964d2b2eca28c46fc18bc5335562665b899118b"
+      "bytes": 1430,
+      "sha256": "b80991f6674c053383ceca791a57c63dafced8c8b92d8a73f123e1521ce98aa7"
     },
     {
       "path": "Assets/BattleRaja/Presentation/Combat/CombatHealth.cs.meta",
@@ -1753,8 +1753,143 @@
     },
     {
       "path": "Docs/MILESTONE_REPORTS/M2.md",
-      "bytes": 4460,
-      "sha256": "153bf0b91a169a6b24efe4551b076f6ec48741612b3d441917c5d0b99540f594"
+      "bytes": 4400,
+      "sha256": "b84735a742146f27112084e19685a1e85ffaaf3ba654e8f7da9c8b0ebd1bb424"
+    },
+    {
+      "path": "Assets/BattleRaja/Content/Fighters/M3-Bijli.asset",
+      "bytes": 892,
+      "sha256": "b8f580e2967fc020e8529661481fcec0e660a06444cf9adbc86692ee6f7f5f8b"
+    },
+    {
+      "path": "Assets/BattleRaja/Content/Fighters/M3-Bijli.asset.meta",
+      "bytes": 189,
+      "sha256": "7ccfe6ab3fe210949a89866ba071004f64c3a359e2d35c9e792670532d66da6e"
+    },
+    {
+      "path": "Assets/BattleRaja/Content/Weapons/M3-BijliElectricBolt.asset",
+      "bytes": 710,
+      "sha256": "92ec30b0138640031d09b23b6d052ee11763330e51817fe9525a3da0e0cdadf4"
+    },
+    {
+      "path": "Assets/BattleRaja/Content/Weapons/M3-BijliElectricBolt.asset.meta",
+      "bytes": 189,
+      "sha256": "a84cba21dea1ddc3597f8c436570f023a0088d96413d3d09e34ae7a67e51a958"
+    },
+    {
+      "path": "Assets/BattleRaja/Core/Domain/AbilityCommand.cs",
+      "bytes": 1149,
+      "sha256": "646daa3e6f466a16f24cdcebaae7b1a2cac280dd7c4a8b97639df89db1d38dab"
+    },
+    {
+      "path": "Assets/BattleRaja/Core/Domain/AbilityCommand.cs.meta",
+      "bytes": 59,
+      "sha256": "d658f36283e2b228adf33c0d320da9612b6e9e1e9721bb90ef4e276455b8a43b"
+    },
+    {
+      "path": "Assets/BattleRaja/Core/Domain/ContentId.cs",
+      "bytes": 1365,
+      "sha256": "05846619f31f4fa2d1d47edd8f460243c041e4153f471843fa012361da2bcaa2"
+    },
+    {
+      "path": "Assets/BattleRaja/Core/Domain/ContentId.cs.meta",
+      "bytes": 59,
+      "sha256": "e48074f96822fc3e101e50a57882fe06a57b3375b7af64cf0f8894ea70a4adf7"
+    },
+    {
+      "path": "Assets/BattleRaja/Core/Domain/DashAbilityDefinition.cs",
+      "bytes": 2179,
+      "sha256": "621ee1b0182653dd7b79c5950b970071ebc3343d58a6e85acb5b46871ee22b26"
+    },
+    {
+      "path": "Assets/BattleRaja/Core/Domain/DashAbilityDefinition.cs.meta",
+      "bytes": 59,
+      "sha256": "37c77a1c9bbd22bbf880e1af30f85dfc0728d82ffb9b7f62086824e14ec96d66"
+    },
+    {
+      "path": "Assets/BattleRaja/Core/Domain/FighterDefinition.cs",
+      "bytes": 1862,
+      "sha256": "b4d21cb1dbd84bc5b2bf356567e8d5fb3ef94f1856a6f373901ec0a15df81b08"
+    },
+    {
+      "path": "Assets/BattleRaja/Core/Domain/FighterDefinition.cs.meta",
+      "bytes": 59,
+      "sha256": "fdfa84d166d2f652d24dda66bcf8cc2424b8ebc76bff62e545719d797c4f2ae3"
+    },
+    {
+      "path": "Assets/BattleRaja/Core/Domain/FighterRuntimeState.cs",
+      "bytes": 6678,
+      "sha256": "b737332d4b46e609fd70fda7f5bff2b7fd4a2bdd957de6fe4002caf68e274f0c"
+    },
+    {
+      "path": "Assets/BattleRaja/Core/Domain/FighterRuntimeState.cs.meta",
+      "bytes": 59,
+      "sha256": "ad9cf0971e5363fec637740525d0f2164c5135a90bf5755332423439395dd60c"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Combat/AbilityButton.cs",
+      "bytes": 582,
+      "sha256": "f66f75197c8e1d815252018d8f93d8b030f5379d2ace056e71efe2926fd54bb4"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Combat/AbilityButton.cs.meta",
+      "bytes": 59,
+      "sha256": "6a5980e35386b61357bbb39cee905a5f17e7c21ec10894be1257dfc9895c5125"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Combat/BijliFighterController.cs",
+      "bytes": 5710,
+      "sha256": "93c1ca49d3e54c81896ba159354d35c30b6b3b12d71126e6fe11905c06b1258e"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Combat/BijliFighterController.cs.meta",
+      "bytes": 59,
+      "sha256": "fd128bcda6e2389b9f9d8154b53db37040602edc84488380dccbe917f7b42e95"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Combat/BijliHud.cs",
+      "bytes": 1443,
+      "sha256": "7684390001f2d0164db78d62e3499fd3756f4793e151314e2f17e8a076c90e83"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Combat/BijliHud.cs.meta",
+      "bytes": 59,
+      "sha256": "d438f8f2259a8132311f7f6f0276745a14a203855924080087b1943d7660cde3"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Combat/FighterDefinitionAsset.cs",
+      "bytes": 2516,
+      "sha256": "269cbd4e56e507b9580bf4109741112056f8a65973aca9671939637943614929"
+    },
+    {
+      "path": "Assets/BattleRaja/Presentation/Combat/FighterDefinitionAsset.cs.meta",
+      "bytes": 59,
+      "sha256": "f93912c9b86915700bf44ee832e720d08982a44ea60180e4639573bd1bab90f8"
+    },
+    {
+      "path": "Assets/BattleRaja/Tests/EditMode/BijliFoundationTests.cs",
+      "bytes": 4041,
+      "sha256": "b614506d45b4b0648f91c10d2fb035041daa1be24764eafe7de67c0e6c7b5e57"
+    },
+    {
+      "path": "Assets/BattleRaja/Tests/EditMode/BijliFoundationTests.cs.meta",
+      "bytes": 59,
+      "sha256": "370fb2c10e209501f5237cb88b4e5d8dcaa5fd6c6caa1056ed6c8c68d04dada9"
+    },
+    {
+      "path": "Assets/BattleRaja/Tests/PlayMode/BijliLabPlayModeTests.cs",
+      "bytes": 2650,
+      "sha256": "74e1784e316398b5f54830907e7af0d21a4c26aac8ba75642bd434a36afe7f96"
+    },
+    {
+      "path": "Assets/BattleRaja/Tests/PlayMode/BijliLabPlayModeTests.cs.meta",
+      "bytes": 59,
+      "sha256": "c374f09097584db739e013a65c6974d7b95f17db3318e89c1819537b2889a78a"
+    },
+    {
+      "path": "Docs/MILESTONE_REPORTS/M3.md",
+      "bytes": 6092,
+      "sha256": "8526ed7809935c97249256bf4b5cad37665b29930e911a5cd4544a33302426f5"
     }
   ]
 }

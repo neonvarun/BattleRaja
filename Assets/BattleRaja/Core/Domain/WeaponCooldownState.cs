@@ -15,6 +15,11 @@ namespace BattleRaja.Core.Domain
             return true;
         }
 
+        public float Remaining(float nowSeconds)
+        {
+            return System.MathF.Max(0f, _nextAllowedTime - nowSeconds);
+        }
+
         public void Reset() => _nextAllowedTime = 0f;
     }
 }

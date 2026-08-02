@@ -134,3 +134,13 @@ Physical touch gestures, multiple safe-area/aspect-ratio layouts, deliberate bro
 Batch-mode PlayMode waits use game-time waits because frame duration is not a stable
 wall-clock proxy in headless Unity. No formal device/browser profiler capture was
 collected.
+
+### M3 evidence (2026-08-02)
+
+- `Unity.exe -batchmode -nographics -projectPath . -runTests -testPlatform editmode -testResults Builds/M3/TestResults/editmode.xml -logFile Builds/M3/Logs/editmode.log` — 20/20 passed.
+- `Unity.exe -batchmode -nographics -projectPath . -runTests -testPlatform playmode -testResults Builds/M3/TestResults/playmode.xml -logFile Builds/M3/Logs/playmode.log` — 16/16 passed.
+- Coverage includes stable content IDs, fighter definition validation, dash fallback,
+  phase stepping, collision truncation, concurrent-action rejection, cooldown,
+  fighter scene spawn, end-to-end dash movement and HUD state publication.
+- Android/Web development builds completed; Android install/launch smoke passed on
+  Lava API 34 and Oppo API 36; local Web HTTP/Chrome/Edge bootstrap checks passed.
