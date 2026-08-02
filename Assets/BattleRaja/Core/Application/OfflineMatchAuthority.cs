@@ -51,6 +51,7 @@ namespace BattleRaja.Core.Application
         private GadgetPickupRuntime[] _gadgetPickups = Array.Empty<GadgetPickupRuntime>();
         private readonly Dictionary<CombatEntityId, GadgetInventory> _gadgetInventories = new Dictionary<CombatEntityId, GadgetInventory>();
         private readonly Dictionary<CombatEntityId, GadgetRuntime> _gadgetRuntimes = new Dictionary<CombatEntityId, GadgetRuntime>();
+        private readonly Dictionary<CombatEntityId, UmbrellaGuardRuntime> _umbrellaGuards = new Dictionary<CombatEntityId, UmbrellaGuardRuntime>();
         private readonly Dictionary<int, GadgetStationRuntime> _stations = new Dictionary<int, GadgetStationRuntime>();
         private OfflineMatchSimulation _simulation;
         private double _outsideDamageAccumulator;
@@ -96,11 +97,13 @@ namespace BattleRaja.Core.Application
 
             _gadgetInventories.Clear();
             _gadgetRuntimes.Clear();
+            _umbrellaGuards.Clear();
             _stations.Clear();
             for (var i = 0; i < spawns.Count; i++)
             {
                 _gadgetInventories[spawns[i].Id] = new GadgetInventory(1);
                 _gadgetRuntimes[spawns[i].Id] = new GadgetRuntime();
+                _umbrellaGuards[spawns[i].Id] = new UmbrellaGuardRuntime();
             }
 
             _outsideDamageAccumulator = 0d;
@@ -133,6 +136,7 @@ namespace BattleRaja.Core.Application
             var simulation = RequireSimulation();
             for (var i = 0; i < _pickups.Length; i++) _pickups[i].Advance(fixedDeltaSeconds);
             foreach (var runtime in _gadgetRuntimes.Values) runtime.Advance(fixedDeltaSeconds);
+            foreach (var guard in _umbrellaGuards.Values) guard.Advance(fixedDeltaSeconds);
             var result = simulation.Advance(fixedDeltaSeconds);
             var healingIntents = new List<GadgetHealingIntent>();
             var expiredStationIds = new List<int>();
@@ -319,8 +323,28 @@ namespace BattleRaja.Core.Application
                     effect.Displacements,
                     stationId);
             }
+            else if (effect.Kind == GadgetEffectKind.UmbrellaGuard && _umbrellaGuards.TryGetValue(command.UserId, out var guard))
+            {
+                guard.Activate(effect.Definition, command.Direction);
+            }
 
             return new GadgetUseResult(true, GadgetUseFailure.None, effect);
+        }
+
+        public DamageRequest ApplyDamageMitigation(DamageRequest request)
+        {
+            if (!_umbrellaGuards.TryGetValue(request.TargetId, out var guard)) return request;
+            var mitigated = guard.Mitigate(request);
+            return mitigated == request.RawAmount
+                ? request
+                : new DamageRequest(
+                    request.InstigatorId,
+                    request.TargetId,
+                    request.InstigatorFaction,
+                    mitigated,
+                    request.DamageType,
+                    request.HitDirection,
+                    request.SimulationTick);
         }
 
         public bool TryAcquireGadget(CombatEntityId collectorId, ContentId gadgetId)

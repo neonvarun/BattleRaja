@@ -625,3 +625,22 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Evidence/sources:** `Gadgets`, `OfflineMatchAuthority`, `GadgetStation`,
   `OfflineMatchController`, `AuthorityFoundationTests` and the 85/34 Phase 1 results.
 - **Owner:** Human project owner
+
+### ADR-032 — Tick Umbrella Guard mitigation in application authority
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the Phase 1 authority continuation.
+- **Context:** Umbrella Guard facing, duration and 30% front mitigation were held in
+  `GadgetUser`, so damage resolution could depend on a presentation component and its
+  local clock.
+- **Decision:** `OfflineMatchAuthority` owns one `UmbrellaGuardRuntime` per participant,
+  activates it only after an accepted authoritative use, advances it on authority ticks,
+  and rewrites incoming damage requests before the presentation pipeline. Aandhi and
+  generic damage bypass the guard. The old `GadgetUser` mitigation path remains only for
+  isolated non-authoritative labs.
+- **Consequences:** Shield duration and mitigation are deterministic and testable without
+  Unity; visual facing/feedback still lives in the presentation adapter. Station damage
+  forwarding and network replication remain open.
+- **Evidence/sources:** `Gadgets`, `OfflineMatchAuthority`, `CombatDamageResolver`,
+  `GadgetUser` and the Umbrella authority assertions in `AuthorityFoundationTests`.
+- **Owner:** Human project owner

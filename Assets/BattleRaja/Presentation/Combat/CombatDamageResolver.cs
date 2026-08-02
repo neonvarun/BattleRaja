@@ -1,5 +1,6 @@
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Gadgets;
+using BattleRaja.Presentation.Match;
 using UnityEngine;
 
 namespace BattleRaja.Presentation.Combat
@@ -20,15 +21,24 @@ namespace BattleRaja.Presentation.Combat
                 return new DamageResult(false, 0, false, DamageRejectionReason.WrongTarget);
             }
 
-            var gadgetUser = target.GetComponent<GadgetUser>();
-            if (gadgetUser != null)
+            var match = FindFirstObjectByType<OfflineMatchController>();
+            var authoritative = match != null && match.Simulation != null;
+            if (authoritative)
             {
-                var mitigated = gadgetUser.ModifyIncomingDamage(request);
-                if (mitigated != request.RawAmount)
+                request = match.ApplyDamageMitigation(request);
+            }
+            else
+            {
+                var gadgetUser = target.GetComponent<GadgetUser>();
+                if (gadgetUser != null)
                 {
-                    request = new DamageRequest(request.InstigatorId, request.TargetId,
-                        request.InstigatorFaction, mitigated, request.DamageType, request.HitDirection,
-                        request.SimulationTick);
+                    var mitigated = gadgetUser.ModifyIncomingDamage(request);
+                    if (mitigated != request.RawAmount)
+                    {
+                        request = new DamageRequest(request.InstigatorId, request.TargetId,
+                            request.InstigatorFaction, mitigated, request.DamageType, request.HitDirection,
+                            request.SimulationTick);
+                    }
                 }
             }
 

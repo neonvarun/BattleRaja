@@ -180,5 +180,41 @@ namespace BattleRaja.Tests.EditMode
             Assert.That(healed, Is.True);
             Assert.That(expired, Is.True);
         }
+
+        [Test]
+        public void AuthorityOwnsUmbrellaMitigationAndExpiresTheGuard()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(4f, 0f), 100)
+            });
+            var gadgetId = GadgetDefinition.UmbrellaGuard.GadgetId;
+            Assert.That(authority.TryAcquireGadget(new CombatEntityId(1), gadgetId), Is.True);
+            Assert.That(authority.TryUseGadget(new GadgetUseCommand(
+                new CombatEntityId(1), gadgetId, Float2.Zero, Float2.Up, 1)).Used, Is.True);
+
+            var incoming = new DamageRequest(
+                new CombatEntityId(2),
+                new CombatEntityId(1),
+                CombatFaction.Enemy,
+                100,
+                DamageType.Projectile,
+                new Float2(0f, -1f),
+                1);
+            Assert.That(authority.ApplyDamageMitigation(incoming).RawAmount, Is.EqualTo(30));
+            Assert.That(authority.ApplyDamageMitigation(new DamageRequest(
+                incoming.InstigatorId,
+                incoming.TargetId,
+                incoming.InstigatorFaction,
+                incoming.RawAmount,
+                DamageType.Aandhi,
+                incoming.HitDirection,
+                incoming.SimulationTick)).RawAmount, Is.EqualTo(100));
+
+            for (var tick = 1; tick <= 106; tick++) authority.Advance(tick, 1f / 30f);
+            Assert.That(authority.ApplyDamageMitigation(incoming).RawAmount, Is.EqualTo(100));
+        }
     }
 }

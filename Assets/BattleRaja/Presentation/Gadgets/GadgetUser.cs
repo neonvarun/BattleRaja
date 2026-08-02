@@ -182,7 +182,9 @@ namespace BattleRaja.Presentation.Gadgets
             var facing = _shieldDirection.Normalized;
             var incoming = request.HitDirection.SqrMagnitude > 0.000001f ? request.HitDirection.Normalized * -1f : facing;
             var dot = facing.X * incoming.X + facing.Y * incoming.Y;
-            return dot >= 0.15f ? Mathf.CeilToInt(request.RawAmount * 0.30f) : request.RawAmount;
+            return dot >= 0.15f
+                ? Mathf.Max(1, Mathf.CeilToInt((request.RawAmount * 0.30f) - 0.0001f))
+                : request.RawAmount;
         }
 
         private void ApplyEffect(GadgetEffect effect)

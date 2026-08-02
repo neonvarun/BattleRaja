@@ -321,6 +321,52 @@ namespace BattleRaja.Core.Domain
         }
     }
 
+    public sealed class UmbrellaGuardRuntime
+    {
+        private float _remaining;
+        private Float2 _direction = Float2.Up;
+
+        public float RemainingSeconds => Math.Max(0f, _remaining);
+        public bool IsActive => _remaining > 0f;
+
+        public void Activate(GadgetDefinition definition, Float2 direction)
+        {
+            if (definition.Kind != GadgetKind.UmbrellaGuard || !definition.IsValid(out var reason) ||
+                direction.SqrMagnitude <= 0.000001f)
+            {
+                throw new ArgumentException("A valid Umbrella Guard definition and direction are required.", nameof(definition));
+            }
+
+            _direction = direction.Normalized;
+            _remaining = definition.DurationSeconds;
+        }
+
+        public void Advance(float deltaSeconds)
+        {
+            if (deltaSeconds < 0f || float.IsNaN(deltaSeconds) || float.IsInfinity(deltaSeconds))
+            {
+                throw new ArgumentOutOfRangeException(nameof(deltaSeconds));
+            }
+
+            _remaining = Math.Max(0f, _remaining - deltaSeconds);
+        }
+
+        public int Mitigate(DamageRequest request)
+        {
+            if (!IsActive || request.DamageType == DamageType.Aandhi || request.DamageType == DamageType.Generic)
+            {
+                return request.RawAmount;
+            }
+
+            var incoming = request.HitDirection.SqrMagnitude > 0.000001f
+                ? request.HitDirection.Normalized * -1f
+                : _direction;
+            var dot = _direction.X * incoming.X + _direction.Y * incoming.Y;
+            if (dot < 0.15f) return request.RawAmount;
+            return Math.Max(1, (int)MathF.Ceiling((request.RawAmount * 0.30f) - 0.0001f));
+        }
+    }
+
     public readonly struct GadgetUseResult
     {
         public GadgetUseResult(bool used, GadgetUseFailure failure, GadgetEffect effect)

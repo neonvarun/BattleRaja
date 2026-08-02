@@ -54,6 +54,11 @@ namespace BattleRaja.Presentation.Match
             return _authority != null && _authority.TryAcquireGadget(collectorId, gadgetId);
         }
 
+        public DamageRequest ApplyDamageMitigation(DamageRequest request)
+        {
+            return _authority != null ? _authority.ApplyDamageMitigation(request) : request;
+        }
+
         private void Awake()
         {
             damageResolver = damageResolver != null ? damageResolver : FindFirstObjectByType<CombatDamageResolver>();
