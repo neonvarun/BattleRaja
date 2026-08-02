@@ -2,7 +2,7 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `4ecc467` (`feat: add readable visual and audio presentation foundation`)
+Latest validated source HEAD: `380781b` (`feat: add canvas match UI foundation`)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
 ## Scope and repository note
@@ -82,3 +82,21 @@ After the authority seam commit `1a92b6c`, the runtime artifacts were rebuilt an
 - Web: 21 files, 132,170,851 bytes; local HTTP `200`; Chrome fresh-tab smoke reported 0 JavaScript errors. Updated screenshot: `Docs/QA/Visual/latest-head-web.png`.
 - Android: 150,813,125 bytes; SHA-256 `A6176D2BCE8A7856555F512B56C9A2679590E601B93F670CAC5FCD8AD4DDA455`; installed/launched on Lava `ST5GDW23LB004392` only (PID `23626`) with the Unity game activity focused. No fatal, crash, SphereCollider or AndroidRuntime matches were found in the post-launch log sample. Updated screenshot: `Docs/QA/Visual/latest-head-android.png`.
 - Authority/statistics/tick/item/fighter regression: 70 EditMode and 27 PlayMode tests pass after the focused foundation changes.
+
+## Canvas match UI foundation validation (`380781b`)
+
+- Repository validation: `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings.
+- Regression: EditMode 72/72 and PlayMode 29/29 passed after the Canvas HUD and Unity 6
+  `LegacyRuntime.ttf` runtime-font correction (`Builds/M11/TestResults/phase5-ui-20260803-editmode-final.xml`,
+  `Builds/M11/TestResults/phase5-ui-20260803-playmode-final.xml`). The first PlayMode
+  run caught the unsupported `Arial.ttf` resource and was not counted as final evidence.
+- Web build: development build succeeded under Unity 6000.5.6f1 (`Builds/M11/Logs/phase5-ui-20260803-web-build-final2.log`), 19 files and 132,679,391 bytes; the main WASM SHA-256 is `611E64BE25E6C953BA72EC7F7DDE268581E3EB4EF42C9B330382AAF5F161A6F8`.
+- Chrome Web smoke: `http://127.0.0.1:8021/index.html` returned HTTP 200; the fresh tab exposed the Unity player controls and captured zero error/warning entries. Screenshot: `Docs/QA/Visual/phase5-ui-20260803-web.png`.
+- Android build: development IL2CPP APK succeeded (`Builds/M11/Logs/phase5-ui-20260803-android-build-final2.log`). Actual artifact size is 151,033,372 bytes; SHA-256 is `3D83BE32A990F66DE000A7F34A00AF75B54A85CDBF1346F93321304409464789`.
+- Android smoke: installed/launched only on Lava `ST5GDW23LB004392` (`LAVA LXX508`), package `com.example.battleraja.m11`. The post-launch log sample contains zero fatal/crash/missing-component/Unity-error markers (`Builds/M11/Logs/phase5-ui-20260803-android-logcat-final.txt`). Screenshot: `Docs/QA/Visual/phase5-ui-20260803-android.png`.
+- Product boundary: the Canvas surface now covers match/zone status, pause/settings,
+  spectator cycling, results/rematch and left-handed/reduced-flash/high-contrast hooks.
+  Bootstrap/main-menu flow, full tutorial/offline progression, localization assets,
+  controller rebinding, functional aim assist, final authored UI and human visual review
+  remain open. The scene and screenshots are still stylised greybox evidence, not a
+  release or store-readiness claim.

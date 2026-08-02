@@ -440,3 +440,26 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Consequences:** Android/Web and PlayMode tests now exercise readable presentation scaffolding without external asset licensing or autoplay failures. The scene remains a stylised greybox; imported animation, VFX, music, authored SFX, quality tiers and final review are follow-up work.
 - **Evidence/sources:** `FighterPresentation.cs`, `BattleRajaAudioDirector.cs`, combat controller integrations, `VerticalSlicePlayModeTests`, phase-4 Android/Web smoke logs and screenshots.
 - **Owner:** Human project owner
+
+### ADR-024 — Use an anchored Canvas HUD for the first production match flow
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the M13 UI foundation; full flow, accessibility and final visual review remain open.
+- **Context:** The production scene still used an immediate-mode zone/results overlay and
+  needed a platform-safe surface for pause, spectator, rematch and settings controls.
+- **Options considered:** Keep immediate-mode labels; hand-author a large scene/prefab UI
+  before the flow is stable; or create a small runtime Canvas surface with normalized
+  anchors and explicit adapter callbacks.
+- **Decision:** `OfflineMatchHud` creates a `CanvasScaler`/`GraphicRaycaster` surface when
+  needed, keeps status/results presentation separate from `OfflineMatchController`
+  authority, and exposes touch-ready buttons for pause/settings, spectator cycling,
+  rematch and accessibility-oriented settings. `FighterPresentation.ReducedFlashMode`
+  is the presentation hook for reduced flashes. The aim-assist control is labeled as
+  ready-only until a real command/aim policy is implemented.
+- **Consequences:** Android and Web now exercise a readable, responsive HUD without
+  introducing a UI singleton or moving simulation rules into scene code. Bootstrap/main
+  menu, localization assets, controller rebinding, safe-area review and final authored
+  UI remain follow-up work; Unity 6 uses `LegacyRuntime.ttf` for runtime-created labels.
+- **Evidence/sources:** `OfflineMatchHud.cs`, `FighterPresentation.cs`, phase-5 EditMode
+  72/72 and PlayMode 29/29 results, Lava Android and Chrome Web smoke screenshots.
+- **Owner:** Human project owner

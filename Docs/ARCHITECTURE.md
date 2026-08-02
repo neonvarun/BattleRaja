@@ -226,3 +226,18 @@ Android and Web share domain, application and most presentation code. Platform-s
 - Final imported animation clips, authored VFX, licensed/original production audio and
   visual approval remain human-review gates. The current presentation is an explicit
   replaceable stylised greybox.
+
+## M13 Canvas match UI foundation
+
+- `OfflineMatchHud` now builds a `CanvasScaler`-backed, anchored HUD at runtime rather
+  than using immediate-mode GUI. It exposes match/zone status, spectator cycling,
+  pause/settings, rematch and a results panel without moving authoritative state into
+  the UI layer.
+- The settings surface includes left-handed stick swapping, reduced-flash propagation
+  to `FighterPresentation`, high-contrast status text and a Web-safe audio user-gesture
+  entry point. Labels remain short and replaceable by localization keys; the current
+  `AIM ASSIST (READY)` control is intentionally a placeholder, not a gameplay claim.
+- The layout uses normalized anchors and a scale-with-screen-size canvas so Android
+  safe-area/device review and Web responsive review remain explicit follow-up gates.
+  Main-menu/bootstrap flow, complete offline/tutorial progression, localization assets,
+  controller rebinding and final authored UI remain outside this foundation slice.
