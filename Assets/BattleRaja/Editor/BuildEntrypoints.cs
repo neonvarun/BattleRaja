@@ -30,6 +30,7 @@ namespace BattleRaja.Editor
         private const string BootstrapScenePath = "Assets/BattleRaja/Scenes/Bootstrap/Bootstrap.unity";
         private const string MovementLabScenePath = "Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity";
         private const string BazaarBastionScenePath = "Assets/BattleRaja/Scenes/Gameplay/BazaarBastion.unity";
+        private const string TutorialArenaScenePath = "Assets/BattleRaja/Scenes/Tutorial/TutorialArena.unity";
         private const string MovementAssetFolder = "Assets/BattleRaja/Content/Movement";
         private const string TuningAssetPath = MovementAssetFolder + "/M1-MovementTuning.asset";
         private const string InputAssetPath = MovementAssetFolder + "/BattleRajaMovement.inputactions";
@@ -386,6 +387,50 @@ namespace BattleRaja.Editor
             AssetDatabase.Refresh();
         }
 
+        /// <summary>
+        /// Creates a replayable onboarding arena from the tested movement lab. Bot actors stay
+        /// in the simulation so the real match authority still has valid separated spawns, but
+        /// their decision components are disabled and a tutorial overlay owns the prompts.
+        /// </summary>
+        public static void CreateTutorialArenaScene()
+        {
+            EnsureUrpAsset();
+            Directory.CreateDirectory("Assets/BattleRaja/Scenes/Tutorial");
+
+            var sourceScene = EditorSceneManager.OpenScene(MovementLabScenePath, OpenSceneMode.Single);
+            EditorSceneManager.SaveScene(sourceScene, TutorialArenaScenePath);
+            var arena = GameObject.Find("MovementLab");
+            if (arena == null) throw new BuildFailedException("MovementLab root was not found while creating Tutorial Arena.");
+            arena.name = "TutorialArena";
+
+            foreach (var brain in arena.GetComponentsInChildren<BotBrain>(true))
+            {
+                brain.enabled = false;
+                var overlay = brain.GetComponent<BotDebugOverlay>();
+                if (overlay != null) SetBool(overlay, "showOverlay", false);
+            }
+
+            var tutorial = arena.GetComponentInChildren<TutorialOverlay>(true);
+            if (tutorial == null)
+            {
+                var tutorialObject = new GameObject("TutorialOverlay");
+                tutorialObject.transform.SetParent(arena.transform, false);
+                tutorialObject.AddComponent<TutorialOverlay>();
+            }
+
+            EditorSceneManager.MarkSceneDirty(sourceScene);
+            EditorSceneManager.SaveScene(sourceScene, TutorialArenaScenePath);
+            EditorBuildSettings.scenes = new[]
+            {
+                new EditorBuildSettingsScene(BootstrapScenePath, true),
+                new EditorBuildSettingsScene(TutorialArenaScenePath, true),
+                new EditorBuildSettingsScene(BazaarBastionScenePath, true),
+                new EditorBuildSettingsScene(MovementLabScenePath, true)
+            };
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
         private static void ConfigurePlayerFighterSelection(
             Transform arena,
             MovementTuningAsset tuningAsset,
@@ -458,9 +503,9 @@ namespace BattleRaja.Editor
                 throw new BuildFailedException("Photon and PlayFab are prohibited before their approved milestones.");
             }
 
-            if (!File.Exists(BootstrapScenePath) || !File.Exists(MovementLabScenePath))
+            if (!File.Exists(BootstrapScenePath) || !File.Exists(MovementLabScenePath) || !File.Exists(TutorialArenaScenePath))
             {
-                throw new BuildFailedException("Both Bootstrap and MovementLab scenes must exist.");
+                throw new BuildFailedException("Bootstrap, Tutorial Arena and MovementLab scenes must exist.");
             }
 
             if (GraphicsSettings.defaultRenderPipeline == null)
@@ -503,6 +548,7 @@ namespace BattleRaja.Editor
         {
             CreateBootstrapScene();
             CreateMovementLabScene();
+            CreateTutorialArenaScene();
             ValidateProject();
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
@@ -531,6 +577,7 @@ namespace BattleRaja.Editor
         {
             CreateBootstrapScene();
             CreateMovementLabScene();
+            CreateTutorialArenaScene();
             ValidateProject();
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WebGL, BuildTarget.WebGL);
@@ -551,6 +598,7 @@ namespace BattleRaja.Editor
         {
             CreateBootstrapScene();
             CreateBazaarBastionScene();
+            CreateTutorialArenaScene();
             ValidateProject();
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
@@ -559,18 +607,19 @@ namespace BattleRaja.Editor
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel28;
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
             PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
-            Build("Builds/M11/Android/BattleRaja-BazaarBastion-M11.apk", BuildTarget.Android, BootstrapScenePath, BazaarBastionScenePath);
+            Build("Builds/M11/Android/BattleRaja-BazaarBastion-M11.apk", BuildTarget.Android, BootstrapScenePath, TutorialArenaScenePath, BazaarBastionScenePath);
         }
 
         public static void BuildWebBazaarBastionDevelopment()
         {
             CreateBootstrapScene();
             CreateBazaarBastionScene();
+            CreateTutorialArenaScene();
             ValidateProject();
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WebGL, BuildTarget.WebGL);
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
-            Build("Builds/M11/Web-BazaarBastion", BuildTarget.WebGL, BootstrapScenePath, BazaarBastionScenePath);
+            Build("Builds/M11/Web-BazaarBastion", BuildTarget.WebGL, BootstrapScenePath, TutorialArenaScenePath, BazaarBastionScenePath);
         }
 
         private static void Build(string outputPath, BuildTarget target, params string[] scenePaths)

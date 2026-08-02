@@ -87,5 +87,17 @@ namespace BattleRaja.Tests.EditMode
             Assert.That(transition.ErrorCode, Is.EqualTo("INVALID_TRANSITION"));
             Assert.That(flow.State, Is.EqualTo(ProductionFlowState.Bootstrap));
         }
+
+        [Test]
+        public void TutorialRouteReturnsToMainMenu()
+        {
+            var flow = new ProductionFlowMachine();
+            flow.FinishBootstrap();
+
+            Assert.That(flow.OpenTutorial().Accepted, Is.True);
+            Assert.That(flow.State, Is.EqualTo(ProductionFlowState.Tutorial));
+            Assert.That(flow.CloseTutorial().Accepted, Is.True);
+            Assert.That(flow.State, Is.EqualTo(ProductionFlowState.MainMenu));
+        }
     }
 }

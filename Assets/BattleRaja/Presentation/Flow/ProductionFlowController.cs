@@ -25,6 +25,7 @@ namespace BattleRaja.Presentation.Flow
         private const string EffectsVolumeKey = "battleraja.settings.effects_volume";
 
         [SerializeField] private string gameplaySceneName = "BazaarBastion";
+        [SerializeField] private string tutorialSceneName = "TutorialArena";
         [SerializeField] private Canvas canvas;
 
         private readonly ProductionFlowMachine _flow = new ProductionFlowMachine();
@@ -124,6 +125,14 @@ namespace BattleRaja.Presentation.Flow
             SavePreferences();
             Apply(transition);
             StartCoroutine(LoadGameplayScene());
+        }
+
+        public void OpenTutorial()
+        {
+            var transition = _flow.OpenTutorial();
+            if (!transition.Accepted) return;
+            Apply(transition);
+            StartCoroutine(LoadTutorialScene());
         }
 
         public void OpenSettings()
@@ -277,6 +286,51 @@ namespace BattleRaja.Presentation.Flow
             _loading = false;
         }
 
+        private IEnumerator LoadTutorialScene()
+        {
+            if (_loading) yield break;
+            _loading = true;
+            if (!Application.CanStreamedLevelBeLoaded(tutorialSceneName))
+            {
+                _loading = false;
+                Apply(_flow.ShowError("TUTORIAL_SCENE_UNAVAILABLE", ProductionFlowState.Tutorial));
+                yield break;
+            }
+
+            AsyncOperation operation;
+            try
+            {
+                operation = SceneManager.LoadSceneAsync(tutorialSceneName, LoadSceneMode.Single);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError($"BattleRaja tutorial load failed: {exception.Message}");
+                _loading = false;
+                Apply(_flow.ShowError("TUTORIAL_LOAD_FAILED", ProductionFlowState.Tutorial));
+                yield break;
+            }
+
+            if (operation == null)
+            {
+                _loading = false;
+                Apply(_flow.ShowError("TUTORIAL_LOAD_FAILED", ProductionFlowState.Tutorial));
+                yield break;
+            }
+
+            operation.allowSceneActivation = false;
+            while (operation.progress < 0.9f)
+            {
+                var percentage = Mathf.Clamp(Mathf.RoundToInt((operation.progress / 0.9f) * 100f), 0, 99);
+                if (_loadingText != null) _loadingText.text = $"LOADING TUTORIAL ARENA  {percentage}%";
+                yield return null;
+            }
+
+            if (_loadingText != null) _loadingText.text = "LOADING TUTORIAL ARENA  100%";
+            operation.allowSceneActivation = true;
+            yield return operation;
+            _loading = false;
+        }
+
         private void Apply(ProductionFlowTransition transition)
         {
             if (!transition.Accepted) return;
@@ -296,6 +350,11 @@ namespace BattleRaja.Presentation.Flow
                     _fighterPanel.SetActive(true);
                     SetHeader("CHOOSE YOUR RAJA", "Select a fighter, then start the offline match.");
                     RefreshFighterSummary();
+                    break;
+                case ProductionFlowState.Tutorial:
+                    _loadingPanel.SetActive(true);
+                    SetHeader("TUTORIAL", "Loading the replayable offline controls and combat walkthrough.");
+                    if (_loadingText != null) _loadingText.text = "LOADING TUTORIAL ARENA  0%";
                     break;
                 case ProductionFlowState.MatchLoading:
                     _loadingPanel.SetActive(true);
@@ -318,6 +377,7 @@ namespace BattleRaja.Presentation.Flow
             SelectFirstButton(transition.Current == ProductionFlowState.MainMenu ? _mainMenuPanel :
                 transition.Current == ProductionFlowState.ModeSelection ? _modePanel :
                 transition.Current == ProductionFlowState.FighterSelection ? _fighterPanel :
+                transition.Current == ProductionFlowState.Tutorial ? _loadingPanel :
                 transition.Current == ProductionFlowState.Settings ? _settingsPanel : _errorPanel);
         }
 
@@ -353,10 +413,11 @@ namespace BattleRaja.Presentation.Flow
             _messageText = CreateText(_safeArea.transform, "Message", new Vector2(0.12f, 0.70f), new Vector2(0.88f, 0.79f), 20, TextAnchor.MiddleCenter);
 
             _mainMenuPanel = CreatePanel(_safeArea.transform, "MainMenuPanel");
-            CreateButton(_mainMenuPanel.transform, "Offline", "PLAY OFFLINE", new Vector2(0.28f, 0.54f), new Vector2(0.72f, 0.66f), OpenModeSelection);
-            CreateButton(_mainMenuPanel.transform, "Online", "ONLINE (LOCKED)", new Vector2(0.28f, 0.39f), new Vector2(0.72f, 0.51f), SelectOnlineMode);
-            CreateButton(_mainMenuPanel.transform, "Settings", "SETTINGS", new Vector2(0.28f, 0.24f), new Vector2(0.72f, 0.36f), OpenSettings);
-            CreateButton(_mainMenuPanel.transform, "Quit", "FOCUS / POINTER HELP", new Vector2(0.28f, 0.09f), new Vector2(0.72f, 0.21f), ReleasePointerFocus);
+            CreateButton(_mainMenuPanel.transform, "Offline", "PLAY OFFLINE", new Vector2(0.28f, 0.53f), new Vector2(0.72f, 0.63f), OpenModeSelection);
+            CreateButton(_mainMenuPanel.transform, "Online", "ONLINE (LOCKED)", new Vector2(0.28f, 0.40f), new Vector2(0.72f, 0.50f), SelectOnlineMode);
+            CreateButton(_mainMenuPanel.transform, "Tutorial", "TUTORIAL REPLAY", new Vector2(0.28f, 0.27f), new Vector2(0.72f, 0.37f), OpenTutorial);
+            CreateButton(_mainMenuPanel.transform, "Settings", "SETTINGS", new Vector2(0.28f, 0.14f), new Vector2(0.72f, 0.24f), OpenSettings);
+            CreateButton(_mainMenuPanel.transform, "Quit", "FOCUS / POINTER HELP", new Vector2(0.28f, 0.01f), new Vector2(0.72f, 0.11f), ReleasePointerFocus);
 
             _modePanel = CreatePanel(_safeArea.transform, "ModePanel");
             CreateButton(_modePanel.transform, "Offline", "OFFLINE  •  1 HUMAN + 7 BOTS", new Vector2(0.18f, 0.54f), new Vector2(0.82f, 0.66f), SelectOfflineMode);
@@ -481,6 +542,10 @@ namespace BattleRaja.Presentation.Flow
                     return "THE OFFLINE MATCH SCENE IS NOT IN BUILD SETTINGS.\nRebuild the development player with the production scene entrypoints.";
                 case "MATCH_LOAD_FAILED":
                     return "THE OFFLINE MATCH COULD NOT LOAD.\nCheck the Unity player log and retry.";
+                case "TUTORIAL_SCENE_UNAVAILABLE":
+                    return "THE TUTORIAL SCENE IS NOT IN BUILD SETTINGS.\nRebuild the development player with the tutorial entrypoint.";
+                case "TUTORIAL_LOAD_FAILED":
+                    return "THE TUTORIAL COULD NOT LOAD.\nCheck the Unity player log and retry.";
                 default:
                     return "AN UNEXPECTED FLOW ERROR OCCURRED.\nRetry or return to the main menu.";
             }

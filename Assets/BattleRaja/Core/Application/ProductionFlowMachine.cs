@@ -12,6 +12,7 @@ namespace BattleRaja.Core.Application
         MainMenu,
         ModeSelection,
         FighterSelection,
+        Tutorial,
         MatchLoading,
         Gameplay,
         Paused,
@@ -42,6 +43,8 @@ namespace BattleRaja.Core.Application
         SelectOnline,
         OpenFighterSelection,
         SelectFighter,
+        OpenTutorial,
+        CloseTutorial,
         BeginMatchLoading,
         FinishMatchLoading,
         Pause,
@@ -139,6 +142,18 @@ namespace BattleRaja.Core.Application
                 ProductionFlowState.FighterSelection);
         }
 
+        public ProductionFlowTransition OpenTutorial()
+        {
+            return Transition(ProductionFlowAction.OpenTutorial, ProductionFlowState.Tutorial,
+                ProductionFlowState.MainMenu);
+        }
+
+        public ProductionFlowTransition CloseTutorial()
+        {
+            return Transition(ProductionFlowAction.CloseTutorial, ProductionFlowState.MainMenu,
+                ProductionFlowState.Tutorial);
+        }
+
         public ProductionFlowTransition BeginMatchLoading()
         {
             _errorReturnState = ProductionFlowState.MatchLoading;
@@ -197,11 +212,14 @@ namespace BattleRaja.Core.Application
         public ProductionFlowTransition ReturnToMenu()
         {
             return Transition(ProductionFlowAction.ReturnToMenu, ProductionFlowState.MainMenu,
-                ProductionFlowState.ModeSelection, ProductionFlowState.FighterSelection,
-                ProductionFlowState.MatchLoading, ProductionFlowState.Gameplay,
-                ProductionFlowState.Paused, ProductionFlowState.Settings,
-                ProductionFlowState.Spectator, ProductionFlowState.Results,
-                ProductionFlowState.Error);
+                new[]
+                {
+                    ProductionFlowState.ModeSelection, ProductionFlowState.FighterSelection,
+                    ProductionFlowState.Tutorial, ProductionFlowState.MatchLoading,
+                    ProductionFlowState.Gameplay, ProductionFlowState.Paused,
+                    ProductionFlowState.Settings, ProductionFlowState.Spectator,
+                    ProductionFlowState.Results, ProductionFlowState.Error
+                }, string.Empty);
         }
 
         public ProductionFlowTransition ShowError(string errorCode, ProductionFlowState returnState)
@@ -209,11 +227,15 @@ namespace BattleRaja.Core.Application
             _errorCode = string.IsNullOrEmpty(errorCode) ? "UNKNOWN_ERROR" : errorCode;
             _errorReturnState = returnState;
             return Transition(ProductionFlowAction.ShowError, ProductionFlowState.Error,
-                ProductionFlowState.Bootstrap, ProductionFlowState.MainMenu,
-                ProductionFlowState.ModeSelection, ProductionFlowState.FighterSelection,
-                ProductionFlowState.MatchLoading, ProductionFlowState.Gameplay,
-                ProductionFlowState.Paused, ProductionFlowState.Settings,
-                ProductionFlowState.Spectator, ProductionFlowState.Results);
+                new[]
+                {
+                    ProductionFlowState.Bootstrap, ProductionFlowState.MainMenu,
+                    ProductionFlowState.ModeSelection, ProductionFlowState.FighterSelection,
+                    ProductionFlowState.Tutorial, ProductionFlowState.MatchLoading,
+                    ProductionFlowState.Gameplay, ProductionFlowState.Paused,
+                    ProductionFlowState.Settings, ProductionFlowState.Spectator,
+                    ProductionFlowState.Results
+                }, errorCode);
         }
 
         public ProductionFlowTransition Retry()
