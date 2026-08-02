@@ -72,4 +72,30 @@ namespace BattleRaja.Core.Domain
         public bool TargetDefeated { get; }
         public DamageRejectionReason RejectionReason { get; }
     }
+
+    public readonly struct CombatDamageEvent
+    {
+        public CombatDamageEvent(
+            DamageRequest request,
+            int amountApplied,
+            bool targetDefeated,
+            int currentHealthAfter,
+            int simulationTick)
+        {
+            Request = request;
+            AmountApplied = amountApplied;
+            TargetDefeated = targetDefeated;
+            CurrentHealthAfter = currentHealthAfter;
+            SimulationTick = simulationTick;
+        }
+
+        public DamageRequest Request { get; }
+        public CombatEntityId InstigatorId => Request.InstigatorId;
+        public CombatEntityId TargetId => Request.TargetId;
+        public DamageType DamageType => Request.DamageType;
+        public int AmountApplied { get; }
+        public bool TargetDefeated { get; }
+        public int CurrentHealthAfter { get; }
+        public int SimulationTick { get; }
+    }
 }

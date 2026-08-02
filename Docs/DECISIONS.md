@@ -101,6 +101,17 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Evidence/sources:** `OfflineMatchAuthority`, `OfflineMatchController`, `AuthorityFoundationTests`, 62 EditMode and 27 PlayMode tests.
 - **Owner:** Human project owner
 
+### ADR-015 — Authoritative combat statistics and Aandhi warning state
+
+- **Date:** 2026-08-02
+- **Status:** Accepted for the offline foundation; assists and complete fixed-tick presentation migration remain open.
+- **Context:** Health polling could establish alive/current-health state but could not attribute damage, eliminations or survival time, and the safe-zone result exposed only a radius.
+- **Options considered:** Infer results from presentation polling; add ad hoc UI counters; or emit typed combat events into the pure match simulation and expose warning/preview data in immutable tick results.
+- **Decision:** Emit `CombatDamageEvent` with instigator, target, applied amount, post-hit health, defeat state and tick. `OfflineMatchSimulation` owns damage dealt, elimination credit, survival time and deterministic timeout ranking. `MatchTickResult` exposes Aandhi warning/closing state, warning time and next radius; Unity renders the data.
+- **Consequences:** Results are reusable for future server authority and duplicate elimination credit is rejected. Assists are not yet attributed, and frame-bound weapon/fighter presentation timing remains a separate fixed-tick task.
+- **Evidence/sources:** `CombatDamageEvent`, `OfflineMatchSimulation.RecordDamage`, `MatchTickResult`, `OfflineMatchTests`, 65 EditMode and 27 PlayMode tests.
+- **Owner:** Human project owner
+
 ### ADR-010 — Milestone 9 safe server/match preparation while Fusion is blocked
 
 - **Date:** 2026-08-02

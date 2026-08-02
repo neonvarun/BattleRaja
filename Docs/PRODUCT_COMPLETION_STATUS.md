@@ -13,8 +13,9 @@ This file records evidence-backed status only. Allowed status values are: `Not s
 | Android smoke build | Passed with evidence | Current IL2CPP APK built and launched on Lava `ST5GDW23LB004392` only; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
 | Web smoke build | Passed with evidence | Current Web build served locally and loaded in Chrome with zero post-fix JavaScript errors |
 | Timeout/winner correctness | Passed with evidence | Deterministic timeout ranking and complete placements implemented; phase-1 EditMode 59/59 and PlayMode 27/27 pass |
-| Explicit fixed simulation clock | Passed with evidence | 30 Hz accumulator integrated into offline match controller; clock EditMode 60/60 and PlayMode 27/27 pass |
-| Continuously interpolated Aandhi | Passed with evidence | Zone radius interpolates between phase radii; EditMode 60/60 and PlayMode 27/27 pass |
+| Eliminations and match statistics | Passed with evidence | Instigator-aware combat events now record damage dealt, eliminations, survival time and duplicate-credit prevention; EditMode 65/65 and PlayMode 27/27 pass |
+| Explicit fixed simulation clock | In progress | 30 Hz accumulator is integrated into offline match authority; input buffering and all presentation cooldowns still need fixed-tick migration |
+| Continuously interpolated Aandhi | Passed with evidence | Warning/closing state, next-radius preview and deterministic interpolation are exposed; EditMode 65/65 and PlayMode 27/27 pass |
 | Bot current/next-zone awareness | Passed with evidence | Bot snapshots carry current/next zone data and proactively reposition; EditMode 61/61 and PlayMode 27/27 pass |
 | Authoritative rule separation | In progress | Zone-damage cadence/intents now live in `OfflineMatchAuthority`; pickup/gadget collection and presentation adapters remain to be extracted |
 | Fighter roster, progression, and complete offline loop | Not started | Later milestone scope; no completion claim |

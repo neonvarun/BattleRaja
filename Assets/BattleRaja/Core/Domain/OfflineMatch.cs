@@ -13,20 +13,29 @@ namespace BattleRaja.Core.Domain
         Resolution = 5
     }
 
+    public enum AandhiState
+    {
+        Stable = 0,
+        Warning = 1,
+        Closing = 2
+    }
+
     public readonly struct MatchPhaseDefinition
     {
-        public MatchPhaseDefinition(MatchPhase phase, float durationSeconds, float radius, int outsideDamagePerSecond)
+        public MatchPhaseDefinition(MatchPhase phase, float durationSeconds, float radius, int outsideDamagePerSecond, float warningSeconds = 0f)
         {
             Phase = phase;
             DurationSeconds = durationSeconds;
             Radius = radius;
             OutsideDamagePerSecond = outsideDamagePerSecond;
+            WarningSeconds = Math.Max(0f, warningSeconds);
         }
 
         public MatchPhase Phase { get; }
         public float DurationSeconds { get; }
         public float Radius { get; }
         public int OutsideDamagePerSecond { get; }
+        public float WarningSeconds { get; }
     }
 
     public readonly struct OfflineMatchDefinition
@@ -59,8 +68,8 @@ namespace BattleRaja.Core.Domain
             {
                 new MatchPhaseDefinition(MatchPhase.LoadWarmup, 3f, 14f, 0),
                 new MatchPhaseDefinition(MatchPhase.SpawnProtection, 5f, 14f, 0),
-                new MatchPhaseDefinition(MatchPhase.Opening, 90f, 14f, 5),
-                new MatchPhaseDefinition(MatchPhase.Pressure, 120f, 8f, 10),
+                new MatchPhaseDefinition(MatchPhase.Opening, 90f, 14f, 5, 8f),
+                new MatchPhaseDefinition(MatchPhase.Pressure, 120f, 8f, 10, 8f),
                 new MatchPhaseDefinition(MatchPhase.FinalCircle, 80f, 3.5f, 20)
             });
     }
@@ -81,7 +90,17 @@ namespace BattleRaja.Core.Domain
 
     public readonly struct MatchParticipantSnapshot
     {
-        public MatchParticipantSnapshot(CombatEntityId id, Float2 position, int currentHealth, int maxHealth, bool alive, int placement, int eliminations)
+        public MatchParticipantSnapshot(
+            CombatEntityId id,
+            Float2 position,
+            int currentHealth,
+            int maxHealth,
+            bool alive,
+            int placement,
+            int eliminations,
+            int damageDealt,
+            int assists,
+            float survivalTimeSeconds)
         {
             Id = id;
             Position = position;
@@ -90,6 +109,9 @@ namespace BattleRaja.Core.Domain
             Alive = alive;
             Placement = placement;
             Eliminations = eliminations;
+            DamageDealt = damageDealt;
+            Assists = assists;
+            SurvivalTimeSeconds = survivalTimeSeconds;
         }
 
         public CombatEntityId Id { get; }
@@ -99,16 +121,31 @@ namespace BattleRaja.Core.Domain
         public bool Alive { get; }
         public int Placement { get; }
         public int Eliminations { get; }
+        public int DamageDealt { get; }
+        public int Assists { get; }
+        public float SurvivalTimeSeconds { get; }
     }
 
     public readonly struct MatchTickResult
     {
-        public MatchTickResult(MatchPhase phase, Float2 zoneCenter, float zoneRadius, float nextZoneRadius, int outsideDamagePerSecond, int outsideCount, bool matchEnded, CombatEntityId winnerId)
+        public MatchTickResult(
+            MatchPhase phase,
+            Float2 zoneCenter,
+            float zoneRadius,
+            float nextZoneRadius,
+            AandhiState aandhiState,
+            float warningRemainingSeconds,
+            int outsideDamagePerSecond,
+            int outsideCount,
+            bool matchEnded,
+            CombatEntityId winnerId)
         {
             Phase = phase;
             ZoneCenter = zoneCenter;
             ZoneRadius = zoneRadius;
             NextZoneRadius = nextZoneRadius;
+            AandhiState = aandhiState;
+            WarningRemainingSeconds = warningRemainingSeconds;
             OutsideDamagePerSecond = outsideDamagePerSecond;
             OutsideCount = outsideCount;
             MatchEnded = matchEnded;
@@ -119,6 +156,8 @@ namespace BattleRaja.Core.Domain
         public Float2 ZoneCenter { get; }
         public float ZoneRadius { get; }
         public float NextZoneRadius { get; }
+        public AandhiState AandhiState { get; }
+        public float WarningRemainingSeconds { get; }
         public int OutsideDamagePerSecond { get; }
         public int OutsideCount { get; }
         public bool MatchEnded { get; }
@@ -190,11 +229,17 @@ namespace BattleRaja.Core.Domain
                 {
                     ResolveWinner();
                 }
+
+                for (var i = 0; i < _participants.Count; i++)
+                {
+                    if (_participants[i].Alive) _participants[i].SurvivalTimeSeconds = _elapsed;
+                }
             }
 
             var phaseDefinition = GetCurrentPhaseDefinition();
             var zoneRadius = GetInterpolatedZoneRadius();
             var nextZoneRadius = GetNextZoneRadius();
+            var aandhiState = GetAandhiState(out var warningRemainingSeconds);
             var outside = 0;
             for (var i = 0; i < _participants.Count; i++)
             {
@@ -206,7 +251,17 @@ namespace BattleRaja.Core.Domain
             }
 
             var winner = FindWinner();
-            return new MatchTickResult(_phase, _definition.ZoneCenter, zoneRadius, nextZoneRadius, phaseDefinition.OutsideDamagePerSecond, outside, IsEnded, winner);
+            return new MatchTickResult(
+                _phase,
+                _definition.ZoneCenter,
+                zoneRadius,
+                nextZoneRadius,
+                aandhiState,
+                warningRemainingSeconds,
+                phaseDefinition.OutsideDamagePerSecond,
+                outside,
+                IsEnded,
+                winner);
         }
 
         public bool SyncHealth(CombatEntityId id, int currentHealth)
@@ -220,6 +275,33 @@ namespace BattleRaja.Core.Domain
             }
 
             if (_started && AliveCount <= 1) ResolveWinner();
+            return true;
+        }
+
+        public bool RecordDamage(CombatDamageEvent damageEvent)
+        {
+            if (!_started || damageEvent.AmountApplied <= 0) return false;
+            var target = Find(damageEvent.TargetId);
+            if (target == null || !target.Alive) return false;
+
+            target.CurrentHealth = Math.Max(0, Math.Min(target.MaxHealth, damageEvent.CurrentHealthAfter));
+            var instigator = Find(damageEvent.InstigatorId);
+            if (instigator != null && instigator.Id != target.Id)
+            {
+                instigator.DamageDealt = SaturatingAdd(instigator.DamageDealt, damageEvent.AmountApplied);
+            }
+
+            if (target.CurrentHealth == 0)
+            {
+                Eliminate(target);
+                if (instigator != null && instigator.Id != target.Id)
+                {
+                    instigator.Eliminations = SaturatingAdd(instigator.Eliminations, 1);
+                }
+
+                if (AliveCount <= 1) ResolveWinner();
+            }
+
             return true;
         }
 
@@ -277,10 +359,32 @@ namespace BattleRaja.Core.Domain
                 : phase;
             var phaseStart = 0f;
             for (var i = 0; i < phaseIndex; i++) phaseStart += _definition.Phases[i].DurationSeconds;
-            var progress = phase.DurationSeconds > 0f
-                ? MathF.Max(0f, MathF.Min(1f, (_elapsed - phaseStart) / phase.DurationSeconds))
+            var closingDuration = MathF.Max(0f, phase.DurationSeconds - MathF.Min(phase.DurationSeconds, phase.WarningSeconds));
+            var progress = closingDuration > 0f
+                ? MathF.Max(0f, MathF.Min(1f, (_elapsed - phaseStart - phase.WarningSeconds) / closingDuration))
                 : 1f;
             return phase.Radius + ((next.Radius - phase.Radius) * progress);
+        }
+
+        private AandhiState GetAandhiState(out float warningRemainingSeconds)
+        {
+            warningRemainingSeconds = 0f;
+            var phaseIndex = FindPhaseIndex(_elapsed);
+            if (phaseIndex < 0 || phaseIndex + 1 >= _definition.Phases.Length) return AandhiState.Stable;
+            var phase = _definition.Phases[phaseIndex];
+            var next = _definition.Phases[phaseIndex + 1];
+            if (MathF.Abs(next.Radius - phase.Radius) <= 0.0001f) return AandhiState.Stable;
+
+            var phaseStart = 0f;
+            for (var i = 0; i < phaseIndex; i++) phaseStart += _definition.Phases[i].DurationSeconds;
+            var phaseElapsed = MathF.Max(0f, _elapsed - phaseStart);
+            if (phaseElapsed < phase.WarningSeconds)
+            {
+                warningRemainingSeconds = phase.WarningSeconds - phaseElapsed;
+                return AandhiState.Warning;
+            }
+
+            return AandhiState.Closing;
         }
 
         private float GetNextZoneRadius()
@@ -331,12 +435,13 @@ namespace BattleRaja.Core.Domain
         private int CompareTimeoutRanking(ParticipantState left, ParticipantState right)
         {
             // Timeout ranking order: alive status (all candidates are alive here),
-            // current-health percentage, eliminations, distance to the final zone
+            // current-health percentage, eliminations, damage dealt, distance to the final zone
             // centre, then ascending entity id as the deterministic final tie-break.
             var leftHealth = (long)left.CurrentHealth * right.MaxHealth;
             var rightHealth = (long)right.CurrentHealth * left.MaxHealth;
             if (leftHealth != rightHealth) return leftHealth > rightHealth ? -1 : 1;
             if (left.Eliminations != right.Eliminations) return right.Eliminations.CompareTo(left.Eliminations);
+            if (left.DamageDealt != right.DamageDealt) return right.DamageDealt.CompareTo(left.DamageDealt);
 
             var leftDistance = Float2.Distance(left.Position, _definition.ZoneCenter);
             var rightDistance = Float2.Distance(right.Position, _definition.ZoneCenter);
@@ -350,6 +455,7 @@ namespace BattleRaja.Core.Domain
             if (!participant.Alive) return;
             participant.Alive = false;
             participant.Placement = _nextPlacement--;
+            participant.SurvivalTimeSeconds = _elapsed;
         }
 
         private CombatEntityId FindWinner()
@@ -377,6 +483,7 @@ namespace BattleRaja.Core.Domain
                 MaxHealth = Math.Max(1, spawn.MaxHealth);
                 CurrentHealth = MaxHealth;
                 Alive = true;
+                SurvivalTimeSeconds = 0f;
             }
 
             public CombatEntityId Id;
@@ -386,8 +493,27 @@ namespace BattleRaja.Core.Domain
             public bool Alive;
             public int Placement;
             public int Eliminations;
+            public int DamageDealt;
+            public int Assists;
+            public float SurvivalTimeSeconds;
 
-            public MatchParticipantSnapshot ToSnapshot() => new MatchParticipantSnapshot(Id, Position, CurrentHealth, MaxHealth, Alive, Placement, Eliminations);
+            public MatchParticipantSnapshot ToSnapshot() => new MatchParticipantSnapshot(
+                Id,
+                Position,
+                CurrentHealth,
+                MaxHealth,
+                Alive,
+                Placement,
+                Eliminations,
+                DamageDealt,
+                Assists,
+                SurvivalTimeSeconds);
+        }
+
+        private static int SaturatingAdd(int value, int amount)
+        {
+            if (amount > 0 && value > int.MaxValue - amount) return int.MaxValue;
+            return value + amount;
         }
     }
 

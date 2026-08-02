@@ -33,6 +33,8 @@ namespace BattleRaja.Presentation.Match
         public Float2 ZoneCenter { get; private set; }
         public Float2 NextZoneCenter { get; private set; }
         public float NextZoneRadius { get; private set; }
+        public AandhiState AandhiState { get; private set; }
+        public float AandhiWarningRemainingSeconds { get; private set; }
         public int AliveCount => Simulation != null ? Simulation.AliveCount : 0;
         public bool PlayerSpectating => _playerSpectating;
         public bool ResultsShown => _resultsShown;
@@ -50,6 +52,14 @@ namespace BattleRaja.Presentation.Match
             if (autoStart)
             {
                 StartMatch();
+            }
+        }
+
+        private void OnDestroy()
+        {
+            for (var i = 0; i < _actors.Count; i++)
+            {
+                _actors[i].Health.DamageApplied -= OnDamageApplied;
             }
         }
 
@@ -76,6 +86,8 @@ namespace BattleRaja.Presentation.Match
                 NextZoneCenter = tick.ZoneCenter;
                 ZoneRadius = tick.ZoneRadius;
                 NextZoneRadius = tick.NextZoneRadius;
+                AandhiState = tick.AandhiState;
+                AandhiWarningRemainingSeconds = tick.WarningRemainingSeconds;
                 if (authorityTick.OutsideDamageRequests.Length > 0)
                 {
                     ApplyOutsideDamage(authorityTick);
@@ -104,6 +116,8 @@ namespace BattleRaja.Presentation.Match
             NextZoneCenter = Float2.Zero;
             ZoneRadius = 0f;
             NextZoneRadius = 0f;
+            AandhiState = AandhiState.Stable;
+            AandhiWarningRemainingSeconds = 0f;
             _playerSpectating = false;
             _resultsShown = false;
             Results = null;
@@ -131,6 +145,11 @@ namespace BattleRaja.Presentation.Match
 
         private void CacheActors()
         {
+            for (var i = 0; i < _actors.Count; i++)
+            {
+                _actors[i].Health.DamageApplied -= OnDamageApplied;
+            }
+
             _actors.Clear();
             var agents = FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None).OrderBy(agent => agent.ActorId);
             foreach (var agent in agents)
@@ -139,9 +158,15 @@ namespace BattleRaja.Presentation.Match
                 var health = agent.GetComponent<CombatHealth>();
                 if (target != null && health != null)
                 {
+                    health.DamageApplied += OnDamageApplied;
                     _actors.Add(new MatchActorBinding(agent.transform, target, health, agent.GetComponent<PlayerInputAdapter>()));
                 }
             }
+        }
+
+        private void OnDamageApplied(CombatDamageEvent damageEvent)
+        {
+            Simulation?.RecordDamage(damageEvent);
         }
 
         private void ApplyOutsideDamage(MatchAuthorityTick authorityTick)

@@ -12,7 +12,8 @@ namespace BattleRaja.Presentation.Combat
             CombatTarget target,
             DamageRequest request,
             bool allowSelfHit,
-            bool allowFriendlyFire)
+            bool allowFriendlyFire,
+            int simulationTick = 0)
         {
             if (target == null || target.Health == null)
             {
@@ -36,7 +37,8 @@ namespace BattleRaja.Presentation.Combat
                 target.Id,
                 target.Faction,
                 allowSelfHit,
-                allowFriendlyFire);
+                allowFriendlyFire,
+                simulationTick);
         }
     }
 }

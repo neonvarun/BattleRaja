@@ -11,6 +11,7 @@ namespace BattleRaja.Presentation.Combat
         private HealthState _state;
 
         public event Action<DamageResult> DamageResolved;
+        public event Action<CombatDamageEvent> DamageApplied;
         public HealthSnapshot Snapshot => _state != null ? _state.Snapshot : new HealthSnapshot(maxHealth, maxHealth);
         public int MaxHealth => maxHealth;
 
@@ -25,7 +26,8 @@ namespace BattleRaja.Presentation.Combat
             CombatEntityId targetId,
             CombatFaction targetFaction,
             bool allowSelfHit,
-            bool allowFriendlyFire)
+            bool allowFriendlyFire,
+            int simulationTick = 0)
         {
             var result = pipeline.Apply(
                 request,
@@ -37,6 +39,12 @@ namespace BattleRaja.Presentation.Combat
             if (result.Applied)
             {
                 DamageResolved?.Invoke(result);
+                DamageApplied?.Invoke(new CombatDamageEvent(
+                    request,
+                    result.AmountApplied,
+                    result.TargetDefeated,
+                    _state.Snapshot.CurrentHealth,
+                    simulationTick));
             }
 
             return result;
