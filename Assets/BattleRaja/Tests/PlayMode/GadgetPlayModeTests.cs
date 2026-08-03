@@ -38,11 +38,37 @@ namespace BattleRaja.Tests.PlayMode
         {
             foreach (var bot in Object.FindObjectsByType<BotBrain>(FindObjectsSortMode.None)) bot.enabled = false;
             var user = PlayModeTestHelpers.FindPlayer<GadgetUser>();
-            var pickup = Object.FindObjectsByType<GadgetPickup>(FindObjectsSortMode.None)[1];
+            var pickup = System.Linq.Enumerable.First(
+                Object.FindObjectsByType<GadgetPickup>(FindObjectsSortMode.None),
+                candidate => candidate.GadgetId.Equals(GadgetDefinition.DholBurst.GadgetId));
             Assert.That(user.TryPickup(pickup.GadgetId), Is.True);
             Assert.That(user.UseHeld(), Is.True);
             Assert.That(user.HasGadget, Is.False);
             yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator PlayerCanCollectSpatialGadgetThroughMatchAuthority()
+        {
+            foreach (var bot in Object.FindObjectsByType<BotBrain>(FindObjectsSortMode.None)) bot.enabled = false;
+            var user = PlayModeTestHelpers.FindPlayer<GadgetUser>();
+            var player = PlayModeTestHelpers.FindPlayer<MovementPlayerAgent>();
+            var match = Object.FindAnyObjectByType<BattleRaja.Presentation.Match.OfflineMatchController>();
+            var pickup = System.Linq.Enumerable.First(
+                Object.FindObjectsByType<GadgetPickup>(FindObjectsSortMode.None),
+                candidate => candidate.GadgetId.Equals(GadgetDefinition.DholBurst.GadgetId));
+
+            player.ExternalCommandMode = true;
+            pickup.transform.position = player.transform.position;
+            match.StartMatch();
+            yield return new WaitForSeconds(0.2f);
+
+            Assert.That(user.HasGadget, Is.True,
+                $"feedback={user.Feedback} player={player.transform.position} pickup={pickup.transform.position} active={pickup.IsAvailable}");
+            Assert.That(user.HeldGadget, Is.EqualTo(GadgetDefinition.DholBurst.GadgetId));
+            Assert.That(pickup.IsAvailable, Is.False);
+            Assert.That(user.UseHeld(), Is.True);
+            Assert.That(user.HasGadget, Is.False);
         }
 
         [UnityTest]

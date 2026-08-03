@@ -124,8 +124,7 @@ namespace BattleRaja.Presentation.Match
                 UpdateSpectator(tick);
                 if (tick.MatchEnded)
                 {
-                    Results = Simulation.GetSnapshots();
-                    _resultsShown = true;
+                    PublishResults();
                     break;
                 }
             }
@@ -228,6 +227,17 @@ namespace BattleRaja.Presentation.Match
         private void OnDamageApplied(CombatDamageEvent damageEvent)
         {
             Simulation?.RecordDamage(damageEvent);
+            if (Simulation != null && Simulation.IsEnded)
+            {
+                PublishResults();
+            }
+        }
+
+        private void PublishResults()
+        {
+            if (_resultsShown || Simulation == null) return;
+            Results = Simulation.GetSnapshots();
+            _resultsShown = true;
         }
 
         private void ApplyOutsideDamage(MatchAuthorityTick authorityTick)

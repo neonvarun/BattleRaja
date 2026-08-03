@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Linq;
+using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Match;
 using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Movement;
@@ -7,6 +8,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using UnityEngine.UI;
 
 namespace BattleRaja.Tests.PlayMode
 {
@@ -56,6 +58,57 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(tick.MatchEnded, Is.True);
             Assert.That(simulation.GetSnapshots().Count(snapshot => snapshot.Placement == 1), Is.EqualTo(1));
             yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator LiveResultsSurfaceAppearsAndRematchReloadsMatch()
+        {
+            PlayModeTestHelpers.DisableBots();
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            var resolver = Object.FindFirstObjectByType<CombatDamageResolver>();
+            var player = Object.FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None)
+                .First(agent => agent.ActorId == 1);
+            var source = player.GetComponent<CombatTarget>();
+            var targets = Object.FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None)
+                .Where(agent => agent.ActorId != 1)
+                .Select(agent => agent.GetComponent<CombatTarget>())
+                .Where(target => target != null)
+                .ToArray();
+
+            for (var i = 0; i < targets.Length; i++)
+            {
+                resolver.Resolve(
+                    targets[i],
+                    new DamageRequest(
+                        source.Id,
+                        targets[i].Id,
+                        source.Faction,
+                        1000,
+                        DamageType.Ability,
+                        Float2.Up,
+                        1),
+                    allowSelfHit: false,
+                    allowFriendlyFire: false,
+                    simulationTick: 1);
+            }
+
+            yield return new WaitForSeconds(0.25f);
+
+            Assert.That(match.ResultsShown, Is.True);
+            var panel = GameObject.Find("ResultsPanel");
+            Assert.That(panel, Is.Not.Null);
+            Assert.That(panel.activeSelf, Is.True);
+            Assert.That(panel.transform.Find("ResultsText").GetComponent<Text>().text, Does.Contain("RESULTS"));
+
+            var rematch = panel.transform.Find("Rematch").GetComponent<Button>();
+            rematch.onClick.Invoke();
+            yield return new WaitForSeconds(0.5f);
+
+            var reloaded = Object.FindAnyObjectByType<OfflineMatchController>();
+            Assert.That(SceneManager.GetActiveScene().name, Is.EqualTo("MovementLab"));
+            Assert.That(reloaded, Is.Not.Null);
+            Assert.That(reloaded.ResultsShown, Is.False);
+            Assert.That(reloaded.AliveCount, Is.EqualTo(8));
         }
 
         [UnityTest]
