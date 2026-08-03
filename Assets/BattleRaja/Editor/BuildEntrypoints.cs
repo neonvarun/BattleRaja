@@ -582,6 +582,7 @@ namespace BattleRaja.Editor
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WebGL, BuildTarget.WebGL);
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
+            PlayerSettings.WebGL.template = "PROJECT:BattleRaja";
             Build("Builds/M11/Web", BuildTarget.WebGL);
         }
 
@@ -591,6 +592,7 @@ namespace BattleRaja.Editor
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WebGL, BuildTarget.WebGL);
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
+            PlayerSettings.WebGL.template = "PROJECT:BattleRaja";
             Build("Builds/M11/Web", BuildTarget.WebGL);
         }
 
@@ -619,6 +621,7 @@ namespace BattleRaja.Editor
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WebGL, BuildTarget.WebGL);
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
+            PlayerSettings.WebGL.template = "PROJECT:BattleRaja";
             Build("Builds/M11/Web-BazaarBastion", BuildTarget.WebGL, BootstrapScenePath, TutorialArenaScenePath, BazaarBastionScenePath);
         }
 

@@ -5,6 +5,7 @@ using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Match;
 using BattleRaja.Presentation.Visuals;
 using BattleRaja.Presentation.Gadgets;
+using BattleRaja.Presentation.Movement;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -86,6 +87,16 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(Object.FindFirstObjectByType<OfflineMatchController>(), Is.Not.Null);
             Assert.That(Object.FindObjectsByType<GadgetUser>(FindObjectsSortMode.None), Has.Length.EqualTo(8));
             yield return null;
+        }
+
+        [Test]
+        public void NarrowViewportsExpandOrthographicFramingWithoutChangingLandscapeSize()
+        {
+            var landscape = TopDownCameraController.CalculateResponsiveOrthographicSize(9.5f, 16f / 9f, 16f / 9f);
+            var portrait = TopDownCameraController.CalculateResponsiveOrthographicSize(9.5f, 390f / 600f, 16f / 9f);
+
+            Assert.That(landscape, Is.EqualTo(9.5f).Within(0.0001f));
+            Assert.That(portrait, Is.GreaterThan(landscape));
         }
     }
 }
