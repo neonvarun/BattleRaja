@@ -92,6 +92,12 @@ namespace BattleRaja.Presentation.Combat
             return _state.Heal(amount);
         }
 
+        public void SetAuthoritativeHealth(int currentHealth)
+        {
+            if (_state == null) _state = new HealthState(maxHealth);
+            _state.SetCurrentHealth(currentHealth);
+        }
+
         public void SetMaxHealthForGadget(int value)
         {
             maxHealth = Mathf.Max(1, value);

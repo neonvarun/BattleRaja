@@ -111,7 +111,6 @@ namespace BattleRaja.Presentation.Match
                 {
                     var actor = _actors[i];
                     _authority.SetPosition(actor.Target.Id, new Float2(actor.Transform.position.x, actor.Transform.position.z));
-                    _authority.SyncHealth(actor.Target.Id, actor.Health.Snapshot.CurrentHealth);
                 }
 
                 var authorityTick = _authority.Advance(simulationTick, (float)_simulationClock.StepSeconds);
@@ -251,7 +250,11 @@ namespace BattleRaja.Presentation.Match
             {
                 var intent = authorityTick.GadgetHealingIntents[i];
                 var actor = _actors.FirstOrDefault(binding => binding.Target.Id == intent.TargetId);
-                actor?.Health.Heal(intent.Amount);
+                if (actor != null)
+                {
+                    _authority.ApplyHealing(intent.TargetId, intent.Amount);
+                    ApplyAuthoritativeHealth(actor);
+                }
             }
 
             if (authorityTick.ExpiredStationIds.Length == 0) return;
@@ -279,7 +282,8 @@ namespace BattleRaja.Presentation.Match
                 var actor = _actors.FirstOrDefault(binding => binding.Target.Id == collection.CollectorId);
                 if (actor != null)
                 {
-                    actor.Health.Heal(collection.HealAmount);
+                    _authority.ApplyHealing(collection.CollectorId, collection.HealAmount);
+                    ApplyAuthoritativeHealth(actor);
                 }
                 if (pickups != null && collection.PickupId >= 0 && collection.PickupId < pickups.Length)
                 {
@@ -330,6 +334,20 @@ namespace BattleRaja.Presentation.Match
                 var next = SpectatorTargetSelector.SelectNext(Simulation.GetSnapshots(), player.Target.Id);
                 var actor = _actors.FirstOrDefault(binding => binding.Target.Id == next);
                 if (actor != null) cameraController?.SetFollowTarget(actor.Transform);
+            }
+        }
+
+        private void ApplyAuthoritativeHealth(MatchActorBinding actor)
+        {
+            if (actor == null || Simulation == null) return;
+            var snapshots = Simulation.GetSnapshots();
+            for (var i = 0; i < snapshots.Length; i++)
+            {
+                if (snapshots[i].Id == actor.Target.Id)
+                {
+                    actor.Health.SetAuthoritativeHealth(snapshots[i].CurrentHealth);
+                    return;
+                }
             }
         }
 

@@ -284,6 +284,16 @@ namespace BattleRaja.Core.Domain
             return true;
         }
 
+        public int Heal(CombatEntityId id, int amount)
+        {
+            if (amount <= 0) return 0;
+            var participant = Find(id);
+            if (participant == null || !participant.Alive) return 0;
+            var applied = Math.Min(amount, participant.MaxHealth - participant.CurrentHealth);
+            participant.CurrentHealth += applied;
+            return applied;
+        }
+
         public bool RecordDamage(CombatDamageEvent damageEvent)
         {
             if (!_started || damageEvent.AmountApplied <= 0) return false;

@@ -124,6 +124,23 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void MatchAuthorityAppliesHealingToCanonicalHealth()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(4f, 0f), 100)
+            });
+            authority.SyncHealth(new CombatEntityId(1), 40);
+
+            Assert.That(authority.ApplyHealing(new CombatEntityId(1), 25), Is.EqualTo(25));
+            Assert.That(authority.Simulation.GetSnapshots().Single(snapshot => snapshot.Id.Value == 1).CurrentHealth, Is.EqualTo(65));
+            Assert.That(authority.ApplyHealing(new CombatEntityId(1), 50), Is.EqualTo(35));
+            Assert.That(authority.ApplyHealing(new CombatEntityId(2), 20), Is.EqualTo(0));
+        }
+
+        [Test]
         public void MatchAuthorityOwnsGadgetUseAndRejectsDuplicateCommands()
         {
             var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);

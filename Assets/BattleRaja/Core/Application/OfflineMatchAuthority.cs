@@ -141,6 +141,8 @@ namespace BattleRaja.Core.Application
 
         public bool SyncHealth(CombatEntityId id, int currentHealth) => RequireSimulation().SyncHealth(id, currentHealth);
 
+        public int ApplyHealing(CombatEntityId id, int amount) => RequireSimulation().Heal(id, amount);
+
         /// <summary>
         /// Routes a resolved combat event through the authority-owned match simulation.
         /// Presentation may report immutable events, but it cannot mutate placements or
