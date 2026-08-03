@@ -2,9 +2,29 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated runtime source HEAD: `a170746` (`feat: label touch combat controls`)
-Latest runtime-bearing candidate: `a170746` (Android/Web candidates with readable touch-action labels)
+Latest validated runtime source HEAD: `08c6f2e` (`refactor: resolve actor damage in match authority`)
+Latest runtime-bearing candidate: `08c6f2e` (authority-first actor damage Android/Web candidates)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
+
+## Authority-first actor damage continuation (`08c6f2e`, 2026-08-03)
+
+Production actor damage now resolves against `OfflineMatchAuthority` and canonical
+simulation health/statistics before Unity applies the returned snapshot/event to the
+view. Non-authority lab targets continue through the local presentation pipeline.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | `Tools\\Validation\\validate.ps1 -ProjectRoot .` — 0 errors, 0 warnings; `git diff --check` clean | command output from 2026-08-03 |
+| EditMode tests | 96 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/authority-damage-editmode-20260803.xml` |
+| PlayMode tests | 48 passed, 0 failed, 0 skipped, including authority-first actor damage and existing results/rematch/Maya coverage | `Builds/M11/TestResults/authority-damage-playmode-20260803.xml` |
+| Android build | `BattleRaja-M11.apk`, 151,414,630 bytes; SHA-256 `5BF1657D1BDA0D059E72C48A6D85AA03441C6096DFFD679E4A8146FC6996B6C4` | `Builds/M11/Logs/android-build.log` |
+| Lava smoke | Exact APK installed/launched only on `ST5GDW23LB004392` (`LAVA LXX508`); Unity activity remained resumed and no sampled fatal crash marker was found | ADB output from 2026-08-03 |
+| Android visual inspection | Portrait live match remains readable with labeled touch controls after the authority change | `Docs/QA/Visual/Phase7/android-lava-authority-damage-20260803.png` |
+| Web build/serve | 21 files, 133,372,172 bytes; `Web.wasm` SHA-256 `9D2101263269276649D596A9F8A229F97B6447483B9D0B20CDFB8E45B3C7C8E7`; local port 8137 returned HTTP 200 | `Builds/M11/Logs/web-build.log`, `Builds/M11/Web` |
+
+This closes the duplicate/late actor-damage accounting gap for the offline authority.
+Movement authority, health/pickup reconciliation, remaining gadget presentation adapters,
+real Photon transport and final network/server authority remain open.
 
 ## Touch-control readability continuation (`a170746`, 2026-08-03)
 

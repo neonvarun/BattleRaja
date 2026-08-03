@@ -1,10 +1,20 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-03
-Runtime-bearing candidate: `a170746` (touch-control readability continuation)
-Current validated runtime source HEAD: `a170746`
+Runtime-bearing candidate: `08c6f2e` (authority-first actor damage continuation)
+Current validated runtime source HEAD: `08c6f2e`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://127.0.0.1:8139/index.html`
+
+## Authority-first actor damage continuation (`08c6f2e`)
+
+- The latest Android candidate was installed/launched only on Lava
+  `ST5GDW23LB004392` (`LAVA LXX508`). The inspected portrait live-match screenshot
+  confirms the existing readable touch controls remain present after the authority
+  migration: `Phase7/android-lava-authority-damage-20260803.png`.
+- This is a runtime smoke/readability observation, not final visual approval. The
+  authority change is functional; touch ergonomics, loading, gadget use, multi-browser
+  coverage and human presentation review remain open.
 
 ## Touch-control readability continuation (`a170746`)
 

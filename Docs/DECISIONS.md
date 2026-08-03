@@ -866,3 +866,27 @@ Record every material choice here. Do not silently overwrite old decisions.
   `AuthorityFoundationTests.MatchAuthorityRoutesDamageEventsAndRejectsDuplicateEliminations`,
   `Builds/M11/TestResults/authority-routing-editmode-20260803.xml` and the latest baseline.
 - **Owner:** Human project owner
+
+### ADR-043 — Resolve production actor damage before Unity view mutation
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical slice; movement reconciliation, network
+  transport and remaining presentation adapters remain future work.
+- **Context:** The previous event bridge applied damage to a Unity `CombatHealth` first and
+  then reported the resulting event to the match simulation. That ordering made a view-side
+  health mutation precede canonical statistics/elimination state and could double-count or
+  accept late events.
+- **Decision:** `OfflineMatchAuthority.ResolveDamage` validates mitigation and applies actor
+  damage to the pure simulation first. `CombatDamageResolver` applies only the returned
+  authoritative health snapshot/event to registered match actors; non-authority lab targets
+  continue through the local pipeline. Results are published immediately when an authoritative
+  damage event ends the match.
+- **Consequences:** Production actor damage, eliminations, placements and statistics no longer
+  depend on a controller callback after view mutation. `SyncHealth` remains a transitional
+  reconciliation seam for the offline adapter, and real server authority is not implied.
+- **Evidence/sources:** `OfflineMatchAuthority.ResolveDamage`, `OfflineMatchSimulation.ApplyDamage`,
+  `CombatHealth.ApplyAuthoritativeDamage`, `AuthorityFoundationTests`,
+  `OfflineMatchPlayModeTests.CombatDamageResolverAppliesAuthorityDamageOnceToViewAndSnapshot`,
+  `Builds/M11/TestResults/authority-damage-editmode-20260803.xml`,
+  `Builds/M11/TestResults/authority-damage-playmode-20260803.xml` and the latest baseline.
+- **Owner:** Human project owner
