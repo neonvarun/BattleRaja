@@ -3,7 +3,7 @@
 Updated: 2026-08-03
 Classification: **prototype**
 
-Latest continuation: `d1b33d1` + `4d3ae6a` + `ff2a3e4` + `8645254` + `044b1b8` (2026-08-03). Production-flow
+Latest continuation: `d1b33d1` + `4d3ae6a` + `ff2a3e4` + `8645254` + `044b1b8` + `2809165` (2026-08-03). Production-flow
 EventSystem creation is Input System-only, the live HUD reflects the selected fighter,
 and resolved combat events enter through the match authority boundary.
 

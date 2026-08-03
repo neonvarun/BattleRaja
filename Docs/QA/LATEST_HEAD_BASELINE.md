@@ -29,6 +29,9 @@ approval. Gadget pickup/use remains an evidence gap; Android touch ergonomics re
 open for owner review. The known Unity API-obsolescence and Web persistent-data-path
 warnings are non-fatal and are not counted as product crashes.
 
+The repository then received docs/CI-only commit `2809165`; it does not change the
+runtime-bearing code or the Android/Web artifact hashes recorded above.
+
 ## Production-flow continuation (`d1b33d1` + `4d3ae6a`)
 
 The production flow now creates `InputSystemUIInputModule` when it has to create an
