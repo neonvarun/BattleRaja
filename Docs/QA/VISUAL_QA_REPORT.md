@@ -1,10 +1,10 @@
 # BattleRaja visual and interaction QA report
 
-Date: 2026-08-03  
-Runtime-bearing candidate: `4391f09` (`feat: add replayable tutorial arena`)  
-Current source HEAD: `a9c93fc` (authority/test continuation after the runtime-bearing candidate)
-Unity: `6000.5.6f1`  
-Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://localhost:8124/index.html`
+Date: 2026-08-03
+Runtime-bearing candidate: `67a4d40` (`fix: make gameplay framing and web host responsive`)
+Current source HEAD: `67a4d40` (responsive camera/template continuation after the station-authority baseline)
+Unity: `6000.5.6f1`
+Web candidate: `Builds/M11/Web` served over local HTTP at `http://127.0.0.1:8137/index.html`
 
 ## Test surface
 
@@ -19,6 +19,7 @@ The Playwright CLI loaded the WebGL candidate and exercised the required desktop
 | Mode selection | Observed | `playwright-1280x720-mode-selection.png`; offline/online labels and back control are readable. |
 | Fighter selection | Observed | `playwright-1280x720-fighter-selection.png` and `playwright-1024x768-fighter-selection.png`; Bijli, Pehel and Maya choices remain readable. |
 | Match opening | Observed | `playwright-1920x1080-match-opening.png`, `playwright-1440x900-match-opening.png`, `playwright-1280x720-match-opening.png` and `playwright-1024x768-match-opening.png`; actors, HUD, controls and arena render without desktop clipping. |
+| Responsive portrait gameplay host | Observed | Fresh `playwright-390x844-responsive-gameplay.png` capture from the responsive Web template and orthographic framing path; the canvas fills the portrait viewport without the earlier fixed 960×600 horizontal crop. |
 | Active combat | Observed | `playwright-1280x720-active-pressure.png`; fighters, projectiles/telegraphs and HUD remain visible during live pressure. |
 | Aandhi pressure | Observed | `playwright-1280x720-aandhi-pressure.png`; the HUD reports `CLOSING` and the zone values change. |
 | Gadget pickup/use | Not verified | `playwright-1280x720-gadget-prompt.png` captures the honest tutorial prompt, but the smoke path continued to show `GADGET [G] empty`; no successful pickup/use was captured. |
@@ -31,11 +32,11 @@ The Playwright CLI loaded the WebGL candidate and exercised the required desktop
 
 - No blank canvas, missing-material screen or browser fatal error was observed in the tested route.
 - Menu, mode, fighter, settings and error labels remain inside the tested desktop canvases.
-- The supported `390×844` portrait menu fits, but portrait gameplay is horizontally cropped (`playwright-390x844-match-crop.png`) and the tutorial overlay is clipped (`playwright-390x844-tutorial-crop.png`). Mobile Web is therefore not a passing layout target.
+- The responsive Web template and orthographic camera path remove the earlier fixed-canvas portrait crop; `playwright-390x844-responsive-gameplay.png` shows the live match filling the tested viewport. The HUD remains dense and the tutorial overlay, touch ergonomics and mobile-Web quality still require review.
 - The match HUD is visibly dense: the top-left status strings are close together and the pause/settings panel covers gameplay. This remains prototype-quality presentation, not visual approval.
 - Touch controls occupy meaningful screen area and should be reviewed on the Lava phone before any release claim.
 - Gadget success and results/rematch remain evidence gaps rather than passed states. Spectator is technically observed, but still needs human UX review.
 
 ## Gate decision
 
-Phase 7 is **In progress**, not passed. Desktop viewport coverage is now evidenced, but portrait gameplay fails responsive layout, the loading/gadget/results surfaces remain incomplete, and final visual quality, mobile ergonomics and human UX approval are still open.
+Phase 7 is **In progress**, not passed. Desktop and responsive portrait framing are now evidenced, but the loading/gadget/results surfaces remain incomplete, the prototype HUD is dense, and final visual quality, mobile ergonomics and human UX approval are still open.

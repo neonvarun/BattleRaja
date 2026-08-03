@@ -667,3 +667,25 @@ Record every material choice here. Do not silently overwrite old decisions.
   `CombatDamageResolver`, `AuthorityFoundationTests`, `GadgetPlayModeTests`, and the
   `phase1-station-authority-*` test/build evidence in `Docs/QA/LATEST_HEAD_BASELINE.md`.
 - **Owner:** Human project owner
+
+### ADR-034 — Keep Web host and orthographic gameplay framing responsive
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the Phase 7 visual continuation; mobile-Web quality and final
+  human UX approval remain open.
+- **Context:** The built-in Web template emitted a fixed 960×600 desktop canvas. At a
+  390×844 browser viewport, the host introduced a horizontal crop even after the game
+  camera had enough world framing to support the portrait aspect.
+- **Decision:** Copy Unity's installed Default Web template into the project as
+  `Assets/WebGLTemplates/BattleRaja`, select it with the project template path, and let
+  the desktop/resized canvas fill the host viewport. `TopDownCameraController` expands
+  orthographic size only for aspects narrower than the 16:9 reference, preserving the
+  existing landscape framing while keeping more of the arena visible in portrait.
+- **Consequences:** Browser layout and gameplay projection now respond together and are
+  testable with a 390×844 Playwright smoke. This does not certify touch ergonomics,
+  tutorial/results layout, mobile-Web performance or final visual quality.
+- **Evidence/sources:** `Assets/WebGLTemplates/BattleRaja`, `BuildEntrypoints`,
+  `TopDownCameraController`, `VerticalSlicePlayModeTests`,
+  `playwright-390x844-responsive-gameplay.png` and the `phase7-responsive-*` evidence
+  in `Docs/QA/LATEST_HEAD_BASELINE.md`.
+- **Owner:** Human project owner

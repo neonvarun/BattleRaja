@@ -305,3 +305,35 @@ authority reports destruction.
 
 This is authority/test/build evidence only. It does not establish final visual quality,
 physical-device validation, performance, real Photon multiplayer or PlayFab integration.
+
+## Responsive Web framing continuation (`67a4d40`)
+
+- Repository validation: `BattleRaja.Editor.BuildEntrypoints.ValidateProject` exited 0
+  with the expected non-fatal Unity licensing/import messages; no project validation
+  errors or warnings were reported.
+- EditMode: 87 passed, 0 failed, 0 skipped
+  (`Builds/M11/TestResults/phase7-responsive-editmode-20260803.xml`).
+- PlayMode: 36 passed, 0 failed, 0 skipped
+  (`Builds/M11/TestResults/phase7-responsive-playmode-20260803.xml`). The added
+  framing assertion covers unchanged 16:9 size and expanded narrow-viewport framing.
+- Android: fresh development IL2CPP build succeeded under Unity 6000.5.6f1
+  (`Builds/M11/Logs/phase7-responsive-android-20260803.log`). `Builds/M11/Android/
+  BattleRaja-M11.apk` is 151,288,356 bytes; SHA-256
+  `1F9A7E6DAF65AE963E167FE8D055AE8C94757C4A2E9EE1ECE8B2BCDCA24BEA9F`. This exact
+  APK was not installed; the Lava-only physical-device gate remains open because
+  serial `ST5GDW23LB004392` was not connected.
+- Web: fresh development build succeeded with the project-owned responsive template
+  (`Builds/M11/Logs/phase7-responsive-web-v2-20260803.log`). The output contains 21
+  files totaling 133,184,187 bytes; `Build/Web.wasm` is 120,493,105 bytes with
+  SHA-256 `027599E8E1A201157C86305DA775A8F500048E89E9318FA002DE812E68186E74`.
+- Browser smoke: local HTTP `http://127.0.0.1:8137/index.html` returned 200. A fresh
+  Playwright run at 390×844 captured `Docs/QA/Visual/Phase7/
+  playwright-390x844-responsive-gameplay.png`; the responsive host and camera framing
+  fill the portrait viewport without the earlier fixed 960×600 horizontal crop. The
+  capture still shows prototype-density HUD and is not mobile-Web or final visual
+  approval.
+- Boundary: this is responsive framing and build evidence only. Gadget success,
+  loading/results surfaces, touch ergonomics, physical Lava validation, performance,
+  real Photon and PlayFab remain open or externally blocked. Build-generated changes
+  to `Bootstrap.unity` and `TutorialArena.unity` were restored because those files
+  were clean before the baseline.
