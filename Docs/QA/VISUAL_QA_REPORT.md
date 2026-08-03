@@ -1,10 +1,21 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-03
-Runtime-bearing candidate: `3e00b02` (Web input-focus continuation)
-Current source HEAD: `3e00b02`
+Runtime-bearing candidate: `5f4566d` (Input System-only continuation)
+Current source HEAD: `5f4566d`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web` served over local HTTP at `http://127.0.0.1:8137/index.html`
+
+## Input System-only continuation (`5f4566d`)
+
+- The active input handler is now Input System only. Generated EventSystems use
+  `InputSystemUIInputModule`; older serialized scenes are adapted at load by the
+  compatibility bridge. This is a technical input-path validation, not final UX approval.
+- The exact development APK installed/launched only on Lava
+  `ST5GDW23LB004392` (`LAVA LXX508`) and remained alive under the sampled log window.
+- The Web candidate returned HTTP 200 on port 8137 after the input migration. Browser
+  focus, touch ergonomics, gadget use, Results/rematch capture and human visual approval
+  remain open.
 
 ## Web input-focus continuation (`3e00b02`)
 

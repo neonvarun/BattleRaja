@@ -2,8 +2,8 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `3e00b02` (`fix: restore Web canvas input focus`)
-Latest runtime-bearing candidate: `3e00b02` (Web focus hardening; Android runtime unchanged)
+Latest validated source HEAD: `5f4566d` (`fix: make project input-system only`)
+Latest runtime-bearing candidate: `5f4566d` (Input System-only Android/Web candidate)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
 ## Scope and repository note
@@ -11,6 +11,26 @@ Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.
 The requested goal path `Docs/AI/RepositoryAuditAndCompletionGoal.md` is absent. The matching file `Docs/AI/BattleRaja_Repository_Audit_and_Completion_Goal.md` was read in full and used as the authoritative continuation brief. This path discrepancy remains a documentation issue; no source from the requested path was available.
 
 The baseline intentionally excludes unrelated working-tree changes in `Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity` and `Data/Plugins/lib_burst_generated.wasm`. Those files were not staged or altered by this baseline work.
+
+## Input System-only continuation (`5f4566d`)
+
+The project now uses Unity's Input System as the active handler. Generated scenes use
+`InputSystemUIInputModule`, audio gesture detection uses Input System device state, and a
+scene-load bridge keeps older serialized scenes runnable without rewriting their YAML.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings | command output from 2026-08-03 |
+| PlayMode tests | 45 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/input-system-playmode-fixed-20260803.xml` |
+| EditMode baseline | 94 passed, 0 failed, 0 skipped on the immediately preceding rebaseline; a fresh invocation was blocked by pre-existing Unity editor processes holding the project lock | `Builds/M11/TestResults/rebaseline-editmode-20260803.xml` |
+| Android development build | Unity log reports `Build Finished, Result: Success`; APK 151,373,009 bytes; SHA-256 `60AEF8C395B21E9C0CA5EF142411AB57214A9B2D50053BE5FF623544CF2D9812` | `Builds/M11/Logs/android-build.log`, `Builds/M11/Android/BattleRaja-M11.apk` |
+| Lava smoke | Exact APK installed/launched only on Lava `ST5GDW23LB004392` (`LAVA LXX508`), process `23328`; sampled log has no fatal exception, SIGSEGV or missing-component marker | ADB command output from 2026-08-03 |
+| Web development build | Unity log reports `Build Finished, Result: Success`; 21 files, 133,358,665 bytes; WASM 120,658,772 bytes; SHA-256 `790349B1D3203B173EDF8075D827426DD20AD74737C99FB7567C52E2FD54B5E2` | `Builds/M11/Logs/web-build.log`, `Builds/M11/Web/Build/Web.wasm` |
+| Local Web serve | `http://127.0.0.1:8137/index.html` returned HTTP 200 | local HTTP check from 2026-08-03 |
+
+The Web build log also contains the expected local websockify `EADDRINUSE` warning on
+port 35020 because another local wrapper already owned that port; Unity completed the
+player build successfully. Existing compiler deprecation warnings remain technical debt.
 
 ## Fresh latest-HEAD rebaseline (`9291d85`)
 

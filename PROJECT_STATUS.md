@@ -143,8 +143,9 @@
   and unavailable crash adapter are compile-safe and service-neutral.
 - Closed-test, rollback/support, store-draft and privacy/data-safety worksheets are in `Docs/`.
 - M11 artifact, test and smoke evidence is recorded in `Docs/MILESTONE_REPORTS/M11.md`.
-- Current continuation HEAD `3e00b02` includes functional bounded aim assist,
+- Current continuation HEAD `5f4566d` includes functional bounded aim assist,
   authoritative offline assist attribution and focus-hardened Web keyboard/pointer input
+  plus an Input System-only project baseline with legacy-scene compatibility bridge,
   in addition to the authority-driven spatial gadget collection
   coverage, immediate live Results/Rematch publication, three repeated rematch cleanup
   cycles and the complete eight-step tutorial walkthrough. Fresh latest-HEAD regression
