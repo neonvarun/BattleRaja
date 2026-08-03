@@ -1,4 +1,5 @@
 using BattleRaja.Core.Domain;
+using BattleRaja.Core.Application;
 using BattleRaja.Presentation.Movement;
 using BattleRaja.Presentation.Match;
 using BattleRaja.Presentation.Visuals;
@@ -35,10 +36,22 @@ namespace BattleRaja.Presentation.Combat
 
         public ContentId AbilityId => _special.AbilityId;
         public FighterDefinition Definition => _definition;
-        public ChargeThrowState ActionState => _runtime != null ? _runtime.State : ChargeThrowState.Ready;
-        public CombatEntityId CapturedTargetId => _runtime != null ? _runtime.CapturedTargetId : default;
-        public float AbilityCooldownRemaining => _runtime != null ? _runtime.CooldownRemaining : 0f;
-        public bool IsMovementLocked => _runtime != null && _runtime.IsMovementLocked;
+        public ChargeThrowState ActionState => UsesAuthorityCharge
+            ? _match.GetPehelChargeState(OwnerId).State
+            : _runtime != null ? _runtime.State : ChargeThrowState.Ready;
+        public CombatEntityId CapturedTargetId => UsesAuthorityCharge
+            ? _match.GetPehelChargeState(OwnerId).CapturedTargetId
+            : _runtime != null ? _runtime.CapturedTargetId : default;
+        public float AbilityCooldownRemaining => UsesAuthorityCharge
+            ? _match.GetPehelChargeState(OwnerId).CooldownRemaining
+            : _runtime != null ? _runtime.CooldownRemaining : 0f;
+        public bool IsMovementLocked => UsesAuthorityCharge
+            ? ActionState != ChargeThrowState.Ready && ActionState != ChargeThrowState.Cooldown
+            : _runtime != null && _runtime.IsMovementLocked;
+
+        private CombatEntityId OwnerId => new CombatEntityId(movementAgent != null ? movementAgent.ActorId : 1);
+        private bool UsesAuthorityCharge => movementAgent != null && movementAgent.AuthorityDrivenMovement &&
+            _match != null && _match.Simulation != null;
 
         private void Awake()
         {
@@ -79,6 +92,22 @@ namespace BattleRaja.Presentation.Combat
                     _abilityQueued = false;
                 }
 
+                if (UsesAuthorityCharge)
+                {
+                    var authorityStep = _match.AdvancePehelCharge(
+                        OwnerId,
+                        simulationTick,
+                        (float)_clock.StepSeconds,
+                        _special.Magnitude);
+                    if (authorityStep.ActorDisplacement.Applied)
+                    {
+                        movementAgent.ApplyAuthoritativePosition(authorityStep.ActorDisplacement.Position);
+                    }
+
+                    ApplyAuthorityResult(authorityStep);
+                    continue;
+                }
+
                 var step = _runtime.Step((float)_clock.StepSeconds, ComputeAvailableDistance(_runtime.Direction));
                 if (step.Displacement.SqrMagnitude > 0.000001f && characterController != null)
                 {
@@ -100,6 +129,16 @@ namespace BattleRaja.Presentation.Combat
             if (_runtime == null) return;
             var movement = inputAdapter != null ? inputAdapter.ReadInput().Movement : Float2.Zero;
             var facing = movementAgent != null ? movementAgent.AimDirection : Float2.Up;
+            if (UsesAuthorityCharge)
+            {
+                if (_match.TryStartPehelCharge(command, movement, facing))
+                {
+                    GetComponent<FighterPresentation>()?.NotifyAbility();
+                }
+
+                return;
+            }
+
             if (_runtime.TryStart(command, movement, facing))
             {
                 GetComponent<FighterPresentation>()?.NotifyAbility();
@@ -111,6 +150,49 @@ namespace BattleRaja.Presentation.Combat
             _runtime?.Reset();
             _abilityHeld = false;
             _abilityQueued = false;
+        }
+
+        private void ApplyAuthorityResult(MatchAuthorityChargeThrow authorityStep)
+        {
+            if (authorityStep.HasDamage)
+            {
+                var targets = FindObjectsByType<CombatTarget>(FindObjectsSortMode.None);
+                for (var i = 0; i < targets.Length; i++)
+                {
+                    var target = targets[i];
+                    if (target == null || target.Id != authorityStep.Damage.Request.TargetId) continue;
+                    target.Health?.ApplyAuthoritativeDamage(
+                        authorityStep.Damage.Request,
+                        authorityStep.Damage.Result,
+                        authorityStep.Damage.CurrentHealthAfter,
+                        authorityStep.SimulationTick);
+                    break;
+                }
+            }
+
+            if (!authorityStep.HasTargetDisplacement) return;
+            var targetObjects = FindObjectsByType<CombatTarget>(FindObjectsSortMode.None);
+            for (var i = 0; i < targetObjects.Length; i++)
+            {
+                var target = targetObjects[i];
+                if (target == null || target.Id != authorityStep.TargetDisplacement.ActorId) continue;
+                var agent = target.GetComponent<MovementPlayerAgent>();
+                if (agent != null && agent.AuthorityDrivenMovement)
+                {
+                    agent.ApplyAuthoritativePosition(authorityStep.TargetDisplacement.Position);
+                }
+                else
+                {
+                    var position = target.transform.position;
+                    target.transform.position = new Vector3(
+                        authorityStep.TargetDisplacement.Position.X,
+                        position.y,
+                        authorityStep.TargetDisplacement.Position.Y);
+                    Physics.SyncTransforms();
+                }
+
+                break;
+            }
         }
 
         private void TryCaptureTarget()

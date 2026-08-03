@@ -1063,3 +1063,29 @@ Record every material choice here. Do not silently overwrite old decisions.
   `Builds/M11/TestResults/bazaar-prefab-playmode-full-20260803.xml` and the latest
   baseline.
 - **Owner:** Human project owner
+
+### ADR-051 — Resolve production Pehel charge throw in match authority
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical slice; world-collision projection,
+  transport replication and final ability presentation remain future work.
+- **Context:** Production Pehel previously advanced its charge runtime and selected
+  capture targets inside `PehelFighterController`. That made the visible controller the
+  source of target selection, damage and throw displacement, even though Bazaar movement
+  was already canonical in `OfflineMatchAuthority`.
+- **Decision:** Register authenticated participant factions with the authority and keep a
+  `ChargeThrowRuntime` per Pehel actor in `OfflineMatchAuthority`. The authority validates
+  the common ability command and tick, selects the nearest living enemy from canonical
+  snapshots with an entity-id tie-break, applies ability damage, and commits throw
+  displacement before returning an immutable `MatchAuthorityChargeThrow`. The Unity
+  controller consumes those results only to update health/transform views; MovementLab
+  retains the non-authority local runtime fallback.
+- **Consequences:** Production Pehel cooldown/state, capture, damage and throw position no
+  longer depend on a client collider query or local ability runtime. The authority still
+  receives a fixed offline arena-distance budget because the offline domain has no world
+  collision map; this is not a real Fusion server implementation.
+- **Evidence/sources:** `OfflineMatchAuthority.TryStartPehelCharge`,
+  `OfflineMatchAuthority.AdvancePehelCharge`, `PehelFighterController`,
+  `AuthorityFoundationTests.AuthorityOwnsPehelChargeCaptureDamageAndThrowDisplacement`,
+  and the next full EditMode/PlayMode baseline.
+- **Owner:** Human project owner

@@ -75,6 +75,29 @@ namespace BattleRaja.Presentation.Match
                 : default(MatchAuthorityDisplacement);
         }
 
+        public bool TryStartPehelCharge(AbilityCommand command, Float2 movement, Float2 facing)
+        {
+            return _authority != null && _authority.TryStartPehelCharge(command, movement, facing);
+        }
+
+        public MatchAuthorityChargeThrowState GetPehelChargeState(CombatEntityId actorId)
+        {
+            return _authority != null
+                ? _authority.GetPehelChargeState(actorId)
+                : new MatchAuthorityChargeThrowState(actorId, ChargeThrowState.Ready, default(CombatEntityId), 0f);
+        }
+
+        public MatchAuthorityChargeThrow AdvancePehelCharge(
+            CombatEntityId actorId,
+            int simulationTick,
+            float fixedDeltaSeconds,
+            float availableDistance)
+        {
+            return _authority != null
+                ? _authority.AdvancePehelCharge(actorId, simulationTick, fixedDeltaSeconds, availableDistance)
+                : default(MatchAuthorityChargeThrow);
+        }
+
         public bool IsAuthorityActor(CombatEntityId actorId)
         {
             return _authority != null && _authority.HasParticipant(actorId);
@@ -250,6 +273,7 @@ namespace BattleRaja.Presentation.Match
             for (var i = 0; i < _actors.Count; i++)
             {
                 var actor = _actors[i];
+                _authority.ConfigureFaction(actor.Target.Id, actor.Target.Faction);
                 actor.Agent.AuthorityDrivenMovement = authorityDrivenMovement;
                 if (authorityDrivenMovement)
                 {

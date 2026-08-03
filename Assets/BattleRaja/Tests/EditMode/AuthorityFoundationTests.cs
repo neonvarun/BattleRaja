@@ -129,6 +129,48 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void AuthorityOwnsPehelChargeCaptureDamageAndThrowDisplacement()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            var pehelId = new CombatEntityId(1);
+            var targetId = new CombatEntityId(2);
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(pehelId, new Float2(-6f, 0f), 125),
+                new MatchSpawn(targetId, new Float2(6f, 0f), 100)
+            });
+            authority.ConfigureFaction(pehelId, CombatFaction.Enemy);
+            authority.ConfigureFaction(targetId, CombatFaction.Player);
+            authority.SetPosition(targetId, new Float2(-4.4f, 0f));
+
+            var command = new AbilityCommand(
+                pehelId,
+                1,
+                FighterSpecialDefinition.PehelChargeThrow.AbilityId,
+                new Float2(1f, 0f),
+                true);
+            Assert.That(authority.TryStartPehelCharge(command, new Float2(1f, 0f), new Float2(1f, 0f)), Is.True);
+            Assert.That(authority.TryStartPehelCharge(command, new Float2(1f, 0f), new Float2(1f, 0f)), Is.False);
+
+            MatchAuthorityChargeThrow thrown = default(MatchAuthorityChargeThrow);
+            for (var tick = 1; tick <= 30; tick++)
+            {
+                thrown = authority.AdvancePehelCharge(pehelId, tick, 1f / 30f, 3.2f);
+                if (thrown.HasDamage) break;
+            }
+
+            Assert.That(thrown.Accepted, Is.True);
+            Assert.That(thrown.HasDamage, Is.True);
+            Assert.That(thrown.Damage.Result.Applied, Is.True);
+            Assert.That(thrown.Damage.Result.AmountApplied, Is.EqualTo(FighterSpecialDefinition.PehelChargeThrow.Magnitude));
+            Assert.That(thrown.HasTargetDisplacement, Is.True);
+            Assert.That(thrown.TargetDisplacement.Position.X, Is.GreaterThan(-4.4f));
+            Assert.That(authority.Simulation.TryGetSnapshot(targetId, out var target), Is.True);
+            Assert.That(target.CurrentHealth, Is.EqualTo(97));
+            Assert.That(authority.GetPehelChargeState(pehelId).CapturedTargetId, Is.EqualTo(targetId));
+        }
+
+        [Test]
         public void MatchAuthorityOwnsPickupAvailabilityAndGadgetCollection()
         {
             var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja, 1f);

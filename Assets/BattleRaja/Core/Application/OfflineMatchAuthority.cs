@@ -99,6 +99,66 @@ namespace BattleRaja.Core.Application
         public float CooldownRemaining { get; }
     }
 
+    /// <summary>
+    /// Immutable result of one authority-owned Pehel charge step. The Unity
+    /// controller consumes these view instructions; it does not decide the
+    /// captured target, damage, or throw position.
+    /// </summary>
+    public readonly struct MatchAuthorityChargeThrow
+    {
+        public MatchAuthorityChargeThrow(
+            CombatEntityId actorId,
+            int simulationTick,
+            bool accepted,
+            ChargeThrowStep step,
+            MatchAuthorityDamage damage,
+            bool hasDamage,
+            MatchAuthorityDisplacement actorDisplacement,
+            MatchAuthorityDisplacement targetDisplacement,
+            bool hasTargetDisplacement)
+        {
+            ActorId = actorId;
+            SimulationTick = simulationTick;
+            Accepted = accepted;
+            Step = step;
+            Damage = damage;
+            HasDamage = hasDamage;
+            ActorDisplacement = actorDisplacement;
+            TargetDisplacement = targetDisplacement;
+            HasTargetDisplacement = hasTargetDisplacement;
+        }
+
+        public CombatEntityId ActorId { get; }
+        public int SimulationTick { get; }
+        public bool Accepted { get; }
+        public ChargeThrowStep Step { get; }
+        public MatchAuthorityDamage Damage { get; }
+        public bool HasDamage { get; }
+        public MatchAuthorityDisplacement ActorDisplacement { get; }
+        public MatchAuthorityDisplacement TargetDisplacement { get; }
+        public bool HasTargetDisplacement { get; }
+    }
+
+    public readonly struct MatchAuthorityChargeThrowState
+    {
+        public MatchAuthorityChargeThrowState(
+            CombatEntityId actorId,
+            ChargeThrowState state,
+            CombatEntityId capturedTargetId,
+            float cooldownRemaining)
+        {
+            ActorId = actorId;
+            State = state;
+            CapturedTargetId = capturedTargetId;
+            CooldownRemaining = cooldownRemaining;
+        }
+
+        public CombatEntityId ActorId { get; }
+        public ChargeThrowState State { get; }
+        public CombatEntityId CapturedTargetId { get; }
+        public float CooldownRemaining { get; }
+    }
+
     public readonly struct MatchAuthorityTick
     {
         public MatchAuthorityTick(MatchTickResult result, DamageRequest[] outsideDamageRequests)
@@ -151,6 +211,11 @@ namespace BattleRaja.Core.Application
         private readonly Dictionary<CombatEntityId, MovementTuning> _movementTunings = new Dictionary<CombatEntityId, MovementTuning>();
         private readonly Dictionary<CombatEntityId, int> _lastMovementTicks = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<CombatEntityId, int> _lastAbilityDisplacementTicks = new Dictionary<CombatEntityId, int>();
+        private readonly Dictionary<CombatEntityId, ChargeThrowRuntime> _pehelChargeRuntimes = new Dictionary<CombatEntityId, ChargeThrowRuntime>();
+        private readonly Dictionary<CombatEntityId, int> _lastPehelCommandTicks = new Dictionary<CombatEntityId, int>();
+        private readonly Dictionary<CombatEntityId, int> _lastPehelStepTicks = new Dictionary<CombatEntityId, int>();
+        private readonly Dictionary<CombatEntityId, int> _lastPehelThrowTicks = new Dictionary<CombatEntityId, int>();
+        private readonly Dictionary<CombatEntityId, CombatFaction> _participantFactions = new Dictionary<CombatEntityId, CombatFaction>();
         private readonly Dictionary<CombatEntityId, DecoyRuntime> _mayaDecoys = new Dictionary<CombatEntityId, DecoyRuntime>();
         private readonly Dictionary<CombatEntityId, int> _lastDecoySpawnTicks = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<CombatEntityId, int> _lastDecoyDamageTicks = new Dictionary<CombatEntityId, int>();
@@ -216,6 +281,11 @@ namespace BattleRaja.Core.Application
             _movementTunings.Clear();
             _lastMovementTicks.Clear();
             _lastAbilityDisplacementTicks.Clear();
+            _pehelChargeRuntimes.Clear();
+            _lastPehelCommandTicks.Clear();
+            _lastPehelStepTicks.Clear();
+            _lastPehelThrowTicks.Clear();
+            _participantFactions.Clear();
             _mayaDecoys.Clear();
             _lastDecoySpawnTicks.Clear();
             _lastDecoyDamageTicks.Clear();
@@ -235,6 +305,21 @@ namespace BattleRaja.Core.Application
             _outsideDamageAccumulator = 0d;
             _lastSimulationTick = -1;
             _nextStationId = 1;
+        }
+
+        /// <summary>
+        /// Registers the server-owned faction for a participant. Network
+        /// adapters must populate this from authenticated match data rather
+        /// than accepting a client-supplied faction on an ability command.
+        /// </summary>
+        public void ConfigureFaction(CombatEntityId actorId, CombatFaction faction)
+        {
+            if (!HasParticipant(actorId))
+            {
+                throw new ArgumentException("Faction can only be configured for a registered match participant.", nameof(actorId));
+            }
+
+            _participantFactions[actorId] = faction;
         }
 
         public bool SetPosition(CombatEntityId id, Float2 position) => RequireSimulation().SetPosition(id, position);
@@ -310,6 +395,250 @@ namespace BattleRaja.Core.Application
 
             _lastAbilityDisplacementTicks[actorId] = simulationTick;
             return new MatchAuthorityDisplacement(actorId, simulationTick, true, displacement, position);
+        }
+
+        /// <summary>
+        /// Starts Pehel's charge in the authority-owned runtime. The
+        /// presentation controller submits only the common command and local
+        /// input context; cooldown and state validation stay here.
+        /// </summary>
+        public bool TryStartPehelCharge(AbilityCommand command, Float2 movement, Float2 facing)
+        {
+            if (!command.Pressed || !command.AbilityId.Equals(FighterSpecialDefinition.PehelChargeThrow.AbilityId) ||
+                command.SimulationTick < 0 ||
+                (_lastPehelCommandTicks.TryGetValue(command.InstigatorId, out var lastTick) && command.SimulationTick <= lastTick) ||
+                !RequireSimulation().TryGetSnapshot(command.InstigatorId, out var snapshot) ||
+                !snapshot.Alive)
+            {
+                return false;
+            }
+
+            if (!_pehelChargeRuntimes.TryGetValue(command.InstigatorId, out var runtime))
+            {
+                runtime = new ChargeThrowRuntime(FighterSpecialDefinition.PehelChargeThrow);
+                _pehelChargeRuntimes[command.InstigatorId] = runtime;
+            }
+
+            if (!runtime.TryStart(command, movement, facing)) return false;
+            _lastPehelCommandTicks[command.InstigatorId] = command.SimulationTick;
+            return true;
+        }
+
+        public MatchAuthorityChargeThrowState GetPehelChargeState(CombatEntityId actorId)
+        {
+            if (!_pehelChargeRuntimes.TryGetValue(actorId, out var runtime))
+            {
+                return new MatchAuthorityChargeThrowState(
+                    actorId,
+                    ChargeThrowState.Ready,
+                    default(CombatEntityId),
+                    0f);
+            }
+
+            return new MatchAuthorityChargeThrowState(
+                actorId,
+                runtime.State,
+                runtime.CapturedTargetId,
+                runtime.CooldownRemaining);
+        }
+
+        /// <summary>
+        /// Advances one fixed Pehel step and resolves capture, damage and
+        /// throw displacement against canonical participant snapshots.
+        /// </summary>
+        public MatchAuthorityChargeThrow AdvancePehelCharge(
+            CombatEntityId actorId,
+            int simulationTick,
+            float fixedDeltaSeconds,
+            float availableDistance)
+        {
+            var runtime = _pehelChargeRuntimes.TryGetValue(actorId, out var found)
+                ? found
+                : null;
+            if (runtime == null || simulationTick < 0 ||
+                !_lastPehelCommandTicks.TryGetValue(actorId, out var lastCommandTick) ||
+                simulationTick < lastCommandTick)
+            {
+                return EmptyChargeThrow(actorId, simulationTick, runtime);
+            }
+
+            if (_lastPehelStepTicks.TryGetValue(actorId, out var lastStepTick) && simulationTick <= lastStepTick)
+            {
+                return EmptyChargeThrow(actorId, simulationTick, runtime);
+            }
+
+            if (!RequireSimulation().TryGetSnapshot(actorId, out var actorSnapshot) || !actorSnapshot.Alive)
+            {
+                return EmptyChargeThrow(actorId, simulationTick, runtime);
+            }
+
+            var step = runtime.Step(fixedDeltaSeconds, availableDistance);
+            _lastPehelStepTicks[actorId] = simulationTick;
+            var actorDisplacement = new MatchAuthorityDisplacement(
+                actorId,
+                simulationTick,
+                false,
+                Float2.Zero,
+                actorSnapshot.Position);
+            if (step.Displacement.SqrMagnitude > 0.000001f)
+            {
+                var position = actorSnapshot.Position + step.Displacement;
+                if (RequireSimulation().SetPosition(actorId, position))
+                {
+                    actorDisplacement = new MatchAuthorityDisplacement(
+                        actorId,
+                        simulationTick,
+                        true,
+                        step.Displacement,
+                        position);
+                }
+            }
+
+            // Capture is selected from authority snapshots, not from a client
+            // collider hit. The nearest living enemy wins deterministic ties by
+            // entity id, and the runtime itself rejects duplicate capture.
+            if (step.State == ChargeThrowState.Active)
+            {
+                TryCaptureNearestPehelTarget(actorId, runtime);
+            }
+
+            var damage = default(MatchAuthorityDamage);
+            var hasDamage = false;
+            var targetDisplacement = default(MatchAuthorityDisplacement);
+            var hasTargetDisplacement = false;
+            if (step.ThrowTriggered && step.CapturedTargetId.Value > 0)
+            {
+                hasDamage = TryResolvePehelThrow(
+                    actorId,
+                    simulationTick,
+                    runtime.Direction,
+                    step.CapturedTargetId,
+                    out damage,
+                    out targetDisplacement);
+                hasTargetDisplacement = targetDisplacement.Applied;
+            }
+
+            return new MatchAuthorityChargeThrow(
+                actorId,
+                simulationTick,
+                true,
+                step,
+                damage,
+                hasDamage,
+                actorDisplacement,
+                targetDisplacement,
+                hasTargetDisplacement);
+        }
+
+        private MatchAuthorityChargeThrow EmptyChargeThrow(
+            CombatEntityId actorId,
+            int simulationTick,
+            ChargeThrowRuntime runtime)
+        {
+            var state = runtime != null
+                ? new ChargeThrowStep(runtime.State, Float2.Zero, runtime.CapturedTargetId, false, false)
+                : default(ChargeThrowStep);
+            return new MatchAuthorityChargeThrow(
+                actorId,
+                simulationTick,
+                false,
+                state,
+                default(MatchAuthorityDamage),
+                false,
+                default(MatchAuthorityDisplacement),
+                default(MatchAuthorityDisplacement),
+                false);
+        }
+
+        private bool TryCaptureNearestPehelTarget(
+            CombatEntityId actorId,
+            ChargeThrowRuntime runtime)
+        {
+            if (!_participantFactions.TryGetValue(actorId, out var sourceFaction)) return false;
+            var simulation = RequireSimulation();
+            if (!simulation.TryGetSnapshot(actorId, out var source) || !source.Alive) return false;
+
+            var snapshots = simulation.GetSnapshots();
+            var best = default(MatchParticipantSnapshot);
+            var bestDistance = float.MaxValue;
+            var found = false;
+            for (var i = 0; i < snapshots.Length; i++)
+            {
+                var candidate = snapshots[i];
+                if (!candidate.Alive || candidate.Id == actorId ||
+                    !_participantFactions.TryGetValue(candidate.Id, out var targetFaction) ||
+                    targetFaction == sourceFaction)
+                {
+                    continue;
+                }
+
+                var distance = Float2.Distance(source.Position, candidate.Position);
+                if (distance > runtime.Definition.Radius ||
+                    (found && (distance > bestDistance ||
+                        (Math.Abs(distance - bestDistance) <= 0.0001f && candidate.Id.Value >= best.Id.Value))))
+                {
+                    continue;
+                }
+
+                best = candidate;
+                bestDistance = distance;
+                found = true;
+            }
+
+            if (!found || !_participantFactions.TryGetValue(best.Id, out var bestFaction)) return false;
+            return runtime.TryCaptureTarget(best.Id, sourceFaction, bestFaction, bestDistance);
+        }
+
+        private bool TryResolvePehelThrow(
+            CombatEntityId actorId,
+            int simulationTick,
+            Float2 direction,
+            CombatEntityId targetId,
+            out MatchAuthorityDamage damage,
+            out MatchAuthorityDisplacement targetDisplacement)
+        {
+            damage = default(MatchAuthorityDamage);
+            targetDisplacement = default(MatchAuthorityDisplacement);
+            if (_lastPehelThrowTicks.TryGetValue(actorId, out var lastThrowTick) && simulationTick <= lastThrowTick)
+            {
+                return false;
+            }
+
+            var simulation = RequireSimulation();
+            if (!_participantFactions.TryGetValue(actorId, out var sourceFaction) ||
+                !_participantFactions.TryGetValue(targetId, out var targetFaction) ||
+                !simulation.TryGetSnapshot(targetId, out var target) || !target.Alive)
+            {
+                _lastPehelThrowTicks[actorId] = simulationTick;
+                return false;
+            }
+
+            var request = new DamageRequest(
+                actorId,
+                targetId,
+                sourceFaction,
+                FighterSpecialDefinition.PehelChargeThrow.Magnitude,
+                DamageType.Ability,
+                direction,
+                simulationTick);
+            var result = simulation.ApplyDamage(request, targetFaction, false, false);
+            _lastPehelThrowTicks[actorId] = simulationTick;
+            var after = simulation.TryGetSnapshot(targetId, out var afterSnapshot)
+                ? afterSnapshot
+                : target;
+            damage = new MatchAuthorityDamage(request, result, after.CurrentHealth);
+            if (!result.Applied) return false;
+
+            var displacement = direction.Normalized * (FighterSpecialDefinition.PehelChargeThrow.Magnitude * 0.25f);
+            var position = after.Position + displacement;
+            if (!simulation.SetPosition(targetId, position)) return false;
+            targetDisplacement = new MatchAuthorityDisplacement(
+                targetId,
+                simulationTick,
+                true,
+                displacement,
+                position);
+            return true;
         }
 
         public MatchAuthorityDecoy TrySpawnMayaDecoy(

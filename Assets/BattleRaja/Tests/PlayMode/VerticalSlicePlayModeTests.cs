@@ -266,6 +266,47 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator ProductionPehelChargeThrowUsesAuthoritySnapshots()
+        {
+            var match = Object.FindFirstObjectByType<OfflineMatchController>();
+            var pehel = Object.FindObjectsByType<PehelFighterController>(FindObjectsSortMode.None)
+                .First(controller => controller.GetComponent<MovementPlayerAgent>()?.AuthorityDrivenMovement == true);
+            var pehelAgent = pehel.GetComponent<MovementPlayerAgent>();
+            var player = PlayModeTestHelpers.FindPlayer<CombatTarget>();
+            var playerAgent = player.GetComponent<MovementPlayerAgent>();
+            Assert.That(match, Is.Not.Null);
+            Assert.That(pehelAgent, Is.Not.Null);
+            Assert.That(player, Is.Not.Null);
+            Assert.That(playerAgent, Is.Not.Null);
+
+            var pehelPosition = new Float2(-4f, 0f);
+            var playerPosition = new Float2(-2.6f, 0f);
+            match.Simulation.SetPosition(pehelAgent.ActorId > 0 ? new CombatEntityId(pehelAgent.ActorId) : default, pehelPosition);
+            match.Simulation.SetPosition(player.Id, playerPosition);
+            pehelAgent.ApplyAuthoritativePosition(pehelPosition);
+            playerAgent.ApplyAuthoritativePosition(playerPosition);
+            pehelAgent.ResetMovement(new Float2(1f, 0f));
+            playerAgent.ResetMovement(Float2.Up);
+            Physics.SyncTransforms();
+
+            var beforeHealth = player.Health.Snapshot.CurrentHealth;
+            pehel.Submit(AbilityCommandFactory.Create(
+                new CombatEntityId(pehelAgent.ActorId),
+                1,
+                pehel.AbilityId,
+                new Float2(1f, 0f),
+                true));
+
+            yield return new WaitForSecondsRealtime(0.9f);
+
+            Assert.That(pehel.CapturedTargetId, Is.EqualTo(player.Id));
+            Assert.That(player.Health.Snapshot.CurrentHealth, Is.LessThan(beforeHealth));
+            Assert.That(pehel.AbilityCooldownRemaining, Is.GreaterThan(0f));
+            Assert.That(match.Simulation.TryGetSnapshot(player.Id, out var targetSnapshot), Is.True);
+            Assert.That(targetSnapshot.Position.X, Is.GreaterThan(playerPosition.X));
+        }
+
+        [UnityTest]
         public IEnumerator ProductionMayaDecoyRoutesLifetimeAndDamageThroughAuthority()
         {
             var match = Object.FindFirstObjectByType<OfflineMatchController>();
