@@ -9,8 +9,10 @@
 - Product vision: drafted
 - Autonomous M1–M11 sequential execution: active; milestone gates and external
   service approvals remain explicit.
-- Latest validated runtime source HEAD: `d993a5b`; the current repository includes
-  the authority-driven Maya decoy continuation after fighter displacement, Dhol, production movement and authority-first damage/healing checkpoints; production-flow EventSystem creation is
+- Latest validated runtime source HEAD: `26b11cc`; the current repository includes
+  the explicit Bazaar production-scene contract after the authority-driven Maya decoy,
+  fighter displacement, Dhol, production movement and authority-first damage/healing
+  checkpoints; production-flow EventSystem creation is
   Input System-only and the selected-fighter HUD path is covered by the current
   regression suite; Maya decoy perception refresh and authority-routed combat events are
   covered by regression.
@@ -38,7 +40,8 @@
   online-alpha completion is blocked by the M8 real-session precondition
 - M10: backend-neutral identity/progression interfaces and deterministic fake are present;
   real PlayFab integration is blocked pending title/account/secret approval
-- M11: release-candidate preparation, analytics/crash/release seams and truthful draft docs
+- M11: release-candidate preparation, analytics/crash/release seams, explicit Bazaar scene
+  boundary and truthful draft docs
   are present; publication, signing, online services and human/legal gates remain open
 - Backend/economy: deliberately deferred
 - Final art/audio/animation: not started

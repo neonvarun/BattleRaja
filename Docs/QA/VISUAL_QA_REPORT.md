@@ -1,10 +1,21 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-03
-Runtime-bearing candidate: `d993a5b` (authority-first Maya decoy continuation)
-Current validated runtime source HEAD: `d993a5b`
+Runtime-bearing candidate: `26b11cc` (Bazaar production-scene contract continuation; prior artifact candidate remains `d993a5b`)
+Current validated runtime source HEAD: `26b11cc`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web` served over local HTTP at `http://127.0.0.1:8137/index.html`
+
+## Bazaar production-scene contract continuation (`26b11cc`)
+
+- The production scene now has a dedicated `BazaarBastionScene` contract and no
+  `MovementLabScene` marker. This is a structural/runtime-boundary change; no fresh
+  Android or Web artifact was built for it.
+- Full EditMode (100/100), full PlayMode (51/51) and focused Bazaar PlayMode (15/15)
+  passed. These are functional checks, not visual approval.
+- The latest inspected Android/Web artifacts remain the `d993a5b` authority-Maya
+  candidates below. Greybox presentation, authored art/audio, touch ergonomics,
+  multi-browser parity and human review remain open.
 
 ## Authority-driven Maya decoy runtime smoke (`d993a5b`)
 

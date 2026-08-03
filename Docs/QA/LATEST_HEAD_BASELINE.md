@@ -2,9 +2,26 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated runtime source HEAD: `d993a5b` (`refactor: route Maya decoy through authority`)
-Latest runtime-bearing candidate: `d993a5b` (authority-first movement/gadget/fighter displacement/Maya decoy/damage/healing Android/Web candidates)
+Latest validated runtime source HEAD: `26b11cc` (`refactor: separate Bazaar production scene contract`)
+Latest runtime-bearing candidate: `26b11cc` (explicit Bazaar production-scene boundary after the authority-first movement/gadget/fighter displacement/Maya decoy/damage/healing candidates)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
+
+## Bazaar production-scene contract continuation (`26b11cc`, 2026-08-03)
+
+`BazaarBastion.unity` now carries a dedicated `BazaarBastionScene` contract and no longer
+serializes the `MovementLabScene` marker. The editor entrypoint opens the existing Bazaar
+scene instead of copying the user-owned MovementLab fixture, preserves TutorialArena in
+build settings, and creates Bazaar architecture idempotently. This is a scene-boundary
+hardening step, not prefab extraction or final-art evidence.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings; `git diff --check` clean | command output from 2026-08-03 |
+| Focused production PlayMode | 15 passed, 0 failed, 0 skipped (`VerticalSlicePlayModeTests`) | `Builds/M11/TestResults/bazaar-boundary-playmode-final-20260803.xml` |
+| Full EditMode regression | 100 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/bazaar-boundary-editmode-full-20260803.xml` |
+| Full PlayMode regression | 51 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/bazaar-boundary-playmode-full-20260803.xml` |
+| Scene boundary | One `BazaarBastionScene`, zero `MovementLabScene` markers, one `BazaarArchitecture`, and serialized player/camera/match/projectile/damage references | `Assets/BattleRaja/Scenes/Gameplay/BazaarBastion.unity`, `VerticalSlicePlayModeTests` |
+| Artifact/runtime scope | No Android/Web rebuild for this scene-only continuation; prior `d993a5b` Lava/Web smoke remains the latest artifact evidence | `Docs/QA/LATEST_HEAD_BASELINE.md` authority-Maya section |
 
 ## Authority-driven Maya decoy continuation (`d993a5b`, 2026-08-03)
 

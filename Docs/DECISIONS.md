@@ -1014,3 +1014,28 @@ Record every material choice here. Do not silently overwrite old decisions.
   `VerticalSlicePlayModeTests.ProductionMayaDecoyRoutesLifetimeAndDamageThroughAuthority`,
   and the latest baseline.
 - **Owner:** Human project owner
+
+### ADR-049 — Give Bazaar Bastion its own production-scene contract
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical slice; prefab extraction and network
+  transport remain future work.
+- **Context:** `CreateBazaarBastionScene` recreated the production scene by copying
+  `MovementLab.unity`, and the resulting Bazaar scene retained a `MovementLabScene`
+  marker. That coupled production serialization to a lab fixture and made rerunning the
+  editor entrypoint capable of importing unrelated lab changes or dropping build scenes.
+- **Decision:** The entrypoint now opens the existing `BazaarBastion.unity`, validates and
+  updates its production graph in place, removes the lab-only marker, and serializes a
+  `BazaarBastionScene` contract with player, camera, match, projectile-pool and damage
+  resolver references. Architecture creation is idempotent, and TutorialArena remains
+  in EditorBuildSettings. MovementLab remains an independent observation fixture.
+- **Consequences:** Production scene ownership is explicit and rerunnable without copying
+  user-owned lab serialization. The scene is still greybox and project gameplay actors are
+  not yet extracted into reusable prefabs; those remain the next production-content step.
+- **Evidence/sources:** `BuildEntrypoints.CreateBazaarBastionScene`,
+  `BazaarBastionScene`, `BazaarBastion.unity`,
+  `VerticalSlicePlayModeTests.ProductionSceneUsesFighterSpecificAbilityControllers`,
+  `Builds/M11/TestResults/bazaar-boundary-playmode-final-20260803.xml`,
+  `Builds/M11/TestResults/bazaar-boundary-editmode-full-20260803.xml` and the latest
+  baseline.
+- **Owner:** Human project owner
