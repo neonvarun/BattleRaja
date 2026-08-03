@@ -2,8 +2,8 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `a9c93fc` (`fix: forward station damage through authority`)
-Latest runtime-bearing candidate: `4391f09` (`feat: add replayable tutorial arena`)
+Latest validated source HEAD: `a245f24` (`fix: preserve fixed tick identities across render steps`)
+Latest runtime-bearing candidate: `a245f24`
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
 ## Scope and repository note
@@ -12,7 +12,31 @@ The requested goal path `Docs/AI/RepositoryAuditAndCompletionGoal.md` is absent.
 
 The baseline intentionally excludes unrelated working-tree changes in `Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity` and `Data/Plugins/lib_burst_generated.wasm`. Those files were not staged or altered by this baseline work.
 
-## Validation results
+## Fresh latest-HEAD continuation (`a245f24`)
+
+This section supersedes the older historical checkpoint below for the current source
+HEAD. The Android/Web artifacts and test results below were generated before the final
+fixed-tick correction commit; the corrected artifacts are recorded in the fixed-tick
+phase section after the historical tables.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings | command output from 2026-08-03 |
+| EditMode tests | 89 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/fixed-tick-runtime-editmode-20260803.xml` |
+| PlayMode tests | 37 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/fixed-tick-runtime-playmode-20260803.xml` |
+| Android development build | Unity exit 0; IL2CPP APK 151,318,469 bytes; SHA-256 `154F0F81FA6F068302FC57A6513A6C38CB4A7A8298C856264A04B14EE796574F` | `Builds/M11/Logs/fixed-tick-runtime-android-20260803.log` |
+| Web development build | Unity exit 0; 21 files, 133,187,266 bytes; WASM 120,495,480 bytes; SHA-256 `F02758353612C68904777C2F25F4F56E22DA4225F0F426A205792BE41E111EC6` | `Builds/M11/Logs/fixed-tick-runtime-web-20260803.log` |
+| Local Web serve | `http://127.0.0.1:8137/index.html` returned HTTP 200 | local HTTP check from 2026-08-03 |
+| Browser runtime | Fresh Playwright load reached the live MovementLab match; inspected capture has no blank canvas and console error/warning scan returned 0 | `Docs/QA/Visual/Phase7/playwright-1000x1000-fixed-tick-46a3d1e.png` |
+| Photon/package check | Unity `6000.5.6f1`; Fusion build `2.1.1 Stable 2177`; Input System `1.20.0`; URP `17.5.0`; Test Framework `1.7.0` | `Assets/Photon/Fusion/build_info.txt`, `Packages/manifest.json` |
+| Android device inventory | `adb devices -l` showed Lava `ST5GDW23LB004392` and Oppo `b60e53b3`; only the Lava serial was used | ADB output from 2026-08-03 |
+| Lava smoke result | Exact fixed-tick APK installed/launched on Lava; focused activity `com.example.battleraja.m11/com.unity3d.player.UnityPlayerGameActivity`; no monotonic-tick exception in the current Unity process | `Docs/QA/Visual/Phase7/android-lava-fixed-tick-46a3d1e.png`, `Builds/M11/Logs/fixed-tick-runtime-lava-logcat-20260803.txt` |
+
+The prior `46a3d1e` APK exposed a real multi-step render-frame tick defect; the
+pre-fix evidence is retained at `Docs/QA/Visual/Phase7/android-lava-pre-fix-tick-error-46a3d1e.png`.
+The current `a245f24` baseline records the corrected retest below.
+
+## Historical checkpoints retained from earlier runs
 
 | Check | Command/result | Evidence |
 | --- | --- | --- |
@@ -372,3 +396,28 @@ physical-device validation, performance, real Photon multiplayer or PlayFab inte
   real Photon and PlayFab remain open or externally blocked. Build-generated changes
   to `Bootstrap.unity` and `TutorialArena.unity` were restored because those files
   were clean before the baseline.
+
+## Fixed-tick runtime correction (`a245f24`)
+
+The Lava baseline exposed a real multi-step render-frame defect: the fixed clock
+advanced several ticks, while every presentation consumer reused the final tick for
+each consumed step. `OfflineMatchAuthority.Advance` therefore rejected repeated tick
+identities on the device. The correction adds `FixedSimulationClock.GetConsumedTick`
+and updates the authority controller, movement, attacks, projectiles, bots, gadgets and
+Bijli/Pehel/Maya ability adapters to pass the per-step tick.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | 0 errors, 0 warnings | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` |
+| EditMode regression | 89 passed, 0 failed, 0 skipped; includes sequential multi-step tick and authority acceptance tests | `Builds/M11/TestResults/fixed-tick-runtime-editmode-20260803.xml` |
+| PlayMode regression | 37 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/fixed-tick-runtime-playmode-20260803.xml` |
+| Android retest | Unity exit 0; APK 151,318,469 bytes; SHA-256 `154F0F81FA6F068302FC57A6513A6C38CB4A7A8298C856264A04B14EE796574F` | `Builds/M11/Logs/fixed-tick-runtime-android-20260803.log` |
+| Lava retest | Exact fixed-tick APK installed/launched on `ST5GDW23LB004392`; focused Unity activity remained alive; no current Unity-process monotonic-tick exception, fatal exception or SIGSEGV; inspected match capture is clean of the prior red Unity console error | `Docs/QA/Visual/Phase7/android-lava-fixed-tick-46a3d1e.png`, `Builds/M11/Logs/fixed-tick-runtime-lava-logcat-20260803.txt` |
+| Web retest | Unity exit 0; 21 files, 133,187,266 bytes; WASM 120,495,480 bytes; SHA-256 `F02758353612C68904777C2F25F4F56E22DA4225F0F426A205792BE41E111EC6` | `Builds/M11/Logs/fixed-tick-runtime-web-20260803.log` |
+| Browser retest | HTTP 200; fresh Playwright render reached live match; inspected screenshot has no blank canvas and console error/warning scan returned 0 | `Docs/QA/Visual/Phase7/playwright-1000x1000-fixed-tick-46a3d1e.png` |
+
+Known non-blocking device log noise remains: Android/Unity reports absent optional
+Google Play Asset Pack classes and Lava gralloc format warnings. These are separate
+from the fixed-tick exception and did not stop the current Unity process. This phase
+does not establish final visual quality, performance, real Photon multiplayer or
+PlayFab integration.

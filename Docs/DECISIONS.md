@@ -709,3 +709,25 @@ Record every material choice here. Do not silently overwrite old decisions.
   `playwright-390x844-hud-compact.png` and the `hud-compact-*` evidence in
   `Docs/QA/LATEST_HEAD_BASELINE.md`.
 - **Owner:** Human project owner
+
+### ADR-036 — Preserve per-step tick identity across render-frame catch-up
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the fixed-clock foundation; replay recording, network
+  prediction and longer soak coverage remain open.
+- **Context:** A render frame can accumulate multiple 30 Hz simulation steps. The
+  clock advanced all of them before presentation loops ran, so consumers that reused
+  the final `Tick` sent duplicate identities to `OfflineMatchAuthority`. The exact
+  Android Lava smoke exposed `Simulation ticks must increase monotonically` while the
+  automated single-step tests stayed green.
+- **Decision:** `FixedSimulationClock` records the number of steps consumed by the
+  latest render frame and exposes `GetConsumedTick(stepIndex)`. Every fixed-step
+  presentation consumer uses the corresponding per-step identity: authority, movement,
+  attacks, projectiles, bots, gadgets, and Bijli/Pehel/Maya ability adapters.
+- **Consequences:** Catch-up frames preserve monotonic command, damage and authority
+  identities without making the render loop authoritative. The correction does not
+  alter the 30 Hz rule rate or claim production networking.
+- **Evidence/sources:** `FixedSimulationClock`, `OfflineMatchController`, all fixed-step
+  consumers, `CoreFoundationTests`, `fixed-tick-runtime-*` test/build logs, and Lava
+  before/after captures in `Docs/QA/Visual/Phase7/`.
+- **Owner:** Human project owner

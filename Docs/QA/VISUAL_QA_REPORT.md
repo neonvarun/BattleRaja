@@ -1,8 +1,8 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-03
-Runtime-bearing candidate: `913988a` (`fix: compact match HUD for portrait play`)
-Current source HEAD: `913988a` (HUD readability continuation after the responsive camera/template baseline)
+Runtime-bearing candidate: `a245f24` (`fix: preserve fixed tick identities across render steps`)
+Current source HEAD: `a245f24` (fixed-tick runtime correction after the compact HUD continuation)
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://127.0.0.1:8138/index.html`
 
@@ -46,3 +46,19 @@ The Playwright CLI loaded the WebGL candidate and exercised the required desktop
 ## Gate decision
 
 Phase 7 is **In progress**, not passed. Desktop and responsive portrait framing are now evidenced, but the loading/gadget/results surfaces remain incomplete, the prototype HUD is dense, and final visual quality, mobile ergonomics and human UX approval are still open.
+
+## Fixed-tick runtime retest (`a245f24`)
+
+- The exact fixed-tick Android APK was installed and launched on Lava
+  `ST5GDW23LB004392` only. The pre-fix capture showed the Unity console error
+  `Simulation ticks must increase monotonically`; the fixed capture shows the same
+  match continuing without that red runtime error.
+- Evidence: `android-lava-pre-fix-tick-error-46a3d1e.png` and
+  `android-lava-fixed-tick-46a3d1e.png` under `Docs/QA/Visual/Phase7/`, with the
+  corresponding logcat samples in `Builds/M11/Logs/`.
+- The fixed Web build was served from `http://127.0.0.1:8137/index.html`; a fresh
+  Playwright render reached the live MovementLab match, the inspected screenshot has
+  no blank canvas, and the console error/warning scan returned zero.
+- This retest proves the tick-order runtime defect is corrected. It does not pass the
+  broader visual gate: loading/gadget/results surfaces, multi-browser coverage,
+  touch ergonomics and final human visual approval remain open.
