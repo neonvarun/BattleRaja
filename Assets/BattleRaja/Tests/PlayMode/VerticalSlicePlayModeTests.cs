@@ -215,6 +215,35 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator ProductionGadgetPickupAndUseRunsThroughAuthority()
+        {
+            var match = Object.FindFirstObjectByType<OfflineMatchController>();
+            var player = PlayModeTestHelpers.FindPlayer<MovementPlayerAgent>();
+            var user = player != null ? player.GetComponent<GadgetUser>() : null;
+            var dhol = Object.FindObjectsByType<GadgetPickup>(FindObjectsSortMode.None)
+                .First(pickup => pickup.GadgetId.Equals(GadgetDefinition.DholBurst.GadgetId));
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(player, Is.Not.Null);
+            Assert.That(user, Is.Not.Null);
+            Assert.That(dhol, Is.Not.Null);
+            Assert.That(match.AuthorityDrivenMovement, Is.True);
+
+            player.ExternalCommandMode = true;
+            dhol.transform.position = player.transform.position;
+            match.StartMatch();
+            yield return new WaitForSecondsRealtime(0.25f);
+
+            Assert.That(user.HasGadget, Is.True,
+                $"feedback={user.Feedback} player={player.transform.position} pickup={dhol.transform.position} active={dhol.IsAvailable}");
+            Assert.That(user.HeldGadget, Is.EqualTo(GadgetDefinition.DholBurst.GadgetId));
+            Assert.That(dhol.IsAvailable, Is.False);
+            Assert.That(user.UseHeld(), Is.True);
+            Assert.That(user.HasGadget, Is.False);
+            Assert.That(user.Feedback, Is.EqualTo("Dhol Burst"));
+        }
+
+        [UnityTest]
         public IEnumerator ProductionMatchRoutesMovementThroughAuthoritySnapshots()
         {
             var match = Object.FindFirstObjectByType<OfflineMatchController>();
