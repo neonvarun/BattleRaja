@@ -55,6 +55,41 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator InMatchAimAssistSettingUpdatesPlayerInputAndPersists()
+        {
+            var key = "battleraja.settings.aim_assist";
+            var hadPrevious = PlayerPrefs.HasKey(key);
+            var previous = PlayerPrefs.GetInt(key, 0);
+            var input = Object.FindObjectsByType<PlayerInputAdapter>(FindObjectsSortMode.None)
+                .First(adapter => adapter.GetComponent<MovementPlayerAgent>()?.ActorId == 1);
+            var before = input.AimAssistEnabled;
+
+            var pause = GameObject.Find("Pause").GetComponent<Button>();
+            pause.onClick.Invoke();
+            yield return null;
+
+            var settings = GameObject.Find("SettingsPanel");
+            Assert.That(settings, Is.Not.Null);
+            Assert.That(settings.activeSelf, Is.True);
+            var toggle = settings.transform.Find("AimAssist").GetComponent<Button>();
+            toggle.onClick.Invoke();
+            yield return null;
+
+            Assert.That(input.AimAssistEnabled, Is.EqualTo(!before));
+            Assert.That(PlayerPrefs.GetInt(key, 0), Is.EqualTo(!before ? 1 : 0));
+
+            toggle.onClick.Invoke();
+            yield return null;
+            Assert.That(input.AimAssistEnabled, Is.EqualTo(before));
+
+            if (hadPrevious) PlayerPrefs.SetInt(key, previous);
+            else PlayerPrefs.DeleteKey(key);
+            PlayerPrefs.Save();
+            pause.onClick.Invoke();
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator AcceleratedSimulationCanReachResultsAndStableWinner()
         {
             var match = Object.FindAnyObjectByType<OfflineMatchController>();
