@@ -777,3 +777,25 @@ Record every material choice here. Do not silently overwrite old decisions.
   `Builds/M11/TestResults/phase6-full-playmode-20260803.xml` and the Phase 6 baseline
   in `Docs/QA/LATEST_HEAD_BASELINE.md`.
 - **Owner:** Human project owner
+
+### ADR-039 — Attribute assists from authoritative damage contributions
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline match simulation; network event replication and
+  balance review remain future work.
+- **Context:** Participant snapshots exposed an `Assists` field, but the match simulation
+  only tracked the finishing instigator's elimination and total damage. That made results
+  incomplete and left assist credit outside the authoritative rules.
+- **Decision:** Keep a per-target, per-participant damage contribution ledger in the pure
+  `OfflineMatchSimulation`. On a valid lethal event, credit one assist to each living,
+  non-finishing participant who contributed damage, reject duplicate post-elimination
+  events, and discard the target ledger. Environmental damage and self-damage never create
+  assist credit.
+- **Consequences:** Results now expose deterministic assist counts without Unity or
+  transport dependencies. The ledger is event-driven and bounded by active match targets;
+  server replication, assist thresholds and final balance remain open.
+- **Evidence/sources:** `OfflineMatchSimulation.RecordDamage`,
+  `OfflineMatchTests.DamageContributionsCreditAssistOnceToNonFinisher`,
+  `Builds/M11/TestResults/assist-editmode-20260803.xml` and
+  `Builds/M11/TestResults/assist-playmode-20260803.xml`.
+- **Owner:** Human project owner

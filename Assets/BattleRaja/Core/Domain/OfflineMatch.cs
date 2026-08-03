@@ -171,6 +171,7 @@ namespace BattleRaja.Core.Domain
     {
         private readonly OfflineMatchDefinition _definition;
         private readonly List<ParticipantState> _participants = new List<ParticipantState>(8);
+        private readonly Dictionary<CombatEntityId, Dictionary<CombatEntityId, int>> _damageContributions = new Dictionary<CombatEntityId, Dictionary<CombatEntityId, int>>();
         private float _elapsed;
         private MatchPhase _phase = MatchPhase.LoadWarmup;
         private bool _started;
@@ -204,6 +205,7 @@ namespace BattleRaja.Core.Domain
             }
 
             _participants.Clear();
+            _damageContributions.Clear();
             for (var i = 0; i < spawns.Count; i++)
             {
                 _participants.Add(new ParticipantState(spawns[i]));
@@ -293,6 +295,14 @@ namespace BattleRaja.Core.Domain
             if (instigator != null && instigator.Id != target.Id)
             {
                 instigator.DamageDealt = SaturatingAdd(instigator.DamageDealt, damageEvent.AmountApplied);
+                if (!_damageContributions.TryGetValue(target.Id, out var contributions))
+                {
+                    contributions = new Dictionary<CombatEntityId, int>();
+                    _damageContributions[target.Id] = contributions;
+                }
+
+                contributions.TryGetValue(instigator.Id, out var previousAmount);
+                contributions[instigator.Id] = SaturatingAdd(previousAmount, damageEvent.AmountApplied);
             }
 
             if (target.CurrentHealth == 0)
@@ -301,7 +311,10 @@ namespace BattleRaja.Core.Domain
                 if (instigator != null && instigator.Id != target.Id)
                 {
                     instigator.Eliminations = SaturatingAdd(instigator.Eliminations, 1);
+                    CreditAssists(target.Id, instigator.Id);
                 }
+
+                _damageContributions.Remove(target.Id);
 
                 if (AliveCount <= 1) ResolveWinner();
             }
@@ -327,6 +340,7 @@ namespace BattleRaja.Core.Domain
         public void Restart()
         {
             _participants.Clear();
+            _damageContributions.Clear();
             _elapsed = 0f;
             _phase = MatchPhase.LoadWarmup;
             _nextPlacement = 0;
@@ -460,6 +474,19 @@ namespace BattleRaja.Core.Domain
             participant.Alive = false;
             participant.Placement = _nextPlacement--;
             participant.SurvivalTimeSeconds = _elapsed;
+        }
+
+        private void CreditAssists(CombatEntityId targetId, CombatEntityId finishingInstigatorId)
+        {
+            if (!_damageContributions.TryGetValue(targetId, out var contributions)) return;
+
+            foreach (var contribution in contributions)
+            {
+                if (contribution.Key == finishingInstigatorId) continue;
+                var participant = Find(contribution.Key);
+                if (participant == null || !participant.Alive) continue;
+                participant.Assists = SaturatingAdd(participant.Assists, 1);
+            }
         }
 
         private CombatEntityId FindWinner()

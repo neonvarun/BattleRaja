@@ -105,6 +105,28 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void DamageContributionsCreditAssistOnceToNonFinisher()
+        {
+            var simulation = new OfflineMatchSimulation(OfflineMatchDefinition.SoloRaja);
+            simulation.Start(CreateSpawns(4));
+
+            var setup = new DamageRequest(new CombatEntityId(1), new CombatEntityId(2), CombatFaction.Player, 30, DamageType.Projectile);
+            Assert.That(simulation.RecordDamage(new CombatDamageEvent(setup, 30, false, 70, 1)), Is.True);
+
+            var finisherSetup = new DamageRequest(new CombatEntityId(3), new CombatEntityId(2), CombatFaction.Enemy, 10, DamageType.Ability);
+            Assert.That(simulation.RecordDamage(new CombatDamageEvent(finisherSetup, 10, false, 60, 2)), Is.True);
+            var finishingHit = new DamageRequest(new CombatEntityId(3), new CombatEntityId(2), CombatFaction.Enemy, 60, DamageType.Ability);
+            Assert.That(simulation.RecordDamage(new CombatDamageEvent(finishingHit, 60, true, 0, 3)), Is.True);
+            Assert.That(simulation.RecordDamage(new CombatDamageEvent(finishingHit, 60, true, 0, 4)), Is.False);
+
+            var snapshots = simulation.GetSnapshots();
+            Assert.That(snapshots[0].Assists, Is.EqualTo(1));
+            Assert.That(snapshots[2].Eliminations, Is.EqualTo(1));
+            Assert.That(snapshots[2].Assists, Is.EqualTo(0));
+            Assert.That(snapshots[1].Alive, Is.False);
+        }
+
+        [Test]
         public void TimeoutRanksSeveralSurvivorsAndAssignsEveryPlacement()
         {
             var simulation = new OfflineMatchSimulation(OfflineMatchDefinition.SoloRaja);
