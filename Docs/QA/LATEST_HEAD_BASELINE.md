@@ -6,6 +6,29 @@ Latest validated runtime source HEAD: `8f190cd` (`content: extract Bazaar archit
 Latest runtime-bearing candidate: `8f190cd` (reusable Bazaar architecture prefab after the explicit production-scene boundary and authority-first movement/gadget/fighter displacement/Maya decoy/damage/healing candidates)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
+## Fresh Bazaar prefab Android/Web artifact continuation (`8f190cd`, 2026-08-03)
+
+The connected Bazaar architecture prefab was rebuilt for both primary targets after
+the production-scene boundary work. This is current technical smoke evidence for the
+prefab-bearing candidate; it is not final-art, gadget-use, performance-closure or
+human visual approval.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Android build | `Tools\\Build\\Android\\build.ps1 ... -BuildMethod BattleRaja.Editor.BuildEntrypoints.BuildAndroidBazaarBastionDevelopment` — succeeded | `Builds/M11/Android/BattleRaja-BazaarBastion-M11.apk` |
+| Android artifact | 151,511,951 bytes; SHA-256 `B485AEA6050CD16093C3A17C77DC8E75484BB7AFFB3875880E36F4110E742B61` | APK hash from 2026-08-03 |
+| Lava smoke | Exact APK installed/launched only on `ST5GDW23LB004392` (`LAVA LXX508`); `UnityPlayerGameActivity` remained top-resumed; sampled logcat had 0 fatal markers | `Builds/M11/Logs/android-lava-bazaar-match-20260803.png` and ADB output |
+| Lava memory snapshot | `TOTAL PSS: 411216 KB`; `TOTAL RSS: 547836 KB`; `Graphics: 82088 KB` | ADB `dumpsys meminfo` from 2026-08-03 |
+| Android visual probe | Menu, mode, fighter-selection and live Bazaar match screens inspected; match HUD showed Bijli HP, attack/ability readiness and touch labels | `Builds/M11/Logs/android-lava-bazaar-match-20260803.png` |
+| Web build | `Tools\\Build\\Web\\build.ps1 ... -BuildMethod BattleRaja.Editor.BuildEntrypoints.BuildWebBazaarBastionDevelopment` — succeeded | `Builds/M11/Web-BazaarBastion`, `Builds/M11/Logs/web-build.log` |
+| Web artifact | 19 files; 133,496,123 bytes; `Web-BazaarBastion.wasm` 120,790,368 bytes; SHA-256 `C1375376EF0906364B33798E046F719C041ECB1BF0277DBFCA32B91ABA165C68` | recursive file/hash inventory from 2026-08-03 |
+| Web serve | Existing local server on `http://127.0.0.1:8139/index.html` returned HTTP 200 (`8,670` bytes) | `Invoke-WebRequest` output from 2026-08-03 |
+| Regression after prefab | 100/100 EditMode and 51/51 PlayMode; repository validator 0 errors/0 warnings | `Builds/M11/TestResults/bazaar-prefab-editmode-full-20260803.xml`, `bazaar-prefab-playmode-full-20260803.xml` |
+
+Gadget pickup/use was probed on Lava but remained visually unverified (`GADGET [G]`
+empty in the inspected match capture). Greybox presentation, authored art/audio,
+browser interaction parity, FPS/GC/GPU/soak measurements and human approval remain open.
+
 ## Bazaar architecture prefab continuation (`8f190cd`, 2026-08-03)
 
 The existing `BazaarArchitecture` hierarchy is now a connected prefab at

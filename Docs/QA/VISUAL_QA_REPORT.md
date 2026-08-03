@@ -4,7 +4,24 @@ Date: 2026-08-03
 Runtime-bearing candidate: `8f190cd` (Bazaar architecture prefab continuation; prior artifact candidate remains `d993a5b`)
 Current validated runtime source HEAD: `8f190cd`
 Unity: `6000.5.6f1`
-Web candidate: `Builds/M11/Web` served over local HTTP at `http://127.0.0.1:8137/index.html`
+Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://127.0.0.1:8139/index.html`
+
+## Fresh Bazaar prefab Android/Web smoke (`8f190cd`, 2026-08-03)
+
+- The fresh Android candidate was built from the connected Bazaar prefab candidate and
+  installed/launched only on Lava `ST5GDW23LB004392` (`LAVA LXX508`). The Unity game
+  activity remained top-resumed and the sampled process log contained no fatal,
+  `AndroidRuntime` or `SIGSEGV` marker. Captures cover the menu, mode, fighter-selection
+  and live Bazaar match route; the live match capture is
+  `Builds/M11/Logs/android-lava-bazaar-match-20260803.png`.
+- The live match capture shows readable `BIJLI HP 85/85`, `BOLT READY`, `DASH READY`,
+  `ATTACK`, `ABILITY` and `GADGET [G]` labels over the Bazaar greybox. Movement and
+  gadget probes were attempted, but pickup/use remained unverified because the HUD
+  stayed empty.
+- The Web candidate contains 19 files and returned HTTP 200 from the existing local
+  server on port 8139. This is technical smoke evidence, not browser visual approval:
+  multi-browser parity, loading/results capture, touch ergonomics, authored art/audio,
+  gadget-use observation and human review remain open.
 
 ## Bazaar architecture prefab continuation (`8f190cd`)
 
