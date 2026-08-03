@@ -799,3 +799,26 @@ Record every material choice here. Do not silently overwrite old decisions.
   `Builds/M11/TestResults/assist-editmode-20260803.xml` and
   `Builds/M11/TestResults/assist-playmode-20260803.xml`.
 - **Owner:** Human project owner
+
+### ADR-040 — Keep aim assist as bounded local input guidance
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline accessibility surface; final balance and networked
+  input-policy review remain open.
+- **Context:** The settings flow persisted an aim-assist preference, but no gameplay path
+  applied it and the in-match toggle was a no-op. Any assist must improve touch/mouse
+  usability without granting a client authority over hit or damage outcomes.
+- **Decision:** Add a pure `AimAssistTargeting` selector that considers only live targets
+  inside a configured range/cone and uses quantized angular scoring, distance and entity ID
+  for deterministic ties. `PlayerInputAdapter` gathers candidates through a fixed
+  `OverlapSphereNonAlloc` buffer and only adjusts the local aim direction; projectile
+  collision and damage remain unchanged. The match HUD toggle persists the setting and
+  updates the adapter immediately.
+- **Consequences:** Aim assist is bounded, testable and available on Android/Web input
+  without per-frame managed collection growth. It does not claim server authority,
+  auto-targeting outside the cone or final accessibility/balance approval.
+- **Evidence/sources:** `AimAssistTargeting`, `PlayerInputAdapter`, `OfflineMatchHud`,
+  `AimAssistTests`, `Builds/M11/TestResults/aimassist-editmode-v5-20260803.xml`,
+  `Builds/M11/TestResults/aimassist-playmode-20260803.xml` and the fresh Phase 7 smoke
+  captures in `Docs/QA/Visual/Phase7/`.
+- **Owner:** Human project owner

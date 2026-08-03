@@ -1,4 +1,5 @@
 using BattleRaja.Core.Domain;
+using BattleRaja.Presentation.Movement;
 using BattleRaja.Presentation.Visuals;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -25,10 +26,13 @@ namespace BattleRaja.Presentation.Match
         private GameObject _resultsPanel;
         private Text _resultsText;
         private GameObject _settingsPanel;
+        private Button _aimAssistButton;
+        private PlayerInputAdapter _playerInput;
         private BattleRajaAudioDirector _audio;
         private bool _highContrast;
         private bool _leftHanded;
         private bool _reducedFlashes;
+        private bool _aimAssist;
         private bool _paused;
         private bool _compactLayout;
 
@@ -48,7 +52,9 @@ namespace BattleRaja.Presentation.Match
             }
 
             _audio = FindFirstObjectByType<BattleRajaAudioDirector>();
+            _playerInput = FindFirstObjectByType<MovementPlayerAgent>()?.GetComponent<PlayerInputAdapter>();
             LoadPreferences();
+            _playerInput?.SetAimAssistEnabled(_aimAssist);
             BuildCanvasUi();
             ApplyHandedLayout();
             ApplyReducedFlashes();
@@ -93,7 +99,7 @@ namespace BattleRaja.Presentation.Match
                     }
 
                     _resultsText.text = hasWinner
-                        ? $"RESULTS\nWINNER {winner.Id.Value}\nKOs {winner.Eliminations}   DAMAGE {winner.DamageDealt}   SURVIVAL {winner.SurvivalTimeSeconds:0.0}s"
+                        ? $"RESULTS\nWINNER {winner.Id.Value}\nKOs {winner.Eliminations}   ASSISTS {winner.Assists}\nDAMAGE {winner.DamageDealt}   SURVIVAL {winner.SurvivalTimeSeconds:0.0}s"
                         : "RESULTS";
                 }
             }
@@ -136,8 +142,9 @@ namespace BattleRaja.Presentation.Match
             CreateButton(_settingsPanel.transform, "LeftHanded", "LEFT-HANDED", new Vector2(0.08f, 0.65f), new Vector2(0.92f, 0.76f), ToggleLeftHanded);
             CreateButton(_settingsPanel.transform, "ReducedFlashes", "REDUCED FLASHES", new Vector2(0.08f, 0.50f), new Vector2(0.92f, 0.61f), ToggleReducedFlashes);
             CreateButton(_settingsPanel.transform, "HighContrast", "HIGH CONTRAST", new Vector2(0.08f, 0.35f), new Vector2(0.92f, 0.46f), ToggleHighContrast);
-            CreateButton(_settingsPanel.transform, "AimAssist", "AIM ASSIST (READY)", new Vector2(0.08f, 0.20f), new Vector2(0.92f, 0.31f), () => { });
+            _aimAssistButton = CreateButton(_settingsPanel.transform, "AimAssist", "AIM ASSIST", new Vector2(0.08f, 0.20f), new Vector2(0.92f, 0.31f), ToggleAimAssist);
             _settingsPanel.SetActive(false);
+            RefreshAimAssistLabel();
             ApplyResponsiveLayout();
         }
 
@@ -227,11 +234,28 @@ namespace BattleRaja.Presentation.Match
             PlayerPrefs.Save();
         }
 
+        private void ToggleAimAssist()
+        {
+            _aimAssist = !_aimAssist;
+            PlayerPrefs.SetInt("battleraja.settings.aim_assist", _aimAssist ? 1 : 0);
+            PlayerPrefs.Save();
+            _playerInput?.SetAimAssistEnabled(_aimAssist);
+            RefreshAimAssistLabel();
+        }
+
+        private void RefreshAimAssistLabel()
+        {
+            if (_aimAssistButton == null) return;
+            var label = _aimAssistButton.GetComponentInChildren<Text>();
+            if (label != null) label.text = _aimAssist ? "AIM ASSIST  ON" : "AIM ASSIST  OFF";
+        }
+
         private void LoadPreferences()
         {
             _leftHanded = PlayerPrefs.GetInt("battleraja.settings.left_handed", 0) != 0;
             _reducedFlashes = PlayerPrefs.GetInt("battleraja.settings.reduced_flashes", 0) != 0;
             _highContrast = PlayerPrefs.GetInt("battleraja.settings.high_contrast", 0) != 0;
+            _aimAssist = PlayerPrefs.GetInt("battleraja.settings.aim_assist", 0) != 0;
         }
 
         private static GameObject CreatePanel(Transform parent, string name, Vector2 min, Vector2 max, Color color)
