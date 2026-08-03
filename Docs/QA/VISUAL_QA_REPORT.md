@@ -18,9 +18,10 @@ Web candidate: `Builds/M11/Web` served over local HTTP at `http://127.0.0.1:8137
   `AndroidRuntime`, `SIGSEGV`, missing-component or monotonic-tick marker. It still
   includes the known optional Google Play Asset Pack class lookup and Lava gralloc
   noise, both non-fatal in this sample.
-- Automated PlayMode coverage now confirms authority-driven spatial Dhol collection
-  and the generated live Results/Rematch reload flow. Those assertions are functional
-  evidence only; they do not convert the visual rows below to “Observed”.
+- Automated PlayMode coverage now confirms authority-driven spatial Dhol collection,
+  the generated live Results/Rematch reload flow and three repeated cleanup cycles.
+  Those assertions are functional evidence only; they do not convert the visual rows
+  below to “Observed”.
 
 ## Test surface
 

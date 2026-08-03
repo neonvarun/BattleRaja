@@ -2,8 +2,8 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `8544f55` (`test: cover spatial gadgets and live rematch`)
-Latest runtime-bearing candidate: `8544f55`
+Latest validated source HEAD: `457bd4b` (`test: verify repeated offline rematches stay clean`)
+Latest runtime-bearing candidate: `457bd4b`
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
 ## Scope and repository note
@@ -22,7 +22,7 @@ results publication after lethal damage, and the rematch scene reload surface.
 | --- | --- | --- |
 | Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings | command output from 2026-08-03 |
 | EditMode tests | 89 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/phase6-full-editmode-20260803.xml` |
-| PlayMode tests | 41 passed, 0 failed, 0 skipped; includes spatial gadget collection and live results/rematch reload | `Builds/M11/TestResults/phase6-full-playmode-20260803.xml` |
+| PlayMode tests | 42 passed, 0 failed, 0 skipped; includes spatial gadget collection, live results/rematch reload and three repeated rematch cleanup cycles | `Builds/M11/TestResults/phase6-rematch-playmode-20260803.xml` |
 | Android development build | Unity exit 0; IL2CPP APK 151,312,094 bytes; SHA-256 `285A7973A0487281F0F79BCFD14827114232D5C6B0F2BA3AD67BC57134B6B6BF` | `Builds/M11/Logs/android-build.log`, `Builds/M11/Android/BattleRaja-M11.apk` |
 | Web development build | Unity exit 0; 21 files, 133,194,614 bytes; WASM 120,501,844 bytes; SHA-256 `E029D2925F6E0B7463DA8F236584EE560F011EE0A59D99884A484E05EDA8EDAB` | `Builds/M11/Logs/web-build.log`, `Builds/M11/Web` |
 | Local Web serve | `http://127.0.0.1:8137/index.html` returned HTTP 200 | local HTTP check from 2026-08-03 |
@@ -33,9 +33,11 @@ results publication after lethal damage, and the rematch scene reload surface.
 
 The new PlayMode coverage is functional evidence, not visual approval: it relocates an
 authored Dhol pickup before restarting the authority-backed scene to exercise spatial
-collection deterministically, and it invokes the generated Results/Rematch buttons
-after authoritative lethal damage. The visual QA gate remains in progress because no
-human-facing gadget-use or results/rematch screenshot has been captured.
+collection deterministically, invokes the generated Results/Rematch buttons after
+authoritative lethal damage, and repeats three real reload cycles while freezing scene
+activation long enough to disable bot-side fixture activity. The visual QA gate remains
+in progress because no human-facing gadget-use or results/rematch screenshot has been
+captured.
 
 ## Fresh Phase 2 continuation (`1f59a68`)
 
