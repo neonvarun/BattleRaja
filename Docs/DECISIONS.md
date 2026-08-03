@@ -689,3 +689,23 @@ Record every material choice here. Do not silently overwrite old decisions.
   `playwright-390x844-responsive-gameplay.png` and the `phase7-responsive-*` evidence
   in `Docs/QA/LATEST_HEAD_BASELINE.md`.
 - **Owner:** Human project owner
+
+### ADR-035 — Compact match telemetry on narrow viewports
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the Phase 5/7 UI continuation; final visual and mobile UX
+  approval remain open.
+- **Context:** The responsive canvas fixed the portrait crop, but the original single-line
+  match status still squeezed the long `SPAWNPROTECTION` phase and zone values beside
+  the fighter and gadget HUD. This reduced readability on a 390×844 viewport.
+- **Decision:** Format match telemetry as two lines, shorten warning labels, and switch
+  to a compact `Z current > next` representation below a 0.75 aspect ratio. The
+  presentation-only formatter remains driven by immutable authority properties; no
+  gameplay rule or timing changes are introduced.
+- **Consequences:** Portrait telemetry is more legible while landscape retains the
+  labelled format. The HUD still requires human review for density, touch ergonomics,
+  localization and final visual hierarchy.
+- **Evidence/sources:** `OfflineMatchHud`, `VerticalSlicePlayModeTests`,
+  `playwright-390x844-hud-compact.png` and the `hud-compact-*` evidence in
+  `Docs/QA/LATEST_HEAD_BASELINE.md`.
+- **Owner:** Human project owner

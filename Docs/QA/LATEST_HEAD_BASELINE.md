@@ -306,6 +306,34 @@ authority reports destruction.
 This is authority/test/build evidence only. It does not establish final visual quality,
 physical-device validation, performance, real Photon multiplayer or PlayFab integration.
 
+## Compact portrait HUD continuation (`913988a`)
+
+- Repository validation: `Tools\\Validation\\validate.ps1 -RequireUnityProject
+  -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` returned 0 errors and 0 warnings.
+- EditMode: 87 passed, 0 failed, 0 skipped
+  (`Builds/M11/TestResults/hud-compact-editmode-20260803.xml`).
+- PlayMode: 37 passed, 0 failed, 0 skipped
+  (`Builds/M11/TestResults/hud-compact-playmode-20260803.xml`). The added
+  `CompactMatchStatusKeepsZoneTelemetryReadable` regression test covers the compact
+  two-line format and warning text.
+- Android: fresh development IL2CPP build succeeded under Unity 6000.5.6f1
+  (`Builds/M11/Logs/hud-compact-android-20260803.log`).
+  `Builds/M11/Android/BattleRaja-M11.apk` is 151,304,957 bytes; SHA-256
+  `A417601C7D4FDCFD5B6D18EBAC88AC28486496740881518A285EF93983FD48C4`. This exact
+  APK was not installed; the Lava-only physical-device gate remains open because
+  serial `ST5GDW23LB004392` was not connected.
+- Web: fresh development build succeeded with the responsive template
+  (`Builds/M11/Logs/hud-responsive-web-20260803.log`). The output contains 21 files
+  totaling 133,185,154 bytes; `Build/Web.wasm` is 120,493,880 bytes with SHA-256
+  `FB8380DC4FCD5B8674D03EF99CF25BBF65B2C280EBB98F3638C05159C248EF09`.
+- Browser smoke: local HTTP `http://127.0.0.1:8137/index.html` returned 200. A fresh
+  Playwright 390×844 capture is stored at
+  `Docs/QA/Visual/Phase7/playwright-390x844-hud-compact.png`; phase/alive/zone
+  telemetry is visibly separated from the fighter/gadget HUD. This is a visual
+  readability observation, not final visual approval.
+- Boundary: gadget success, loading/results surfaces, touch ergonomics, physical Lava
+  validation, performance, real Photon and PlayFab remain open or externally blocked.
+
 ## Responsive Web framing continuation (`67a4d40`)
 
 - Repository validation: `BattleRaja.Editor.BuildEntrypoints.ValidateProject` exited 0
