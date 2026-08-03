@@ -394,6 +394,19 @@ namespace BattleRaja.Core.Domain
             return snapshots;
         }
 
+        public bool TryGetSnapshot(CombatEntityId id, out MatchParticipantSnapshot snapshot)
+        {
+            var participant = Find(id);
+            if (participant == null)
+            {
+                snapshot = default(MatchParticipantSnapshot);
+                return false;
+            }
+
+            snapshot = participant.ToSnapshot();
+            return true;
+        }
+
         public void Restart()
         {
             _participants.Clear();

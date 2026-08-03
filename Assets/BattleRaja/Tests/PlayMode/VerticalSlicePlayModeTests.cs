@@ -208,6 +208,33 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator ProductionMatchRoutesMovementThroughAuthoritySnapshots()
+        {
+            var match = Object.FindFirstObjectByType<OfflineMatchController>();
+            var player = Object.FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None)
+                .First(agent => agent.ActorId == 1);
+            Assert.That(match.AuthorityDrivenMovement, Is.True);
+            Assert.That(match.Simulation.TryGetSnapshot(new CombatEntityId(1), out var before), Is.True);
+
+            var previousTimeScale = Time.timeScale;
+            Time.timeScale = 1f;
+            try
+            {
+                player.Submit(new MovementCommand(1, 1, new Float2(1f, 0f), new Float2(1f, 0f)));
+                yield return new WaitForSecondsRealtime(0.2f);
+
+                Assert.That(match.Simulation.TryGetSnapshot(new CombatEntityId(1), out var after), Is.True);
+                Assert.That(after.Position.X, Is.GreaterThan(before.Position.X));
+                Assert.That(player.LastAuthoritativePosition.x, Is.EqualTo(after.Position.X).Within(0.001f));
+                Assert.That(player.LastAuthoritativePosition.z, Is.EqualTo(after.Position.Y).Within(0.001f));
+            }
+            finally
+            {
+                Time.timeScale = previousTimeScale;
+            }
+        }
+
+        [UnityTest]
         public IEnumerator TouchControlsExposeReadableActionLabels()
         {
             Assert.That(GameObject.Find("AttackButton")?.GetComponentInChildren<Text>(true)?.text, Is.EqualTo("ATTACK"));

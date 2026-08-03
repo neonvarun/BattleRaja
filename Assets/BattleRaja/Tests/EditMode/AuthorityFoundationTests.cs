@@ -31,6 +31,39 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void MatchAuthorityResolvesMovementAgainstCanonicalPositionExactlyOncePerTick()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(8f, 0f), 100)
+            });
+            authority.ConfigureMovement(new CombatEntityId(1), new MovementTuning(
+                maxSpeed: 4f,
+                acceleration: 100f,
+                deceleration: 100f,
+                rotationSpeed: 720f,
+                movementDeadZone: 0f,
+                aimDeadZone: 0f,
+                inputSensitivity: 1f));
+
+            var command = new MovementCommand(1, 1, new Float2(1f, 0f), new Float2(1f, 0f));
+            var first = authority.ResolveMovement(command, 1f / 30f);
+            var duplicate = authority.ResolveMovement(command, 1f / 30f);
+            var second = authority.ResolveMovement(new MovementCommand(1, 2, command.Movement, command.Aim), 1f / 30f);
+
+            Assert.That(first.Applied, Is.True);
+            Assert.That(first.Position.X, Is.EqualTo((100f / 30f) / 30f).Within(0.0001f));
+            Assert.That(duplicate.Applied, Is.False);
+            Assert.That(duplicate.Position, Is.EqualTo(first.Position));
+            Assert.That(second.Applied, Is.True);
+            Assert.That(second.Position.X, Is.GreaterThan(first.Position.X));
+            Assert.That(authority.Simulation.TryGetSnapshot(new CombatEntityId(1), out var snapshot), Is.True);
+            Assert.That(snapshot.Position, Is.EqualTo(second.Position));
+        }
+
+        [Test]
         public void MatchAuthorityOwnsPickupAvailabilityAndGadgetCollection()
         {
             var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja, 1f);

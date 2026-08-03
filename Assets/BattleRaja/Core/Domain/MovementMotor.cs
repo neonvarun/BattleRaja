@@ -51,6 +51,17 @@ namespace BattleRaja.Core.Domain
             _aimDirection = aimDirection.SqrMagnitude > 0.000001f ? aimDirection.Normalized : Float2.Up;
         }
 
+        /// <summary>
+        /// Applies a state snapshot produced by an authority-owned movement step.
+        /// Presentation adapters use this to keep their local motor aligned with the
+        /// canonical simulation without re-running movement rules a second time.
+        /// </summary>
+        public void ApplyAuthoritativeState(Float2 velocity, Float2 aimDirection)
+        {
+            _velocity = velocity;
+            _aimDirection = aimDirection.SqrMagnitude > 0.000001f ? aimDirection.Normalized : Float2.Up;
+        }
+
         private static Float2 MoveTowards(Float2 current, Float2 target, float maxDelta)
         {
             var distance = Float2.Distance(current, target);

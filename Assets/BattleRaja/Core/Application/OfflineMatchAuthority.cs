@@ -18,6 +18,29 @@ namespace BattleRaja.Core.Application
         public int CurrentHealthAfter { get; }
     }
 
+    public readonly struct MatchAuthorityMovement
+    {
+        public MatchAuthorityMovement(
+            CombatEntityId actorId,
+            int simulationTick,
+            bool applied,
+            MovementStep step,
+            Float2 position)
+        {
+            ActorId = actorId;
+            SimulationTick = simulationTick;
+            Applied = applied;
+            Step = step;
+            Position = position;
+        }
+
+        public CombatEntityId ActorId { get; }
+        public int SimulationTick { get; }
+        public bool Applied { get; }
+        public MovementStep Step { get; }
+        public Float2 Position { get; }
+    }
+
     public readonly struct MatchAuthorityTick
     {
         public MatchAuthorityTick(MatchTickResult result, DamageRequest[] outsideDamageRequests)
@@ -66,6 +89,9 @@ namespace BattleRaja.Core.Application
         private readonly Dictionary<CombatEntityId, GadgetInventory> _gadgetInventories = new Dictionary<CombatEntityId, GadgetInventory>();
         private readonly Dictionary<CombatEntityId, GadgetRuntime> _gadgetRuntimes = new Dictionary<CombatEntityId, GadgetRuntime>();
         private readonly Dictionary<CombatEntityId, UmbrellaGuardRuntime> _umbrellaGuards = new Dictionary<CombatEntityId, UmbrellaGuardRuntime>();
+        private readonly Dictionary<CombatEntityId, MovementMotor> _movementMotors = new Dictionary<CombatEntityId, MovementMotor>();
+        private readonly Dictionary<CombatEntityId, MovementTuning> _movementTunings = new Dictionary<CombatEntityId, MovementTuning>();
+        private readonly Dictionary<CombatEntityId, int> _lastMovementTicks = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<int, GadgetStationRuntime> _stations = new Dictionary<int, GadgetStationRuntime>();
         private OfflineMatchSimulation _simulation;
         private double _outsideDamageAccumulator;
@@ -124,12 +150,18 @@ namespace BattleRaja.Core.Application
             _gadgetInventories.Clear();
             _gadgetRuntimes.Clear();
             _umbrellaGuards.Clear();
+            _movementMotors.Clear();
+            _movementTunings.Clear();
+            _lastMovementTicks.Clear();
             _stations.Clear();
             for (var i = 0; i < spawns.Count; i++)
             {
                 _gadgetInventories[spawns[i].Id] = new GadgetInventory(1);
                 _gadgetRuntimes[spawns[i].Id] = new GadgetRuntime();
                 _umbrellaGuards[spawns[i].Id] = new UmbrellaGuardRuntime();
+                _movementMotors[spawns[i].Id] = new MovementMotor();
+                _movementTunings[spawns[i].Id] = MovementTuning.Default;
+                _lastMovementTicks[spawns[i].Id] = -1;
             }
 
             _outsideDamageAccumulator = 0d;
@@ -138,6 +170,52 @@ namespace BattleRaja.Core.Application
         }
 
         public bool SetPosition(CombatEntityId id, Float2 position) => RequireSimulation().SetPosition(id, position);
+
+        public void ConfigureMovement(CombatEntityId id, MovementTuning tuning)
+        {
+            if (!_movementMotors.ContainsKey(id))
+            {
+                throw new ArgumentException("Movement can only be configured for a registered match participant.", nameof(id));
+            }
+
+            _movementTunings[id] = tuning;
+        }
+
+        /// <summary>
+        /// Resolves one fixed-tick movement command against canonical participant state.
+        /// The returned step is a view instruction; Unity must not re-run the motor.
+        /// </summary>
+        public MatchAuthorityMovement ResolveMovement(
+            MovementCommand command,
+            float fixedDeltaSeconds)
+        {
+            var actorId = new CombatEntityId(command.ActorId);
+            var simulation = RequireSimulation();
+            var hasCurrent = simulation.TryGetSnapshot(actorId, out var current);
+            if (!_movementMotors.TryGetValue(actorId, out var motor) ||
+                !_movementTunings.TryGetValue(actorId, out var tuning) ||
+                command.SimulationTick < 0 ||
+                fixedDeltaSeconds <= 0f ||
+                float.IsNaN(fixedDeltaSeconds) ||
+                float.IsInfinity(fixedDeltaSeconds) ||
+                !_lastMovementTicks.TryGetValue(actorId, out var lastTick) ||
+                command.SimulationTick <= lastTick ||
+                !hasCurrent ||
+                !current.Alive)
+            {
+                return new MatchAuthorityMovement(actorId, command.SimulationTick, false, default(MovementStep), current.Position);
+            }
+
+            var step = motor.Step(command, fixedDeltaSeconds, tuning);
+            var position = current.Position + step.Displacement;
+            if (!simulation.SetPosition(actorId, position))
+            {
+                return new MatchAuthorityMovement(actorId, command.SimulationTick, false, step, current.Position);
+            }
+
+            _lastMovementTicks[actorId] = command.SimulationTick;
+            return new MatchAuthorityMovement(actorId, command.SimulationTick, true, step, position);
+        }
 
         public bool SyncHealth(CombatEntityId id, int currentHealth) => RequireSimulation().SyncHealth(id, currentHealth);
 

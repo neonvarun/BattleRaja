@@ -6925,6 +6925,7 @@ MonoBehaviour:
   gadgetPickups: []
   outsideDamageTickSeconds: 1
   simulationTickRate: 30
+  authorityDrivenMovement: 1
   autoStart: 1
 --- !u!1 &1723574739
 GameObject:

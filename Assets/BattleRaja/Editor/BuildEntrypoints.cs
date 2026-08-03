@@ -367,6 +367,9 @@ namespace BattleRaja.Editor
 
             var damageResolver = arena.GetComponentInChildren<CombatDamageResolver>();
             var projectilePool = arena.GetComponentInChildren<CombatProjectilePool>();
+            var matchController = arena.GetComponentInChildren<OfflineMatchController>(true);
+            if (matchController == null) throw new BuildFailedException("Bazaar Bastion match controller is missing.");
+            SetBool(matchController, "authorityDrivenMovement", true);
             var bots = UnityEngine.Object.FindObjectsByType<BotBrain>(FindObjectsSortMode.None)
                 .OrderBy(bot => bot.GetComponent<MovementPlayerAgent>() != null ? bot.GetComponent<MovementPlayerAgent>().ActorId : int.MaxValue)
                 .ToArray();
@@ -784,8 +787,13 @@ namespace BattleRaja.Editor
             CombatProjectilePool projectilePool)
         {
             var bot = brain.gameObject;
-            var oldFighter = bot.GetComponent<BijliFighterController>();
-            if (oldFighter != null) UnityEngine.Object.DestroyImmediate(oldFighter);
+            var oldFighters = bot.GetComponents<MonoBehaviour>()
+                .Where(component => component is IFighterAbilityController)
+                .ToArray();
+            for (var i = 0; i < oldFighters.Length; i++)
+            {
+                if (oldFighters[i] != null) UnityEngine.Object.DestroyImmediate(oldFighters[i]);
+            }
 
             var domain = fighterAsset.ToDomain();
             var fighter = domain.FighterId.Equals(FighterDefinition.Pehel.FighterId)

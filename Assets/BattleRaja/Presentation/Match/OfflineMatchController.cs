@@ -19,6 +19,7 @@ namespace BattleRaja.Presentation.Match
         [SerializeField] private GadgetPickup[] gadgetPickups;
         [SerializeField] private float outsideDamageTickSeconds = 1f;
         [SerializeField] private int simulationTickRate = 30;
+        [SerializeField] private bool authorityDrivenMovement;
         [SerializeField] private bool autoStart = true;
 
         private readonly List<MatchActorBinding> _actors = new List<MatchActorBinding>(8);
@@ -41,6 +42,7 @@ namespace BattleRaja.Presentation.Match
         public MatchParticipantSnapshot[] Results { get; private set; }
         public int SimulationTick => _simulationClock != null ? _simulationClock.Tick : 0;
         public double SimulationInterpolationAlpha => _simulationClock != null ? _simulationClock.InterpolationAlpha : 0d;
+        public bool AuthorityDrivenMovement => authorityDrivenMovement;
 
         public GadgetUseResult TryUseGadget(GadgetUseCommand command)
         {
@@ -110,7 +112,16 @@ namespace BattleRaja.Presentation.Match
                 for (var i = 0; i < _actors.Count; i++)
                 {
                     var actor = _actors[i];
-                    _authority.SetPosition(actor.Target.Id, new Float2(actor.Transform.position.x, actor.Transform.position.z));
+                    if (authorityDrivenMovement)
+                    {
+                        var command = actor.Agent.GetAuthorityCommand(simulationTick);
+                        var movement = _authority.ResolveMovement(command, (float)_simulationClock.StepSeconds);
+                        actor.Agent.ApplyAuthoritativeMovement(movement, (float)_simulationClock.StepSeconds);
+                    }
+                    else
+                    {
+                        _authority.SetPosition(actor.Target.Id, new Float2(actor.Transform.position.x, actor.Transform.position.z));
+                    }
                 }
 
                 var authorityTick = _authority.Advance(simulationTick, (float)_simulationClock.StepSeconds);
@@ -179,6 +190,15 @@ namespace BattleRaja.Presentation.Match
 
             _authority.ConfigureItems(pickupDefinitions, gadgetDefinitions);
             _authority.Start(spawns);
+            for (var i = 0; i < _actors.Count; i++)
+            {
+                var actor = _actors[i];
+                actor.Agent.AuthorityDrivenMovement = authorityDrivenMovement;
+                if (authorityDrivenMovement)
+                {
+                    _authority.ConfigureMovement(actor.Target.Id, actor.Agent.Tuning);
+                }
+            }
             _simulationClock = new FixedSimulationClock(Math.Max(1, simulationTickRate));
             ZoneCenter = Float2.Zero;
             NextZoneCenter = Float2.Zero;
@@ -221,7 +241,7 @@ namespace BattleRaja.Presentation.Match
                 var health = agent.GetComponent<CombatHealth>();
                 if (target != null && health != null)
                 {
-                    _actors.Add(new MatchActorBinding(agent.transform, target, health, agent.GetComponent<PlayerInputAdapter>()));
+                    _actors.Add(new MatchActorBinding(agent, agent.transform, target, health, agent.GetComponent<PlayerInputAdapter>()));
                 }
             }
         }
@@ -353,14 +373,16 @@ namespace BattleRaja.Presentation.Match
 
         private sealed class MatchActorBinding
         {
-            public MatchActorBinding(Transform transform, CombatTarget target, CombatHealth health, PlayerInputAdapter input)
+            public MatchActorBinding(MovementPlayerAgent agent, Transform transform, CombatTarget target, CombatHealth health, PlayerInputAdapter input)
             {
+                Agent = agent;
                 Transform = transform;
                 Target = target;
                 Health = health;
                 Input = input;
             }
 
+            public MovementPlayerAgent Agent { get; }
             public Transform Transform { get; }
             public CombatTarget Target { get; }
             public CombatHealth Health { get; }
