@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.InputSystem;
 
 namespace BattleRaja.Presentation.Visuals
 {
@@ -49,7 +50,10 @@ namespace BattleRaja.Presentation.Visuals
 
         private void Update()
         {
-            if (!_started && (Input.anyKeyDown || Input.GetMouseButtonDown(0) || Input.touchCount > 0))
+            var keyboardGesture = Keyboard.current != null && Keyboard.current.anyKey.wasPressedThisFrame;
+            var mouseGesture = Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+            var touchGesture = Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame;
+            if (!_started && (keyboardGesture || mouseGesture || touchGesture))
             {
                 StartFromUserGesture();
             }

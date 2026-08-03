@@ -17,6 +17,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
@@ -79,7 +80,7 @@ namespace BattleRaja.Editor
 
             if (UnityEngine.Object.FindFirstObjectByType<EventSystem>() == null)
             {
-                var eventObject = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
+                var eventObject = new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
                 eventObject.GetComponent<EventSystem>().sendNavigationEvents = true;
             }
 
@@ -183,7 +184,7 @@ namespace BattleRaja.Editor
 
             var canvas = CreateTouchCanvas(out var movementStick, out var aimStick, out var attackButton, out var abilityButton, out var gadgetButton);
             var hud = CreateHud(canvas, out var hudText);
-            var eventSystem = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
+            var eventSystem = new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
             eventSystem.transform.SetParent(arena.transform);
 
             var combatSystems = new GameObject("CombatSystems");

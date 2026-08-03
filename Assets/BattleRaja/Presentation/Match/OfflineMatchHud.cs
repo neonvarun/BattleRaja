@@ -55,7 +55,13 @@ namespace BattleRaja.Presentation.Match
             }
 
             _audio = FindFirstObjectByType<BattleRajaAudioDirector>();
-            _playerInput = FindFirstObjectByType<MovementPlayerAgent>()?.GetComponent<PlayerInputAdapter>();
+            var movementAgents = FindObjectsByType<MovementPlayerAgent>();
+            for (var i = 0; i < movementAgents.Length; i++)
+            {
+                if (movementAgents[i].ActorId != 1) continue;
+                _playerInput = movementAgents[i].GetComponent<PlayerInputAdapter>();
+                break;
+            }
             LoadPreferences();
             _playerInput?.SetAimAssistEnabled(_aimAssist);
             BuildCanvasUi();

@@ -822,3 +822,26 @@ Record every material choice here. Do not silently overwrite old decisions.
   `Builds/M11/TestResults/aimassist-playmode-20260803.xml` and the fresh Phase 7 smoke
   captures in `Docs/QA/Visual/Phase7/`.
 - **Owner:** Human project owner
+
+### ADR-041 — Use Unity Input System only with a legacy-scene compatibility bridge
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the current Android/Web project baseline; serialized legacy
+  scene cleanup and broader controller rebinding remain future work.
+- **Context:** The project had both legacy `StandaloneInputModule` scenes and the new
+  Input System package enabled. Unity's `activeInputHandler: Both` generated an editor
+  warning and allowed presentation code to keep depending on the legacy `UnityEngine.Input`
+  API, while switching directly to Input System would break user-owned serialized scenes.
+- **Decision:** Set `ProjectSettings.activeInputHandler` to Input System only. Generated
+  scenes now use `InputSystemUIInputModule`, audio gesture detection uses Input System
+  device state, and `InputModuleCompatibilityBridge` replaces any legacy module at scene
+  load so existing scenes remain runnable without rewriting their YAML in place.
+- **Consequences:** Android and Web builds share one input API and no longer depend on
+  legacy polling in project code. The bridge is a transitional runtime boundary; vendor
+  Photon code and old serialized scene data may still contain legacy module references,
+  and controller rebinding, touch ergonomics and final input QA remain open.
+- **Evidence/sources:** `ProjectSettings/ProjectSettings.asset`,
+  `BuildEntrypoints`, `BattleRajaAudioDirector`, `InputModuleCompatibilityBridge`,
+  `Builds/M11/TestResults/input-system-playmode-fixed-20260803.xml`, the successful
+  Android/Web M11 builds, and `Tools/Validation/validate.ps1`.
+- **Owner:** Human project owner
