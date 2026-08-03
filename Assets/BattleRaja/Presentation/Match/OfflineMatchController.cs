@@ -226,7 +226,7 @@ namespace BattleRaja.Presentation.Match
 
         private void OnDamageApplied(CombatDamageEvent damageEvent)
         {
-            Simulation?.RecordDamage(damageEvent);
+            _authority?.RecordDamage(damageEvent);
             if (Simulation != null && Simulation.IsEnded)
             {
                 PublishResults();

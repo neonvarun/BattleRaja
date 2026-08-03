@@ -115,6 +115,13 @@ namespace BattleRaja.Core.Application
 
         public bool SyncHealth(CombatEntityId id, int currentHealth) => RequireSimulation().SyncHealth(id, currentHealth);
 
+        /// <summary>
+        /// Routes a resolved combat event through the authority-owned match simulation.
+        /// Presentation may report immutable events, but it cannot mutate placements or
+        /// statistics by reaching into the simulation directly.
+        /// </summary>
+        public bool RecordDamage(CombatDamageEvent damageEvent) => RequireSimulation().RecordDamage(damageEvent);
+
         public MatchAuthorityTick Advance(float fixedDeltaSeconds)
         {
             return Advance(_lastSimulationTick + 1, fixedDeltaSeconds);

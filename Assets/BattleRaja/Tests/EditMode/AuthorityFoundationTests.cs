@@ -60,6 +60,30 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void MatchAuthorityRoutesDamageEventsAndRejectsDuplicateEliminations()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(4f, 0f), 100),
+                new MatchSpawn(new CombatEntityId(3), new Float2(-4f, 0f), 100)
+            });
+
+            var setup = new DamageRequest(new CombatEntityId(1), new CombatEntityId(2), CombatFaction.Player, 40, DamageType.Projectile, new Float2(1f, 0f), 1);
+            var finishing = new DamageRequest(new CombatEntityId(1), new CombatEntityId(2), CombatFaction.Player, 60, DamageType.Projectile, new Float2(1f, 0f), 2);
+
+            Assert.That(authority.RecordDamage(new CombatDamageEvent(setup, 40, false, 60, 1)), Is.True);
+            Assert.That(authority.RecordDamage(new CombatDamageEvent(finishing, 60, true, 0, 2)), Is.True);
+            Assert.That(authority.RecordDamage(new CombatDamageEvent(finishing, 60, true, 0, 3)), Is.False);
+
+            var snapshots = authority.Simulation.GetSnapshots();
+            Assert.That(snapshots.Single(snapshot => snapshot.Id.Value == 1).DamageDealt, Is.EqualTo(100));
+            Assert.That(snapshots.Single(snapshot => snapshot.Id.Value == 1).Eliminations, Is.EqualTo(1));
+            Assert.That(snapshots.Single(snapshot => snapshot.Id.Value == 2).Placement, Is.EqualTo(3));
+        }
+
+        [Test]
         public void MatchAuthorityOwnsGadgetUseAndRejectsDuplicateCommands()
         {
             var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
