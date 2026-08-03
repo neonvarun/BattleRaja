@@ -9,8 +9,8 @@
 - Product vision: drafted
 - Autonomous M1–M11 sequential execution: active; milestone gates and external
   service approvals remain explicit.
-- Latest validated runtime source HEAD: `678acb0`; the current repository includes
-  the authority-first damage/healing continuation after the touch-control/docs checkpoints; production-flow EventSystem creation is
+- Latest validated runtime source HEAD: `204e4f0`; the current repository includes
+  the authority-driven production movement continuation after the authority-first damage/healing checkpoints; production-flow EventSystem creation is
   Input System-only and the selected-fighter HUD path is covered by the current
   regression suite; Maya decoy perception refresh and authority-routed combat events are
   covered by regression.
@@ -148,14 +148,15 @@
   and unavailable crash adapter are compile-safe and service-neutral.
 - Closed-test, rollback/support, store-draft and privacy/data-safety worksheets are in `Docs/`.
 - M11 artifact, test and smoke evidence is recorded in `Docs/MILESTONE_REPORTS/M11.md`.
-- Current continuation HEAD `5f4566d` includes functional bounded aim assist,
+- Current continuation HEAD `204e4f0` includes authority-driven Bazaar movement,
+  functional bounded aim assist,
   authoritative offline assist attribution and focus-hardened Web keyboard/pointer input
   plus an Input System-only project baseline with legacy-scene compatibility bridge,
   in addition to the authority-driven spatial gadget collection
   coverage, immediate live Results/Rematch publication, three repeated rematch cleanup
   cycles and the complete eight-step tutorial walkthrough. Fresh latest-HEAD regression
-  is 94/94 EditMode and 45/45 PlayMode; the latest development APK/Web smoke artifacts
-  and Lava/Chrome/Edge runtime captures are recorded in `Docs/QA/LATEST_HEAD_BASELINE.md`.
+  is 98/98 EditMode and 49/49 PlayMode; the latest development APK/Web smoke artifacts
+  and Lava runtime capture are recorded in `Docs/QA/LATEST_HEAD_BASELINE.md`.
 - No public publication, store submission, signing-key use, paid service, legal acceptance or
   final approval is claimed.
 - External blockers and exact owner actions are tracked in `Docs/EXTERNAL_SERVICE_GATES.md`.

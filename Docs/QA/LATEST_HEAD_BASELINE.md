@@ -2,9 +2,27 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated runtime source HEAD: `678acb0` (`refactor: apply healing through match authority`)
-Latest runtime-bearing candidate: `678acb0` (authority-first damage/healing Android/Web candidates)
+Latest validated runtime source HEAD: `204e4f0` (`refactor: route production movement through authority`)
+Latest runtime-bearing candidate: `204e4f0` (authority-first movement/damage/healing Android/Web candidates)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
+
+## Authority-driven production movement continuation (`204e4f0`, 2026-08-03)
+
+Bazaar Bastion now routes actor movement commands through `OfflineMatchAuthority` at the
+fixed simulation tick. The pure motor runs once per actor/tick, canonical positions are
+stored in `OfflineMatchSimulation`, duplicate ticks are rejected, and the presentation
+adapter applies the returned snapshot. MovementLab intentionally retains its local
+observation path for movement fixtures. Fighter ability displacement and real network
+authority remain open.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings; `git diff --check` clean | command output from 2026-08-03 |
+| EditMode tests | 98 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/authority-movement-editmode-20260803-final.xml` |
+| PlayMode tests | 49 passed, 0 failed, 0 skipped, including `ProductionMatchRoutesMovementThroughAuthoritySnapshots` | `Builds/M11/TestResults/authority-movement-playmode-20260803-final2.xml` |
+| Android build | `BattleRaja-M11.apk`, 151,468,901 bytes; SHA-256 `378B0474577A575139FEE1F797EF848C2FC27335CCA69427F64297860A768A04` | `Builds/M11/Logs/android-build.log` |
+| Lava smoke | Exact APK installed/launched only on `ST5GDW23LB004392` (`LAVA LXX508`); top-resumed Unity activity observed with process id 7419 and zero sampled fatal/AndroidRuntime markers | ADB output from 2026-08-03; `Builds/M11/Logs/android-lava-authority-movement-20260803.png` |
+| Web build/serve | 21 files, 133,467,594 bytes; `Web.wasm` SHA-256 `DFA4599679634349459DBD68973467B929F9470D7FAC057A56B90D5C137C46FC`; local port 8137 returned HTTP 200 | `Builds/M11/Logs/web-build.log`, `Builds/M11/Web` |
 
 ## Authority-first healing continuation (`678acb0`, 2026-08-03)
 

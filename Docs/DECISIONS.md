@@ -910,3 +910,29 @@ Record every material choice here. Do not silently overwrite old decisions.
   `CombatHealth.SetAuthoritativeHealth`, `AuthorityFoundationTests.MatchAuthorityAppliesHealingToCanonicalHealth`,
   fresh authority-health EditMode/PlayMode XML and the latest baseline.
 - **Owner:** Human project owner
+
+### ADR-045 — Resolve production movement in offline match authority
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline Bazaar Bastion vertical slice; fighter ability
+  displacement, Photon transport and server deployment remain future work.
+- **Context:** Production movement still copied the Unity transform into the simulation
+  each render frame, allowing presentation state to become the effective owner of actor
+  placement and making duplicate/local movement possible.
+- **Decision:** Register one `MovementMotor` and `MovementTuning` per authority participant.
+  `OfflineMatchController` submits fixed-tick `MovementCommand` values to
+  `OfflineMatchAuthority.ResolveMovement`; the authority applies the pure motor exactly
+  once per monotonically increasing tick and returns an immutable step/position snapshot.
+  Bazaar Bastion uses this path, while MovementLab retains its observation path for local
+  movement regression fixtures. The presentation adapter applies the canonical position
+  directly and disables its local `CharacterController` in authority mode so Unity
+  collision projection cannot reject a valid canonical result.
+- **Consequences:** Production actor placement is now canonical in the offline authority,
+  with duplicate-tick rejection and PlayMode coverage. Fighter ability movement is not yet
+  authority-owned and therefore remains explicitly out of scope for this continuation;
+  this is not a real multiplayer or trusted-server claim.
+- **Evidence/sources:** `OfflineMatchAuthority.ResolveMovement`, `MovementMotor`,
+  `OfflineMatchController`, `MovementPlayerAgent`, `AuthorityFoundationTests`,
+  `VerticalSlicePlayModeTests`, `Builds/M11/TestResults/authority-movement-editmode-20260803-final.xml`,
+  `Builds/M11/TestResults/authority-movement-playmode-20260803-final2.xml` and the latest baseline.
+- **Owner:** Human project owner
