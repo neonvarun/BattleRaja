@@ -1,10 +1,24 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-03
-Runtime-bearing candidate: `c23982e` (fresh aim-assist accessibility phase)
-Current source HEAD: `d69b74b` (PlayMode-test-only continuation after the fixed-tick correction)
+Runtime-bearing candidate: `810f484` (results-screen continuation)
+Current source HEAD: `810f484`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web` served over local HTTP at `http://127.0.0.1:8137/index.html`
+
+## Results-screen continuation (`810f484`)
+
+- The pure formatter now emits a deterministic row for every placement with KOs, assists,
+  damage and survival time, plus a compact portrait representation. EditMode remains
+  94/94 and PlayMode is 45/45 after the new regression test.
+- The exact Android candidate was installed/launched only on Lava
+  `ST5GDW23LB004392` (`LAVA LXX508`). `android-lava-results-20260803.png` shows the live
+  portrait match after launch and its log sample contains no fatal application markers.
+- The Web candidate returned HTTP 200 on port 8137. Chrome reached the live match;
+  `playwright-results-20260803.png` shows the arena/HUD and the console scan reported
+  0 errors and 0 warnings.
+- These captures do not show the Results/rematch state itself. The human-facing Results
+  and Rematch row remains **Not verified**, and no visual gate is claimed here.
 
 ## Fresh latest-HEAD runtime smoke (`9291d85`)
 

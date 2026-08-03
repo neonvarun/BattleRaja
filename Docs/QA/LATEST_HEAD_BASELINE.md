@@ -2,8 +2,8 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `d69b74b` (`test: cover in-match aim assist setting`)
-Latest runtime-bearing candidate: `c23982e` (latest source change is PlayMode-test-only; the two pre-existing user-owned worktree edits were preserved and not committed)
+Latest validated source HEAD: `810f484` (`feat: show full offline result placements`)
+Latest runtime-bearing candidate: `810f484` (full result-placement formatter and regression test)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
 ## Scope and repository note
@@ -78,6 +78,26 @@ unchanged.
 
 The functional setting still requires human review for touch ergonomics, fairness and
 accessibility approval; this evidence does not close the broader visual gate.
+
+## Results-screen continuation (`810f484`)
+
+The offline Results surface now lists every placement in deterministic placement/ID order,
+including eliminations, assists, damage and survival time. Compact portrait mode uses a
+shorter row format and smaller results typography; the formatter is pure and does not
+mutate the match snapshots.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| EditMode tests | 94 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/results-editmode-20260803.xml` |
+| PlayMode tests | 45 passed, 0 failed, 0 skipped; includes the placement/statistics formatter regression | `Builds/M11/TestResults/results-playmode-20260803.xml` |
+| Android development build | Unity log reports `Build Finished, Result: Success`; APK 151,408,183 bytes; SHA-256 `AF7A862E47BE8F50C885AC3784C01964503AF2B96802CA21319E3E1AEC2D8AE4` | `Builds/M11/Logs/android-build.log`, `Builds/M11/Android/BattleRaja-M11.apk` |
+| Web development build | Unity log reports success; 21 files, 133,352,571 bytes; WASM SHA-256 `70210B58F843B51A29499AA5D8DB3A4D64AAAB0E994FA8425064AEF78762A0C7` | `Builds/M11/Logs/web-build.log`, `Builds/M11/Web` |
+| Browser runtime | `http://127.0.0.1:8137/index.html` returned HTTP 200; Chrome/Playwright reached the live match with 53 console messages, 0 errors and 0 warnings | `Docs/QA/Visual/Phase7/playwright-results-20260803.png`, `.playwright-cli/console-2026-08-03T04-59-04-584Z.log` |
+| Lava smoke | Exact APK installed/launched only on Lava `ST5GDW23LB004392` (`LAVA LXX508`), process `22304`; capture shows a live portrait match and log scan found no fatal, SIGSEGV, AndroidRuntime, missing-component or null-reference marker | `Docs/QA/Visual/Phase7/android-lava-results-20260803.png`, `Builds/M11/Logs/results-lava-20260803.txt` |
+
+The runtime captures are live-match technical evidence for the build. They do not claim
+that the Results/rematch state has passed human visual review; that state still needs a
+deliberate capture and owner approval.
 
 ## Fresh Phase 6 continuation (`8544f55`)
 
