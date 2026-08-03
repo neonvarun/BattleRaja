@@ -1,10 +1,23 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-03
-Runtime-bearing candidate: `9100e69` (authority-first fighter displacement continuation)
-Current validated runtime source HEAD: `9100e69`
+Runtime-bearing candidate: `d993a5b` (authority-first Maya decoy continuation)
+Current validated runtime source HEAD: `d993a5b`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web` served over local HTTP at `http://127.0.0.1:8137/index.html`
+
+## Authority-driven Maya decoy runtime smoke (`d993a5b`)
+
+- The fresh Android candidate was installed/launched only on Lava
+  `ST5GDW23LB004392` (`LAVA LXX508`). The Unity game activity remained top-resumed,
+  and the sampled process log contained no fatal, `AndroidRuntime` or `SIGSEGV` marker.
+  Capture: `Builds/M11/Logs/android-lava-authority-maya-20260803.png`.
+- The fresh Web output returned HTTP 200 from the existing local server on port 8137.
+  Browser visual approval, multi-browser parity and a human-facing decoy-use capture
+  were not rerun for this continuation.
+- This is technical runtime evidence for authority-owned Maya decoy state, not final
+  visual approval. The decoy remains a generated capsule placeholder; greybox art,
+  touch ergonomics, multi-browser coverage and owner review remain open.
 
 ## Authority-driven fighter displacement runtime smoke (`9100e69`)
 

@@ -9,8 +9,8 @@
 - Product vision: drafted
 - Autonomous M1–M11 sequential execution: active; milestone gates and external
   service approvals remain explicit.
-- Latest validated runtime source HEAD: `9100e69`; the current repository includes
-  the authority-driven fighter displacement continuation after the Dhol, production movement and authority-first damage/healing checkpoints; production-flow EventSystem creation is
+- Latest validated runtime source HEAD: `d993a5b`; the current repository includes
+  the authority-driven Maya decoy continuation after fighter displacement, Dhol, production movement and authority-first damage/healing checkpoints; production-flow EventSystem creation is
   Input System-only and the selected-fighter HUD path is covered by the current
   regression suite; Maya decoy perception refresh and authority-routed combat events are
   covered by regression.
@@ -148,14 +148,15 @@
   and unavailable crash adapter are compile-safe and service-neutral.
 - Closed-test, rollback/support, store-draft and privacy/data-safety worksheets are in `Docs/`.
 - M11 artifact, test and smoke evidence is recorded in `Docs/MILESTONE_REPORTS/M11.md`.
-- Current continuation HEAD `204e4f0` includes authority-driven Bazaar movement,
+- Current continuation HEAD `d993a5b` includes authority-driven Bazaar movement,
+  fighter displacement and production Maya decoy lifetime/health,
   functional bounded aim assist,
   authoritative offline assist attribution and focus-hardened Web keyboard/pointer input
   plus an Input System-only project baseline with legacy-scene compatibility bridge,
   in addition to the authority-driven spatial gadget collection
   coverage, immediate live Results/Rematch publication, three repeated rematch cleanup
   cycles and the complete eight-step tutorial walkthrough. Fresh latest-HEAD regression
-  is 98/98 EditMode and 49/49 PlayMode; the latest development APK/Web smoke artifacts
+  is 100/100 EditMode and 51/51 PlayMode; the latest development APK/Web smoke artifacts
   and Lava runtime capture are recorded in `Docs/QA/LATEST_HEAD_BASELINE.md`.
 - No public publication, store submission, signing-key use, paid service, legal acceptance or
   final approval is claimed.

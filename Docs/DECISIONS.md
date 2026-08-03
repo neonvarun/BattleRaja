@@ -988,3 +988,29 @@ Record every material choice here. Do not silently overwrite old decisions.
   `VerticalSlicePlayModeTests.ProductionBijliAbilityRoutesDisplacementThroughAuthority`,
   and the latest baseline.
 - **Owner:** Human project owner
+
+### ADR-048 — Keep production Maya decoys in match authority
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical slice; network transport and final
+  fighter presentation remain future work.
+- **Context:** Maya's presentation controller created a decoy `CombatHealth` and
+  `CombatTarget` directly. In Bazaar Bastion that allowed decoy lifetime, follow
+  position and damage to bypass the same authority boundary used by participant
+  movement and combat.
+- **Decision:** `OfflineMatchAuthority` owns one deterministic `DecoyRuntime` per
+  participant, validates tick-ordered spawn and damage, advances the decoy from the
+  canonical owner snapshot, and exposes immutable `MatchAuthorityDecoy` snapshots.
+  `MayaFighterController` consumes those snapshots to create/update/destroy only the
+  Unity view. `CombatDamageResolver` routes authority decoy damage through the
+  application seam; non-authority lab probes retain the local runtime path.
+- **Consequences:** Production Maya decoy health, lifetime, follow position and duplicate
+  damage rejection are now authority-owned and regression-tested. The view still uses a
+  generated capsule placeholder, and fighter ability command validation/cooldown policy
+  is transitional rather than a real network-server implementation.
+- **Evidence/sources:** `OfflineMatchAuthority.TrySpawnMayaDecoy`,
+  `OfflineMatchAuthority.ResolveMayaDecoyDamage`, `MayaFighterController`,
+  `CombatDamageResolver`, `AuthorityFoundationTests.MatchAuthorityOwnsMayaDecoyLifetimeAndDamage`,
+  `VerticalSlicePlayModeTests.ProductionMayaDecoyRoutesLifetimeAndDamageThroughAuthority`,
+  and the latest baseline.
+- **Owner:** Human project owner

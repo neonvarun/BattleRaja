@@ -2,9 +2,26 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated runtime source HEAD: `9100e69` (`refactor: route fighter displacement through authority`)
-Latest runtime-bearing candidate: `9100e69` (authority-first movement/gadget/fighter displacement/damage/healing Android/Web candidates)
+Latest validated runtime source HEAD: `d993a5b` (`refactor: route Maya decoy through authority`)
+Latest runtime-bearing candidate: `d993a5b` (authority-first movement/gadget/fighter displacement/Maya decoy/damage/healing Android/Web candidates)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
+
+## Authority-driven Maya decoy continuation (`d993a5b`, 2026-08-03)
+
+Production Maya decoys are now owned by `OfflineMatchAuthority`: spawn, follow position,
+remaining lifetime, health and duplicate-tick damage are resolved in the pure/application
+path. `MayaFighterController` consumes immutable snapshots and creates only the generated
+capsule view. The local non-authority probe path remains available; this is not a real
+network-server claim.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings; `git diff --check` clean | command output from 2026-08-03 |
+| EditMode tests | 100 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/authority-maya-decoy-editmode-full-20260803.xml` |
+| PlayMode tests | 51 passed, 0 failed, 0 skipped; includes production Maya authority lifetime/damage | `Builds/M11/TestResults/authority-maya-decoy-playmode-full-20260803.xml`, `Builds/M11/TestResults/authority-maya-decoy-playmode-20260803.xml` |
+| Android build | `BattleRaja-M11.apk`, 151,512,643 bytes; SHA-256 `F12EEBB2A6E8968992B38F9446E1D9B55A5C2BD0EBB0F6AB0306A23786E9BEB9` | `Builds/M11/Logs/android-build.log` |
+| Lava smoke | Exact APK installed/launched only on `ST5GDW23LB004392` (`LAVA LXX508`); `UnityPlayerGameActivity` remained top-resumed; sampled logcat had 0 fatal/AndroidRuntime/SIGSEGV markers | ADB output from 2026-08-03; `Builds/M11/Logs/android-lava-authority-maya-20260803.png` |
+| Web build/serve | 21 files, 133,498,294 bytes; `Web.wasm` 120,789,716 bytes, SHA-256 `FE33609725B6C8AE097A56F1C29928B41EB8DBCBAFB42217129018E5DB2B97DD`; local port 8137 returned HTTP 200 | `Builds/M11/Web`, `Builds/M11/Logs/web-build.log` |
 
 ## Authority-driven fighter displacement continuation (`9100e69`, 2026-08-03)
 
