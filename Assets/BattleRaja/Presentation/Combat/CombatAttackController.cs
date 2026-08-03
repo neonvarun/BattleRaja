@@ -40,7 +40,7 @@ namespace BattleRaja.Presentation.Combat
         {
             inputAdapter = inputAdapter != null ? inputAdapter : GetComponent<PlayerInputAdapter>();
             movementAgent = movementAgent != null ? movementAgent : GetComponent<MovementPlayerAgent>();
-            projectilePool = projectilePool != null ? projectilePool : FindFirstObjectByType<CombatProjectilePool>();
+            projectilePool = projectilePool != null ? projectilePool : FindAnyObjectByType<CombatProjectilePool>();
             _definition = fighterDefinition != null
                 ? fighterDefinition.ToDomain().BasicAttack
                 : (weapon != null ? weapon.ToDomain() : ProjectileWeaponDefinition.TrainingBolt);

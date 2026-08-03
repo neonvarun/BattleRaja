@@ -29,11 +29,11 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator SceneContainsBijliPehelAndMayaDefinitions()
         {
-            var ids = Object.FindObjectsByType<BijliFighterController>(FindObjectsSortMode.None)
+            var ids = Object.FindObjectsByType<BijliFighterController>()
                 .Select(controller => controller.Definition.FighterId.Value)
-                .Concat(Object.FindObjectsByType<PehelFighterController>(FindObjectsSortMode.None)
+                .Concat(Object.FindObjectsByType<PehelFighterController>()
                     .Select(controller => controller.Definition.FighterId.Value))
-                .Concat(Object.FindObjectsByType<MayaFighterController>(FindObjectsSortMode.None)
+                .Concat(Object.FindObjectsByType<MayaFighterController>()
                     .Select(controller => controller.Definition.FighterId.Value))
                 .Distinct()
                 .ToArray();
@@ -47,13 +47,13 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator ProductionSceneUsesFighterSpecificAbilityControllers()
         {
-            Assert.That(Object.FindObjectsByType<PehelFighterController>(FindObjectsSortMode.None), Has.Length.GreaterThanOrEqualTo(1));
-            Assert.That(Object.FindObjectsByType<MayaFighterController>(FindObjectsSortMode.None), Has.Length.GreaterThanOrEqualTo(1));
+            Assert.That(Object.FindObjectsByType<PehelFighterController>(), Has.Length.GreaterThanOrEqualTo(1));
+            Assert.That(Object.FindObjectsByType<MayaFighterController>(), Has.Length.GreaterThanOrEqualTo(1));
             Assert.That(GameObject.Find("BazaarBastion"), Is.Not.Null);
             Assert.That(GameObject.Find("BazaarArchitecture"), Is.Not.Null);
-            var production = Object.FindFirstObjectByType<BazaarBastionScene>();
+            var production = Object.FindAnyObjectByType<BazaarBastionScene>();
             Assert.That(production, Is.Not.Null);
-            Assert.That(Object.FindFirstObjectByType<MovementLabScene>(), Is.Null,
+            Assert.That(Object.FindAnyObjectByType<MovementLabScene>(), Is.Null,
                 "The production scene must not retain the MovementLab scene contract.");
             Assert.That(production.Player, Is.Not.Null);
             Assert.That(production.MatchController, Is.Not.Null);
@@ -64,7 +64,7 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator ProductionBotsResolveTheirOwnFighterAbilityControllers()
         {
-            var brains = Object.FindObjectsByType<BotBrain>(FindObjectsSortMode.None);
+            var brains = Object.FindObjectsByType<BotBrain>();
             Assert.That(brains, Has.Length.GreaterThanOrEqualTo(1));
             for (var i = 0; i < brains.Length; i++)
             {
@@ -85,14 +85,14 @@ namespace BattleRaja.Tests.PlayMode
         public IEnumerator ProductionBotsRespectSpawnProtectionBeforeCombat()
         {
             var player = PlayModeTestHelpers.FindPlayer<CombatHealth>();
-            var brains = Object.FindObjectsByType<BotBrain>(FindObjectsSortMode.None);
+            var brains = Object.FindObjectsByType<BotBrain>();
             Assert.That(brains, Has.Length.EqualTo(7));
             for (var i = 0; i < brains.Length; i++) brains[i].enabled = true;
 
             var initialHealth = player.Snapshot.CurrentHealth;
             yield return new WaitForSeconds(4f);
 
-            var match = Object.FindFirstObjectByType<OfflineMatchController>();
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
             Assert.That(match.CurrentPhase, Is.EqualTo(MatchPhase.SpawnProtection));
             Assert.That(player.Snapshot.CurrentHealth, Is.EqualTo(initialHealth),
                 "Bots must not deal combat damage during load warmup or spawn protection.");
@@ -162,7 +162,7 @@ namespace BattleRaja.Tests.PlayMode
             ownerTarget.Configure(9010, CombatFaction.Enemy, mayaHealth);
             attacker.Configure(9011, CombatFaction.Player, attackerHealth);
             botTarget.Configure(9012, CombatFaction.Player, botHealth);
-            var resolver = Object.FindFirstObjectByType<CombatDamageResolver>();
+            var resolver = Object.FindAnyObjectByType<CombatDamageResolver>();
 
             maya.Submit(AbilityCommandFactory.Create(
                 ownerTarget.Id,
@@ -216,9 +216,9 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator ProductionSceneHasReadableFighterAndAudioPresentation()
         {
-            Assert.That(Object.FindObjectsByType<FighterPresentation>(FindObjectsSortMode.None), Has.Length.GreaterThanOrEqualTo(8));
-            Assert.That(Object.FindObjectsByType<BattleRajaAudioDirector>(FindObjectsSortMode.None), Has.Length.EqualTo(1));
-            var visual = Object.FindFirstObjectByType<FighterPresentation>();
+            Assert.That(Object.FindObjectsByType<FighterPresentation>(), Has.Length.GreaterThanOrEqualTo(8));
+            Assert.That(Object.FindObjectsByType<BattleRajaAudioDirector>(), Has.Length.EqualTo(1));
+            var visual = Object.FindAnyObjectByType<FighterPresentation>();
             Assert.That(visual.CurrentAnimation, Is.EqualTo(FighterPresentation.AnimationState.Idle).Or.EqualTo(FighterPresentation.AnimationState.Locomotion));
             yield return null;
         }
@@ -226,18 +226,18 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator ExistingOfflineMatchAndGadgetSystemsRemainPresent()
         {
-            Assert.That(Object.FindFirstObjectByType<OfflineMatchController>(), Is.Not.Null);
-            Assert.That(Object.FindObjectsByType<GadgetUser>(FindObjectsSortMode.None), Has.Length.EqualTo(8));
+            Assert.That(Object.FindAnyObjectByType<OfflineMatchController>(), Is.Not.Null);
+            Assert.That(Object.FindObjectsByType<GadgetUser>(), Has.Length.EqualTo(8));
             yield return null;
         }
 
         [UnityTest]
         public IEnumerator ProductionGadgetPickupAndUseRunsThroughAuthority()
         {
-            var match = Object.FindFirstObjectByType<OfflineMatchController>();
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
             var player = PlayModeTestHelpers.FindPlayer<MovementPlayerAgent>();
             var user = player != null ? player.GetComponent<GadgetUser>() : null;
-            var dhol = Object.FindObjectsByType<GadgetPickup>(FindObjectsSortMode.None)
+            var dhol = Object.FindObjectsByType<GadgetPickup>()
                 .First(pickup => pickup.GadgetId.Equals(GadgetDefinition.DholBurst.GadgetId));
 
             Assert.That(match, Is.Not.Null);
@@ -263,8 +263,8 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator ProductionMatchRoutesMovementThroughAuthoritySnapshots()
         {
-            var match = Object.FindFirstObjectByType<OfflineMatchController>();
-            var player = Object.FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None)
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            var player = Object.FindObjectsByType<MovementPlayerAgent>()
                 .First(agent => agent.ActorId == 1);
             Assert.That(match.AuthorityDrivenMovement, Is.True);
             Assert.That(match.Simulation.TryGetSnapshot(new CombatEntityId(1), out var before), Is.True);
@@ -290,8 +290,8 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator ProductionBijliAbilityRoutesDisplacementThroughAuthority()
         {
-            var match = Object.FindFirstObjectByType<OfflineMatchController>();
-            var player = Object.FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None)
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            var player = Object.FindObjectsByType<MovementPlayerAgent>()
                 .First(agent => agent.ActorId == 1);
             var bijli = player.GetComponent<BijliFighterController>();
             Assert.That(bijli, Is.Not.Null);
@@ -314,8 +314,8 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator ProductionPehelChargeThrowUsesAuthoritySnapshots()
         {
-            var match = Object.FindFirstObjectByType<OfflineMatchController>();
-            var pehel = Object.FindObjectsByType<PehelFighterController>(FindObjectsSortMode.None)
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            var pehel = Object.FindObjectsByType<PehelFighterController>()
                 .First(controller => controller.GetComponent<MovementPlayerAgent>()?.AuthorityDrivenMovement == true);
             var pehelAgent = pehel.GetComponent<MovementPlayerAgent>();
             var player = PlayModeTestHelpers.FindPlayer<CombatTarget>();
@@ -355,8 +355,8 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator ProductionMayaDecoyRoutesLifetimeAndDamageThroughAuthority()
         {
-            var match = Object.FindFirstObjectByType<OfflineMatchController>();
-            var maya = Object.FindObjectsByType<MayaFighterController>(FindObjectsSortMode.None)
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            var maya = Object.FindObjectsByType<MayaFighterController>()
                 .First(controller => controller.GetComponent<MovementPlayerAgent>() != null &&
                     controller.GetComponent<MovementPlayerAgent>().AuthorityDrivenMovement &&
                     controller.GetComponent<BotBrain>() != null);
@@ -371,9 +371,9 @@ namespace BattleRaja.Tests.PlayMode
 
             Assert.That(match.TryGetMayaDecoySnapshot(ownerId, out var spawned), Is.True);
             Assert.That(spawned.Active, Is.True);
-            var decoy = Object.FindObjectsByType<CombatTarget>(FindObjectsSortMode.None)
+            var decoy = Object.FindObjectsByType<CombatTarget>()
                 .First(target => target.Id == spawned.DecoyId);
-            var resolver = Object.FindFirstObjectByType<CombatDamageResolver>();
+            var resolver = Object.FindAnyObjectByType<CombatDamageResolver>();
             Assert.That(resolver, Is.Not.Null);
             var attackerId = new CombatEntityId(ownerId.Value == 1 ? 2 : 1);
             var result = resolver.Resolve(

@@ -26,7 +26,7 @@ namespace BattleRaja.Tests.PlayMode
                 yield return null;
                 yield return null;
 
-                var selection = Object.FindFirstObjectByType<PlayerFighterSelection>();
+                var selection = Object.FindAnyObjectByType<PlayerFighterSelection>();
                 Assert.That(selection, Is.Not.Null);
                 var agent = selection.GetComponent<MovementPlayerAgent>();
                 Assert.That(agent, Is.Not.Null);

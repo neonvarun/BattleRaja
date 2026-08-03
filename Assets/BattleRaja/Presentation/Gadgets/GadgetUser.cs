@@ -41,8 +41,8 @@ namespace BattleRaja.Presentation.Gadgets
             movementAgent = movementAgent != null ? movementAgent : GetComponent<MovementPlayerAgent>();
             combatTarget = combatTarget != null ? combatTarget : GetComponent<CombatTarget>();
             health = health != null ? health : GetComponent<CombatHealth>();
-            damageResolver = damageResolver != null ? damageResolver : FindFirstObjectByType<CombatDamageResolver>();
-            match = match != null ? match : FindFirstObjectByType<OfflineMatchController>();
+            damageResolver = damageResolver != null ? damageResolver : FindAnyObjectByType<CombatDamageResolver>();
+            match = match != null ? match : FindAnyObjectByType<OfflineMatchController>();
             _clock = new FixedSimulationClock(Mathf.Max(1, simulationTickRate));
         }
 
@@ -215,7 +215,7 @@ namespace BattleRaja.Presentation.Gadgets
         {
             if (effect.Displacements != null && effect.Displacements.Length > 0)
             {
-                var targets = FindObjectsByType<CombatTarget>(FindObjectsSortMode.None);
+                var targets = FindObjectsByType<CombatTarget>();
                 for (var i = 0; i < effect.Displacements.Length; i++)
                 {
                     var displacement = effect.Displacements[i];
@@ -238,7 +238,7 @@ namespace BattleRaja.Presentation.Gadgets
             }
 
             // Local lab fallback when no match authority is active.
-            var agents = FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None);
+            var agents = FindObjectsByType<MovementPlayerAgent>();
             for (var i = 0; i < agents.Length; i++)
             {
                 var other = agents[i];

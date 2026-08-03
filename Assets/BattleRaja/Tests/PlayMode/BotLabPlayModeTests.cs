@@ -21,8 +21,8 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator SevenBijliBotsSpawnWithUniqueCommandActors()
         {
-            var bots = Object.FindObjectsByType<BotBrain>(FindObjectsSortMode.None);
-            var agents = Object.FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None)
+            var bots = Object.FindObjectsByType<BotBrain>();
+            var agents = Object.FindObjectsByType<MovementPlayerAgent>()
                 .Where(agent => agent.ActorId >= 10)
                 .ToArray();
 
@@ -35,7 +35,7 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator BotsPerceiveAndIssueImperfectDecisions()
         {
-            var bots = Object.FindObjectsByType<BotBrain>(FindObjectsSortMode.None);
+            var bots = Object.FindObjectsByType<BotBrain>();
             yield return new WaitForSeconds(1.4f);
 
             Assert.That(bots.All(bot => bot.DecisionCount > 0), Is.True);
@@ -46,7 +46,7 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator SevenBotStressScenarioMaintainsProgressAndBoundedDecisionCost()
         {
-            var bots = Object.FindObjectsByType<BotBrain>(FindObjectsSortMode.None);
+            var bots = Object.FindObjectsByType<BotBrain>();
             var start = Time.realtimeSinceStartup;
             yield return new WaitForSeconds(2f);
             var elapsed = Time.realtimeSinceStartup - start;

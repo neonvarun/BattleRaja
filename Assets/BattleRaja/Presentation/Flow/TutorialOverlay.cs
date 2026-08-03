@@ -31,7 +31,7 @@ namespace BattleRaja.Presentation.Flow
 
         private void Awake()
         {
-            match = match != null ? match : FindFirstObjectByType<OfflineMatchController>();
+            match = match != null ? match : FindAnyObjectByType<OfflineMatchController>();
             BuildCanvasUi();
             Refresh();
         }

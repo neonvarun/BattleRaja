@@ -21,7 +21,7 @@ namespace BattleRaja.Presentation.Combat
                 return new DamageResult(false, 0, false, DamageRejectionReason.WrongTarget);
             }
 
-            var match = FindFirstObjectByType<OfflineMatchController>();
+            var match = FindAnyObjectByType<OfflineMatchController>();
             if (match != null && match.Simulation != null && match.IsAuthorityDecoy(target.Id))
             {
                 var decoyDamage = match.ResolveMayaDecoyDamage(

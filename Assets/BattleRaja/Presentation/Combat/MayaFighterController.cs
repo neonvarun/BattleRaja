@@ -65,7 +65,7 @@ namespace BattleRaja.Presentation.Combat
             inputAdapter = inputAdapter != null ? inputAdapter : GetComponent<PlayerInputAdapter>();
             movementAgent = movementAgent != null ? movementAgent : GetComponent<MovementPlayerAgent>();
             _definition = fighterDefinition != null ? fighterDefinition.ToDomain() : FighterDefinition.Maya;
-            _match = FindFirstObjectByType<OfflineMatchController>();
+            _match = FindAnyObjectByType<OfflineMatchController>();
             _special = FighterSpecialDefinition.MayaDecoy;
             _runtime = new DecoyRuntime();
             _clock = new FixedSimulationClock(Mathf.Max(1, simulationTickRate));
@@ -219,7 +219,7 @@ namespace BattleRaja.Presentation.Combat
 
         private static void RefreshBotPerceptionTargets()
         {
-            var sensors = FindObjectsByType<BotPerceptionSensor>(FindObjectsSortMode.None);
+            var sensors = FindObjectsByType<BotPerceptionSensor>();
             for (var i = 0; i < sensors.Length; i++) sensors[i].RefreshTargets();
         }
     }

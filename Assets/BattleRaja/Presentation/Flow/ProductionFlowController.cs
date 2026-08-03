@@ -458,7 +458,7 @@ namespace BattleRaja.Presentation.Flow
         private void EnsureCanvas()
         {
             if (canvas != null) return;
-            canvas = FindFirstObjectByType<Canvas>();
+            canvas = FindAnyObjectByType<Canvas>();
         }
 
         private static void EnsureEventSystem()

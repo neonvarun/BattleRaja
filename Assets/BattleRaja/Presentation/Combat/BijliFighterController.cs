@@ -45,7 +45,7 @@ namespace BattleRaja.Presentation.Combat
             movementAgent = movementAgent != null ? movementAgent : GetComponent<MovementPlayerAgent>();
             characterController = characterController != null ? characterController : GetComponent<CharacterController>();
             _definition = fighterDefinition != null ? fighterDefinition.ToDomain() : FighterDefinition.Bijli;
-            _match = FindFirstObjectByType<OfflineMatchController>();
+            _match = FindAnyObjectByType<OfflineMatchController>();
             _runtime = new FighterRuntimeState(_definition);
             _clock = new FixedSimulationClock(Mathf.Max(1, simulationTickRate));
             if (dashTrail != null)

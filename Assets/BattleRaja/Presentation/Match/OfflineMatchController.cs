@@ -168,10 +168,10 @@ namespace BattleRaja.Presentation.Match
 
         private void Awake()
         {
-            damageResolver = damageResolver != null ? damageResolver : FindFirstObjectByType<CombatDamageResolver>();
-            cameraController = cameraController != null ? cameraController : FindFirstObjectByType<TopDownCameraController>();
-            pickups = pickups != null && pickups.Length > 0 ? pickups : FindObjectsByType<MatchPickup>(FindObjectsSortMode.None);
-            gadgetPickups = gadgetPickups != null && gadgetPickups.Length > 0 ? gadgetPickups : FindObjectsByType<GadgetPickup>(FindObjectsSortMode.None);
+            damageResolver = damageResolver != null ? damageResolver : FindAnyObjectByType<CombatDamageResolver>();
+            cameraController = cameraController != null ? cameraController : FindAnyObjectByType<TopDownCameraController>();
+            pickups = pickups != null && pickups.Length > 0 ? pickups : FindObjectsByType<MatchPickup>();
+            gadgetPickups = gadgetPickups != null && gadgetPickups.Length > 0 ? gadgetPickups : FindObjectsByType<GadgetPickup>();
             CacheActors();
             if (autoStart)
             {
@@ -317,7 +317,7 @@ namespace BattleRaja.Presentation.Match
         private void CacheActors()
         {
             _actors.Clear();
-            var agents = FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None).OrderBy(agent => agent.ActorId);
+            var agents = FindObjectsByType<MovementPlayerAgent>().OrderBy(agent => agent.ActorId);
             foreach (var agent in agents)
             {
                 var target = agent.GetComponent<CombatTarget>();
@@ -361,7 +361,7 @@ namespace BattleRaja.Presentation.Match
             }
 
             if (authorityTick.ExpiredStationIds.Length == 0) return;
-            var stations = FindObjectsByType<GadgetStation>(FindObjectsSortMode.None);
+            var stations = FindObjectsByType<GadgetStation>();
             for (var i = 0; i < authorityTick.ExpiredStationIds.Length; i++)
             {
                 var stationId = authorityTick.ExpiredStationIds[i];

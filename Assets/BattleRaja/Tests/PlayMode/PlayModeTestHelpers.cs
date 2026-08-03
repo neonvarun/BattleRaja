@@ -9,14 +9,14 @@ namespace BattleRaja.Tests.PlayMode
     {
         public static T FindPlayer<T>() where T : Component
         {
-            return Object.FindObjectsByType<T>(FindObjectsSortMode.None)
+            return Object.FindObjectsByType<T>()
                 .First(component => component.GetComponent<MovementPlayerAgent>()?.ActorId == 1 ||
                                     component.GetComponentInParent<MovementPlayerAgent>()?.ActorId == 1);
         }
 
         public static void DisableBots()
         {
-            foreach (var bot in Object.FindObjectsByType<BotBrain>(FindObjectsSortMode.None))
+            foreach (var bot in Object.FindObjectsByType<BotBrain>())
             {
                 bot.enabled = false;
             }

@@ -28,7 +28,7 @@ namespace BattleRaja.Tests.PlayMode
             yield return null;
             yield return null;
 
-            var flow = Object.FindFirstObjectByType<ProductionFlowController>();
+            var flow = Object.FindAnyObjectByType<ProductionFlowController>();
             Assert.That(flow, Is.Not.Null);
             Assert.That(flow.State, Is.EqualTo(ProductionFlowState.MainMenu));
 

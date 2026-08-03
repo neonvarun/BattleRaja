@@ -60,7 +60,7 @@ namespace BattleRaja.Presentation.Visuals
             bodyRenderer = bodyRenderer != null ? bodyRenderer : GetComponentInChildren<Renderer>();
             health = health != null ? health : GetComponent<CombatHealth>();
             movementAgent = movementAgent != null ? movementAgent : GetComponent<MovementPlayerAgent>();
-            _audio = FindFirstObjectByType<BattleRajaAudioDirector>();
+            _audio = FindAnyObjectByType<BattleRajaAudioDirector>();
             _bodyProperties = new MaterialPropertyBlock();
             _bodyBaseLocalPosition = bodyRenderer != null ? bodyRenderer.transform.localPosition : Vector3.zero;
             if (bodyRenderer != null)

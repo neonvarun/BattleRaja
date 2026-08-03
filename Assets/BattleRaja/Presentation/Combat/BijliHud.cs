@@ -63,7 +63,7 @@ namespace BattleRaja.Presentation.Combat
         private void ResolveSelectionReferences()
         {
             if (selection != null) return;
-            selection = FindFirstObjectByType<PlayerFighterSelection>();
+            selection = FindAnyObjectByType<PlayerFighterSelection>();
             if (selection == null) return;
 
             var player = selection.gameObject;

@@ -58,9 +58,9 @@ namespace BattleRaja.Presentation.Combat
             inputAdapter = inputAdapter != null ? inputAdapter : GetComponent<PlayerInputAdapter>();
             movementAgent = movementAgent != null ? movementAgent : GetComponent<MovementPlayerAgent>();
             characterController = characterController != null ? characterController : GetComponent<CharacterController>();
-            damageResolver = damageResolver != null ? damageResolver : FindFirstObjectByType<CombatDamageResolver>();
+            damageResolver = damageResolver != null ? damageResolver : FindAnyObjectByType<CombatDamageResolver>();
             _definition = fighterDefinition != null ? fighterDefinition.ToDomain() : FighterDefinition.Pehel;
-            _match = FindFirstObjectByType<OfflineMatchController>();
+            _match = FindAnyObjectByType<OfflineMatchController>();
             _special = FighterSpecialDefinition.PehelChargeThrow;
             _runtime = new ChargeThrowRuntime(_special);
             _clock = new FixedSimulationClock(Mathf.Max(1, simulationTickRate));
@@ -156,7 +156,7 @@ namespace BattleRaja.Presentation.Combat
         {
             if (authorityStep.HasDamage)
             {
-                var targets = FindObjectsByType<CombatTarget>(FindObjectsSortMode.None);
+                var targets = FindObjectsByType<CombatTarget>();
                 for (var i = 0; i < targets.Length; i++)
                 {
                     var target = targets[i];
@@ -171,7 +171,7 @@ namespace BattleRaja.Presentation.Combat
             }
 
             if (!authorityStep.HasTargetDisplacement) return;
-            var targetObjects = FindObjectsByType<CombatTarget>(FindObjectsSortMode.None);
+            var targetObjects = FindObjectsByType<CombatTarget>();
             for (var i = 0; i < targetObjects.Length; i++)
             {
                 var target = targetObjects[i];
@@ -211,7 +211,7 @@ namespace BattleRaja.Presentation.Combat
         private void ResolveThrow(CombatEntityId targetId, int simulationTick)
         {
             if (targetId.Value <= 0) return;
-            var targets = FindObjectsByType<CombatTarget>(FindObjectsSortMode.None);
+            var targets = FindObjectsByType<CombatTarget>();
             for (var i = 0; i < targets.Length; i++)
             {
                 var target = targets[i];

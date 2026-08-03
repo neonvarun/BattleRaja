@@ -18,14 +18,14 @@ namespace BattleRaja.Tests.PlayMode
         {
             yield return SceneManager.LoadSceneAsync("MovementLab", LoadSceneMode.Single);
             PlayModeTestHelpers.DisableBots();
-            foreach (var pickup in Object.FindObjectsByType<GadgetPickup>(FindObjectsInactive.Include, FindObjectsSortMode.None)) pickup.ResetPickup();
+            foreach (var pickup in Object.FindObjectsByType<GadgetPickup>(FindObjectsInactive.Include)) pickup.ResetPickup();
             yield return null;
         }
 
         [UnityTest]
         public IEnumerator GadgetPickupsAndOneSlotInventoryBootstrap()
         {
-            var pickups = Object.FindObjectsByType<GadgetPickup>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var pickups = Object.FindObjectsByType<GadgetPickup>(FindObjectsInactive.Include);
             var user = PlayModeTestHelpers.FindPlayer<GadgetUser>();
             Assert.That(pickups, Has.Length.EqualTo(3));
             Assert.That(user, Is.Not.Null);
@@ -36,10 +36,10 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator PlayerCanCollectAndUseDholBurst()
         {
-            foreach (var bot in Object.FindObjectsByType<BotBrain>(FindObjectsSortMode.None)) bot.enabled = false;
+            foreach (var bot in Object.FindObjectsByType<BotBrain>()) bot.enabled = false;
             var user = PlayModeTestHelpers.FindPlayer<GadgetUser>();
             var pickup = System.Linq.Enumerable.First(
-                Object.FindObjectsByType<GadgetPickup>(FindObjectsSortMode.None),
+                Object.FindObjectsByType<GadgetPickup>(),
                 candidate => candidate.GadgetId.Equals(GadgetDefinition.DholBurst.GadgetId));
             Assert.That(user.TryPickup(pickup.GadgetId), Is.True);
             Assert.That(user.UseHeld(), Is.True);
@@ -50,12 +50,12 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator PlayerCanCollectSpatialGadgetThroughMatchAuthority()
         {
-            foreach (var bot in Object.FindObjectsByType<BotBrain>(FindObjectsSortMode.None)) bot.enabled = false;
+            foreach (var bot in Object.FindObjectsByType<BotBrain>()) bot.enabled = false;
             var user = PlayModeTestHelpers.FindPlayer<GadgetUser>();
             var player = PlayModeTestHelpers.FindPlayer<MovementPlayerAgent>();
             var match = Object.FindAnyObjectByType<BattleRaja.Presentation.Match.OfflineMatchController>();
             var pickup = System.Linq.Enumerable.First(
-                Object.FindObjectsByType<GadgetPickup>(FindObjectsSortMode.None),
+                Object.FindObjectsByType<GadgetPickup>(),
                 candidate => candidate.GadgetId.Equals(GadgetDefinition.DholBurst.GadgetId));
 
             player.ExternalCommandMode = true;
@@ -74,26 +74,26 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator TiffinStationSpawnsAndExpiresAfterConfiguredLifetime()
         {
-            foreach (var bot in Object.FindObjectsByType<BotBrain>(FindObjectsSortMode.None)) bot.enabled = false;
+            foreach (var bot in Object.FindObjectsByType<BotBrain>()) bot.enabled = false;
             var user = PlayModeTestHelpers.FindPlayer<GadgetUser>();
             user.TryPickup(BattleRaja.Core.Domain.GadgetDefinition.TiffinStation.GadgetId);
             Assert.That(user.UseHeld(), Is.True);
             yield return new WaitForSeconds(0.1f);
-            Assert.That(Object.FindObjectsByType<GadgetStation>(FindObjectsSortMode.None), Has.Length.EqualTo(1));
+            Assert.That(Object.FindObjectsByType<GadgetStation>(), Has.Length.EqualTo(1));
         }
 
         [UnityTest]
         public IEnumerator TiffinStationDamageIsAcceptedThroughMatchAuthority()
         {
-            foreach (var bot in Object.FindObjectsByType<BotBrain>(FindObjectsSortMode.None)) bot.enabled = false;
+            foreach (var bot in Object.FindObjectsByType<BotBrain>()) bot.enabled = false;
             var user = PlayModeTestHelpers.FindPlayer<GadgetUser>();
             user.TryPickup(GadgetDefinition.TiffinStation.GadgetId);
             Assert.That(user.UseHeld(), Is.True);
             yield return null;
 
-            var station = Object.FindFirstObjectByType<GadgetStation>();
+            var station = Object.FindAnyObjectByType<GadgetStation>();
             var target = station.GetComponent<CombatTarget>();
-            var resolver = Object.FindFirstObjectByType<CombatDamageResolver>();
+            var resolver = Object.FindAnyObjectByType<CombatDamageResolver>();
             var request = new DamageRequest(
                 new CombatEntityId(2),
                 target.Id,

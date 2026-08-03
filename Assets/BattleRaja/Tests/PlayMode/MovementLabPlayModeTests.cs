@@ -27,7 +27,7 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator PlayerSpawnsWithMovementAndCameraReferences()
         {
-            var lab = Object.FindFirstObjectByType<MovementLabScene>();
+            var lab = Object.FindAnyObjectByType<MovementLabScene>();
 
             Assert.That(lab, Is.Not.Null);
             Assert.That(lab.Player, Is.Not.Null);
@@ -129,7 +129,7 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator TouchStickResetClearsActiveValue()
         {
-            var sticks = Object.FindObjectsByType<VirtualStick>(FindObjectsSortMode.None);
+            var sticks = Object.FindObjectsByType<VirtualStick>();
             Assert.That(sticks.Length, Is.EqualTo(2));
 
             foreach (var stick in sticks)

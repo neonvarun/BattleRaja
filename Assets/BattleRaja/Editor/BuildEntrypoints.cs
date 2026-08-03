@@ -80,7 +80,7 @@ namespace BattleRaja.Editor
                 flowObject.AddComponent<ProductionFlowController>();
             }
 
-            if (UnityEngine.Object.FindFirstObjectByType<EventSystem>() == null)
+            if (UnityEngine.Object.FindAnyObjectByType<EventSystem>() == null)
             {
                 var eventObject = new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
                 eventObject.GetComponent<EventSystem>().sendNavigationEvents = true;
@@ -386,7 +386,7 @@ namespace BattleRaja.Editor
             SetObjectReference(productionMarker, "projectilePool", projectilePool);
             SetObjectReference(productionMarker, "damageResolver", damageResolver);
             SetBool(matchController, "authorityDrivenMovement", true);
-            var bots = UnityEngine.Object.FindObjectsByType<BotBrain>(FindObjectsSortMode.None)
+            var bots = UnityEngine.Object.FindObjectsByType<BotBrain>()
                 .OrderBy(bot => bot.GetComponent<MovementPlayerAgent>() != null ? bot.GetComponent<MovementPlayerAgent>().ActorId : int.MaxValue)
                 .ToArray();
             if (bots.Length < 4) throw new BuildFailedException("Bazaar Bastion requires at least four bot actors in the production scene.");

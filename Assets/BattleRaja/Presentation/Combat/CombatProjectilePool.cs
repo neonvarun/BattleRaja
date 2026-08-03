@@ -22,8 +22,8 @@ namespace BattleRaja.Presentation.Combat
 
         private void Awake()
         {
-            damageResolver = damageResolver != null ? damageResolver : FindFirstObjectByType<CombatDamageResolver>();
-            impactPool = impactPool != null ? impactPool : FindFirstObjectByType<CombatImpactFeedbackPool>();
+            damageResolver = damageResolver != null ? damageResolver : FindAnyObjectByType<CombatDamageResolver>();
+            impactPool = impactPool != null ? impactPool : FindAnyObjectByType<CombatImpactFeedbackPool>();
             var count = Mathf.Clamp(prewarmCount, 0, Mathf.Max(0, maxCount));
             for (var i = 0; i < count; i++)
             {

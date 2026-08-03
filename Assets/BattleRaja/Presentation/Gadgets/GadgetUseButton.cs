@@ -11,7 +11,7 @@ namespace BattleRaja.Presentation.Gadgets
 
         private void Awake()
         {
-            user = user != null ? user : FindFirstObjectByType<GadgetUser>();
+            user = user != null ? user : FindAnyObjectByType<GadgetUser>();
             TouchControlLabel.Ensure(transform, "GADGET");
         }
         public void OnPointerDown(PointerEventData eventData) { IsPressed = true; user?.UseHeld(); }

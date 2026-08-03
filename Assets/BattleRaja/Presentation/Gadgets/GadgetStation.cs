@@ -69,7 +69,7 @@ namespace BattleRaja.Presentation.Gadgets
 
         private void HealNearby()
         {
-            var agents = FindObjectsByType<CombatHealth>(FindObjectsSortMode.None);
+            var agents = FindObjectsByType<CombatHealth>();
             for (var i = 0; i < agents.Length; i++)
             {
                 var target = agents[i];

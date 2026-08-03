@@ -20,15 +20,15 @@ namespace BattleRaja.Tests.PlayMode
             yield return null;
             yield return null;
 
-            var overlay = Object.FindFirstObjectByType<TutorialOverlay>();
-            var match = Object.FindFirstObjectByType<OfflineMatchController>();
+            var overlay = Object.FindAnyObjectByType<TutorialOverlay>();
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
             Assert.That(overlay, Is.Not.Null);
             Assert.That(match, Is.Not.Null);
             Assert.That(overlay.CurrentStep, Is.EqualTo(TutorialStep.Movement));
             Assert.That(match.Simulation, Is.Not.Null);
             Assert.That(match.Simulation.AliveCount, Is.EqualTo(8));
 
-            foreach (var brain in Object.FindObjectsByType<BotBrain>(FindObjectsSortMode.None))
+            foreach (var brain in Object.FindObjectsByType<BotBrain>())
             {
                 Assert.That(brain.enabled, Is.False);
             }
@@ -52,7 +52,7 @@ namespace BattleRaja.Tests.PlayMode
             yield return null;
             yield return null;
 
-            var overlay = Object.FindFirstObjectByType<TutorialOverlay>();
+            var overlay = Object.FindAnyObjectByType<TutorialOverlay>();
             var panel = GameObject.Find("TutorialPanel");
             Assert.That(overlay, Is.Not.Null);
             Assert.That(panel, Is.Not.Null);

@@ -20,7 +20,7 @@ namespace BattleRaja.Tests.PlayMode
         {
             yield return SceneManager.LoadSceneAsync("MovementLab", LoadSceneMode.Single);
             PlayModeTestHelpers.DisableBots();
-            foreach (var gadgetUser in Object.FindObjectsByType<GadgetUser>(FindObjectsSortMode.None))
+            foreach (var gadgetUser in Object.FindObjectsByType<GadgetUser>())
             {
                 var agent = gadgetUser.GetComponent<MovementPlayerAgent>();
                 if (agent != null && agent.ActorId != 1) gadgetUser.enabled = false;
@@ -32,7 +32,7 @@ namespace BattleRaja.Tests.PlayMode
         public IEnumerator OfflineMatchStartsWithEightSeparatedCombatants()
         {
             var match = Object.FindAnyObjectByType<OfflineMatchController>();
-            var actors = Object.FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None)
+            var actors = Object.FindObjectsByType<MovementPlayerAgent>()
                 .Where(agent => agent.GetComponent<CombatTarget>() != null)
                 .ToArray();
 
@@ -51,7 +51,7 @@ namespace BattleRaja.Tests.PlayMode
 
             Assert.That(match.CurrentPhase, Is.EqualTo(BattleRaja.Core.Domain.MatchPhase.LoadWarmup));
             Assert.That(match.ZoneRadius, Is.GreaterThan(0f));
-            Assert.That(Object.FindObjectsByType<MatchPickup>(FindObjectsSortMode.None).Length, Is.EqualTo(3));
+            Assert.That(Object.FindObjectsByType<MatchPickup>().Length, Is.EqualTo(3));
         }
 
         [UnityTest]
@@ -59,10 +59,10 @@ namespace BattleRaja.Tests.PlayMode
         {
             PlayModeTestHelpers.DisableBots();
             var match = Object.FindAnyObjectByType<OfflineMatchController>();
-            var resolver = Object.FindFirstObjectByType<CombatDamageResolver>();
-            var source = Object.FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None)
+            var resolver = Object.FindAnyObjectByType<CombatDamageResolver>();
+            var source = Object.FindObjectsByType<MovementPlayerAgent>()
                 .First(agent => agent.ActorId == 1).GetComponent<CombatTarget>();
-            var target = Object.FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None)
+            var target = Object.FindObjectsByType<MovementPlayerAgent>()
                 .First(agent => agent.ActorId == 10).GetComponent<CombatTarget>();
             var beforeHealth = target.Health.Snapshot.CurrentHealth;
             var beforeDamage = match.Simulation.GetSnapshots().First(item => item.Id == source.Id).DamageDealt;
@@ -89,7 +89,7 @@ namespace BattleRaja.Tests.PlayMode
             var key = "battleraja.settings.aim_assist";
             var hadPrevious = PlayerPrefs.HasKey(key);
             var previous = PlayerPrefs.GetInt(key, 0);
-            var input = Object.FindObjectsByType<PlayerInputAdapter>(FindObjectsSortMode.None)
+            var input = Object.FindObjectsByType<PlayerInputAdapter>()
                 .First(adapter => adapter.GetComponent<MovementPlayerAgent>()?.ActorId == 1);
             var before = input.AimAssistEnabled;
 
@@ -136,11 +136,11 @@ namespace BattleRaja.Tests.PlayMode
         {
             PlayModeTestHelpers.DisableBots();
             var match = Object.FindAnyObjectByType<OfflineMatchController>();
-            var resolver = Object.FindFirstObjectByType<CombatDamageResolver>();
-            var player = Object.FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None)
+            var resolver = Object.FindAnyObjectByType<CombatDamageResolver>();
+            var player = Object.FindObjectsByType<MovementPlayerAgent>()
                 .First(agent => agent.ActorId == 1);
             var source = player.GetComponent<CombatTarget>();
-            var targets = Object.FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None)
+            var targets = Object.FindObjectsByType<MovementPlayerAgent>()
                 .Where(agent => agent.ActorId != 1)
                 .Select(agent => agent.GetComponent<CombatTarget>())
                 .Where(target => target != null)
@@ -189,11 +189,11 @@ namespace BattleRaja.Tests.PlayMode
             {
                 PlayModeTestHelpers.DisableBots();
                 var match = Object.FindAnyObjectByType<OfflineMatchController>();
-                var resolver = Object.FindFirstObjectByType<CombatDamageResolver>();
-                var player = Object.FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None)
+                var resolver = Object.FindAnyObjectByType<CombatDamageResolver>();
+                var player = Object.FindObjectsByType<MovementPlayerAgent>()
                     .First(agent => agent.ActorId == 1);
                 var source = player.GetComponent<CombatTarget>();
-                var targets = Object.FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None)
+                var targets = Object.FindObjectsByType<MovementPlayerAgent>()
                     .Where(agent => agent.ActorId != 1)
                     .Select(agent => agent.GetComponent<CombatTarget>())
                     .Where(target => target != null)
@@ -226,7 +226,7 @@ namespace BattleRaja.Tests.PlayMode
                 panel.transform.Find("Rematch").GetComponent<Button>().onClick.Invoke();
                 yield return new WaitForSecondsRealtime(0.45f);
                 PlayModeTestHelpers.DisableBots();
-                foreach (var gadgetUser in Object.FindObjectsByType<GadgetUser>(FindObjectsSortMode.None))
+                foreach (var gadgetUser in Object.FindObjectsByType<GadgetUser>())
                 {
                     var agent = gadgetUser.GetComponent<MovementPlayerAgent>();
                     if (agent != null && agent.ActorId != 1) gadgetUser.enabled = false;
@@ -235,11 +235,11 @@ namespace BattleRaja.Tests.PlayMode
                 yield return null;
 
                 Assert.That(SceneManager.GetActiveScene().name, Is.EqualTo("MovementLab"));
-                Assert.That(Object.FindObjectsByType<OfflineMatchController>(FindObjectsSortMode.None), Has.Length.EqualTo(1));
-                Assert.That(Object.FindObjectsByType<OfflineMatchHud>(FindObjectsSortMode.None), Has.Length.EqualTo(1));
-                Assert.That(Object.FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None)
+                Assert.That(Object.FindObjectsByType<OfflineMatchController>(), Has.Length.EqualTo(1));
+                Assert.That(Object.FindObjectsByType<OfflineMatchHud>(), Has.Length.EqualTo(1));
+                Assert.That(Object.FindObjectsByType<MovementPlayerAgent>()
                     .Count(agent => agent.GetComponent<CombatTarget>() != null), Is.EqualTo(8));
-                Assert.That(Object.FindObjectsByType<GadgetStation>(FindObjectsSortMode.None), Is.Empty);
+                Assert.That(Object.FindObjectsByType<GadgetStation>(), Is.Empty);
                 Assert.That(Object.FindAnyObjectByType<OfflineMatchController>().ResultsShown, Is.False);
                 Assert.That(Time.timeScale, Is.EqualTo(1f));
             }
@@ -254,8 +254,8 @@ namespace BattleRaja.Tests.PlayMode
                 yield return null;
                 yield return null;
 
-                var matches = Object.FindObjectsByType<OfflineMatchController>(FindObjectsSortMode.None);
-                var actors = Object.FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None)
+                var matches = Object.FindObjectsByType<OfflineMatchController>();
+                var actors = Object.FindObjectsByType<MovementPlayerAgent>()
                     .Where(agent => agent.GetComponent<CombatTarget>() != null)
                     .ToArray();
 

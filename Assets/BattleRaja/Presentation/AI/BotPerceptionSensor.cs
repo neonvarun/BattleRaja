@@ -25,13 +25,13 @@ namespace BattleRaja.Presentation.AI
             health = health != null ? health : GetComponent<CombatHealth>();
             selfTarget = selfTarget != null ? selfTarget : GetComponent<CombatTarget>();
             eye = eye != null ? eye : transform;
-            match = match != null ? match : FindFirstObjectByType<OfflineMatchController>();
+            match = match != null ? match : FindAnyObjectByType<OfflineMatchController>();
             RefreshTargets();
         }
 
         public void RefreshTargets()
         {
-            _targets = FindObjectsByType<CombatTarget>(FindObjectsSortMode.None);
+            _targets = FindObjectsByType<CombatTarget>();
             var size = Mathf.Max(1, maxTargets);
             if (_observations.Length != size)
             {

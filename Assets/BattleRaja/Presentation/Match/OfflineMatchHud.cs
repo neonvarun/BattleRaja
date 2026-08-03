@@ -41,8 +41,8 @@ namespace BattleRaja.Presentation.Match
 
         private void Awake()
         {
-            match = match != null ? match : FindFirstObjectByType<OfflineMatchController>();
-            canvas = canvas != null ? canvas : FindFirstObjectByType<Canvas>();
+            match = match != null ? match : FindAnyObjectByType<OfflineMatchController>();
+            canvas = canvas != null ? canvas : FindAnyObjectByType<Canvas>();
             if (canvas == null)
             {
                 var canvasObject = new GameObject("ProductionHudCanvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
@@ -54,7 +54,7 @@ namespace BattleRaja.Presentation.Match
                 scaler.matchWidthOrHeight = 0.5f;
             }
 
-            _audio = FindFirstObjectByType<BattleRajaAudioDirector>();
+            _audio = FindAnyObjectByType<BattleRajaAudioDirector>();
             var movementAgents = FindObjectsByType<MovementPlayerAgent>();
             for (var i = 0; i < movementAgents.Length; i++)
             {
@@ -259,7 +259,7 @@ namespace BattleRaja.Presentation.Match
 
         private void ApplyReducedFlashes()
         {
-            foreach (var presentation in FindObjectsByType<FighterPresentation>(FindObjectsSortMode.None))
+            foreach (var presentation in FindObjectsByType<FighterPresentation>())
             {
                 presentation.ReducedFlashMode = _reducedFlashes;
             }
