@@ -731,3 +731,27 @@ Record every material choice here. Do not silently overwrite old decisions.
   consumers, `CoreFoundationTests`, `fixed-tick-runtime-*` test/build logs, and Lava
   before/after captures in `Docs/QA/Visual/Phase7/`.
 - **Owner:** Human project owner
+
+### ADR-037 — Do not treat fighter targets as Pehel charge walls
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical-slice controller boundary; networked
+  authority and broader collision policy remain future work.
+- **Context:** The live Pehel controller's sphere cast used the all-collision mask. An
+  opposing `CombatTarget` collider could therefore be returned as the nearest wall,
+  reducing available travel to zero and putting the ability into cooldown before the
+  active-phase capture query ran.
+- **Decision:** Use a non-allocating sphere-cast buffer and ignore colliders that belong
+  to `CombatTarget` objects when selecting static obstacles. Target capture remains a
+  separate faction/radius check; static geometry and play bounds still constrain the
+  charge. Invalid runtime `FighterDefinitionAsset` component lookups are removed because
+  the definition is a `ScriptableObject` and serialized scene references already provide
+  the intended data path.
+- **Consequences:** Live Pehel capture/throw works against a real target collider without
+  sacrificing wall blocking or adding per-frame cast allocations. The controller remains
+  a presentation adapter around the pure `ChargeThrowRuntime`; this does not make the
+  client authoritative for public matches.
+- **Evidence/sources:** `PehelFighterController`, `MayaFighterController`,
+  `BijliFighterController`, `PlayerFighterSelection`, `VerticalSlicePlayModeTests`,
+  `phase2-full-*` results, the Phase 2 Android Lava sample and Chrome Web smoke capture.
+- **Owner:** Human project owner

@@ -2,8 +2,8 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `a245f24` (`fix: preserve fixed tick identities across render steps`)
-Latest runtime-bearing candidate: `a245f24`
+Latest validated source HEAD: `1f59a68` (`test: exercise live fighter abilities`)
+Latest runtime-bearing candidate: `1f59a68`
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
 ## Scope and repository note
@@ -12,29 +12,33 @@ The requested goal path `Docs/AI/RepositoryAuditAndCompletionGoal.md` is absent.
 
 The baseline intentionally excludes unrelated working-tree changes in `Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity` and `Data/Plugins/lib_burst_generated.wasm`. Those files were not staged or altered by this baseline work.
 
-## Fresh latest-HEAD continuation (`a245f24`)
+## Fresh Phase 2 continuation (`1f59a68`)
 
-This section supersedes the older historical checkpoint below for the current source
-HEAD. The Android/Web artifacts and test results below were generated before the final
-fixed-tick correction commit; the corrected artifacts are recorded in the fixed-tick
-phase section after the historical tables.
+This section supersedes the older historical checkpoints below for the current source
+HEAD. The fresh artifacts and runtime samples were generated from the Phase 2 live
+fighter-controller coverage commit.
 
 | Check | Command/result | Evidence |
 | --- | --- | --- |
 | Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings | command output from 2026-08-03 |
-| EditMode tests | 89 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/fixed-tick-runtime-editmode-20260803.xml` |
-| PlayMode tests | 37 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/fixed-tick-runtime-playmode-20260803.xml` |
-| Android development build | Unity exit 0; IL2CPP APK 151,318,469 bytes; SHA-256 `154F0F81FA6F068302FC57A6513A6C38CB4A7A8298C856264A04B14EE796574F` | `Builds/M11/Logs/fixed-tick-runtime-android-20260803.log` |
-| Web development build | Unity exit 0; 21 files, 133,187,266 bytes; WASM 120,495,480 bytes; SHA-256 `F02758353612C68904777C2F25F4F56E22DA4225F0F426A205792BE41E111EC6` | `Builds/M11/Logs/fixed-tick-runtime-web-20260803.log` |
+| EditMode tests | 89 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/phase2-full-editmode-20260803.xml` |
+| PlayMode tests | 39 passed, 0 failed, 0 skipped; includes live Pehel and Maya ability tests | `Builds/M11/TestResults/phase2-full-playmode-20260803.xml` |
+| Android development build | Unity exit 0; IL2CPP APK 151,305,385 bytes; SHA-256 `42BCF8B076AACC8C099462BB0DE3028183A84E2D7959DBE5A1BF77BC2C57CEDB` | `Builds/M11/Logs/android-build.log` |
+| Web development build | Unity exit 0; 21 files, 133,194,254 bytes; WASM 120,501,562 bytes; SHA-256 `B8CED1C03AE4F9D6BCF1B601A3B333DD149C9E5228A97BAB7171E5A17D7EA805` | `Builds/M11/Logs/web-build.log` |
 | Local Web serve | `http://127.0.0.1:8137/index.html` returned HTTP 200 | local HTTP check from 2026-08-03 |
-| Browser runtime | Fresh Playwright load reached the live MovementLab match; inspected capture has no blank canvas and console error/warning scan returned 0 | `Docs/QA/Visual/Phase7/playwright-1000x1000-fixed-tick-46a3d1e.png` |
+| Browser runtime | Fresh Chrome/Playwright load reached the live match after an 8-second warmup; inspected capture has no blank canvas and console scan returned 0 errors/0 warnings | `Docs/QA/Visual/Phase7/playwright-phase2-runtime-20260803.png`; Playwright CLI output from 2026-08-03 |
 | Photon/package check | Unity `6000.5.6f1`; Fusion build `2.1.1 Stable 2177`; Input System `1.20.0`; URP `17.5.0`; Test Framework `1.7.0` | `Assets/Photon/Fusion/build_info.txt`, `Packages/manifest.json` |
 | Android device inventory | `adb devices -l` showed Lava `ST5GDW23LB004392` and Oppo `b60e53b3`; only the Lava serial was used | ADB output from 2026-08-03 |
-| Lava smoke result | Exact fixed-tick APK installed/launched on Lava; focused activity `com.example.battleraja.m11/com.unity3d.player.UnityPlayerGameActivity`; no monotonic-tick exception in the current Unity process | `Docs/QA/Visual/Phase7/android-lava-fixed-tick-46a3d1e.png`, `Builds/M11/Logs/fixed-tick-runtime-lava-logcat-20260803.txt` |
+| Lava smoke result | Exact Phase 2 APK installed/launched only on Lava `ST5GDW23LB004392`; process `13173` remained alive; no fatal Unity/Android exception, missing-component marker or monotonic-tick error in the captured process sample | `Docs/QA/Visual/Phase7/android-lava-phase2-runtime-20260803.png`, `Builds/M11/Logs/phase2-runtime-lava-logcat-20260803.txt` |
+
+The Phase 2 controller tests also removed invalid ScriptableObject component lookups
+from fighter-definition fallback paths. Pehel's charge cast now ignores fighter
+colliders while retaining static-geometry blocking, so an opposing target can be
+captured instead of prematurely ending the charge.
 
 The prior `46a3d1e` APK exposed a real multi-step render-frame tick defect; the
 pre-fix evidence is retained at `Docs/QA/Visual/Phase7/android-lava-pre-fix-tick-error-46a3d1e.png`.
-The current `a245f24` baseline records the corrected retest below.
+The earlier `a245f24` baseline records the corrected fixed-tick retest below.
 
 ## Historical checkpoints retained from earlier runs
 

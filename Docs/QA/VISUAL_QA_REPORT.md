@@ -1,10 +1,10 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-03
-Runtime-bearing candidate: `a245f24` (`fix: preserve fixed tick identities across render steps`)
-Current source HEAD: `a245f24` (fixed-tick runtime correction after the compact HUD continuation)
+Runtime-bearing candidate: `1f59a68` (`test: exercise live fighter abilities`)
+Current source HEAD: `1f59a68` (Phase 2 live-controller coverage after the fixed-tick correction)
 Unity: `6000.5.6f1`
-Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://127.0.0.1:8138/index.html`
+Web candidate: `Builds/M11/Web` served over local HTTP at `http://127.0.0.1:8137/index.html`
 
 ## Test surface
 
@@ -62,3 +62,15 @@ Phase 7 is **In progress**, not passed. Desktop and responsive portrait framing 
 - This retest proves the tick-order runtime defect is corrected. It does not pass the
   broader visual gate: loading/gadget/results surfaces, multi-browser coverage,
   touch ergonomics and final human visual approval remain open.
+
+## Phase 2 runtime smoke (`1f59a68`)
+
+- The fresh Phase 2 APK was installed and launched on Lava `ST5GDW23LB004392` only.
+  The inspected capture shows the live portrait match HUD and arena without the
+  earlier monotonic-tick Unity error. The process remained alive after launch.
+- The fresh Web build was served from `http://127.0.0.1:8137/index.html`. Chrome was
+  held through the warm-up into the live match; the inspected capture shows gameplay,
+  and Playwright reported 0 console errors and 0 warnings.
+- These are smoke-build/runtime observations. They do not prove final visual quality,
+  mobile touch ergonomics, multi-browser compatibility, gadget success, results/rematch,
+  or human approval.
