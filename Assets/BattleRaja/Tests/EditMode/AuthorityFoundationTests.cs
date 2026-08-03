@@ -196,6 +196,8 @@ namespace BattleRaja.Tests.EditMode
             Assert.That(used.Effect.Displacements, Has.Length.EqualTo(1));
             Assert.That(used.Effect.Displacements[0].TargetId.Value, Is.EqualTo(2));
             Assert.That(used.Effect.Displacements[0].Displacement.X, Is.EqualTo(0.32f).Within(0.0001f));
+            Assert.That(authority.Simulation.TryGetSnapshot(new CombatEntityId(2), out var displaced), Is.True);
+            Assert.That(displaced.Position.X, Is.EqualTo(3.32f).Within(0.0001f));
             Assert.That(duplicate.Used, Is.False);
             Assert.That(duplicate.Failure, Is.EqualTo(GadgetUseFailure.NotHeld));
         }

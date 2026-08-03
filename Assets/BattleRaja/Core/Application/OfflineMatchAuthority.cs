@@ -440,9 +440,10 @@ namespace BattleRaja.Core.Application
                     if (!snapshot.Alive || snapshot.Id == command.UserId) continue;
                     var delta = snapshot.Position - command.Origin;
                     if (delta.SqrMagnitude > effect.Definition.Radius * effect.Definition.Radius) continue;
-                    displacements.Add(new GadgetDisplacementIntent(
-                        snapshot.Id,
-                        delta.Normalized * (effect.Definition.Magnitude * 0.08f)));
+                    var displacement = delta.Normalized * (effect.Definition.Magnitude * 0.08f);
+                    var canonicalPosition = snapshot.Position + displacement;
+                    if (!RequireSimulation().SetPosition(snapshot.Id, canonicalPosition)) continue;
+                    displacements.Add(new GadgetDisplacementIntent(snapshot.Id, displacement));
                 }
 
                 effect = new GadgetEffect(

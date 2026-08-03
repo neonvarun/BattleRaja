@@ -56,6 +56,15 @@ namespace BattleRaja.Presentation.Match
             return _authority != null && _authority.TryAcquireGadget(collectorId, gadgetId);
         }
 
+        public bool ApplyAuthoritativeDisplacement(GadgetDisplacementIntent displacement)
+        {
+            if (_authority == null || Simulation == null) return false;
+            var actor = _actors.FirstOrDefault(binding => binding.Target.Id == displacement.TargetId);
+            if (actor == null || !Simulation.TryGetSnapshot(displacement.TargetId, out var snapshot)) return false;
+            actor.Agent.ApplyAuthoritativePosition(snapshot.Position);
+            return true;
+        }
+
         public bool IsAuthorityActor(CombatEntityId actorId)
         {
             return _authority != null && _authority.HasParticipant(actorId);

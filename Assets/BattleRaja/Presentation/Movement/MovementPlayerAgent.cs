@@ -233,5 +233,14 @@ namespace BattleRaja.Presentation.Movement
 
             aimIndicator?.SetAimDirection(movement.Step.AimDirection);
         }
+
+        public void ApplyAuthoritativePosition(Float2 position)
+        {
+            var current = transform.position;
+            _lastAuthoritativePosition = new Vector3(position.X, current.y, position.Y);
+            _hasAuthoritativePosition = true;
+            transform.position = _lastAuthoritativePosition;
+            Physics.SyncTransforms();
+        }
     }
 }

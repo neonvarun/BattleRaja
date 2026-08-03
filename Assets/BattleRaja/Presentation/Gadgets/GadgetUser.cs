@@ -223,10 +223,13 @@ namespace BattleRaja.Presentation.Gadgets
                     {
                         var target = targets[targetIndex];
                         if (target == null || target.Id != displacement.TargetId) continue;
-                        target.GetComponent<CharacterController>()?.Move(new Vector3(
-                            displacement.Displacement.X,
-                            0f,
-                            displacement.Displacement.Y));
+                        if (match == null || !match.ApplyAuthoritativeDisplacement(displacement))
+                        {
+                            target.GetComponent<CharacterController>()?.Move(new Vector3(
+                                displacement.Displacement.X,
+                                0f,
+                                displacement.Displacement.Y));
+                        }
                         break;
                     }
                 }
