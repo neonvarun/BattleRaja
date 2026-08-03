@@ -2,7 +2,7 @@
 
 Date: 2026-08-03  
 Runtime-bearing candidate: `4391f09` (`feat: add replayable tutorial arena`)  
-Current source HEAD: `0699980` (visual QA evidence/documentation follow-up commits after the runtime-bearing candidate)  
+Current source HEAD: `a9c93fc` (authority/test continuation after the runtime-bearing candidate)
 Unity: `6000.5.6f1`  
 Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://localhost:8124/index.html`
 

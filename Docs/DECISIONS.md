@@ -644,3 +644,26 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Evidence/sources:** `Gadgets`, `OfflineMatchAuthority`, `CombatDamageResolver`,
   `GadgetUser` and the Umbrella authority assertions in `AuthorityFoundationTests`.
 - **Owner:** Human project owner
+
+### ADR-033 — Route Tiffin station damage through application authority
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the Phase 1 authority continuation; network replication and
+  broader presentation extraction remain open.
+- **Context:** Tiffin healing and lifetime were already fixed-tick authority rules, but
+  station damage still mutated only the Unity `CombatHealth` view. A client could therefore
+  destroy a rendered station without changing the canonical station runtime.
+- **Decision:** `OfflineMatchAuthority.TryDamageStation` validates and applies station
+  damage against the authoritative `GadgetStationRuntime`, returns the applied amount and
+  destruction state, and removes destroyed runtimes immediately. `CombatDamageResolver`
+  validates the target request before forwarding it, then applies the returned amount to the
+  Unity view and expires that view when authority reports destruction. The local station loop
+  remains only for isolated non-authoritative lab objects.
+- **Consequences:** Station destruction and remaining health are deterministic and testable
+  without Unity, and the presentation station cannot be the source of public-match outcome.
+  The adapter still renders local health feedback, while Fusion transport, server-side event
+  replication and other scene-owned presentation details remain future work.
+- **Evidence/sources:** `Gadgets`, `OfflineMatchAuthority`, `OfflineMatchController`,
+  `CombatDamageResolver`, `AuthorityFoundationTests`, `GadgetPlayModeTests`, and the
+  `phase1-station-authority-*` test/build evidence in `Docs/QA/LATEST_HEAD_BASELINE.md`.
+- **Owner:** Human project owner

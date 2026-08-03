@@ -2,7 +2,7 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `d328132` (`refactor: tick umbrella authority mitigation`)
+Latest validated source HEAD: `a9c93fc` (`fix: forward station damage through authority`)
 Latest runtime-bearing candidate: `4391f09` (`feat: add replayable tutorial arena`)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
@@ -283,3 +283,25 @@ After the authority seam commit `1a92b6c`, the runtime artifacts were rebuilt an
 - Local Web serve: `python -m http.server 8130` from `Builds/M11/Web`; `http://127.0.0.1:8130/index.html` returned HTTP 200.
 - Browser bootstrap: Playwright loaded the fresh URL in Chromium; the Unity player title and controls appeared, and the console reported 0 errors and 0 warnings. This is bootstrap evidence, not visual gameplay approval.
 - Build warnings/limitations: existing obsolete Unity `FindObjectsByType` API warnings and non-fatal licensing/Fusion/native-extension messages remain. The build's internal websockify helper also logged an `EADDRINUSE` shutdown warning while the player build itself reported success. Build-generated changes to `Bootstrap.unity` and `TutorialArena.unity` were restored because those files were clean before the baseline.
+
+## Phase 1 Tiffin station-authority continuation (`a9c93fc`)
+
+Tiffin station damage now enters the same application-owned runtime as healing and
+lifetime. The resolver validates the target request, forwards damage to the authority,
+applies only the authoritative amount to the Unity view, and expires the view when the
+authority reports destruction.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | 0 errors, 0 warnings | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` |
+| EditMode suite | 87 passed, 0 failed | `Builds/M11/TestResults/phase1-station-authority-editmode-final-20260803.xml` |
+| PlayMode suite | 35 passed, 0 failed | `Builds/M11/TestResults/phase1-station-authority-playmode-final-20260803.xml` |
+| Authority station rule | Pure test covers partial damage, capped destruction and removal; PlayMode resolves damage through the live match authority | `AuthorityFoundationTests.AuthorityOwnsTiffinStationDamageAndRemovesDestroyedStations`, `GadgetPlayModeTests.TiffinStationDamageIsAcceptedThroughMatchAuthority` |
+| Android development smoke build | Unity build success; APK 151,286,056 bytes; SHA-256 `9D6EFD324FE0C83427868AE59136FF276F51A608F5C78A43A5B7A5AE3D1482E5` | `Builds/M11/Logs/phase1-station-authority-android-20260803.log`, `Builds/M11/Android/BattleRaja-M11.apk` |
+| Web development smoke build | Unity build success; 21 files, 133,182,055 bytes; `Build/Web.wasm` 120,491,763 bytes; SHA-256 `B66C0F97A06FB2E60384D9B59D5C3323BBA53E8B3344FC8BF6657233ED1D8AD7` | `Builds/M11/Logs/phase1-station-authority-web-20260803.log`, `Builds/M11/Web` |
+| Local Web serve | `curl -I http://127.0.0.1:8136/index.html` returned HTTP 200 | local server check from 2026-08-03 |
+| Web build warning | Build succeeded; non-fatal Unity WebGL script-debugging warning and websockify helper shutdown message remain | `Builds/M11/Logs/phase1-station-authority-web-20260803.log` |
+| Lava physical smoke | Not run: `adb devices -l` still did not list `ST5GDW23LB004392`; the connected Oppo device was intentionally not used | device-gate blocker |
+
+This is authority/test/build evidence only. It does not establish final visual quality,
+physical-device validation, performance, real Photon multiplayer or PlayFab integration.
