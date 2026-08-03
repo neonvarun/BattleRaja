@@ -9,7 +9,7 @@
 - Product vision: drafted
 - Autonomous M1–M11 sequential execution: active; milestone gates and external
   service approvals remain explicit.
-- Latest validated runtime source HEAD: `6f0fe8b` (current docs update follows this source commit); the current repository includes
+- Latest validated runtime source HEAD: `583106e` (current docs update follows this source commit); the current repository includes
   the connected Bazaar architecture prefab and explicit production-scene contract after the authority-driven Maya decoy,
   fighter displacement, Dhol, production movement and authority-first damage/healing
   checkpoints; production-flow EventSystem creation is
@@ -67,6 +67,26 @@
   results/rematch captures are recorded. A later bounded smoke sample recorded
   120,872,306 bytes of WASM transfer and 5.603 ms mean browser rAF; gadget-use capture,
   formal performance closure, multi-browser coverage and human review remain open.
+
+## Phase 1 authority attack-command continuation — 2026-08-03
+
+- Source commit `583106e` adds `OfflineMatchAuthority.TryAcceptAttack`, authority-owned
+  weapon cooldown/tick ordering and the production `CombatAttackController` submission
+  seam. Duplicate/out-of-order commands, defeated actors, invalid/non-finite inputs and
+  cooldown violations are rejected before presentation projectile spawning.
+- Repository validation is **0 errors / 0 warnings**. Full EditMode is **102/102** and
+  full PlayMode is **55/55**, including the new authority foundation and production
+  attack-routing regressions. Core assemblies remain Unity/vendor independent and the
+  presentation mutation scan is clean.
+- Exact Android artifact is **151,541,453 bytes**, SHA-256
+  `10CD9FBC5B720519797702A43BA922F352A28AB6058DDDCBE561C6F7B37CC609`; it was installed
+  and launched only on Lava `ST5GDW23LB004392` (`LAVA LXX508`).
+- The exact-source Web rebuild was started but stopped at the owner's request before
+  Unity reported success. The previous successful Web artifact remains historical only;
+  no fresh Web pass is claimed for `583106e`.
+- Phase 1 remains **In progress**: projectile collision, remaining presentation-owned
+  state, broader authority migration, soak/performance evidence and real network
+  authority are still open.
 
 ## M1 execution evidence — 2026-08-02
 

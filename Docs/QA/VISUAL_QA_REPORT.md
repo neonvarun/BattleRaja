@@ -1,8 +1,8 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-03
-Runtime-bearing candidate: `6f0fe8b` (Unity 6 object-lookup cleanup over the bot spawn-protection baseline)
-Current validated runtime source HEAD: `6f0fe8b`
+Runtime-bearing candidate: `583106e` (offline attack-command authority over the Unity 6 warning-clean baseline)
+Current validated runtime source HEAD: `583106e`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://127.0.0.1:8139/index.html`
 
@@ -19,6 +19,19 @@ Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://
 - These captures confirm current-source startup/rendering only. Gadget pickup/use,
   loading-state observation, touch ergonomics, multi-browser parity, performance and
   human visual approval remain open.
+
+## Offline attack-authority continuation — 2026-08-03
+
+- The exact `583106e` Android APK was installed/launched only on Lava
+  `ST5GDW23LB004392` (`LAVA LXX508`). The inspected portrait menu capture is
+  `Docs/QA/Visual/Phase7/android-authority-attack-20260803.png`; it renders the
+  BattleRaja title and the offline/online/tutorial/settings route without a blank
+  canvas or obvious clipping at the captured device viewport.
+- A Web build was started against `583106e` but stopped at the owner's request before
+  Unity reported success. Therefore this report retains the previous Web screenshots
+  as historical references and makes no new exact-source Web visual claim.
+- Human visual review, gadget-use readability, touch ergonomics, multi-browser parity,
+  performance and final authored presentation remain open.
 
 ## Production Pehel authority smoke — 2026-08-03
 

@@ -2,9 +2,34 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated runtime source HEAD: `6f0fe8b` (`chore: remove Unity 6 obsolete object lookup APIs`)
-Latest runtime-bearing candidate: `6f0fe8b` (Unity 6 object-lookup warning cleanup over the bot spawn-protection baseline)
+Latest validated runtime source HEAD: `583106e` (`authority: gate production attack commands in offline match authority`)
+Latest runtime-bearing candidate: `583106e` (offline production attack-command authority gate over the Unity 6 warning-clean baseline)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
+
+## Phase 1 authority attack-command continuation (`583106e`, 2026-08-03)
+
+This focused continuation moves production attack command ordering, alive-state checks
+and weapon cooldown consumption into `OfflineMatchAuthority`. The Unity attack controller
+now submits the common command and spawns a presentation projectile only after authority
+acceptance. This is an offline vertical-slice seam, not a trusted network combat server;
+projectile collision projection and the remaining presentation-owned rules are still open.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Source commit | `583106e` pushed to `origin/codex/product-completion` | `git rev-parse`, 2026-08-03 |
+| Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject ...` — **0 errors, 0 warnings**; Core dependency and presentation-mutation scans clean | command output from 2026-08-03 |
+| Full EditMode | **102/102 passed**, 0 failed, 0 skipped | `Builds/M11/TestResults/authority-attack-editmode-final-20260803.xml` |
+| Full PlayMode | **55/55 passed**, 0 failed, 0 skipped | `Builds/M11/TestResults/authority-attack-playmode-final2-20260803.xml` |
+| Android build | `BuildAndroidBazaarBastionDevelopment` succeeded; APK **151,541,453 bytes**, SHA-256 `10CD9FBC5B720519797702A43BA922F352A28AB6058DDDCBE561C6F7B37CC609` | `Builds/M11/Android/BattleRaja-BazaarBastion-M11.apk`, `Builds/M11/Logs/android-build.log` |
+| Lava runtime | Exact APK installed/launched only on `ST5GDW23LB004392` (`LAVA LXX508`); `UnityPlayerGameActivity` top-resumed; sampled memory **403,525 KB PSS / 540,544 KB RSS / 76,800 KB Graphics / 252 KB swap** | ADB output and `Docs/QA/Visual/Phase7/android-authority-attack-20260803.png` |
+| Web build | A fresh `BuildWebBazaarBastionDevelopment` was started against this source, then stopped at the owner's request before `Build Finished, Result: Success`; no new exact-source Web artifact is claimed | `Builds/M11/Logs/web-build.log` (stopped during Bee player build) |
+| Web baseline | The prior successful `6f0fe8b` Web output remains available for historical smoke reference, but is not evidence for the new attack-authority source commit | prior Web hash recorded above |
+
+The new EditMode/PlayMode regressions cover duplicate/out-of-order attack rejection,
+authority cooldown ownership, finite weapon inputs and production controller routing.
+The full Phase 1 authority-separation acceptance remains **In progress** because
+projectile collision, remaining presentation-owned mutation paths, soak evidence and
+real multiplayer transport have not yet migrated.
 
 ## Current source rebaseline after Unity 6 object-lookup cleanup (`6f0fe8b`, 2026-08-03)
 
