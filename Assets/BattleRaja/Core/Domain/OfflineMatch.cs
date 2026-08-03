@@ -322,6 +322,53 @@ namespace BattleRaja.Core.Domain
             return true;
         }
 
+        /// <summary>
+        /// Applies a damage request to canonical participant health and records the
+        /// resulting combat statistics in the same operation.
+        /// </summary>
+        public DamageResult ApplyDamage(
+            DamageRequest request,
+            CombatFaction targetFaction,
+            bool allowSelfHit,
+            bool allowFriendlyFire)
+        {
+            if (!_started) return new DamageResult(false, 0, false, DamageRejectionReason.WrongTarget);
+
+            var target = Find(request.TargetId);
+            if (target == null)
+            {
+                return new DamageResult(false, 0, false, DamageRejectionReason.WrongTarget);
+            }
+
+            if (!allowSelfHit && request.InstigatorId == target.Id)
+            {
+                return new DamageResult(false, 0, target.CurrentHealth <= 0, DamageRejectionReason.SelfHit);
+            }
+
+            if (!allowFriendlyFire && request.InstigatorFaction != CombatFaction.Neutral &&
+                request.InstigatorFaction == targetFaction)
+            {
+                return new DamageResult(false, 0, target.CurrentHealth <= 0, DamageRejectionReason.FriendlyFire);
+            }
+
+            if (request.RawAmount <= 0)
+            {
+                return new DamageResult(false, 0, target.CurrentHealth <= 0, DamageRejectionReason.InvalidAmount);
+            }
+
+            if (!target.Alive || target.CurrentHealth <= 0)
+            {
+                return new DamageResult(false, 0, true, DamageRejectionReason.AlreadyDefeated);
+            }
+
+            var applied = Math.Min(request.RawAmount, target.CurrentHealth);
+            target.CurrentHealth -= applied;
+            var defeated = target.CurrentHealth == 0;
+            var result = new DamageResult(true, applied, defeated, DamageRejectionReason.None);
+            RecordDamage(new CombatDamageEvent(request, applied, defeated, target.CurrentHealth, request.SimulationTick));
+            return result;
+        }
+
         public bool SetPosition(CombatEntityId id, Float2 position)
         {
             var participant = Find(id);

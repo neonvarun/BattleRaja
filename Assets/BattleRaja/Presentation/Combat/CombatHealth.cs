@@ -50,6 +50,28 @@ namespace BattleRaja.Presentation.Combat
             return result;
         }
 
+        public DamageResult ApplyAuthoritativeDamage(
+            DamageRequest request,
+            DamageResult result,
+            int currentHealthAfter,
+            int simulationTick)
+        {
+            if (_state == null) _state = new HealthState(maxHealth);
+            _state.SetCurrentHealth(currentHealthAfter);
+            if (result.Applied)
+            {
+                DamageResolved?.Invoke(result);
+                DamageApplied?.Invoke(new CombatDamageEvent(
+                    request,
+                    result.AmountApplied,
+                    result.TargetDefeated,
+                    _state.Snapshot.CurrentHealth,
+                    simulationTick));
+            }
+
+            return result;
+        }
+
         public void ResetHealth()
         {
             if (_state == null)

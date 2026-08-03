@@ -22,10 +22,8 @@ namespace BattleRaja.Presentation.Combat
             }
 
             var match = FindFirstObjectByType<OfflineMatchController>();
-            var authoritative = match != null && match.Simulation != null;
+            var authoritative = match != null && match.Simulation != null && match.IsAuthorityActor(target.Id);
             var station = target.GetComponent<GadgetStation>();
-            var stationDamage = default(GadgetStationDamageResult);
-            var stationDamageApplied = false;
             if (authoritative && station != null && station.StationId > 0)
             {
                 if (request.TargetId != target.Id)
@@ -48,7 +46,7 @@ namespace BattleRaja.Presentation.Combat
                     return new DamageResult(false, 0, false, DamageRejectionReason.AlreadyDefeated);
                 }
 
-                stationDamage = match.TryDamageStation(station.StationId, request.RawAmount);
+                var stationDamage = match.TryDamageStation(station.StationId, request.RawAmount);
                 if (!stationDamage.Applied)
                 {
                     return new DamageResult(
@@ -66,24 +64,43 @@ namespace BattleRaja.Presentation.Combat
                     request.DamageType,
                     request.HitDirection,
                     request.SimulationTick);
-                stationDamageApplied = true;
+
+                var stationResult = new DamageResult(
+                    true,
+                    stationDamage.AmountApplied,
+                    stationDamage.Destroyed,
+                    DamageRejectionReason.None);
+                var appliedToView = target.Health.ApplyAuthoritativeDamage(
+                    request,
+                    stationResult,
+                    stationDamage.CurrentHealth,
+                    simulationTick);
+                if (stationDamage.Destroyed) station.ExpireFromAuthority();
+                return appliedToView;
             }
             if (authoritative)
             {
-                request = match.ApplyDamageMitigation(request);
+                var authorityDamage = match.ResolveDamage(
+                    request,
+                    target.Faction,
+                    allowSelfHit,
+                    allowFriendlyFire);
+                return target.Health.ApplyAuthoritativeDamage(
+                    authorityDamage.Request,
+                    authorityDamage.Result,
+                    authorityDamage.CurrentHealthAfter,
+                    simulationTick);
             }
-            else
+
+            var gadgetUser = target.GetComponent<GadgetUser>();
+            if (gadgetUser != null)
             {
-                var gadgetUser = target.GetComponent<GadgetUser>();
-                if (gadgetUser != null)
+                var mitigated = gadgetUser.ModifyIncomingDamage(request);
+                if (mitigated != request.RawAmount)
                 {
-                    var mitigated = gadgetUser.ModifyIncomingDamage(request);
-                    if (mitigated != request.RawAmount)
-                    {
-                        request = new DamageRequest(request.InstigatorId, request.TargetId,
-                            request.InstigatorFaction, mitigated, request.DamageType, request.HitDirection,
-                            request.SimulationTick);
-                    }
+                    request = new DamageRequest(request.InstigatorId, request.TargetId,
+                        request.InstigatorFaction, mitigated, request.DamageType, request.HitDirection,
+                        request.SimulationTick);
                 }
             }
 
@@ -95,11 +112,6 @@ namespace BattleRaja.Presentation.Combat
                 allowSelfHit,
                 allowFriendlyFire,
                 simulationTick);
-            if (stationDamageApplied && stationDamage.Destroyed)
-            {
-                station.ExpireFromAuthority();
-            }
-
             return result;
         }
     }

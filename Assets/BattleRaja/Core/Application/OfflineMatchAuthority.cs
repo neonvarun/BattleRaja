@@ -4,6 +4,20 @@ using BattleRaja.Core.Domain;
 
 namespace BattleRaja.Core.Application
 {
+    public readonly struct MatchAuthorityDamage
+    {
+        public MatchAuthorityDamage(DamageRequest request, DamageResult result, int currentHealthAfter)
+        {
+            Request = request;
+            Result = result;
+            CurrentHealthAfter = currentHealthAfter;
+        }
+
+        public DamageRequest Request { get; }
+        public DamageResult Result { get; }
+        public int CurrentHealthAfter { get; }
+    }
+
     public readonly struct MatchAuthorityTick
     {
         public MatchAuthorityTick(MatchTickResult result, DamageRequest[] outsideDamageRequests)
@@ -71,6 +85,18 @@ namespace BattleRaja.Core.Application
 
         public OfflineMatchSimulation Simulation => _simulation;
 
+        public bool HasParticipant(CombatEntityId id)
+        {
+            if (_simulation == null) return false;
+            var snapshots = _simulation.GetSnapshots();
+            for (var i = 0; i < snapshots.Length; i++)
+            {
+                if (snapshots[i].Id == id) return true;
+            }
+
+            return false;
+        }
+
         public void ConfigureItems(
             IReadOnlyList<MatchPickupDefinition> pickups,
             IReadOnlyList<GadgetPickupDefinition> gadgetPickups)
@@ -121,6 +147,32 @@ namespace BattleRaja.Core.Application
         /// statistics by reaching into the simulation directly.
         /// </summary>
         public bool RecordDamage(CombatDamageEvent damageEvent) => RequireSimulation().RecordDamage(damageEvent);
+
+        /// <summary>
+        /// Resolves actor damage against the authority-owned health and statistics state.
+        /// Unity receives the resulting snapshot/event only after this method succeeds.
+        /// </summary>
+        public MatchAuthorityDamage ResolveDamage(
+            DamageRequest request,
+            CombatFaction targetFaction,
+            bool allowSelfHit,
+            bool allowFriendlyFire)
+        {
+            var mitigated = ApplyDamageMitigation(request);
+            var result = RequireSimulation().ApplyDamage(mitigated, targetFaction, allowSelfHit, allowFriendlyFire);
+            var currentHealthAfter = 0;
+            var snapshots = RequireSimulation().GetSnapshots();
+            for (var i = 0; i < snapshots.Length; i++)
+            {
+                if (snapshots[i].Id == request.TargetId)
+                {
+                    currentHealthAfter = snapshots[i].CurrentHealth;
+                    break;
+                }
+            }
+
+            return new MatchAuthorityDamage(mitigated, result, currentHealthAfter);
+        }
 
         public MatchAuthorityTick Advance(float fixedDeltaSeconds)
         {

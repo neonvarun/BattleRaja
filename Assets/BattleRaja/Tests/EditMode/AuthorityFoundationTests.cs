@@ -84,6 +84,46 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void MatchAuthorityResolvesDamageAgainstCanonicalHealthExactlyOnce()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(4f, 0f), 100),
+                new MatchSpawn(new CombatEntityId(3), new Float2(-4f, 0f), 100)
+            });
+
+            var request = new DamageRequest(
+                new CombatEntityId(1),
+                new CombatEntityId(2),
+                CombatFaction.Player,
+                40,
+                DamageType.Projectile,
+                new Float2(1f, 0f),
+                1);
+            var first = authority.ResolveDamage(request, CombatFaction.Enemy, false, false);
+            var second = authority.ResolveDamage(
+                new DamageRequest(request.InstigatorId, request.TargetId, request.InstigatorFaction, 60,
+                    request.DamageType, request.HitDirection, 2),
+                CombatFaction.Enemy,
+                false,
+                false);
+            var duplicate = authority.ResolveDamage(request, CombatFaction.Enemy, false, false);
+            var attacker = authority.Simulation.GetSnapshots().Single(snapshot => snapshot.Id.Value == 1);
+            var target = authority.Simulation.GetSnapshots().Single(snapshot => snapshot.Id.Value == 2);
+
+            Assert.That(first.Result.Applied, Is.True);
+            Assert.That(first.CurrentHealthAfter, Is.EqualTo(60));
+            Assert.That(second.Result.TargetDefeated, Is.True);
+            Assert.That(second.CurrentHealthAfter, Is.Zero);
+            Assert.That(duplicate.Result.Applied, Is.False);
+            Assert.That(attacker.DamageDealt, Is.EqualTo(100));
+            Assert.That(attacker.Eliminations, Is.EqualTo(1));
+            Assert.That(target.Placement, Is.EqualTo(3));
+        }
+
+        [Test]
         public void MatchAuthorityOwnsGadgetUseAndRejectsDuplicateCommands()
         {
             var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);

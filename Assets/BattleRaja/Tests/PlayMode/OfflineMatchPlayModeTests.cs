@@ -55,6 +55,35 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator CombatDamageResolverAppliesAuthorityDamageOnceToViewAndSnapshot()
+        {
+            PlayModeTestHelpers.DisableBots();
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            var resolver = Object.FindFirstObjectByType<CombatDamageResolver>();
+            var source = Object.FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None)
+                .First(agent => agent.ActorId == 1).GetComponent<CombatTarget>();
+            var target = Object.FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None)
+                .First(agent => agent.ActorId == 10).GetComponent<CombatTarget>();
+            var beforeHealth = target.Health.Snapshot.CurrentHealth;
+            var beforeDamage = match.Simulation.GetSnapshots().First(item => item.Id == source.Id).DamageDealt;
+
+            var result = resolver.Resolve(
+                target,
+                new DamageRequest(source.Id, target.Id, source.Faction, 25, DamageType.Projectile, new Float2(1f, 0f), 1),
+                allowSelfHit: false,
+                allowFriendlyFire: false,
+                simulationTick: 1);
+            var snapshot = match.Simulation.GetSnapshots().First(item => item.Id == target.Id);
+            var attacker = match.Simulation.GetSnapshots().First(item => item.Id == source.Id);
+
+            Assert.That(result.Applied, Is.True);
+            Assert.That(target.Health.Snapshot.CurrentHealth, Is.EqualTo(beforeHealth - 25));
+            Assert.That(snapshot.CurrentHealth, Is.EqualTo(beforeHealth - 25));
+            Assert.That(attacker.DamageDealt, Is.EqualTo(beforeDamage + 25));
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator InMatchAimAssistSettingUpdatesPlayerInputAndPersists()
         {
             var key = "battleraja.settings.aim_assist";

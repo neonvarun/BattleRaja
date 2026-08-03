@@ -54,6 +54,11 @@ namespace BattleRaja.Presentation.Match
             return _authority != null && _authority.TryAcquireGadget(collectorId, gadgetId);
         }
 
+        public bool IsAuthorityActor(CombatEntityId actorId)
+        {
+            return _authority != null && _authority.HasParticipant(actorId);
+        }
+
         public GadgetStationDamageResult TryDamageStation(int stationId, int rawAmount)
         {
             return _authority != null
@@ -66,6 +71,18 @@ namespace BattleRaja.Presentation.Match
             return _authority != null ? _authority.ApplyDamageMitigation(request) : request;
         }
 
+        public MatchAuthorityDamage ResolveDamage(
+            DamageRequest request,
+            CombatFaction targetFaction,
+            bool allowSelfHit,
+            bool allowFriendlyFire)
+        {
+            if (_authority == null) return default(MatchAuthorityDamage);
+            var result = _authority.ResolveDamage(request, targetFaction, allowSelfHit, allowFriendlyFire);
+            if (Simulation != null && Simulation.IsEnded) PublishResults();
+            return result;
+        }
+
         private void Awake()
         {
             damageResolver = damageResolver != null ? damageResolver : FindFirstObjectByType<CombatDamageResolver>();
@@ -76,14 +93,6 @@ namespace BattleRaja.Presentation.Match
             if (autoStart)
             {
                 StartMatch();
-            }
-        }
-
-        private void OnDestroy()
-        {
-            for (var i = 0; i < _actors.Count; i++)
-            {
-                _actors[i].Health.DamageApplied -= OnDamageApplied;
             }
         }
 
@@ -205,11 +214,6 @@ namespace BattleRaja.Presentation.Match
 
         private void CacheActors()
         {
-            for (var i = 0; i < _actors.Count; i++)
-            {
-                _actors[i].Health.DamageApplied -= OnDamageApplied;
-            }
-
             _actors.Clear();
             var agents = FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None).OrderBy(agent => agent.ActorId);
             foreach (var agent in agents)
@@ -218,18 +222,8 @@ namespace BattleRaja.Presentation.Match
                 var health = agent.GetComponent<CombatHealth>();
                 if (target != null && health != null)
                 {
-                    health.DamageApplied += OnDamageApplied;
                     _actors.Add(new MatchActorBinding(agent.transform, target, health, agent.GetComponent<PlayerInputAdapter>()));
                 }
-            }
-        }
-
-        private void OnDamageApplied(CombatDamageEvent damageEvent)
-        {
-            _authority?.RecordDamage(damageEvent);
-            if (Simulation != null && Simulation.IsEnded)
-            {
-                PublishResults();
             }
         }
 
