@@ -137,12 +137,16 @@
   cross-device persistence, account recovery or economy deployment is claimed.
 - Evidence and test/build status are recorded in `Docs/MILESTONE_REPORTS/M10.md`.
 
-## M11 execution evidence — 2026-08-02
+## M11 execution evidence — 2026-08-03
 
 - Release candidate configuration rejects admin tools/secrets; bounded development analytics
   and unavailable crash adapter are compile-safe and service-neutral.
 - Closed-test, rollback/support, store-draft and privacy/data-safety worksheets are in `Docs/`.
 - M11 artifact, test and smoke evidence is recorded in `Docs/MILESTONE_REPORTS/M11.md`.
+- Current continuation HEAD `8544f55` adds authority-driven spatial gadget collection
+  coverage and immediate live Results/Rematch publication. Fresh regression is 89/89
+  EditMode and 41/41 PlayMode; the development APK/Web smoke artifacts and Lava/Chrome
+  runtime captures are recorded in `Docs/QA/LATEST_HEAD_BASELINE.md`.
 - No public publication, store submission, signing-key use, paid service, legal acceptance or
   final approval is claimed.
 - External blockers and exact owner actions are tracked in `Docs/EXTERNAL_SERVICE_GATES.md`.

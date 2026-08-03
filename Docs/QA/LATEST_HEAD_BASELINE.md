@@ -2,8 +2,8 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `1f59a68` (`test: exercise live fighter abilities`)
-Latest runtime-bearing candidate: `1f59a68`
+Latest validated source HEAD: `8544f55` (`test: cover spatial gadgets and live rematch`)
+Latest runtime-bearing candidate: `8544f55`
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
 ## Scope and repository note
@@ -11,6 +11,30 @@ Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.
 The requested goal path `Docs/AI/RepositoryAuditAndCompletionGoal.md` is absent. The matching file `Docs/AI/BattleRaja_Repository_Audit_and_Completion_Goal.md` was read in full and used as the authoritative continuation brief. This path discrepancy remains a documentation issue; no source from the requested path was available.
 
 The baseline intentionally excludes unrelated working-tree changes in `Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity` and `Data/Plugins/lib_burst_generated.wasm`. Those files were not staged or altered by this baseline work.
+
+## Fresh Phase 6 continuation (`8544f55`)
+
+This section supersedes the older Phase 2 checkpoint below for the current source
+HEAD. It covers the authority-driven spatial gadget collection path, immediate live
+results publication after lethal damage, and the rematch scene reload surface.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings | command output from 2026-08-03 |
+| EditMode tests | 89 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/phase6-full-editmode-20260803.xml` |
+| PlayMode tests | 41 passed, 0 failed, 0 skipped; includes spatial gadget collection and live results/rematch reload | `Builds/M11/TestResults/phase6-full-playmode-20260803.xml` |
+| Android development build | Unity exit 0; IL2CPP APK 151,312,094 bytes; SHA-256 `285A7973A0487281F0F79BCFD14827114232D5C6B0F2BA3AD67BC57134B6B6BF` | `Builds/M11/Logs/android-build.log`, `Builds/M11/Android/BattleRaja-M11.apk` |
+| Web development build | Unity exit 0; 21 files, 133,194,614 bytes; WASM 120,501,844 bytes; SHA-256 `E029D2925F6E0B7463DA8F236584EE560F011EE0A59D99884A484E05EDA8EDAB` | `Builds/M11/Logs/web-build.log`, `Builds/M11/Web` |
+| Local Web serve | `http://127.0.0.1:8137/index.html` returned HTTP 200 | local HTTP check from 2026-08-03 |
+| Browser runtime | Fresh Chrome/Playwright load reached the live match after an 8-second warmup; screenshot shows the arena and HUD; console scan returned 0 errors/0 warnings | `Docs/QA/Visual/Phase7/playwright-phase6-runtime-20260803.png`; Playwright CLI output from 2026-08-03 |
+| Lava smoke | Exact Phase 6 APK installed/launched only on Lava `ST5GDW23LB004392` (`LAVA LXX508`), process `14841`; portrait screenshot shows the live match and HUD; process-scoped log contains no fatal crash, monotonic-tick or missing-component marker | `Docs/QA/Visual/Phase7/android-lava-phase6-runtime-20260803.png`, `Builds/M11/Logs/phase6-runtime-lava-process-20260803.txt` |
+| Runtime warnings | The process sample still contains the known optional `com.google.android.play.core.assetpacks.AssetPackManager` lookup and Lava `gralloc`/vendor buffer noise; these did not terminate the process | `Builds/M11/Logs/phase6-runtime-lava-process-20260803.txt` |
+
+The new PlayMode coverage is functional evidence, not visual approval: it relocates an
+authored Dhol pickup before restarting the authority-backed scene to exercise spatial
+collection deterministically, and it invokes the generated Results/Rematch buttons
+after authoritative lethal damage. The visual QA gate remains in progress because no
+human-facing gadget-use or results/rematch screenshot has been captured.
 
 ## Fresh Phase 2 continuation (`1f59a68`)
 

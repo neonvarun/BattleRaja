@@ -755,3 +755,25 @@ Record every material choice here. Do not silently overwrite old decisions.
   `BijliFighterController`, `PlayerFighterSelection`, `VerticalSlicePlayModeTests`,
   `phase2-full-*` results, the Phase 2 Android Lava sample and Chrome Web smoke capture.
 - **Owner:** Human project owner
+
+### ADR-038 — Publish offline results when authoritative damage ends the match
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical slice; network replication and final
+  results UX remain future work.
+- **Context:** `CombatDamageResolver` records lethal damage into the offline authority
+  immediately. When the last elimination left one participant alive, the domain match
+  entered `Resolution` before the next controller tick; the controller then returned
+  early for an ended simulation and never published `Results` to the HUD.
+- **Decision:** Centralize result publication in `OfflineMatchController.PublishResults`.
+  Call it both from the normal `MatchTickResult.MatchEnded` path and immediately after
+  an authority-recorded damage event observes `Simulation.IsEnded`. Add PlayMode
+  coverage for the generated Results panel and Rematch button reload.
+- **Consequences:** Results/rematch state is available regardless of whether the match
+  ends on a fixed simulation tick or during a presentation damage callback. The rule
+  remains offline-only; networked result replication, final art and human UX review are
+  not implied.
+- **Evidence/sources:** `OfflineMatchController`, `OfflineMatchPlayModeTests`,
+  `Builds/M11/TestResults/phase6-full-playmode-20260803.xml` and the Phase 6 baseline
+  in `Docs/QA/LATEST_HEAD_BASELINE.md`.
+- **Owner:** Human project owner

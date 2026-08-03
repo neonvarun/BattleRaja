@@ -1,10 +1,26 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-03
-Runtime-bearing candidate: `1f59a68` (`test: exercise live fighter abilities`)
-Current source HEAD: `1f59a68` (Phase 2 live-controller coverage after the fixed-tick correction)
+Runtime-bearing candidate: `8544f55` (`test: cover spatial gadgets and live rematch`)
+Current source HEAD: `8544f55` (Phase 6 authority collection/results coverage after the fixed-tick correction)
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web` served over local HTTP at `http://127.0.0.1:8137/index.html`
+
+## Fresh Phase 6 runtime smoke (`8544f55`)
+
+- The fresh Web candidate reached the live MovementLab match in Chrome after an
+  eight-second warm-up. `playwright-phase6-runtime-20260803.png` shows the arena,
+  fighters, HUD and controls; the Playwright console scan reported 0 errors and 0
+  warnings.
+- The fresh development APK was installed and launched only on Lava
+  `ST5GDW23LB004392` (`LAVA LXX508`). `android-lava-phase6-runtime-20260803.png`
+  shows a live portrait match. The process-scoped log has no fatal crash,
+  `AndroidRuntime`, `SIGSEGV`, missing-component or monotonic-tick marker. It still
+  includes the known optional Google Play Asset Pack class lookup and Lava gralloc
+  noise, both non-fatal in this sample.
+- Automated PlayMode coverage now confirms authority-driven spatial Dhol collection
+  and the generated live Results/Rematch reload flow. Those assertions are functional
+  evidence only; they do not convert the visual rows below to “Observed”.
 
 ## Test surface
 
@@ -24,10 +40,10 @@ The Playwright CLI loaded the WebGL candidate and exercised the required desktop
 | Responsive portrait tutorial | Observed | Fresh `playwright-390x844-responsive-tutorial.png` capture from the production Bootstrap → Tutorial Arena route; the tutorial card, controls and arena remain readable at 390×844. |
 | Active combat | Observed | `playwright-1280x720-active-pressure.png`; fighters, projectiles/telegraphs and HUD remain visible during live pressure. |
 | Aandhi pressure | Observed | `playwright-1280x720-aandhi-pressure.png`; the HUD reports `CLOSING` and the zone values change. |
-| Gadget pickup/use | Not verified | `playwright-1280x720-gadget-prompt.png` captures the honest tutorial prompt, but the smoke path continued to show `GADGET [G] empty`; no successful pickup/use was captured. |
+| Gadget pickup/use | Not verified | Phase 6 PlayMode now proves authority-driven spatial collection and use, but no successful human-facing pickup/use capture exists; the prior Web prompt still showed `GADGET [G] empty`. |
 | Pause/settings | Observed | `playwright-1280x720-settings.png`; the overlay is readable but covers a substantial portion of the arena. |
 | Spectator | Observed | `playwright-1280x720-spectator.png`; the player was eliminated during the run and the spectator surface was entered through the real `SPECTATE` control. |
-| Results/rematch | Not verified | The run reached `MATCH RESOLUTION` with one survivor but did not reach a results/rematch surface; no fake result was produced. |
+| Results/rematch | Not verified | Phase 6 PlayMode now proves immediate results publication and rematch scene reload after lethal damage, but no human-facing results/rematch screenshot has been captured. |
 | Online/error | Observed | `playwright-1280x720-online-error.png`; the build states that Photon access is unavailable and does not fabricate a room. |
 
 ## Findings
@@ -42,6 +58,10 @@ The Playwright CLI loaded the WebGL candidate and exercised the required desktop
 - Touch controls occupy meaningful screen area and should be reviewed on the Lava phone before any release claim.
 - Gadget success and results/rematch remain evidence gaps rather than passed states. Spectator is technically observed, but still needs human UX review.
 - The production Web run logged Unity's known non-fatal `JS_FileSystem_Sync()` deprecation warning; no browser error or blank-canvas failure was observed.
+
+- The Phase 6 smoke screenshots remain technical prototype evidence. They do not certify
+  final art/audio, touch ergonomics, loading-state presentation, multi-browser parity,
+  or human visual approval.
 
 ## Gate decision
 
