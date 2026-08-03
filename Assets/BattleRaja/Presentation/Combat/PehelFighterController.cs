@@ -29,16 +29,17 @@ namespace BattleRaja.Presentation.Combat
         private bool _abilityHeld;
         private bool _abilityQueued;
         private Float2 _queuedDirection = Float2.Up;
+        private readonly RaycastHit[] _chargeHits = new RaycastHit[32];
 
         public ContentId AbilityId => _special.AbilityId;
         public FighterDefinition Definition => _definition;
         public ChargeThrowState ActionState => _runtime != null ? _runtime.State : ChargeThrowState.Ready;
+        public CombatEntityId CapturedTargetId => _runtime != null ? _runtime.CapturedTargetId : default;
         public float AbilityCooldownRemaining => _runtime != null ? _runtime.CooldownRemaining : 0f;
         public bool IsMovementLocked => _runtime != null && _runtime.IsMovementLocked;
 
         private void Awake()
         {
-            fighterDefinition = fighterDefinition != null ? fighterDefinition : GetComponent<FighterDefinitionAsset>();
             inputAdapter = inputAdapter != null ? inputAdapter : GetComponent<PlayerInputAdapter>();
             movementAgent = movementAgent != null ? movementAgent : GetComponent<MovementPlayerAgent>();
             characterController = characterController != null ? characterController : GetComponent<CharacterController>();
@@ -151,10 +152,24 @@ namespace BattleRaja.Presentation.Combat
             if (normalized.Y > 0f) available = Mathf.Min(available, (playMaxZ - position.z) / normalized.Y);
             if (normalized.Y < 0f) available = Mathf.Min(available, (playMinZ - position.z) / normalized.Y);
             var origin = position + Vector3.up * Mathf.Max(0.1f, characterController != null ? characterController.height * 0.5f : 0.5f);
-            if (Physics.SphereCast(origin, _special.Radius * 0.25f, new Vector3(normalized.X, 0f, normalized.Y), out var hit, available, chargeCollisionMask, QueryTriggerInteraction.Ignore))
+            var hitCount = Physics.SphereCastNonAlloc(
+                origin,
+                _special.Radius * 0.25f,
+                new Vector3(normalized.X, 0f, normalized.Y),
+                _chargeHits,
+                available,
+                chargeCollisionMask,
+                QueryTriggerInteraction.Ignore);
+            var nearestObstacle = available;
+            for (var i = 0; i < hitCount; i++)
             {
-                available = Mathf.Min(available, Mathf.Max(0f, hit.distance - _special.Radius * 0.25f));
+                var hit = _chargeHits[i];
+                var target = hit.collider != null ? hit.collider.GetComponentInParent<CombatTarget>() : null;
+                if (target != null) continue;
+                nearestObstacle = Mathf.Min(nearestObstacle, Mathf.Max(0f, hit.distance - _special.Radius * 0.25f));
             }
+
+            available = nearestObstacle;
 
             return Mathf.Max(0f, available);
         }

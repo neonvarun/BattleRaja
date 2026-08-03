@@ -64,7 +64,6 @@ namespace BattleRaja.Presentation.Combat
 
         private void ResolveReferences()
         {
-            bijliDefinition = bijliDefinition != null ? bijliDefinition : GetComponent<FighterDefinitionAsset>();
             bijliController = bijliController != null ? bijliController : GetComponent<BijliFighterController>();
             pehelController = pehelController != null ? pehelController : GetComponent<PehelFighterController>();
             mayaController = mayaController != null ? mayaController : GetComponent<MayaFighterController>();

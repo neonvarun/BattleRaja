@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Linq;
+using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.AI;
 using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Match;
@@ -68,6 +69,112 @@ namespace BattleRaja.Tests.PlayMode
                 Assert.That(brains[i].AbilityController, Is.SameAs(expected), brains[i].name);
             }
 
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator PehelChargeThrowRunsThroughTheLiveController()
+        {
+            var pehelObject = new GameObject("PehelRuntimeProbe");
+            var pehelHealth = pehelObject.AddComponent<CombatHealth>();
+            var pehelTarget = pehelObject.AddComponent<CombatTarget>();
+            var pehel = pehelObject.AddComponent<PehelFighterController>();
+            pehelObject.transform.position = new Vector3(10f, 1f, -8f);
+
+            var targetObject = new GameObject("PehelRuntimeTarget");
+            var targetHealth = targetObject.AddComponent<CombatHealth>();
+            var target = targetObject.AddComponent<CombatTarget>();
+            targetObject.AddComponent<CharacterController>();
+            targetObject.transform.position = pehelObject.transform.position + Vector3.right * 1.4f;
+
+            yield return null;
+
+            pehelTarget.Configure(9001, CombatFaction.Enemy, pehelHealth);
+            target.Configure(9002, CombatFaction.Player, targetHealth);
+            Physics.SyncTransforms();
+            Assert.That(Physics.OverlapSphere(pehelObject.transform.position, 2.2f)
+                .Any(collider => collider.GetComponentInParent<CombatTarget>() == target), Is.True);
+            var chargeStartTargetPosition = targetObject.transform.position;
+            var beforeHealth = targetHealth.Snapshot.CurrentHealth;
+            pehel.Submit(AbilityCommandFactory.Create(
+                pehelTarget.Id,
+                1,
+                pehel.AbilityId,
+                new Float2(1f, 0f),
+                true));
+
+            yield return new WaitForSeconds(0.6f);
+
+            Assert.That(pehel.CapturedTargetId.Value, Is.EqualTo(target.Id.Value));
+            Assert.That(targetHealth.Snapshot.CurrentHealth, Is.LessThan(beforeHealth));
+            Assert.That(pehel.AbilityCooldownRemaining, Is.GreaterThan(0f));
+            Assert.That(targetObject.transform.position.x, Is.GreaterThan(chargeStartTargetPosition.x));
+
+            Object.Destroy(pehelObject);
+            Object.Destroy(targetObject);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator MayaDecoySpawnsFollowsAndCanBeDestroyedByCombat()
+        {
+            var mayaObject = new GameObject("MayaRuntimeProbe");
+            var mayaHealth = mayaObject.AddComponent<CombatHealth>();
+            var ownerTarget = mayaObject.AddComponent<CombatTarget>();
+            var maya = mayaObject.AddComponent<MayaFighterController>();
+            mayaObject.transform.position = new Vector3(10f, 1f, 6f);
+
+            var attackerObject = new GameObject("MayaRuntimeAttacker");
+            var attackerHealth = attackerObject.AddComponent<CombatHealth>();
+            var attacker = attackerObject.AddComponent<CombatTarget>();
+            yield return null;
+
+            ownerTarget.Configure(9010, CombatFaction.Enemy, mayaHealth);
+            attacker.Configure(9011, CombatFaction.Player, attackerHealth);
+            var resolver = Object.FindFirstObjectByType<CombatDamageResolver>();
+
+            maya.Submit(AbilityCommandFactory.Create(
+                ownerTarget.Id,
+                1,
+                maya.AbilityId,
+                Float2.Up,
+                true));
+            yield return null;
+
+            Assert.That(maya.IsDecoyActive, Is.True);
+            var decoy = GameObject.Find("MayaDecoy");
+            Assert.That(decoy, Is.Not.Null);
+            var decoyTarget = decoy.GetComponent<CombatTarget>();
+            var decoyHealth = decoy.GetComponent<CombatHealth>();
+            Assert.That(decoyTarget, Is.Not.Null);
+            Assert.That(decoyHealth, Is.Not.Null);
+            Assert.That(decoyTarget.Faction, Is.Not.EqualTo(attacker.Faction));
+
+            var beforeFollow = decoy.transform.position;
+            maya.transform.position += Vector3.right * 3f;
+            yield return new WaitForSeconds(0.5f);
+            Assert.That(decoy.transform.position.x, Is.GreaterThan(beforeFollow.x));
+
+            var result = resolver.Resolve(
+                decoyTarget,
+                new DamageRequest(
+                    attacker.Id,
+                    decoyTarget.Id,
+                    attacker.Faction,
+                    decoyHealth.Snapshot.CurrentHealth,
+                    DamageType.Projectile,
+                    new Float2(1f, 0f),
+                    1),
+                allowSelfHit: false,
+                allowFriendlyFire: false,
+                simulationTick: 1);
+            Assert.That(result.Applied, Is.True);
+            yield return null;
+            Assert.That(maya.IsDecoyActive, Is.False);
+            Assert.That(GameObject.Find("MayaDecoy"), Is.Null);
+
+            Object.Destroy(mayaObject);
+            Object.Destroy(attackerObject);
             yield return null;
         }
 

@@ -32,7 +32,6 @@ namespace BattleRaja.Presentation.Combat
 
         private void Awake()
         {
-            fighterDefinition = fighterDefinition != null ? fighterDefinition : GetComponent<FighterDefinitionAsset>();
             inputAdapter = inputAdapter != null ? inputAdapter : GetComponent<PlayerInputAdapter>();
             movementAgent = movementAgent != null ? movementAgent : GetComponent<MovementPlayerAgent>();
             _definition = fighterDefinition != null ? fighterDefinition.ToDomain() : FighterDefinition.Maya;
