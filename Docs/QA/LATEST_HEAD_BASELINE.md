@@ -22,6 +22,7 @@ through a real Results screen and a subsequent Rematch transition in Chrome 150.
 | Web production smoke | 19 files, 133,358,779 bytes; `Web-BazaarBastion.wasm` SHA-256 `66D159C1291809BA04A3365A47976AA0042145E53F2335CA9BC545213A2BF6DA`; port 8139 HTTP 200 | `Builds/M11/Web-BazaarBastion`, `Builds/M11/Logs/web-build.log` |
 | Results capture | Chrome showed all eight placements, statistics, `REMATCH` and `MENU` controls at 1280x720; the exact APK also reached the portrait Results panel on Lava | `Docs/QA/Visual/Phase7/playwright-1280x720-results-20260803.png`, `Docs/QA/Visual/Phase7/android-lava-results-authority-20260803.png` |
 | Rematch transition | Clicking `REMATCH` returned to a fresh live match; screenshot inspected after the transition; Chrome session recorded 61 messages, 0 errors and 1 known `JS_FileSystem_Sync` deprecation warning | `Docs/QA/Visual/Phase7/playwright-1280x720-rematch-match-20260803.png`, `.playwright-cli/console-2026-08-03T06-02-11-380Z.log` |
+| Performance smoke | Chrome warm local run: DOMContentLoaded 152 ms, load 251.4 ms, WASM transfer 120,662,567 bytes, rAF mean/p95 5.620/6.1 ms, JS heap used 30,296,011 bytes; Lava PSS/RSS/Graphics PSS 458,974/596,588/95,468 KB; Android gfxinfo had no frame histogram | `Docs/QA/Performance/authority-runtime-20260803.md` and sibling raw captures |
 
 The Results/rematch observation is technical interaction evidence, not human visual
 approval. Gadget pickup/use remains an evidence gap; Android touch ergonomics remain

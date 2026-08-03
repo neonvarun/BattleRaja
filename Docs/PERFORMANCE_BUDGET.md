@@ -44,6 +44,26 @@ These are bounded smoke observations, not release-performance sign-off.
   mobile-browser coverage, shader warm-up, compression/cache headers and network
   bandwidth remain unmeasured.
 
+## Authority candidate smoke measurement — 2026-08-03 (`044b1b8`)
+
+- Chrome 150, local production Web after an 8-second warm-up: DOMContentLoaded **152
+  ms**, load **251.4 ms**, WASM transfer **120,662,567 bytes** over **1,903.5 ms**;
+  120 browser `requestAnimationFrame` samples mean **5.620 ms**, p50 **5.5 ms**,
+  p95 **6.1 ms**, max **6.1 ms**. `performance.memory` reported **30,296,011 bytes**
+  used of **31,053,339 bytes** total (browser heap limit **4,395,630,592 bytes**).
+  The page had one canvas, 0 console errors and 14 autoplay-policy warnings from the
+  automated reload; these are browser observations, not Unity FPS/GPU/GC evidence.
+- Lava `ST5GDW23LB004392` (`LAVA LXX508`) process `com.example.battleraja.m11`:
+  **458,974 KB PSS**, **596,588 KB RSS**, **95,468 KB Graphics PSS**, **100 KB swap**.
+  `dumpsys gfxinfo` still exposed no frame/jank histogram, so Android FPS, frame time,
+  GPU and GC-rate remain unmeasured.
+- Raw captured files and the full interpretation are tracked in
+  `Docs/QA/Performance/authority-runtime-20260803.md` and its sibling `.txt` files.
+
+These values are smoke baselines only. They do not establish release budgets,
+low-end-device performance, thermal/battery behavior, repeated-match memory growth,
+cold-load behavior, multi-browser parity or Unity Profiler data.
+
 ## Web-specific measured budgets
 
 - Compressed initial download

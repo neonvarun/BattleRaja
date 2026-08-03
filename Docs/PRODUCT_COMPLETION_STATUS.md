@@ -30,7 +30,7 @@ This file records evidence-backed status only. Allowed status values are: `Not s
 | Visual and interaction QA | In progress | `Docs/QA/VISUAL_QA_REPORT.md` records the focus-hardened Chrome/Edge Web smoke plus Playwright evidence at 1920×1080, 1440×900, 1280×720, 1024×768 and 390×844. Results and Rematch are now technically captured in `Phase7/playwright-1280x720-results-20260803.png` and `playwright-1280x720-rematch-match-20260803.png`; gadget use, loading-state observation, touch ergonomics and final human approval remain open |
 | Real Photon multiplayer | Not started | Imported SDK is not an adapter or multiplayer validation |
 | PlayFab/backend/economy | Not started | No production backend claim |
-| Performance, soak, multi-browser, and release gates | In progress | Phase 6 collected a Lava memory snapshot (507,397 KB PSS; 644,576 KB RSS; 97,884 KB Graphics PSS) and Chrome navigation/WASM/JS-heap timing; frame-time/FPS/GPU/GC, repeated-match growth, thermal/battery and multi-browser release measurements remain open; see `Docs/PERFORMANCE_BUDGET.md` |
+| Performance, soak, multi-browser, and release gates | In progress | Current candidate smoke measurement records Chrome navigation/WASM/rAF/heap values and a Lava snapshot (458,974 KB PSS; 596,588 KB RSS; 95,468 KB Graphics PSS); frame-time/FPS/GPU/GC, repeated-match growth, thermal/battery and multi-browser release measurements remain open; see `Docs/PERFORMANCE_BUDGET.md` and `Docs/QA/Performance/authority-runtime-20260803.md` |
 | Visual/audio/UI approval | Human review required | Current smoke screenshots show greybox/prototype presentation |
 
 ## Documentation discrepancy
