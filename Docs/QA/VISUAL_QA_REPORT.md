@@ -6,6 +6,29 @@ Current validated runtime source HEAD: `8f190cd`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://127.0.0.1:8139/index.html`
 
+## Current HEAD Web/Android visual interaction gate (`efbb1ac` docs atop `8f190cd`, 2026-08-03)
+
+- The current Web candidate was served at `http://127.0.0.1:8139/index.html` and
+  inspected with Playwright. Menu screenshots were captured at **1280×720**, **1440×900**
+  and **1024×768**. At 1024×768, screenshots cover mode selection, fighter selection,
+  loading/warmup, match opening, active Aandhi pressure, spectator, results and rematch:
+  `Docs/QA/Visual/Phase7/web-bazaar-*.png` and
+  `web-bazaar-results-final-probe-1024x768-20260803.png`.
+- The Web route rendered the shared Bazaar greybox scene, readable HUD labels, zone
+  transitions, spectator state, complete placements/statistics and rematch restart.
+  Playwright reported **0 console errors** and one Unity deprecation warning about
+  manual `persistentDataPath` synchronization. This is interaction evidence, not final
+  art, accessibility, multi-browser or human approval.
+- Gadget movement/use was attempted with keyboard movement and the touch-positioned
+  gadget button, but the held slot remained empty before the player was eliminated.
+  Gadget pickup/use therefore remains **not visually verified** despite passing functional
+  PlayMode coverage.
+- The current Android candidate was installed/launched only on Lava
+  `ST5GDW23LB004392` (`LAVA LXX508`). The Unity activity remained top-resumed; the inspected
+  menu capture is `Builds/M11/Logs/android-lava-rebaseline-20260803.png`. The current
+  match capture is a technical smoke only; the greybox arena and touch labels are readable,
+  while authored presentation and human approval remain open.
+
 ## Fresh Bazaar prefab Android/Web smoke (`8f190cd`, 2026-08-03)
 
 - The fresh Android candidate was built from the connected Bazaar prefab candidate and
