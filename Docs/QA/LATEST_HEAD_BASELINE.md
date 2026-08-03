@@ -2,9 +2,29 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `044b1b8` (`docs: record authority event routing evidence`)
-Latest runtime-bearing candidate: `044b1b8` (production Bazaar Bastion Android/Web candidate)
+Latest validated runtime source HEAD: `a170746` (`feat: label touch combat controls`)
+Latest runtime-bearing candidate: `a170746` (Android/Web candidates with readable touch-action labels)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
+
+## Touch-control readability continuation (`a170746`, 2026-08-03)
+
+The three runtime combat touch surfaces now create non-raycast labels for `ATTACK`,
+`ABILITY` and `GADGET`. This keeps the scene controls data-light while making the
+actions discoverable on Android and Web. The labels are covered by a PlayMode
+regression and were inspected on the permitted Lava device.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | `Tools\\Validation\\validate.ps1 -ProjectRoot .` — 0 errors, 0 warnings | command output from 2026-08-03 |
+| EditMode tests | 95 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/touch-labels-editmode-retry-20260803.xml` |
+| PlayMode tests | 47 passed, 0 failed, 0 skipped, including `TouchControlsExposeReadableActionLabels` | `Builds/M11/TestResults/touch-labels-playmode-20260803.xml` |
+| Android build | `BattleRaja-M11.apk`, 151,407,488 bytes; SHA-256 `959D766A0D218F8D531B7BA85D0D8199A77A39E90DD0C23B0AAD8A3C85A5E18F` | `Builds/M11/Logs/android-build.log` |
+| Lava smoke | APK installed/launched only on `ST5GDW23LB004392` (`LAVA LXX508`); active Unity activity and no sampled fatal crash marker | ADB output from 2026-08-03 |
+| Android visual inspection | Portrait match visibly shows all three labels on the touch surfaces | `Docs/QA/Visual/Phase7/android-lava-touch-labels-20260803.png` |
+| Web build | 21 files, 133,364,566 bytes; `Web.wasm` SHA-256 `D75EE1355A111711A716C72AEFA6714252FC2C08943CC8AE4FBE707464885C69` | `Builds/M11/Logs/web-build.log`, `Builds/M11/Web` |
+
+This closes the technical readability gap only. Touch ergonomics, loading-state behavior,
+gadget pickup/use, multi-browser coverage and final human presentation approval remain open.
 
 ## Authority and results/rematch continuation (`044b1b8`, 2026-08-03)
 

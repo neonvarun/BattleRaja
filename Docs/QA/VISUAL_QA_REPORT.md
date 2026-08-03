@@ -1,10 +1,21 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-03
-Runtime-bearing candidate: `044b1b8` (authority event-routing continuation)
-Current source HEAD: `044b1b8`
+Runtime-bearing candidate: `a170746` (touch-control readability continuation)
+Current validated runtime source HEAD: `a170746`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://127.0.0.1:8139/index.html`
+
+## Touch-control readability continuation (`a170746`)
+
+- `AttackButton`, `AbilityButton` and `GadgetUseButton` now add non-raycast runtime
+  labels (`ATTACK`, `ABILITY`, `GADGET`) without changing pointer semantics. The new
+  PlayMode regression passed with the full 47-test PlayMode suite.
+- The fresh APK was installed/launched only on Lava `ST5GDW23LB004392` (`LAVA LXX508`).
+  The inspected portrait screenshot shows all three labels over the colored control
+  surfaces: `Phase7/android-lava-touch-labels-20260803.png`.
+- This is technical readability evidence, not final UX approval. Touch ergonomics,
+  loading-state behavior, gadget pickup/use and authored visual review remain open.
 
 ## Results/rematch interaction continuation (`044b1b8`)
 

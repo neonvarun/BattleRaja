@@ -9,8 +9,8 @@
 - Product vision: drafted
 - Autonomous M1–M11 sequential execution: active; milestone gates and external
   service approvals remain explicit.
-- Latest validated runtime source HEAD: `044b1b8`; current repository HEAD is
-  docs/CI-only commit `2809165`; production-flow EventSystem creation is
+- Latest validated runtime source HEAD: `a170746`; the current repository includes
+  the touch-control readability continuation after the docs/CI checkpoint; production-flow EventSystem creation is
   Input System-only and the selected-fighter HUD path is covered by the current
   regression suite; Maya decoy perception refresh and authority-routed combat events are
   covered by regression.
