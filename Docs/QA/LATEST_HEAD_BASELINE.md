@@ -332,6 +332,13 @@ physical-device validation, performance, real Photon multiplayer or PlayFab inte
   fill the portrait viewport without the earlier fixed 960×600 horizontal crop. The
   capture still shows prototype-density HUD and is not mobile-Web or final visual
   approval.
+- Production-flow Web recheck: `BuildWebBazaarBastionDevelopment` also succeeded in
+  `Builds/M11/Web-BazaarBastion` (19 files, 133,179,836 bytes; the same main WASM
+  hash as above). Local HTTP `http://127.0.0.1:8138/index.html` returned 200. The
+  fresh route reached Bootstrap → Tutorial Arena at 390×844 and captured
+  `Docs/QA/Visual/Phase7/playwright-390x844-responsive-tutorial.png`; the tutorial
+  card and controls remained inside the portrait viewport. The browser emitted only
+  Unity's known non-fatal `JS_FileSystem_Sync()` deprecation warning.
 - Boundary: this is responsive framing and build evidence only. Gadget success,
   loading/results surfaces, touch ergonomics, physical Lava validation, performance,
   real Photon and PlayFab remain open or externally blocked. Build-generated changes

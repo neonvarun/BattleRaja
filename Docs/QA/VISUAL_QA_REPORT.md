@@ -4,7 +4,7 @@ Date: 2026-08-03
 Runtime-bearing candidate: `67a4d40` (`fix: make gameplay framing and web host responsive`)
 Current source HEAD: `67a4d40` (responsive camera/template continuation after the station-authority baseline)
 Unity: `6000.5.6f1`
-Web candidate: `Builds/M11/Web` served over local HTTP at `http://127.0.0.1:8137/index.html`
+Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://127.0.0.1:8138/index.html`
 
 ## Test surface
 
@@ -20,6 +20,7 @@ The Playwright CLI loaded the WebGL candidate and exercised the required desktop
 | Fighter selection | Observed | `playwright-1280x720-fighter-selection.png` and `playwright-1024x768-fighter-selection.png`; Bijli, Pehel and Maya choices remain readable. |
 | Match opening | Observed | `playwright-1920x1080-match-opening.png`, `playwright-1440x900-match-opening.png`, `playwright-1280x720-match-opening.png` and `playwright-1024x768-match-opening.png`; actors, HUD, controls and arena render without desktop clipping. |
 | Responsive portrait gameplay host | Observed | Fresh `playwright-390x844-responsive-gameplay.png` capture from the responsive Web template and orthographic framing path; the canvas fills the portrait viewport without the earlier fixed 960×600 horizontal crop. |
+| Responsive portrait tutorial | Observed | Fresh `playwright-390x844-responsive-tutorial.png` capture from the production Bootstrap → Tutorial Arena route; the tutorial card, controls and arena remain readable at 390×844. |
 | Active combat | Observed | `playwright-1280x720-active-pressure.png`; fighters, projectiles/telegraphs and HUD remain visible during live pressure. |
 | Aandhi pressure | Observed | `playwright-1280x720-aandhi-pressure.png`; the HUD reports `CLOSING` and the zone values change. |
 | Gadget pickup/use | Not verified | `playwright-1280x720-gadget-prompt.png` captures the honest tutorial prompt, but the smoke path continued to show `GADGET [G] empty`; no successful pickup/use was captured. |
@@ -33,9 +34,11 @@ The Playwright CLI loaded the WebGL candidate and exercised the required desktop
 - No blank canvas, missing-material screen or browser fatal error was observed in the tested route.
 - Menu, mode, fighter, settings and error labels remain inside the tested desktop canvases.
 - The responsive Web template and orthographic camera path remove the earlier fixed-canvas portrait crop; `playwright-390x844-responsive-gameplay.png` shows the live match filling the tested viewport. The HUD remains dense and the tutorial overlay, touch ergonomics and mobile-Web quality still require review.
+- The production tutorial route was also exercised at 390×844; `playwright-390x844-responsive-tutorial.png` shows the card and three actions inside the viewport. Text remains small and the touch ergonomics still require Lava review.
 - The match HUD is visibly dense: the top-left status strings are close together and the pause/settings panel covers gameplay. This remains prototype-quality presentation, not visual approval.
 - Touch controls occupy meaningful screen area and should be reviewed on the Lava phone before any release claim.
 - Gadget success and results/rematch remain evidence gaps rather than passed states. Spectator is technically observed, but still needs human UX review.
+- The production Web run logged Unity's known non-fatal `JS_FileSystem_Sync()` deprecation warning; no browser error or blank-canvas failure was observed.
 
 ## Gate decision
 
