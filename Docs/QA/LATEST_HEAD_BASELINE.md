@@ -50,6 +50,25 @@ the Web wrapper still reports the local websockify port-35020 collision, but bot
 builds report success. No visual-approval or performance-readiness claim is added by this
 behavioral fix.
 
+## Authority event-routing continuation (`8645254`)
+
+`OfflineMatchAuthority.RecordDamage` is now the application-owned entry point for resolved
+combat events. `OfflineMatchController` reports immutable `CombatDamageEvent` values through
+that method instead of calling `OfflineMatchSimulation.RecordDamage` directly. This keeps
+placements, eliminations, damage and assists behind the authority boundary while leaving
+Unity responsible for applying view-side health changes.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings | command output from 2026-08-03 |
+| EditMode tests | 95 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/authority-routing-editmode-20260803.xml` |
+| PlayMode tests | 46 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/authority-routing-playmode-20260803.xml` |
+| Android production smoke | APK 151,412,235 bytes; SHA-256 `9433136F638F622597DEB816E023999811208EB8827AE9A9ADE565AD17C39D87`; exact APK installed/launched on Lava `ST5GDW23LB004392` as process `27998`; crash-marker scan count 0 | `Builds/M11/Logs/android-build.log` and ADB output from 2026-08-03 |
+| Web production smoke | 19 files, 133,358,779 bytes; `Web-BazaarBastion.wasm` SHA-256 `66D159C1291809BA04A3365A47976AA0042145E53F2335CA9BC545213A2BF6DA`; port 8139 HTTP 200; Chrome one canvas, 52 console messages, 0 errors and 0 warnings | `Builds/M11/Web-BazaarBastion`, `Builds/M11/Logs/web-build.log` |
+
+This phase reduces the presentation-authority coupling but does not establish real network
+authority, server transport, or release readiness.
+
 ## Scope and repository note
 
 The requested goal path `Docs/AI/RepositoryAuditAndCompletionGoal.md` is absent. The matching file `Docs/AI/BattleRaja_Repository_Audit_and_Completion_Goal.md` was read in full and used as the authoritative continuation brief. This path discrepancy remains a documentation issue; no source from the requested path was available.

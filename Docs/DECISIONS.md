@@ -845,3 +845,24 @@ Record every material choice here. Do not silently overwrite old decisions.
   `Builds/M11/TestResults/input-system-playmode-fixed-20260803.xml`, the successful
   Android/Web M11 builds, and `Tools/Validation/validate.ps1`.
 - **Owner:** Human project owner
+
+### ADR-042 — Route resolved combat events through application authority
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical slice; network transport and remaining
+  presentation adapters remain future work.
+- **Context:** `OfflineMatchController` subscribed to Unity health callbacks but then called
+  `OfflineMatchSimulation.RecordDamage` directly. That made the presentation bridge the
+  visible owner of the canonical combat-statistics mutation path even though the simulation
+  itself was pure.
+- **Decision:** Expose `OfflineMatchAuthority.RecordDamage(CombatDamageEvent)` as the
+  application-owned event ingress. The controller reports immutable resolved events through
+  the authority; the authority delegates to the simulation and retains ownership of
+  elimination, placement, damage and assist outcomes. Add a duplicate-elimination regression.
+- **Consequences:** The offline presentation bridge no longer reaches into the pure simulation
+  for combat mutation. Unity still applies health visuals and transport integration is not
+  implied; a future network adapter must call the same authority contract under server rules.
+- **Evidence/sources:** `OfflineMatchAuthority`, `OfflineMatchController`,
+  `AuthorityFoundationTests.MatchAuthorityRoutesDamageEventsAndRejectsDuplicateEliminations`,
+  `Builds/M11/TestResults/authority-routing-editmode-20260803.xml` and the latest baseline.
+- **Owner:** Human project owner
