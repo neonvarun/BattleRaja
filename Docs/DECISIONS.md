@@ -936,3 +936,28 @@ Record every material choice here. Do not silently overwrite old decisions.
   `VerticalSlicePlayModeTests`, `Builds/M11/TestResults/authority-movement-editmode-20260803-final.xml`,
   `Builds/M11/TestResults/authority-movement-playmode-20260803-final2.xml` and the latest baseline.
 - **Owner:** Human project owner
+
+### ADR-046 — Apply Dhol Burst displacement through canonical match state
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical slice; fighter ability movement and
+  network transport remain future work.
+- **Context:** The authority computed Dhol Burst displacement intents, but the Unity
+  gadget adapter applied them only through `CharacterController.Move`. In the production
+  authority movement path that controller is disabled to prevent local collision
+  projection from rejecting canonical movement, so Dhol could appear to succeed without
+  changing the authoritative participant position.
+- **Decision:** `OfflineMatchAuthority.TryUseGadget` applies each valid Dhol displacement
+  to the canonical simulation before returning the immutable intent. The controller then
+  applies the resulting snapshot through `MovementPlayerAgent`; a local controller move
+  remains only as a fallback when no match adapter is available.
+- **Consequences:** Dhol Burst now changes canonical and presentation positions through
+  the same authority boundary and duplicate gadget commands remain rejected. Collision
+  resolution, Pehel charge displacement and Bijli dash displacement are still not
+  authority-owned and must not be described as network-ready.
+- **Evidence/sources:** `OfflineMatchAuthority.TryUseGadget`, `GadgetUser`,
+  `OfflineMatchController.ApplyAuthoritativeDisplacement`, `MovementPlayerAgent`,
+  `AuthorityFoundationTests.MatchAuthorityOwnsGadgetUseAndRejectsDuplicateCommands`,
+  `Builds/M11/TestResults/authority-gadget-displacement-editmode-20260803.xml` and
+  `Builds/M11/TestResults/authority-gadget-displacement-playmode-20260803.xml`.
+- **Owner:** Human project owner

@@ -1,8 +1,8 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-03
-Runtime-bearing candidate: `678acb0` (authority-first damage/healing continuation)
-Current validated runtime source HEAD: `678acb0`
+Runtime-bearing candidate: `78fa990` (authority-first Dhol displacement continuation)
+Current validated runtime source HEAD: `78fa990`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web` served over local HTTP at `http://127.0.0.1:8137/index.html`
 
@@ -18,6 +18,19 @@ Web candidate: `Builds/M11/Web` served over local HTTP at `http://127.0.0.1:8137
 - This is technical runtime evidence for the authority movement seam, not final visual
   approval. Greybox presentation, touch ergonomics, gadget use, multi-browser coverage
   and owner review remain open.
+
+## Authority-driven Dhol displacement continuation (`78fa990`)
+
+- The current Android candidate was installed/launched only on Lava
+  `ST5GDW23LB004392` (`LAVA LXX508`). The top-resumed Unity activity remained alive and
+  the sampled log window contained no fatal application marker. Inspection capture:
+  `Builds/M11/Logs/android-lava-authority-gadget-20260803.png`.
+- The current Web output contains 21 files and returned HTTP 200 from the existing local
+  server on port 8137. Browser visual approval and multi-browser coverage were not rerun
+  for this continuation.
+- This is technical runtime evidence for the authority Dhol seam, not final visual
+  approval. Greybox presentation, touch ergonomics, deeper gadget interaction coverage,
+  multi-browser coverage and owner review remain open.
 
 ## Authority-first healing continuation (`678acb0`)
 

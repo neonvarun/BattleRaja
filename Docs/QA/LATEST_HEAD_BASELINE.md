@@ -2,9 +2,26 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated runtime source HEAD: `204e4f0` (`refactor: route production movement through authority`)
-Latest runtime-bearing candidate: `204e4f0` (authority-first movement/damage/healing Android/Web candidates)
+Latest validated runtime source HEAD: `78fa990` (`refactor: apply gadget displacement through authority`)
+Latest runtime-bearing candidate: `78fa990` (authority-first movement/gadget/damage/healing Android/Web candidates)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
+
+## Authority-driven Dhol displacement continuation (`78fa990`, 2026-08-03)
+
+Dhol Burst now applies each validated displacement to the canonical participant position
+before returning the immutable effect. The presentation adapter consumes the resulting
+snapshot, so production authority movement no longer depends on a local
+`CharacterController.Move` call. Pehel charge displacement, Bijli dash displacement and
+real network authority remain open.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings; `git diff --check` clean | command output from 2026-08-03 |
+| EditMode tests | 98 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/authority-gadget-displacement-editmode-20260803.xml` |
+| PlayMode tests | 49 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/authority-gadget-displacement-playmode-20260803.xml` |
+| Android build | `BattleRaja-M11.apk`, 151,472,675 bytes; SHA-256 `B8D6DCEB124B0CA9DA42A2E341720B7AC7F325FA734FDD2EA3650F9F3B53AF80` | `Builds/M11/Logs/android-build.log` |
+| Lava smoke | Exact APK installed/launched only on `ST5GDW23LB004392` (`LAVA LXX508`); top-resumed Unity activity observed with process id 8128 and zero sampled fatal/AndroidRuntime markers | ADB output from 2026-08-03; `Builds/M11/Logs/android-lava-authority-gadget-20260803.png` |
+| Web build/serve | 21 files, 133,469,527 bytes; `Web.wasm` SHA-256 `C51E0EBB3B086C16EAA0C079532FC37C0015CD827F437B89C009DF892F4846F6`; local port 8137 returned HTTP 200 | `Builds/M11/Logs/web-build.log`, `Builds/M11/Web` |
 
 ## Authority-driven production movement continuation (`204e4f0`, 2026-08-03)
 
