@@ -2,9 +2,29 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated runtime source HEAD: `08c6f2e` (`refactor: resolve actor damage in match authority`)
-Latest runtime-bearing candidate: `08c6f2e` (authority-first actor damage Android/Web candidates)
+Latest validated runtime source HEAD: `678acb0` (`refactor: apply healing through match authority`)
+Latest runtime-bearing candidate: `678acb0` (authority-first damage/healing Android/Web candidates)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
+
+## Authority-first healing continuation (`678acb0`, 2026-08-03)
+
+Health pickups and Tiffin station healing now apply to canonical simulation health
+through `OfflineMatchAuthority.ApplyHealing`; Unity applies only the resulting health
+snapshot. The controller no longer mirrors view health back into authority every render
+frame. The legacy `SyncHealth` method remains for test/server compatibility while movement
+reconciliation is still incremental.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | `Tools\\Validation\\validate.ps1 -ProjectRoot .` — 0 errors, 0 warnings; `git diff --check` clean | command output from 2026-08-03 |
+| EditMode tests | 97 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/authority-health-editmode-20260803.xml` |
+| PlayMode tests | 48 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/authority-health-playmode-20260803.xml` |
+| Android build | `BattleRaja-M11.apk`, 151,415,947 bytes; SHA-256 `4B1BAF633BA448555B5D3E6C4C21666C61462499D0C3451CFE596AEA1234CFD3` | `Builds/M11/Logs/android-build.log` |
+| Lava smoke | Exact APK installed/launched only on `ST5GDW23LB004392` (`LAVA LXX508`); Unity activity remained resumed and no sampled fatal crash marker was found | ADB output from 2026-08-03 |
+| Android visual inspection | Portrait live match remains readable after canonical healing migration | `Docs/QA/Visual/Phase7/android-lava-authority-healing-20260803.png` |
+| Web build/serve | 21 files, 133,374,016 bytes; `Web.wasm` SHA-256 `1DBDC8DA65514A660DC4651EF7116FB83C522C42F62E0678716B059F7B76438E`; local port 8137 returned HTTP 200 | `Builds/M11/Logs/web-build.log`, `Builds/M11/Web` |
+
+Movement authority and remaining non-health presentation reconciliation are still open.
 
 ## Authority-first actor damage continuation (`08c6f2e`, 2026-08-03)
 

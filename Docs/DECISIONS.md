@@ -890,3 +890,23 @@ Record every material choice here. Do not silently overwrite old decisions.
   `Builds/M11/TestResults/authority-damage-editmode-20260803.xml`,
   `Builds/M11/TestResults/authority-damage-playmode-20260803.xml` and the latest baseline.
 - **Owner:** Human project owner
+
+### ADR-044 — Apply production healing through match authority
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical slice; movement reconciliation and network
+  transport remain future work.
+- **Context:** Health pickup and Tiffin healing were accepted by application runtimes but
+  then mutated Unity `CombatHealth` directly. The controller mirrored view health back into
+  authority each render frame, leaving a presentation-owned reconciliation path.
+- **Decision:** Add `OfflineMatchSimulation.Heal` and `OfflineMatchAuthority.ApplyHealing`.
+  Pickup and Tiffin intents update canonical participant health first, then the controller
+  applies the resulting snapshot to Unity via `CombatHealth.SetAuthoritativeHealth`.
+  Keep `SyncHealth` only as an explicit compatibility seam for tests and the transport proof.
+- **Consequences:** Production pickup/Tiffin healing no longer depends on render-frame view
+  state. Movement still enters authority through a transitional position observation seam, and
+  local lab pickups/stations remain presentation adapters by design.
+- **Evidence/sources:** `OfflineMatchSimulation.Heal`, `OfflineMatchAuthority.ApplyHealing`,
+  `CombatHealth.SetAuthoritativeHealth`, `AuthorityFoundationTests.MatchAuthorityAppliesHealingToCanonicalHealth`,
+  fresh authority-health EditMode/PlayMode XML and the latest baseline.
+- **Owner:** Human project owner

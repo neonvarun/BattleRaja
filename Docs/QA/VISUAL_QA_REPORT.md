@@ -1,10 +1,19 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-03
-Runtime-bearing candidate: `08c6f2e` (authority-first actor damage continuation)
-Current validated runtime source HEAD: `08c6f2e`
+Runtime-bearing candidate: `678acb0` (authority-first damage/healing continuation)
+Current validated runtime source HEAD: `678acb0`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://127.0.0.1:8139/index.html`
+
+## Authority-first healing continuation (`678acb0`)
+
+- The latest Android candidate was installed/launched only on Lava
+  `ST5GDW23LB004392` (`LAVA LXX508`). The inspected portrait live-match screenshot
+  remains readable after moving pickup/Tiffin healing into authority state:
+  `Phase7/android-lava-authority-healing-20260803.png`.
+- This is technical runtime/readability evidence, not final visual approval. Touch
+  ergonomics, loading, gadget use, multi-browser coverage and human review remain open.
 
 ## Authority-first actor damage continuation (`08c6f2e`)
 
