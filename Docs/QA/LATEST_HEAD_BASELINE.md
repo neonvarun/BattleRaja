@@ -30,6 +30,26 @@ text for Pehel and Maya. They are still greybox/prototype evidence; the 390x844
 MovementLab capture shows bot debug-label/HUD overlap, so visual approval, touch
 ergonomics and final authored presentation remain human-review items.
 
+## Maya bot-perception continuation (`ff2a3e4`)
+
+Maya decoy spawn/destruction now refreshes bot perception targets. Decoys are deactivated
+before deferred destruction so a bot cannot retain a stale target after the decoy has left
+gameplay. `VerticalSlicePlayModeTests.MayaDecoySpawnsFollowsAndCanBeDestroyedByCombat`
+now asserts that a sensor created before the decoy observes it after spawn.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings | command output from 2026-08-03 |
+| EditMode tests | 94 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/maya-bot-decoy-editmode-20260803.xml` |
+| PlayMode tests | 46 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/maya-bot-decoy-playmode-20260803.xml` |
+| Android production smoke | APK 151,385,439 bytes; SHA-256 `535620433C81BF9B146E783FCE5F05F779B1E1BCB7B9CBA1FF4724A123D5B876`; installed/launched on Lava `ST5GDW23LB004392` as process `27459`; crash-marker scan count 0 | `Builds/M11/Logs/android-build.log` and ADB output from 2026-08-03 |
+| Web production smoke | 19 files, 133,358,415 bytes; `Web-BazaarBastion.wasm` SHA-256 `65BD44CD401E9A1AD16C684AD168F8E71B4932465DC719A4A2C2D38AE1DD580`; port 8139 HTTP 200; Chrome one canvas, 52 console messages, 0 errors and 0 warnings | `Builds/M11/Web-BazaarBastion`, `Builds/M11/Logs/web-build.log` |
+
+The Android build still reports the repository's existing Unity API-obsolescence warnings;
+the Web wrapper still reports the local websockify port-35020 collision, but both Unity
+builds report success. No visual-approval or performance-readiness claim is added by this
+behavioral fix.
+
 ## Scope and repository note
 
 The requested goal path `Docs/AI/RepositoryAuditAndCompletionGoal.md` is absent. The matching file `Docs/AI/BattleRaja_Repository_Audit_and_Completion_Goal.md` was read in full and used as the authoritative continuation brief. This path discrepancy remains a documentation issue; no source from the requested path was available.

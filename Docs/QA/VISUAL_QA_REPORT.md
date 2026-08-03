@@ -1,8 +1,8 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-03
-Runtime-bearing candidate: `4d3ae6a` (production Bazaar Bastion continuation)
-Current source HEAD: `4d3ae6a`
+Runtime-bearing candidate: `ff2a3e4` (production Bazaar Bastion continuation)
+Current source HEAD: `ff2a3e4`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://127.0.0.1:8139/index.html`
 
