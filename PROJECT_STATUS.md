@@ -9,7 +9,7 @@
 - Product vision: drafted
 - Autonomous M1–M11 sequential execution: active; milestone gates and external
   service approvals remain explicit.
-- Latest validated source HEAD: `8645254`; production-flow EventSystem creation is
+- Latest validated source HEAD: `044b1b8`; production-flow EventSystem creation is
   Input System-only and the selected-fighter HUD path is covered by the current
   regression suite; Maya decoy perception refresh and authority-routed combat events are
   covered by regression.

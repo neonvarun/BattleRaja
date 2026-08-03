@@ -1,10 +1,23 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-03
-Runtime-bearing candidate: `ff2a3e4` (production Bazaar Bastion continuation)
-Current source HEAD: `ff2a3e4`
+Runtime-bearing candidate: `044b1b8` (authority event-routing continuation)
+Current source HEAD: `044b1b8`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://127.0.0.1:8139/index.html`
+
+## Results/rematch interaction continuation (`044b1b8`)
+
+- Chrome 150 reached a live production Bazaar Bastion match, let the offline match
+  resolve, and displayed the real Results panel. The inspected 1280x720 screenshot
+  shows all eight ordered placements with KOs, assists, damage and survival values plus
+  `REMATCH` and `MENU` controls: `Phase7/playwright-1280x720-results-20260803.png`.
+- Clicking `REMATCH` returned to a fresh live match. The post-transition screenshot is
+  `Phase7/playwright-1280x720-rematch-match-20260803.png`. The session recorded 61
+  console messages, 0 errors and 1 known Unity `JS_FileSystem_Sync` deprecation warning.
+- This closes the deliberate Results/rematch technical capture gap, but it does not
+  claim final visual quality, touch ergonomics or owner approval. Gadget pickup/use is
+  still not visually verified.
 
 ## Production Bazaar Bastion flow (`d1b33d1` + `4d3ae6a`)
 
@@ -133,7 +146,7 @@ The Playwright CLI loaded the WebGL candidate and exercised the required desktop
 | Gadget pickup/use | Not verified | Phase 6 PlayMode now proves authority-driven spatial collection and use, but no successful human-facing pickup/use capture exists; the prior Web prompt still showed `GADGET [G] empty`. |
 | Pause/settings | Observed | `playwright-1280x720-settings.png`; the overlay is readable but covers a substantial portion of the arena. |
 | Spectator | Observed | `playwright-1280x720-spectator.png`; the player was eliminated during the run and the spectator surface was entered through the real `SPECTATE` control. |
-| Results/rematch | Not verified | Phase 6 PlayMode now proves immediate results publication and rematch scene reload after lethal damage, but no human-facing results/rematch screenshot has been captured. |
+| Results/rematch | Observed (technical) | `Phase7/playwright-1280x720-results-20260803.png` shows the real Results panel and controls; `Phase7/playwright-1280x720-rematch-match-20260803.png` shows the fresh match after clicking `REMATCH`. Human visual approval remains open. |
 | Online/error | Observed | `playwright-1280x720-online-error.png`; the build states that Photon access is unavailable and does not fabricate a room. |
 
 ## Findings

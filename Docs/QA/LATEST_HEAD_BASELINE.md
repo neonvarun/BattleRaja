@@ -2,9 +2,31 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `4d3ae6a` (`fix: bind hud to selected fighter`)
-Latest runtime-bearing candidate: `4d3ae6a` (production Bazaar Bastion Android/Web candidate)
+Latest validated source HEAD: `044b1b8` (`docs: record authority event routing evidence`)
+Latest runtime-bearing candidate: `044b1b8` (production Bazaar Bastion Android/Web candidate)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
+
+## Authority and results/rematch continuation (`044b1b8`, 2026-08-03)
+
+This is the current source/runtime checkpoint after the authority event-routing fix.
+`OfflineMatchController` now reports resolved combat events through
+`OfflineMatchAuthority.RecordDamage`; the production Web candidate was also driven
+through a real Results screen and a subsequent Rematch transition in Chrome 150.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings | command output from 2026-08-03 |
+| EditMode tests | 95 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/authority-routing-editmode-20260803.xml` |
+| PlayMode tests | 46 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/authority-routing-playmode-20260803.xml` |
+| Android production smoke | APK 151,412,235 bytes; SHA-256 `9433136F638F622597DEB816E023999811208EB8827AE9A9ADE565AD17C39D87`; installed/launched only on Lava `ST5GDW23LB004392` (`LAVA LXX508`), process `27998`; crash-marker scan count 0 | `Builds/M11/Logs/android-build.log` and ADB output from 2026-08-03 |
+| Web production smoke | 19 files, 133,358,779 bytes; `Web-BazaarBastion.wasm` SHA-256 `66D159C1291809BA04A3365A47976AA0042145E53F2335CA9BC545213A2BF6DA`; port 8139 HTTP 200 | `Builds/M11/Web-BazaarBastion`, `Builds/M11/Logs/web-build.log` |
+| Results capture | Results panel showed all eight placements, statistics, `REMATCH` and `MENU` controls; screenshot inspected at 1280x720 | `Docs/QA/Visual/Phase7/playwright-1280x720-results-20260803.png` |
+| Rematch transition | Clicking `REMATCH` returned to a fresh live match; screenshot inspected after the transition; Chrome session recorded 61 messages, 0 errors and 1 known `JS_FileSystem_Sync` deprecation warning | `Docs/QA/Visual/Phase7/playwright-1280x720-rematch-match-20260803.png`, `.playwright-cli/console-2026-08-03T06-02-11-380Z.log` |
+
+The Results/rematch observation is technical interaction evidence, not human visual
+approval. Gadget pickup/use remains an evidence gap; Android touch ergonomics remain
+open for owner review. The known Unity API-obsolescence and Web persistent-data-path
+warnings are non-fatal and are not counted as product crashes.
 
 ## Production-flow continuation (`d1b33d1` + `4d3ae6a`)
 
