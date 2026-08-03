@@ -82,6 +82,23 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator ProductionBotsRespectSpawnProtectionBeforeCombat()
+        {
+            var player = PlayModeTestHelpers.FindPlayer<CombatHealth>();
+            var brains = Object.FindObjectsByType<BotBrain>(FindObjectsSortMode.None);
+            Assert.That(brains, Has.Length.EqualTo(7));
+            for (var i = 0; i < brains.Length; i++) brains[i].enabled = true;
+
+            var initialHealth = player.Snapshot.CurrentHealth;
+            yield return new WaitForSeconds(4f);
+
+            var match = Object.FindFirstObjectByType<OfflineMatchController>();
+            Assert.That(match.CurrentPhase, Is.EqualTo(MatchPhase.SpawnProtection));
+            Assert.That(player.Snapshot.CurrentHealth, Is.EqualTo(initialHealth),
+                "Bots must not deal combat damage during load warmup or spawn protection.");
+        }
+
+        [UnityTest]
         public IEnumerator PehelChargeThrowRunsThroughTheLiveController()
         {
             var pehelObject = new GameObject("PehelRuntimeProbe");

@@ -2,6 +2,7 @@ using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Movement;
 using BattleRaja.Presentation.Gadgets;
+using BattleRaja.Presentation.Match;
 using System.Diagnostics;
 using UnityEngine;
 
@@ -22,6 +23,7 @@ namespace BattleRaja.Presentation.AI
         [SerializeField] private MonoBehaviour fighterController;
         [SerializeField] private BotPerceptionSensor perception;
         [SerializeField] private GadgetUser gadgetUser;
+        [SerializeField] private OfflineMatchController matchController;
 
         private BotDifficultyProfile _profile;
         private BotDecisionEngine _engine;
@@ -41,6 +43,14 @@ namespace BattleRaja.Presentation.AI
         public int DecisionCount { get; private set; }
         public double MaxDecisionMilliseconds { get; private set; }
         public string DebugSummary => $"{_decision.State} target={_decision.TargetId.Value} utility={_decision.UtilityScore:0.0} threats={_decision.PerceivedThreats} stuck={_decision.StuckRecovery}";
+
+        public void SetMatchController(OfflineMatchController controller)
+        {
+            matchController = controller;
+        }
+
+        public bool CombatEnabled => matchController == null ||
+            (matchController.CurrentPhase >= MatchPhase.Opening && matchController.CurrentPhase < MatchPhase.Resolution);
 
         private void Awake()
         {
@@ -96,13 +106,13 @@ namespace BattleRaja.Presentation.AI
                 MaxDecisionMilliseconds = Mathf.Max((float)MaxDecisionMilliseconds, (float)_decisionTimer.Elapsed.TotalMilliseconds);
                 _nextDecisionTick = _simulationTick + _decisionIntervalTicks;
                 if (!_decision.Ability) _abilityIssued = false;
-                gadgetUser?.UseForContext(snapshot);
+                if (CombatEnabled) gadgetUser?.UseForContext(snapshot);
             }
 
             var input = new MovementInputFrame(_decision.Movement, _decision.Aim);
             movementAgent.Submit(MovementCommandFactory.Create(movementAgent.ActorId, _simulationTick, input, movementAgent.Tuning), fixedDeltaSeconds);
 
-            if (attackController != null && _decision.Attack)
+            if (CombatEnabled && attackController != null && _decision.Attack)
             {
                 var origin = new Float2(transform.position.x, transform.position.z) + _decision.Aim * 0.7f;
                 attackController.Submit(AttackCommandFactory.Create(
@@ -113,7 +123,7 @@ namespace BattleRaja.Presentation.AI
                     true));
             }
 
-            if (_abilityController != null && _decision.Ability && !_abilityIssued)
+            if (CombatEnabled && _abilityController != null && _decision.Ability && !_abilityIssued)
             {
                 _abilityController.Submit(AbilityCommandFactory.Create(
                     new CombatEntityId(movementAgent.ActorId),

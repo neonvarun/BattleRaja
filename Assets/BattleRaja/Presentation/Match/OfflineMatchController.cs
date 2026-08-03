@@ -6,6 +6,7 @@ using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Movement;
 using BattleRaja.Presentation.Gadgets;
+using BattleRaja.Presentation.AI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -275,6 +276,7 @@ namespace BattleRaja.Presentation.Match
                 var actor = _actors[i];
                 _authority.ConfigureFaction(actor.Target.Id, actor.Target.Faction);
                 actor.Agent.AuthorityDrivenMovement = authorityDrivenMovement;
+                actor.Transform.GetComponent<BotBrain>()?.SetMatchController(this);
                 if (authorityDrivenMovement)
                 {
                     _authority.ConfigureMovement(actor.Target.Id, actor.Agent.Tuning);
