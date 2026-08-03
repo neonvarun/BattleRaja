@@ -2,8 +2,8 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `c23982e` (`feat: make aim assist functional`)
-Latest runtime-bearing candidate: `c23982e` (fresh artifacts below; the two pre-existing user-owned worktree edits were preserved and not committed)
+Latest validated source HEAD: `d69b74b` (`test: cover in-match aim assist setting`)
+Latest runtime-bearing candidate: `c23982e` (latest source change is PlayMode-test-only; the two pre-existing user-owned worktree edits were preserved and not committed)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
 ## Scope and repository note
@@ -59,7 +59,7 @@ The Android wrapper printed a stale PowerShell `$LASTEXITCODE` after Unity had a
 logged a successful build; the Unity build log and artifact were checked directly. This
 wrapper quirk is recorded rather than treated as a product failure.
 
-## Fresh aim-assist accessibility phase (`c23982e`)
+## Fresh aim-assist accessibility phase (`c23982e` + `d69b74b` test coverage)
 
 The accessibility setting now changes only the local aim direction within a bounded
 18-degree, 10-metre cone. Target selection is pure and deterministic; Unity gathers
@@ -70,7 +70,7 @@ unchanged.
 | --- | --- | --- |
 | Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings | command output from 2026-08-03 |
 | EditMode tests | 94 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/aimassist-editmode-v5-20260803.xml` |
-| PlayMode tests | 43 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/aimassist-playmode-20260803.xml` |
+| PlayMode tests | 44 passed, 0 failed, 0 skipped, including the in-match settings toggle/persistence test | `Builds/M11/TestResults/aimassist-playmode-v2-20260803.xml` |
 | Android development build | Unity log reports `Build Finished, Result: Success`; APK 151,378,712 bytes; SHA-256 `94A5C3D933BB00C99BBF293FA832DD6E67E3DB7D37C3BD63581E3BA7878772E8` | `Builds/M11/Logs/android-build.log`, `Builds/M11/Android/BattleRaja-M11.apk` |
 | Web development build | Unity log reports success; 21 files, 133,250,977 bytes; WASM SHA-256 `3B505C77E2F567878CDFAEC34BDE83A23B53AE3DA4943C3FBE474555D536505F` | `Builds/M11/Logs/web-build.log`, `Builds/M11/Web` |
 | Browser runtime | Chrome/Playwright found one canvas after an 8-second warm-up; 53 console messages, 0 errors and 0 warnings; inspected screenshot shows the live greybox match | `Docs/QA/Visual/Phase7/playwright-aimassist-phase-20260803.png`, `.playwright-cli/console-2026-08-03T04-33-13-788Z.log` |

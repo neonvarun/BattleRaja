@@ -2,7 +2,7 @@
 
 Date: 2026-08-03
 Runtime-bearing candidate: `c23982e` (fresh aim-assist accessibility phase)
-Current source HEAD: `c23982e` (fresh Photon-import baseline after the fixed-tick correction)
+Current source HEAD: `d69b74b` (PlayMode-test-only continuation after the fixed-tick correction)
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web` served over local HTTP at `http://127.0.0.1:8137/index.html`
 
