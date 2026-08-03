@@ -29,6 +29,7 @@ results publication after lethal damage, and the rematch scene reload surface.
 | Browser runtime | Fresh Chrome/Playwright load reached the live match after an 8-second warmup; screenshot shows the arena and HUD; console scan returned 0 errors/0 warnings | `Docs/QA/Visual/Phase7/playwright-phase6-runtime-20260803.png`; Playwright CLI output from 2026-08-03 |
 | Lava smoke | Exact Phase 6 APK installed/launched only on Lava `ST5GDW23LB004392` (`LAVA LXX508`), process `14841`; portrait screenshot shows the live match and HUD; process-scoped log contains no fatal crash, monotonic-tick or missing-component marker | `Docs/QA/Visual/Phase7/android-lava-phase6-runtime-20260803.png`, `Builds/M11/Logs/phase6-runtime-lava-process-20260803.txt` |
 | Runtime warnings | The process sample still contains the known optional `com.google.android.play.core.assetpacks.AssetPackManager` lookup and Lava `gralloc`/vendor buffer noise; these did not terminate the process | `Builds/M11/Logs/phase6-runtime-lava-process-20260803.txt` |
+| Performance smoke snapshot | Lava after ~20 seconds: 507,397 KB PSS, 644,576 KB RSS, 97,884 KB Graphics PSS; Chrome: 120,502,144-byte WASM transfer, 274.8 ms WASM resource duration, 30,464,015-byte used JS heap | `Docs/PERFORMANCE_BUDGET.md`, `Builds/M11/Logs/phase6-lava-gfxinfo-20260803.txt`, `Builds/M11/Logs/phase6-lava-meminfo-20260803.txt` |
 
 The new PlayMode coverage is functional evidence, not visual approval: it relocates an
 authored Dhol pickup before restarting the authority-backed scene to exercise spatial

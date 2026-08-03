@@ -26,7 +26,7 @@ This file records evidence-backed status only. Allowed status values are: `Not s
 | Visual and interaction QA | In progress | `Docs/QA/VISUAL_QA_REPORT.md` records the fresh Phase 6 Chrome and Lava runtime captures plus earlier Playwright evidence at 1920×1080, 1440×900, 1280×720, 1024×768 and 390×844. Automated tests now cover spatial gadget collection and results/rematch, but successful gadget/results interaction has not been visually captured; loading, touch ergonomics, multi-browser coverage and final human approval remain unverified |
 | Real Photon multiplayer | Not started | Imported SDK is not an adapter or multiplayer validation |
 | PlayFab/backend/economy | Not started | No production backend claim |
-| Performance, soak, multi-browser, and release gates | Not started | No measured release evidence yet |
+| Performance, soak, multi-browser, and release gates | In progress | Phase 6 collected a Lava memory snapshot (507,397 KB PSS; 644,576 KB RSS; 97,884 KB Graphics PSS) and Chrome navigation/WASM/JS-heap timing; frame-time/FPS/GPU/GC, repeated-match growth, thermal/battery and multi-browser release measurements remain open; see `Docs/PERFORMANCE_BUDGET.md` |
 | Visual/audio/UI approval | Human review required | Current smoke screenshots show greybox/prototype presentation |
 
 ## Documentation discrepancy

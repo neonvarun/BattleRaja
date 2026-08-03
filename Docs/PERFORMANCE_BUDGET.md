@@ -150,3 +150,23 @@ Required next measurement: capture a short Editor, Lava and Oppo session with Un
   collected.
 - Before distribution, capture cold/warm load, repeated-match object growth, frame-time and
   memory on approved device/browser tiers and document Web compression/MIME/cache headers.
+
+## Phase 6 smoke measurement snapshot — 2026-08-03 (`8544f55`)
+
+- Lava `LAVA LXX508` (`ST5GDW23LB004392`) was left in the live development match for
+  approximately 20 seconds. `adb shell dumpsys meminfo` reported **507,397 KB total PSS**,
+  **644,576 KB total RSS**, and **97,884 KB Graphics PSS**. These are development-player
+  observations, not a release memory budget.
+- Lava `dumpsys gfxinfo` exposed the Unity `ViewRootImpl` but emitted no frame/jank
+  histogram for this surface, so FPS, frame time, GPU time and GC allocation rate remain
+  unmeasured. The raw captures are `Builds/M11/Logs/phase6-lava-gfxinfo-20260803.txt`
+  and `Builds/M11/Logs/phase6-lava-meminfo-20260803.txt`.
+- Chrome/Playwright loaded the local Web candidate with a canvas present. The observed
+  navigation timing was DOMContentLoaded **11.7 ms**, load **203 ms**; the WASM resource
+  reported **120,502,144 bytes transferred** and **274.8 ms** resource duration. Chromium
+  exposed **30,464,015 bytes used JS heap** of **39,391,851 bytes total** (heap limit
+  4,395,630,592 bytes). This was a local smoke run with existing browser caching and is
+  not a cold-download, WebAssembly peak, frame-time or multi-browser budget.
+- No optimization or release readiness claim follows from this snapshot. Formal Unity
+  Profiler/Android GPU/CPU/GC capture, repeated-match growth, thermal/battery, Web frame
+  pacing and multi-browser measurements remain required.
