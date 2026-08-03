@@ -31,6 +31,7 @@ This file records evidence-backed status only. Allowed status values are: `Not s
 | Real Photon multiplayer | Not started | Imported SDK is not an adapter or multiplayer validation |
 | PlayFab/backend/economy | Not started | No production backend claim |
 | Performance, soak, multi-browser, and release gates | In progress | Current candidate smoke measurement records Chrome navigation/WASM/rAF/heap values and a Lava snapshot (458,974 KB PSS; 596,588 KB RSS; 95,468 KB Graphics PSS); frame-time/FPS/GPU/GC, repeated-match growth, thermal/battery and multi-browser release measurements remain open; see `Docs/PERFORMANCE_BUDGET.md` and `Docs/QA/Performance/authority-runtime-20260803.md` |
+| CI, security and release preparation | In progress | Read-only static validation/LFS/secret checks are defined in `.github/workflows/repository-validation.yml` and documented in `Docs/CI.md`; Unity licensed tests/builds, artifact retention, dependency review, AAB/signing, publication and legal/privacy approval remain owner-gated |
 | Visual/audio/UI approval | Human review required | Current smoke screenshots show greybox/prototype presentation |
 
 ## Documentation discrepancy
