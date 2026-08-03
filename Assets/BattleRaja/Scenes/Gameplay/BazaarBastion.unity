@@ -652,6 +652,7 @@ MonoBehaviour:
   aimIndicator: {fileID: 0}
   fighterController: {fileID: 243717754}
   externalCommandMode: 0
+  authorityDrivenMovement: 0
   simulationTickRate: 30
 --- !u!143 &243717759
 CharacterController:
@@ -1115,6 +1116,7 @@ MonoBehaviour:
   aimIndicator: {fileID: 331243772}
   fighterController: {fileID: 331243769}
   externalCommandMode: 0
+  authorityDrivenMovement: 0
   simulationTickRate: 30
 --- !u!114 &331243769
 MonoBehaviour:
@@ -1320,6 +1322,8 @@ MonoBehaviour:
   attackButton: {fileID: 161014353}
   abilityButton: {fileID: 2058337382}
   aimOrigin: {fileID: 331243774}
+  aimAssistRange: 10
+  aimAssistConeDegrees: 18
 --- !u!4 &331243774
 Transform:
   m_ObjectHideFlags: 0
@@ -2092,6 +2096,7 @@ MonoBehaviour:
   aimIndicator: {fileID: 0}
   fighterController: {fileID: 392919029}
   externalCommandMode: 0
+  authorityDrivenMovement: 0
   simulationTickRate: 30
 --- !u!143 &392919026
 CharacterController:
@@ -2889,6 +2894,7 @@ MonoBehaviour:
   aimIndicator: {fileID: 0}
   fighterController: {fileID: 795220286}
   externalCommandMode: 0
+  authorityDrivenMovement: 0
   simulationTickRate: 30
 --- !u!143 &795220291
 CharacterController:
@@ -3187,6 +3193,7 @@ MonoBehaviour:
   cameraOffset: {x: 0, y: 12, z: -8}
   followSmoothTime: 0.08
   orthographicSize: 9.5
+  referenceAspect: 1.7777778
   perspectiveFieldOfView: 48
   obstructionMask:
     serializedVersion: 2
@@ -3566,6 +3573,7 @@ MonoBehaviour:
   aimIndicator: {fileID: 0}
   fighterController: {fileID: 989590247}
   externalCommandMode: 0
+  authorityDrivenMovement: 0
   simulationTickRate: 30
 --- !u!143 &989590244
 CharacterController:
@@ -4321,6 +4329,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Combat.BijliHud
   fighter: {fileID: 331243769}
+  selection: {fileID: 0}
+  pehel: {fileID: 0}
+  maya: {fileID: 0}
   health: {fileID: 331243766}
   attack: {fileID: 331243775}
   statusText: {fileID: 525754671}
@@ -5959,6 +5970,7 @@ MonoBehaviour:
   aimIndicator: {fileID: 0}
   fighterController: {fileID: 1574973499}
   externalCommandMode: 0
+  authorityDrivenMovement: 0
   simulationTickRate: 30
 --- !u!143 &1574973504
 CharacterController:
@@ -6758,6 +6770,7 @@ MonoBehaviour:
   aimIndicator: {fileID: 0}
   fighterController: {fileID: 1715868714}
   externalCommandMode: 0
+  authorityDrivenMovement: 0
   simulationTickRate: 30
 --- !u!143 &1715868719
 CharacterController:
@@ -7000,12 +7013,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1723574739}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c05b722f1aba1bc498d34a3b10855ecc, type: 3}
+  m_Script: {fileID: 11500000, guid: a14b85a18679d934190ddf36b659ccb6, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Movement.MovementLabScene
+  m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Match.BazaarBastionScene
   player: {fileID: 331243768}
   cameraController: {fileID: 988681426}
-  trainingDummy: {fileID: 2037782143}
+  matchController: {fileID: 1720232523}
   projectilePool: {fileID: 1585441182}
   damageResolver: {fileID: 1585441181}
 --- !u!1 &1757328086
@@ -8052,6 +8065,7 @@ MonoBehaviour:
   aimIndicator: {fileID: 0}
   fighterController: {fileID: 2058019584}
   externalCommandMode: 0
+  authorityDrivenMovement: 0
   simulationTickRate: 30
 --- !u!143 &2058019589
 CharacterController:

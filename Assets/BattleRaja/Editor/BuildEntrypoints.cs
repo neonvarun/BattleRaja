@@ -330,11 +330,13 @@ namespace BattleRaja.Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            var sourceScene = EditorSceneManager.OpenScene(MovementLabScenePath, OpenSceneMode.Single);
-            EditorSceneManager.SaveScene(sourceScene, BazaarBastionScenePath);
-            var arena = GameObject.Find("MovementLab");
-            if (arena == null) throw new BuildFailedException("MovementLab root was not found while creating Bazaar Bastion.");
-            arena.name = "BazaarBastion";
+            var productionScene = EditorSceneManager.OpenScene(BazaarBastionScenePath, OpenSceneMode.Single);
+            var arena = GameObject.Find("BazaarBastion");
+            if (arena == null) throw new BuildFailedException("Bazaar Bastion root was not found while validating the production scene.");
+
+            var labMarker = arena.GetComponent<MovementLabScene>();
+            if (labMarker != null) UnityEngine.Object.DestroyImmediate(labMarker);
+            var productionMarker = arena.GetComponent<BazaarBastionScene>() ?? arena.AddComponent<BazaarBastionScene>();
 
             var floor = EnsureMaterial("BazaarBastionFloor", new Color(0.32f, 0.24f, 0.19f, 1f));
             var wall = EnsureMaterial("BazaarBastionTeal", new Color(0.12f, 0.34f, 0.36f, 1f));
@@ -342,7 +344,10 @@ namespace BattleRaja.Editor
             var pehelMaterial = EnsureMaterial("BazaarBastionPehel", new Color(0.92f, 0.39f, 0.16f, 1f));
             var mayaMaterial = EnsureMaterial("BazaarBastionMaya", new Color(0.72f, 0.32f, 0.86f, 1f));
             ApplyBazaarPalette(arena.transform, floor, wall, stall);
-            CreateBazaarDecor(arena.transform, wall, stall);
+            if (arena.transform.Find("BazaarArchitecture") == null)
+            {
+                CreateBazaarDecor(arena.transform, wall, stall);
+            }
             if (arena.GetComponentInChildren<BattleRajaAudioDirector>(true) == null)
             {
                 var audioObject = new GameObject("AudioDirector");
@@ -369,21 +374,36 @@ namespace BattleRaja.Editor
             var projectilePool = arena.GetComponentInChildren<CombatProjectilePool>();
             var matchController = arena.GetComponentInChildren<OfflineMatchController>(true);
             if (matchController == null) throw new BuildFailedException("Bazaar Bastion match controller is missing.");
+            var playerAgent = arena.GetComponentsInChildren<MovementPlayerAgent>(true)
+                .FirstOrDefault(agent => agent.ActorId == 1);
+            var cameraController = UnityEngine.Object.FindAnyObjectByType<TopDownCameraController>();
+            SetObjectReference(productionMarker, "player", playerAgent);
+            SetObjectReference(productionMarker, "cameraController", cameraController);
+            SetObjectReference(productionMarker, "matchController", matchController);
+            SetObjectReference(productionMarker, "projectilePool", projectilePool);
+            SetObjectReference(productionMarker, "damageResolver", damageResolver);
             SetBool(matchController, "authorityDrivenMovement", true);
             var bots = UnityEngine.Object.FindObjectsByType<BotBrain>(FindObjectsSortMode.None)
                 .OrderBy(bot => bot.GetComponent<MovementPlayerAgent>() != null ? bot.GetComponent<MovementPlayerAgent>().ActorId : int.MaxValue)
                 .ToArray();
-            if (bots.Length < 4) throw new BuildFailedException("Bazaar Bastion requires at least four bot actors in the copied lab.");
-            ConfigureProductionBot(bots[1], pehelAsset, pehelMaterial, null, damageResolver, projectilePool);
-            ConfigureProductionBot(bots[2], mayaAsset, mayaMaterial, mayaMaterial, damageResolver, projectilePool);
+            if (bots.Length < 4) throw new BuildFailedException("Bazaar Bastion requires at least four bot actors in the production scene.");
+            if (bots[1].GetComponent<PehelFighterController>() == null)
+            {
+                ConfigureProductionBot(bots[1], pehelAsset, pehelMaterial, null, damageResolver, projectilePool);
+            }
+            if (bots[2].GetComponent<MayaFighterController>() == null)
+            {
+                ConfigureProductionBot(bots[2], mayaAsset, mayaMaterial, mayaMaterial, damageResolver, projectilePool);
+            }
 
             ConfigurePlayerFighterSelection(arena.transform, tuningAsset, pehelAsset, mayaAsset, mayaMaterial, damageResolver);
 
-            EditorSceneManager.MarkSceneDirty(sourceScene);
-            EditorSceneManager.SaveScene(sourceScene, BazaarBastionScenePath);
+            EditorSceneManager.MarkSceneDirty(productionScene);
+            EditorSceneManager.SaveScene(productionScene, BazaarBastionScenePath);
             EditorBuildSettings.scenes = new[]
             {
                 new EditorBuildSettingsScene(BootstrapScenePath, true),
+                new EditorBuildSettingsScene(TutorialArenaScenePath, true),
                 new EditorBuildSettingsScene(BazaarBastionScenePath, true),
                 new EditorBuildSettingsScene(MovementLabScenePath, true)
             };

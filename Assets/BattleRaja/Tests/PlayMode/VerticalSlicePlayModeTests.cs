@@ -51,6 +51,13 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(Object.FindObjectsByType<MayaFighterController>(FindObjectsSortMode.None), Has.Length.GreaterThanOrEqualTo(1));
             Assert.That(GameObject.Find("BazaarBastion"), Is.Not.Null);
             Assert.That(GameObject.Find("BazaarArchitecture"), Is.Not.Null);
+            var production = Object.FindFirstObjectByType<BazaarBastionScene>();
+            Assert.That(production, Is.Not.Null);
+            Assert.That(Object.FindFirstObjectByType<MovementLabScene>(), Is.Null,
+                "The production scene must not retain the MovementLab scene contract.");
+            Assert.That(production.Player, Is.Not.Null);
+            Assert.That(production.MatchController, Is.Not.Null);
+            Assert.That(production.DamageResolver, Is.Not.Null);
             yield return null;
         }
 
@@ -264,7 +271,8 @@ namespace BattleRaja.Tests.PlayMode
             var match = Object.FindFirstObjectByType<OfflineMatchController>();
             var maya = Object.FindObjectsByType<MayaFighterController>(FindObjectsSortMode.None)
                 .First(controller => controller.GetComponent<MovementPlayerAgent>() != null &&
-                    controller.GetComponent<MovementPlayerAgent>().AuthorityDrivenMovement);
+                    controller.GetComponent<MovementPlayerAgent>().AuthorityDrivenMovement &&
+                    controller.GetComponent<BotBrain>() != null);
             var agent = maya.GetComponent<MovementPlayerAgent>();
             var ownerId = new CombatEntityId(agent.ActorId);
             Assert.That(match, Is.Not.Null);
