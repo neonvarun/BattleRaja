@@ -1,10 +1,34 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-03
-Runtime-bearing candidate: `8544f55` (`test: cover spatial gadgets and live rematch`)
-Current source HEAD: `8544f55` (Phase 6 authority collection/results coverage after the fixed-tick correction)
+Runtime-bearing candidate: `5845485` (fresh assist/statistics phase; runtime code is otherwise unchanged from the latest-HEAD baseline)
+Current source HEAD: `5845485` (fresh Photon-import baseline after the fixed-tick correction)
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web` served over local HTTP at `http://127.0.0.1:8137/index.html`
+
+## Fresh latest-HEAD runtime smoke (`9291d85`)
+
+- The fresh Web candidate reached the live MovementLab match in Chrome after an
+  eight-second warm-up. `playwright-fresh-baseline-20260803.png` shows the arena,
+  fighters, HUD and controls; the Playwright console scan reported 0 errors and 0
+  warnings.
+- The fresh development APK was installed and launched only on Lava
+  `ST5GDW23LB004392` (`LAVA LXX508`). `android-lava-fresh-baseline-20260803.png`
+  shows a live portrait match. The process-scoped log has no fatal crash,
+  `AndroidRuntime`, `SIGSEGV`, missing-component or monotonic-tick marker.
+- These captures are technical greybox evidence. They do not change the unverified
+  gadget-use or results/rematch rows below into visual observations.
+
+## Fresh assist/statistics runtime smoke (`5845485`)
+
+- The assist-phase Web candidate reached the live match in Chrome after an eight-second
+  warm-up. `playwright-assist-phase-20260803.png` shows the arena and HUD; the console
+  scan reported 0 errors and 0 warnings.
+- The assist-phase APK was installed/launched only on Lava
+  `ST5GDW23LB004392` (`LAVA LXX508`). `android-lava-assist-phase-20260803.png` shows
+  the live portrait match, and the process-scoped sample has no fatal crash markers.
+- These captures remain technical greybox evidence and do not close the visual gadget,
+  results/rematch, loading, multi-browser or human-review gates.
 
 ## Fresh Phase 6 runtime smoke (`8544f55`)
 

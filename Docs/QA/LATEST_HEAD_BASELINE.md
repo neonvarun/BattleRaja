@@ -2,8 +2,8 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `18f285c` (`test: cover the full tutorial walkthrough`)
-Latest runtime-bearing candidate: `18f285c`
+Latest validated source HEAD: `5845485` (`fix: attribute authoritative offline assists`)
+Latest runtime-bearing candidate: `5845485` (fresh artifacts below; the two pre-existing user-owned worktree edits were preserved and not committed)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
 ## Scope and repository note
@@ -11,6 +11,53 @@ Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.
 The requested goal path `Docs/AI/RepositoryAuditAndCompletionGoal.md` is absent. The matching file `Docs/AI/BattleRaja_Repository_Audit_and_Completion_Goal.md` was read in full and used as the authoritative continuation brief. This path discrepancy remains a documentation issue; no source from the requested path was available.
 
 The baseline intentionally excludes unrelated working-tree changes in `Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity` and `Data/Plugins/lib_burst_generated.wasm`. Those files were not staged or altered by this baseline work.
+
+## Fresh latest-HEAD rebaseline (`9291d85`)
+
+This is the current rebaseline requested after the Photon Fusion import. It was run
+against the current project at Unity `6000.5.6f1`; the two pre-existing user-owned
+tracked edits listed above remained untouched and no generated scene changes were
+included in source control.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Unity/toolchain | Unity `6000.5.6f1`; AndroidPlayer, WebGLSupport and WindowsStandaloneSupport present; embedded ADB `36.0.0`; Lava `ST5GDW23LB004392` connected | command output from 2026-08-03 |
+| Photon/package check | Photon Fusion `2.1.1 Stable 2177` files present under `Assets/Photon/Fusion`; Input System `1.20.0`; URP `17.5.0`; Test Framework `1.7.0` | `Assets/Photon/Fusion/build_info.txt`, `Packages/manifest.json` |
+| Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings | command output from 2026-08-03 |
+| EditMode tests | 89 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/fresh-editmode-20260803.xml` |
+| PlayMode tests | 43 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/fresh-playmode-20260803.xml` |
+| Android development build | `Tools\\Build\\Android\\build.ps1` completed; APK 151,312,094 bytes; SHA-256 `2C6E9861E8D1D1011B3EF3A1B891B8BC92FA075410B8DA97015AA4BEB4BCA353` | `Builds/M11/Android/BattleRaja-M11.apk` |
+| Web development build | `Tools\\Build\\Web\\build.ps1` completed; 21 files, 133,194,576 bytes; WASM SHA-256 `E029D2925F6E0B7463DA8F236584EE560F011EE0A59D99884A484E05EDA8EDAB` | `Builds/M11/Web`, `Builds/M11/Web/Build/Web.wasm` |
+| Local Web serve | `http://127.0.0.1:8137/index.html` returned HTTP 200 | local HTTP check from 2026-08-03 |
+| Chrome bootstrap/runtime | Playwright loaded the build, found one Unity canvas after 8 seconds, and reported 53 console messages with 0 errors and 0 warnings; inspected screenshot shows the live greybox match | `Docs/QA/Visual/Phase7/playwright-fresh-baseline-20260803.png`, `.playwright-cli/console-2026-08-03T03-18-15-589Z.log` |
+| Lava smoke | Fresh APK installed/launched only on Lava `ST5GDW23LB004392` (`LAVA LXX508`), process `17939`; portrait screenshot shows the live match/HUD; process-scoped log has no fatal, SIGSEGV, missing-component or monotonic-tick markers | `Docs/QA/Visual/Phase7/android-lava-fresh-baseline-20260803.png`, `Builds/M11/Logs/fresh-baseline-lava-20260803.txt` |
+
+Known baseline warnings remain separate from pass/fail results: Unity batchmode logs
+report the empty `BattleRaja.Gameplay` asmdef, Photon editor custom-dependency scheduling,
+no AudioListener in the generated `MovementLab` fixture, and an unavailable batchmode
+licensing handshake/access token. None caused a test or build failure. The ADB inventory
+also showed an Oppo device, but no Oppo command was used; physical smoke testing used
+only the instructed Lava serial.
+
+## Fresh assist/statistics phase (`5845485`)
+
+The pure match-statistics change adds one deterministic assist credit to each living,
+non-finishing participant who contributed damage to an eliminated target. Duplicate lethal
+events, environmental damage and self-damage do not create additional assists.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings | command output from 2026-08-03 |
+| EditMode tests | 90 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/assist-editmode-20260803.xml` |
+| PlayMode tests | 43 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/assist-playmode-20260803.xml` |
+| Android development build | Unity log reports `Build Finished, Result: Success`; APK 151,365,343 bytes; SHA-256 `7217CFDE7ACC1F9F61FF8ACA90C95B07DA8CB952E760760EC3F1AC1748CFD4D3` | `Builds/M11/Logs/android-build.log`, `Builds/M11/Android/BattleRaja-M11.apk` |
+| Web development build | Unity log reports success; 21 files, 133,247,876 bytes; WASM SHA-256 `F48A35AE2F9DB985DC28689B31A1BF8C42F5A1CED70531A7F374608F5B7FA3D3` | `Builds/M11/Logs/web-build.log`, `Builds/M11/Web` |
+| Browser runtime | Chrome/Playwright found one canvas after an 8-second warm-up; 53 console messages, 0 errors and 0 warnings; inspected screenshot shows the live greybox match | `Docs/QA/Visual/Phase7/playwright-assist-phase-20260803.png`, `.playwright-cli/console-2026-08-03T03-36-22-982Z.log` |
+| Lava smoke | Exact assist APK installed/launched only on Lava `ST5GDW23LB004392` (`LAVA LXX508`), process `20176`; process-scoped log contains no fatal, SIGSEGV, missing-component or monotonic-tick marker | `Docs/QA/Visual/Phase7/android-lava-assist-phase-20260803.png`, `Builds/M11/Logs/assist-lava-20260803.txt` |
+
+The Android wrapper printed a stale PowerShell `$LASTEXITCODE` after Unity had already
+logged a successful build; the Unity build log and artifact were checked directly. This
+wrapper quirk is recorded rather than treated as a product failure.
 
 ## Fresh Phase 6 continuation (`8544f55`)
 
