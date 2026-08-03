@@ -65,6 +65,7 @@ namespace BattleRaja.Presentation.Combat
             var steps = _clock.Consume(Time.deltaTime);
             for (var i = 0; i < steps; i++)
             {
+                var simulationTick = _clock.GetConsumedTick(i);
                 var start = transform.position;
                 var step = _simulation.Step((float)_clock.StepSeconds);
                 var end = new Vector3(step.Position.X, start.y, step.Position.Y);
@@ -89,13 +90,13 @@ namespace BattleRaja.Presentation.Combat
                             _definition.Damage,
                             DamageType.Projectile,
                             _direction,
-                            _clock.Tick);
+                            simulationTick);
                         var result = _damageResolver.Resolve(
                             target,
                             request,
                             _definition.AllowSelfHit,
                             _definition.AllowFriendlyFire,
-                            _clock.Tick);
+                            simulationTick);
                         _impactPool?.Play(hit.point, result.Applied);
                         Despawn(ProjectileDespawnReason.Hit);
                         return;

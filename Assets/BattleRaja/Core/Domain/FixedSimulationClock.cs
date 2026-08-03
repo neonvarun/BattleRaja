@@ -19,6 +19,7 @@ namespace BattleRaja.Core.Domain
 
         public int TickRate { get; }
         public int Tick { get; private set; }
+        public int LastConsumedSteps { get; private set; }
         public double StepSeconds => 1d / TickRate;
         public double AccumulatorSeconds => _accumulatorSeconds;
         public double InterpolationAlpha => _accumulatorSeconds / StepSeconds;
@@ -40,7 +41,24 @@ namespace BattleRaja.Core.Domain
                 steps++;
             }
 
+            LastConsumedSteps = steps;
             return steps;
+        }
+
+        /// <summary>
+        /// Returns the authoritative tick represented by one of the steps consumed
+        /// by the most recent <see cref="Consume"/> call. A render frame can consume
+        /// more than one fixed step, so callers must not reuse <see cref="Tick"/>
+        /// for every iteration of that frame.
+        /// </summary>
+        public int GetConsumedTick(int stepIndex)
+        {
+            if (stepIndex < 0 || stepIndex >= LastConsumedSteps)
+            {
+                throw new ArgumentOutOfRangeException(nameof(stepIndex));
+            }
+
+            return Tick - LastConsumedSteps + stepIndex + 1;
         }
 
         public void Advance()

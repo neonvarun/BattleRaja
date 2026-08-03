@@ -54,7 +54,7 @@ namespace BattleRaja.Presentation.Combat
             var steps = _clock.Consume(Time.deltaTime);
             for (var step = 0; step < steps; step++)
             {
-                _simulationTick = _clock.Tick;
+                _simulationTick = _clock.GetConsumedTick(step);
                 if (attackHeld)
                 {
                     var direction = movementAgent != null ? movementAgent.AimDirection : Float2.Up;

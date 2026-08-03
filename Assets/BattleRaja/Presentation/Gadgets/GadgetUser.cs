@@ -22,6 +22,7 @@ namespace BattleRaja.Presentation.Gadgets
         private readonly GadgetRuntime _runtime = new GadgetRuntime();
         private FixedSimulationClock _clock;
         private int _tick;
+        private int _activeSimulationTick = -1;
         private float _shieldRemaining;
         private Float2 _shieldDirection = Float2.Up;
         private float _feedbackRemaining;
@@ -53,8 +54,10 @@ namespace BattleRaja.Presentation.Gadgets
             }
 
             var steps = _clock.Consume(Time.deltaTime);
+            _activeSimulationTick = -1;
             for (var i = 0; i < steps; i++)
             {
+                _activeSimulationTick = _clock.GetConsumedTick(i);
                 if (_useQueued)
                 {
                     UseHeld();
@@ -67,6 +70,7 @@ namespace BattleRaja.Presentation.Gadgets
                 _feedbackRemaining = Mathf.Max(0f, _feedbackRemaining - delta);
                 if (_feedbackRemaining <= 0f) _feedback = string.Empty;
             }
+            _activeSimulationTick = -1;
         }
 
         public bool TryPickup(ContentId id)
@@ -263,7 +267,9 @@ namespace BattleRaja.Presentation.Gadgets
 
         private int NextTick()
         {
-            return _clock != null ? _clock.Tick : _tick++;
+            return _clock != null
+                ? (_activeSimulationTick >= 0 ? _activeSimulationTick : _clock.Tick)
+                : _tick++;
         }
     }
 }

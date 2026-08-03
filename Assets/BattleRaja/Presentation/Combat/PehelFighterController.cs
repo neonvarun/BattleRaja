@@ -63,11 +63,12 @@ namespace BattleRaja.Presentation.Combat
             var steps = _clock.Consume(Time.deltaTime);
             for (var i = 0; i < steps; i++)
             {
+                var simulationTick = _clock.GetConsumedTick(i);
                 if (_abilityQueued)
                 {
                     Submit(AbilityCommandFactory.Create(
                         _self != null ? _self.Id : new CombatEntityId(movementAgent != null ? movementAgent.ActorId : 1),
-                        _clock.Tick,
+                        simulationTick,
                         AbilityId,
                         _queuedDirection,
                         true));
@@ -81,7 +82,7 @@ namespace BattleRaja.Presentation.Combat
                 }
 
                 if (_runtime.State == ChargeThrowState.Active) TryCaptureTarget();
-                if (step.ThrowTriggered) ResolveThrow(step.CapturedTargetId);
+                if (step.ThrowTriggered) ResolveThrow(step.CapturedTargetId, simulationTick);
             }
         }
 
@@ -116,7 +117,7 @@ namespace BattleRaja.Presentation.Combat
             }
         }
 
-        private void ResolveThrow(CombatEntityId targetId)
+        private void ResolveThrow(CombatEntityId targetId, int simulationTick)
         {
             if (targetId.Value <= 0) return;
             var targets = FindObjectsByType<CombatTarget>(FindObjectsSortMode.None);
@@ -131,8 +132,8 @@ namespace BattleRaja.Presentation.Combat
                     _special.Magnitude,
                     DamageType.Ability,
                     _runtime.Direction,
-                    _clock.Tick);
-                damageResolver?.Resolve(target, request, false, false, _clock.Tick);
+                    simulationTick);
+                damageResolver?.Resolve(target, request, false, false, simulationTick);
                 var targetController = target.GetComponent<CharacterController>();
                 targetController?.Move(new Vector3(_runtime.Direction.X, 0f, _runtime.Direction.Y) * (_special.Magnitude * 0.25f));
                 break;

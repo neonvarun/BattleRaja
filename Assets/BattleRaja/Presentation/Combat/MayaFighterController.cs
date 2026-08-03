@@ -54,11 +54,12 @@ namespace BattleRaja.Presentation.Combat
             var steps = _clock.Consume(Time.deltaTime);
             for (var i = 0; i < steps; i++)
             {
+                var simulationTick = _clock.GetConsumedTick(i);
                 if (_abilityQueued)
                 {
                     Submit(AbilityCommandFactory.Create(
                         new CombatEntityId(movementAgent != null ? movementAgent.ActorId : 1),
-                        _clock.Tick,
+                        simulationTick,
                         AbilityId,
                         _queuedDirection,
                         true));

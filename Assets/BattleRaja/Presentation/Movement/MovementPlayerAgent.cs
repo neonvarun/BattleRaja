@@ -79,7 +79,7 @@ namespace BattleRaja.Presentation.Movement
             var steps = _clock.Consume(Time.deltaTime);
             for (var step = 0; step < steps; step++)
             {
-                _simulationTick = _clock.Tick;
+                _simulationTick = _clock.GetConsumedTick(step);
                 Submit(MovementCommandFactory.Create(actorId, _simulationTick, _bufferedInput, _tuning), (float)_clock.StepSeconds);
             }
         }

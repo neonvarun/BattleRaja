@@ -1,3 +1,5 @@
+using System;
+using BattleRaja.Core.Application;
 using BattleRaja.Core.Domain;
 using NUnit.Framework;
 
@@ -29,6 +31,43 @@ namespace BattleRaja.Tests.EditMode
             Assert.That(clock.Consume(1d / 30d), Is.EqualTo(1));
             Assert.That(clock.Tick, Is.EqualTo(2));
             Assert.That(clock.InterpolationAlpha, Is.InRange(0d, 1d));
+        }
+
+        [Test]
+        public void FixedClockExposesSequentialTicksForEveryStepInOneRenderFrame()
+        {
+            var clock = new FixedSimulationClock(30);
+
+            Assert.That(clock.Consume(0.1d), Is.EqualTo(3));
+            Assert.That(clock.LastConsumedSteps, Is.EqualTo(3));
+            Assert.That(clock.GetConsumedTick(0), Is.EqualTo(1));
+            Assert.That(clock.GetConsumedTick(1), Is.EqualTo(2));
+            Assert.That(clock.GetConsumedTick(2), Is.EqualTo(3));
+            Assert.Throws<ArgumentOutOfRangeException>(() => clock.GetConsumedTick(3));
+
+            Assert.That(clock.Consume(0d), Is.EqualTo(0));
+            Assert.That(clock.LastConsumedSteps, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void OfflineAuthorityAcceptsEveryFixedStepFromOneRenderFrame()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            authority.Start(new[]
+            {
+                new MatchSpawn(new CombatEntityId(1), new Float2(-8f, 0f), 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(8f, 0f), 100)
+            });
+            var clock = new FixedSimulationClock(30);
+            var steps = clock.Consume(0.1d);
+
+            for (var i = 0; i < steps; i++)
+            {
+                authority.Advance(clock.GetConsumedTick(i), (float)clock.StepSeconds);
+            }
+
+            Assert.That(authority.Simulation.ElapsedSeconds, Is.EqualTo(0.1f).Within(0.0001f));
+            Assert.That(authority.Simulation.Phase, Is.EqualTo(MatchPhase.LoadWarmup));
         }
 
         [Test]

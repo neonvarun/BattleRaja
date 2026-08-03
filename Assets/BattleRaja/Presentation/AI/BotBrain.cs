@@ -74,7 +74,7 @@ namespace BattleRaja.Presentation.AI
             }
 
             var steps = _clock.Consume(Time.deltaTime);
-            for (var step = 0; step < steps; step++) SimulateTick(_clock.Tick);
+            for (var step = 0; step < steps; step++) SimulateTick(_clock.GetConsumedTick(step));
         }
 
         private void SimulateTick(int simulationTick)

@@ -71,7 +71,7 @@ namespace BattleRaja.Presentation.Combat
             var steps = _clock.Consume(Time.deltaTime);
             for (var i = 0; i < steps; i++)
             {
-                _simulationTick = _clock.Tick;
+                _simulationTick = _clock.GetConsumedTick(i);
                 if (_abilityQueued)
                 {
                     var command = AbilityCommandFactory.Create(

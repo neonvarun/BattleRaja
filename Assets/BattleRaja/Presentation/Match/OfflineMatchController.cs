@@ -97,6 +97,7 @@ namespace BattleRaja.Presentation.Match
             var simulationSteps = _simulationClock.Consume(Time.deltaTime);
             for (var step = 0; step < simulationSteps; step++)
             {
+                var simulationTick = _simulationClock.GetConsumedTick(step);
                 for (var i = 0; i < _actors.Count; i++)
                 {
                     var actor = _actors[i];
@@ -104,7 +105,7 @@ namespace BattleRaja.Presentation.Match
                     _authority.SyncHealth(actor.Target.Id, actor.Health.Snapshot.CurrentHealth);
                 }
 
-                var authorityTick = _authority.Advance(_simulationClock.Tick, (float)_simulationClock.StepSeconds);
+                var authorityTick = _authority.Advance(simulationTick, (float)_simulationClock.StepSeconds);
                 var tick = authorityTick.Result;
                 ZoneCenter = tick.ZoneCenter;
                 NextZoneCenter = tick.NextZoneCenter;
