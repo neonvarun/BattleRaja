@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Linq;
+using BattleRaja.Core.Application;
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.AI;
 using BattleRaja.Presentation.Combat;
@@ -237,6 +238,18 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(text, Does.Contain("WINNER 1"));
             Assert.That(text, Does.Contain("#1 PLAYER 1  KOs 3  AST 1  DMG 120  SURV 25.0s"));
             Assert.That(text, Does.Contain("#2 PLAYER 2  KOs 1  AST 2  DMG 40  SURV 12.0s"));
+        }
+
+        [Test]
+        public void FighterHudUsesSelectedFighterIdentity()
+        {
+            var pehel = BijliHud.FormatStatus(ProductionFighter.Pehel, 61, 85, "BOLT READY", "CHARGE READY");
+            var maya = BijliHud.FormatStatus(ProductionFighter.Maya, 58, 80, "BOLT 0.2s", "DECOY ACTIVE");
+
+            Assert.That(pehel, Does.StartWith("PEHEL   HP 61/85"));
+            Assert.That(pehel, Does.Contain("CHARGE READY"));
+            Assert.That(maya, Does.StartWith("MAYA   HP 58/80"));
+            Assert.That(maya, Does.Contain("DECOY ACTIVE"));
         }
     }
 }
