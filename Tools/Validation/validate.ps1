@@ -29,6 +29,7 @@ $requiredPaths = @(
     'Docs\WEB_PLATFORM.md',
     'Docs\MILESTONE_0_EXECUTION_PLAN.md',
     'Assets\BattleRaja',
+    'Assets\WebGLTemplates\BattleRaja\index.html',
     '.gitattributes',
     '.gitignore'
 )
@@ -36,6 +37,17 @@ $requiredPaths = @(
 foreach ($relativePath in $requiredPaths) {
     if (-not (Test-Path -LiteralPath (Join-Path $ProjectRoot $relativePath))) {
         Add-ValidationError "Required path is missing: $relativePath"
+    }
+}
+
+$webTemplatePath = Join-Path $ProjectRoot 'Assets\WebGLTemplates\BattleRaja\index.html'
+if (Test-Path -LiteralPath $webTemplatePath) {
+    $webTemplate = Get-Content -LiteralPath $webTemplatePath -Raw
+    if ($webTemplate -notmatch 'id="unity-canvas"[^>]*tabindex="0"') {
+        Add-ValidationError 'WebGL template canvas must be keyboard-focusable with tabindex="0".'
+    }
+    if ($webTemplate -notmatch 'canvas\.addEventListener\("pointerdown"') {
+        Add-ValidationError 'WebGL template must restore canvas focus on pointer interaction.'
     }
 }
 
