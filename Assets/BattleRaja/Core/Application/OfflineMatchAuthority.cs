@@ -64,6 +64,41 @@ namespace BattleRaja.Core.Application
         public Float2 Position { get; }
     }
 
+    public readonly struct MatchAuthorityDecoy
+    {
+        public MatchAuthorityDecoy(
+            CombatEntityId ownerId,
+            CombatEntityId decoyId,
+            bool active,
+            bool targetable,
+            Float2 position,
+            int currentHealth,
+            int maxHealth,
+            float remainingSeconds,
+            float cooldownRemaining)
+        {
+            OwnerId = ownerId;
+            DecoyId = decoyId;
+            Active = active;
+            Targetable = targetable;
+            Position = position;
+            CurrentHealth = currentHealth;
+            MaxHealth = maxHealth;
+            RemainingSeconds = remainingSeconds;
+            CooldownRemaining = cooldownRemaining;
+        }
+
+        public CombatEntityId OwnerId { get; }
+        public CombatEntityId DecoyId { get; }
+        public bool Active { get; }
+        public bool Targetable { get; }
+        public Float2 Position { get; }
+        public int CurrentHealth { get; }
+        public int MaxHealth { get; }
+        public float RemainingSeconds { get; }
+        public float CooldownRemaining { get; }
+    }
+
     public readonly struct MatchAuthorityTick
     {
         public MatchAuthorityTick(MatchTickResult result, DamageRequest[] outsideDamageRequests)
@@ -116,6 +151,9 @@ namespace BattleRaja.Core.Application
         private readonly Dictionary<CombatEntityId, MovementTuning> _movementTunings = new Dictionary<CombatEntityId, MovementTuning>();
         private readonly Dictionary<CombatEntityId, int> _lastMovementTicks = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<CombatEntityId, int> _lastAbilityDisplacementTicks = new Dictionary<CombatEntityId, int>();
+        private readonly Dictionary<CombatEntityId, DecoyRuntime> _mayaDecoys = new Dictionary<CombatEntityId, DecoyRuntime>();
+        private readonly Dictionary<CombatEntityId, int> _lastDecoySpawnTicks = new Dictionary<CombatEntityId, int>();
+        private readonly Dictionary<CombatEntityId, int> _lastDecoyDamageTicks = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<int, GadgetStationRuntime> _stations = new Dictionary<int, GadgetStationRuntime>();
         private OfflineMatchSimulation _simulation;
         private double _outsideDamageAccumulator;
@@ -178,6 +216,9 @@ namespace BattleRaja.Core.Application
             _movementTunings.Clear();
             _lastMovementTicks.Clear();
             _lastAbilityDisplacementTicks.Clear();
+            _mayaDecoys.Clear();
+            _lastDecoySpawnTicks.Clear();
+            _lastDecoyDamageTicks.Clear();
             _stations.Clear();
             for (var i = 0; i < spawns.Count; i++)
             {
@@ -188,6 +229,7 @@ namespace BattleRaja.Core.Application
                 _movementTunings[spawns[i].Id] = MovementTuning.Default;
                 _lastMovementTicks[spawns[i].Id] = -1;
                 _lastAbilityDisplacementTicks[spawns[i].Id] = -1;
+                _lastDecoySpawnTicks[spawns[i].Id] = -1;
             }
 
             _outsideDamageAccumulator = 0d;
@@ -270,6 +312,136 @@ namespace BattleRaja.Core.Application
             return new MatchAuthorityDisplacement(actorId, simulationTick, true, displacement, position);
         }
 
+        public MatchAuthorityDecoy TrySpawnMayaDecoy(
+            CombatEntityId ownerId,
+            int simulationTick,
+            Float2 position)
+        {
+            var simulation = RequireSimulation();
+            if (simulationTick < 0 || !position.IsFinite ||
+                !_lastDecoySpawnTicks.TryGetValue(ownerId, out var lastTick) ||
+                simulationTick <= lastTick ||
+                !simulation.TryGetSnapshot(ownerId, out var owner) || !owner.Alive)
+            {
+                return GetMayaDecoySnapshot(ownerId);
+            }
+
+            if (!_mayaDecoys.TryGetValue(ownerId, out var decoy))
+            {
+                decoy = new DecoyRuntime();
+                _mayaDecoys[ownerId] = decoy;
+            }
+
+            if (!decoy.TrySpawn(ownerId, position, FighterSpecialDefinition.MayaDecoy))
+            {
+                return GetMayaDecoySnapshot(ownerId);
+            }
+
+            _lastDecoySpawnTicks[ownerId] = simulationTick;
+            return GetMayaDecoySnapshot(ownerId);
+        }
+
+        public MatchAuthorityDecoy GetMayaDecoySnapshot(CombatEntityId ownerId)
+        {
+            if (!_mayaDecoys.TryGetValue(ownerId, out var decoy))
+            {
+                return default(MatchAuthorityDecoy);
+            }
+
+            return CreateDecoySnapshot(ownerId, decoy);
+        }
+
+        public bool TryGetMayaDecoySnapshot(CombatEntityId decoyId, out MatchAuthorityDecoy snapshot)
+        {
+            foreach (var pair in _mayaDecoys)
+            {
+                if (GetDecoyId(pair.Key) != decoyId) continue;
+                snapshot = CreateDecoySnapshot(pair.Key, pair.Value);
+                return true;
+            }
+
+            snapshot = default(MatchAuthorityDecoy);
+            return false;
+        }
+
+        public bool IsAuthorityDecoy(CombatEntityId decoyId)
+        {
+            return TryGetMayaDecoySnapshot(decoyId, out _);
+        }
+
+        public MatchAuthorityDamage ResolveMayaDecoyDamage(
+            DamageRequest request,
+            CombatFaction targetFaction,
+            bool allowSelfHit,
+            bool allowFriendlyFire)
+        {
+            if (!TryFindMayaDecoy(request.TargetId, out _, out var decoy))
+            {
+                return new MatchAuthorityDamage(
+                    request,
+                    new DamageResult(false, 0, false, DamageRejectionReason.WrongTarget),
+                    0);
+            }
+
+            if (request.RawAmount <= 0)
+            {
+                return new MatchAuthorityDamage(
+                    request,
+                    new DamageResult(false, 0, decoy.CurrentHealth <= 0, DamageRejectionReason.InvalidAmount),
+                    decoy.CurrentHealth);
+            }
+
+            if (!allowSelfHit && request.InstigatorId == request.TargetId)
+            {
+                return new MatchAuthorityDamage(
+                    request,
+                    new DamageResult(false, 0, decoy.CurrentHealth <= 0, DamageRejectionReason.SelfHit),
+                    decoy.CurrentHealth);
+            }
+
+            if (!allowFriendlyFire && request.InstigatorFaction == targetFaction)
+            {
+                return new MatchAuthorityDamage(
+                    request,
+                    new DamageResult(false, 0, decoy.CurrentHealth <= 0, DamageRejectionReason.FriendlyFire),
+                    decoy.CurrentHealth);
+            }
+
+            if (!decoy.IsTargetable)
+            {
+                return new MatchAuthorityDamage(
+                    request,
+                    new DamageResult(false, 0, true, DamageRejectionReason.AlreadyDefeated),
+                    decoy.CurrentHealth);
+            }
+
+            if (_lastDecoyDamageTicks.TryGetValue(request.TargetId, out var lastDamageTick) &&
+                request.SimulationTick <= lastDamageTick)
+            {
+                return new MatchAuthorityDamage(
+                    request,
+                    new DamageResult(false, 0, decoy.CurrentHealth <= 0, DamageRejectionReason.AlreadyDefeated),
+                    decoy.CurrentHealth);
+            }
+
+            var before = decoy.CurrentHealth;
+            if (!decoy.TryDamage(request.RawAmount))
+            {
+                return new MatchAuthorityDamage(
+                    request,
+                    new DamageResult(false, 0, decoy.CurrentHealth <= 0, DamageRejectionReason.AlreadyDefeated),
+                    decoy.CurrentHealth);
+            }
+
+            _lastDecoyDamageTicks[request.TargetId] = request.SimulationTick;
+            var result = new DamageResult(
+                true,
+                before - decoy.CurrentHealth,
+                !decoy.IsTargetable,
+                DamageRejectionReason.None);
+            return new MatchAuthorityDamage(request, result, decoy.CurrentHealth);
+        }
+
         public bool SyncHealth(CombatEntityId id, int currentHealth) => RequireSimulation().SyncHealth(id, currentHealth);
 
         public int ApplyHealing(CombatEntityId id, int amount) => RequireSimulation().Heal(id, amount);
@@ -329,6 +501,7 @@ namespace BattleRaja.Core.Application
             for (var i = 0; i < _pickups.Length; i++) _pickups[i].Advance(fixedDeltaSeconds);
             foreach (var runtime in _gadgetRuntimes.Values) runtime.Advance(fixedDeltaSeconds);
             foreach (var guard in _umbrellaGuards.Values) guard.Advance(fixedDeltaSeconds);
+            AdvanceMayaDecoys(fixedDeltaSeconds, simulation);
             var result = simulation.Advance(fixedDeltaSeconds);
             var healingIntents = new List<GadgetHealingIntent>();
             var expiredStationIds = new List<int>();
@@ -578,6 +751,57 @@ namespace BattleRaja.Core.Application
         {
             var index = FindGadgetPickupIndex(pickupId);
             return index >= 0 && _gadgetPickups[index].IsAvailable;
+        }
+
+        private void AdvanceMayaDecoys(float fixedDeltaSeconds, OfflineMatchSimulation simulation)
+        {
+            foreach (var pair in _mayaDecoys)
+            {
+                var ownerId = pair.Key;
+                var decoy = pair.Value;
+                if (!decoy.IsActive) continue;
+                if (!simulation.TryGetSnapshot(ownerId, out var owner) || !owner.Alive)
+                {
+                    decoy.Destroy();
+                    continue;
+                }
+
+                decoy.Advance(fixedDeltaSeconds, owner.Position);
+            }
+        }
+
+        private bool TryFindMayaDecoy(CombatEntityId decoyId, out CombatEntityId ownerId, out DecoyRuntime decoy)
+        {
+            foreach (var pair in _mayaDecoys)
+            {
+                if (GetDecoyId(pair.Key) != decoyId) continue;
+                ownerId = pair.Key;
+                decoy = pair.Value;
+                return true;
+            }
+
+            ownerId = default(CombatEntityId);
+            decoy = null;
+            return false;
+        }
+
+        private static CombatEntityId GetDecoyId(CombatEntityId ownerId)
+        {
+            return new CombatEntityId(100000 + ownerId.Value);
+        }
+
+        private static MatchAuthorityDecoy CreateDecoySnapshot(CombatEntityId ownerId, DecoyRuntime decoy)
+        {
+            return new MatchAuthorityDecoy(
+                ownerId,
+                GetDecoyId(ownerId),
+                decoy.IsActive,
+                decoy.IsTargetable,
+                decoy.Position,
+                decoy.CurrentHealth,
+                decoy.MaxHealth,
+                decoy.RemainingSeconds,
+                decoy.CooldownRemaining);
         }
 
         private void AdvanceStations(

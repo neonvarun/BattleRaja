@@ -80,6 +80,44 @@ namespace BattleRaja.Presentation.Match
             return _authority != null && _authority.HasParticipant(actorId);
         }
 
+        public MatchAuthorityDecoy TrySpawnMayaDecoy(
+            CombatEntityId ownerId,
+            int simulationTick,
+            Float2 position)
+        {
+            return _authority != null
+                ? _authority.TrySpawnMayaDecoy(ownerId, simulationTick, position)
+                : default(MatchAuthorityDecoy);
+        }
+
+        public bool TryGetMayaDecoySnapshot(CombatEntityId ownerId, out MatchAuthorityDecoy snapshot)
+        {
+            if (_authority != null)
+            {
+                snapshot = _authority.GetMayaDecoySnapshot(ownerId);
+                return snapshot.OwnerId == ownerId;
+            }
+
+            snapshot = default(MatchAuthorityDecoy);
+            return false;
+        }
+
+        public bool IsAuthorityDecoy(CombatEntityId decoyId)
+        {
+            return _authority != null && _authority.IsAuthorityDecoy(decoyId);
+        }
+
+        public MatchAuthorityDamage ResolveMayaDecoyDamage(
+            DamageRequest request,
+            CombatFaction targetFaction,
+            bool allowSelfHit,
+            bool allowFriendlyFire)
+        {
+            return _authority != null
+                ? _authority.ResolveMayaDecoyDamage(request, targetFaction, allowSelfHit, allowFriendlyFire)
+                : default(MatchAuthorityDamage);
+        }
+
         public GadgetStationDamageResult TryDamageStation(int stationId, int rawAmount)
         {
             return _authority != null

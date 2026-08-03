@@ -22,6 +22,20 @@ namespace BattleRaja.Presentation.Combat
             }
 
             var match = FindFirstObjectByType<OfflineMatchController>();
+            if (match != null && match.Simulation != null && match.IsAuthorityDecoy(target.Id))
+            {
+                var decoyDamage = match.ResolveMayaDecoyDamage(
+                    request,
+                    target.Faction,
+                    allowSelfHit,
+                    allowFriendlyFire);
+                return target.Health.ApplyAuthoritativeDamage(
+                    decoyDamage.Request,
+                    decoyDamage.Result,
+                    decoyDamage.CurrentHealthAfter,
+                    simulationTick);
+            }
+
             var authoritative = match != null && match.Simulation != null && match.IsAuthorityActor(target.Id);
             var station = target.GetComponent<GadgetStation>();
             if (authoritative && station != null && station.StationId > 0)

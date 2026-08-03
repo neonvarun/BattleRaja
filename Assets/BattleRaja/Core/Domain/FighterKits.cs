@@ -248,13 +248,16 @@ namespace BattleRaja.Core.Domain
         private float _cooldownRemaining;
         private Float2 _position;
         private CombatEntityId _ownerId;
+        private int _maxHealth;
         private int _health;
 
         public bool IsActive => _remaining > 0f;
         public Float2 Position => _position;
         public CombatEntityId OwnerId => _ownerId;
+        public int MaxHealth => _maxHealth;
         public int CurrentHealth => Math.Max(0, _health);
         public bool IsTargetable => IsActive && _health > 0;
+        public float RemainingSeconds => Math.Max(0f, _remaining);
         public float CooldownRemaining => Math.Max(0f, _cooldownRemaining);
 
         public bool TrySpawn(Float2 position, FighterSpecialDefinition definition)
@@ -264,6 +267,7 @@ namespace BattleRaja.Core.Domain
             _remaining = definition.DurationSeconds;
             _cooldownRemaining = definition.CooldownSeconds;
             _ownerId = default(CombatEntityId);
+            _maxHealth = definition.Magnitude;
             _health = definition.Magnitude;
             return true;
         }

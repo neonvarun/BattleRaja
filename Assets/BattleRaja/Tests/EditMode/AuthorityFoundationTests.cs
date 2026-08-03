@@ -87,6 +87,48 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void MatchAuthorityOwnsMayaDecoyLifetimeAndDamage()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(8f, 0f), 100)
+            });
+
+            var spawned = authority.TrySpawnMayaDecoy(new CombatEntityId(1), 1, Float2.Zero);
+            var duplicate = authority.TrySpawnMayaDecoy(new CombatEntityId(1), 1, Float2.Zero);
+
+            Assert.That(spawned.OwnerId.Value, Is.EqualTo(1));
+            Assert.That(spawned.DecoyId.Value, Is.EqualTo(100001));
+            Assert.That(spawned.Active, Is.True);
+            Assert.That(spawned.Targetable, Is.True);
+            Assert.That(duplicate.RemainingSeconds, Is.EqualTo(spawned.RemainingSeconds).Within(0.0001f));
+
+            authority.SetPosition(new CombatEntityId(1), new Float2(2f, 0f));
+            authority.Advance(1f / 30f);
+            var followed = authority.GetMayaDecoySnapshot(new CombatEntityId(1));
+            Assert.That(followed.Position.X, Is.GreaterThan(0f));
+
+            var request = new DamageRequest(
+                new CombatEntityId(2),
+                spawned.DecoyId,
+                CombatFaction.Player,
+                spawned.MaxHealth,
+                DamageType.Projectile,
+                new Float2(-1f, 0f),
+                2);
+            var damage = authority.ResolveMayaDecoyDamage(request, CombatFaction.Enemy, false, false);
+            var duplicateDamage = authority.ResolveMayaDecoyDamage(request, CombatFaction.Enemy, false, false);
+
+            Assert.That(damage.Result.Applied, Is.True);
+            Assert.That(damage.Result.TargetDefeated, Is.True);
+            Assert.That(damage.CurrentHealthAfter, Is.EqualTo(0));
+            Assert.That(duplicateDamage.Result.Applied, Is.False);
+            Assert.That(authority.GetMayaDecoySnapshot(new CombatEntityId(1)).Active, Is.False);
+        }
+
+        [Test]
         public void MatchAuthorityOwnsPickupAvailabilityAndGadgetCollection()
         {
             var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja, 1f);

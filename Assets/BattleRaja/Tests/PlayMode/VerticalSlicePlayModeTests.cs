@@ -259,6 +259,50 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator ProductionMayaDecoyRoutesLifetimeAndDamageThroughAuthority()
+        {
+            var match = Object.FindFirstObjectByType<OfflineMatchController>();
+            var maya = Object.FindObjectsByType<MayaFighterController>(FindObjectsSortMode.None)
+                .First(controller => controller.GetComponent<MovementPlayerAgent>() != null &&
+                    controller.GetComponent<MovementPlayerAgent>().AuthorityDrivenMovement);
+            var agent = maya.GetComponent<MovementPlayerAgent>();
+            var ownerId = new CombatEntityId(agent.ActorId);
+            Assert.That(match, Is.Not.Null);
+            Assert.That(maya, Is.Not.Null);
+            Assert.That(match.TryGetMayaDecoySnapshot(ownerId, out _), Is.False);
+
+            maya.Submit(AbilityCommandFactory.Create(ownerId, 1, maya.AbilityId, Float2.Up, true));
+            yield return new WaitForSecondsRealtime(0.25f);
+
+            Assert.That(match.TryGetMayaDecoySnapshot(ownerId, out var spawned), Is.True);
+            Assert.That(spawned.Active, Is.True);
+            var decoy = Object.FindObjectsByType<CombatTarget>(FindObjectsSortMode.None)
+                .First(target => target.Id == spawned.DecoyId);
+            var resolver = Object.FindFirstObjectByType<CombatDamageResolver>();
+            Assert.That(resolver, Is.Not.Null);
+            var attackerId = new CombatEntityId(ownerId.Value == 1 ? 2 : 1);
+            var result = resolver.Resolve(
+                decoy,
+                new DamageRequest(
+                    attackerId,
+                    spawned.DecoyId,
+                    CombatFaction.Player,
+                    spawned.MaxHealth,
+                    DamageType.Projectile,
+                    Float2.Up,
+                    2),
+                allowSelfHit: false,
+                allowFriendlyFire: false,
+                simulationTick: 2);
+
+            Assert.That(result.Applied, Is.True);
+            yield return null;
+            Assert.That(match.TryGetMayaDecoySnapshot(ownerId, out var after), Is.True);
+            Assert.That(after.Active, Is.False);
+            Assert.That(maya.IsDecoyActive, Is.False);
+        }
+
+        [UnityTest]
         public IEnumerator TouchControlsExposeReadableActionLabels()
         {
             Assert.That(GameObject.Find("AttackButton")?.GetComponentInChildren<Text>(true)?.text, Is.EqualTo("ATTACK"));
