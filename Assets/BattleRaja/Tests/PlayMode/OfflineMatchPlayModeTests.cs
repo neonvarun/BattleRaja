@@ -3,6 +3,7 @@ using System.Linq;
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Match;
 using BattleRaja.Presentation.Combat;
+using BattleRaja.Presentation.Gadgets;
 using BattleRaja.Presentation.Movement;
 using NUnit.Framework;
 using UnityEngine;
@@ -18,6 +19,12 @@ namespace BattleRaja.Tests.PlayMode
         public IEnumerator LoadMovementLab()
         {
             yield return SceneManager.LoadSceneAsync("MovementLab", LoadSceneMode.Single);
+            PlayModeTestHelpers.DisableBots();
+            foreach (var gadgetUser in Object.FindObjectsByType<GadgetUser>(FindObjectsSortMode.None))
+            {
+                var agent = gadgetUser.GetComponent<MovementPlayerAgent>();
+                if (agent != null && agent.ActorId != 1) gadgetUser.enabled = false;
+            }
             yield return null;
         }
 
@@ -109,6 +116,69 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(reloaded, Is.Not.Null);
             Assert.That(reloaded.ResultsShown, Is.False);
             Assert.That(reloaded.AliveCount, Is.EqualTo(8));
+        }
+
+        [UnityTest]
+        public IEnumerator RepeatedResultsRematchesKeepRuntimeGraphClean()
+        {
+            for (var round = 0; round < 3; round++)
+            {
+                PlayModeTestHelpers.DisableBots();
+                var match = Object.FindAnyObjectByType<OfflineMatchController>();
+                var resolver = Object.FindFirstObjectByType<CombatDamageResolver>();
+                var player = Object.FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None)
+                    .First(agent => agent.ActorId == 1);
+                var source = player.GetComponent<CombatTarget>();
+                var targets = Object.FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None)
+                    .Where(agent => agent.ActorId != 1)
+                    .Select(agent => agent.GetComponent<CombatTarget>())
+                    .Where(target => target != null)
+                    .ToArray();
+
+                foreach (var target in targets)
+                {
+                    resolver.Resolve(
+                        target,
+                        new DamageRequest(
+                            source.Id,
+                            target.Id,
+                            source.Faction,
+                            1000,
+                            DamageType.Ability,
+                            Float2.Up,
+                            round + 1),
+                        allowSelfHit: false,
+                        allowFriendlyFire: false,
+                        simulationTick: round + 1);
+                }
+
+                yield return new WaitForSeconds(0.2f);
+
+                Assert.That(match.ResultsShown, Is.True, $"round {round} did not publish results");
+                var panel = GameObject.Find("ResultsPanel");
+                Assert.That(panel, Is.Not.Null);
+                Assert.That(panel.activeSelf, Is.True);
+                Time.timeScale = 0f;
+                panel.transform.Find("Rematch").GetComponent<Button>().onClick.Invoke();
+                yield return new WaitForSecondsRealtime(0.45f);
+                PlayModeTestHelpers.DisableBots();
+                foreach (var gadgetUser in Object.FindObjectsByType<GadgetUser>(FindObjectsSortMode.None))
+                {
+                    var agent = gadgetUser.GetComponent<MovementPlayerAgent>();
+                    if (agent != null && agent.ActorId != 1) gadgetUser.enabled = false;
+                }
+                Time.timeScale = 1f;
+                yield return null;
+
+                Assert.That(SceneManager.GetActiveScene().name, Is.EqualTo("MovementLab"));
+                Assert.That(Object.FindObjectsByType<OfflineMatchController>(FindObjectsSortMode.None), Has.Length.EqualTo(1));
+                Assert.That(Object.FindObjectsByType<OfflineMatchHud>(FindObjectsSortMode.None), Has.Length.EqualTo(1));
+                Assert.That(Object.FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None)
+                    .Count(agent => agent.GetComponent<CombatTarget>() != null), Is.EqualTo(8));
+                Assert.That(Object.FindObjectsByType<GadgetStation>(FindObjectsSortMode.None), Is.Empty);
+                Assert.That(Object.FindAnyObjectByType<OfflineMatchController>().ResultsShown, Is.False);
+                Assert.That(Time.timeScale, Is.EqualTo(1f));
+            }
         }
 
         [UnityTest]
