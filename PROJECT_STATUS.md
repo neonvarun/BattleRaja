@@ -9,6 +9,9 @@
 - Product vision: drafted
 - Autonomous M1–M11 sequential execution: active; milestone gates and external
   service approvals remain explicit.
+- Latest validated source HEAD: `4d3ae6a`; production-flow EventSystem creation is
+  Input System-only and the selected-fighter HUD path is covered by the current
+  regression suite.
 - Root agent rules: active
 - Milestone 0: complete and committed locally
 - Unity project: verified at the repository root with URP and MovementLab scenes

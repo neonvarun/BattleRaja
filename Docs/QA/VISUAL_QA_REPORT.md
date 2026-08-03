@@ -1,10 +1,27 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-03
-Runtime-bearing candidate: `5f4566d` (Input System-only continuation)
-Current source HEAD: `5f4566d`
+Runtime-bearing candidate: `4d3ae6a` (production Bazaar Bastion continuation)
+Current source HEAD: `4d3ae6a`
 Unity: `6000.5.6f1`
-Web candidate: `Builds/M11/Web` served over local HTTP at `http://127.0.0.1:8137/index.html`
+Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://127.0.0.1:8139/index.html`
+
+## Production Bazaar Bastion flow (`d1b33d1` + `4d3ae6a`)
+
+- `BuildWebBazaarBastionDevelopment` was rebuilt from the current source and served at
+  `http://127.0.0.1:8139/index.html`; Chrome 150 loaded the exact production output with
+  one Unity canvas and 52 console messages (0 errors, 0 warnings).
+- The inspected production route covered main menu, settings, mode selection, fighter
+  selection, and live Bazaar Bastion matches. Pehel and Maya captures show their own
+  selected-fighter HUD identity and ability labels rather than the former hard-coded
+  Bijli label. Captures: `Docs/QA/Visual/Phase7/playwright-production-main-menu-20260803.png`,
+  `playwright-production-settings-20260803.png`, `playwright-production-mode-selection-20260803.png`,
+  `playwright-production-fighter-selection-20260803.png`, `playwright-production-pehel-match-20260803.png`,
+  and `playwright-production-maya-match-20260803.png`.
+- This is technical greybox evidence, not final visual approval. The 390x844 MovementLab
+  screenshot (`playwright-input-system-portrait-20260803.png`) still shows bot debug-label
+  and compact-HUD overlap. Touch ergonomics, loading-state behavior, multi-browser coverage
+  and human presentation approval remain open.
 
 ## Input System-only continuation (`5f4566d`)
 

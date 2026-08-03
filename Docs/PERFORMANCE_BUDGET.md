@@ -24,6 +24,26 @@
 
 Never claim optimisation without profiling evidence.
 
+## Latest candidate measurements — 2026-08-03
+
+These are bounded smoke observations, not release-performance sign-off.
+
+- **Lava `ST5GDW23LB004392` (`LAVA LXX508`)**: total PSS 502,948 KB, total RSS
+  639,560 KB, Graphics PSS 101,708 KB. A process-scoped `top` sample showed the game
+  process alive; `dumpsys gfxinfo` exposed only the ViewRoot summary and no frame/jank
+  histogram, so no FPS or frame-time claim is made. Raw captures are in
+  `Builds/M11/Logs/input-system-lava-meminfo-20260803.txt`,
+  `input-system-lava-gfxinfo-20260803.txt` and `input-system-lava-top-20260803.txt`.
+- **Chrome 150, production Bazaar Bastion Web**: DOMContentLoaded 401.7 ms, load
+  520.4 ms, WASM transfer 120,659,088 bytes, browser `requestAnimationFrame` sample
+  mean 5.592 ms / p50 5.5 ms / p95 6.0 ms / max 6.1 ms, JS heap used 30,182,138 bytes
+  of 33,119,866 bytes. The rAF values are browser observations and are not Unity FPS;
+  this was a local cached run, not a cold CDN or mobile-Web measurement.
+- **Open measurements**: Unity Profiler CPU/GPU/GC/draw-call capture, Android frame
+  pacing, thermal/battery soak, repeated-match memory growth, Web cold-load and
+  mobile-browser coverage, shader warm-up, compression/cache headers and network
+  bandwidth remain unmeasured.
+
 ## Web-specific measured budgets
 
 - Compressed initial download

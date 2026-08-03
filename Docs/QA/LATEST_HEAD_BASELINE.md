@@ -2,9 +2,33 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `5f4566d` (`fix: make project input-system only`)
-Latest runtime-bearing candidate: `5f4566d` (Input System-only Android/Web candidate)
+Latest validated source HEAD: `4d3ae6a` (`fix: bind hud to selected fighter`)
+Latest runtime-bearing candidate: `4d3ae6a` (production Bazaar Bastion Android/Web candidate)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
+
+## Production-flow continuation (`d1b33d1` + `4d3ae6a`)
+
+The production flow now creates `InputSystemUIInputModule` when it has to create an
+EventSystem, and the combat HUD binds its identity and ability text to the selected
+fighter (Bijli, Pehel or Maya). The static formatter is covered independently so the
+selection labels cannot silently regress to Bijli.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings | command output from 2026-08-03 |
+| EditMode tests | 94 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/fighter-hud-final-editmode-20260803.xml` |
+| PlayMode tests | 46 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/fighter-hud-final-playmode-20260803.xml` |
+| Production Android build | Unity `Build Finished, Result: Success`; APK 151,378,890 bytes; SHA-256 `F47DC800BF351A1AD5A29A48C40ECE633E76D14E967DDF6F391D5F6935C2F4D6` | `Builds/M11/Logs/android-build.log`, `Builds/M11/Android/BattleRaja-BazaarBastion-M11.apk` |
+| Lava smoke | Exact production APK installed/launched on Lava `ST5GDW23LB004392` (`LAVA LXX508`), process `26699`; no process death or fatal crash marker in the sampled log. Unity emitted the known optional Play Asset Delivery `AssetPackManager` class-probe warning. | ADB output from 2026-08-03 |
+| Production Web build | Unity WebGL build completed; 19 files, 133,357,921 bytes; `Web-BazaarBastion.wasm` SHA-256 `BC3689B1D48DFD099DA8C619E9E9059EA709BB3D394C74B3411B17FCCFD03BAC` | `Builds/M11/Web-BazaarBastion`, `Builds/M11/Logs/web-build.log` |
+| Local production Web serve | `http://127.0.0.1:8139/index.html` returned HTTP 200; Chrome 150 loaded one Unity canvas and reported 52 console messages with 0 errors and 0 warnings after reload | Playwright/HTTP output from 2026-08-03 |
+| Browser focus/timing observation | Canvas focus contract remains `tabindex=0`; prior local Chrome observation: DOMContentLoaded 401.7 ms, load 520.4 ms, WASM transfer 120,659,088 bytes, browser `requestAnimationFrame` p95 6.0 ms, JS heap used 30.2 MB | `Docs/QA/Visual/Phase7/playwright-input-system-runtime-20260803.png` and measurement output from 2026-08-03 |
+| Lava memory observation | PSS 502,948 KB, RSS 639,560 KB, Graphics PSS 101,708 KB; `dumpsys gfxinfo` exposed no frame/jank histogram, so no FPS claim is made | `Builds/M11/Logs/input-system-lava-meminfo-20260803.txt`, `input-system-lava-gfxinfo-20260803.txt`, `input-system-lava-top-20260803.txt` |
+
+The production Chrome captures show the Bazaar Bastion route and fighter-specific HUD
+text for Pehel and Maya. They are still greybox/prototype evidence; the 390x844
+MovementLab capture shows bot debug-label/HUD overlap, so visual approval, touch
+ergonomics and final authored presentation remain human-review items.
 
 ## Scope and repository note
 

@@ -3,15 +3,18 @@
 Updated: 2026-08-03
 Classification: **prototype**
 
+Latest continuation: `d1b33d1` + `4d3ae6a` (2026-08-03). Production-flow EventSystem
+creation is Input System-only, and the live HUD now reflects the selected fighter.
+
 This file records evidence-backed status only. Allowed status values are: `Not started`, `In progress`, `Passed with evidence`, `Blocked`, and `Human review required`.
 
 | Area | Status | Evidence / boundary |
 | --- | --- | --- |
-| Unity project and package baseline | Passed with evidence | Unity `6000.5.6f1`; latest validated source HEAD `5f4566d`; Input System-only handler with legacy-scene compatibility bridge; repository validation clean; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
+| Unity project and package baseline | Passed with evidence | Unity `6000.5.6f1`; latest validated source HEAD `4d3ae6a`; Input System-only handler with legacy-scene compatibility bridge; repository validation clean; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
 | Photon Fusion import | Passed with evidence | Fusion 2.1.1 stable build 2177 is present and imported; no public multiplayer claim |
-| EditMode and PlayMode regression baseline | Passed with evidence | Results-screen continuation passes 94/94 EditMode and 45/45 PlayMode tests, including spatial gadget collection, live results/rematch reload, three repeated rematch cleanup cycles, the full eight-step tutorial walkthrough, pure aim-assist targeting, in-match settings persistence and full placement/statistics formatting; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
-| Android smoke build | Passed with evidence | Input System-only development IL2CPP APK (`151,373,009` bytes; SHA-256 `60AEF8C395B21E9C0CA5EF142411AB57214A9B2D50053BE5FF623544CF2D9812`) installed/launched only on Lava `ST5GDW23LB004392`; process-scoped capture remained alive without fatal Unity/Android crash markers; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
-| Web smoke build | Passed with evidence | Input System-only Web build (`21` build files; `133,358,665` bytes; main WASM SHA-256 `790349B1D3203B173EDF8075D827426DD20AD74737C99FB7567C52E2FD54B5E2`) served locally on port 8137 with HTTP 200; browser visual/input and human review gates remain open; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
+| EditMode and PlayMode regression baseline | Passed with evidence | Latest production-flow/HUD regression passes 94/94 EditMode and 46/46 PlayMode tests, including spatial gadget collection, live results/rematch reload, three repeated rematch cleanup cycles, the full eight-step tutorial walkthrough, pure aim-assist targeting, in-match settings persistence, full placement/statistics formatting and selected-fighter HUD identity; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
+| Android smoke build | Passed with evidence | Production Bazaar Bastion IL2CPP APK (`151,378,890` bytes; SHA-256 `F47DC800BF351A1AD5A29A48C40ECE633E76D14E967DDF6F391D5F6935C2F4D6`) installed/launched only on Lava `ST5GDW23LB004392`; process remained alive. The optional Play Asset Delivery class-probe warning remains known; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
+| Web smoke build | Passed with evidence | Production Bazaar Bastion Web output (`19` files; `133,357,921` bytes; main WASM SHA-256 `BC3689B1D48DFD099DA8C619E9E9059EA709BB3D394C74B3411B17FCCFD03BAC`) served locally on port 8139 with HTTP 200; browser visual/input and human review gates remain open; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
 | Timeout/winner correctness | Passed with evidence | Deterministic timeout ranking and complete placements implemented; phase-1 EditMode 59/59 and PlayMode 27/27 pass |
 | Eliminations and match statistics | Passed with evidence | Instigator-aware combat events now record damage dealt, eliminations, deterministic non-finisher assists, survival time and duplicate-credit prevention; fresh EditMode 90/90 and PlayMode 43/43 pass |
 | Explicit fixed simulation clock | Passed with evidence | 30 Hz clock now exposes the exact tick for every step consumed in a render frame; authority, movement, attacks, projectiles, bots, gadgets and all three fighter adapters use per-step identities. 89 EditMode/43 PlayMode tests, fixed Android Lava retest and Web smoke evidence pass; replay recording and broader soak coverage remain |
