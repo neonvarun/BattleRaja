@@ -128,10 +128,15 @@ namespace BattleRaja.Tests.PlayMode
             var attackerObject = new GameObject("MayaRuntimeAttacker");
             var attackerHealth = attackerObject.AddComponent<CombatHealth>();
             var attacker = attackerObject.AddComponent<CombatTarget>();
+            var botObject = new GameObject("MayaRuntimeObserver");
+            var botHealth = botObject.AddComponent<CombatHealth>();
+            var botTarget = botObject.AddComponent<CombatTarget>();
+            var botSensor = botObject.AddComponent<BotPerceptionSensor>();
             yield return null;
 
             ownerTarget.Configure(9010, CombatFaction.Enemy, mayaHealth);
             attacker.Configure(9011, CombatFaction.Player, attackerHealth);
+            botTarget.Configure(9012, CombatFaction.Player, botHealth);
             var resolver = Object.FindFirstObjectByType<CombatDamageResolver>();
 
             maya.Submit(AbilityCommandFactory.Create(
@@ -150,6 +155,9 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(decoyTarget, Is.Not.Null);
             Assert.That(decoyHealth, Is.Not.Null);
             Assert.That(decoyTarget.Faction, Is.Not.EqualTo(attacker.Faction));
+            var observed = botSensor.Capture();
+            Assert.That(observed.Targets.Take(observed.TargetCount).Any(target => target.Id == decoyTarget.Id), Is.True,
+                "A bot perception sensor must observe a decoy spawned after its Awake phase.");
 
             var beforeFollow = decoy.transform.position;
             maya.transform.position += Vector3.right * 3f;
@@ -176,6 +184,7 @@ namespace BattleRaja.Tests.PlayMode
 
             Object.Destroy(mayaObject);
             Object.Destroy(attackerObject);
+            Object.Destroy(botObject);
             yield return null;
         }
 

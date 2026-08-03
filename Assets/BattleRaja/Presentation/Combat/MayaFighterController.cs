@@ -1,4 +1,5 @@
 using BattleRaja.Core.Domain;
+using BattleRaja.Presentation.AI;
 using BattleRaja.Presentation.Movement;
 using BattleRaja.Presentation.Visuals;
 using UnityEngine;
@@ -115,6 +116,7 @@ namespace BattleRaja.Presentation.Combat
             var target = _decoyObject.AddComponent<CombatTarget>();
             target.Configure(100000 + (movementAgent != null ? movementAgent.ActorId : 1), faction, _decoyHealth);
             _decoyHealth.DamageApplied += OnDecoyDamage;
+            RefreshBotPerceptionTargets();
         }
 
         private void OnDecoyDamage(CombatDamageEvent damageEvent)
@@ -129,9 +131,22 @@ namespace BattleRaja.Presentation.Combat
         private void DestroyDecoy()
         {
             if (_decoyHealth != null) _decoyHealth.DamageApplied -= OnDecoyDamage;
-            if (_decoyObject != null) Destroy(_decoyObject);
+            if (_decoyObject != null)
+            {
+                // Deactivate before deferred destruction so sensors do not retain a
+                // target that is already gone from gameplay.
+                _decoyObject.SetActive(false);
+                Destroy(_decoyObject);
+            }
             _decoyObject = null;
             _decoyHealth = null;
+            RefreshBotPerceptionTargets();
+        }
+
+        private static void RefreshBotPerceptionTargets()
+        {
+            var sensors = FindObjectsByType<BotPerceptionSensor>(FindObjectsSortMode.None);
+            for (var i = 0; i < sensors.Length; i++) sensors[i].RefreshTargets();
         }
     }
 
