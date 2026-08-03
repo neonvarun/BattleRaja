@@ -23,6 +23,51 @@ namespace BattleRaja.Presentation.Combat
 
             var match = FindFirstObjectByType<OfflineMatchController>();
             var authoritative = match != null && match.Simulation != null;
+            var station = target.GetComponent<GadgetStation>();
+            var stationDamage = default(GadgetStationDamageResult);
+            var stationDamageApplied = false;
+            if (authoritative && station != null && station.StationId > 0)
+            {
+                if (request.TargetId != target.Id)
+                {
+                    return new DamageResult(false, 0, false, DamageRejectionReason.WrongTarget);
+                }
+
+                if (!allowSelfHit && request.InstigatorId == target.Id)
+                {
+                    return new DamageResult(false, 0, false, DamageRejectionReason.SelfHit);
+                }
+
+                if (!allowFriendlyFire && request.InstigatorFaction == target.Faction)
+                {
+                    return new DamageResult(false, 0, false, DamageRejectionReason.FriendlyFire);
+                }
+
+                if (target.Health.Snapshot.IsDefeated)
+                {
+                    return new DamageResult(false, 0, false, DamageRejectionReason.AlreadyDefeated);
+                }
+
+                stationDamage = match.TryDamageStation(station.StationId, request.RawAmount);
+                if (!stationDamage.Applied)
+                {
+                    return new DamageResult(
+                        false,
+                        0,
+                        stationDamage.Destroyed,
+                        stationDamage.Destroyed ? DamageRejectionReason.AlreadyDefeated : DamageRejectionReason.WrongTarget);
+                }
+
+                request = new DamageRequest(
+                    request.InstigatorId,
+                    request.TargetId,
+                    request.InstigatorFaction,
+                    stationDamage.AmountApplied,
+                    request.DamageType,
+                    request.HitDirection,
+                    request.SimulationTick);
+                stationDamageApplied = true;
+            }
             if (authoritative)
             {
                 request = match.ApplyDamageMitigation(request);
@@ -42,7 +87,7 @@ namespace BattleRaja.Presentation.Combat
                 }
             }
 
-            return target.Health.ApplyThroughPipeline(
+            var result = target.Health.ApplyThroughPipeline(
                 _pipeline,
                 request,
                 target.Id,
@@ -50,6 +95,12 @@ namespace BattleRaja.Presentation.Combat
                 allowSelfHit,
                 allowFriendlyFire,
                 simulationTick);
+            if (stationDamageApplied && stationDamage.Destroyed)
+            {
+                station.ExpireFromAuthority();
+            }
+
+            return result;
         }
     }
 }

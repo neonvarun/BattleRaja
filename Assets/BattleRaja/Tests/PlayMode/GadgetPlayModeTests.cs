@@ -1,7 +1,9 @@
 using System.Collections;
+using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Gadgets;
 using BattleRaja.Presentation.Movement;
 using BattleRaja.Presentation.AI;
+using BattleRaja.Presentation.Combat;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -52,6 +54,33 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(user.UseHeld(), Is.True);
             yield return new WaitForSeconds(0.1f);
             Assert.That(Object.FindObjectsByType<GadgetStation>(FindObjectsSortMode.None), Has.Length.EqualTo(1));
+        }
+
+        [UnityTest]
+        public IEnumerator TiffinStationDamageIsAcceptedThroughMatchAuthority()
+        {
+            foreach (var bot in Object.FindObjectsByType<BotBrain>(FindObjectsSortMode.None)) bot.enabled = false;
+            var user = PlayModeTestHelpers.FindPlayer<GadgetUser>();
+            user.TryPickup(GadgetDefinition.TiffinStation.GadgetId);
+            Assert.That(user.UseHeld(), Is.True);
+            yield return null;
+
+            var station = Object.FindFirstObjectByType<GadgetStation>();
+            var target = station.GetComponent<CombatTarget>();
+            var resolver = Object.FindFirstObjectByType<CombatDamageResolver>();
+            var request = new DamageRequest(
+                new CombatEntityId(2),
+                target.Id,
+                CombatFaction.Enemy,
+                10,
+                DamageType.Ability,
+                Float2.Up,
+                1);
+            var result = resolver.Resolve(target, request, allowSelfHit: false, allowFriendlyFire: true, simulationTick: 1);
+
+            Assert.That(result.Applied, Is.True);
+            Assert.That(result.AmountApplied, Is.EqualTo(10));
+            Assert.That(target.Health.Snapshot.CurrentHealth, Is.EqualTo(35));
         }
     }
 }

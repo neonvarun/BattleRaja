@@ -353,6 +353,34 @@ namespace BattleRaja.Core.Application
                 GadgetCatalog.TryGet(gadgetId, out _) && inventory.TryPickup(gadgetId);
         }
 
+        public GadgetStationDamageResult TryDamageStation(int stationId, int rawAmount)
+        {
+            GadgetStationRuntime station = null;
+            if (stationId > 0)
+            {
+                _stations.TryGetValue(stationId, out station);
+            }
+
+            if (stationId <= 0 || rawAmount <= 0 || station == null || !station.IsActive)
+            {
+                return new GadgetStationDamageResult(false, 0, false, station != null ? station.CurrentHealth : 0);
+            }
+
+            var before = station.CurrentHealth;
+            if (!station.TryDamage(rawAmount))
+            {
+                return new GadgetStationDamageResult(false, 0, station.IsActive == false && station.CurrentHealth == 0, station.CurrentHealth);
+            }
+
+            var destroyed = station.CurrentHealth <= 0;
+            if (destroyed)
+            {
+                _stations.Remove(stationId);
+            }
+
+            return new GadgetStationDamageResult(true, before - station.CurrentHealth, destroyed, station.CurrentHealth);
+        }
+
         public bool IsGadgetPickupAvailable(int pickupId)
         {
             var index = FindGadgetPickupIndex(pickupId);

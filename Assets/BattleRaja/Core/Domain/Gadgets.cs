@@ -239,6 +239,22 @@ namespace BattleRaja.Core.Domain
         public int Amount { get; }
     }
 
+    public readonly struct GadgetStationDamageResult
+    {
+        public GadgetStationDamageResult(bool applied, int amountApplied, bool destroyed, int currentHealth)
+        {
+            Applied = applied;
+            AmountApplied = amountApplied;
+            Destroyed = destroyed;
+            CurrentHealth = currentHealth;
+        }
+
+        public bool Applied { get; }
+        public int AmountApplied { get; }
+        public bool Destroyed { get; }
+        public int CurrentHealth { get; }
+    }
+
     public readonly struct GadgetStationStep
     {
         public GadgetStationStep(int stationId, GadgetHealingIntent[] healing, bool expired)

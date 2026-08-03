@@ -216,5 +216,34 @@ namespace BattleRaja.Tests.EditMode
             for (var tick = 1; tick <= 106; tick++) authority.Advance(tick, 1f / 30f);
             Assert.That(authority.ApplyDamageMitigation(incoming).RawAmount, Is.EqualTo(100));
         }
+
+        [Test]
+        public void AuthorityOwnsTiffinStationDamageAndRemovesDestroyedStations()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(4f, 0f), 100)
+            });
+            var gadgetId = GadgetDefinition.TiffinStation.GadgetId;
+            Assert.That(authority.TryAcquireGadget(new CombatEntityId(1), gadgetId), Is.True);
+            var use = authority.TryUseGadget(new GadgetUseCommand(
+                new CombatEntityId(1), gadgetId, Float2.Zero, Float2.Up, 1));
+            Assert.That(use.Used, Is.True);
+
+            var first = authority.TryDamageStation(use.Effect.StationId, 10);
+            Assert.That(first.Applied, Is.True);
+            Assert.That(first.AmountApplied, Is.EqualTo(10));
+            Assert.That(first.CurrentHealth, Is.EqualTo(35));
+            Assert.That(first.Destroyed, Is.False);
+
+            var destroyed = authority.TryDamageStation(use.Effect.StationId, 50);
+            Assert.That(destroyed.Applied, Is.True);
+            Assert.That(destroyed.AmountApplied, Is.EqualTo(35));
+            Assert.That(destroyed.CurrentHealth, Is.Zero);
+            Assert.That(destroyed.Destroyed, Is.True);
+            Assert.That(authority.TryDamageStation(use.Effect.StationId, 1).Applied, Is.False);
+        }
     }
 }

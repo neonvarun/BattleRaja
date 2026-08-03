@@ -54,6 +54,13 @@ namespace BattleRaja.Presentation.Match
             return _authority != null && _authority.TryAcquireGadget(collectorId, gadgetId);
         }
 
+        public GadgetStationDamageResult TryDamageStation(int stationId, int rawAmount)
+        {
+            return _authority != null
+                ? _authority.TryDamageStation(stationId, rawAmount)
+                : new GadgetStationDamageResult(false, 0, false, 0);
+        }
+
         public DamageRequest ApplyDamageMitigation(DamageRequest request)
         {
             return _authority != null ? _authority.ApplyDamageMitigation(request) : request;
