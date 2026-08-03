@@ -98,5 +98,22 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(landscape, Is.EqualTo(9.5f).Within(0.0001f));
             Assert.That(portrait, Is.GreaterThan(landscape));
         }
+
+        [Test]
+        public void CompactMatchStatusKeepsZoneTelemetryReadable()
+        {
+            var status = OfflineMatchHud.FormatMatchStatus(
+                BattleRaja.Core.Domain.MatchPhase.SpawnProtection,
+                8,
+                14f,
+                8f,
+                BattleRaja.Core.Domain.AandhiState.Warning,
+                2.5f,
+                compact: true);
+
+            Assert.That(status, Does.Contain("\n"));
+            Assert.That(status, Does.Contain("Z 14.0 > 8.0"));
+            Assert.That(status, Does.Contain("WARN 2.5s"));
+        }
     }
 }

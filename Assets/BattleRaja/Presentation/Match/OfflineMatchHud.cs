@@ -13,7 +13,8 @@ namespace BattleRaja.Presentation.Match
     /// </summary>
     public sealed class OfflineMatchHud : MonoBehaviour
     {
-        private const string MatchFormat = "MATCH {0}  ALIVE {1}  ZONE {2:0.0}  NEXT {3:0.0}{4}";
+        private const string MatchFormat = "MATCH {0}\nALIVE {1}  ZONE {2:0.0} > {3:0.0}{4}";
+        private const string CompactMatchFormat = "{0}\nALIVE {1}  Z {2:0.0} > {3:0.0}{4}";
 
         [SerializeField] private OfflineMatchController match;
         [SerializeField] private bool showZoneOverlay = true;
@@ -29,6 +30,7 @@ namespace BattleRaja.Presentation.Match
         private bool _leftHanded;
         private bool _reducedFlashes;
         private bool _paused;
+        private bool _compactLayout;
 
         private void Awake()
         {
@@ -60,13 +62,12 @@ namespace BattleRaja.Presentation.Match
         private void Update()
         {
             if (match == null) return;
-            var warning = match.AandhiState == BattleRaja.Core.Domain.AandhiState.Warning
-                ? $"  WARNING {match.AandhiWarningRemainingSeconds:0.0}s"
-                : match.AandhiState == BattleRaja.Core.Domain.AandhiState.Closing ? "  CLOSING" : string.Empty;
+            ApplyResponsiveLayout();
+            var compact = _compactLayout;
             if (_statusText != null)
             {
                 _statusText.gameObject.SetActive(showZoneOverlay);
-                _statusText.text = string.Format(MatchFormat, match.CurrentPhase.ToString().ToUpperInvariant(), match.AliveCount, match.ZoneRadius, match.NextZoneRadius, warning);
+                _statusText.text = FormatMatchStatus(match.CurrentPhase, match.AliveCount, match.ZoneRadius, match.NextZoneRadius, match.AandhiState, match.AandhiWarningRemainingSeconds, compact);
                 _statusText.color = _highContrast ? Color.white : new Color(0.9f, 0.96f, 1f, 1f);
             }
 
@@ -96,6 +97,15 @@ namespace BattleRaja.Presentation.Match
                         : "RESULTS";
                 }
             }
+        }
+
+        public static string FormatMatchStatus(MatchPhase phase, int aliveCount, float zoneRadius, float nextZoneRadius, AandhiState aandhiState, float warningRemainingSeconds, bool compact)
+        {
+            var warning = aandhiState == AandhiState.Warning
+                ? $"  WARN {warningRemainingSeconds:0.0}s"
+                : aandhiState == AandhiState.Closing ? "  CLOSE" : string.Empty;
+            var format = compact ? CompactMatchFormat : MatchFormat;
+            return string.Format(format, phase.ToString().ToUpperInvariant(), aliveCount, zoneRadius, nextZoneRadius, warning);
         }
 
         private void BuildCanvasUi()
@@ -128,6 +138,25 @@ namespace BattleRaja.Presentation.Match
             CreateButton(_settingsPanel.transform, "HighContrast", "HIGH CONTRAST", new Vector2(0.08f, 0.35f), new Vector2(0.92f, 0.46f), ToggleHighContrast);
             CreateButton(_settingsPanel.transform, "AimAssist", "AIM ASSIST (READY)", new Vector2(0.08f, 0.20f), new Vector2(0.92f, 0.31f), () => { });
             _settingsPanel.SetActive(false);
+            ApplyResponsiveLayout();
+        }
+
+        private void ApplyResponsiveLayout()
+        {
+            if (_statusText == null || _spectatorText == null || Screen.height <= 0) return;
+            var compact = (float)Screen.width / Screen.height < 0.75f;
+            if (compact == _compactLayout && _statusText.fontSize == (compact ? 18 : 22)) return;
+
+            _compactLayout = compact;
+            var statusRect = _statusText.rectTransform;
+            statusRect.anchorMin = compact ? new Vector2(0.42f, 0.90f) : new Vector2(0.42f, 0.94f);
+            statusRect.anchorMax = new Vector2(0.98f, 0.99f);
+            _statusText.fontSize = compact ? 18 : 22;
+
+            var spectatorRect = _spectatorText.rectTransform;
+            spectatorRect.anchorMin = compact ? new Vector2(0.42f, 0.84f) : new Vector2(0.42f, 0.88f);
+            spectatorRect.anchorMax = compact ? new Vector2(0.98f, 0.89f) : new Vector2(0.98f, 0.93f);
+            _spectatorText.fontSize = compact ? 16 : 20;
         }
 
         private void ToggleSettings()
