@@ -1,5 +1,6 @@
 using BattleRaja.Core.Application;
 using BattleRaja.Core.Domain;
+using BattleRaja.Presentation.Match;
 using BattleRaja.Presentation.Movement;
 using BattleRaja.Presentation.Visuals;
 using UnityEngine;
@@ -15,6 +16,7 @@ namespace BattleRaja.Presentation.Combat
         [SerializeField] private PlayerInputAdapter inputAdapter;
         [SerializeField] private MovementPlayerAgent movementAgent;
         [SerializeField] private CombatProjectilePool projectilePool;
+        [SerializeField] private OfflineMatchController match;
         [SerializeField] private int simulationTickRate = 30;
 
         private WeaponCooldownState _cooldown;
@@ -23,9 +25,25 @@ namespace BattleRaja.Presentation.Combat
         private int _simulationTick;
 
         public int ActiveProjectileCount => projectilePool != null ? projectilePool.ActiveCount : 0;
-        public float CooldownRemaining => _cooldown != null && _clock != null
-            ? _cooldown.RemainingSeconds(_clock.Tick, _clock.TickRate)
-            : 0f;
+        public float CooldownRemaining
+        {
+            get
+            {
+                if (_clock == null) return 0f;
+                if (UsesAuthority)
+                {
+                    return match.GetAttackCooldownRemaining(
+                        new CombatEntityId(actorId),
+                        _clock.TickRate,
+                        _clock.Tick);
+                }
+
+                return _cooldown != null ? _cooldown.RemainingSeconds(_clock.Tick, _clock.TickRate) : 0f;
+            }
+        }
+
+        private bool UsesAuthority => match != null && match.Simulation != null &&
+            match.IsAuthorityActor(new CombatEntityId(actorId));
 
         public void ConfigureFighter(FighterDefinitionAsset definition)
         {
@@ -41,6 +59,7 @@ namespace BattleRaja.Presentation.Combat
             inputAdapter = inputAdapter != null ? inputAdapter : GetComponent<PlayerInputAdapter>();
             movementAgent = movementAgent != null ? movementAgent : GetComponent<MovementPlayerAgent>();
             projectilePool = projectilePool != null ? projectilePool : FindAnyObjectByType<CombatProjectilePool>();
+            match = match != null ? match : FindAnyObjectByType<OfflineMatchController>();
             _definition = fighterDefinition != null
                 ? fighterDefinition.ToDomain().BasicAttack
                 : (weapon != null ? weapon.ToDomain() : ProjectileWeaponDefinition.TrainingBolt);
@@ -76,13 +95,20 @@ namespace BattleRaja.Presentation.Combat
                 return;
             }
 
-            var intervalTicks = Mathf.Max(1, Mathf.CeilToInt(_definition.FireIntervalSeconds * _clock.TickRate));
-            if (_cooldown.TryConsume(command.SimulationTick, intervalTicks))
+            if (UsesAuthority)
             {
-                if (projectilePool.Spawn(command, _definition, faction) != null)
-                {
-                    GetComponent<FighterPresentation>()?.NotifyAttack();
-                }
+                var authority = match.TryAcceptAttack(command, _definition, _clock.TickRate);
+                if (!authority.Accepted) return;
+            }
+            else
+            {
+                var intervalTicks = Mathf.Max(1, Mathf.CeilToInt(_definition.FireIntervalSeconds * _clock.TickRate));
+                if (!_cooldown.TryConsume(command.SimulationTick, intervalTicks)) return;
+            }
+
+            if (projectilePool.Spawn(command, _definition, faction) != null)
+            {
+                GetComponent<FighterPresentation>()?.NotifyAttack();
             }
         }
 

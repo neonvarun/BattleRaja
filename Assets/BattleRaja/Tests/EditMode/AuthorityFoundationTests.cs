@@ -87,6 +87,46 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void MatchAuthorityRejectsDuplicateAndOutOfOrderAttackCommands()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            var actorId = new CombatEntityId(1);
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(actorId, Float2.Zero, 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(8f, 0f), 100)
+            });
+
+            var first = authority.TryAcceptAttack(
+                new AttackCommand(actorId, 1, Float2.Zero, Float2.Up, true),
+                ProjectileWeaponDefinition.TrainingBolt,
+                30);
+            var duplicate = authority.TryAcceptAttack(
+                new AttackCommand(actorId, 1, Float2.Zero, Float2.Up, true),
+                ProjectileWeaponDefinition.TrainingBolt,
+                30);
+            var older = authority.TryAcceptAttack(
+                new AttackCommand(actorId, 0, Float2.Zero, Float2.Up, true),
+                ProjectileWeaponDefinition.TrainingBolt,
+                30);
+            var cooldown = authority.TryAcceptAttack(
+                new AttackCommand(actorId, 2, Float2.Zero, Float2.Up, true),
+                ProjectileWeaponDefinition.TrainingBolt,
+                30);
+            var afterCooldown = authority.TryAcceptAttack(
+                new AttackCommand(actorId, 12, Float2.Zero, Float2.Up, true),
+                ProjectileWeaponDefinition.TrainingBolt,
+                30);
+
+            Assert.That(first.Accepted, Is.True);
+            Assert.That(duplicate.Accepted, Is.False);
+            Assert.That(duplicate.Failure, Is.EqualTo(MatchAuthorityAttackFailure.OutOfOrder));
+            Assert.That(older.Failure, Is.EqualTo(MatchAuthorityAttackFailure.OutOfOrder));
+            Assert.That(cooldown.Failure, Is.EqualTo(MatchAuthorityAttackFailure.Cooldown));
+            Assert.That(afterCooldown.Accepted, Is.True);
+        }
+
+        [Test]
         public void MatchAuthorityOwnsMayaDecoyLifetimeAndDamage()
         {
             var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);

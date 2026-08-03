@@ -84,6 +84,27 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator ProductionAttackCommandsUseAuthorityOrderingAndCooldown()
+        {
+            PlayModeTestHelpers.DisableBots();
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            var player = Object.FindObjectsByType<MovementPlayerAgent>()
+                .First(agent => agent.ActorId == 1);
+            var attack = player.GetComponent<CombatAttackController>();
+            var origin = new Float2(player.transform.position.x, player.transform.position.z);
+            var command = new AttackCommand(player.GetComponent<CombatTarget>().Id, 1, origin, Float2.Up, true);
+
+            attack.Submit(command);
+            attack.Submit(command);
+            attack.Submit(new AttackCommand(command.InstigatorId, 0, origin, Float2.Up, true));
+            yield return null;
+
+            Assert.That(match.Simulation, Is.Not.Null);
+            Assert.That(attack.ActiveProjectileCount, Is.EqualTo(1));
+            Assert.That(attack.CooldownRemaining, Is.GreaterThan(0f));
+        }
+
+        [UnityTest]
         public IEnumerator InMatchAimAssistSettingUpdatesPlayerInputAndPersists()
         {
             var key = "battleraja.settings.aim_assist";

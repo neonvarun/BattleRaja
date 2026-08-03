@@ -64,6 +64,39 @@ namespace BattleRaja.Core.Application
         public Float2 Position { get; }
     }
 
+    public enum MatchAuthorityAttackFailure
+    {
+        None = 0,
+        InvalidCommand = 1,
+        UnknownActor = 2,
+        DefeatedActor = 3,
+        OutOfOrder = 4,
+        Cooldown = 5
+    }
+
+    public readonly struct MatchAuthorityAttack
+    {
+        public MatchAuthorityAttack(
+            CombatEntityId actorId,
+            int simulationTick,
+            bool accepted,
+            MatchAuthorityAttackFailure failure,
+            int cooldownTicksRemaining)
+        {
+            ActorId = actorId;
+            SimulationTick = simulationTick;
+            Accepted = accepted;
+            Failure = failure;
+            CooldownTicksRemaining = cooldownTicksRemaining;
+        }
+
+        public CombatEntityId ActorId { get; }
+        public int SimulationTick { get; }
+        public bool Accepted { get; }
+        public MatchAuthorityAttackFailure Failure { get; }
+        public int CooldownTicksRemaining { get; }
+    }
+
     public readonly struct MatchAuthorityDecoy
     {
         public MatchAuthorityDecoy(
@@ -211,6 +244,8 @@ namespace BattleRaja.Core.Application
         private readonly Dictionary<CombatEntityId, MovementTuning> _movementTunings = new Dictionary<CombatEntityId, MovementTuning>();
         private readonly Dictionary<CombatEntityId, int> _lastMovementTicks = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<CombatEntityId, int> _lastAbilityDisplacementTicks = new Dictionary<CombatEntityId, int>();
+        private readonly Dictionary<CombatEntityId, WeaponCooldownState> _attackCooldowns = new Dictionary<CombatEntityId, WeaponCooldownState>();
+        private readonly Dictionary<CombatEntityId, int> _lastAttackTicks = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<CombatEntityId, ChargeThrowRuntime> _pehelChargeRuntimes = new Dictionary<CombatEntityId, ChargeThrowRuntime>();
         private readonly Dictionary<CombatEntityId, int> _lastPehelCommandTicks = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<CombatEntityId, int> _lastPehelStepTicks = new Dictionary<CombatEntityId, int>();
@@ -281,6 +316,8 @@ namespace BattleRaja.Core.Application
             _movementTunings.Clear();
             _lastMovementTicks.Clear();
             _lastAbilityDisplacementTicks.Clear();
+            _attackCooldowns.Clear();
+            _lastAttackTicks.Clear();
             _pehelChargeRuntimes.Clear();
             _lastPehelCommandTicks.Clear();
             _lastPehelStepTicks.Clear();
@@ -299,6 +336,8 @@ namespace BattleRaja.Core.Application
                 _movementTunings[spawns[i].Id] = MovementTuning.Default;
                 _lastMovementTicks[spawns[i].Id] = -1;
                 _lastAbilityDisplacementTicks[spawns[i].Id] = -1;
+                _attackCooldowns[spawns[i].Id] = new WeaponCooldownState();
+                _lastAttackTicks[spawns[i].Id] = -1;
                 _lastDecoySpawnTicks[spawns[i].Id] = -1;
             }
 
@@ -395,6 +434,87 @@ namespace BattleRaja.Core.Application
 
             _lastAbilityDisplacementTicks[actorId] = simulationTick;
             return new MatchAuthorityDisplacement(actorId, simulationTick, true, displacement, position);
+        }
+
+        /// <summary>
+        /// Validates and consumes one fixed-tick attack command for a registered
+        /// participant. Projectile spawning remains a presentation concern, but
+        /// command ordering, alive-state validation and cooldown ownership stay in
+        /// the transport-independent authority.
+        /// </summary>
+        public MatchAuthorityAttack TryAcceptAttack(
+            AttackCommand command,
+            ProjectileWeaponDefinition definition,
+            int tickRate)
+        {
+            var actorId = command.InstigatorId;
+            if (!command.Pressed || command.SimulationTick < 0 || tickRate <= 0 ||
+                !command.Origin.IsFinite || !command.Direction.IsFinite ||
+                !definition.IsValid(out _))
+            {
+                return new MatchAuthorityAttack(
+                    actorId,
+                    command.SimulationTick,
+                    false,
+                    MatchAuthorityAttackFailure.InvalidCommand,
+                    0);
+            }
+
+            if (!_attackCooldowns.TryGetValue(actorId, out var cooldown) ||
+                !RequireSimulation().TryGetSnapshot(actorId, out var snapshot))
+            {
+                return new MatchAuthorityAttack(
+                    actorId,
+                    command.SimulationTick,
+                    false,
+                    MatchAuthorityAttackFailure.UnknownActor,
+                    0);
+            }
+
+            if (!snapshot.Alive)
+            {
+                return new MatchAuthorityAttack(
+                    actorId,
+                    command.SimulationTick,
+                    false,
+                    MatchAuthorityAttackFailure.DefeatedActor,
+                    cooldown.RemainingTicks(command.SimulationTick));
+            }
+
+            if (_lastAttackTicks.TryGetValue(actorId, out var lastTick) && command.SimulationTick <= lastTick)
+            {
+                return new MatchAuthorityAttack(
+                    actorId,
+                    command.SimulationTick,
+                    false,
+                    MatchAuthorityAttackFailure.OutOfOrder,
+                    cooldown.RemainingTicks(command.SimulationTick));
+            }
+
+            _lastAttackTicks[actorId] = command.SimulationTick;
+            var intervalTicks = Math.Max(1, (int)Math.Ceiling(definition.FireIntervalSeconds * tickRate));
+            if (!cooldown.TryConsume(command.SimulationTick, intervalTicks))
+            {
+                return new MatchAuthorityAttack(
+                    actorId,
+                    command.SimulationTick,
+                    false,
+                    MatchAuthorityAttackFailure.Cooldown,
+                    cooldown.RemainingTicks(command.SimulationTick));
+            }
+
+            return new MatchAuthorityAttack(
+                actorId,
+                command.SimulationTick,
+                true,
+                MatchAuthorityAttackFailure.None,
+                cooldown.RemainingTicks(command.SimulationTick));
+        }
+
+        public float GetAttackCooldownRemaining(CombatEntityId actorId, int tickRate, int currentTick)
+        {
+            if (tickRate <= 0 || !_attackCooldowns.TryGetValue(actorId, out var cooldown)) return 0f;
+            return cooldown.RemainingSeconds(currentTick, tickRate);
         }
 
         /// <summary>
@@ -621,13 +741,16 @@ namespace BattleRaja.Core.Application
                 DamageType.Ability,
                 direction,
                 simulationTick);
-            var result = simulation.ApplyDamage(request, targetFaction, false, false);
+            var authorityDamage = ResolveDamage(request, targetFaction, false, false);
             _lastPehelThrowTicks[actorId] = simulationTick;
             var after = simulation.TryGetSnapshot(targetId, out var afterSnapshot)
                 ? afterSnapshot
                 : target;
-            damage = new MatchAuthorityDamage(request, result, after.CurrentHealth);
-            if (!result.Applied) return false;
+            damage = new MatchAuthorityDamage(
+                authorityDamage.Request,
+                authorityDamage.Result,
+                after.CurrentHealth);
+            if (!authorityDamage.Result.Applied) return false;
 
             var displacement = direction.Normalized * (FighterSpecialDefinition.PehelChargeThrow.Magnitude * 0.25f);
             var position = after.Position + displacement;

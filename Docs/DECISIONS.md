@@ -1089,3 +1089,32 @@ Record every material choice here. Do not silently overwrite old decisions.
   `AuthorityFoundationTests.AuthorityOwnsPehelChargeCaptureDamageAndThrowDisplacement`,
   and the next full EditMode/PlayMode baseline.
 - **Owner:** Human project owner
+
+### ADR-052 — Validate production attack commands in match authority
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical slice; projectile collision, network
+  replication and broader rule migration remain future work.
+- **Context:** Production `CombatAttackController` previously owned the fire-rate gate
+  and could spawn a projectile after only local presentation checks. That allowed
+  duplicate or stale commands to bypass the same fixed-tick authority boundary used by
+  movement and fighter abilities.
+- **Decision:** Add `OfflineMatchAuthority.TryAcceptAttack` as the transport-independent
+  validation seam. It rejects invalid/non-finite commands, unknown or defeated actors,
+  duplicate/out-of-order ticks and cooldown violations, and consumes an authority-owned
+  `WeaponCooldownState`. `CombatAttackController` submits the common command and only
+  spawns the presentation projectile after an accepted result; the HUD reads the
+  authority cooldown for production actors. Core assembly dependency checks and a
+  presentation-mutation scan now enforce the boundary in repository validation.
+- **Consequences:** Production attack ordering, alive-state validation and cooldown
+  policy are deterministic and testable without Unity. Projectile instantiation and
+  collision projection remain Unity presentation responsibilities, so this is not yet
+  a trusted multiplayer combat implementation. The Pehel throw path also resolves its
+  damage through the existing authority seam while world collision remains offline.
+- **Evidence/sources:** `OfflineMatchAuthority.TryAcceptAttack`,
+  `CombatAttackController`, `OfflineMatchController`,
+  `AuthorityFoundationTests.MatchAuthorityRejectsDuplicateAndOutOfOrderAttackCommands`,
+  `OfflineMatchPlayModeTests.ProductionAttackCommandsUseAuthorityOrderingAndCooldown`,
+  `Tools/Validation/validate.ps1`, and the Phase 1 continuation in
+  `Docs/QA/LATEST_HEAD_BASELINE.md`.
+- **Owner:** Human project owner

@@ -57,9 +57,11 @@ namespace BattleRaja.Tests.EditMode
         public void WeaponValidationRejectsUnsafeDefinitions()
         {
             var invalid = new ProjectileWeaponDefinition(10, 0f, 12f, 10f, 1f, 0.1f, ~0, false, false);
+            var nonFinite = new ProjectileWeaponDefinition(10, float.NaN, 12f, 10f, 1f, 0.1f, ~0, false, false);
             var valid = ProjectileWeaponDefinition.TrainingBolt;
 
             Assert.That(invalid.IsValid(out _), Is.False);
+            Assert.That(nonFinite.IsValid(out _), Is.False);
             Assert.That(valid.IsValid(out _), Is.True);
         }
 

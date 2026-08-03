@@ -76,6 +76,28 @@ namespace BattleRaja.Presentation.Match
                 : default(MatchAuthorityDisplacement);
         }
 
+        public MatchAuthorityAttack TryAcceptAttack(
+            AttackCommand command,
+            ProjectileWeaponDefinition definition,
+            int tickRate)
+        {
+            return _authority != null
+                ? _authority.TryAcceptAttack(command, definition, tickRate)
+                : new MatchAuthorityAttack(
+                    command.InstigatorId,
+                    command.SimulationTick,
+                    false,
+                    MatchAuthorityAttackFailure.UnknownActor,
+                    0);
+        }
+
+        public float GetAttackCooldownRemaining(CombatEntityId actorId, int tickRate, int currentTick)
+        {
+            return _authority != null
+                ? _authority.GetAttackCooldownRemaining(actorId, tickRate, currentTick)
+                : 0f;
+        }
+
         public bool TryStartPehelCharge(AbilityCommand command, Float2 movement, Float2 facing)
         {
             return _authority != null && _authority.TryStartPehelCharge(command, movement, facing);
