@@ -15,6 +15,10 @@ Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://
 - Clicking `REMATCH` returned to a fresh live match. The post-transition screenshot is
   `Phase7/playwright-1280x720-rematch-match-20260803.png`. The session recorded 61
   console messages, 0 errors and 1 known Unity `JS_FileSystem_Sync` deprecation warning.
+- The same exact APK was driven on the permitted Lava phone until the offline match
+  resolved; `Phase7/android-lava-results-authority-20260803.png` shows the portrait
+  Results panel and rematch/menu controls. This is a device smoke observation, not a
+  claim of touch ergonomics or human approval.
 - This closes the deliberate Results/rematch technical capture gap, but it does not
   claim final visual quality, touch ergonomics or owner approval. Gadget pickup/use is
   still not visually verified.
