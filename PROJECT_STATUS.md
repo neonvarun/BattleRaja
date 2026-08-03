@@ -9,13 +9,14 @@
 - Product vision: drafted
 - Autonomous M1–M11 sequential execution: active; milestone gates and external
   service approvals remain explicit.
-- Latest validated runtime source HEAD: `d67dd48` (current docs update follows this source commit); the current repository includes
+- Latest validated runtime source HEAD: `42e93e7` (current docs update follows this source commit); the current repository includes
   the connected Bazaar architecture prefab and explicit production-scene contract after the authority-driven Maya decoy,
   fighter displacement, Dhol, production movement and authority-first damage/healing
   checkpoints; production-flow EventSystem creation is
   Input System-only and the selected-fighter HUD path is covered by the current
   regression suite; Maya decoy perception refresh, authority-routed combat events and
-  production Pehel charge/capture/damage/throw resolution are covered by regression.
+  production Pehel charge/capture/damage/throw resolution and the Bazaar gadget
+  pickup/use route are covered by regression.
 - Root agent rules: active
 - Milestone 0: complete and committed locally
 - Unity project: verified at the repository root with URP and MovementLab scenes
@@ -50,8 +51,8 @@
 ## Current source rebaseline evidence — 2026-08-03
 
 - Repository validation: 0 errors, 0 warnings; full EditMode 101/101 and full PlayMode
-  52/52 passed from source commit `d67dd48`; focused Pehel authority tests pass 1/1 in
-  each mode.
+  53/53 passed from source commit `42e93e7`; focused Pehel authority and production
+  gadget route tests pass 1/1 each in PlayMode.
 - Android: current Bazaar APK `Builds/M11/Android/BattleRaja-BazaarBastion-M11.apk`
   is 151,554,550 bytes (SHA-256
   `88FC6A49A52AEFE4D38CF502120AD1FB49C0B86AD8475B6B82E53F230001188F`); exact APK

@@ -2,15 +2,16 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated runtime source HEAD: `d67dd48` (`authority: route production Pehel charge through match authority`)
-Latest runtime-bearing candidate: `d67dd48` (production Pehel charge/capture/damage/throw resolution through the offline match authority boundary)
+Latest validated runtime source HEAD: `42e93e7` (`test: cover production gadget authority route`)
+Latest runtime-bearing candidate: `42e93e7` (production Pehel authority plus a production Bazaar gadget pickup/use regression)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
-## Current source rebaseline after production Pehel authority (`d67dd48`, 2026-08-03)
+## Current source rebaseline after production gadget route (`42e93e7`, 2026-08-03)
 
-This is the fresh validation/build/smoke baseline for source commit `d67dd48`, based
+This is the fresh validation/build/smoke baseline for source commit `42e93e7`, based
 on `aa640c2`. The Pehel production controller now submits commands and consumes
-immutable authority results; no Photon gameplay claim is made. Build-generated
+immutable authority results, and the production Bazaar route has a gadget pickup/use
+regression; no Photon gameplay claim is made. Build-generated
 Bootstrap/Tutorial fixture rewrites were discarded after the builds, while the
 pre-existing user-owned MovementLab and Burst changes remain unstaged.
 
@@ -20,7 +21,7 @@ pre-existing user-owned MovementLab and Burst changes remain unstaged.
 | Unity/toolchain | Unity `6000.5.6f1`; Git 2.53.0; Git LFS 3.7.1; embedded ADB 36.0.2 | installed tool output |
 | Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject ...` — 0 errors, 0 warnings | command output from 2026-08-03 |
 | Full EditMode | 101 passed, 0 failed, 0 skipped; focused Pehel authority test 1/1 | `Builds/M11/TestResults/pehel-authority-full-editmode-20260803.xml`, `pehel-authority-editmode-20260803-retry.xml` |
-| Full PlayMode | 52 passed, 0 failed, 0 skipped; focused production Pehel authority test 1/1 | `Builds/M11/TestResults/pehel-authority-final-playmode-full-20260803.xml`, `pehel-authority-playmode-stable-20260803.xml` |
+| Full PlayMode | 53 passed, 0 failed, 0 skipped; focused production Pehel authority and gadget route tests pass 1/1 each | `Builds/M11/TestResults/production-gadget-full-playmode-20260803.xml`, `pehel-authority-final-playmode-full-20260803.xml`, `production-gadget-playmode-lower-20260803.xml` |
 | Android build | `BuildAndroidBazaarBastionDevelopment` succeeded; APK 151,554,550 bytes; SHA-256 `88FC6A49A52AEFE4D38CF502120AD1FB49C0B86AD8475B6B82E53F230001188F` | `Builds/M11/Android/BattleRaja-BazaarBastion-M11.apk`, `Builds/M11/Logs/android-build.log` |
 | Lava runtime | Exact APK installed/launched only on `ST5GDW23LB004392` (`LAVA LXX508`); `UnityPlayerGameActivity` top-resumed; strict fatal/app-process marker search had no hits. The optional Play Asset Delivery class-probe warning remains known. | `Builds/M11/Logs/android-lava-pehel-authority-menu-ready-20260803.png`, ADB output |
 | Lava memory | `TOTAL PSS: 408734 KB`; `TOTAL RSS: 545576 KB`; `Graphics: 82088 KB` | `dumpsys meminfo` from 2026-08-03 |

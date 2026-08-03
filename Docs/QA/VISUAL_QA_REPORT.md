@@ -2,7 +2,7 @@
 
 Date: 2026-08-03
 Runtime-bearing candidate: `d67dd48` (production Pehel authority continuation; prior artifact candidate remains `8f190cd`)
-Current validated runtime source HEAD: `d67dd48`
+Current validated runtime source HEAD: `42e93e7`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://127.0.0.1:8139/index.html`
 
@@ -19,6 +19,14 @@ Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://
 - These are technical smoke captures for the authority continuation. Gadget use,
   authored art/audio, touch ergonomics, multi-browser parity and human visual approval
   remain open.
+
+## Production gadget route evidence — 2026-08-03
+
+- The production Bazaar PlayMode regression now proves Dhol pickup/use through the
+  live authority route, but this is automated evidence rather than visual approval.
+- The inspected Web and Lava captures still do not prove a human-readable pickup/use
+  moment; gadget visual readability, touch ergonomics, authored effects, browser parity
+  and human review remain open.
 
 ## Current HEAD Web/Android visual interaction gate (`efbb1ac` docs atop `8f190cd`, 2026-08-03)
 
