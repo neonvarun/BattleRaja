@@ -33,6 +33,8 @@ namespace BattleRaja.Editor
         private const string BazaarBastionScenePath = "Assets/BattleRaja/Scenes/Gameplay/BazaarBastion.unity";
         private const string TutorialArenaScenePath = "Assets/BattleRaja/Scenes/Tutorial/TutorialArena.unity";
         private const string MovementAssetFolder = "Assets/BattleRaja/Content/Movement";
+        private const string BazaarPrefabFolder = "Assets/BattleRaja/Content/Prefabs";
+        private const string BazaarArchitecturePrefabPath = BazaarPrefabFolder + "/BazaarArchitecture.prefab";
         private const string TuningAssetPath = MovementAssetFolder + "/M1-MovementTuning.asset";
         private const string InputAssetPath = MovementAssetFolder + "/BattleRajaMovement.inputactions";
         private const string WeaponAssetPath = "Assets/BattleRaja/Content/Weapons/M2-TrainingBolt.asset";
@@ -348,6 +350,7 @@ namespace BattleRaja.Editor
             {
                 CreateBazaarDecor(arena.transform, wall, stall);
             }
+            EnsureBazaarArchitecturePrefab(arena.transform);
             if (arena.GetComponentInChildren<BattleRajaAudioDirector>(true) == null)
             {
                 var audioObject = new GameObject("AudioDirector");
@@ -540,6 +543,11 @@ namespace BattleRaja.Editor
             if (!File.Exists(WeaponAssetPath) || !File.Exists(BijliWeaponAssetPath) || !File.Exists(FighterAssetPath))
             {
                 throw new BuildFailedException("M2/M3 projectile or Bijli fighter asset is missing.");
+            }
+
+            if (!File.Exists(BazaarArchitecturePrefabPath))
+            {
+                throw new BuildFailedException("Bazaar architecture prefab is missing.");
             }
 
             var fighter = AssetDatabase.LoadAssetAtPath<FighterDefinitionAsset>(FighterAssetPath);
@@ -890,6 +898,27 @@ namespace BattleRaja.Editor
         {
             CreateBlock(name + "Counter", position, new Vector3(2.4f, 1.6f, 1.2f), material, parent);
             CreateBlock(name + "Roof", position + new Vector3(0f, 1.8f, 0f), new Vector3(2.8f, 0.25f, 1.6f), material, parent);
+        }
+
+        private static void EnsureBazaarArchitecturePrefab(Transform arena)
+        {
+            var architecture = arena.Find("BazaarArchitecture");
+            if (architecture == null)
+            {
+                throw new BuildFailedException("Bazaar architecture root is missing.");
+            }
+
+            Directory.CreateDirectory(BazaarPrefabFolder);
+            if (PrefabUtility.IsPartOfPrefabInstance(architecture.gameObject)) return;
+
+            var prefab = PrefabUtility.SaveAsPrefabAssetAndConnect(
+                architecture.gameObject,
+                BazaarArchitecturePrefabPath,
+                InteractionMode.AutomatedAction);
+            if (prefab == null)
+            {
+                throw new BuildFailedException("Bazaar architecture prefab could not be created.");
+            }
         }
 
         private static Canvas CreateTouchCanvas(out VirtualStick movementStick, out VirtualStick aimStick, out AttackButton attackButton, out AbilityButton abilityButton, out GadgetUseButton gadgetButton)
