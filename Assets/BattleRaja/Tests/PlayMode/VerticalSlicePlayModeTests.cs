@@ -12,6 +12,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using UnityEngine.UI;
 
 namespace BattleRaja.Tests.PlayMode
 {
@@ -203,6 +204,15 @@ namespace BattleRaja.Tests.PlayMode
         {
             Assert.That(Object.FindFirstObjectByType<OfflineMatchController>(), Is.Not.Null);
             Assert.That(Object.FindObjectsByType<GadgetUser>(FindObjectsSortMode.None), Has.Length.EqualTo(8));
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator TouchControlsExposeReadableActionLabels()
+        {
+            Assert.That(GameObject.Find("AttackButton")?.GetComponentInChildren<Text>(true)?.text, Is.EqualTo("ATTACK"));
+            Assert.That(GameObject.Find("AbilityButton")?.GetComponentInChildren<Text>(true)?.text, Is.EqualTo("ABILITY"));
+            Assert.That(GameObject.Find("GadgetButton")?.GetComponentInChildren<Text>(true)?.text, Is.EqualTo("GADGET"));
             yield return null;
         }
 
