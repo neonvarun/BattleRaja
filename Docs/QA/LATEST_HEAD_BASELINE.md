@@ -27,7 +27,7 @@ pre-existing user-owned MovementLab and Burst changes remain unstaged.
 | Lava memory | `TOTAL PSS: 408734 KB`; `TOTAL RSS: 545576 KB`; `Graphics: 82088 KB` | `dumpsys meminfo` from 2026-08-03 |
 | Web build | `BuildWebBazaarBastionDevelopment` succeeded; 19 files / 133,581,238 bytes; `Web-BazaarBastion.wasm` 120,872,006 bytes; SHA-256 `BEB099C9B6B0FA148A70CC479FC2365F83944F046DB0F60A6DD2D4D148B31E7A` | `Builds/M11/Web-BazaarBastion`, `Builds/M11/Logs/web-build.log` |
 | Web serve/console | Existing local `http://127.0.0.1:8139/index.html` returned HTTP 200; Playwright session `brweb` reported 0 errors and 0 warnings across 52 messages. | Playwright session `brweb`, 2026-08-03 |
-| Web visual/interaction | Current rebuilt menu was inspected at 1024×768; prior flow captures cover the primary route and results/rematch. Gadget use remains unverified. | `Docs/QA/Visual/Phase7/web-bazaar-pehel-authority-menu-1024x768-20260803.png`, `web-bazaar-*.png` |
+| Web visual/interaction | Current rebuilt Web candidate was inspected at 1024×768 for the locked-service error route and settings, and at 1920×1080 for menu/settings. Prior flow captures cover the primary route and results/rematch. Gadget use remains unverified. | `Docs/QA/Visual/Phase7/web-bazaar-error-reconnect-1024x768-20260803.png`, `web-bazaar-settings-1024x768-20260803.png`, `web-bazaar-menu-1920x1080-20260803.png`, `web-bazaar-settings-1920x1080-20260803.png` |
 
 The baseline passes compile/test/build/smoke gates, but remains prototype evidence:
 greybox art, gadget-use capture, performance/soak, multi-browser coverage, real Photon

@@ -23,7 +23,7 @@
 - Unity version: `6000.5.6f1`
 - Android toolchain: Unity-managed SDK/NDK/OpenJDK modules installed and verified; SDK/Build Tools 36.0.0, NDK r27c `27.2.12479018`, OpenJDK 17.0.18, embedded ADB 36.0.0
 - Unity Web build support: present and used successfully
-- Browser test environment: Chrome 150 and Edge 150 available; Firefox/Playwright/WebDriver unavailable
+- Browser test environment: Chrome 150, Edge 150 and Playwright CLI available; Firefox unavailable
 - Packages: Input System `1.20.0`, uGUI `2.5.0`, URP `17.5.0`, Test Framework `1.7.0`; lockfile is authoritative
 - Movement laboratory: implemented with grey-box arena, placeholder player, independent movement/aim, orthographic camera, aim indicator, desktop bindings and safe-area touch sticks
 - M1 report: `Docs/MILESTONE_REPORTS/M1.md`; technical gate passed provisionally with

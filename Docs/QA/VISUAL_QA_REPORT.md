@@ -78,6 +78,21 @@ Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://
 - Authored art/audio/animation, touch ergonomics, multi-browser parity and human review
   remain open.
 
+## Settings and blocked-service error route — 2026-08-03
+
+- The rebuilt Web candidate was visually inspected at **1024×768** for the settings
+  panel and locked-service error/retry route, and at **1920×1080** for the main menu
+  and settings panel.
+- The inspected captures show readable text, bounded panels and no obvious clipping or
+  overlap at those viewports:
+  `web-bazaar-settings-1024x768-20260803.png`,
+  `web-bazaar-settings-1920x1080-20260803.png`,
+  `web-bazaar-menu-1920x1080-20260803.png`, and
+  `web-bazaar-error-reconnect-1024x768-20260803.png`.
+- The error screen is an intentional blocked-service state: Photon access/session
+  configuration is not approved in this build and no fake room or client-authoritative
+  match is started. This proves route readability, not real online connectivity.
+
 ## Bazaar production-scene contract continuation (`26b11cc`)
 
 - The production scene now has a dedicated `BazaarBastionScene` contract and no
