@@ -1,5 +1,6 @@
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Movement;
+using BattleRaja.Presentation.Match;
 using BattleRaja.Presentation.Visuals;
 using UnityEngine;
 
@@ -30,6 +31,7 @@ namespace BattleRaja.Presentation.Combat
         private bool _abilityQueued;
         private Float2 _queuedDirection = Float2.Up;
         private readonly RaycastHit[] _chargeHits = new RaycastHit[32];
+        private OfflineMatchController _match;
 
         public ContentId AbilityId => _special.AbilityId;
         public FighterDefinition Definition => _definition;
@@ -45,6 +47,7 @@ namespace BattleRaja.Presentation.Combat
             characterController = characterController != null ? characterController : GetComponent<CharacterController>();
             damageResolver = damageResolver != null ? damageResolver : FindFirstObjectByType<CombatDamageResolver>();
             _definition = fighterDefinition != null ? fighterDefinition.ToDomain() : FighterDefinition.Pehel;
+            _match = FindFirstObjectByType<OfflineMatchController>();
             _special = FighterSpecialDefinition.PehelChargeThrow;
             _runtime = new ChargeThrowRuntime(_special);
             _clock = new FixedSimulationClock(Mathf.Max(1, simulationTickRate));
@@ -79,7 +82,12 @@ namespace BattleRaja.Presentation.Combat
                 var step = _runtime.Step((float)_clock.StepSeconds, ComputeAvailableDistance(_runtime.Direction));
                 if (step.Displacement.SqrMagnitude > 0.000001f && characterController != null)
                 {
-                    characterController.Move(new Vector3(step.Displacement.X, 0f, step.Displacement.Y));
+                    var appliedByAuthority = movementAgent != null && movementAgent.AuthorityDrivenMovement &&
+                        _match != null && ApplyAuthorityDisplacement(step.Displacement, simulationTick);
+                    if (!appliedByAuthority)
+                    {
+                        characterController.Move(new Vector3(step.Displacement.X, 0f, step.Displacement.Y));
+                    }
                 }
 
                 if (_runtime.State == ChargeThrowState.Active) TryCaptureTarget();
@@ -135,10 +143,30 @@ namespace BattleRaja.Presentation.Combat
                     _runtime.Direction,
                     simulationTick);
                 damageResolver?.Resolve(target, request, false, false, simulationTick);
-                var targetController = target.GetComponent<CharacterController>();
-                targetController?.Move(new Vector3(_runtime.Direction.X, 0f, _runtime.Direction.Y) * (_special.Magnitude * 0.25f));
+                var throwDisplacement = _runtime.Direction * (_special.Magnitude * 0.25f);
+                var targetAgent = target.GetComponent<MovementPlayerAgent>();
+                var appliedByAuthority = targetAgent != null && targetAgent.AuthorityDrivenMovement &&
+                    _match != null && ApplyAuthorityDisplacement(targetAgent, throwDisplacement, simulationTick);
+                if (!appliedByAuthority)
+                {
+                    target.GetComponent<CharacterController>()?.Move(new Vector3(throwDisplacement.X, 0f, throwDisplacement.Y));
+                }
                 break;
             }
+        }
+
+        private bool ApplyAuthorityDisplacement(Float2 displacement, int simulationTick)
+        {
+            return ApplyAuthorityDisplacement(movementAgent, displacement, simulationTick);
+        }
+
+        private bool ApplyAuthorityDisplacement(MovementPlayerAgent agent, Float2 displacement, int simulationTick)
+        {
+            if (agent == null) return false;
+            var result = _match.ResolveAbilityDisplacement(new CombatEntityId(agent.ActorId), simulationTick, displacement);
+            if (!result.Applied) return false;
+            agent.ApplyAuthoritativePosition(result.Position);
+            return true;
         }
 
         private float ComputeAvailableDistance(Float2 direction)

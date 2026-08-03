@@ -41,6 +41,29 @@ namespace BattleRaja.Core.Application
         public Float2 Position { get; }
     }
 
+    public readonly struct MatchAuthorityDisplacement
+    {
+        public MatchAuthorityDisplacement(
+            CombatEntityId actorId,
+            int simulationTick,
+            bool applied,
+            Float2 displacement,
+            Float2 position)
+        {
+            ActorId = actorId;
+            SimulationTick = simulationTick;
+            Applied = applied;
+            Displacement = displacement;
+            Position = position;
+        }
+
+        public CombatEntityId ActorId { get; }
+        public int SimulationTick { get; }
+        public bool Applied { get; }
+        public Float2 Displacement { get; }
+        public Float2 Position { get; }
+    }
+
     public readonly struct MatchAuthorityTick
     {
         public MatchAuthorityTick(MatchTickResult result, DamageRequest[] outsideDamageRequests)
@@ -92,6 +115,7 @@ namespace BattleRaja.Core.Application
         private readonly Dictionary<CombatEntityId, MovementMotor> _movementMotors = new Dictionary<CombatEntityId, MovementMotor>();
         private readonly Dictionary<CombatEntityId, MovementTuning> _movementTunings = new Dictionary<CombatEntityId, MovementTuning>();
         private readonly Dictionary<CombatEntityId, int> _lastMovementTicks = new Dictionary<CombatEntityId, int>();
+        private readonly Dictionary<CombatEntityId, int> _lastAbilityDisplacementTicks = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<int, GadgetStationRuntime> _stations = new Dictionary<int, GadgetStationRuntime>();
         private OfflineMatchSimulation _simulation;
         private double _outsideDamageAccumulator;
@@ -153,6 +177,7 @@ namespace BattleRaja.Core.Application
             _movementMotors.Clear();
             _movementTunings.Clear();
             _lastMovementTicks.Clear();
+            _lastAbilityDisplacementTicks.Clear();
             _stations.Clear();
             for (var i = 0; i < spawns.Count; i++)
             {
@@ -162,6 +187,7 @@ namespace BattleRaja.Core.Application
                 _movementMotors[spawns[i].Id] = new MovementMotor();
                 _movementTunings[spawns[i].Id] = MovementTuning.Default;
                 _lastMovementTicks[spawns[i].Id] = -1;
+                _lastAbilityDisplacementTicks[spawns[i].Id] = -1;
             }
 
             _outsideDamageAccumulator = 0d;
@@ -215,6 +241,33 @@ namespace BattleRaja.Core.Application
 
             _lastMovementTicks[actorId] = command.SimulationTick;
             return new MatchAuthorityMovement(actorId, command.SimulationTick, true, step, position);
+        }
+
+        public MatchAuthorityDisplacement ResolveAbilityDisplacement(
+            CombatEntityId actorId,
+            int simulationTick,
+            Float2 displacement)
+        {
+            var simulation = RequireSimulation();
+            var hasCurrent = simulation.TryGetSnapshot(actorId, out var current);
+            if (!_lastAbilityDisplacementTicks.TryGetValue(actorId, out var lastTick) ||
+                simulationTick < 0 ||
+                simulationTick <= lastTick ||
+                !displacement.IsFinite ||
+                !hasCurrent ||
+                !current.Alive)
+            {
+                return new MatchAuthorityDisplacement(actorId, simulationTick, false, Float2.Zero, current.Position);
+            }
+
+            var position = current.Position + displacement;
+            if (!simulation.SetPosition(actorId, position))
+            {
+                return new MatchAuthorityDisplacement(actorId, simulationTick, false, Float2.Zero, current.Position);
+            }
+
+            _lastAbilityDisplacementTicks[actorId] = simulationTick;
+            return new MatchAuthorityDisplacement(actorId, simulationTick, true, displacement, position);
         }
 
         public bool SyncHealth(CombatEntityId id, int currentHealth) => RequireSimulation().SyncHealth(id, currentHealth);

@@ -64,6 +64,29 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void MatchAuthorityResolvesAbilityDisplacementExactlyOncePerTick()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(8f, 0f), 100)
+            });
+
+            var first = authority.ResolveAbilityDisplacement(new CombatEntityId(1), 1, new Float2(1f, 0f));
+            var duplicate = authority.ResolveAbilityDisplacement(new CombatEntityId(1), 1, new Float2(1f, 0f));
+            var invalid = authority.ResolveAbilityDisplacement(new CombatEntityId(1), 2, new Float2(float.NaN, 0f));
+
+            Assert.That(first.Applied, Is.True);
+            Assert.That(first.Position, Is.EqualTo(new Float2(1f, 0f)));
+            Assert.That(duplicate.Applied, Is.False);
+            Assert.That(duplicate.Position, Is.EqualTo(first.Position));
+            Assert.That(invalid.Applied, Is.False);
+            Assert.That(authority.Simulation.TryGetSnapshot(new CombatEntityId(1), out var snapshot), Is.True);
+            Assert.That(snapshot.Position, Is.EqualTo(first.Position));
+        }
+
+        [Test]
         public void MatchAuthorityOwnsPickupAvailabilityAndGadgetCollection()
         {
             var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja, 1f);

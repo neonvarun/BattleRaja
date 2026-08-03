@@ -65,6 +65,16 @@ namespace BattleRaja.Presentation.Match
             return true;
         }
 
+        public MatchAuthorityDisplacement ResolveAbilityDisplacement(
+            CombatEntityId actorId,
+            int simulationTick,
+            Float2 displacement)
+        {
+            return _authority != null
+                ? _authority.ResolveAbilityDisplacement(actorId, simulationTick, displacement)
+                : default(MatchAuthorityDisplacement);
+        }
+
         public bool IsAuthorityActor(CombatEntityId actorId)
         {
             return _authority != null && _authority.HasParticipant(actorId);

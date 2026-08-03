@@ -1,6 +1,7 @@
 using BattleRaja.Core.Application;
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Movement;
+using BattleRaja.Presentation.Match;
 using BattleRaja.Presentation.Visuals;
 using UnityEngine;
 
@@ -21,6 +22,7 @@ namespace BattleRaja.Presentation.Combat
         [SerializeField] private float playMaxZ = 9.2f;
         [SerializeField] private LayerMask dashCollisionMask = ~0;
         [SerializeField] private int simulationTickRate = 30;
+        private OfflineMatchController _match;
 
         private FighterDefinition _definition;
         private FighterRuntimeState _runtime;
@@ -43,6 +45,7 @@ namespace BattleRaja.Presentation.Combat
             movementAgent = movementAgent != null ? movementAgent : GetComponent<MovementPlayerAgent>();
             characterController = characterController != null ? characterController : GetComponent<CharacterController>();
             _definition = fighterDefinition != null ? fighterDefinition.ToDomain() : FighterDefinition.Bijli;
+            _match = FindFirstObjectByType<OfflineMatchController>();
             _runtime = new FighterRuntimeState(_definition);
             _clock = new FixedSimulationClock(Mathf.Max(1, simulationTickRate));
             if (dashTrail != null)
@@ -87,7 +90,12 @@ namespace BattleRaja.Presentation.Combat
                 var step = _runtime.Step((float)_clock.StepSeconds, availableDistance);
                 if (step.Displacement.SqrMagnitude > 0.000001f && characterController != null)
                 {
-                    characterController.Move(new Vector3(step.Displacement.X, 0f, step.Displacement.Y));
+                    var appliedByAuthority = movementAgent != null && movementAgent.AuthorityDrivenMovement &&
+                        _match != null && ApplyAuthorityDisplacement(step.Displacement, _simulationTick);
+                    if (!appliedByAuthority)
+                    {
+                        characterController.Move(new Vector3(step.Displacement.X, 0f, step.Displacement.Y));
+                    }
                 }
 
                 if (dashTrail != null)
@@ -121,6 +129,15 @@ namespace BattleRaja.Presentation.Combat
             {
                 dashTrail.emitting = false;
             }
+        }
+
+        private bool ApplyAuthorityDisplacement(Float2 displacement, int simulationTick)
+        {
+            var actorId = new CombatEntityId(movementAgent.ActorId);
+            var result = _match.ResolveAbilityDisplacement(actorId, simulationTick, displacement);
+            if (!result.Applied) return false;
+            movementAgent.ApplyAuthoritativePosition(result.Position);
+            return true;
         }
 
         private float ComputeAvailableDistance(Float2 direction)

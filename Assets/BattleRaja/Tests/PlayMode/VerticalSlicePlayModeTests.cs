@@ -235,6 +235,30 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator ProductionBijliAbilityRoutesDisplacementThroughAuthority()
+        {
+            var match = Object.FindFirstObjectByType<OfflineMatchController>();
+            var player = Object.FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None)
+                .First(agent => agent.ActorId == 1);
+            var bijli = player.GetComponent<BijliFighterController>();
+            Assert.That(bijli, Is.Not.Null);
+            Assert.That(player.AuthorityDrivenMovement, Is.True);
+            Assert.That(match.Simulation.TryGetSnapshot(new CombatEntityId(1), out var before), Is.True);
+
+            bijli.Submit(AbilityCommandFactory.Create(
+                new CombatEntityId(1),
+                1,
+                bijli.AbilityId,
+                new Float2(1f, 0f),
+                true));
+            yield return new WaitForSecondsRealtime(0.4f);
+
+            Assert.That(match.Simulation.TryGetSnapshot(new CombatEntityId(1), out var after), Is.True);
+            Assert.That(after.Position.X, Is.GreaterThan(before.Position.X));
+            Assert.That(player.LastAuthoritativePosition.x, Is.EqualTo(after.Position.X).Within(0.001f));
+        }
+
+        [UnityTest]
         public IEnumerator TouchControlsExposeReadableActionLabels()
         {
             Assert.That(GameObject.Find("AttackButton")?.GetComponentInChildren<Text>(true)?.text, Is.EqualTo("ATTACK"));
