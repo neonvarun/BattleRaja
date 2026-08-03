@@ -961,3 +961,30 @@ Record every material choice here. Do not silently overwrite old decisions.
   `Builds/M11/TestResults/authority-gadget-displacement-editmode-20260803.xml` and
   `Builds/M11/TestResults/authority-gadget-displacement-playmode-20260803.xml`.
 - **Owner:** Human project owner
+
+### ADR-047 — Route fighter ability displacement through the authority seam
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical slice; ability runtime ownership,
+  collision policy and network transport remain future work.
+- **Context:** Bazaar Bastion disables local `CharacterController` projection while
+  movement is authority-driven. Bijli dash, Pehel charge and Pehel throw therefore
+  needed an explicit path to update the canonical participant position rather than
+  silently relying on a disabled Unity controller.
+- **Decision:** Add a tick-validated `OfflineMatchAuthority.ResolveAbilityDisplacement`
+  contract. Bijli and Pehel adapters submit their already-resolved displacement through
+  `OfflineMatchController` when the actor is authority-driven; the returned canonical
+  position is applied to `MovementPlayerAgent`. Non-authority lab fixtures retain their
+  local controller fallback. Invalid, duplicate-tick, dead-actor and non-finite requests
+  are rejected without mutating simulation state.
+- **Consequences:** Production ability displacement now changes the same canonical
+  position used by authority movement, and the live Bijli path has PlayMode coverage.
+  Fighter cooldown/runtime state, collision projection and authoritative ability command
+  validation are still presentation-owned or transitional; this does not establish a
+  trusted multiplayer server.
+- **Evidence/sources:** `OfflineMatchAuthority.ResolveAbilityDisplacement`,
+  `BijliFighterController`, `PehelFighterController`, `MovementPlayerAgent`,
+  `AuthorityFoundationTests.MatchAuthorityResolvesAbilityDisplacementExactlyOncePerTick`,
+  `VerticalSlicePlayModeTests.ProductionBijliAbilityRoutesDisplacementThroughAuthority`,
+  and the latest baseline.
+- **Owner:** Human project owner

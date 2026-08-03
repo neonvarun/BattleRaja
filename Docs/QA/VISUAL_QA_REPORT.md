@@ -1,10 +1,23 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-03
-Runtime-bearing candidate: `78fa990` (authority-first Dhol displacement continuation)
-Current validated runtime source HEAD: `78fa990`
+Runtime-bearing candidate: `9100e69` (authority-first fighter displacement continuation)
+Current validated runtime source HEAD: `9100e69`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web` served over local HTTP at `http://127.0.0.1:8137/index.html`
+
+## Authority-driven fighter displacement runtime smoke (`9100e69`)
+
+- The fresh Android candidate was installed/launched only on Lava
+  `ST5GDW23LB004392` (`LAVA LXX508`). The Unity game activity remained top-resumed,
+  and the sampled process log contained no fatal or `AndroidRuntime` marker. Capture:
+  `Builds/M11/Logs/android-lava-authority-bijli-20260803.png`.
+- The fresh Web output returned HTTP 200 from the existing local server on port 8137.
+  Browser visual approval, multi-browser parity and manual ability feel were not rerun
+  for this continuation.
+- This is technical runtime evidence for the authority displacement seam, not final
+  visual approval. Greybox presentation, touch ergonomics, gadget-use observation,
+  multi-browser coverage and owner review remain open.
 
 ## Authority-driven production movement continuation (`204e4f0`)
 

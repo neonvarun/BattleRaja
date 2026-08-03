@@ -2,9 +2,26 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated runtime source HEAD: `78fa990` (`refactor: apply gadget displacement through authority`)
-Latest runtime-bearing candidate: `78fa990` (authority-first movement/gadget/damage/healing Android/Web candidates)
+Latest validated runtime source HEAD: `9100e69` (`refactor: route fighter displacement through authority`)
+Latest runtime-bearing candidate: `9100e69` (authority-first movement/gadget/fighter displacement/damage/healing Android/Web candidates)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
+
+## Authority-driven fighter displacement continuation (`9100e69`, 2026-08-03)
+
+Bijli dash, Pehel charge and Pehel throw now submit resolved displacement through a
+tick-validated `OfflineMatchAuthority` seam whenever the actor uses production
+authority-driven movement. Non-authority lab fixtures retain their local controller
+fallback. This closes the disabled-`CharacterController` production behavior gap, but
+does not claim server-owned ability runtime state or network authority.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings; `git diff --check` clean | command output from 2026-08-03 |
+| EditMode tests | 99 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/authority-ability-displacement-editmode-full-rerun-20260803.xml` |
+| PlayMode tests | 50 passed, 0 failed, 0 skipped; includes the live Bijli authority displacement test | `Builds/M11/TestResults/authority-ability-displacement-playmode-full-rerun-20260803.xml`, `Builds/M11/TestResults/authority-bijli-playmode-20260803.xml` |
+| Android build | `BattleRaja-M11.apk`, 151,465,096 bytes; SHA-256 `00D83717FAC958A588B4F4964504C92ACA70CDE23DFE800C99234CC48A6ED3E8` | `Builds/M11/Logs/android-build.log` |
+| Lava smoke | Exact APK installed/launched only on `ST5GDW23LB004392` (`LAVA LXX508`); `com.example.battleraja.m11/com.unity3d.player.UnityPlayerGameActivity` remained top-resumed; sampled logcat had no fatal/AndroidRuntime marker | ADB output from 2026-08-03; `Builds/M11/Logs/android-lava-authority-bijli-20260803.png` |
+| Web build/serve | 21 files, 133,477,944 bytes; `Web.wasm` SHA-256 `F6C37FFC4D3CAE8DE87BDFAF5202FE32F7FF504AE66BB4C55D7834C50852D6EB`; local port 8137 returned HTTP 200 | `Builds/M11/Web`, `Builds/M11/Logs/web-build.log` |
 
 ## Authority-driven Dhol displacement continuation (`78fa990`, 2026-08-03)
 
