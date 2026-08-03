@@ -2,8 +2,8 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `5845485` (`fix: attribute authoritative offline assists`)
-Latest runtime-bearing candidate: `5845485` (fresh artifacts below; the two pre-existing user-owned worktree edits were preserved and not committed)
+Latest validated source HEAD: `c23982e` (`feat: make aim assist functional`)
+Latest runtime-bearing candidate: `c23982e` (fresh artifacts below; the two pre-existing user-owned worktree edits were preserved and not committed)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
 ## Scope and repository note
@@ -58,6 +58,26 @@ events, environmental damage and self-damage do not create additional assists.
 The Android wrapper printed a stale PowerShell `$LASTEXITCODE` after Unity had already
 logged a successful build; the Unity build log and artifact were checked directly. This
 wrapper quirk is recorded rather than treated as a product failure.
+
+## Fresh aim-assist accessibility phase (`c23982e`)
+
+The accessibility setting now changes only the local aim direction within a bounded
+18-degree, 10-metre cone. Target selection is pure and deterministic; Unity gathers
+eligible enemy colliders with a fixed non-allocating buffer, and projectile authority is
+unchanged.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings | command output from 2026-08-03 |
+| EditMode tests | 94 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/aimassist-editmode-v5-20260803.xml` |
+| PlayMode tests | 43 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/aimassist-playmode-20260803.xml` |
+| Android development build | Unity log reports `Build Finished, Result: Success`; APK 151,378,712 bytes; SHA-256 `94A5C3D933BB00C99BBF293FA832DD6E67E3DB7D37C3BD63581E3BA7878772E8` | `Builds/M11/Logs/android-build.log`, `Builds/M11/Android/BattleRaja-M11.apk` |
+| Web development build | Unity log reports success; 21 files, 133,250,977 bytes; WASM SHA-256 `3B505C77E2F567878CDFAEC34BDE83A23B53AE3DA4943C3FBE474555D536505F` | `Builds/M11/Logs/web-build.log`, `Builds/M11/Web` |
+| Browser runtime | Chrome/Playwright found one canvas after an 8-second warm-up; 53 console messages, 0 errors and 0 warnings; inspected screenshot shows the live greybox match | `Docs/QA/Visual/Phase7/playwright-aimassist-phase-20260803.png`, `.playwright-cli/console-2026-08-03T04-33-13-788Z.log` |
+| Lava smoke | Exact aim-assist APK installed/launched only on Lava `ST5GDW23LB004392` (`LAVA LXX508`), process `21626`; process-scoped log contains no fatal, SIGSEGV, missing-component or monotonic-tick marker | `Docs/QA/Visual/Phase7/android-lava-aimassist-phase-20260803.png`, `Builds/M11/Logs/aimassist-lava-20260803.txt` |
+
+The functional setting still requires human review for touch ergonomics, fairness and
+accessibility approval; this evidence does not close the broader visual gate.
 
 ## Fresh Phase 6 continuation (`8544f55`)
 

@@ -1,8 +1,8 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-03
-Runtime-bearing candidate: `5845485` (fresh assist/statistics phase; runtime code is otherwise unchanged from the latest-HEAD baseline)
-Current source HEAD: `5845485` (fresh Photon-import baseline after the fixed-tick correction)
+Runtime-bearing candidate: `c23982e` (fresh aim-assist accessibility phase)
+Current source HEAD: `c23982e` (fresh Photon-import baseline after the fixed-tick correction)
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web` served over local HTTP at `http://127.0.0.1:8137/index.html`
 
@@ -29,6 +29,18 @@ Web candidate: `Builds/M11/Web` served over local HTTP at `http://127.0.0.1:8137
   the live portrait match, and the process-scoped sample has no fatal crash markers.
 - These captures remain technical greybox evidence and do not close the visual gadget,
   results/rematch, loading, multi-browser or human-review gates.
+
+## Fresh aim-assist runtime smoke (`c23982e`)
+
+- The aim-assist Web candidate reached the live match in Chrome after an eight-second
+  warm-up. `playwright-aimassist-phase-20260803.png` shows the arena and HUD; the
+  console scan reported 0 errors and 0 warnings.
+- The aim-assist APK was installed/launched only on Lava
+  `ST5GDW23LB004392` (`LAVA LXX508`). `android-lava-aimassist-phase-20260803.png`
+  shows the live portrait match, and the process-scoped sample has no fatal crash
+  markers.
+- Runtime smoke confirms the setting does not break the path; it does not prove that
+  aim-assist fairness, touch ergonomics or accessibility are human-approved.
 
 ## Fresh Phase 6 runtime smoke (`8544f55`)
 
