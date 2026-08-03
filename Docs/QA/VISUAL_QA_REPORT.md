@@ -1,10 +1,24 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-03
-Runtime-bearing candidate: `d67dd48` (production Pehel authority continuation; prior artifact candidate remains `8f190cd`)
-Current validated runtime source HEAD: `42e93e7`
+Runtime-bearing candidate: `6f0fe8b` (Unity 6 object-lookup cleanup over the bot spawn-protection baseline)
+Current validated runtime source HEAD: `6f0fe8b`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://127.0.0.1:8139/index.html`
+
+## Current HEAD smoke — 2026-08-03
+
+- The rebuilt Web candidate from `6f0fe8b` returned HTTP 200 on port 8139. Playwright
+  session `brweb5` reported 52 console messages with **0 errors / 0 warnings** after
+  reload. The inspected 1024×768 menu capture is
+  `Phase7/web-api-warning-clean-1024x768-20260803.png`.
+- The exact `6f0fe8b` Android APK was installed/launched only on Lava
+  `ST5GDW23LB004392` (`LAVA LXX508`); `UnityPlayerGameActivity` remained top-resumed.
+  The inspected portrait menu capture is
+  `Phase7/android-api-warning-clean-20260803.png`.
+- These captures confirm current-source startup/rendering only. Gadget pickup/use,
+  loading-state observation, touch ergonomics, multi-browser parity, performance and
+  human visual approval remain open.
 
 ## Production Pehel authority smoke — 2026-08-03
 

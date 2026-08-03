@@ -9,7 +9,7 @@
 - Product vision: drafted
 - Autonomous M1–M11 sequential execution: active; milestone gates and external
   service approvals remain explicit.
-- Latest validated runtime source HEAD: `aa8e994` (current docs update follows this source commit); the current repository includes
+- Latest validated runtime source HEAD: `6f0fe8b` (current docs update follows this source commit); the current repository includes
   the connected Bazaar architecture prefab and explicit production-scene contract after the authority-driven Maya decoy,
   fighter displacement, Dhol, production movement and authority-first damage/healing
   checkpoints; production-flow EventSystem creation is
@@ -51,18 +51,19 @@
 ## Current source rebaseline evidence — 2026-08-03
 
 - Repository validation: 0 errors, 0 warnings; full EditMode 101/101 and full PlayMode
-  54/54 passed from source commit `aa8e994`; focused Pehel authority and production
+  54/54 passed from source commit `6f0fe8b`; authored Unity 6 object-lookup calls are
+  absent and the full test logs contain no C# compiler-warning lines; focused Pehel authority and production
   gadget route tests pass 1/1 each in PlayMode, and production bot spawn protection has
   a dedicated passing regression.
 - Android: current Bazaar APK `Builds/M11/Android/BattleRaja-BazaarBastion-M11.apk`
-  is 151,554,550 bytes (SHA-256
-  `88FC6A49A52AEFE4D38CF502120AD1FB49C0B86AD8475B6B82E53F230001188F`); exact APK
+  is 151,551,952 bytes (SHA-256
+  `11624AFA7A9DB1CDEFC66FCACA5BBEC9CEDBD4C3316AA9AA7BE153BC33141AF4`); exact APK
   launched only on Lava `ST5GDW23LB004392` with top-resumed Unity activity and no strict
-  fatal/app-process marker. Memory snapshot: 408,734 KB PSS / 545,576 KB RSS / 82,088 KB Graphics.
-- Web: `Builds/M11/Web-BazaarBastion` contains 19 files / 133,581,238 bytes;
+  fatal/app-process marker. Memory snapshot: 408,290 KB PSS / 545,224 KB RSS / 82,088 KB Graphics.
+- Web: `Builds/M11/Web-BazaarBastion` contains 19 files / 133,581,884 bytes;
   `Web-BazaarBastion.wasm` SHA-256
-  `BEB099C9B6B0FA148A70CC479FC2365F83944F046DB0F60A6DD2D4D148B31E7A`; local port 8139
-  returned HTTP 200 and Playwright reported 0 errors/0 warnings. Visual flow and
+  `3663611AE374B5B481905341DA451BE335A0A79C704C888D856ACBA8E1D9C585`; local port 8139
+  returned HTTP 200 and Playwright `brweb5` reported 0 errors/0 warnings. Visual flow and
   results/rematch captures are recorded. A later bounded smoke sample recorded
   120,872,306 bytes of WASM transfer and 5.603 ms mean browser rAF; gadget-use capture,
   formal performance closure, multi-browser coverage and human review remain open.
