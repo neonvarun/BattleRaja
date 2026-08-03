@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Movement;
 using BattleRaja.Presentation.Visuals;
@@ -88,19 +91,7 @@ namespace BattleRaja.Presentation.Match
                 _resultsPanel.SetActive(match.ResultsShown);
                 if (match.ResultsShown && match.Results != null)
                 {
-                    var winner = default(MatchParticipantSnapshot);
-                    var hasWinner = false;
-                    for (var i = 0; i < match.Results.Length; i++)
-                    {
-                        if (match.Results[i].Placement != 1) continue;
-                        winner = match.Results[i];
-                        hasWinner = true;
-                        break;
-                    }
-
-                    _resultsText.text = hasWinner
-                        ? $"RESULTS\nWINNER {winner.Id.Value}\nKOs {winner.Eliminations}   ASSISTS {winner.Assists}\nDAMAGE {winner.DamageDealt}   SURVIVAL {winner.SurvivalTimeSeconds:0.0}s"
-                        : "RESULTS";
+                    _resultsText.text = FormatResults(match.Results, compact);
                 }
             }
         }
@@ -112,6 +103,46 @@ namespace BattleRaja.Presentation.Match
                 : aandhiState == AandhiState.Closing ? "  CLOSE" : string.Empty;
             var format = compact ? CompactMatchFormat : MatchFormat;
             return string.Format(format, phase.ToString().ToUpperInvariant(), aliveCount, zoneRadius, nextZoneRadius, warning);
+        }
+
+        public static string FormatResults(MatchParticipantSnapshot[] results, bool compact)
+        {
+            if (results == null || results.Length == 0) return "RESULTS";
+
+            var ordered = new List<MatchParticipantSnapshot>(results);
+            ordered.Sort((left, right) =>
+            {
+                var placement = left.Placement.CompareTo(right.Placement);
+                return placement != 0 ? placement : left.Id.Value.CompareTo(right.Id.Value);
+            });
+
+            var builder = new StringBuilder(256);
+            builder.Append("RESULTS\nWINNER ").Append(ordered[0].Id.Value).Append('\n');
+            for (var i = 0; i < ordered.Count; i++)
+            {
+                var participant = ordered[i];
+                if (compact)
+                {
+                    builder.Append('#').Append(participant.Placement)
+                        .Append(" P").Append(participant.Id.Value)
+                        .Append(" K").Append(participant.Eliminations)
+                        .Append(" A").Append(participant.Assists)
+                        .Append(" D").Append(participant.DamageDealt)
+                        .Append('\n');
+                }
+                else
+                {
+                    builder.Append('#').Append(participant.Placement)
+                        .Append(" PLAYER ").Append(participant.Id.Value)
+                        .Append("  KOs ").Append(participant.Eliminations)
+                        .Append("  AST ").Append(participant.Assists)
+                        .Append("  DMG ").Append(participant.DamageDealt)
+                        .Append("  SURV ").Append(participant.SurvivalTimeSeconds.ToString("0.0"))
+                        .Append('s').Append('\n');
+                }
+            }
+
+            return builder.ToString().TrimEnd();
         }
 
         private void BuildCanvasUi()
@@ -159,6 +190,7 @@ namespace BattleRaja.Presentation.Match
             statusRect.anchorMin = compact ? new Vector2(0.42f, 0.90f) : new Vector2(0.42f, 0.94f);
             statusRect.anchorMax = new Vector2(0.98f, 0.99f);
             _statusText.fontSize = compact ? 18 : 22;
+            if (_resultsText != null) _resultsText.fontSize = compact ? 16 : 20;
 
             var spectatorRect = _spectatorText.rectTransform;
             spectatorRect.anchorMin = compact ? new Vector2(0.42f, 0.84f) : new Vector2(0.42f, 0.88f);

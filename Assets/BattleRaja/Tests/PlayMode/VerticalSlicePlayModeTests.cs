@@ -222,5 +222,21 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(status, Does.Contain("Z 14.0 > 8.0"));
             Assert.That(status, Does.Contain("WARN 2.5s"));
         }
+
+        [Test]
+        public void ResultsFormatterListsPlacementsAndCombatStats()
+        {
+            var results = new[]
+            {
+                new MatchParticipantSnapshot(new CombatEntityId(2), Float2.Zero, 0, 100, false, 2, 1, 40, 2, 12f),
+                new MatchParticipantSnapshot(new CombatEntityId(1), Float2.Zero, 100, 100, true, 1, 3, 120, 1, 25f)
+            };
+
+            var text = OfflineMatchHud.FormatResults(results, compact: false);
+
+            Assert.That(text, Does.Contain("WINNER 1"));
+            Assert.That(text, Does.Contain("#1 PLAYER 1  KOs 3  AST 1  DMG 120  SURV 25.0s"));
+            Assert.That(text, Does.Contain("#2 PLAYER 2  KOs 1  AST 2  DMG 40  SURV 12.0s"));
+        }
     }
 }
