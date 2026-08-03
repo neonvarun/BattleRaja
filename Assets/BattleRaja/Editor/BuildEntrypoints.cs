@@ -584,11 +584,11 @@ namespace BattleRaja.Editor
             ValidateProject();
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
-            PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, DevelopmentApplicationId);
+            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, DevelopmentApplicationId);
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel28;
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
-            PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
+            PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
             Build("Builds/M11/Android/BattleRaja-M11.apk", BuildTarget.Android);
         }
 
@@ -597,11 +597,11 @@ namespace BattleRaja.Editor
             ValidateProject();
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
-            PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, DevelopmentApplicationId);
+            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, DevelopmentApplicationId);
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel28;
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
-            PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
+            PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
             Build("Builds/M11/Android/BattleRaja-M11.apk", BuildTarget.Android);
         }
 
@@ -636,11 +636,11 @@ namespace BattleRaja.Editor
             ValidateProject();
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
-            PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, DevelopmentApplicationId);
+            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, DevelopmentApplicationId);
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel28;
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
-            PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
+            PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
             Build("Builds/M11/Android/BattleRaja-BazaarBastion-M11.apk", BuildTarget.Android, BootstrapScenePath, TutorialArenaScenePath, BazaarBastionScenePath);
         }
 
