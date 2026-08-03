@@ -1039,3 +1039,27 @@ Record every material choice here. Do not silently overwrite old decisions.
   `Builds/M11/TestResults/bazaar-boundary-editmode-full-20260803.xml` and the latest
   baseline.
 - **Owner:** Human project owner
+
+### ADR-050 — Extract reusable Bazaar architecture into a prefab boundary
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical slice; fighter actor prefab extraction
+  and final authored content remain future work.
+- **Context:** Bazaar architecture was serialized as a large inline hierarchy inside the
+  production scene, while the editor generator still owned the construction details. That
+  made scene diffs noisy and prevented reusable content validation.
+- **Decision:** Save the existing `BazaarArchitecture` hierarchy as
+  `Assets/BattleRaja/Content/Prefabs/BazaarArchitecture.prefab` with Unity's
+  `PrefabUtility.SaveAsPrefabAssetAndConnect`. `CreateBazaarBastionScene` is idempotent:
+  it creates the hierarchy only when absent, connects it to the prefab, and validation
+  requires the asset. Fighter and gameplay definitions remain separate data assets.
+- **Consequences:** The production scene now references a reusable architecture asset and
+  the generator no longer expands the geometry into every scene copy. The prefab contains
+  greybox geometry/material references only; actor prefabs, authored art, animation, VFX
+  and final review remain open.
+- **Evidence/sources:** `Assets/BattleRaja/Content/Prefabs/BazaarArchitecture.prefab`,
+  `BuildEntrypoints.EnsureBazaarArchitecturePrefab`,
+  `Builds/M11/TestResults/bazaar-prefab-editmode-full-20260803.xml`,
+  `Builds/M11/TestResults/bazaar-prefab-playmode-full-20260803.xml` and the latest
+  baseline.
+- **Owner:** Human project owner

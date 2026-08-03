@@ -2,9 +2,25 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated runtime source HEAD: `26b11cc` (`refactor: separate Bazaar production scene contract`)
-Latest runtime-bearing candidate: `26b11cc` (explicit Bazaar production-scene boundary after the authority-first movement/gadget/fighter displacement/Maya decoy/damage/healing candidates)
+Latest validated runtime source HEAD: `8f190cd` (`content: extract Bazaar architecture prefab`)
+Latest runtime-bearing candidate: `8f190cd` (reusable Bazaar architecture prefab after the explicit production-scene boundary and authority-first movement/gadget/fighter displacement/Maya decoy/damage/healing candidates)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
+
+## Bazaar architecture prefab continuation (`8f190cd`, 2026-08-03)
+
+The existing `BazaarArchitecture` hierarchy is now a connected prefab at
+`Assets/BattleRaja/Content/Prefabs/BazaarArchitecture.prefab`. The editor entrypoint
+creates/connects it through Unity's `PrefabUtility`, remains idempotent on reruns, and
+validation requires the asset. This is reusable greybox content evidence, not final art or
+actor prefab extraction.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject -UnityExe ...\\6000.5.6f1\\Editor\\Unity.exe` — 0 errors, 0 warnings; `git diff --check` clean | command output from 2026-08-03 |
+| Full EditMode regression | 100 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/bazaar-prefab-editmode-full-20260803.xml` |
+| Full PlayMode regression | 51 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/bazaar-prefab-playmode-full-20260803.xml` |
+| Prefab boundary | Prefab exists, and Bazaar scene contains a prefab instance with the matching architecture asset GUID | `Assets/BattleRaja/Content/Prefabs/BazaarArchitecture.prefab`, `Assets/BattleRaja/Scenes/Gameplay/BazaarBastion.unity` |
+| Artifact/runtime scope | No Android/Web rebuild for this content-only continuation; prior `d993a5b` Lava/Web smoke remains the latest artifact evidence | authority-Maya section below |
 
 ## Bazaar production-scene contract continuation (`26b11cc`, 2026-08-03)
 

@@ -3,8 +3,9 @@
 Updated: 2026-08-03
 Classification: **prototype**
 
-Latest continuation: `26b11cc` + `d993a5b` + `9100e69` + `78fa990` + `204e4f0` + `678acb0` (2026-08-03).
-The production Bazaar scene now has an explicit `BazaarBastionScene` contract and no
+Latest continuation: `8f190cd` + `26b11cc` + `d993a5b` + `9100e69` + `78fa990` + `204e4f0` + `678acb0` (2026-08-03).
+The production Bazaar scene now has an explicit `BazaarBastionScene` contract, a connected
+architecture prefab and no
 longer carries the `MovementLabScene` marker; production-flow EventSystem creation is
 Input System-only, the live HUD reflects the selected fighter, and resolved combat events
 enter through the match authority boundary.
@@ -13,7 +14,7 @@ This file records evidence-backed status only. Allowed status values are: `Not s
 
 | Area | Status | Evidence / boundary |
 | --- | --- | --- |
-| Unity project and package baseline | Passed with evidence | Unity `6000.5.6f1`; latest validated source HEAD `26b11cc`; Photon Fusion `2.1.1 Stable 2177`; Input System-only handler with legacy-scene compatibility bridge; repository validation clean; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
+| Unity project and package baseline | Passed with evidence | Unity `6000.5.6f1`; latest validated source HEAD `8f190cd`; Photon Fusion `2.1.1 Stable 2177`; Input System-only handler with legacy-scene compatibility bridge; repository validation clean; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
 | Photon Fusion import | Passed with evidence | Fusion 2.1.1 stable build 2177 is present and imported; no public multiplayer claim |
 | EditMode and PlayMode regression baseline | Passed with evidence | Latest scene-boundary regression passes 100/100 EditMode and 51/51 PlayMode tests, including the 15/15 focused Bazaar production suite, canonical actor movement, damage/healing, duplicate prevention, readable touch labels, results/rematch, Maya coverage and live Bijli/Maya authority paths; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
 | Android smoke build | Passed with evidence | Current `d993a5b` APK (`151,512,643` bytes; SHA-256 `F12EEBB2A6E8968992B38F9446E1D9B55A5C2BD0EBB0F6AB0306A23786E9BEB9`) installed/launched only on Lava `ST5GDW23LB004392` (`LAVA LXX508`); Unity activity remained top-resumed with no sampled fatal marker. The optional Play Asset Delivery class-probe warning remains known. |
@@ -24,7 +25,7 @@ This file records evidence-backed status only. Allowed status values are: `Not s
 | Continuously interpolated Aandhi | Passed with evidence | Warning/closing state, next-radius preview and deterministic interpolation are exposed; EditMode 70/70 and PlayMode 27/27 pass |
 | Bot current/next-zone awareness | Passed with evidence | Bot snapshots carry explicit current/next zone centre/radius data and proactively reposition from the fixed clock; EditMode 71/71 and PlayMode 27/27 pass |
 | Authoritative rule separation | In progress | Actor damage, pickup/Tiffin healing, production movement, Dhol displacement, Bijli/Pehel displacement and production Maya decoy lifetime/health now resolve through `OfflineMatchAuthority` before Unity applies snapshots/events. Bazaar movement rejects duplicate ticks and disables local CharacterController projection; MovementLab remains an observation fixture. Fighter command/runtime ownership, remaining presentation adapters and network transport remain open |
-| Bazaar Bastion production vertical slice | Passed with evidence | `BazaarBastion.unity` now has a dedicated `BazaarBastionScene` contract, zero `MovementLabScene` markers and idempotent architecture generation; focused production PlayMode 15/15 plus full 100/100 EditMode and 51/51 PlayMode pass. Existing Lava/Web smoke evidence remains from `d993a5b`; presentation remains greybox and prefab extraction/human review are required |
+| Bazaar Bastion production vertical slice | Passed with evidence | `BazaarBastion.unity` has a dedicated `BazaarBastionScene` contract, zero `MovementLabScene` markers and a connected `Content/Prefabs/BazaarArchitecture.prefab`; full 100/100 EditMode and 51/51 PlayMode pass after prefab extraction. Existing Lava/Web smoke evidence remains from `d993a5b`; actor prefab extraction, greybox replacement and human review are required |
 | Fighter roster, progression, and complete offline loop | In progress | Common ability/movement interfaces select fighter-specific Pehel Charge Throw and Maya Decoy adapters; live controller tests cover Pehel charge/capture/throw, authority-routed Maya decoy follow/damage/destruction, and bot perception of a decoy spawned after sensor Awake. Latest regression is 100/100 EditMode and 51/51 PlayMode. Progression, full-loop reliability/soak, final presentation and audio remain |
 | Visual/audio placeholder foundation | Passed with evidence | `FighterPresentation` supplies replaceable colour rings, health bars, code-driven action states, attack/ability telegraphs and hit/elimination feedback; `BattleRajaAudioDirector` supplies original procedural cues, volume hooks and Web gesture-gated startup. Final art, animation clips, VFX, authored audio and visual approval remain open |
 | Canvas match UI foundation | Passed with evidence | `OfflineMatchHud` provides anchored match/zone status, pause/settings, spectator, full-placement results/rematch, locally persisted presentation settings and a functional bounded aim-assist toggle. Pure aim-assist/results tests plus fresh 94/94 EditMode and 45/45 PlayMode regression pass; localization assets, controller rebinding and human UI approval remain open; see ADR-024, ADR-040 and latest-head evidence |

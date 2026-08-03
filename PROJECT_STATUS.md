@@ -9,8 +9,8 @@
 - Product vision: drafted
 - Autonomous M1–M11 sequential execution: active; milestone gates and external
   service approvals remain explicit.
-- Latest validated runtime source HEAD: `26b11cc`; the current repository includes
-  the explicit Bazaar production-scene contract after the authority-driven Maya decoy,
+- Latest validated runtime source HEAD: `8f190cd`; the current repository includes
+  the connected Bazaar architecture prefab and explicit production-scene contract after the authority-driven Maya decoy,
   fighter displacement, Dhol, production movement and authority-first damage/healing
   checkpoints; production-flow EventSystem creation is
   Input System-only and the selected-fighter HUD path is covered by the current

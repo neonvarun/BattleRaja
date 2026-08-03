@@ -1,10 +1,20 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-03
-Runtime-bearing candidate: `26b11cc` (Bazaar production-scene contract continuation; prior artifact candidate remains `d993a5b`)
-Current validated runtime source HEAD: `26b11cc`
+Runtime-bearing candidate: `8f190cd` (Bazaar architecture prefab continuation; prior artifact candidate remains `d993a5b`)
+Current validated runtime source HEAD: `8f190cd`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web` served over local HTTP at `http://127.0.0.1:8137/index.html`
+
+## Bazaar architecture prefab continuation (`8f190cd`)
+
+- Bazaar architecture is now a connected greybox prefab. This is a structural content
+  boundary, not a visual approval or final-art result.
+- Full EditMode (100/100) and full PlayMode (51/51) passed. No fresh Android/Web artifact
+  was built for this content-only continuation; the `d993a5b` Lava/Web smoke remains the
+  latest artifact evidence.
+- Authored art/audio/animation, touch ergonomics, multi-browser parity and human review
+  remain open.
 
 ## Bazaar production-scene contract continuation (`26b11cc`)
 
