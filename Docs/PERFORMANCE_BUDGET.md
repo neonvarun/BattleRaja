@@ -24,21 +24,26 @@
 
 Never claim optimisation without profiling evidence.
 
-## Latest candidate measurements — 2026-08-03
+## Latest bounded smoke measurements — 2026-08-03 (`42e93e7` runtime / `e90ad19` docs)
 
-These are bounded smoke observations, not release-performance sign-off.
+These are bounded runtime observations, not release-performance sign-off. The raw
+Android captures are retained under `Builds/M11/Logs/`; the interpretation is tracked
+in `Docs/QA/Performance/runtime-smoke-20260803.md`.
 
-- **Lava `ST5GDW23LB004392` (`LAVA LXX508`)**: total PSS 502,948 KB, total RSS
-  639,560 KB, Graphics PSS 101,708 KB. A process-scoped `top` sample showed the game
-  process alive; `dumpsys gfxinfo` exposed only the ViewRoot summary and no frame/jank
-  histogram, so no FPS or frame-time claim is made. Raw captures are in
-  `Builds/M11/Logs/input-system-lava-meminfo-20260803.txt`,
-  `input-system-lava-gfxinfo-20260803.txt` and `input-system-lava-top-20260803.txt`.
-- **Chrome 150, production Bazaar Bastion Web**: DOMContentLoaded 401.7 ms, load
-  520.4 ms, WASM transfer 120,659,088 bytes, browser `requestAnimationFrame` sample
-  mean 5.592 ms / p50 5.5 ms / p95 6.0 ms / max 6.1 ms, JS heap used 30,182,138 bytes
-  of 33,119,866 bytes. The rAF values are browser observations and are not Unity FPS;
-  this was a local cached run, not a cold CDN or mobile-Web measurement.
+- **Lava `ST5GDW23LB004392` (`LAVA LXX508`)**, active Bazaar match for 20 seconds:
+  total PSS **460,165 KB**, total RSS **597,680 KB**, Graphics PSS **101,480 KB**,
+  swap **240 KB**. The process-scoped sample peaked at an instantaneous **87% CPU**;
+  `dumpsys cpuinfo` reported **50% user / 13% kernel** for the process in its sample.
+  `dumpsys gfxinfo` exposed only the ViewRoot/render-node summary and no frame/jank
+  histogram, so Android FPS, frame time, GPU and GC-rate claims remain unmade.
+- **Chrome 150, local production Bazaar Bastion Web** after an 8-second warm-up:
+  DOMContentLoaded **17.4 ms**, load **62.5 ms**, WASM transfer **120,872,306 bytes**
+  (decoded **120,872,006 bytes**) over **1,058.9 ms**; browser `requestAnimationFrame`
+  sample mean **5.603 ms**, p50 **5.5 ms**, p95 **6.1 ms**, max **6.1 ms**. JavaScript
+  heap used **58,307,579 bytes** of **64,410,431 bytes** (browser heap limit
+  **4,395,630,592 bytes**). The rAF values are browser observations and are not Unity
+  FPS; this was a local run, not a cold CDN or mobile-Web measurement. Console summary:
+  **0 errors / 0 warnings**.
 - **Open measurements**: Unity Profiler CPU/GPU/GC/draw-call capture, Android frame
   pacing, thermal/battery soak, repeated-match memory growth, Web cold-load and
   mobile-browser coverage, shader warm-up, compression/cache headers and network

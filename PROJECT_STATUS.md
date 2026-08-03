@@ -62,8 +62,9 @@
   `Web-BazaarBastion.wasm` SHA-256
   `BEB099C9B6B0FA148A70CC479FC2365F83944F046DB0F60A6DD2D4D148B31E7A`; local port 8139
   returned HTTP 200 and Playwright reported 0 errors/0 warnings. Visual flow and
-  results/rematch captures are recorded;
-  gadget-use capture, performance closure, multi-browser coverage and human review remain open.
+  results/rematch captures are recorded. A later bounded smoke sample recorded
+  120,872,306 bytes of WASM transfer and 5.603 ms mean browser rAF; gadget-use capture,
+  formal performance closure, multi-browser coverage and human review remain open.
 
 ## M1 execution evidence — 2026-08-02
 

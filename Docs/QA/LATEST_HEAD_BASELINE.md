@@ -29,6 +29,18 @@ pre-existing user-owned MovementLab and Burst changes remain unstaged.
 | Web serve/console | Existing local `http://127.0.0.1:8139/index.html` returned HTTP 200; Playwright session `brweb` reported 0 errors and 0 warnings across 52 messages. | Playwright session `brweb`, 2026-08-03 |
 | Web visual/interaction | Current rebuilt Web candidate was inspected at 1024×768 for the locked-service error route and settings, and at 1920×1080 for menu/settings. Prior flow captures cover the primary route and results/rematch. Gadget use remains unverified. | `Docs/QA/Visual/Phase7/web-bazaar-error-reconnect-1024x768-20260803.png`, `web-bazaar-settings-1024x768-20260803.png`, `web-bazaar-menu-1920x1080-20260803.png`, `web-bazaar-settings-1920x1080-20260803.png` |
 
+## Runtime performance continuation (`e90ad19` docs-only, 2026-08-03)
+
+The runtime-bearing source remains `42e93e7`; this documentation-only continuation records
+bounded observations from the connected Lava device and the local Chrome 150 Web route.
+Lava reported 460,165 KB PSS / 597,680 KB RSS / 101,480 KB Graphics / 240 KB swap in a
+20-second active-match sample. The process samples reported 87% instantaneous `top` CPU
+and 50% user / 13% kernel in `dumpsys cpuinfo`; `gfxinfo` exposed no frame/jank histogram.
+Chrome reported a 120,872,306-byte WASM transfer, 5.603 ms mean browser rAF and 0/0
+console errors/warnings after warm-up. These are smoke observations, not FPS, GPU, GC,
+thermal, repeated-match, cold-load, mobile-Web or release sign-off. Full interpretation:
+`Docs/QA/Performance/runtime-smoke-20260803.md`.
+
 The baseline passes compile/test/build/smoke gates, but remains prototype evidence:
 greybox art, gadget-use capture, performance/soak, multi-browser coverage, real Photon
 and PlayFab services, and human approval are still open.
