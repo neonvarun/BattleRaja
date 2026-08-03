@@ -5,6 +5,7 @@ using BattleRaja.Presentation.Movement;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -463,7 +464,7 @@ namespace BattleRaja.Presentation.Flow
         private static void EnsureEventSystem()
         {
             if (EventSystem.current != null) return;
-            var eventObject = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
+            var eventObject = new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
             eventObject.GetComponent<EventSystem>().sendNavigationEvents = true;
         }
 
