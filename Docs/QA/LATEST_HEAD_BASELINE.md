@@ -2,32 +2,35 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated runtime source HEAD: `42e93e7` (`test: cover production gadget authority route`)
-Latest runtime-bearing candidate: `42e93e7` (production Pehel authority plus a production Bazaar gadget pickup/use regression)
+Latest validated runtime source HEAD: `aa8e994` (`gameplay: enforce bot spawn protection`)
+Latest runtime-bearing candidate: `aa8e994` (production Pehel authority, gadget route and bot spawn-protection gating)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
-## Current source rebaseline after production gadget route (`42e93e7`, 2026-08-03)
+## Current source rebaseline after bot spawn-protection gating (`aa8e994`, 2026-08-03)
 
-This is the fresh validation/build/smoke baseline for source commit `42e93e7`, based
-on `aa640c2`. The Pehel production controller now submits commands and consumes
-immutable authority results, and the production Bazaar route has a gadget pickup/use
-regression; no Photon gameplay claim is made. Build-generated
+This is the fresh validation/test baseline for source commit `aa8e994`, based
+on `42e93e7`. The Pehel production controller now submits commands and consumes
+immutable authority results, the production Bazaar route has a gadget pickup/use
+regression, and bots respect load warmup/spawn protection before combat; no Photon
+gameplay claim is made. Build-generated
 Bootstrap/Tutorial fixture rewrites were discarded after the builds, while the
 pre-existing user-owned MovementLab and Burst changes remain unstaged.
 
 | Check | Command/result | Evidence |
 | --- | --- | --- |
-| Git baseline | Source commit `d67dd48` on branch `codex/product-completion`; docs evidence update follows this source commit | `git rev-parse`, 2026-08-03 |
+| Git baseline | Source commit `aa8e994` on branch `codex/product-completion`; docs evidence update follows this source commit | `git rev-parse`, 2026-08-03 |
 | Unity/toolchain | Unity `6000.5.6f1`; Git 2.53.0; Git LFS 3.7.1; embedded ADB 36.0.2 | installed tool output |
 | Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject ...` — 0 errors, 0 warnings | command output from 2026-08-03 |
 | Full EditMode | 101 passed, 0 failed, 0 skipped; focused Pehel authority test 1/1 | `Builds/M11/TestResults/pehel-authority-full-editmode-20260803.xml`, `pehel-authority-editmode-20260803-retry.xml` |
-| Full PlayMode | 53 passed, 0 failed, 0 skipped; focused production Pehel authority and gadget route tests pass 1/1 each | `Builds/M11/TestResults/production-gadget-full-playmode-20260803.xml`, `pehel-authority-final-playmode-full-20260803.xml`, `production-gadget-playmode-lower-20260803.xml` |
+| Full PlayMode | 54 passed, 0 failed, 0 skipped; focused production Pehel authority and gadget route tests pass 1/1 each; spawn-protection regression passes | `Builds/M11/TestResults/bot-protection-full-playmode-20260803.xml`, `production-gadget-playmode-lower-20260803.xml` |
 | Android build | `BuildAndroidBazaarBastionDevelopment` succeeded; APK 151,554,550 bytes; SHA-256 `88FC6A49A52AEFE4D38CF502120AD1FB49C0B86AD8475B6B82E53F230001188F` | `Builds/M11/Android/BattleRaja-BazaarBastion-M11.apk`, `Builds/M11/Logs/android-build.log` |
 | Lava runtime | Exact APK installed/launched only on `ST5GDW23LB004392` (`LAVA LXX508`); `UnityPlayerGameActivity` top-resumed; strict fatal/app-process marker search had no hits. The optional Play Asset Delivery class-probe warning remains known. | `Builds/M11/Logs/android-lava-pehel-authority-menu-ready-20260803.png`, ADB output |
 | Lava memory | `TOTAL PSS: 408734 KB`; `TOTAL RSS: 545576 KB`; `Graphics: 82088 KB` | `dumpsys meminfo` from 2026-08-03 |
 | Web build | `BuildWebBazaarBastionDevelopment` succeeded; 19 files / 133,581,238 bytes; `Web-BazaarBastion.wasm` 120,872,006 bytes; SHA-256 `BEB099C9B6B0FA148A70CC479FC2365F83944F046DB0F60A6DD2D4D148B31E7A` | `Builds/M11/Web-BazaarBastion`, `Builds/M11/Logs/web-build.log` |
 | Web serve/console | Existing local `http://127.0.0.1:8139/index.html` returned HTTP 200; Playwright session `brweb` reported 0 errors and 0 warnings across 52 messages. | Playwright session `brweb`, 2026-08-03 |
 | Web visual/interaction | Current rebuilt Web candidate was inspected at 1024×768 for the locked-service error route and settings, and at 1920×1080 for menu/settings. Prior flow captures cover the primary route and results/rematch. Gadget use remains unverified. | `Docs/QA/Visual/Phase7/web-bazaar-error-reconnect-1024x768-20260803.png`, `web-bazaar-settings-1024x768-20260803.png`, `web-bazaar-menu-1920x1080-20260803.png`, `web-bazaar-settings-1920x1080-20260803.png` |
+
+| Bot spawn protection | Production bots remain movement-capable but cannot use gadgets, attack, or activate abilities until the Opening phase; the new regression passes | `Assets/BattleRaja/Presentation/AI/BotBrain.cs`, `Assets/BattleRaja/Presentation/Match/OfflineMatchController.cs`, `Builds/M11/TestResults/bot-protection-full-playmode-20260803.xml` |
 
 ## Runtime performance continuation (`e90ad19` docs-only, 2026-08-03)
 
