@@ -1,10 +1,24 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-03
-Runtime-bearing candidate: `8f190cd` (Bazaar architecture prefab continuation; prior artifact candidate remains `d993a5b`)
-Current validated runtime source HEAD: `8f190cd`
+Runtime-bearing candidate: `d67dd48` (production Pehel authority continuation; prior artifact candidate remains `8f190cd`)
+Current validated runtime source HEAD: `d67dd48`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://127.0.0.1:8139/index.html`
+
+## Production Pehel authority smoke — 2026-08-03
+
+- The rebuilt Web candidate was served at `http://127.0.0.1:8139/index.html`; the
+  Playwright `brweb` session reported **0 console errors and 0 warnings** across 52
+  messages. A fresh 1024×768 menu capture is
+  `Docs/QA/Visual/Phase7/web-bazaar-pehel-authority-menu-1024x768-20260803.png`.
+- The fresh Android APK was installed/launched only on Lava
+  `ST5GDW23LB004392` (`LAVA LXX508`); `UnityPlayerGameActivity` remained top-resumed.
+  The readable menu capture is
+  `Builds/M11/Logs/android-lava-pehel-authority-menu-ready-20260803.png`.
+- These are technical smoke captures for the authority continuation. Gadget use,
+  authored art/audio, touch ergonomics, multi-browser parity and human visual approval
+  remain open.
 
 ## Current HEAD Web/Android visual interaction gate (`efbb1ac` docs atop `8f190cd`, 2026-08-03)
 

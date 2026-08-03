@@ -2,31 +2,31 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated runtime source HEAD: `8f190cd` (`content: extract Bazaar architecture prefab`)
-Latest runtime-bearing candidate: `8f190cd` (reusable Bazaar architecture prefab after the explicit production-scene boundary and authority-first movement/gadget/fighter displacement/Maya decoy/damage/healing candidates)
+Latest validated runtime source HEAD: `d67dd48` (`authority: route production Pehel charge through match authority`)
+Latest runtime-bearing candidate: `d67dd48` (production Pehel charge/capture/damage/throw resolution through the offline match authority boundary)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
-## Current HEAD rebaseline after Photon import (`efbb1ac` docs atop `8f190cd`, 2026-08-03)
+## Current source rebaseline after production Pehel authority (`d67dd48`, 2026-08-03)
 
-This is the fresh Phase 0 baseline from the current branch tip. `efbb1ac` is
-documentation-only on top of runtime source `8f190cd`; no Photon gameplay claim is
-made. Build-generated Bootstrap/Tutorial fixture rewrites were discarded after the
-builds, while the pre-existing user-owned MovementLab and Burst changes remain
-unstaged.
+This is the fresh validation/build/smoke baseline for source commit `d67dd48`, based
+on `aa640c2`. The Pehel production controller now submits commands and consumes
+immutable authority results; no Photon gameplay claim is made. Build-generated
+Bootstrap/Tutorial fixture rewrites were discarded after the builds, while the
+pre-existing user-owned MovementLab and Burst changes remain unstaged.
 
 | Check | Command/result | Evidence |
 | --- | --- | --- |
-| Git baseline | Local `efbb1ac811aedb635017296dceadabc2ec983893` equals `origin/codex/product-completion`; branch `codex/product-completion` | `git fetch origin`, `git rev-parse` from 2026-08-03 |
+| Git baseline | Source commit `d67dd48` on branch `codex/product-completion`; docs evidence update follows this source commit | `git rev-parse`, 2026-08-03 |
 | Unity/toolchain | Unity `6000.5.6f1`; Git 2.53.0; Git LFS 3.7.1; embedded ADB 36.0.2 | installed tool output |
 | Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject ...` — 0 errors, 0 warnings | command output from 2026-08-03 |
-| Full EditMode | 100 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/rebaseline-head-editmode-20260803.xml` |
-| Full PlayMode | 51 passed, 0 failed, 0 skipped | `Builds/M11/TestResults/rebaseline-head-playmode-20260803.xml` |
-| Android build | `BuildAndroidBazaarBastionDevelopment` succeeded; APK 151,511,951 bytes; SHA-256 `4837EACB14E2E5166E85AD034F4C88F453AC260AF695BE2FFEBB7A8A8AE7A14A` | `Builds/M11/Android/BattleRaja-BazaarBastion-M11.apk`, `Builds/M11/Logs/android-build.log` |
-| Lava runtime | Exact APK installed/launched only on `ST5GDW23LB004392` (`LAVA LXX508`); Unity activity top-resumed; no fatal exception/SIGSEGV/app-process crash markers. Three benign `AndroidRuntime` VM-start lines and the known optional Play Asset Delivery `AssetPackManager` class-probe warning were observed. | `Builds/M11/Logs/android-lava-rebaseline-20260803.png`, ADB output |
-| Lava memory | `TOTAL PSS: 408271 KB`; `TOTAL RSS: 545328 KB`; `Graphics: 82088 KB` | `dumpsys meminfo` from 2026-08-03 |
-| Web build | `BuildWebBazaarBastionDevelopment` succeeded; 19 files / 133,496,106 bytes; `Web-BazaarBastion.wasm` 120,790,368 bytes; SHA-256 `C1375376EF0906364B33798E046F719C041ECB1BF0277DBFCA32B91ABA165C68` | `Builds/M11/Web-BazaarBastion`, `Builds/M11/Logs/web-build.log` |
-| Web serve/console | Existing local `http://127.0.0.1:8139/index.html` returned HTTP 200; Playwright console had 0 errors and 1 Unity deprecation warning for manual `persistentDataPath` sync. Unity's temporary websockify helper also logged `EADDRINUSE` on port 35020, but the build and independent HTTP serve succeeded. | Playwright session `brweb`, `web-build.log` |
-| Web visual/interaction | Current candidate inspected at 1280×720, 1440×900 and 1024×768 for menu; 1024×768 for mode, fighter, loading, opening, active pressure, spectator, results and rematch. Gadget use remained unverified. | `Docs/QA/Visual/Phase7/web-bazaar-*.png`, `web-bazaar-results-final-probe-1024x768-20260803.png` |
+| Full EditMode | 101 passed, 0 failed, 0 skipped; focused Pehel authority test 1/1 | `Builds/M11/TestResults/pehel-authority-full-editmode-20260803.xml`, `pehel-authority-editmode-20260803-retry.xml` |
+| Full PlayMode | 52 passed, 0 failed, 0 skipped; focused production Pehel authority test 1/1 | `Builds/M11/TestResults/pehel-authority-final-playmode-full-20260803.xml`, `pehel-authority-playmode-stable-20260803.xml` |
+| Android build | `BuildAndroidBazaarBastionDevelopment` succeeded; APK 151,554,550 bytes; SHA-256 `88FC6A49A52AEFE4D38CF502120AD1FB49C0B86AD8475B6B82E53F230001188F` | `Builds/M11/Android/BattleRaja-BazaarBastion-M11.apk`, `Builds/M11/Logs/android-build.log` |
+| Lava runtime | Exact APK installed/launched only on `ST5GDW23LB004392` (`LAVA LXX508`); `UnityPlayerGameActivity` top-resumed; strict fatal/app-process marker search had no hits. The optional Play Asset Delivery class-probe warning remains known. | `Builds/M11/Logs/android-lava-pehel-authority-menu-ready-20260803.png`, ADB output |
+| Lava memory | `TOTAL PSS: 408734 KB`; `TOTAL RSS: 545576 KB`; `Graphics: 82088 KB` | `dumpsys meminfo` from 2026-08-03 |
+| Web build | `BuildWebBazaarBastionDevelopment` succeeded; 19 files / 133,581,238 bytes; `Web-BazaarBastion.wasm` 120,872,006 bytes; SHA-256 `BEB099C9B6B0FA148A70CC479FC2365F83944F046DB0F60A6DD2D4D148B31E7A` | `Builds/M11/Web-BazaarBastion`, `Builds/M11/Logs/web-build.log` |
+| Web serve/console | Existing local `http://127.0.0.1:8139/index.html` returned HTTP 200; Playwright session `brweb` reported 0 errors and 0 warnings across 52 messages. | Playwright session `brweb`, 2026-08-03 |
+| Web visual/interaction | Current rebuilt menu was inspected at 1024×768; prior flow captures cover the primary route and results/rematch. Gadget use remains unverified. | `Docs/QA/Visual/Phase7/web-bazaar-pehel-authority-menu-1024x768-20260803.png`, `web-bazaar-*.png` |
 
 The baseline passes compile/test/build/smoke gates, but remains prototype evidence:
 greybox art, gadget-use capture, performance/soak, multi-browser coverage, real Photon

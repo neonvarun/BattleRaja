@@ -9,13 +9,13 @@
 - Product vision: drafted
 - Autonomous M1–M11 sequential execution: active; milestone gates and external
   service approvals remain explicit.
-- Latest validated runtime source HEAD: `8f190cd` (current docs HEAD `efbb1ac`); the current repository includes
+- Latest validated runtime source HEAD: `d67dd48` (current docs update follows this source commit); the current repository includes
   the connected Bazaar architecture prefab and explicit production-scene contract after the authority-driven Maya decoy,
   fighter displacement, Dhol, production movement and authority-first damage/healing
   checkpoints; production-flow EventSystem creation is
   Input System-only and the selected-fighter HUD path is covered by the current
-  regression suite; Maya decoy perception refresh and authority-routed combat events are
-  covered by regression.
+  regression suite; Maya decoy perception refresh, authority-routed combat events and
+  production Pehel charge/capture/damage/throw resolution are covered by regression.
 - Root agent rules: active
 - Milestone 0: complete and committed locally
 - Unity project: verified at the repository root with URP and MovementLab scenes
@@ -47,19 +47,21 @@
 - Final art/audio/animation: not started
 - Git/LFS: local repository initialized and LFS configured; `origin` points to `https://github.com/neonvarun/BattleRaja.git`
 
-## Current HEAD rebaseline evidence — 2026-08-03
+## Current source rebaseline evidence — 2026-08-03
 
-- Repository validation: 0 errors, 0 warnings; full EditMode 100/100 and full PlayMode
-  51/51 passed from current HEAD `efbb1ac`.
+- Repository validation: 0 errors, 0 warnings; full EditMode 101/101 and full PlayMode
+  52/52 passed from source commit `d67dd48`; focused Pehel authority tests pass 1/1 in
+  each mode.
 - Android: current Bazaar APK `Builds/M11/Android/BattleRaja-BazaarBastion-M11.apk`
-  is 151,511,951 bytes (SHA-256
-  `4837EACB14E2E5166E85AD034F4C88F453AC260AF695BE2FFEBB7A8A8AE7A14A`); exact APK
-  launched only on Lava `ST5GDW23LB004392` with top-resumed Unity activity and no fatal
-  app-process marker. Memory snapshot: 408,271 KB PSS / 545,328 KB RSS / 82,088 KB Graphics.
-- Web: `Builds/M11/Web-BazaarBastion` contains 19 files / 133,496,106 bytes;
+  is 151,554,550 bytes (SHA-256
+  `88FC6A49A52AEFE4D38CF502120AD1FB49C0B86AD8475B6B82E53F230001188F`); exact APK
+  launched only on Lava `ST5GDW23LB004392` with top-resumed Unity activity and no strict
+  fatal/app-process marker. Memory snapshot: 408,734 KB PSS / 545,576 KB RSS / 82,088 KB Graphics.
+- Web: `Builds/M11/Web-BazaarBastion` contains 19 files / 133,581,238 bytes;
   `Web-BazaarBastion.wasm` SHA-256
-  `C1375376EF0906364B33798E046F719C041ECB1BF0277DBFCA32B91ABA165C68`; local port 8139
-  returned HTTP 200. Playwright visual flow and results/rematch captures are recorded;
+  `BEB099C9B6B0FA148A70CC479FC2365F83944F046DB0F60A6DD2D4D148B31E7A`; local port 8139
+  returned HTTP 200 and Playwright reported 0 errors/0 warnings. Visual flow and
+  results/rematch captures are recorded;
   gadget-use capture, performance closure, multi-browser coverage and human review remain open.
 
 ## M1 execution evidence — 2026-08-02
