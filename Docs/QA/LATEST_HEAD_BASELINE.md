@@ -2,8 +2,8 @@
 
 Date: 2026-08-03
 Branch: `codex/product-completion`
-Latest validated source HEAD: `810f484` (`feat: show full offline result placements`)
-Latest runtime-bearing candidate: `810f484` (full result-placement formatter and regression test)
+Latest validated source HEAD: `3e00b02` (`fix: restore Web canvas input focus`)
+Latest runtime-bearing candidate: `3e00b02` (Web focus hardening; Android runtime unchanged)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
 ## Scope and repository note
@@ -98,6 +98,25 @@ mutate the match snapshots.
 The runtime captures are live-match technical evidence for the build. They do not claim
 that the Results/rematch state has passed human visual review; that state still needs a
 deliberate capture and owner approval.
+
+## Web input-focus continuation (`3e00b02`)
+
+The Web template now gives the Unity canvas keyboard focus semantics (`tabindex="0"`, an
+accessible game label and pointer-down focus restoration). The repository validator checks
+these invariants so keyboard/pointer browser QA does not silently run against an unfocusable
+canvas.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | `Tools\Validation\validate.ps1 -RequireUnityProject -UnityExe ...\6000.5.6f1\Editor\Unity.exe` — 0 errors, 0 warnings | command output from 2026-08-03 |
+| Fresh regression baseline | EditMode 94/94 and PlayMode 45/45 passed sequentially | `Builds/M11/TestResults/rebaseline-editmode-20260803.xml`, `Builds/M11/TestResults/rebaseline-playmode-20260803.xml` |
+| Web build | Unity Web build completed; 21 files, 133,353,130 bytes; WASM SHA-256 `70210B58F843B51A29499AA5D8DB3A4D64AAAB0E994FA8425064AEF78762A0C7` | `Builds/M11/Logs/web-build.log`, `Builds/M11/Web/index.html` |
+| Chrome focus/runtime | `http://127.0.0.1:8137/index.html` returned HTTP 200; after clicking the canvas, `document.activeElement.id` was `unity-canvas` and `tabIndex` was `0`; 53 console messages, 0 errors and 0 warnings | `Docs/QA/Visual/Phase7/playwright-web-focus-20260803.png`, `.playwright-cli/console-2026-08-03T05-12-58-426Z.log` |
+| Edge focus/runtime | After clicking the canvas, `document.activeElement.id` was `unity-canvas` and `tabIndex` was `0`; 53 console messages, 0 errors and 0 warnings | `.playwright-cli/console-2026-08-03T05-13-26-439Z.log` |
+
+This closes the DOM/canvas focus defect only. It does not turn the unverified gadget-use or
+Results/rematch screenshot rows into visual approval, and it does not replace manual touch
+ergonomics review.
 
 ## Fresh Phase 6 continuation (`8544f55`)
 

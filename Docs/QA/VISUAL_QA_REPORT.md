@@ -1,10 +1,21 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-03
-Runtime-bearing candidate: `810f484` (results-screen continuation)
-Current source HEAD: `810f484`
+Runtime-bearing candidate: `3e00b02` (Web input-focus continuation)
+Current source HEAD: `3e00b02`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web` served over local HTTP at `http://127.0.0.1:8137/index.html`
+
+## Web input-focus continuation (`3e00b02`)
+
+- The generated canvas now has `tabindex="0"`, an accessible game label and pointer-down
+  focus restoration. The validator checks the template contract.
+- Chrome and Edge both loaded the Web candidate on port 8137, reported `unity-canvas` as
+  the active element after a canvas click, and produced 0 console errors/warnings.
+- `playwright-web-focus-20260803.png` shows the live greybox match from the focused Chrome
+  candidate. This is technical interaction evidence, not final visual approval.
+- The focus fix removes one browser-QA blocker, but successful gadget use, Results/rematch
+  capture, touch ergonomics, loading-state observation and human visual review remain open.
 
 ## Results-screen continuation (`810f484`)
 
