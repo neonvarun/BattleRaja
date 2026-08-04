@@ -3,7 +3,7 @@
 Updated: 2026-08-04
 Classification: **prototype**
 
-Latest continuation: `7ad7e42` + `a5fdde8` + `0e531bb` + `7889672` + `583106e` + `6f0fe8b` + `3af3e42` + `aa8e994` + `a72045d` + `b05f558` + `42e93e7` + `d67dd48` + `efbb1ac` + `8f190cd` + `26b11cc` + `d993a5b` + `9100e69` + `78fa990` + `204e4f0` + `678acb0` (2026-08-04).
+Latest continuation: `af2e0d8` + `7ad7e42` + `a5fdde8` + `0e531bb` + `7889672` + `583106e` + `6f0fe8b` + `3af3e42` + `aa8e994` + `a72045d` + `b05f558` + `42e93e7` + `d67dd48` + `efbb1ac` + `8f190cd` + `26b11cc` + `d993a5b` + `9100e69` + `78fa990` + `204e4f0` + `678acb0` (2026-08-04).
 The production Bazaar scene now has an explicit `BazaarBastionScene` contract, a connected
 architecture prefab and no
 longer carries the `MovementLabScene` marker; production-flow EventSystem creation is
@@ -25,7 +25,7 @@ runtime commit) now has fresh Android/Web smoke evidence. Goal B is therefore st
 
 | Area | Status | Evidence / boundary |
 | --- | --- | --- |
-| Unity project and package baseline | Passed with evidence | Unity `6000.5.6f1`; latest validated repository HEAD `7ad7e42`, runtime source `a5fdde8`; Photon Fusion `2.1.1 Stable 2177`; Input System-only handler with legacy-scene compatibility bridge; repository validation clean; authored Unity 6 object-lookup warnings removed; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
+| Unity project and package baseline | Passed with evidence | Unity `6000.5.6f1`; latest validated repository HEAD `af2e0d8`, exact platform candidate `7ad7e42`, runtime source `a5fdde8`; Photon Fusion `2.1.1 Stable 2177`; Input System-only handler with legacy-scene compatibility bridge; repository validation clean; authored Unity 6 object-lookup warnings removed; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
 | Photon Fusion import | Passed with evidence | Fusion 2.1.1 stable build 2177 is present and imported; no public multiplayer claim |
 | EditMode and PlayMode regression baseline | Passed with evidence | Exact Goal B source `a5fdde8` passes **109/109 EditMode** and **55/55 PlayMode** tests, including deterministic collision/placement and authority-driven Pehel regressions; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
 | Android smoke build | Passed with evidence | Exact platform candidate `7ad7e42` APK (**94,028,145** bytes; SHA-256 `FA0CB54C04DC9309D8B21DAE02CE1D3D8A9961DA1C77F5ADE47F0B6AD280053A`) installed/launched only on Lava `ST5GDW23LB004392` (`LAVA LXX508`); Unity activity remained top-resumed. Memory snapshot: 402,013 KB PSS / 537,532 KB RSS / 82,088 KB Graphics / 40 KB swap. This is a development smoke artifact, not a size/performance pass. |

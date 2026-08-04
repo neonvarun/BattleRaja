@@ -9,7 +9,7 @@
 - Product vision: drafted
 - Autonomous M1–M11 sequential execution: active; milestone gates and external
   service approvals remain explicit.
-- Latest validated repository HEAD: `7ad7e42` (docs-only evidence continuation after runtime source `a5fdde8`); the current repository includes
+- Latest validated repository HEAD: `af2e0d8` (docs-only evidence continuation after exact platform candidate `7ad7e42` and runtime source `a5fdde8`); the current repository includes
   the connected Bazaar architecture prefab and explicit production-scene contract after the authority-driven Maya decoy,
   fighter displacement, Dhol, production movement and authority-first damage/healing
   checkpoints; production-flow EventSystem creation is

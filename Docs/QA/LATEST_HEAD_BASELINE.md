@@ -2,9 +2,9 @@
 
 Date: 2026-08-04
 Branch: `codex/product-completion`
-Latest validated repository HEAD: `7ad7e42` (`docs: record Goal B collision evidence`)
+Latest validated repository HEAD: `af2e0d8` (`docs: record exact Goal B platform evidence`)
 Latest validated runtime source: `a5fdde8` (`authority: canonicalize collision and ability placement`)
-Latest runtime-bearing candidate: `a5fdde8`; exact-source platform candidate: `7ad7e42` (docs-only after the runtime commit)
+Latest runtime-bearing candidate: `a5fdde8`; exact-source platform candidate: `7ad7e42` (current HEAD is docs-only after the platform candidate)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
 ## Goal B deterministic collision and placement slice (`a5fdde8`; exact platform candidate `7ad7e42`, 2026-08-04)
