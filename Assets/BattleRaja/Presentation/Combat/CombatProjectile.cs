@@ -6,7 +6,6 @@ namespace BattleRaja.Presentation.Combat
     public sealed class CombatProjectile : MonoBehaviour
     {
         private ProjectileSimulation _simulation;
-        private ProjectileHitTracker _hitTracker;
         private ProjectileWeaponDefinition _definition;
         private CombatEntityId _instigatorId;
         private CombatFaction _instigatorFaction;
@@ -15,9 +14,11 @@ namespace BattleRaja.Presentation.Combat
         private CombatImpactFeedbackPool _impactPool;
         private FixedSimulationClock _clock;
         private Float2 _direction;
+        private int _projectileId;
         private bool _active;
 
         public bool IsActive => _active;
+        public int ProjectileId => _projectileId;
 
         public void Launch(
             AttackCommand command,
@@ -25,7 +26,8 @@ namespace BattleRaja.Presentation.Combat
             CombatFaction instigatorFaction,
             CombatProjectilePool pool,
             CombatDamageResolver damageResolver,
-            CombatImpactFeedbackPool impactPool)
+            CombatImpactFeedbackPool impactPool,
+            int projectileId = 0)
         {
             _definition = definition;
             _instigatorId = command.InstigatorId;
@@ -34,15 +36,15 @@ namespace BattleRaja.Presentation.Combat
             _damageResolver = damageResolver;
             _impactPool = impactPool;
             _direction = command.Direction;
+            _projectileId = projectileId;
             _simulation = new ProjectileSimulation(
                 command.Origin,
                 command.Direction,
                 definition.ProjectileSpeed,
-                definition.MaxRange,
+                definition.MaxRangeSeconds * definition.ProjectileSpeed,
                 definition.LifetimeSeconds);
             _clock = new FixedSimulationClock(30);
-            _hitTracker = new ProjectileHitTracker();
-            transform.position = new Vector3(command.Origin.X, pool.ProjectileHeight, command.Origin.Y);
+            transform.position = new Vector3(command.Origin.X, pool != null ? pool.ProjectileHeight : 1f, command.Origin.Y);
             transform.forward = new Vector3(command.Direction.X, 0f, command.Direction.Y);
             _active = true;
             gameObject.SetActive(true);
@@ -51,7 +53,7 @@ namespace BattleRaja.Presentation.Combat
         public void ResetProjectile()
         {
             _active = false;
-            _hitTracker?.Clear();
+            _projectileId = 0;
             gameObject.SetActive(false);
         }
 
@@ -65,52 +67,8 @@ namespace BattleRaja.Presentation.Combat
             var steps = _clock.Consume(Time.deltaTime);
             for (var i = 0; i < steps; i++)
             {
-                var simulationTick = _clock.GetConsumedTick(i);
-                var start = transform.position;
                 var step = _simulation.Step((float)_clock.StepSeconds);
-                var end = new Vector3(step.Position.X, start.y, step.Position.Y);
-                var delta = end - start;
-                var distance = delta.magnitude;
-                if (distance > 0.00001f && Physics.SphereCast(
-                        start,
-                        _definition.Radius,
-                        delta / distance,
-                        out var hit,
-                        distance,
-                        _definition.CollisionLayerMask,
-                        QueryTriggerInteraction.Ignore))
-                {
-                    var target = hit.collider.GetComponentInParent<CombatTarget>();
-                    if (target != null && target.Id != _instigatorId && _hitTracker.TryRegister(target.Id))
-                    {
-                        var request = new DamageRequest(
-                            _instigatorId,
-                            target.Id,
-                            _instigatorFaction,
-                            _definition.Damage,
-                            DamageType.Projectile,
-                            _direction,
-                            simulationTick);
-                        var result = _damageResolver.Resolve(
-                            target,
-                            request,
-                            _definition.AllowSelfHit,
-                            _definition.AllowFriendlyFire,
-                            simulationTick);
-                        _impactPool?.Play(hit.point, result.Applied);
-                        Despawn(ProjectileDespawnReason.Hit);
-                        return;
-                    }
-
-                    if (target == null)
-                    {
-                        _impactPool?.Play(hit.point, false);
-                        Despawn(ProjectileDespawnReason.Collision);
-                        return;
-                    }
-                }
-
-                transform.position = end;
+                transform.position = new Vector3(step.Position.X, _pool != null ? _pool.ProjectileHeight : 1f, step.Position.Y);
                 if (step.Expired)
                 {
                     Despawn(step.Reason);
@@ -119,10 +77,11 @@ namespace BattleRaja.Presentation.Combat
             }
         }
 
-        private void Despawn(ProjectileDespawnReason reason)
+        public void Despawn(ProjectileDespawnReason reason)
         {
+            if (!_active) return;
             _active = false;
-            _pool.Release(this, reason);
+            _pool?.Release(this, reason);
         }
     }
 }

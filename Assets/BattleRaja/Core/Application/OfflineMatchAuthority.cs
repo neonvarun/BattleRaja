@@ -97,7 +97,9 @@ namespace BattleRaja.Core.Application
                 ProjectileWeaponDefinition.TrainingBolt,
                 CombatFaction.Neutral,
                 Float2.Zero,
-                Float2.Up)
+                Float2.Up,
+                0,
+                0)
         {
         }
 
@@ -110,7 +112,9 @@ namespace BattleRaja.Core.Application
             ProjectileWeaponDefinition weapon,
             CombatFaction faction,
             Float2 origin,
-            Float2 direction)
+            Float2 direction,
+            int projectileId = 0,
+            int attackExecutionId = 0)
         {
             ActorId = actorId;
             SimulationTick = simulationTick;
@@ -121,6 +125,8 @@ namespace BattleRaja.Core.Application
             Faction = faction;
             Origin = origin;
             Direction = direction;
+            ProjectileId = projectileId;
+            AttackExecutionId = attackExecutionId;
         }
 
         public CombatEntityId ActorId { get; }
@@ -132,6 +138,8 @@ namespace BattleRaja.Core.Application
         public CombatFaction Faction { get; }
         public Float2 Origin { get; }
         public Float2 Direction { get; }
+        public int ProjectileId { get; }
+        public int AttackExecutionId { get; }
     }
 
     public readonly struct MatchAuthorityDecoy
@@ -232,12 +240,12 @@ namespace BattleRaja.Core.Application
     public readonly struct MatchAuthorityTick
     {
         public MatchAuthorityTick(MatchTickResult result, DamageRequest[] outsideDamageRequests)
-            : this(0, result, outsideDamageRequests, Array.Empty<GadgetHealingIntent>(), Array.Empty<int>())
+            : this(0, result, outsideDamageRequests, Array.Empty<GadgetHealingIntent>(), Array.Empty<int>(), Array.Empty<DomainProjectileSnapshot>())
         {
         }
 
         public MatchAuthorityTick(int simulationTick, MatchTickResult result, DamageRequest[] outsideDamageRequests)
-            : this(simulationTick, result, outsideDamageRequests, Array.Empty<GadgetHealingIntent>(), Array.Empty<int>())
+            : this(simulationTick, result, outsideDamageRequests, Array.Empty<GadgetHealingIntent>(), Array.Empty<int>(), Array.Empty<DomainProjectileSnapshot>())
         {
         }
 
@@ -247,12 +255,24 @@ namespace BattleRaja.Core.Application
             DamageRequest[] outsideDamageRequests,
             GadgetHealingIntent[] gadgetHealingIntents,
             int[] expiredStationIds)
+            : this(simulationTick, result, outsideDamageRequests, gadgetHealingIntents, expiredStationIds, Array.Empty<DomainProjectileSnapshot>())
+        {
+        }
+
+        public MatchAuthorityTick(
+            int simulationTick,
+            MatchTickResult result,
+            DamageRequest[] outsideDamageRequests,
+            GadgetHealingIntent[] gadgetHealingIntents,
+            int[] expiredStationIds,
+            DomainProjectileSnapshot[] projectileSnapshots)
         {
             SimulationTick = simulationTick;
             Result = result;
             OutsideDamageRequests = outsideDamageRequests ?? Array.Empty<DamageRequest>();
             GadgetHealingIntents = gadgetHealingIntents ?? Array.Empty<GadgetHealingIntent>();
             ExpiredStationIds = expiredStationIds ?? Array.Empty<int>();
+            ProjectileSnapshots = projectileSnapshots ?? Array.Empty<DomainProjectileSnapshot>();
         }
 
         public int SimulationTick { get; }
@@ -260,6 +280,7 @@ namespace BattleRaja.Core.Application
         public DamageRequest[] OutsideDamageRequests { get; }
         public GadgetHealingIntent[] GadgetHealingIntents { get; }
         public int[] ExpiredStationIds { get; }
+        public DomainProjectileSnapshot[] ProjectileSnapshots { get; }
     }
 
     /// <summary>
@@ -295,6 +316,8 @@ namespace BattleRaja.Core.Application
         private readonly Dictionary<CombatEntityId, int> _lastDecoySpawnTicks = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<CombatEntityId, int> _lastDecoyDamageTicks = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<int, GadgetStationRuntime> _stations = new Dictionary<int, GadgetStationRuntime>();
+        private readonly MatchEventIdentityTracker _identityTracker = new MatchEventIdentityTracker();
+        private readonly List<AuthoritativeProjectile> _activeProjectiles = new List<AuthoritativeProjectile>();
         private ArenaCollisionDefinition _collisionDefinition = ArenaCollisionDefinition.BazaarBastion;
         private DeterministicCollisionSolver _collisionSolver;
         private OfflineMatchSimulation _simulation;
@@ -393,6 +416,8 @@ namespace BattleRaja.Core.Application
             _lastDecoySpawnTicks.Clear();
             _lastDecoyDamageTicks.Clear();
             _stations.Clear();
+            _identityTracker.Reset();
+            _activeProjectiles.Clear();
             for (var i = 0; i < spawns.Count; i++)
             {
                 _gadgetInventories[spawns[i].Id] = new GadgetInventory(1);
@@ -647,6 +672,24 @@ namespace BattleRaja.Core.Application
             var faction = _participantFactions.TryGetValue(actorId, out var configuredFaction)
                 ? configuredFaction
                 : CombatFaction.Neutral;
+
+            var attackExecutionId = _identityTracker.NextAttackExecutionId();
+            var projectileId = _identityTracker.NextProjectileId();
+            var proj = new AuthoritativeProjectile(
+                projectileId,
+                attackExecutionId,
+                actorId,
+                definition.WeaponId,
+                command.SimulationTick,
+                canonicalOrigin,
+                canonicalDirection,
+                definition.ProjectileSpeed,
+                definition.ProjectileRadius,
+                definition.MaxRangeSeconds * definition.ProjectileSpeed,
+                definition.MaxRangeSeconds,
+                faction);
+            _activeProjectiles.Add(proj);
+
             return new MatchAuthorityAttack(
                 actorId,
                 command.SimulationTick,
@@ -656,7 +699,9 @@ namespace BattleRaja.Core.Application
                 definition,
                 faction,
                 canonicalOrigin,
-                canonicalDirection);
+                canonicalDirection,
+                projectileId,
+                attackExecutionId);
         }
 
         /// <summary>
@@ -1120,6 +1165,7 @@ namespace BattleRaja.Core.Application
             foreach (var runtime in _gadgetRuntimes.Values) runtime.Advance(fixedDeltaSeconds);
             foreach (var guard in _umbrellaGuards.Values) guard.Advance(fixedDeltaSeconds);
             AdvanceMayaDecoys(fixedDeltaSeconds, simulation);
+            var projectileSnapshots = AdvanceProjectiles(simulationTick, fixedDeltaSeconds, simulation);
             var result = simulation.Advance(fixedDeltaSeconds);
             var healingIntents = new List<GadgetHealingIntent>();
             var expiredStationIds = new List<int>();
@@ -1132,7 +1178,8 @@ namespace BattleRaja.Core.Application
                     result,
                     Array.Empty<DamageRequest>(),
                     healingIntents.ToArray(),
-                    expiredStationIds.ToArray());
+                    expiredStationIds.ToArray(),
+                    projectileSnapshots);
             }
 
             _outsideDamageAccumulator += fixedDeltaSeconds;
@@ -1143,7 +1190,8 @@ namespace BattleRaja.Core.Application
                     result,
                     Array.Empty<DamageRequest>(),
                     healingIntents.ToArray(),
-                    expiredStationIds.ToArray());
+                    expiredStationIds.ToArray(),
+                    projectileSnapshots);
             }
 
             var requests = new List<DamageRequest>(result.OutsideCount);
@@ -1171,7 +1219,214 @@ namespace BattleRaja.Core.Application
                 result,
                 requests.ToArray(),
                 healingIntents.ToArray(),
-                expiredStationIds.ToArray());
+                expiredStationIds.ToArray(),
+                projectileSnapshots);
+        }
+
+        private DomainProjectileSnapshot[] AdvanceProjectiles(
+            int simulationTick,
+            float fixedDeltaSeconds,
+            OfflineMatchSimulation simulation)
+        {
+            if (_activeProjectiles.Count == 0) return Array.Empty<DomainProjectileSnapshot>();
+
+            var snapshots = new List<DomainProjectileSnapshot>(_activeProjectiles.Count);
+            var participantSnapshots = simulation.GetSnapshots();
+
+            for (var i = _activeProjectiles.Count - 1; i >= 0; i--)
+            {
+                var proj = _activeProjectiles[i];
+                if (!proj.IsActive)
+                {
+                    _activeProjectiles.RemoveAt(i);
+                    continue;
+                }
+
+                var stepDistance = proj.Speed * fixedDeltaSeconds;
+                var maxDistance = Math.Min(stepDistance, proj.RemainingRange);
+
+                if (maxDistance <= 0.00001f)
+                {
+                    proj.Despawn(ProjectileDespawnReason.RangeExpired);
+                    snapshots.Add(proj.ToSnapshot());
+                    _activeProjectiles.RemoveAt(i);
+                    continue;
+                }
+
+                var bestHitDistance = maxDistance;
+                var hitType = ProjectileDespawnReason.None;
+                var hitTargetId = default(CombatEntityId);
+                var hitStationId = 0;
+
+                // 1. Arena collision (walls / obstacles)
+                if (_collisionDefinition.Raycast(proj.Position, proj.Direction, maxDistance, out var wallHitPoint, out _))
+                {
+                    var dWall = Float2.Distance(proj.Position, wallHitPoint);
+                    if (dWall < bestHitDistance)
+                    {
+                        bestHitDistance = dWall;
+                        hitType = ProjectileDespawnReason.HitWall;
+                    }
+                }
+
+                // 2. Participants
+                for (var p = 0; p < participantSnapshots.Length; p++)
+                {
+                    var target = participantSnapshots[p];
+                    if (!target.Alive || target.Id == proj.InstigatorId) continue;
+                    if (_participantFactions.TryGetValue(target.Id, out var targetFaction) && targetFaction == proj.Faction) continue;
+
+                    var targetRadius = _collisionDefinition.ActorRadius + proj.Radius;
+                    if (IntersectRayCircle(proj.Position, proj.Direction, maxDistance, target.Position, targetRadius, out var tHit))
+                    {
+                        if (tHit < bestHitDistance - 0.0001f ||
+                            (Math.Abs(tHit - bestHitDistance) <= 0.0001f && (hitType != ProjectileDespawnReason.HitActor || target.Id.Value < hitTargetId.Value)))
+                        {
+                            bestHitDistance = tHit;
+                            hitType = ProjectileDespawnReason.HitActor;
+                            hitTargetId = target.Id;
+                        }
+                    }
+                }
+
+                // 3. Maya Decoys
+                foreach (var pair in _mayaDecoys)
+                {
+                    var ownerId = pair.Key;
+                    var decoy = pair.Value;
+                    if (!decoy.IsActive || !decoy.IsTargetable || ownerId == proj.InstigatorId) continue;
+                    if (_participantFactions.TryGetValue(ownerId, out var ownerFaction) && ownerFaction == proj.Faction) continue;
+
+                    var decoyId = GetDecoyId(ownerId);
+                    var decoyRadius = _collisionDefinition.ActorRadius + proj.Radius;
+                    if (IntersectRayCircle(proj.Position, proj.Direction, maxDistance, decoy.Position, decoyRadius, out var tHit))
+                    {
+                        if (tHit < bestHitDistance - 0.0001f ||
+                            (Math.Abs(tHit - bestHitDistance) <= 0.0001f && (hitType != ProjectileDespawnReason.HitDecoy || decoyId.Value < hitTargetId.Value)))
+                        {
+                            bestHitDistance = tHit;
+                            hitType = ProjectileDespawnReason.HitDecoy;
+                            hitTargetId = decoyId;
+                        }
+                    }
+                }
+
+                // 4. Tiffin Stations
+                foreach (var pair in _stations)
+                {
+                    var stationId = pair.Key;
+                    var station = pair.Value;
+                    if (!station.IsActive) continue;
+
+                    var stationRadius = 0.55f + proj.Radius;
+                    if (IntersectRayCircle(proj.Position, proj.Direction, maxDistance, station.Position, stationRadius, out var tHit))
+                    {
+                        if (tHit < bestHitDistance - 0.0001f)
+                        {
+                            bestHitDistance = tHit;
+                            hitType = ProjectileDespawnReason.HitStation;
+                            hitStationId = stationId;
+                        }
+                    }
+                }
+
+                if (hitType != ProjectileDespawnReason.None)
+                {
+                    var hitPos = proj.Position + proj.Direction * bestHitDistance;
+                    proj.MoveTo(hitPos, bestHitDistance, fixedDeltaSeconds);
+                    proj.Despawn(hitType, hitTargetId);
+
+                    if (_participantWeapons.TryGetValue(proj.InstigatorId, out var weapon))
+                    {
+                        if (hitType == ProjectileDespawnReason.HitActor && hitTargetId.Value > 0)
+                        {
+                            _participantFactions.TryGetValue(hitTargetId, out var targetFaction);
+                            var damageReq = new DamageRequest(
+                                proj.InstigatorId,
+                                hitTargetId,
+                                proj.Faction,
+                                weapon.Damage,
+                                DamageType.BasicAttack,
+                                proj.Direction,
+                                simulationTick);
+                            ResolveDamage(damageReq, targetFaction, false, false);
+                        }
+                        else if (hitType == ProjectileDespawnReason.HitDecoy && hitTargetId.Value > 0)
+                        {
+                            _participantFactions.TryGetValue(proj.InstigatorId, out var instigatorFaction);
+                            var damageReq = new DamageRequest(
+                                proj.InstigatorId,
+                                hitTargetId,
+                                instigatorFaction,
+                                weapon.Damage,
+                                DamageType.BasicAttack,
+                                proj.Direction,
+                                simulationTick);
+                            ResolveMayaDecoyDamage(damageReq, CombatFaction.Enemy, false, false);
+                        }
+                        else if (hitType == ProjectileDespawnReason.HitStation && hitStationId > 0)
+                        {
+                            TryDamageStation(hitStationId, weapon.Damage);
+                        }
+                    }
+
+                    snapshots.Add(proj.ToSnapshot());
+                    _activeProjectiles.RemoveAt(i);
+                }
+                else
+                {
+                    var nextPos = proj.Position + proj.Direction * stepDistance;
+                    proj.MoveTo(nextPos, stepDistance, fixedDeltaSeconds);
+
+                    if (proj.RemainingRange <= 0.0001f)
+                    {
+                        proj.Despawn(ProjectileDespawnReason.RangeExpired);
+                        snapshots.Add(proj.ToSnapshot());
+                        _activeProjectiles.RemoveAt(i);
+                    }
+                    else if (proj.RemainingLifetime <= 0.0001f)
+                    {
+                        proj.Despawn(ProjectileDespawnReason.LifetimeExpired);
+                        snapshots.Add(proj.ToSnapshot());
+                        _activeProjectiles.RemoveAt(i);
+                    }
+                    else
+                    {
+                        snapshots.Add(proj.ToSnapshot());
+                    }
+                }
+            }
+
+            return snapshots.ToArray();
+        }
+
+        private static bool IntersectRayCircle(Float2 rayStart, Float2 rayDir, float maxDist, Float2 circleCenter, float circleRadius, out float tHit)
+        {
+            tHit = maxDist;
+            var v = circleCenter - rayStart;
+            var vSq = v.X * v.X + v.Y * v.Y;
+            var rSq = circleRadius * circleRadius;
+            if (vSq <= rSq)
+            {
+                tHit = 0f;
+                return true;
+            }
+
+            var tProj = v.X * rayDir.X + v.Y * rayDir.Y;
+            if (tProj <= 0f) return false;
+
+            var dSq = vSq - tProj * tProj;
+            if (dSq > rSq) return false;
+
+            var dHalf = (float)Math.Sqrt(rSq - dSq);
+            var tEntry = tProj - dHalf;
+            if (tEntry >= 0f && tEntry <= maxDist)
+            {
+                tHit = tEntry;
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
