@@ -1,10 +1,47 @@
 # Latest HEAD baseline
 
-Date: 2026-08-03
+Date: 2026-08-04
 Branch: `codex/product-completion`
-Latest validated runtime source HEAD: `583106e` (`authority: gate production attack commands in offline match authority`)
-Latest runtime-bearing candidate: `583106e` (offline production attack-command authority gate over the Unity 6 warning-clean baseline)
+Latest validated runtime source HEAD: `7889672` (`authority: harden attack commands and canonical match ticks`)
+Latest runtime-bearing candidate: `7889672` (Goal A canonical match tick and authority-owned attack configuration slice)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
+
+## Goal A exact-source rebaseline and command-authority slice (`7889672`, 2026-08-04)
+
+This focused Goal A commit establishes a single match-controller tick event for
+production command producers, keeps attack input malformed values available for
+authority rejection, and moves weapon, faction, tick-rate, muzzle origin and
+cooldown configuration behind `OfflineMatchAuthority`. Warmup, spawn-protection,
+resolution, stale/duplicate sequence, bounded-future tick and invalid direction
+inputs are rejected. The Unity projectile remains a presentation-only consumer of
+an accepted authority attack; projectile travel/collision, deterministic arena
+collision, replay and Photon remain out of scope.
+
+The build and browser evidence below was produced in a clean detached worktree at
+`7889672` (`C:\Projects\BattleRaja-GoalA-Validation`) so the main worktree's
+user-owned scene/Burst/Resources/Playwright/screenshot changes were not staged or
+overwritten. The detached worktree contains build-generated scene rewrites and is
+not a source baseline.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Source commit | `7889672` on `codex/product-completion`; main worktree remains dirty only with pre-existing user/generated files | `git rev-parse`, 2026-08-04 |
+| Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject ...` — **0 errors, 0 warnings** | command output from 2026-08-04 |
+| Full EditMode | **104/104 passed**, 0 failed, 0 skipped | `Builds/GoalA/TestResults/editmode.xml` (main-worktree test run) |
+| Full PlayMode | **55/55 passed**, 0 failed, 0 skipped | `Builds/GoalA/TestResults/playmode.xml` (main-worktree test run) |
+| Android build | `BuildAndroidBazaarBastionDevelopment` succeeded on Unity `6000.5.6f1`; APK **93,969,457 bytes**, SHA-256 `7558B505785A8E89C847E7039E900B2B2269E42E1BDD4EC2EA72D04609EF9FA9` | `C:\Projects\BattleRaja-GoalA-Validation\\Builds\\M11\\Android\\BattleRaja-BazaarBastion-M11.apk` and `android-build.log` |
+| Lava runtime | Exact APK installed/launched only on `ST5GDW23LB004392` (`LAVA LXX508`); Unity activity top-resumed; sampled memory **399,752 KB PSS / 536,648 KB RSS / 81,956 KB Graphics / 368 KB swap** | ADB output from 2026-08-04 |
+| Web build | `BuildWebBazaarBastionDevelopment` succeeded; **19 files / 133,684,703 bytes**; `Web-BazaarBastion.wasm` **120,975,513 bytes**, SHA-256 `B86AF336D02063AE04729C5874D14DCC3B8FC6E15203473A7580AE6284494DDE` | `C:\Projects\BattleRaja-GoalA-Validation\\Builds\\M11\\Web-BazaarBastion` and `web-build.log` |
+| Web serve/smoke | Local HTTP `127.0.0.1:8140/index.html` returned **200**; Playwright Chromium/Chrome and Edge canvas smoke tests each passed with no captured page/console errors | `Builds/GoalA/WebSmoke/*.png` and detached-worktree Playwright output, 2026-08-04 |
+| Web visual probe | Main menu canvas inspected at Chrome 1280×720 and 390×844 plus Edge 1280×720; no blank canvas or fatal browser error observed | detached-worktree screenshots, 2026-08-04 |
+
+Known non-fatal build/device noise remains: Unity reports an unavailable access
+token while resolving the locally assigned Personal entitlement, Fusion's editor
+import hook reports an already-existing generated config asset, WebGL ignores
+`AllowDebugging`, and Lava emits known gralloc/audio warnings. None prevented the
+successful build, launch or browser smoke. This is still prototype evidence, not
+Goal A completion: remaining per-component clocks, presentation collision/projectile
+authority, stable combat event IDs, replay/soak evidence and human review are open.
 
 ## Phase 1 authority attack-command continuation (`583106e`, 2026-08-03)
 
