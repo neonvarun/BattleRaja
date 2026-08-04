@@ -57,13 +57,16 @@ namespace BattleRaja.Core.Domain
             Minimum = minimum;
             Maximum = maximum;
             ActorRadius = actorRadius;
-            Obstacles = CopyAndSort(obstacles);
+            _obstacles = CopyAndSort(obstacles);
         }
 
+        private readonly ArenaObstacle[] _obstacles;
         public Float2 Minimum { get; }
         public Float2 Maximum { get; }
         public float ActorRadius { get; }
-        public ArenaObstacle[] Obstacles { get; }
+        public int ObstacleCount => _obstacles.Length;
+
+        public ArenaObstacle GetObstacle(int index) => _obstacles[index];
 
         /// <summary>
         /// Conservative Bazaar Bastion bounds matching the current authored play

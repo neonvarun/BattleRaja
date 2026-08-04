@@ -71,9 +71,9 @@ namespace BattleRaja.Core.Domain
                 collided = true;
             }
 
-            for (var i = 0; i < _definition.Obstacles.Length; i++)
+            for (var i = 0; i < _definition.ObstacleCount; i++)
             {
-                var obstacle = _definition.Obstacles[i];
+                var obstacle = _definition.GetObstacle(i);
                 var crossAxis = horizontal ? position.Y : position.X;
                 var crossMinimum = (horizontal ? obstacle.Minimum.Y : obstacle.Minimum.X) - _definition.ActorRadius;
                 var crossMaximum = (horizontal ? obstacle.Maximum.Y : obstacle.Maximum.X) + _definition.ActorRadius;
