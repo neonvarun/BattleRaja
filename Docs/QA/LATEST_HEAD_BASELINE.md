@@ -2,9 +2,33 @@
 
 Date: 2026-08-04
 Branch: `codex/product-completion`
-Latest validated runtime source HEAD: `0e531bb` (`authority: route fighter and gadget ticks through match clock`)
-Latest runtime-bearing candidate: `0e531bb` (Goal A canonical match tick plus authority-driven fighter/gadget adapter slice)
+Latest validated runtime source HEAD: `a5fdde8` (`authority: canonicalize collision and ability placement`)
+Latest runtime-bearing candidate: `a5fdde8` (Goal B deterministic bounds/placement slice; platform artifacts below remain from `0e531bb`)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
+
+## Goal B deterministic collision and placement slice (`a5fdde8`, 2026-08-04)
+
+This focused slice adds a Unity/vendor-free arena collision contract and deterministic
+axis-separated bounds/ordered-AABB solver. Production authority movement, Bijli/Pehel
+displacement, Dhol displacement and Tiffin placement now resolve through canonical
+authority positions; Maya decoy placement ignores caller-supplied remote positions.
+The current Bazaar Bastion default contract has bounds and no authored obstacles yet,
+so this is not a complete arena-collision or ability-completion claim. Projectile
+travel/collision, stable combat event IDs, atomic match resolution, replay/soak and
+Photon remain out of scope.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Source commit | `a5fdde8` on `codex/product-completion`; only the focused authority/test files were committed; pre-existing scene/Burst/Resources/Playwright/screenshot changes remain unstaged | `git rev-parse`, 2026-08-04 |
+| Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject ...` — **0 errors, 0 warnings** | command output from 2026-08-04 |
+| Full EditMode | **109/109 passed**, 0 failed, 0 skipped | `Builds/GoalB/TestResults/collision-editmode-final.xml` |
+| Full PlayMode | **55/55 passed**, 0 failed, 0 skipped | `Builds/GoalB/TestResults/collision-playmode-final.xml` |
+| Collision/placement coverage | Bounds clamp, deterministic obstacle slide/order, canonical Maya placement and canonical Tiffin origin tests pass; production Pehel fixture now selects an enabled bot and waits for authority throw resolution | `Assets/BattleRaja/Tests/EditMode/ArenaCollisionTests.cs`, `Assets/BattleRaja/Tests/PlayMode/VerticalSlicePlayModeTests.cs` |
+| Android/Web artifacts | **Not rebuilt from `a5fdde8`**. The latest successful platform artifacts remain the exact `0e531bb` detached-worktree APK/Web evidence recorded below; no current-HEAD platform pass is claimed | `0e531bb` artifact rows |
+
+The project remains prototype evidence. The committed Goal B slice does not include
+generated scene rewrites or authored obstacle data, and it does not close presentation
+projectile authority, atomic events, performance/soak, visual QA or human review.
 
 ## Goal A canonical adapter continuation (`0e531bb`, 2026-08-04)
 

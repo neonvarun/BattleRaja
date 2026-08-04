@@ -9,7 +9,7 @@
 - Product vision: drafted
 - Autonomous M1–M11 sequential execution: active; milestone gates and external
   service approvals remain explicit.
-- Latest validated runtime source HEAD: `0e531bb` (current Goal A authority/tick slice; exact-source build evidence is recorded below); the current repository includes
+- Latest validated runtime source HEAD: `a5fdde8` (current Goal B deterministic collision/placement slice; exact-source platform evidence is recorded below with a current-HEAD caveat); the current repository includes
   the connected Bazaar architecture prefab and explicit production-scene contract after the authority-driven Maya decoy,
   fighter displacement, Dhol, production movement and authority-first damage/healing
   checkpoints; production-flow EventSystem creation is
@@ -47,6 +47,27 @@
 - Backend/economy: deliberately deferred
 - Final art/audio/animation: not started
 - Git/LFS: local repository initialized and LFS configured; `origin` points to `https://github.com/neonvarun/BattleRaja.git`
+
+## Exact Goal B deterministic collision/placement evidence — 2026-08-04
+
+- Source commit: `a5fdde8` (`authority: canonicalize collision and ability placement`).
+- Repository validation: **0 errors, 0 warnings**. Full EditMode **109/109** and
+  full PlayMode **55/55** passed. The new coverage exercises immutable arena bounds,
+  deterministic ordered obstacle sliding, canonical Maya placement and canonical
+  Tiffin placement. The production Pehel regression now targets an enabled bot and
+  waits for the authority-owned throw resolution rather than assuming damage at the
+  capture frame.
+- Authority scope: production movement, Bijli/Pehel displacement, Dhol displacement
+  and Tiffin placement use the Core collision solver; Maya ignores caller-supplied
+  remote placement. Bazaar's default collision definition currently contains bounds
+  and no authored obstacles, so full arena geometry and all ability edge cases remain
+  open.
+- Android/Web: no platform build was generated from `a5fdde8`. The latest successful
+  exact-source APK/Web artifacts are from `0e531bb` in the detached-worktree Goal A2
+  evidence below; this commit therefore has test/validation evidence but not a fresh
+  current-HEAD Android/Web smoke pass.
+- User-owned/generated scene YAML, Burst output, Resources, Playwright files and
+  screenshots remain untouched and unstaged.
 
 ## Exact Goal A canonical adapter rebaseline evidence — 2026-08-04
 
