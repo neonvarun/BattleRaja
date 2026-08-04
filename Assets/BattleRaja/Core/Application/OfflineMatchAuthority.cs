@@ -295,6 +295,8 @@ namespace BattleRaja.Core.Application
         private readonly Dictionary<CombatEntityId, int> _lastDecoySpawnTicks = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<CombatEntityId, int> _lastDecoyDamageTicks = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<int, GadgetStationRuntime> _stations = new Dictionary<int, GadgetStationRuntime>();
+        private ArenaCollisionDefinition _collisionDefinition = ArenaCollisionDefinition.BazaarBastion;
+        private DeterministicCollisionSolver _collisionSolver;
         private OfflineMatchSimulation _simulation;
         private double _outsideDamageAccumulator;
         private int _lastSimulationTick = -1;
@@ -316,6 +318,7 @@ namespace BattleRaja.Core.Application
         public OfflineMatchSimulation Simulation => _simulation;
         public int CurrentSimulationTick => _lastSimulationTick;
         public MatchPhase CurrentPhase => _simulation != null ? _simulation.Phase : MatchPhase.LoadWarmup;
+        public ArenaCollisionDefinition CollisionDefinition => _collisionDefinition;
 
         public bool HasParticipant(CombatEntityId id)
         {
@@ -337,10 +340,26 @@ namespace BattleRaja.Core.Application
             _gadgetPickupDefinitions = gadgetPickups != null ? Copy(gadgetPickups) : Array.Empty<GadgetPickupDefinition>();
         }
 
+        /// <summary>
+        /// Selects the immutable arena collision contract before a match starts.
+        /// Unity scene adapters may supply authored obstacles, but the authority
+        /// never consumes Unity colliders directly.
+        /// </summary>
+        public void ConfigureArenaCollision(ArenaCollisionDefinition definition)
+        {
+            if (_simulation != null)
+            {
+                throw new InvalidOperationException("Arena collision cannot change after match start.");
+            }
+
+            _collisionDefinition = definition ?? throw new ArgumentNullException(nameof(definition));
+        }
+
         public void Start(IReadOnlyList<MatchSpawn> spawns)
         {
             _simulation = new OfflineMatchSimulation(_definition);
             _simulation.Start(spawns);
+            _collisionSolver = new DeterministicCollisionSolver(_collisionDefinition);
             _pickups = new MatchPickupRuntime[_pickupDefinitions.Length];
             for (var i = 0; i < _pickupDefinitions.Length; i++)
             {
@@ -470,14 +489,16 @@ namespace BattleRaja.Core.Application
             }
 
             var step = motor.Step(command, fixedDeltaSeconds, tuning);
-            var position = current.Position + step.Displacement;
+            var collision = _collisionSolver.Move(current.Position, step.Displacement);
+            var position = collision.Position;
+            var appliedStep = new MovementStep(step.Velocity, collision.AppliedDisplacement, step.AimDirection);
             if (!simulation.SetPosition(actorId, position))
             {
-                return new MatchAuthorityMovement(actorId, command.SimulationTick, false, step, current.Position);
+                return new MatchAuthorityMovement(actorId, command.SimulationTick, false, appliedStep, current.Position);
             }
 
             _lastMovementTicks[actorId] = command.SimulationTick;
-            return new MatchAuthorityMovement(actorId, command.SimulationTick, true, step, position);
+            return new MatchAuthorityMovement(actorId, command.SimulationTick, true, appliedStep, position);
         }
 
         public MatchAuthorityDisplacement ResolveAbilityDisplacement(
@@ -497,14 +518,15 @@ namespace BattleRaja.Core.Application
                 return new MatchAuthorityDisplacement(actorId, simulationTick, false, Float2.Zero, current.Position);
             }
 
-            var position = current.Position + displacement;
+            var collision = _collisionSolver.Move(current.Position, displacement);
+            var position = collision.Position;
             if (!simulation.SetPosition(actorId, position))
             {
                 return new MatchAuthorityDisplacement(actorId, simulationTick, false, Float2.Zero, current.Position);
             }
 
             _lastAbilityDisplacementTicks[actorId] = simulationTick;
-            return new MatchAuthorityDisplacement(actorId, simulationTick, true, displacement, position);
+            return new MatchAuthorityDisplacement(actorId, simulationTick, true, collision.AppliedDisplacement, position);
         }
 
         /// <summary>
@@ -741,14 +763,15 @@ namespace BattleRaja.Core.Application
                 actorSnapshot.Position);
             if (step.Displacement.SqrMagnitude > 0.000001f)
             {
-                var position = actorSnapshot.Position + step.Displacement;
+                var collision = _collisionSolver.Move(actorSnapshot.Position, step.Displacement);
+                var position = collision.Position;
                 if (RequireSimulation().SetPosition(actorId, position))
                 {
                     actorDisplacement = new MatchAuthorityDisplacement(
                         actorId,
                         simulationTick,
                         true,
-                        step.Displacement,
+                        collision.AppliedDisplacement,
                         position);
                 }
             }
@@ -892,13 +915,14 @@ namespace BattleRaja.Core.Application
             if (!authorityDamage.Result.Applied) return false;
 
             var displacement = direction.Normalized * (FighterSpecialDefinition.PehelChargeThrow.Magnitude * 0.25f);
-            var position = after.Position + displacement;
+            var collision = _collisionSolver.Move(after.Position, displacement);
+            var position = collision.Position;
             if (!simulation.SetPosition(targetId, position)) return false;
             targetDisplacement = new MatchAuthorityDisplacement(
                 targetId,
                 simulationTick,
                 true,
-                displacement,
+                collision.AppliedDisplacement,
                 position);
             return true;
         }
