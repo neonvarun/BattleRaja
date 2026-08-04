@@ -31,6 +31,7 @@ namespace BattleRaja.Presentation.Combat
         private bool _abilityHeld;
         private bool _abilityQueued;
         private Float2 _queuedDirection = Float2.Up;
+        private bool _subscribedToCanonicalTick;
 
         public FighterDefinition Definition => _definition;
         public ContentId AbilityId => _definition.Ability.AbilityId;
@@ -54,6 +55,30 @@ namespace BattleRaja.Presentation.Combat
             }
         }
 
+        private void Start()
+        {
+            SubscribeToCanonicalTick();
+        }
+
+        private void OnDestroy()
+        {
+            if (_subscribedToCanonicalTick && _match != null)
+            {
+                _match.SimulationTickAdvanced -= OnCanonicalSimulationTick;
+                _subscribedToCanonicalTick = false;
+            }
+        }
+
+        private bool UsesAuthority => movementAgent != null && movementAgent.AuthorityDrivenMovement &&
+            _match != null && _match.Simulation != null;
+
+        private void SubscribeToCanonicalTick()
+        {
+            if (_subscribedToCanonicalTick || !isActiveAndEnabled || _match == null) return;
+            _match.SimulationTickAdvanced += OnCanonicalSimulationTick;
+            _subscribedToCanonicalTick = true;
+        }
+
         private void Update()
         {
             if (_runtime == null)
@@ -70,6 +95,11 @@ namespace BattleRaja.Presentation.Combat
             }
 
             _abilityHeld = abilityPressed;
+            if (UsesAuthority && _match.IsMatchStarted)
+            {
+                return;
+            }
+
             var steps = _clock.Consume(Time.deltaTime);
             for (var i = 0; i < steps; i++)
             {
@@ -102,6 +132,38 @@ namespace BattleRaja.Presentation.Combat
                 {
                     dashTrail.emitting = ActionState == FighterActionState.Active;
                 }
+            }
+        }
+
+        private void OnCanonicalSimulationTick(int simulationTick, float fixedDeltaSeconds)
+        {
+            if (!isActiveAndEnabled || !UsesAuthority || !_match.IsMatchStarted) return;
+
+            if (_abilityQueued)
+            {
+                Submit(AbilityCommandFactory.Create(
+                    new CombatEntityId(movementAgent != null ? movementAgent.ActorId : 1),
+                    simulationTick,
+                    _definition.Ability.AbilityId,
+                    _queuedDirection,
+                    true));
+                _abilityQueued = false;
+            }
+
+            var availableDistance = ComputeAvailableDistance(_runtime.DashDirection);
+            var step = _runtime.Step(fixedDeltaSeconds, availableDistance);
+            if (step.Displacement.SqrMagnitude > 0.000001f && characterController != null)
+            {
+                var appliedByAuthority = ApplyAuthorityDisplacement(step.Displacement, simulationTick);
+                if (!appliedByAuthority)
+                {
+                    characterController.Move(new Vector3(step.Displacement.X, 0f, step.Displacement.Y));
+                }
+            }
+
+            if (dashTrail != null)
+            {
+                dashTrail.emitting = ActionState == FighterActionState.Active;
             }
         }
 

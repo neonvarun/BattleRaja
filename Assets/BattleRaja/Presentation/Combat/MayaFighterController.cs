@@ -27,6 +27,7 @@ namespace BattleRaja.Presentation.Combat
         private bool _abilityQueued;
         private Float2 _queuedDirection = Float2.Up;
         private OfflineMatchController _match;
+        private bool _subscribedToCanonicalTick;
 
         public ContentId AbilityId => _special.AbilityId;
         public FighterDefinition Definition => _definition;
@@ -71,6 +72,27 @@ namespace BattleRaja.Presentation.Combat
             _clock = new FixedSimulationClock(Mathf.Max(1, simulationTickRate));
         }
 
+        private void Start()
+        {
+            SubscribeToCanonicalTick();
+        }
+
+        private void OnDestroy()
+        {
+            if (_subscribedToCanonicalTick && _match != null)
+            {
+                _match.SimulationTickAdvanced -= OnCanonicalSimulationTick;
+                _subscribedToCanonicalTick = false;
+            }
+        }
+
+        private void SubscribeToCanonicalTick()
+        {
+            if (_subscribedToCanonicalTick || !isActiveAndEnabled || _match == null) return;
+            _match.SimulationTickAdvanced += OnCanonicalSimulationTick;
+            _subscribedToCanonicalTick = true;
+        }
+
         private void Update()
         {
             var pressed = inputAdapter != null && inputAdapter.IsAbilityPressed;
@@ -81,6 +103,12 @@ namespace BattleRaja.Presentation.Combat
             }
 
             _abilityHeld = pressed;
+            if (UsesAuthorityDecoy && _match.IsMatchStarted)
+            {
+                SyncDecoyView();
+                return;
+            }
+
             var steps = _clock.Consume(Time.deltaTime);
             for (var i = 0; i < steps; i++)
             {
@@ -103,6 +131,24 @@ namespace BattleRaja.Presentation.Combat
 
                 SyncDecoyView();
             }
+        }
+
+        private void OnCanonicalSimulationTick(int simulationTick, float fixedDeltaSeconds)
+        {
+            if (!isActiveAndEnabled || !UsesAuthorityDecoy || !_match.IsMatchStarted) return;
+
+            if (_abilityQueued)
+            {
+                Submit(AbilityCommandFactory.Create(
+                    new CombatEntityId(movementAgent != null ? movementAgent.ActorId : 1),
+                    simulationTick,
+                    AbilityId,
+                    _queuedDirection,
+                    true));
+                _abilityQueued = false;
+            }
+
+            SyncDecoyView();
         }
 
         public void Submit(AbilityCommand command)

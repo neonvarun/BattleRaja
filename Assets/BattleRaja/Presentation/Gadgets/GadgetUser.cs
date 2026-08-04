@@ -28,6 +28,7 @@ namespace BattleRaja.Presentation.Gadgets
         private float _feedbackRemaining;
         private string _feedback = string.Empty;
         private bool _useQueued;
+        private bool _subscribedToCanonicalTick;
 
         public bool HasGadget => _inventory.HasGadget;
         public ContentId HeldGadget => _inventory.HeldGadget;
@@ -46,11 +47,39 @@ namespace BattleRaja.Presentation.Gadgets
             _clock = new FixedSimulationClock(Mathf.Max(1, simulationTickRate));
         }
 
+        private void Start()
+        {
+            SubscribeToCanonicalTick();
+        }
+
+        private void OnDestroy()
+        {
+            if (_subscribedToCanonicalTick && match != null)
+            {
+                match.SimulationTickAdvanced -= OnCanonicalSimulationTick;
+                _subscribedToCanonicalTick = false;
+            }
+        }
+
+        private bool UsesAuthority => match != null && match.AuthorityDrivenMovement && match.Simulation != null;
+
+        private void SubscribeToCanonicalTick()
+        {
+            if (_subscribedToCanonicalTick || !isActiveAndEnabled || match == null) return;
+            match.SimulationTickAdvanced += OnCanonicalSimulationTick;
+            _subscribedToCanonicalTick = true;
+        }
+
         private void Update()
         {
             if (!botControlled && Keyboard.current != null && Keyboard.current.gKey.wasPressedThisFrame)
             {
                 _useQueued = true;
+            }
+
+            if (UsesAuthority && match.IsMatchStarted)
+            {
+                return;
             }
 
             var steps = _clock.Consume(Time.deltaTime);
@@ -64,13 +93,32 @@ namespace BattleRaja.Presentation.Gadgets
                     _useQueued = false;
                 }
 
-                var delta = (float)_clock.StepSeconds;
-                _runtime.Advance(delta);
-                _shieldRemaining = Mathf.Max(0f, _shieldRemaining - delta);
-                _feedbackRemaining = Mathf.Max(0f, _feedbackRemaining - delta);
-                if (_feedbackRemaining <= 0f) _feedback = string.Empty;
+                AdvancePresentation((float)_clock.StepSeconds);
             }
             _activeSimulationTick = -1;
+        }
+
+        private void OnCanonicalSimulationTick(int simulationTick, float fixedDeltaSeconds)
+        {
+            if (!isActiveAndEnabled || !UsesAuthority || !match.IsMatchStarted) return;
+
+            _activeSimulationTick = simulationTick;
+            if (_useQueued)
+            {
+                UseHeld();
+                _useQueued = false;
+            }
+
+            AdvancePresentation(fixedDeltaSeconds);
+            _activeSimulationTick = -1;
+        }
+
+        private void AdvancePresentation(float deltaSeconds)
+        {
+            _runtime.Advance(deltaSeconds);
+            _shieldRemaining = Mathf.Max(0f, _shieldRemaining - deltaSeconds);
+            _feedbackRemaining = Mathf.Max(0f, _feedbackRemaining - deltaSeconds);
+            if (_feedbackRemaining <= 0f) _feedback = string.Empty;
         }
 
         public bool TryPickup(ContentId id)
@@ -270,6 +318,11 @@ namespace BattleRaja.Presentation.Gadgets
 
         private int NextTick()
         {
+            if (UsesAuthority && match.IsMatchStarted)
+            {
+                return match.SimulationTick;
+            }
+
             return _clock != null
                 ? (_activeSimulationTick >= 0 ? _activeSimulationTick : _clock.Tick)
                 : _tick++;
