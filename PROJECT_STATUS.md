@@ -9,7 +9,7 @@
 - Product vision: drafted
 - Autonomous M1–M11 sequential execution: active; milestone gates and external
   service approvals remain explicit.
-- Latest validated runtime source HEAD: `7889672` (current Goal A authority/tick slice; exact-source build evidence is recorded below); the current repository includes
+- Latest validated runtime source HEAD: `0e531bb` (current Goal A authority/tick slice; exact-source build evidence is recorded below); the current repository includes
   the connected Bazaar architecture prefab and explicit production-scene contract after the authority-driven Maya decoy,
   fighter displacement, Dhol, production movement and authority-first damage/healing
   checkpoints; production-flow EventSystem creation is
@@ -47,6 +47,29 @@
 - Backend/economy: deliberately deferred
 - Final art/audio/animation: not started
 - Git/LFS: local repository initialized and LFS configured; `origin` points to `https://github.com/neonvarun/BattleRaja.git`
+
+## Exact Goal A canonical adapter rebaseline evidence — 2026-08-04
+
+- Source commit: `0e531bb` (`authority: route fighter and gadget ticks through match clock`).
+- Repository validation: 0 errors, 0 warnings. Full EditMode **104/104** and full
+  PlayMode **55/55** passed after routing authority-driven Bijli, Pehel, Maya and
+  gadget adapter steps through the match controller's canonical tick event.
+- Android: clean detached-worktree build on Unity `6000.5.6f1` produced a
+  **93,986,577-byte** APK (SHA-256
+  `0D6F54E5083886E5543C261DEB918708009A12479786293968827BB7D7178AF3`). It was
+  installed/launched only on Lava `ST5GDW23LB004392` (`LAVA LXX508`); the Unity
+  activity was top-resumed. The sampled process reported **350,551 KB PSS /
+  487,160 KB RSS / 69,556 KB Graphics / 3 KB swap**.
+- Web: the exact source built successfully in the same clean detached worktree;
+  output contains **19 files / 133,693,325 bytes**, with
+  `Web-BazaarBastion.wasm` **120,983,326 bytes** (SHA-256
+  `9BC3A5451695EE90DD53C5EB0F1BECB1E7065E8DAAD5C5B895314ACC49CC47FD`). Local
+  HTTP returned 200, and Chrome plus Edge Playwright canvas smoke tests passed
+  without captured page/console errors at desktop and portrait probes.
+- Build-generated scene rewrites remain isolated to the detached worktree; the
+  main worktree's pre-existing scene YAML, Burst, Resources, Playwright and
+  screenshot changes remain untouched and unstaged. Projectile/collision authority,
+  replay, soak/performance measurements and human review remain open.
 
 ## Exact Goal A source rebaseline evidence — 2026-08-04
 

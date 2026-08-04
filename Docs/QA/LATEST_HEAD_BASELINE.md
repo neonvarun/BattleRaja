@@ -2,9 +2,38 @@
 
 Date: 2026-08-04
 Branch: `codex/product-completion`
-Latest validated runtime source HEAD: `7889672` (`authority: harden attack commands and canonical match ticks`)
-Latest runtime-bearing candidate: `7889672` (Goal A canonical match tick and authority-owned attack configuration slice)
+Latest validated runtime source HEAD: `0e531bb` (`authority: route fighter and gadget ticks through match clock`)
+Latest runtime-bearing candidate: `0e531bb` (Goal A canonical match tick plus authority-driven fighter/gadget adapter slice)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
+
+## Goal A canonical adapter continuation (`0e531bb`, 2026-08-04)
+
+This focused continuation routes authority-driven Bijli, Pehel, Maya and gadget
+adapter steps through `OfflineMatchController.SimulationTickAdvanced`. Their local
+MovementLab paths retain local clocks, while production attack/bot commands and
+authority-driven abilities no longer consume independent gameplay clocks. Projectile
+travel/collision remains presentation-only; deterministic arena collision, stable
+combat event IDs, replay/soak and Photon remain out of scope.
+
+The clean detached worktree at `C:\Projects\BattleRaja-GoalA2-Validation` was used
+for the fresh platform artifacts so the main worktree's user-owned/generated files
+remain untouched.
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Source commit | `0e531bb` on `codex/product-completion`; only focused source/docs commits are ahead of origin; pre-existing dirty assets remain unstaged | `git rev-parse`, 2026-08-04 |
+| Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject ...` — **0 errors, 0 warnings** | command output from 2026-08-04 |
+| Full EditMode | **104/104 passed**, 0 failed, 0 skipped | `Builds/GoalA/TestResults/editmode-canonical-abilities.xml` |
+| Full PlayMode | **55/55 passed**, 0 failed, 0 skipped | `Builds/GoalA/TestResults/playmode-canonical-abilities-2.xml` |
+| Android build | `BuildAndroidBazaarBastionDevelopment` succeeded; APK **93,986,577 bytes**, SHA-256 `0D6F54E5083886E5543C261DEB918708009A12479786293968827BB7D7178AF3` | `C:\Projects\BattleRaja-GoalA2-Validation\\Builds\\M11\\Android\\BattleRaja-BazaarBastion-M11.apk` and `android-build.log` |
+| Lava runtime | Exact APK installed/launched only on `ST5GDW23LB004392` (`LAVA LXX508`); Unity activity top-resumed; sampled memory **350,551 KB PSS / 487,160 KB RSS / 69,556 KB Graphics / 3 KB swap** | ADB output from 2026-08-04 |
+| Web build | `BuildWebBazaarBastionDevelopment` succeeded; **19 files / 133,693,325 bytes**; `Web-BazaarBastion.wasm` **120,983,326 bytes**, SHA-256 `9BC3A5451695EE90DD53C5EB0F1BECB1E7065E8DAAD5C5B895314ACC49CC47FD` | `C:\Projects\BattleRaja-GoalA2-Validation\\Builds\\M11\\Web-BazaarBastion` and `web-build.log` |
+| Web serve/smoke | Local HTTP `127.0.0.1:8141/index.html` returned **200**; Chrome and Edge Playwright canvas smoke tests each passed with no captured page/console errors | detached-worktree WebSmoke screenshots and test output, 2026-08-04 |
+| Web visual probe | Main menu canvas inspected at Chrome 1280×720 and 390×844 plus Edge 1280×720; no blank canvas or fatal browser error observed | detached-worktree screenshots, 2026-08-04 |
+
+The project remains prototype evidence. Known non-fatal Unity licensing/Fusion
+editor-import and WebGL debugging warnings, plus Lava gralloc/audio noise, do not
+constitute a performance, visual, multiplayer or release pass.
 
 ## Goal A exact-source rebaseline and command-authority slice (`7889672`, 2026-08-04)
 
