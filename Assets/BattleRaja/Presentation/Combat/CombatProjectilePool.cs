@@ -34,7 +34,8 @@ namespace BattleRaja.Presentation.Combat
         public CombatProjectile Spawn(
             AttackCommand command,
             ProjectileWeaponDefinition definition,
-            CombatFaction faction)
+            CombatFaction faction,
+            int projectileId = 0)
         {
             if (!definition.IsValid(out _))
             {
@@ -48,7 +49,7 @@ namespace BattleRaja.Presentation.Combat
 
             var projectile = _available.Count > 0 ? _available.Pop() : CreateProjectile();
             ActiveCount++;
-            projectile.Launch(command, definition, faction, this, damageResolver, impactPool);
+            projectile.Launch(command, definition, faction, this, damageResolver, impactPool, projectileId);
             return projectile;
         }
 

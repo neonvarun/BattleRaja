@@ -145,12 +145,14 @@ namespace BattleRaja.Presentation.Combat
             var spawnFaction = faction;
             var spawnCommand = command;
 
+            var projectileId = 0;
             if (UsesAuthority)
             {
                 var authority = match.TryAcceptAttack(command);
                 if (!authority.Accepted) return;
                 spawnDefinition = authority.Weapon;
                 spawnFaction = authority.Faction;
+                projectileId = authority.ProjectileId;
                 spawnCommand = new AttackCommand(
                     command.InstigatorId,
                     authority.SimulationTick,
@@ -165,7 +167,7 @@ namespace BattleRaja.Presentation.Combat
                 if (!_cooldown.TryConsume(command.SimulationTick, intervalTicks)) return;
             }
 
-            if (projectilePool != null && projectilePool.Spawn(spawnCommand, spawnDefinition, spawnFaction) != null)
+            if (projectilePool != null && projectilePool.Spawn(spawnCommand, spawnDefinition, spawnFaction, projectileId) != null)
             {
                 GetComponent<FighterPresentation>()?.NotifyAttack();
             }

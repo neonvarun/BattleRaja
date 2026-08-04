@@ -397,6 +397,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Flow.ProductionFlowController
   gameplaySceneName: BazaarBastion
+  tutorialSceneName: TutorialArena
   canvas: {fileID: 0}
 --- !u!4 &1900219770
 Transform:
