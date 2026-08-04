@@ -316,7 +316,11 @@ namespace BattleRaja.Tests.PlayMode
         {
             var match = Object.FindAnyObjectByType<OfflineMatchController>();
             var pehel = Object.FindObjectsByType<PehelFighterController>()
-                .First(controller => controller.GetComponent<MovementPlayerAgent>()?.AuthorityDrivenMovement == true);
+                .Where(controller => controller.isActiveAndEnabled &&
+                    controller.GetComponent<MovementPlayerAgent>()?.AuthorityDrivenMovement == true &&
+                    controller.GetComponent<BotBrain>() != null)
+                .OrderBy(controller => controller.GetComponent<MovementPlayerAgent>().ActorId)
+                .First();
             var pehelAgent = pehel.GetComponent<MovementPlayerAgent>();
             var player = PlayModeTestHelpers.FindPlayer<CombatTarget>();
             var playerAgent = player.GetComponent<MovementPlayerAgent>();
@@ -343,7 +347,16 @@ namespace BattleRaja.Tests.PlayMode
                 new Float2(1f, 0f),
                 true));
 
-            yield return new WaitForSecondsRealtime(0.9f);
+            // Allow the canonical match tick to advance through startup, active,
+            // capture and recovery even when the editor is compiling/importing in
+            // the background. The test still fails if the authority never captures.
+            var captureTimeout = 2f;
+            while (captureTimeout > 0f &&
+                (pehel.CapturedTargetId != player.Id || player.Health.Snapshot.CurrentHealth >= beforeHealth))
+            {
+                captureTimeout -= Time.unscaledDeltaTime;
+                yield return null;
+            }
 
             Assert.That(pehel.CapturedTargetId, Is.EqualTo(player.Id));
             Assert.That(player.Health.Snapshot.CurrentHealth, Is.LessThan(beforeHealth));

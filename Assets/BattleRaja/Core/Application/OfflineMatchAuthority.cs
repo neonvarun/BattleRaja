@@ -947,7 +947,10 @@ namespace BattleRaja.Core.Application
                 _mayaDecoys[ownerId] = decoy;
             }
 
-            if (!decoy.TrySpawn(ownerId, position, FighterSpecialDefinition.MayaDecoy))
+            // The owner snapshot is canonical. The presentation-supplied position
+            // is an intent marker and cannot move a decoy remotely.
+            var canonicalPosition = _collisionSolver.Move(owner.Position, Float2.Zero).Position;
+            if (!decoy.TrySpawn(ownerId, canonicalPosition, FighterSpecialDefinition.MayaDecoy))
             {
                 return GetMayaDecoySnapshot(ownerId);
             }
@@ -1264,7 +1267,37 @@ namespace BattleRaja.Core.Application
                 return new GadgetUseResult(false, GadgetUseFailure.NotHeld, default(GadgetEffect));
             }
 
-            var result = runtime.TryUse(inventory, command);
+            if (!RequireSimulation().TryGetSnapshot(command.UserId, out var user) || !user.Alive ||
+                !GadgetCatalog.TryGet(command.GadgetId, out var definition))
+            {
+                return new GadgetUseResult(false, GadgetUseFailure.InvalidPlacement, default(GadgetEffect));
+            }
+
+            var direction = command.Direction.Normalized;
+            var canonicalOrigin = user.Position;
+            if (definition.Kind == GadgetKind.TiffinStation)
+            {
+                if (direction.SqrMagnitude <= 0.000001f)
+                {
+                    return new GadgetUseResult(false, GadgetUseFailure.InvalidPlacement, default(GadgetEffect));
+                }
+
+                var placement = _collisionSolver.Move(user.Position, direction * definition.PlacementRadius);
+                if (placement.AppliedDisplacement.SqrMagnitude <= 0.000001f)
+                {
+                    return new GadgetUseResult(false, GadgetUseFailure.InvalidPlacement, default(GadgetEffect));
+                }
+
+                canonicalOrigin = placement.Position;
+            }
+
+            var canonicalCommand = new GadgetUseCommand(
+                command.UserId,
+                command.GadgetId,
+                canonicalOrigin,
+                direction,
+                command.Tick);
+            var result = runtime.TryUse(inventory, canonicalCommand);
             if (!result.Used)
             {
                 return result;
@@ -1279,12 +1312,12 @@ namespace BattleRaja.Core.Application
                 {
                     var snapshot = snapshots[i];
                     if (!snapshot.Alive || snapshot.Id == command.UserId) continue;
-                    var delta = snapshot.Position - command.Origin;
+                    var delta = snapshot.Position - canonicalCommand.Origin;
                     if (delta.SqrMagnitude > effect.Definition.Radius * effect.Definition.Radius) continue;
                     var displacement = delta.Normalized * (effect.Definition.Magnitude * 0.08f);
-                    var canonicalPosition = snapshot.Position + displacement;
-                    if (!RequireSimulation().SetPosition(snapshot.Id, canonicalPosition)) continue;
-                    displacements.Add(new GadgetDisplacementIntent(snapshot.Id, displacement));
+                    var collision = _collisionSolver.Move(snapshot.Position, displacement);
+                    if (!RequireSimulation().SetPosition(snapshot.Id, collision.Position)) continue;
+                    displacements.Add(new GadgetDisplacementIntent(snapshot.Id, collision.AppliedDisplacement));
                 }
 
                 effect = new GadgetEffect(
@@ -1296,7 +1329,7 @@ namespace BattleRaja.Core.Application
             else if (effect.Kind == GadgetEffectKind.TiffinStation)
             {
                 var stationId = _nextStationId++;
-                _stations[stationId] = new GadgetStationRuntime(stationId, command.Origin, effect.Definition);
+                _stations[stationId] = new GadgetStationRuntime(stationId, canonicalCommand.Origin, effect.Definition);
                 effect = new GadgetEffect(
                     effect.Kind,
                     effect.Definition,

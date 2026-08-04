@@ -15,10 +15,9 @@ namespace BattleRaja.Tests.PlayMode
         [UnitySetUp]
         public IEnumerator LoadMovementLab()
         {
-            if (SceneManager.GetActiveScene().name != SceneName)
-            {
-                yield return SceneManager.LoadSceneAsync(SceneName, LoadSceneMode.Single);
-            }
+            // Reload the fixture for every test so movement state from a prior
+            // command sequence cannot influence the next assertion.
+            yield return SceneManager.LoadSceneAsync(SceneName, LoadSceneMode.Single);
 
             PlayModeTestHelpers.DisableBots();
             yield return null;
