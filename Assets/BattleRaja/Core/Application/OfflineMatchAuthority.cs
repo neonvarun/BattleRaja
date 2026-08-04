@@ -684,9 +684,9 @@ namespace BattleRaja.Core.Application
                 canonicalOrigin,
                 canonicalDirection,
                 definition.ProjectileSpeed,
-                definition.ProjectileRadius,
-                definition.MaxRangeSeconds * definition.ProjectileSpeed,
-                definition.MaxRangeSeconds,
+                definition.Radius,
+                definition.MaxRange,
+                definition.LifetimeSeconds,
                 faction);
             _activeProjectiles.Add(proj);
 
@@ -1346,7 +1346,7 @@ namespace BattleRaja.Core.Application
                                 hitTargetId,
                                 proj.Faction,
                                 weapon.Damage,
-                                DamageType.BasicAttack,
+                                DamageType.Projectile,
                                 proj.Direction,
                                 simulationTick);
                             ResolveDamage(damageReq, targetFaction, false, false);
@@ -1359,7 +1359,7 @@ namespace BattleRaja.Core.Application
                                 hitTargetId,
                                 instigatorFaction,
                                 weapon.Damage,
-                                DamageType.BasicAttack,
+                                DamageType.Projectile,
                                 proj.Direction,
                                 simulationTick);
                             ResolveMayaDecoyDamage(damageReq, CombatFaction.Enemy, false, false);

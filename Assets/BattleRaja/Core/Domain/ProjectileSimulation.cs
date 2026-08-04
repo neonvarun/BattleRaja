@@ -7,7 +7,12 @@ namespace BattleRaja.Core.Domain
         RangeExceeded = 2,
         LifetimeExpired = 3,
         Collision = 4,
-        PoolReset = 5
+        PoolReset = 5,
+        HitActor = 6,
+        HitDecoy = 7,
+        HitStation = 8,
+        HitWall = 9,
+        RangeExpired = 10
     }
 
     public readonly struct ProjectileStepResult

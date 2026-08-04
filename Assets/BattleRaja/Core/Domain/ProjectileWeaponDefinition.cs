@@ -33,6 +33,7 @@ namespace BattleRaja.Core.Domain
         public int CollisionLayerMask { get; }
         public bool AllowSelfHit { get; }
         public bool AllowFriendlyFire { get; }
+        public ContentId WeaponId => ContentId.Attack("BasicAttack");
 
         public bool IsValid(out string reason)
         {

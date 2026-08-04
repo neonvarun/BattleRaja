@@ -2,17 +2,6 @@ using System;
 
 namespace BattleRaja.Core.Domain
 {
-    public enum ProjectileDespawnReason
-    {
-        None = 0,
-        HitActor = 1,
-        HitDecoy = 2,
-        HitStation = 3,
-        HitWall = 4,
-        RangeExpired = 5,
-        LifetimeExpired = 6
-    }
-
     public readonly struct DomainProjectileSnapshot
     {
         public DomainProjectileSnapshot(

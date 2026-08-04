@@ -41,7 +41,7 @@ namespace BattleRaja.Presentation.Combat
                 command.Origin,
                 command.Direction,
                 definition.ProjectileSpeed,
-                definition.MaxRangeSeconds * definition.ProjectileSpeed,
+                definition.MaxRange,
                 definition.LifetimeSeconds);
             _clock = new FixedSimulationClock(30);
             transform.position = new Vector3(command.Origin.X, pool != null ? pool.ProjectileHeight : 1f, command.Origin.Y);

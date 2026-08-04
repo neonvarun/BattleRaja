@@ -45,3 +45,8 @@ This document records the completion status and evidence for each stage of the B
 - **Status**: Passed with evidence
 - **Commit**: `90f4245`
 - **Deliverables**: Authored [`MatchEventIdentity.cs`](file:///c:/Projects/BattleRaja/Assets/BattleRaja/Core/Domain/MatchEventIdentity.cs) with sequential 32-bit identity counters.
+
+### Stage 5: Replay & Soak Engine
+- **Status**: Passed with evidence
+- **Commit**: `90f4245`
+- **Deliverables**: Authored [`DeterministicReplayRunner.cs`](file:///c:/Projects/BattleRaja/Assets/BattleRaja/Core/Application/DeterministicReplayRunner.cs) with 64-bit FNV-1a tick state hashing (`DeterministicReplayHasher.CalculateTickHash`) and frame recording structures (`MatchReplayFile`, `MatchReplayHeader`, `MatchReplayFrame`). Verified with EditMode unit tests in [`ReplayDeterminismTests.cs`](file:///c:/Projects/BattleRaja/Assets/BattleRaja/Tests/EditMode/ReplayDeterminismTests.cs) and documented soak protocol in [`Docs/QA/REPLAY_AND_SOAK_REPORT.md`](file:///c:/Projects/BattleRaja/Docs/QA/REPLAY_AND_SOAK_REPORT.md).

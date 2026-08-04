@@ -34,65 +34,87 @@ namespace BattleRaja.Tests.EditMode
         [Test]
         public void AuthoritativeProjectile_SweepsAndHitsParticipant_ResolvingDamageInAuthority()
         {
-            var p1 = new MatchParticipantDefinition(new CombatEntityId(1), "Player", ContentId.Maya, ProjectileWeaponDefinition.TrainingBolt, 100);
-            var p2 = new MatchParticipantDefinition(new CombatEntityId(2), "Enemy", ContentId.Raja, ProjectileWeaponDefinition.TrainingBolt, 100);
-            var definition = new OfflineMatchDefinition(new[] { p1, p2 }, MatchRuleset.Default);
+            var definition = OfflineMatchDefinition.SoloRaja;
             var authority = new OfflineMatchAuthority(definition);
 
-            var spawns = new List<ParticipantSpawnInfo>
+            var p1 = new CombatEntityId(1);
+            var p2 = new CombatEntityId(2);
+
+            var spawns = new List<MatchSpawn>
             {
-                new ParticipantSpawnInfo(p1.Id, new Float2(0f, 0f), CombatFaction.Player),
-                new ParticipantSpawnInfo(p2.Id, new Float2(5f, 0f), CombatFaction.Enemy)
+                new MatchSpawn(p1, new Float2(0f, 0f), 100),
+                new MatchSpawn(p2, new Float2(5f, 0f), 100)
             };
 
             authority.Start(spawns);
+            authority.ConfigureWeapon(p1, ProjectileWeaponDefinition.TrainingBolt, 30);
+            authority.ConfigureWeapon(p2, ProjectileWeaponDefinition.TrainingBolt, 30);
+            authority.ConfigureFaction(p1, CombatFaction.Player);
+            authority.ConfigureFaction(p2, CombatFaction.Enemy);
+
+            // Advance past warmup and spawn protection
+            for (var t = 0; t < 300; t++)
+            {
+                authority.Advance(t, 1f / 30f);
+            }
+
+            var currentTick = authority.CurrentSimulationTick + 1;
 
             // Fire attack from p1 towards p2 at (5, 0)
-            var attackCmd = new AttackCommand(p1.Id, 0, new Float2(0.7f, 0f), Float2.Right, true, 1);
+            var attackCmd = new AttackCommand(p1, currentTick, new Float2(0.7f, 0f), new Float2(1f, 0f), true, 1);
             var attackResult = authority.TryAcceptAttack(attackCmd);
 
             Assert.IsTrue(attackResult.Accepted);
             Assert.Greater(attackResult.ProjectileId, 0);
 
             // Enemy start health is 100
-            Assert.IsTrue(authority.Simulation.TryGetSnapshot(p2.Id, out var snapshotBefore));
+            Assert.IsTrue(authority.Simulation.TryGetSnapshot(p2, out var snapshotBefore));
             Assert.AreEqual(100, snapshotBefore.CurrentHealth);
 
             // Advance simulation step (fixedDeltaSeconds = 0.5f, speed = 20 -> dist = 10, hits enemy at 5)
-            var tick = authority.Advance(0, 0.5f);
+            var tick = authority.Advance(currentTick, 0.5f);
 
             Assert.AreEqual(1, tick.ProjectileSnapshots.Length);
             var projSnap = tick.ProjectileSnapshots[0];
             Assert.AreEqual(ProjectileDespawnReason.HitActor, projSnap.DespawnReason);
-            Assert.AreEqual(p2.Id, projSnap.HitTargetId);
+            Assert.AreEqual(p2, projSnap.HitTargetId);
 
             // Health of p2 must be reduced inside authority simulation
-            Assert.IsTrue(authority.Simulation.TryGetSnapshot(p2.Id, out var snapshotAfter));
+            Assert.IsTrue(authority.Simulation.TryGetSnapshot(p2, out var snapshotAfter));
             Assert.Less(snapshotAfter.CurrentHealth, 100);
         }
 
         [Test]
         public void AuthoritativeProjectile_SweepsAndHitsWall_DespawnsWithoutActorDamage()
         {
-            var p1 = new MatchParticipantDefinition(new CombatEntityId(1), "Player", ContentId.Maya, ProjectileWeaponDefinition.TrainingBolt, 100);
-            var definition = new OfflineMatchDefinition(new[] { p1 }, MatchRuleset.Default);
+            var definition = OfflineMatchDefinition.SoloRaja;
             var authority = new OfflineMatchAuthority(definition);
 
-            var spawns = new List<ParticipantSpawnInfo>
+            var p1 = new CombatEntityId(1);
+            var spawns = new List<MatchSpawn>
             {
-                // Position near NarrowLaneWest wall at X = -14.5
-                new ParticipantSpawnInfo(p1.Id, new Float2(-13f, 0f), CombatFaction.Player)
+                new MatchSpawn(p1, new Float2(-13f, 0f), 100)
             };
 
             authority.Start(spawns);
+            authority.ConfigureWeapon(p1, ProjectileWeaponDefinition.TrainingBolt, 30);
+            authority.ConfigureFaction(p1, CombatFaction.Player);
+
+            // Advance past warmup and spawn protection
+            for (var t = 0; t < 300; t++)
+            {
+                authority.Advance(t, 1f / 30f);
+            }
+
+            var currentTick = authority.CurrentSimulationTick + 1;
 
             // Fire attack directly west towards wall at X = -14.5
-            var attackCmd = new AttackCommand(p1.Id, 0, new Float2(-13.7f, 0f), Float2.Left, true, 1);
+            var attackCmd = new AttackCommand(p1, currentTick, new Float2(-13.7f, 0f), new Float2(-1f, 0f), true, 1);
             var attackResult = authority.TryAcceptAttack(attackCmd);
 
             Assert.IsTrue(attackResult.Accepted);
 
-            var tick = authority.Advance(0, 0.5f);
+            var tick = authority.Advance(currentTick, 0.5f);
 
             Assert.AreEqual(1, tick.ProjectileSnapshots.Length);
             var projSnap = tick.ProjectileSnapshots[0];
