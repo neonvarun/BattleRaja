@@ -16,12 +16,14 @@ namespace BattleRaja.Presentation.Movement
         [SerializeField] private Vector3 cameraOffset = new Vector3(0f, 12f, -8f);
         [SerializeField] private float followSmoothTime = 0.08f;
         [SerializeField] private float orthographicSize = 9.5f;
+        [SerializeField] private float referenceAspect = 16f / 9f;
         [SerializeField] private float perspectiveFieldOfView = 48f;
         [SerializeField] private LayerMask obstructionMask = 1;
         [SerializeField] private float obstructionPadding = 0.25f;
 
         private Camera _camera;
         private Vector3 _followVelocity;
+        private float _lastAspect = -1f;
 
         public CameraProjectionMode ProjectionMode => projectionMode;
         public Transform FollowTarget => followTarget;
@@ -37,6 +39,11 @@ namespace BattleRaja.Presentation.Movement
             if (followTarget == null)
             {
                 return;
+            }
+
+            if (projectionMode == CameraProjectionMode.Orthographic)
+            {
+                ApplyResponsiveOrthographicSize();
             }
 
             var targetPosition = followTarget.position + targetOffset;
@@ -64,6 +71,24 @@ namespace BattleRaja.Presentation.Movement
             followTarget = target;
         }
 
+        public static float CalculateResponsiveOrthographicSize(float baseSize, float aspect, float referenceAspect)
+        {
+            if (float.IsNaN(baseSize) || float.IsInfinity(baseSize) || baseSize <= 0f)
+            {
+                return 0.1f;
+            }
+
+            if (float.IsNaN(aspect) || float.IsInfinity(aspect) || aspect <= 0f ||
+                float.IsNaN(referenceAspect) || float.IsInfinity(referenceAspect) || referenceAspect <= 0f)
+            {
+                return baseSize;
+            }
+
+            return aspect < referenceAspect
+                ? baseSize * (referenceAspect / aspect)
+                : baseSize;
+        }
+
         private void ApplyProjection()
         {
             if (_camera == null)
@@ -74,12 +99,22 @@ namespace BattleRaja.Presentation.Movement
             _camera.orthographic = projectionMode == CameraProjectionMode.Orthographic;
             if (_camera.orthographic)
             {
-                _camera.orthographicSize = orthographicSize;
+                _lastAspect = -1f;
+                ApplyResponsiveOrthographicSize();
             }
             else
             {
                 _camera.fieldOfView = perspectiveFieldOfView;
             }
+        }
+
+        private void ApplyResponsiveOrthographicSize()
+        {
+            if (_camera == null) return;
+            var aspect = _camera.aspect;
+            if (Mathf.Abs(aspect - _lastAspect) < 0.001f) return;
+            _lastAspect = aspect;
+            _camera.orthographicSize = CalculateResponsiveOrthographicSize(orthographicSize, aspect, referenceAspect);
         }
     }
 }

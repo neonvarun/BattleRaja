@@ -29,6 +29,7 @@ $requiredPaths = @(
     'Docs\WEB_PLATFORM.md',
     'Docs\MILESTONE_0_EXECUTION_PLAN.md',
     'Assets\BattleRaja',
+    'Assets\WebGLTemplates\BattleRaja\index.html',
     '.gitattributes',
     '.gitignore'
 )
@@ -36,6 +37,17 @@ $requiredPaths = @(
 foreach ($relativePath in $requiredPaths) {
     if (-not (Test-Path -LiteralPath (Join-Path $ProjectRoot $relativePath))) {
         Add-ValidationError "Required path is missing: $relativePath"
+    }
+}
+
+$webTemplatePath = Join-Path $ProjectRoot 'Assets\WebGLTemplates\BattleRaja\index.html'
+if (Test-Path -LiteralPath $webTemplatePath) {
+    $webTemplate = Get-Content -LiteralPath $webTemplatePath -Raw
+    if ($webTemplate -notmatch 'id="unity-canvas"[^>]*tabindex="0"') {
+        Add-ValidationError 'WebGL template canvas must be keyboard-focusable with tabindex="0".'
+    }
+    if ($webTemplate -notmatch 'canvas\.addEventListener\("pointerdown"') {
+        Add-ValidationError 'WebGL template must restore canvas focus on pointer interaction.'
     }
 }
 
@@ -67,6 +79,53 @@ if (Test-Path -LiteralPath $manifestPath) {
         }
     } catch {
         Add-ValidationError "Packages/manifest.json is not valid JSON: $($_.Exception.Message)"
+    }
+}
+
+# Core must remain replaceable by a network/server transport. Keep its two
+# assemblies free of Unity/vendor dependencies and reject presentation code
+# reaching directly into simulation mutators.
+$coreRoots = @(
+    (Join-Path $ProjectRoot 'Assets\BattleRaja\Core\Domain'),
+    (Join-Path $ProjectRoot 'Assets\BattleRaja\Core\Application')
+) | Where-Object { Test-Path -LiteralPath $_ }
+$coreForbiddenPattern = '(?i)\b(UnityEngine|UnityEditor|Photon|Fusion|PlayFab)\b'
+foreach ($coreRoot in $coreRoots) {
+    Get-ChildItem -LiteralPath $coreRoot -Recurse -File -Filter '*.cs' -ErrorAction SilentlyContinue | ForEach-Object {
+        if (Select-String -LiteralPath $_.FullName -Pattern $coreForbiddenPattern -Quiet -ErrorAction SilentlyContinue) {
+            Add-ValidationError "Core code contains a Unity/vendor dependency: $([System.IO.Path]::GetRelativePath($ProjectRoot, $_.FullName))"
+        }
+    }
+}
+
+foreach ($asmdefRelativePath in @(
+    'Assets\BattleRaja\Core\BattleRaja.Core.Domain.asmdef',
+    'Assets\BattleRaja\Core\Application\BattleRaja.Core.Application.asmdef'
+)) {
+    $asmdefPath = Join-Path $ProjectRoot $asmdefRelativePath
+    if (-not (Test-Path -LiteralPath $asmdefPath)) { continue }
+    try {
+        $asmdef = Get-Content -LiteralPath $asmdefPath -Raw | ConvertFrom-Json
+        if ($asmdef.noEngineReferences -ne $true) {
+            Add-ValidationError "Core assembly must set noEngineReferences=true: $asmdefRelativePath"
+        }
+        if (($asmdef.references | ConvertTo-Json -Depth 10) -match '(?i)photon|fusion|playfab|unityengine') {
+            Add-ValidationError "Core assembly has a prohibited reference: $asmdefRelativePath"
+        }
+    } catch {
+        Add-ValidationError "Core assembly definition is not valid JSON: $asmdefRelativePath"
+    }
+}
+
+$presentationRoots = @(
+    (Join-Path $ProjectRoot 'Assets\BattleRaja\Presentation')
+) | Where-Object { Test-Path -LiteralPath $_ }
+$presentationSimulationMutationPattern = '(?i)\b(?:Simulation|simulation)\.(?:SyncHealth|Heal|ApplyDamage|RecordDamage|SetPosition|Advance|Restart|Start)\s*\('
+foreach ($presentationRoot in $presentationRoots) {
+    Get-ChildItem -LiteralPath $presentationRoot -Recurse -File -Filter '*.cs' -ErrorAction SilentlyContinue | ForEach-Object {
+        if (Select-String -LiteralPath $_.FullName -Pattern $presentationSimulationMutationPattern -Quiet -ErrorAction SilentlyContinue) {
+            Add-ValidationError "Presentation code directly mutates OfflineMatchSimulation: $([System.IO.Path]::GetRelativePath($ProjectRoot, $_.FullName))"
+        }
     }
 }
 

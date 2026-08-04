@@ -1,0 +1,17 @@
+Applications Graphics Acceleration Info:
+Uptime: 25864126 Realtime: 25864126
+
+** Graphics info for pid 30158 [com.example.battleraja.m11] **
+Profile data in ms:
+
+	com.example.battleraja.m11/com.unity3d.player.UnityPlayerGameActivity/android.view.ViewRootImpl@3fe0393 (visibility=0)
+View hierarchy:
+
+  com.example.battleraja.m11/com.unity3d.player.UnityPlayerGameActivity/android.view.ViewRootImpl@3fe0393
+  9 views, 11.25 kB of render nodes
+
+
+Total ViewRootImpl   : 1
+Total attached Views : 9
+Total RenderNode     : 11.25 kB (used) / 11.25 kB (capacity)
+

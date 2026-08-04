@@ -9,14 +9,25 @@ namespace BattleRaja.Tests.PlayMode
     {
         public static T FindPlayer<T>() where T : Component
         {
-            return Object.FindObjectsByType<T>(FindObjectsSortMode.None)
-                .First(component => component.GetComponent<MovementPlayerAgent>()?.ActorId == 1 ||
-                                    component.GetComponentInParent<MovementPlayerAgent>()?.ActorId == 1);
+            var lab = Object.FindAnyObjectByType<MovementLabScene>();
+            var authoredPlayer = lab != null ? lab.Player : null;
+            if (authoredPlayer != null)
+            {
+                var authoredComponent = authoredPlayer.GetComponent<T>();
+                if (authoredComponent != null) return authoredComponent;
+            }
+
+            return Object.FindObjectsByType<T>()
+                .Where(component => component.GetComponent<MovementPlayerAgent>()?.ActorId == 1 ||
+                                    component.GetComponentInParent<MovementPlayerAgent>()?.ActorId == 1)
+                .OrderBy(component => component.GetComponent<MovementPlayerAgent>()?.ActorId ??
+                                      component.GetComponentInParent<MovementPlayerAgent>()?.ActorId ?? int.MaxValue)
+                .First();
         }
 
         public static void DisableBots()
         {
-            foreach (var bot in Object.FindObjectsByType<BotBrain>(FindObjectsSortMode.None))
+            foreach (var bot in Object.FindObjectsByType<BotBrain>())
             {
                 bot.enabled = false;
             }

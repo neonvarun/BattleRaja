@@ -36,6 +36,16 @@ namespace BattleRaja.Core.Domain
 
         public bool IsValid(out string reason)
         {
+            if (float.IsNaN(FireIntervalSeconds) || float.IsInfinity(FireIntervalSeconds) ||
+                float.IsNaN(ProjectileSpeed) || float.IsInfinity(ProjectileSpeed) ||
+                float.IsNaN(MaxRange) || float.IsInfinity(MaxRange) ||
+                float.IsNaN(LifetimeSeconds) || float.IsInfinity(LifetimeSeconds) ||
+                float.IsNaN(Radius) || float.IsInfinity(Radius))
+            {
+                reason = "Weapon timing and projectile dimensions must be finite.";
+                return false;
+            }
+
             if (Damage <= 0) { reason = "Damage must be positive."; return false; }
             if (FireIntervalSeconds <= 0f) { reason = "Fire interval must be positive."; return false; }
             if (ProjectileSpeed <= 0f) { reason = "Projectile speed must be positive."; return false; }

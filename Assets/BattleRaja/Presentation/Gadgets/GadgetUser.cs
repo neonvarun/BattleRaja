@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Combat;
+using BattleRaja.Presentation.Match;
 using BattleRaja.Presentation.Movement;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -13,15 +14,21 @@ namespace BattleRaja.Presentation.Gadgets
         [SerializeField] private CombatTarget combatTarget;
         [SerializeField] private CombatHealth health;
         [SerializeField] private CombatDamageResolver damageResolver;
+        [SerializeField] private OfflineMatchController match;
         [SerializeField] private bool botControlled;
+        [SerializeField] private int simulationTickRate = 30;
 
         private readonly GadgetInventory _inventory = new GadgetInventory(1);
         private readonly GadgetRuntime _runtime = new GadgetRuntime();
+        private FixedSimulationClock _clock;
         private int _tick;
+        private int _activeSimulationTick = -1;
         private float _shieldRemaining;
         private Float2 _shieldDirection = Float2.Up;
         private float _feedbackRemaining;
         private string _feedback = string.Empty;
+        private bool _useQueued;
+        private bool _subscribedToCanonicalTick;
 
         public bool HasGadget => _inventory.HasGadget;
         public ContentId HeldGadget => _inventory.HeldGadget;
@@ -35,23 +42,100 @@ namespace BattleRaja.Presentation.Gadgets
             movementAgent = movementAgent != null ? movementAgent : GetComponent<MovementPlayerAgent>();
             combatTarget = combatTarget != null ? combatTarget : GetComponent<CombatTarget>();
             health = health != null ? health : GetComponent<CombatHealth>();
-            damageResolver = damageResolver != null ? damageResolver : FindFirstObjectByType<CombatDamageResolver>();
+            damageResolver = damageResolver != null ? damageResolver : FindAnyObjectByType<CombatDamageResolver>();
+            match = match != null ? match : FindAnyObjectByType<OfflineMatchController>();
+            _clock = new FixedSimulationClock(Mathf.Max(1, simulationTickRate));
+        }
+
+        private void Start()
+        {
+            SubscribeToCanonicalTick();
+        }
+
+        private void OnDestroy()
+        {
+            if (_subscribedToCanonicalTick && match != null)
+            {
+                match.SimulationTickAdvanced -= OnCanonicalSimulationTick;
+                _subscribedToCanonicalTick = false;
+            }
+        }
+
+        private bool UsesAuthority => match != null && match.AuthorityDrivenMovement && match.Simulation != null;
+
+        private void SubscribeToCanonicalTick()
+        {
+            if (_subscribedToCanonicalTick || !isActiveAndEnabled || match == null) return;
+            match.SimulationTickAdvanced += OnCanonicalSimulationTick;
+            _subscribedToCanonicalTick = true;
         }
 
         private void Update()
         {
-            _runtime.Advance(Time.deltaTime);
-            _shieldRemaining = Mathf.Max(0f, _shieldRemaining - Time.deltaTime);
-            _feedbackRemaining = Mathf.Max(0f, _feedbackRemaining - Time.deltaTime);
-            if (_feedbackRemaining <= 0f) _feedback = string.Empty;
-
             if (!botControlled && Keyboard.current != null && Keyboard.current.gKey.wasPressedThisFrame)
             {
-                UseHeld();
+                _useQueued = true;
             }
+
+            if (UsesAuthority && match.IsMatchStarted)
+            {
+                return;
+            }
+
+            var steps = _clock.Consume(Time.deltaTime);
+            _activeSimulationTick = -1;
+            for (var i = 0; i < steps; i++)
+            {
+                _activeSimulationTick = _clock.GetConsumedTick(i);
+                if (_useQueued)
+                {
+                    UseHeld();
+                    _useQueued = false;
+                }
+
+                AdvancePresentation((float)_clock.StepSeconds);
+            }
+            _activeSimulationTick = -1;
+        }
+
+        private void OnCanonicalSimulationTick(int simulationTick, float fixedDeltaSeconds)
+        {
+            if (!isActiveAndEnabled || !UsesAuthority || !match.IsMatchStarted) return;
+
+            _activeSimulationTick = simulationTick;
+            if (_useQueued)
+            {
+                UseHeld();
+                _useQueued = false;
+            }
+
+            AdvancePresentation(fixedDeltaSeconds);
+            _activeSimulationTick = -1;
+        }
+
+        private void AdvancePresentation(float deltaSeconds)
+        {
+            _runtime.Advance(deltaSeconds);
+            _shieldRemaining = Mathf.Max(0f, _shieldRemaining - deltaSeconds);
+            _feedbackRemaining = Mathf.Max(0f, _feedbackRemaining - deltaSeconds);
+            if (_feedbackRemaining <= 0f) _feedback = string.Empty;
         }
 
         public bool TryPickup(ContentId id)
+        {
+            var accepted = _inventory.TryPickup(id);
+            if (accepted && match != null && match.Simulation != null && combatTarget != null &&
+                !match.TryAcquireGadget(combatTarget.Id, id))
+            {
+                _inventory.TryConsume(id);
+                accepted = false;
+            }
+
+            SetFeedback(accepted ? $"Picked {id.Value}" : "Gadget slot full");
+            return accepted;
+        }
+
+        public bool TryPickupFromAuthority(ContentId id)
         {
             var accepted = _inventory.TryPickup(id);
             SetFeedback(accepted ? $"Picked {id.Value}" : "Gadget slot full");
@@ -72,12 +156,23 @@ namespace BattleRaja.Presentation.Gadgets
                 _inventory.HeldGadget,
                 new Float2(transform.position.x, transform.position.z),
                 direction,
-                _tick++);
-            var result = _runtime.TryUse(_inventory, command);
+                NextTick());
+            var result = TryUse(command, out var authoritative);
             if (!result.Used)
             {
                 SetFeedback(result.Failure.ToString());
                 return false;
+            }
+
+            if (authoritative)
+            {
+                if (!_inventory.TryConsume(command.GadgetId))
+                {
+                    SetFeedback("Authority inventory mismatch");
+                    return false;
+                }
+
+                _runtime.ApplyAuthoritativeUse(result.Effect.Definition);
             }
 
             ApplyEffect(result.Effect);
@@ -108,11 +203,25 @@ namespace BattleRaja.Presentation.Gadgets
                 _inventory.HeldGadget,
                 new Float2(transform.position.x, transform.position.z),
                 direction,
-                _tick++);
-            var result = _runtime.TryUse(_inventory, command);
+                NextTick());
+            var result = TryUse(command, out var authoritative);
             if (!result.Used) return false;
+            if (authoritative)
+            {
+                if (!_inventory.TryConsume(command.GadgetId)) return false;
+                _runtime.ApplyAuthoritativeUse(result.Effect.Definition);
+            }
+
             ApplyEffect(result.Effect);
             return true;
+        }
+
+        private GadgetUseResult TryUse(GadgetUseCommand command, out bool authoritative)
+        {
+            authoritative = match != null && match.Simulation != null;
+            return authoritative
+                ? match.TryUseGadget(command)
+                : _runtime.TryUse(_inventory, command);
         }
 
         public int ModifyIncomingDamage(DamageRequest request)
@@ -125,7 +234,9 @@ namespace BattleRaja.Presentation.Gadgets
             var facing = _shieldDirection.Normalized;
             var incoming = request.HitDirection.SqrMagnitude > 0.000001f ? request.HitDirection.Normalized * -1f : facing;
             var dot = facing.X * incoming.X + facing.Y * incoming.Y;
-            return dot >= 0.15f ? Mathf.CeilToInt(request.RawAmount * 0.30f) : request.RawAmount;
+            return dot >= 0.15f
+                ? Mathf.Max(1, Mathf.CeilToInt((request.RawAmount * 0.30f) - 0.0001f))
+                : request.RawAmount;
         }
 
         private void ApplyEffect(GadgetEffect effect)
@@ -150,7 +261,32 @@ namespace BattleRaja.Presentation.Gadgets
 
         private void ApplyDholBurst(GadgetEffect effect)
         {
-            var agents = FindObjectsByType<MovementPlayerAgent>(FindObjectsSortMode.None);
+            if (effect.Displacements != null && effect.Displacements.Length > 0)
+            {
+                var targets = FindObjectsByType<CombatTarget>();
+                for (var i = 0; i < effect.Displacements.Length; i++)
+                {
+                    var displacement = effect.Displacements[i];
+                    for (var targetIndex = 0; targetIndex < targets.Length; targetIndex++)
+                    {
+                        var target = targets[targetIndex];
+                        if (target == null || target.Id != displacement.TargetId) continue;
+                        if (match == null || !match.ApplyAuthoritativeDisplacement(displacement))
+                        {
+                            target.GetComponent<CharacterController>()?.Move(new Vector3(
+                                displacement.Displacement.X,
+                                0f,
+                                displacement.Displacement.Y));
+                        }
+                        break;
+                    }
+                }
+
+                return;
+            }
+
+            // Local lab fallback when no match authority is active.
+            var agents = FindObjectsByType<MovementPlayerAgent>();
             for (var i = 0; i < agents.Length; i++)
             {
                 var other = agents[i];
@@ -168,7 +304,7 @@ namespace BattleRaja.Presentation.Gadgets
             station.transform.position = new Vector3(effect.Command.Origin.X, 0.5f, effect.Command.Origin.Y);
             station.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
             var component = station.AddComponent<GadgetStation>();
-            component.Configure(effect.Definition);
+            component.Configure(effect.Definition, effect.StationId);
             var target = station.AddComponent<CombatTarget>();
             var stationHealth = station.GetComponent<CombatHealth>();
             target.enabled = true;
@@ -178,6 +314,18 @@ namespace BattleRaja.Presentation.Gadgets
         {
             _feedback = value;
             _feedbackRemaining = 2f;
+        }
+
+        private int NextTick()
+        {
+            if (UsesAuthority && match.IsMatchStarted)
+            {
+                return match.SimulationTick;
+            }
+
+            return _clock != null
+                ? (_activeSimulationTick >= 0 ? _activeSimulationTick : _clock.Tick)
+                : _tick++;
         }
     }
 }

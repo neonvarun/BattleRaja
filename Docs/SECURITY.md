@@ -12,6 +12,15 @@
 
 This document must be expanded before Photon, PlayFab, analytics or store submission.
 
+## CI hygiene
+
+- `.github/workflows/repository-validation.yml` runs read-only repository, LFS,
+  whitespace and source-secret checks without Unity, Photon, PlayFab or signing
+  credentials.
+- Unity test/build jobs are intentionally manual and require owner-approved protected
+  secrets; no license, App ID, backend secret or signing key is stored in GitHub
+  workflow text or artifacts.
+
 ## Web security
 
 - Assume browser code/configuration are downloadable and inspectable.

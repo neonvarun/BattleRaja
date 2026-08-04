@@ -15,18 +15,23 @@ namespace BattleRaja.Presentation.Gadgets
         private CombatHealth _health;
         private float _lifetime;
         private float _healAccumulator;
+        private int _stationId = -1;
+        private bool _authorityDriven;
 
         public bool IsExpired { get; private set; }
+        public int StationId => _stationId;
         public float RemainingLifetime => Mathf.Max(0f, lifetimeSeconds - _lifetime);
         public int HealAmount => healAmount;
         public float EffectRadius => effectRadius;
 
-        public void Configure(GadgetDefinition definition)
+        public void Configure(GadgetDefinition definition, int stationId = -1)
         {
             lifetimeSeconds = definition.DurationSeconds;
             effectRadius = definition.Radius;
             healAmount = definition.Magnitude;
             maxHealth = definition.StationHealth;
+            _stationId = stationId;
+            _authorityDriven = stationId > 0;
         }
 
         private void Awake()
@@ -38,6 +43,7 @@ namespace BattleRaja.Presentation.Gadgets
 
         private void Update()
         {
+            if (_authorityDriven) return;
             if (IsExpired) return;
             _lifetime += Time.deltaTime;
             _healAccumulator += Time.deltaTime;
@@ -54,9 +60,16 @@ namespace BattleRaja.Presentation.Gadgets
             }
         }
 
+        public void ExpireFromAuthority()
+        {
+            if (IsExpired) return;
+            IsExpired = true;
+            Destroy(gameObject);
+        }
+
         private void HealNearby()
         {
-            var agents = FindObjectsByType<CombatHealth>(FindObjectsSortMode.None);
+            var agents = FindObjectsByType<CombatHealth>();
             for (var i = 0; i < agents.Length; i++)
             {
                 var target = agents[i];

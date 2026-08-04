@@ -15,10 +15,9 @@ namespace BattleRaja.Tests.PlayMode
         [UnitySetUp]
         public IEnumerator LoadMovementLab()
         {
-            if (SceneManager.GetActiveScene().name != SceneName)
-            {
-                yield return SceneManager.LoadSceneAsync(SceneName, LoadSceneMode.Single);
-            }
+            // Reload the fixture for every test so movement state from a prior
+            // command sequence cannot influence the next assertion.
+            yield return SceneManager.LoadSceneAsync(SceneName, LoadSceneMode.Single);
 
             PlayModeTestHelpers.DisableBots();
             yield return null;
@@ -27,7 +26,7 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator PlayerSpawnsWithMovementAndCameraReferences()
         {
-            var lab = Object.FindFirstObjectByType<MovementLabScene>();
+            var lab = Object.FindAnyObjectByType<MovementLabScene>();
 
             Assert.That(lab, Is.Not.Null);
             Assert.That(lab.Player, Is.Not.Null);
@@ -129,7 +128,7 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator TouchStickResetClearsActiveValue()
         {
-            var sticks = Object.FindObjectsByType<VirtualStick>(FindObjectsSortMode.None);
+            var sticks = Object.FindObjectsByType<VirtualStick>();
             Assert.That(sticks.Length, Is.EqualTo(2));
 
             foreach (var stick in sticks)

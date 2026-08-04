@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using BattleRaja.Presentation.Combat;
 
 namespace BattleRaja.Presentation.Gadgets
 {
@@ -8,7 +9,11 @@ namespace BattleRaja.Presentation.Gadgets
         [SerializeField] private GadgetUser user;
         public bool IsPressed { get; private set; }
 
-        private void Awake() => user = user != null ? user : FindFirstObjectByType<GadgetUser>();
+        private void Awake()
+        {
+            user = user != null ? user : FindAnyObjectByType<GadgetUser>();
+            TouchControlLabel.Ensure(transform, "GADGET");
+        }
         public void OnPointerDown(PointerEventData eventData) { IsPressed = true; user?.UseHeld(); }
         public void OnPointerUp(PointerEventData eventData) => IsPressed = false;
         public void OnPointerExit(PointerEventData eventData) => IsPressed = false;

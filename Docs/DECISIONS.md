@@ -90,6 +90,95 @@ Record every material choice here. Do not silently overwrite old decisions.
   and 27/27 PlayMode tests; `PhotonAppSettings.asset` App ID configuration.
 - **Owner:** Human project owner
 
+### ADR-014 — Offline match authority boundary
+
+- **Date:** 2026-08-02
+- **Status:** Accepted for the offline foundation; pickup/gadget extraction remains open.
+- **Context:** `OfflineMatchController` was coordinating the fixed clock, match simulation, zone-damage cadence and Unity damage application in one presentation object.
+- **Options considered:** Keep scene timing as the authority; duplicate the rules in a future network adapter; or isolate transport-independent match ticking and damage intents in Core/Application while leaving Unity as an adapter.
+- **Decision:** Use `OfflineMatchAuthority` to own the offline simulation reference, fixed-step zone-damage cadence and immutable `DamageRequest` intents. `OfflineMatchController` consumes those intents through the existing central damage resolver. Pickup/gadget proximity and spectator/UI behavior remain presentation adapters until their domain contracts are defined.
+- **Consequences:** Zone damage and match resolution have a reusable pure/application seam for future server or Fusion adapters. Unity remains responsible for object lookup, damage presentation and pickup effects. The authority boundary is intentionally partial and is not a real multiplayer claim.
+- **Evidence/sources:** `OfflineMatchAuthority`, `OfflineMatchController`, `AuthorityFoundationTests`, 62 EditMode and 27 PlayMode tests.
+- **Owner:** Human project owner
+
+### ADR-015 — Authoritative combat statistics and Aandhi warning state
+
+- **Date:** 2026-08-02
+- **Status:** Accepted for the offline foundation; assists and complete fixed-tick presentation migration remain open.
+- **Context:** Health polling could establish alive/current-health state but could not attribute damage, eliminations or survival time, and the safe-zone result exposed only a radius.
+- **Options considered:** Infer results from presentation polling; add ad hoc UI counters; or emit typed combat events into the pure match simulation and expose warning/preview data in immutable tick results.
+- **Decision:** Emit `CombatDamageEvent` with instigator, target, applied amount, post-hit health, defeat state and tick. `OfflineMatchSimulation` owns damage dealt, elimination credit, survival time and deterministic timeout ranking. `MatchTickResult` exposes Aandhi warning/closing state, warning time and next radius; Unity renders the data.
+- **Consequences:** Results are reusable for future server authority and duplicate elimination credit is rejected. Assists are not yet attributed; weapon attack cooldown now uses the shared 30 Hz tick, while input buffering, movement, projectiles, gadgets and fighter abilities remain separate fixed-tick tasks.
+- **Evidence/sources:** `CombatDamageEvent`, `OfflineMatchSimulation.RecordDamage`, `MatchTickResult`, `WeaponCooldownState`, `CombatAttackController`, `OfflineMatchTests`, 66 EditMode and 27 PlayMode tests.
+- **Owner:** Human project owner
+
+### ADR-016 — Shared 30 Hz presentation simulation clock
+
+- **Date:** 2026-08-02
+- **Status:** Accepted for the offline foundation; full input/ability migration remains open.
+- **Context:** The offline authority already used a fixed 30 Hz clock, but player movement,
+  weapon cooldown, projectiles, fighter timing and gadget timers could still diverge with
+  rendered frame rate.
+- **Options considered:** Keep each MonoBehaviour on `Time.deltaTime`; use Unity's variable
+  `FixedUpdate` without command identity; or use explicit per-component accumulators that
+  consume render time into deterministic 30 Hz steps and carry commands across the boundary.
+- **Decision:** Use `FixedSimulationClock` at 30 Hz for the player movement agent, Bijli
+  ability presentation, combat projectile stepping, gadget timers and player attack cooldown.
+  Render-frame input is sampled into a short-lived buffer and applied on the next authoritative
+  step. Bot commands remain injectable through existing command sinks; remaining bot movement,
+  ability-runtime cooldowns and online adapters are tracked as follow-up work.
+- **Consequences:** These presentation paths now have stable simulation ticks and can be
+  compared across render rates without making Unity's render loop the authority. Physics queries
+  still occur on Unity's scene objects, and the migration is intentionally incremental.
+- **Evidence/sources:** `FixedSimulationClock`, `MovementPlayerAgent`, `BijliFighterController`,
+  `CombatProjectile`, `GadgetUser`, `CombatAttackController`, `CoreFoundationTests`, 67 EditMode
+  and 27 PlayMode tests.
+- **Owner:** Human project owner
+
+### ADR-017 — Application-owned match item collection
+
+- **Date:** 2026-08-02
+- **Status:** Accepted for the offline foundation; gadget effect execution remains an adapter concern.
+- **Context:** Scene `MatchPickup` and `GadgetPickup` components previously decided availability,
+  respawn and collection directly while `OfflineMatchController` scanned actors.
+- **Options considered:** Keep item state inside scene components; duplicate pickup rules in a
+  future online adapter; or move availability/respawn/collection decisions into pure runtimes
+  and let Unity apply only accepted health/inventory effects.
+- **Decision:** `OfflineMatchAuthority` owns configured `MatchPickupRuntime` and
+  `GadgetPickupRuntime` instances. Collection receives health/inventory observations and returns
+  typed results; `OfflineMatchController` supplies proximity and applies those results to Unity
+  components. Gadget effect execution remains behind the existing `GadgetUser` presentation
+  adapter until effect events have a dedicated application contract.
+- **Consequences:** Duplicate collection and respawn rules cannot be accepted by a future client
+  path, and item behavior can be tested without a scene. Scene objects remain visual adapters and
+  are not the public-match authority.
+- **Evidence/sources:** `MatchItems`, `OfflineMatchAuthority`, `OfflineMatchController`,
+  `AuthorityFoundationTests`, 68 EditMode and 27 PlayMode tests.
+- **Owner:** Human project owner
+
+### ADR-018 — Fighter-specific ability executors behind a common command boundary
+
+- **Date:** 2026-08-02
+- **Status:** In progress for the offline alpha; generated-scene runtime coverage remains open.
+- **Context:** Pehel and Maya definitions existed, but scene actors routed every ability through
+  the Bijli dash-oriented component, making distinct kits presentation-only data.
+- **Options considered:** Keep one dash bridge and branch on IDs; add bespoke controllers with
+  duplicated input paths; or keep one command/movement contract and select fighter-specific
+  executors from data definitions.
+- **Decision:** Use `IFighterAbilityController` and `IFighterMovementLock` as the shared boundary.
+  Keep Bijli's dash controller, add fixed-tick `PehelFighterController` backed by
+  `ChargeThrowRuntime`, and add fixed-tick `MayaFighterController` backed by `DecoyRuntime`.
+  The editor generator chooses the executor from the fighter definition; all damage still goes
+  through `CombatDamageResolver` and common ability commands.
+- **Consequences:** Pehel validates enemy capture, prevents duplicate capture, emits a controlled
+  throw and central damage/knockback; Maya creates a targetable, health-bounded decoy with copied
+  movement, cooldown and destruction. Full generated-scene PlayMode evidence, VFX/audio and
+  production readability remain follow-up work.
+- **Evidence/sources:** `FighterAbilityPorts`, `ChargeThrowRuntime`, `DecoyRuntime`,
+  `PehelFighterController`, `MayaFighterController`, `BuildEntrypoints`, `VerticalSliceFighterTests`,
+  70 EditMode and 27 PlayMode tests.
+- **Owner:** Human project owner
+
 ### ADR-010 — Milestone 9 safe server/match preparation while Fusion is blocked
 
 - **Date:** 2026-08-02
@@ -286,4 +375,746 @@ Record every material choice here. Do not silently overwrite old decisions.
   required.
 - **Evidence/sources:** `PROMPTS/06_MILESTONE_6_JUGAAD_GADGETS.md`; 37 EditMode and
   25 PlayMode tests; M6 Android/Web smoke evidence.
+- **Owner:** Human project owner
+
+### ADR-020 — Latest-head fixed-tick bot and result-snapshot seam
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the Phase 1 authority/fixed-clock continuation; broader
+  replay/input buffering and runtime coverage remain open.
+- **Context:** The fixed simulation clock had reached movement, combat, gadgets and fighter
+  abilities, but bot decisions still used render-frame timing. The match tick also exposed a
+  next radius without an explicit next-zone centre, and the reported winner could fall back to
+  participant-list order after timeout.
+- **Decision:** Run `BotBrain` decisions, navigation progress, movement commands and bot combat
+  commands from a 30 Hz `FixedSimulationClock`. Expose `NextZoneCenter` in the immutable
+  `MatchTickResult` and consume it in presentation. Select the participant with placement 1 as
+  the winner after resolution, with deterministic ranking fallback before resolution. Movement
+  command sinks reject commands while a fighter's shared movement-lock port is active.
+- **Consequences:** Bot behaviour and result IDs no longer depend on render FPS or actor/list
+  order. A future moving-zone definition can populate the explicit next centre without changing
+  the bot observation contract. Full client input buffering/replay and physical runtime coverage
+  remain required before claiming network-ready authority.
+- **Evidence/sources:** `Assets/BattleRaja/Core/Domain/OfflineMatch.cs`,
+  `Assets/BattleRaja/Presentation/AI/BotBrain.cs`, latest Phase 1 EditMode 71/71 and
+  PlayMode 27/27 test results.
+- **Owner:** Human project owner
+
+### ADR-021 — Offline authority owns gadget inventory and use validation
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the Phase 1 authority seam; effect execution remains a presentation
+  adapter until the combat-effect intent set is expanded.
+- **Context:** The offline lab's `GadgetUser` could validate and consume a gadget locally even
+  after `OfflineMatchAuthority` became responsible for pickup availability. That would allow a
+  future client or scene object to bypass authoritative inventory/cooldown decisions.
+- **Decision:** Create per-participant `GadgetInventory` and `GadgetRuntime` instances inside
+  `OfflineMatchAuthority`. Expose collection and use requests through the authority. The Unity
+  `GadgetUser` mirrors authority-approved pickup/use results and applies the immutable effect as
+  presentation; direct local setup remains an explicit request path for offline tests only.
+- **Consequences:** Duplicate gadget use is rejected by the application layer and cooldown state
+  is no longer authoritative in a MonoBehaviour. Dhol knockback and Tiffin station spawning still
+  need typed effect intents before they can be claimed as fully application-owned.
+- **Evidence/sources:** `OfflineMatchAuthority`, `GadgetUser`, `AuthorityFoundationTests`,
+  latest 72/72 EditMode and 27/27 PlayMode results.
+- **Owner:** Human project owner
+
+### ADR-022 — Bazaar Bastion is a controlled production-scene copy
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the M7 vertical slice; final art, audio, UI and content review remain open.
+- **Context:** The technical MovementLab fixture proves the simulation and presentation seams but is not an acceptable production-facing arena. M7 needs one authored-feeling scene while preserving the regression fixture and avoiding hand-edited Unity YAML.
+- **Options considered:** Mutate MovementLab in place; hand-author a new scene YAML; or use a deterministic editor generator to copy the fixture, apply palette/architecture content and select data-driven fighter adapters.
+- **Decision:** Generate `Assets/BattleRaja/Scenes/Gameplay/BazaarBastion.unity` from the on-disk MovementLab scene through `BuildEntrypoints.CreateBazaarBastionScene`. Keep MovementLab unchanged as the technical fixture, register Bazaar Bastion first in build settings, and configure Pehel/Maya through their shared command and movement-lock boundaries. The generator owns repeatability; the scene asset is committed as the build/test artifact.
+- **Consequences:** Android/Web smoke builds and PlayMode tests exercise the same production scene. The current result is a deliberate stylised greybox with palette blocks and stalls, not final art; scene regeneration must be rerun through the editor entrypoint after fixture or content changes.
+- **Evidence/sources:** `Assets/BattleRaja/Editor/BuildEntrypoints.cs`, `Assets/BattleRaja/Scenes/Gameplay/BazaarBastion.unity`, `Assets/BattleRaja/Tests/PlayMode/VerticalSlicePlayModeTests.cs`, Bazaar Bastion Android/Web smoke logs and screenshots.
+- **Owner:** Human project owner
+
+### ADR-023 — Use replaceable code-driven presentation primitives before final art
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the presentation foundation; final art/audio approval remains open.
+- **Context:** The vertical slice needed readable silhouettes, gameplay state communication and platform-safe feedback, but no licensed production art or audio was available. Animation-event timing would also risk coupling authoritative combat to presentation.
+- **Options considered:** Wait for final art; add unlicensed reference assets; or provide original, replaceable primitives and procedural cues behind presentation-only adapters.
+- **Decision:** Add `FighterPresentation` for colour rings, health bars, telegraphs, code-driven action states and hit/elimination readability. Add scene-owned `BattleRajaAudioDirector` with generated original tones, optional mixer-group hooks and Web user-gesture gating. Combat controllers notify these adapters after accepted commands; authoritative hit/ability results remain independent of animation/audio.
+- **Consequences:** Android/Web and PlayMode tests now exercise readable presentation scaffolding without external asset licensing or autoplay failures. The scene remains a stylised greybox; imported animation, VFX, music, authored SFX, quality tiers and final review are follow-up work.
+- **Evidence/sources:** `FighterPresentation.cs`, `BattleRajaAudioDirector.cs`, combat controller integrations, `VerticalSlicePlayModeTests`, phase-4 Android/Web smoke logs and screenshots.
+- **Owner:** Human project owner
+
+### ADR-024 — Use an anchored Canvas HUD for the first production match flow
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the M13 UI foundation; full flow, accessibility and final visual review remain open.
+- **Context:** The production scene still used an immediate-mode zone/results overlay and
+  needed a platform-safe surface for pause, spectator, rematch and settings controls.
+- **Options considered:** Keep immediate-mode labels; hand-author a large scene/prefab UI
+  before the flow is stable; or create a small runtime Canvas surface with normalized
+  anchors and explicit adapter callbacks.
+- **Decision:** `OfflineMatchHud` creates a `CanvasScaler`/`GraphicRaycaster` surface when
+  needed, keeps status/results presentation separate from `OfflineMatchController`
+  authority, and exposes touch-ready buttons for pause/settings, spectator cycling,
+  rematch and accessibility-oriented settings. `FighterPresentation.ReducedFlashMode`
+  is the presentation hook for reduced flashes. The aim-assist control is labeled as
+  ready-only until a real command/aim policy is implemented.
+- **Consequences:** Android and Web now exercise a readable, responsive HUD without
+  introducing a UI singleton or moving simulation rules into scene code. Bootstrap/main
+  menu, localization assets, controller rebinding, safe-area review and final authored
+  UI remain follow-up work; Unity 6 uses `LegacyRuntime.ttf` for runtime-created labels.
+- **Evidence/sources:** `OfflineMatchHud.cs`, `FighterPresentation.cs`, phase-5 EditMode
+  72/72 and PlayMode 29/29 results, Lava Android and Chrome Web smoke screenshots.
+- **Owner:** Human project owner
+
+### ADR-025 — Keep production flow pure and bind the selected fighter at the scene boundary
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the first production-flow slice; tutorial, final UX and real
+  service gates remain open.
+- **Context:** The Canvas match HUD was usable only after opening a gameplay scene directly.
+  A product-facing build needs a deterministic bootstrap/menu/mode/fighter/loading/error path,
+  while the selected fighter must change the real actor rather than remain a decorative menu
+  choice.
+- **Options considered:** Put flow state in a Unity MonoBehaviour; make the menu load a
+  fixed Bijli scene; or keep transitions in a pure application state machine and apply the
+  persisted fighter choice through an explicit presentation boundary on actor 1.
+- **Decision:** `ProductionFlowMachine` owns only deterministic flow state, mode/fighter intent
+  and error transitions in `BattleRaja.Core.Application`. `ProductionFlowController` renders
+  that state in a runtime Canvas, persists local presentation preferences with `PlayerPrefs`,
+  asynchronously loads `BazaarBastion`, and reports online/Fusion unavailability without
+  fabricating a room. `PlayerFighterSelection` then enables the selected first-party
+  `BijliFighterController`, `PehelFighterController` or `MayaFighterController`, updates the
+  shared movement-lock and attack definition seams, and leaves bots/match authority unchanged.
+- **Consequences:** Bootstrap is first in Android/Web build settings, the production scenes
+  are loadable by name, and menu/fighter routing is testable without Unity. Local preferences
+  are not authoritative progression or network state. Scene generation must be rerun through
+  the editor entrypoint after fixture/content changes; the final authored UI and tutorial are
+  still follow-up work.
+- **Evidence/sources:** `ProductionFlowMachine.cs`, `ProductionFlowController.cs`,
+  `PlayerFighterSelection.cs`, `BootstrapPlayModeTests.cs`,
+  `PlayerFighterSelectionPlayModeTests.cs`, 77/77 EditMode and 31/31 PlayMode results,
+  `Docs/QA/Visual/Flow/` screenshots, and HEAD `2c36bbb` Android/Web build logs.
+- **Owner:** Human project owner
+
+### ADR-026 — Add a replayable tutorial as a presentation layer over real offline authority
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the tutorial/offline onboarding slice; competency certification,
+  final UX and full-loop reliability remain open.
+- **Context:** The production menu could reach the offline match but offered no guided first-run
+  route. The tutorial must teach controls and the Aandhi/gadget/combat vocabulary without creating
+  a second simulation or making prompts authoritative.
+- **Options considered:** Hard-code tutorial rules into the match controller; create a fake
+  training sandbox; or use a replayable, scene-owned overlay backed by a pure step machine while
+  keeping the real authority, HUD, pickups and controls active.
+- **Decision:** Use `TutorialStepMachine` for deterministic Movement → Aim → BasicAttack → Ability
+  → Gadget → Aandhi → Elimination → Victory → Complete progression. `TutorialOverlay` renders
+  replay/skip/menu controls and persists only local completion. `CreateTutorialArenaScene` copies
+  the tested MovementLab scene, disables BotBrain decisions but keeps eight actor spawns valid,
+  and registers `TutorialArena` in the production Android/Web build order.
+- **Consequences:** New players can reach a clear, replayable guidance loop from Main Menu, and
+  PlayMode verifies the real `OfflineMatchController` starts with eight authority participants.
+  Prompts do not certify that a player performed an action; full match reliability, performance,
+  visual review and external service gates remain independent.
+- **Evidence/sources:** `TutorialStepMachine.cs`, `TutorialOverlay.cs`, `TutorialArena.unity`,
+  `TutorialArenaPlayModeTests.cs`, 81/81 EditMode and 32/32 PlayMode results, and the 4391f09
+  Android/Web/browser evidence in `Docs/QA/LATEST_HEAD_BASELINE.md`.
+- **Owner:** Human project owner
+
+### ADR-027 — Carry authoritative simulation ticks through damage and gadget intents
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the Phase 1 authority/fixed-clock continuation; transport-specific
+  prediction and replay remain open.
+- **Context:** The offline authority already advanced at a fixed step, but Aandhi damage
+  requests carried no tick identity and authoritative gadget runtimes were never advanced.
+  That weakened auditability and could leave a server-owned gadget cooldown permanently active.
+- **Options considered:** Infer intent timing from render callbacks; keep cooldowns in the
+  presentation `GadgetUser`; or carry the authoritative tick through application intents and
+  advance all application-owned runtimes from the same fixed step.
+- **Decision:** Add `SimulationTick` to `DamageRequest` and `MatchAuthorityTick`, require
+  monotonic ticks on the explicit authority overload, advance authoritative gadget runtimes
+  on every fixed step, and preserve the tick through projectile, Pehel and Aandhi damage paths.
+  Keep the float overload as a compatibility helper for pure offline callers; production
+  presentation passes the shared match clock tick explicitly.
+- **Consequences:** Damage attribution can be ordered and replayed by tick, and gadget
+  cooldowns no longer depend on a scene-local timer. The authority still delegates proximity
+  sensing and effect rendering to Unity adapters, and real Fusion transport remains blocked.
+- **Evidence/sources:** `DamageRequest`, `OfflineMatchAuthority`,
+  `OfflineMatchController`, `AuthorityFoundationTests`, and the fixed-clock render-rate
+  equivalence test in `CoreFoundationTests`.
+- **Owner:** Human project owner
+
+### ADR-028 — Resolve item proximity and collector selection in application authority
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the Phase 1 authority continuation; network transport and
+  presentation effect execution remain open.
+- **Context:** Pickup respawn/inventory state was application-owned, but the presentation
+  controller still chose collectors using hard-coded distances and actor iteration order.
+  That made a public-match outcome depend on scene callback order and left non-contiguous
+  scene pickup IDs fragile.
+- **Options considered:** Keep proximity checks in `OfflineMatchController`; add a physics
+  service to the scene; or pass authored item positions into application definitions and
+  emit deterministic collection intents from the authority.
+- **Decision:** Store item position and collection radius in validated domain definitions.
+  `OfflineMatchAuthority.CollectNearby` selects the lowest-ID eligible living participant,
+  applies the pure pickup/inventory runtime, and returns immutable heal/gadget collection
+  intents. Unity applies those intents to health, `GadgetUser` and visual availability only.
+  Authority lookup uses authored pickup IDs rather than assuming contiguous arrays.
+- **Consequences:** Offline collection outcomes are deterministic and testable without a
+  scene, while physics-backed actor positioning and visual effect application remain
+  presentation responsibilities. Real Fusion authority still requires a later adapter.
+- **Evidence/sources:** `MatchItems`, `MatchCollectionIntents`, `OfflineMatchAuthority`,
+  `OfflineMatchController`, `AuthorityFoundationTests`, and the Phase 1 Android/Web smoke
+  builds recorded in `Docs/QA/LATEST_HEAD_BASELINE.md`.
+- **Owner:** Human project owner
+
+### ADR-029 — Resolve bot abilities from the configured fighter controller
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the Phase 2 fighter continuation.
+- **Context:** `BotBrain` used `BijliFighterController` as its missing-reference fallback.
+  A production bot whose serialized reference was absent could therefore silently issue
+  the dash ability even when its actor carried Pehel or Maya.
+- **Decision:** Resolve the configured `IFighterAbilityController` directly, or discover
+  the interface on the same actor. Do not select a fighter-specific fallback by name.
+  Expose the resolved controller for diagnostics and assert in the production PlayMode
+  suite that each bot resolves the controller actually attached to its actor.
+- **Consequences:** Missing scene references fail safely instead of changing fighter
+  identity; authored scene configuration remains responsible for attaching one controller.
+  The networked fighter adapter and server-side ability authority remain future work.
+- **Evidence/sources:** `BotBrain`, `VerticalSlicePlayModeTests` and the Phase 2 full
+  PlayMode result recorded in `Docs/QA/LATEST_HEAD_BASELINE.md`.
+- **Owner:** Human project owner
+
+### ADR-030 — Emit authoritative Dhol displacement intents
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the Phase 1 authority continuation; full network transport
+  and other gadget effects remain open.
+- **Context:** Dhol Burst use and cooldown were validated by the authority, but the
+  presentation `GadgetUser` independently scanned every movement actor and selected
+  knockback targets. That made target selection and displacement scene-order dependent.
+- **Decision:** When the authority accepts a Dhol command, it evaluates living
+  participants from the application snapshot and returns immutable per-target
+  `GadgetDisplacementIntent` values. Unity applies those impulses to matching
+  `CharacterController` views. A local non-authoritative lab fallback remains for
+  isolated gadget testing only.
+- **Consequences:** Public-match target selection is deterministic and testable without
+  Physics queries; actual collision movement and VFX remain presentation adapters. Tiffin
+  healing/station lifetime and Umbrella mitigation still require the same treatment.
+- **Evidence/sources:** `Gadgets`, `OfflineMatchAuthority`, `GadgetUser`, and the Dhol
+  displacement assertion in `AuthorityFoundationTests`.
+- **Owner:** Human project owner
+
+### ADR-031 — Tick Tiffin healing and lifetime in application authority
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the Phase 1 authority continuation; station damage and
+  network transport remain open.
+- **Context:** Tiffin healing and expiry were driven by `GadgetStation.Update` using
+  `Time.deltaTime` and a scene-wide health scan. In a public match that would make
+  healing cadence and lifetime presentation-owned.
+- **Decision:** Add a pure `GadgetStationRuntime` owned by `OfflineMatchAuthority`.
+  Accepted Tiffin uses receive a station ID; fixed authority ticks emit immutable
+  healing intents and station-expiry IDs. Unity renders the station and applies those
+  intents to actor health. Authority-driven station views no longer run their own
+  healing/lifetime loop; isolated local-lab stations retain the fallback loop.
+- **Consequences:** Tiffin healing cadence and expiry are deterministic and testable
+  without a scene. Station damage forwarding and authoritative Umbrella mitigation are
+  still required before claiming complete gadget rule separation.
+- **Evidence/sources:** `Gadgets`, `OfflineMatchAuthority`, `GadgetStation`,
+  `OfflineMatchController`, `AuthorityFoundationTests` and the 85/34 Phase 1 results.
+- **Owner:** Human project owner
+
+### ADR-032 — Tick Umbrella Guard mitigation in application authority
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the Phase 1 authority continuation.
+- **Context:** Umbrella Guard facing, duration and 30% front mitigation were held in
+  `GadgetUser`, so damage resolution could depend on a presentation component and its
+  local clock.
+- **Decision:** `OfflineMatchAuthority` owns one `UmbrellaGuardRuntime` per participant,
+  activates it only after an accepted authoritative use, advances it on authority ticks,
+  and rewrites incoming damage requests before the presentation pipeline. Aandhi and
+  generic damage bypass the guard. The old `GadgetUser` mitigation path remains only for
+  isolated non-authoritative labs.
+- **Consequences:** Shield duration and mitigation are deterministic and testable without
+  Unity; visual facing/feedback still lives in the presentation adapter. Station damage
+  forwarding and network replication remain open.
+- **Evidence/sources:** `Gadgets`, `OfflineMatchAuthority`, `CombatDamageResolver`,
+  `GadgetUser` and the Umbrella authority assertions in `AuthorityFoundationTests`.
+- **Owner:** Human project owner
+
+### ADR-033 — Route Tiffin station damage through application authority
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the Phase 1 authority continuation; network replication and
+  broader presentation extraction remain open.
+- **Context:** Tiffin healing and lifetime were already fixed-tick authority rules, but
+  station damage still mutated only the Unity `CombatHealth` view. A client could therefore
+  destroy a rendered station without changing the canonical station runtime.
+- **Decision:** `OfflineMatchAuthority.TryDamageStation` validates and applies station
+  damage against the authoritative `GadgetStationRuntime`, returns the applied amount and
+  destruction state, and removes destroyed runtimes immediately. `CombatDamageResolver`
+  validates the target request before forwarding it, then applies the returned amount to the
+  Unity view and expires that view when authority reports destruction. The local station loop
+  remains only for isolated non-authoritative lab objects.
+- **Consequences:** Station destruction and remaining health are deterministic and testable
+  without Unity, and the presentation station cannot be the source of public-match outcome.
+  The adapter still renders local health feedback, while Fusion transport, server-side event
+  replication and other scene-owned presentation details remain future work.
+- **Evidence/sources:** `Gadgets`, `OfflineMatchAuthority`, `OfflineMatchController`,
+  `CombatDamageResolver`, `AuthorityFoundationTests`, `GadgetPlayModeTests`, and the
+  `phase1-station-authority-*` test/build evidence in `Docs/QA/LATEST_HEAD_BASELINE.md`.
+- **Owner:** Human project owner
+
+### ADR-034 — Keep Web host and orthographic gameplay framing responsive
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the Phase 7 visual continuation; mobile-Web quality and final
+  human UX approval remain open.
+- **Context:** The built-in Web template emitted a fixed 960×600 desktop canvas. At a
+  390×844 browser viewport, the host introduced a horizontal crop even after the game
+  camera had enough world framing to support the portrait aspect.
+- **Decision:** Copy Unity's installed Default Web template into the project as
+  `Assets/WebGLTemplates/BattleRaja`, select it with the project template path, and let
+  the desktop/resized canvas fill the host viewport. `TopDownCameraController` expands
+  orthographic size only for aspects narrower than the 16:9 reference, preserving the
+  existing landscape framing while keeping more of the arena visible in portrait.
+- **Consequences:** Browser layout and gameplay projection now respond together and are
+  testable with a 390×844 Playwright smoke. This does not certify touch ergonomics,
+  tutorial/results layout, mobile-Web performance or final visual quality.
+- **Evidence/sources:** `Assets/WebGLTemplates/BattleRaja`, `BuildEntrypoints`,
+  `TopDownCameraController`, `VerticalSlicePlayModeTests`,
+  `playwright-390x844-responsive-gameplay.png` and the `phase7-responsive-*` evidence
+  in `Docs/QA/LATEST_HEAD_BASELINE.md`.
+- **Owner:** Human project owner
+
+### ADR-035 — Compact match telemetry on narrow viewports
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the Phase 5/7 UI continuation; final visual and mobile UX
+  approval remain open.
+- **Context:** The responsive canvas fixed the portrait crop, but the original single-line
+  match status still squeezed the long `SPAWNPROTECTION` phase and zone values beside
+  the fighter and gadget HUD. This reduced readability on a 390×844 viewport.
+- **Decision:** Format match telemetry as two lines, shorten warning labels, and switch
+  to a compact `Z current > next` representation below a 0.75 aspect ratio. The
+  presentation-only formatter remains driven by immutable authority properties; no
+  gameplay rule or timing changes are introduced.
+- **Consequences:** Portrait telemetry is more legible while landscape retains the
+  labelled format. The HUD still requires human review for density, touch ergonomics,
+  localization and final visual hierarchy.
+- **Evidence/sources:** `OfflineMatchHud`, `VerticalSlicePlayModeTests`,
+  `playwright-390x844-hud-compact.png` and the `hud-compact-*` evidence in
+  `Docs/QA/LATEST_HEAD_BASELINE.md`.
+- **Owner:** Human project owner
+
+### ADR-036 — Preserve per-step tick identity across render-frame catch-up
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the fixed-clock foundation; replay recording, network
+  prediction and longer soak coverage remain open.
+- **Context:** A render frame can accumulate multiple 30 Hz simulation steps. The
+  clock advanced all of them before presentation loops ran, so consumers that reused
+  the final `Tick` sent duplicate identities to `OfflineMatchAuthority`. The exact
+  Android Lava smoke exposed `Simulation ticks must increase monotonically` while the
+  automated single-step tests stayed green.
+- **Decision:** `FixedSimulationClock` records the number of steps consumed by the
+  latest render frame and exposes `GetConsumedTick(stepIndex)`. Every fixed-step
+  presentation consumer uses the corresponding per-step identity: authority, movement,
+  attacks, projectiles, bots, gadgets, and Bijli/Pehel/Maya ability adapters.
+- **Consequences:** Catch-up frames preserve monotonic command, damage and authority
+  identities without making the render loop authoritative. The correction does not
+  alter the 30 Hz rule rate or claim production networking.
+- **Evidence/sources:** `FixedSimulationClock`, `OfflineMatchController`, all fixed-step
+  consumers, `CoreFoundationTests`, `fixed-tick-runtime-*` test/build logs, and Lava
+  before/after captures in `Docs/QA/Visual/Phase7/`.
+- **Owner:** Human project owner
+
+### ADR-037 — Do not treat fighter targets as Pehel charge walls
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical-slice controller boundary; networked
+  authority and broader collision policy remain future work.
+- **Context:** The live Pehel controller's sphere cast used the all-collision mask. An
+  opposing `CombatTarget` collider could therefore be returned as the nearest wall,
+  reducing available travel to zero and putting the ability into cooldown before the
+  active-phase capture query ran.
+- **Decision:** Use a non-allocating sphere-cast buffer and ignore colliders that belong
+  to `CombatTarget` objects when selecting static obstacles. Target capture remains a
+  separate faction/radius check; static geometry and play bounds still constrain the
+  charge. Invalid runtime `FighterDefinitionAsset` component lookups are removed because
+  the definition is a `ScriptableObject` and serialized scene references already provide
+  the intended data path.
+- **Consequences:** Live Pehel capture/throw works against a real target collider without
+  sacrificing wall blocking or adding per-frame cast allocations. The controller remains
+  a presentation adapter around the pure `ChargeThrowRuntime`; this does not make the
+  client authoritative for public matches.
+- **Evidence/sources:** `PehelFighterController`, `MayaFighterController`,
+  `BijliFighterController`, `PlayerFighterSelection`, `VerticalSlicePlayModeTests`,
+  `phase2-full-*` results, the Phase 2 Android Lava sample and Chrome Web smoke capture.
+- **Owner:** Human project owner
+
+### ADR-038 — Publish offline results when authoritative damage ends the match
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical slice; network replication and final
+  results UX remain future work.
+- **Context:** `CombatDamageResolver` records lethal damage into the offline authority
+  immediately. When the last elimination left one participant alive, the domain match
+  entered `Resolution` before the next controller tick; the controller then returned
+  early for an ended simulation and never published `Results` to the HUD.
+- **Decision:** Centralize result publication in `OfflineMatchController.PublishResults`.
+  Call it both from the normal `MatchTickResult.MatchEnded` path and immediately after
+  an authority-recorded damage event observes `Simulation.IsEnded`. Add PlayMode
+  coverage for the generated Results panel and Rematch button reload.
+- **Consequences:** Results/rematch state is available regardless of whether the match
+  ends on a fixed simulation tick or during a presentation damage callback. The rule
+  remains offline-only; networked result replication, final art and human UX review are
+  not implied.
+- **Evidence/sources:** `OfflineMatchController`, `OfflineMatchPlayModeTests`,
+  `Builds/M11/TestResults/phase6-full-playmode-20260803.xml` and the Phase 6 baseline
+  in `Docs/QA/LATEST_HEAD_BASELINE.md`.
+- **Owner:** Human project owner
+
+### ADR-039 — Attribute assists from authoritative damage contributions
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline match simulation; network event replication and
+  balance review remain future work.
+- **Context:** Participant snapshots exposed an `Assists` field, but the match simulation
+  only tracked the finishing instigator's elimination and total damage. That made results
+  incomplete and left assist credit outside the authoritative rules.
+- **Decision:** Keep a per-target, per-participant damage contribution ledger in the pure
+  `OfflineMatchSimulation`. On a valid lethal event, credit one assist to each living,
+  non-finishing participant who contributed damage, reject duplicate post-elimination
+  events, and discard the target ledger. Environmental damage and self-damage never create
+  assist credit.
+- **Consequences:** Results now expose deterministic assist counts without Unity or
+  transport dependencies. The ledger is event-driven and bounded by active match targets;
+  server replication, assist thresholds and final balance remain open.
+- **Evidence/sources:** `OfflineMatchSimulation.RecordDamage`,
+  `OfflineMatchTests.DamageContributionsCreditAssistOnceToNonFinisher`,
+  `Builds/M11/TestResults/assist-editmode-20260803.xml` and
+  `Builds/M11/TestResults/assist-playmode-20260803.xml`.
+- **Owner:** Human project owner
+
+### ADR-040 — Keep aim assist as bounded local input guidance
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline accessibility surface; final balance and networked
+  input-policy review remain open.
+- **Context:** The settings flow persisted an aim-assist preference, but no gameplay path
+  applied it and the in-match toggle was a no-op. Any assist must improve touch/mouse
+  usability without granting a client authority over hit or damage outcomes.
+- **Decision:** Add a pure `AimAssistTargeting` selector that considers only live targets
+  inside a configured range/cone and uses quantized angular scoring, distance and entity ID
+  for deterministic ties. `PlayerInputAdapter` gathers candidates through a fixed
+  `OverlapSphereNonAlloc` buffer and only adjusts the local aim direction; projectile
+  collision and damage remain unchanged. The match HUD toggle persists the setting and
+  updates the adapter immediately.
+- **Consequences:** Aim assist is bounded, testable and available on Android/Web input
+  without per-frame managed collection growth. It does not claim server authority,
+  auto-targeting outside the cone or final accessibility/balance approval.
+- **Evidence/sources:** `AimAssistTargeting`, `PlayerInputAdapter`, `OfflineMatchHud`,
+  `AimAssistTests`, `Builds/M11/TestResults/aimassist-editmode-v5-20260803.xml`,
+  `Builds/M11/TestResults/aimassist-playmode-20260803.xml` and the fresh Phase 7 smoke
+  captures in `Docs/QA/Visual/Phase7/`.
+- **Owner:** Human project owner
+
+### ADR-041 — Use Unity Input System only with a legacy-scene compatibility bridge
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the current Android/Web project baseline; serialized legacy
+  scene cleanup and broader controller rebinding remain future work.
+- **Context:** The project had both legacy `StandaloneInputModule` scenes and the new
+  Input System package enabled. Unity's `activeInputHandler: Both` generated an editor
+  warning and allowed presentation code to keep depending on the legacy `UnityEngine.Input`
+  API, while switching directly to Input System would break user-owned serialized scenes.
+- **Decision:** Set `ProjectSettings.activeInputHandler` to Input System only. Generated
+  scenes now use `InputSystemUIInputModule`, audio gesture detection uses Input System
+  device state, and `InputModuleCompatibilityBridge` replaces any legacy module at scene
+  load so existing scenes remain runnable without rewriting their YAML in place.
+- **Consequences:** Android and Web builds share one input API and no longer depend on
+  legacy polling in project code. The bridge is a transitional runtime boundary; vendor
+  Photon code and old serialized scene data may still contain legacy module references,
+  and controller rebinding, touch ergonomics and final input QA remain open.
+- **Evidence/sources:** `ProjectSettings/ProjectSettings.asset`,
+  `BuildEntrypoints`, `BattleRajaAudioDirector`, `InputModuleCompatibilityBridge`,
+  `Builds/M11/TestResults/input-system-playmode-fixed-20260803.xml`, the successful
+  Android/Web M11 builds, and `Tools/Validation/validate.ps1`.
+- **Owner:** Human project owner
+
+### ADR-042 — Route resolved combat events through application authority
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical slice; network transport and remaining
+  presentation adapters remain future work.
+- **Context:** `OfflineMatchController` subscribed to Unity health callbacks but then called
+  `OfflineMatchSimulation.RecordDamage` directly. That made the presentation bridge the
+  visible owner of the canonical combat-statistics mutation path even though the simulation
+  itself was pure.
+- **Decision:** Expose `OfflineMatchAuthority.RecordDamage(CombatDamageEvent)` as the
+  application-owned event ingress. The controller reports immutable resolved events through
+  the authority; the authority delegates to the simulation and retains ownership of
+  elimination, placement, damage and assist outcomes. Add a duplicate-elimination regression.
+- **Consequences:** The offline presentation bridge no longer reaches into the pure simulation
+  for combat mutation. Unity still applies health visuals and transport integration is not
+  implied; a future network adapter must call the same authority contract under server rules.
+- **Evidence/sources:** `OfflineMatchAuthority`, `OfflineMatchController`,
+  `AuthorityFoundationTests.MatchAuthorityRoutesDamageEventsAndRejectsDuplicateEliminations`,
+  `Builds/M11/TestResults/authority-routing-editmode-20260803.xml` and the latest baseline.
+- **Owner:** Human project owner
+
+### ADR-043 — Resolve production actor damage before Unity view mutation
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical slice; movement reconciliation, network
+  transport and remaining presentation adapters remain future work.
+- **Context:** The previous event bridge applied damage to a Unity `CombatHealth` first and
+  then reported the resulting event to the match simulation. That ordering made a view-side
+  health mutation precede canonical statistics/elimination state and could double-count or
+  accept late events.
+- **Decision:** `OfflineMatchAuthority.ResolveDamage` validates mitigation and applies actor
+  damage to the pure simulation first. `CombatDamageResolver` applies only the returned
+  authoritative health snapshot/event to registered match actors; non-authority lab targets
+  continue through the local pipeline. Results are published immediately when an authoritative
+  damage event ends the match.
+- **Consequences:** Production actor damage, eliminations, placements and statistics no longer
+  depend on a controller callback after view mutation. `SyncHealth` remains a transitional
+  reconciliation seam for the offline adapter, and real server authority is not implied.
+- **Evidence/sources:** `OfflineMatchAuthority.ResolveDamage`, `OfflineMatchSimulation.ApplyDamage`,
+  `CombatHealth.ApplyAuthoritativeDamage`, `AuthorityFoundationTests`,
+  `OfflineMatchPlayModeTests.CombatDamageResolverAppliesAuthorityDamageOnceToViewAndSnapshot`,
+  `Builds/M11/TestResults/authority-damage-editmode-20260803.xml`,
+  `Builds/M11/TestResults/authority-damage-playmode-20260803.xml` and the latest baseline.
+- **Owner:** Human project owner
+
+### ADR-044 — Apply production healing through match authority
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical slice; movement reconciliation and network
+  transport remain future work.
+- **Context:** Health pickup and Tiffin healing were accepted by application runtimes but
+  then mutated Unity `CombatHealth` directly. The controller mirrored view health back into
+  authority each render frame, leaving a presentation-owned reconciliation path.
+- **Decision:** Add `OfflineMatchSimulation.Heal` and `OfflineMatchAuthority.ApplyHealing`.
+  Pickup and Tiffin intents update canonical participant health first, then the controller
+  applies the resulting snapshot to Unity via `CombatHealth.SetAuthoritativeHealth`.
+  Keep `SyncHealth` only as an explicit compatibility seam for tests and the transport proof.
+- **Consequences:** Production pickup/Tiffin healing no longer depends on render-frame view
+  state. Movement still enters authority through a transitional position observation seam, and
+  local lab pickups/stations remain presentation adapters by design.
+- **Evidence/sources:** `OfflineMatchSimulation.Heal`, `OfflineMatchAuthority.ApplyHealing`,
+  `CombatHealth.SetAuthoritativeHealth`, `AuthorityFoundationTests.MatchAuthorityAppliesHealingToCanonicalHealth`,
+  fresh authority-health EditMode/PlayMode XML and the latest baseline.
+- **Owner:** Human project owner
+
+### ADR-045 — Resolve production movement in offline match authority
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline Bazaar Bastion vertical slice; fighter ability
+  displacement, Photon transport and server deployment remain future work.
+- **Context:** Production movement still copied the Unity transform into the simulation
+  each render frame, allowing presentation state to become the effective owner of actor
+  placement and making duplicate/local movement possible.
+- **Decision:** Register one `MovementMotor` and `MovementTuning` per authority participant.
+  `OfflineMatchController` submits fixed-tick `MovementCommand` values to
+  `OfflineMatchAuthority.ResolveMovement`; the authority applies the pure motor exactly
+  once per monotonically increasing tick and returns an immutable step/position snapshot.
+  Bazaar Bastion uses this path, while MovementLab retains its observation path for local
+  movement regression fixtures. The presentation adapter applies the canonical position
+  directly and disables its local `CharacterController` in authority mode so Unity
+  collision projection cannot reject a valid canonical result.
+- **Consequences:** Production actor placement is now canonical in the offline authority,
+  with duplicate-tick rejection and PlayMode coverage. Fighter ability movement is not yet
+  authority-owned and therefore remains explicitly out of scope for this continuation;
+  this is not a real multiplayer or trusted-server claim.
+- **Evidence/sources:** `OfflineMatchAuthority.ResolveMovement`, `MovementMotor`,
+  `OfflineMatchController`, `MovementPlayerAgent`, `AuthorityFoundationTests`,
+  `VerticalSlicePlayModeTests`, `Builds/M11/TestResults/authority-movement-editmode-20260803-final.xml`,
+  `Builds/M11/TestResults/authority-movement-playmode-20260803-final2.xml` and the latest baseline.
+- **Owner:** Human project owner
+
+### ADR-046 — Apply Dhol Burst displacement through canonical match state
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical slice; fighter ability movement and
+  network transport remain future work.
+- **Context:** The authority computed Dhol Burst displacement intents, but the Unity
+  gadget adapter applied them only through `CharacterController.Move`. In the production
+  authority movement path that controller is disabled to prevent local collision
+  projection from rejecting canonical movement, so Dhol could appear to succeed without
+  changing the authoritative participant position.
+- **Decision:** `OfflineMatchAuthority.TryUseGadget` applies each valid Dhol displacement
+  to the canonical simulation before returning the immutable intent. The controller then
+  applies the resulting snapshot through `MovementPlayerAgent`; a local controller move
+  remains only as a fallback when no match adapter is available.
+- **Consequences:** Dhol Burst now changes canonical and presentation positions through
+  the same authority boundary and duplicate gadget commands remain rejected. Collision
+  resolution, Pehel charge displacement and Bijli dash displacement are still not
+  authority-owned and must not be described as network-ready.
+- **Evidence/sources:** `OfflineMatchAuthority.TryUseGadget`, `GadgetUser`,
+  `OfflineMatchController.ApplyAuthoritativeDisplacement`, `MovementPlayerAgent`,
+  `AuthorityFoundationTests.MatchAuthorityOwnsGadgetUseAndRejectsDuplicateCommands`,
+  `Builds/M11/TestResults/authority-gadget-displacement-editmode-20260803.xml` and
+  `Builds/M11/TestResults/authority-gadget-displacement-playmode-20260803.xml`.
+- **Owner:** Human project owner
+
+### ADR-047 — Route fighter ability displacement through the authority seam
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical slice; ability runtime ownership,
+  collision policy and network transport remain future work.
+- **Context:** Bazaar Bastion disables local `CharacterController` projection while
+  movement is authority-driven. Bijli dash, Pehel charge and Pehel throw therefore
+  needed an explicit path to update the canonical participant position rather than
+  silently relying on a disabled Unity controller.
+- **Decision:** Add a tick-validated `OfflineMatchAuthority.ResolveAbilityDisplacement`
+  contract. Bijli and Pehel adapters submit their already-resolved displacement through
+  `OfflineMatchController` when the actor is authority-driven; the returned canonical
+  position is applied to `MovementPlayerAgent`. Non-authority lab fixtures retain their
+  local controller fallback. Invalid, duplicate-tick, dead-actor and non-finite requests
+  are rejected without mutating simulation state.
+- **Consequences:** Production ability displacement now changes the same canonical
+  position used by authority movement, and the live Bijli path has PlayMode coverage.
+  Fighter cooldown/runtime state, collision projection and authoritative ability command
+  validation are still presentation-owned or transitional; this does not establish a
+  trusted multiplayer server.
+- **Evidence/sources:** `OfflineMatchAuthority.ResolveAbilityDisplacement`,
+  `BijliFighterController`, `PehelFighterController`, `MovementPlayerAgent`,
+  `AuthorityFoundationTests.MatchAuthorityResolvesAbilityDisplacementExactlyOncePerTick`,
+  `VerticalSlicePlayModeTests.ProductionBijliAbilityRoutesDisplacementThroughAuthority`,
+  and the latest baseline.
+- **Owner:** Human project owner
+
+### ADR-048 — Keep production Maya decoys in match authority
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical slice; network transport and final
+  fighter presentation remain future work.
+- **Context:** Maya's presentation controller created a decoy `CombatHealth` and
+  `CombatTarget` directly. In Bazaar Bastion that allowed decoy lifetime, follow
+  position and damage to bypass the same authority boundary used by participant
+  movement and combat.
+- **Decision:** `OfflineMatchAuthority` owns one deterministic `DecoyRuntime` per
+  participant, validates tick-ordered spawn and damage, advances the decoy from the
+  canonical owner snapshot, and exposes immutable `MatchAuthorityDecoy` snapshots.
+  `MayaFighterController` consumes those snapshots to create/update/destroy only the
+  Unity view. `CombatDamageResolver` routes authority decoy damage through the
+  application seam; non-authority lab probes retain the local runtime path.
+- **Consequences:** Production Maya decoy health, lifetime, follow position and duplicate
+  damage rejection are now authority-owned and regression-tested. The view still uses a
+  generated capsule placeholder, and fighter ability command validation/cooldown policy
+  is transitional rather than a real network-server implementation.
+- **Evidence/sources:** `OfflineMatchAuthority.TrySpawnMayaDecoy`,
+  `OfflineMatchAuthority.ResolveMayaDecoyDamage`, `MayaFighterController`,
+  `CombatDamageResolver`, `AuthorityFoundationTests.MatchAuthorityOwnsMayaDecoyLifetimeAndDamage`,
+  `VerticalSlicePlayModeTests.ProductionMayaDecoyRoutesLifetimeAndDamageThroughAuthority`,
+  and the latest baseline.
+- **Owner:** Human project owner
+
+### ADR-049 — Give Bazaar Bastion its own production-scene contract
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical slice; prefab extraction and network
+  transport remain future work.
+- **Context:** `CreateBazaarBastionScene` recreated the production scene by copying
+  `MovementLab.unity`, and the resulting Bazaar scene retained a `MovementLabScene`
+  marker. That coupled production serialization to a lab fixture and made rerunning the
+  editor entrypoint capable of importing unrelated lab changes or dropping build scenes.
+- **Decision:** The entrypoint now opens the existing `BazaarBastion.unity`, validates and
+  updates its production graph in place, removes the lab-only marker, and serializes a
+  `BazaarBastionScene` contract with player, camera, match, projectile-pool and damage
+  resolver references. Architecture creation is idempotent, and TutorialArena remains
+  in EditorBuildSettings. MovementLab remains an independent observation fixture.
+- **Consequences:** Production scene ownership is explicit and rerunnable without copying
+  user-owned lab serialization. The scene is still greybox and project gameplay actors are
+  not yet extracted into reusable prefabs; those remain the next production-content step.
+- **Evidence/sources:** `BuildEntrypoints.CreateBazaarBastionScene`,
+  `BazaarBastionScene`, `BazaarBastion.unity`,
+  `VerticalSlicePlayModeTests.ProductionSceneUsesFighterSpecificAbilityControllers`,
+  `Builds/M11/TestResults/bazaar-boundary-playmode-final-20260803.xml`,
+  `Builds/M11/TestResults/bazaar-boundary-editmode-full-20260803.xml` and the latest
+  baseline.
+- **Owner:** Human project owner
+
+### ADR-050 — Extract reusable Bazaar architecture into a prefab boundary
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical slice; fighter actor prefab extraction
+  and final authored content remain future work.
+- **Context:** Bazaar architecture was serialized as a large inline hierarchy inside the
+  production scene, while the editor generator still owned the construction details. That
+  made scene diffs noisy and prevented reusable content validation.
+- **Decision:** Save the existing `BazaarArchitecture` hierarchy as
+  `Assets/BattleRaja/Content/Prefabs/BazaarArchitecture.prefab` with Unity's
+  `PrefabUtility.SaveAsPrefabAssetAndConnect`. `CreateBazaarBastionScene` is idempotent:
+  it creates the hierarchy only when absent, connects it to the prefab, and validation
+  requires the asset. Fighter and gameplay definitions remain separate data assets.
+- **Consequences:** The production scene now references a reusable architecture asset and
+  the generator no longer expands the geometry into every scene copy. The prefab contains
+  greybox geometry/material references only; actor prefabs, authored art, animation, VFX
+  and final review remain open.
+- **Evidence/sources:** `Assets/BattleRaja/Content/Prefabs/BazaarArchitecture.prefab`,
+  `BuildEntrypoints.EnsureBazaarArchitecturePrefab`,
+  `Builds/M11/TestResults/bazaar-prefab-editmode-full-20260803.xml`,
+  `Builds/M11/TestResults/bazaar-prefab-playmode-full-20260803.xml` and the latest
+  baseline.
+- **Owner:** Human project owner
+
+### ADR-051 — Resolve production Pehel charge throw in match authority
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical slice; world-collision projection,
+  transport replication and final ability presentation remain future work.
+- **Context:** Production Pehel previously advanced its charge runtime and selected
+  capture targets inside `PehelFighterController`. That made the visible controller the
+  source of target selection, damage and throw displacement, even though Bazaar movement
+  was already canonical in `OfflineMatchAuthority`.
+- **Decision:** Register authenticated participant factions with the authority and keep a
+  `ChargeThrowRuntime` per Pehel actor in `OfflineMatchAuthority`. The authority validates
+  the common ability command and tick, selects the nearest living enemy from canonical
+  snapshots with an entity-id tie-break, applies ability damage, and commits throw
+  displacement before returning an immutable `MatchAuthorityChargeThrow`. The Unity
+  controller consumes those results only to update health/transform views; MovementLab
+  retains the non-authority local runtime fallback.
+- **Consequences:** Production Pehel cooldown/state, capture, damage and throw position no
+  longer depend on a client collider query or local ability runtime. The authority still
+  receives a fixed offline arena-distance budget because the offline domain has no world
+  collision map; this is not a real Fusion server implementation.
+- **Evidence/sources:** `OfflineMatchAuthority.TryStartPehelCharge`,
+  `OfflineMatchAuthority.AdvancePehelCharge`, `PehelFighterController`,
+  `AuthorityFoundationTests.AuthorityOwnsPehelChargeCaptureDamageAndThrowDisplacement`,
+  and the next full EditMode/PlayMode baseline.
+- **Owner:** Human project owner
+
+### ADR-052 — Validate production attack commands in match authority
+
+- **Date:** 2026-08-03
+- **Status:** Accepted for the offline vertical slice; projectile collision, network
+  replication and broader rule migration remain future work.
+- **Context:** Production `CombatAttackController` previously owned the fire-rate gate
+  and could spawn a projectile after only local presentation checks. That allowed
+  duplicate or stale commands to bypass the same fixed-tick authority boundary used by
+  movement and fighter abilities.
+- **Decision:** Add `OfflineMatchAuthority.TryAcceptAttack` as the transport-independent
+  validation seam. It rejects invalid/non-finite commands, unknown or defeated actors,
+  duplicate/out-of-order ticks and cooldown violations, and consumes an authority-owned
+  `WeaponCooldownState`. `CombatAttackController` submits the common command and only
+  spawns the presentation projectile after an accepted result; the HUD reads the
+  authority cooldown for production actors. Core assembly dependency checks and a
+  presentation-mutation scan now enforce the boundary in repository validation.
+- **Consequences:** Production attack ordering, alive-state validation and cooldown
+  policy are deterministic and testable without Unity. Projectile instantiation and
+  collision projection remain Unity presentation responsibilities, so this is not yet
+  a trusted multiplayer combat implementation. The Pehel throw path also resolves its
+  damage through the existing authority seam while world collision remains offline.
+- **Evidence/sources:** `OfflineMatchAuthority.TryAcceptAttack`,
+  `CombatAttackController`, `OfflineMatchController`,
+  `AuthorityFoundationTests.MatchAuthorityRejectsDuplicateAndOutOfOrderAttackCommands`,
+  `OfflineMatchPlayModeTests.ProductionAttackCommandsUseAuthorityOrderingAndCooldown`,
+  `Tools/Validation/validate.ps1`, and the Phase 1 continuation in
+  `Docs/QA/LATEST_HEAD_BASELINE.md`.
 - **Owner:** Human project owner

@@ -77,9 +77,35 @@ namespace BattleRaja.Core.Domain
         public bool HasLineOfSight { get; }
     }
 
+    public readonly struct BotZoneObservation
+    {
+        public BotZoneObservation(Float2 currentCenter, float currentRadius, Float2 nextCenter, float nextRadius)
+        {
+            CurrentCenter = currentCenter;
+            CurrentRadius = currentRadius;
+            NextCenter = nextCenter;
+            NextRadius = nextRadius;
+        }
+
+        public Float2 CurrentCenter { get; }
+        public float CurrentRadius { get; }
+        public Float2 NextCenter { get; }
+        public float NextRadius { get; }
+
+        public bool IsOutsideCurrent(Float2 position) => CurrentRadius > 0f && CurrentRadius < float.MaxValue && position.SqrMagnitudeFrom(CurrentCenter) > CurrentRadius * CurrentRadius;
+        public bool IsOutsideNext(Float2 position) => NextRadius > 0f && NextRadius < float.MaxValue && position.SqrMagnitudeFrom(NextCenter) > NextRadius * NextRadius;
+
+        public static BotZoneObservation Unbounded => new BotZoneObservation(Float2.Zero, float.MaxValue, Float2.Zero, float.MaxValue);
+    }
+
     public readonly struct BotPerceptionSnapshot
     {
         public BotPerceptionSnapshot(CombatEntityId selfId, Float2 position, int currentHealth, int maxHealth, BotObservedTarget[] targets, int targetCount = -1)
+            : this(selfId, position, currentHealth, maxHealth, targets, targetCount, BotZoneObservation.Unbounded)
+        {
+        }
+
+        public BotPerceptionSnapshot(CombatEntityId selfId, Float2 position, int currentHealth, int maxHealth, BotObservedTarget[] targets, int targetCount, BotZoneObservation zone)
         {
             SelfId = selfId;
             Position = position;
@@ -87,6 +113,7 @@ namespace BattleRaja.Core.Domain
             MaxHealth = maxHealth;
             Targets = targets ?? Array.Empty<BotObservedTarget>();
             TargetCount = targetCount < 0 ? Targets.Length : Math.Min(targetCount, Targets.Length);
+            Zone = zone;
         }
 
         public CombatEntityId SelfId { get; }
@@ -95,6 +122,7 @@ namespace BattleRaja.Core.Domain
         public int MaxHealth { get; }
         public BotObservedTarget[] Targets { get; }
         public int TargetCount { get; }
+        public BotZoneObservation Zone { get; }
     }
 
     public readonly struct BotDecision
@@ -221,6 +249,23 @@ namespace BattleRaja.Core.Domain
             {
                 var recovery = new Float2(NextSigned(random), NextSigned(random)).Normalized;
                 decision = new BotDecision(BotDecisionState.Recover, target.Id, recovery, recovery, false, false, 0.2f, threatCount, true);
+            }
+            else if (snapshot.Zone.IsOutsideCurrent(snapshot.Position) || snapshot.Zone.IsOutsideNext(snapshot.Position))
+            {
+                var destination = snapshot.Zone.IsOutsideCurrent(snapshot.Position)
+                    ? snapshot.Zone.CurrentCenter
+                    : snapshot.Zone.NextCenter;
+                var toZone = (destination - snapshot.Position).Normalized;
+                decision = new BotDecision(
+                    BotDecisionState.Reposition,
+                    default,
+                    toZone,
+                    toZone,
+                    false,
+                    false,
+                    1.1f,
+                    threatCount,
+                    false);
             }
             else if (healthFraction <= profile.RetreatHealthFraction && target.Id.Value != 0)
             {

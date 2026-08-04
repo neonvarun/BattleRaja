@@ -6,9 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity
-    guid: 00000000000000000000000000000000
-  - enabled: 1
     path: Assets/BattleRaja/Scenes/Bootstrap/Bootstrap.unity
     guid: 728df539127e8a5428d937e4a0c3cb91
+  - enabled: 1
+    path: Assets/BattleRaja/Scenes/Tutorial/TutorialArena.unity
+    guid: 9d0ae611c43f79949af4004104e8ee80
+  - enabled: 1
+    path: Assets/BattleRaja/Scenes/Gameplay/BazaarBastion.unity
+    guid: 0b90df2224e50e04ea57430b6d0256de
+  - enabled: 1
+    path: Assets/BattleRaja/Scenes/MovementLab/MovementLab.unity
+    guid: ddcafd719f9018a44b17f098cc886cde
   m_configObjects: {}

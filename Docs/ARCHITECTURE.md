@@ -134,6 +134,9 @@ Android and Web share domain, application and most presentation code. Platform-s
 - `GadgetDefinitionAsset` is the serialized content bridge for versionable M6 balance
   data. `GadgetUser`, `GadgetPickup`, `GadgetStation` and `GadgetHud` are presentation
   adapters; they route damage/healing through the existing combat health/resolver paths.
+- `OfflineMatchAuthority` owns per-participant gadget inventory, pickup collection and
+  cooldown/use validation. `GadgetUser` submits use intents and consumes the immutable effect
+  result for presentation; it does not decide whether a public-match gadget use is valid.
 - Umbrella Guard stores facing and duration state on the user; projectile hit direction
   is part of `DamageRequest` so directional mitigation is explicit. Dhol Burst uses
   CharacterController displacement and does not add a second movement authority.
@@ -145,15 +148,21 @@ Android and Web share domain, application and most presentation code. Platform-s
 ## M7 vertical-slice fighter implementation
 
 - `FighterDefinition.Pehel` and `.Maya` provide stable IDs and distinct data-driven
-  health, movement and attack baselines. `FighterSpecialDefinition` and `DecoyRuntime`
-  keep Charge Throw/Decoy timing, bounds and expiry testable without Unity.
+  health, movement and attack baselines. `FighterSpecialDefinition`, `ChargeThrowRuntime`
+  and `DecoyRuntime` keep capture/throw, targetability, cooldown and expiry rules testable
+  without Unity.
 - M7 serialized fighter/weapon assets are loaded by the editor scene generator after
   scene creation so Unity asset lifecycle cannot silently fall back to Bijli. Actors
-  still use the shared `MovementPlayerAgent`, `CombatAttackController`,
-  `BijliFighterController` bridge and bot command interfaces.
-- The shared presentation bridge is intentionally an alpha implementation: bespoke
-  Pehel throw displacement and Maya decoy visuals are not yet authoritative presentation
-  systems. This is recorded as M7 debt rather than hidden in the Domain layer.
+  still share `MovementPlayerAgent`, `CombatAttackController` and the common
+  `IFighterAbilityController`/`IFighterMovementLock` command boundary, while the editor
+  generator selects `BijliFighterController`, `PehelFighterController` or
+  `MayaFighterController` from the data definition.
+- Pehel's adapter performs fixed-tick charge/capture/throw collision and central damage;
+  Maya's adapter spawns a targetable, health-bounded decoy with copied movement and expiry.
+  `BuildEntrypoints.CreateBazaarBastionScene` regenerates a controlled production-scene
+  copy from the MovementLab fixture, applies the Bazaar palette/architecture and selects
+  the fighter-specific adapters without mutating the lab fixture. Bespoke VFX/audio,
+  final UI, and full offline/tutorial progression remain explicit alpha debt.
 
 ## M8 networking boundary
 
@@ -204,3 +213,68 @@ Android and Web share domain, application and most presentation code. Platform-s
 - Store copy, privacy/data-safety worksheet, closed-test instructions and rollback guidance
   are documentation drafts. They are not legal declarations, store submissions or public
   deployment automation.
+
+## M12 presentation foundation
+
+- `FighterPresentation` is a replaceable Unity presentation adapter. It creates gameplay
+  colour rings, health/status bars, attack/ability telegraphs and code-driven idle,
+  locomotion, attack, ability, hit and elimination states without storing gameplay rules.
+  Hit timing remains driven by combat results, not animation events.
+- `BattleRajaAudioDirector` owns original procedural placeholder cues, effects/music volume
+  controls, optional `AudioMixer`/group references and user-gesture-gated startup for Web.
+  It is scene-owned and does not introduce a global singleton or external audio dependency.
+- Final imported animation clips, authored VFX, licensed/original production audio and
+  visual approval remain human-review gates. The current presentation is an explicit
+  replaceable stylised greybox.
+
+## M13 Canvas match UI foundation
+
+- `OfflineMatchHud` now builds a `CanvasScaler`-backed, anchored HUD at runtime rather
+  than using immediate-mode GUI. It exposes match/zone status, spectator cycling,
+  pause/settings, rematch and a results panel without moving authoritative state into
+  the UI layer.
+- The settings surface includes left-handed stick swapping, reduced-flash propagation
+  to `FighterPresentation`, high-contrast status text and a Web-safe audio user-gesture
+  entry point. Labels remain short and replaceable by localization keys; the current
+  `AIM ASSIST (READY)` control is intentionally a placeholder, not a gameplay claim.
+- The layout uses normalized anchors and a scale-with-screen-size canvas so Android
+  safe-area/device review and Web responsive review remain explicit follow-up gates.
+  Main-menu/bootstrap flow, complete offline/tutorial progression, localization assets,
+  controller rebinding and final authored UI remain outside this foundation slice.
+
+## M14 production flow and selected-fighter boundary
+
+- `BattleRaja.Core.Application.ProductionFlowMachine` is a Unity-independent state machine
+  for Bootstrap, MainMenu, ModeSelection, FighterSelection, MatchLoading, Gameplay,
+  Paused, Settings, Spectator, Results and Error. It carries local mode/fighter intent and
+  explicit error codes; it does not own match outcomes, credentials or network authority.
+- `BattleRaja.Presentation.Flow.ProductionFlowController` creates the Bootstrap Canvas,
+  safe-area root and EventSystem, renders the menu/mode/fighter/loading/settings/error
+  surfaces, persists only local presentation preferences, and loads the production scene
+  asynchronously. The online path is deliberately an honest unavailable state until the
+  approved Fusion account/session gate exists.
+- `PlayerFighterSelection` is the explicit scene-boundary adapter for actor 1. It selects
+  one of the existing first-party fighter ability controllers, refreshes the shared movement
+  lock and attack definition seams, and never writes authoritative match state. Bots remain
+  statically configured by the production-scene generator. `OfflineMatchHud` adds pause/
+  menu cleanup and local settings persistence without moving simulation rules into UI.
+- Build entrypoints register `Bootstrap.unity` before `BazaarBastion.unity` for production
+  Android/Web builds. `MovementLab` remains a regression fixture. The flow is proven by pure,
+  EditMode and PlayMode tests plus a 1280×720 Web smoke; responsive multi-viewport visual QA,
+  tutorial replay and final authored presentation remain explicit gates.
+
+## M15 replayable tutorial boundary
+
+- `TutorialStepMachine` remains Unity-independent and owns only ordered, idempotent prompt
+  progression from movement through victory. It does not infer success, mutate match state or
+  replace human/bot commands.
+- `TutorialOverlay` is a scene-owned presentation adapter. It renders concise control, combat,
+  gadget and Aandhi guidance over the real `OfflineMatchController`, Canvas HUD and touch/mouse
+  controls. Replay/skip/completion persistence is local presentation state only.
+- `TutorialArena.unity` is generated from the tested MovementLab fixture. Bot decision components
+  are disabled while their actor GameObjects remain active, preserving eight valid authority
+  spawns for the real offline simulation. The arena is registered after Bootstrap and before
+  Bazaar Bastion in Android/Web build entrypoints.
+- Tutorial prompts are guidance, not automated competency or balance evidence. Full-length
+  offline reliability, memory/soak testing, responsive visual QA, final authored presentation,
+  real Photon and real PlayFab remain separate gates.

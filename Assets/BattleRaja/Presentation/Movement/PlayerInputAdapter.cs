@@ -14,6 +14,8 @@ namespace BattleRaja.Presentation.Movement
         [SerializeField] private AttackButton attackButton;
         [SerializeField] private AbilityButton abilityButton;
         [SerializeField] private Transform aimOrigin;
+        [SerializeField] private float aimAssistRange = 10f;
+        [SerializeField] private float aimAssistConeDegrees = 18f;
 
         private InputActionMap _playerMap;
         private InputAction _moveAction;
@@ -21,15 +23,22 @@ namespace BattleRaja.Presentation.Movement
         private InputAction _aimStickAction;
         private InputAction _attackAction;
         private InputAction _abilityAction;
+        private Collider[] _aimAssistColliders;
+        private AimAssistCandidate[] _aimAssistCandidates;
+        private bool _aimAssistEnabled;
         private bool _hasFocus = true;
 
         public bool HasFocus => _hasFocus;
+        public bool AimAssistEnabled => _aimAssistEnabled;
         public bool IsAttackHeld => _hasFocus && ((_attackAction != null && _attackAction.IsPressed()) || (attackButton != null && attackButton.IsPressed));
         public bool IsAbilityPressed => _hasFocus && ((_abilityAction != null && _abilityAction.IsPressed()) || (abilityButton != null && abilityButton.IsPressed));
 
         private void Awake()
         {
             aimOrigin = aimOrigin != null ? aimOrigin : transform;
+            _aimAssistColliders = new Collider[32];
+            _aimAssistCandidates = new AimAssistCandidate[32];
+            _aimAssistEnabled = PlayerPrefs.GetInt("battleraja.settings.aim_assist", 0) != 0;
             if (actionsAsset != null)
             {
                 _playerMap = actionsAsset.FindActionMap("Player", throwIfNotFound: false);
@@ -75,9 +84,19 @@ namespace BattleRaja.Presentation.Movement
                 aim = ReadMouseAim();
             }
 
+            if (_aimAssistEnabled)
+            {
+                aim = ApplyAimAssist(aim);
+            }
+
             return new MovementInputFrame(
                 new Float2(movement.x, movement.y),
                 new Float2(aim.x, aim.y));
+        }
+
+        public void SetAimAssistEnabled(bool enabled)
+        {
+            _aimAssistEnabled = enabled;
         }
 
         public void ReleasePointerFocus()
@@ -140,6 +159,41 @@ namespace BattleRaja.Presentation.Movement
             var direction = worldPoint - aimOrigin.position;
             direction.y = 0f;
             return new Vector2(direction.x, direction.z).normalized;
+        }
+
+        private Vector2 ApplyAimAssist(Vector2 inputAim)
+        {
+            if (aimOrigin == null || inputAim.sqrMagnitude <= 0.0001f) return inputAim;
+
+            var colliderCount = Physics.OverlapSphereNonAlloc(
+                aimOrigin.position,
+                Mathf.Max(0.1f, aimAssistRange),
+                _aimAssistColliders);
+            var candidateCount = 0;
+            var origin = new Float2(aimOrigin.position.x, aimOrigin.position.z);
+            for (var i = 0; i < colliderCount && candidateCount < _aimAssistCandidates.Length; i++)
+            {
+                var collider = _aimAssistColliders[i];
+                if (collider == null) continue;
+                var target = collider.GetComponentInParent<CombatTarget>();
+                if (target == null || target.Faction != CombatFaction.Enemy ||
+                    target.Health == null || target.Health.Snapshot.IsDefeated) continue;
+
+                _aimAssistCandidates[candidateCount++] = new AimAssistCandidate(
+                    target.Id,
+                    new Float2(target.transform.position.x, target.transform.position.z));
+            }
+
+            return AimAssistTargeting.TryAssist(
+                origin,
+                new Float2(inputAim.x, inputAim.y),
+                _aimAssistCandidates,
+                candidateCount,
+                Mathf.Max(0.1f, aimAssistRange),
+                Mathf.Clamp(aimAssistConeDegrees, 1f, 179f),
+                out var assisted)
+                ? new Vector2(assisted.X, assisted.Y)
+                : inputAim;
         }
     }
 }

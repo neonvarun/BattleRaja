@@ -34,12 +34,49 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void MayaDecoyIsTargetableAndCanBeDestroyedWithoutOwnerHealthBypass()
+        {
+            var decoy = new DecoyRuntime();
+            var definition = FighterSpecialDefinition.MayaDecoy;
+            Assert.That(decoy.TrySpawn(new CombatEntityId(7), Float2.Zero, definition), Is.True);
+            Assert.That(decoy.OwnerId.Value, Is.EqualTo(7));
+            Assert.That(decoy.IsTargetable, Is.True);
+            Assert.That(decoy.TryDamage(definition.Magnitude - 1), Is.True);
+            Assert.That(decoy.IsTargetable, Is.True);
+            Assert.That(decoy.TryDamage(1), Is.True);
+            Assert.That(decoy.IsTargetable, Is.False);
+        }
+
+        [Test]
         public void PehelChargeThrowHasBoundedRadiusAndCooldown()
         {
             var kit = FighterSpecialDefinition.PehelChargeThrow;
             Assert.That(kit.Radius, Is.LessThanOrEqualTo(2.5f));
             Assert.That(kit.CooldownSeconds, Is.GreaterThan(4f));
             Assert.That(kit.Magnitude, Is.LessThanOrEqualTo(4));
+        }
+
+        [Test]
+        public void PehelChargeThrowCapturesEnemyOnceAndEmitsControlledThrow()
+        {
+            var runtime = new ChargeThrowRuntime(FighterSpecialDefinition.PehelChargeThrow);
+            var command = AbilityCommandFactory.Create(
+                new CombatEntityId(10),
+                1,
+                FighterSpecialDefinition.PehelChargeThrow.AbilityId,
+                Float2.Up,
+                true);
+
+            Assert.That(runtime.TryStart(command, Float2.Zero, Float2.Up), Is.True);
+            runtime.Step(0.2f, 4f);
+            Assert.That(runtime.State, Is.EqualTo(ChargeThrowState.Active));
+            Assert.That(runtime.TryCaptureTarget(new CombatEntityId(11), CombatFaction.Enemy, CombatFaction.Player, 1.5f), Is.True);
+            Assert.That(runtime.TryCaptureTarget(new CombatEntityId(12), CombatFaction.Enemy, CombatFaction.Player, 1.5f), Is.False);
+
+            var step = runtime.Step(0.2f, 4f);
+            Assert.That(step.ThrowTriggered, Is.True);
+            Assert.That(step.CapturedTargetId.Value, Is.EqualTo(11));
+            Assert.That(runtime.TryStart(command, Float2.Zero, Float2.Up), Is.False);
         }
     }
 }

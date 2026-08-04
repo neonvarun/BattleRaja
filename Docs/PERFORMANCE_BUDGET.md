@@ -24,6 +24,51 @@
 
 Never claim optimisation without profiling evidence.
 
+## Latest bounded smoke measurements — 2026-08-03 (`42e93e7` runtime / `e90ad19` docs)
+
+These are bounded runtime observations, not release-performance sign-off. The raw
+Android captures are retained under `Builds/M11/Logs/`; the interpretation is tracked
+in `Docs/QA/Performance/runtime-smoke-20260803.md`.
+
+- **Lava `ST5GDW23LB004392` (`LAVA LXX508`)**, active Bazaar match for 20 seconds:
+  total PSS **460,165 KB**, total RSS **597,680 KB**, Graphics PSS **101,480 KB**,
+  swap **240 KB**. The process-scoped sample peaked at an instantaneous **87% CPU**;
+  `dumpsys cpuinfo` reported **50% user / 13% kernel** for the process in its sample.
+  `dumpsys gfxinfo` exposed only the ViewRoot/render-node summary and no frame/jank
+  histogram, so Android FPS, frame time, GPU and GC-rate claims remain unmade.
+- **Chrome 150, local production Bazaar Bastion Web** after an 8-second warm-up:
+  DOMContentLoaded **17.4 ms**, load **62.5 ms**, WASM transfer **120,872,306 bytes**
+  (decoded **120,872,006 bytes**) over **1,058.9 ms**; browser `requestAnimationFrame`
+  sample mean **5.603 ms**, p50 **5.5 ms**, p95 **6.1 ms**, max **6.1 ms**. JavaScript
+  heap used **58,307,579 bytes** of **64,410,431 bytes** (browser heap limit
+  **4,395,630,592 bytes**). The rAF values are browser observations and are not Unity
+  FPS; this was a local run, not a cold CDN or mobile-Web measurement. Console summary:
+  **0 errors / 0 warnings**.
+- **Open measurements**: Unity Profiler CPU/GPU/GC/draw-call capture, Android frame
+  pacing, thermal/battery soak, repeated-match memory growth, Web cold-load and
+  mobile-browser coverage, shader warm-up, compression/cache headers and network
+  bandwidth remain unmeasured.
+
+## Authority candidate smoke measurement — 2026-08-03 (`044b1b8`)
+
+- Chrome 150, local production Web after an 8-second warm-up: DOMContentLoaded **152
+  ms**, load **251.4 ms**, WASM transfer **120,662,567 bytes** over **1,903.5 ms**;
+  120 browser `requestAnimationFrame` samples mean **5.620 ms**, p50 **5.5 ms**,
+  p95 **6.1 ms**, max **6.1 ms**. `performance.memory` reported **30,296,011 bytes**
+  used of **31,053,339 bytes** total (browser heap limit **4,395,630,592 bytes**).
+  The page had one canvas, 0 console errors and 14 autoplay-policy warnings from the
+  automated reload; these are browser observations, not Unity FPS/GPU/GC evidence.
+- Lava `ST5GDW23LB004392` (`LAVA LXX508`) process `com.example.battleraja.m11`:
+  **458,974 KB PSS**, **596,588 KB RSS**, **95,468 KB Graphics PSS**, **100 KB swap**.
+  `dumpsys gfxinfo` still exposed no frame/jank histogram, so Android FPS, frame time,
+  GPU and GC-rate remain unmeasured.
+- Raw captured files and the full interpretation are tracked in
+  `Docs/QA/Performance/authority-runtime-20260803.md` and its sibling `.txt` files.
+
+These values are smoke baselines only. They do not establish release budgets,
+low-end-device performance, thermal/battery behavior, repeated-match memory growth,
+cold-load behavior, multi-browser parity or Unity Profiler data.
+
 ## Web-specific measured budgets
 
 - Compressed initial download
@@ -150,3 +195,23 @@ Required next measurement: capture a short Editor, Lava and Oppo session with Un
   collected.
 - Before distribution, capture cold/warm load, repeated-match object growth, frame-time and
   memory on approved device/browser tiers and document Web compression/MIME/cache headers.
+
+## Phase 6 smoke measurement snapshot — 2026-08-03 (`8544f55`)
+
+- Lava `LAVA LXX508` (`ST5GDW23LB004392`) was left in the live development match for
+  approximately 20 seconds. `adb shell dumpsys meminfo` reported **507,397 KB total PSS**,
+  **644,576 KB total RSS**, and **97,884 KB Graphics PSS**. These are development-player
+  observations, not a release memory budget.
+- Lava `dumpsys gfxinfo` exposed the Unity `ViewRootImpl` but emitted no frame/jank
+  histogram for this surface, so FPS, frame time, GPU time and GC allocation rate remain
+  unmeasured. The raw captures are `Builds/M11/Logs/phase6-lava-gfxinfo-20260803.txt`
+  and `Builds/M11/Logs/phase6-lava-meminfo-20260803.txt`.
+- Chrome/Playwright loaded the local Web candidate with a canvas present. The observed
+  navigation timing was DOMContentLoaded **11.7 ms**, load **203 ms**; the WASM resource
+  reported **120,502,144 bytes transferred** and **274.8 ms** resource duration. Chromium
+  exposed **30,464,015 bytes used JS heap** of **39,391,851 bytes total** (heap limit
+  4,395,630,592 bytes). This was a local smoke run with existing browser caching and is
+  not a cold-download, WebAssembly peak, frame-time or multi-browser budget.
+- No optimization or release readiness claim follows from this snapshot. Formal Unity
+  Profiler/Android GPU/CPU/GC capture, repeated-match growth, thermal/battery, Web frame
+  pacing and multi-browser measurements remain required.

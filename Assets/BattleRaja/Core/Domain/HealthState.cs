@@ -51,6 +51,11 @@ namespace BattleRaja.Core.Domain
             return applied;
         }
 
+        public void SetCurrentHealth(int currentHealth)
+        {
+            _currentHealth = System.Math.Max(0, System.Math.Min(_maxHealth, currentHealth));
+        }
+
         public void Reset()
         {
             _currentHealth = _maxHealth;

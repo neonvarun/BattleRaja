@@ -1,5 +1,6 @@
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Combat;
+using BattleRaja.Presentation.Match;
 using UnityEngine;
 
 namespace BattleRaja.Presentation.AI
@@ -10,6 +11,7 @@ namespace BattleRaja.Presentation.AI
         [SerializeField] private CombatHealth health;
         [SerializeField] private CombatTarget selfTarget;
         [SerializeField] private Transform eye;
+        [SerializeField] private OfflineMatchController match;
         [SerializeField] private LayerMask lineOfSightMask = 1;
         [SerializeField] private int maxTargets = 16;
 
@@ -23,12 +25,13 @@ namespace BattleRaja.Presentation.AI
             health = health != null ? health : GetComponent<CombatHealth>();
             selfTarget = selfTarget != null ? selfTarget : GetComponent<CombatTarget>();
             eye = eye != null ? eye : transform;
+            match = match != null ? match : FindAnyObjectByType<OfflineMatchController>();
             RefreshTargets();
         }
 
         public void RefreshTargets()
         {
-            _targets = FindObjectsByType<CombatTarget>(FindObjectsSortMode.None);
+            _targets = FindObjectsByType<CombatTarget>();
             var size = Mathf.Max(1, maxTargets);
             if (_observations.Length != size)
             {
@@ -59,13 +62,17 @@ namespace BattleRaja.Presentation.AI
             }
 
             var current = health != null ? health.Snapshot : default;
+            var zone = match != null
+                ? new BotZoneObservation(match.ZoneCenter, match.ZoneRadius, match.NextZoneCenter, match.NextZoneRadius)
+                : BotZoneObservation.Unbounded;
             LastSnapshot = new BotPerceptionSnapshot(
                 selfTarget != null ? selfTarget.Id : new CombatEntityId(actorId),
                 new Float2(transform.position.x, transform.position.z),
                 current.CurrentHealth,
                 current.MaxHealth,
                 _observations,
-                count);
+                count,
+                zone);
             return LastSnapshot;
         }
     }

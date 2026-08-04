@@ -40,6 +40,11 @@ namespace BattleRaja.Tests.PlayMode
         {
             var fighter = PlayModeTestHelpers.FindPlayer<BijliFighterController>();
             var movement = PlayModeTestHelpers.FindPlayer<MovementPlayerAgent>();
+            var characterController = movement.GetComponent<CharacterController>();
+            characterController.enabled = false;
+            movement.transform.position = new Vector3(0f, 1f, 0f);
+            characterController.enabled = true;
+            Physics.SyncTransforms();
             var start = movement.transform.position;
             var command = AbilityCommandFactory.Create(
                 new CombatEntityId(movement.ActorId),

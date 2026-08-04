@@ -7,6 +7,8 @@ namespace BattleRaja.Presentation.Combat
     {
         public bool IsPressed { get; private set; }
 
+        private void Awake() => TouchControlLabel.Ensure(transform, "ABILITY");
+
         public void OnPointerDown(PointerEventData eventData) => IsPressed = true;
         public void OnPointerUp(PointerEventData eventData) => IsPressed = false;
         public void OnPointerExit(PointerEventData eventData) => IsPressed = false;

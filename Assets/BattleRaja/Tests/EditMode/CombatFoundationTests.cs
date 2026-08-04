@@ -57,9 +57,11 @@ namespace BattleRaja.Tests.EditMode
         public void WeaponValidationRejectsUnsafeDefinitions()
         {
             var invalid = new ProjectileWeaponDefinition(10, 0f, 12f, 10f, 1f, 0.1f, ~0, false, false);
+            var nonFinite = new ProjectileWeaponDefinition(10, float.NaN, 12f, 10f, 1f, 0.1f, ~0, false, false);
             var valid = ProjectileWeaponDefinition.TrainingBolt;
 
             Assert.That(invalid.IsValid(out _), Is.False);
+            Assert.That(nonFinite.IsValid(out _), Is.False);
             Assert.That(valid.IsValid(out _), Is.True);
         }
 
@@ -73,6 +75,21 @@ namespace BattleRaja.Tests.EditMode
             Assert.That(cooldown.TryConsume(0.5f, 0.5f), Is.True);
             cooldown.Reset();
             Assert.That(cooldown.TryConsume(0f, 0.5f), Is.True);
+        }
+
+        [Test]
+        public void TickCooldownEnforcesDeterministicIntervals()
+        {
+            var cooldown = new WeaponCooldownState();
+
+            Assert.That(cooldown.TryConsume(0, 15), Is.True);
+            Assert.That(cooldown.TryConsume(14, 15), Is.False);
+            Assert.That(cooldown.RemainingTicks(14), Is.EqualTo(1));
+            Assert.That(cooldown.TryConsume(15, 15), Is.True);
+            Assert.That(cooldown.RemainingSeconds(15, 30), Is.EqualTo(0.5f));
+            cooldown.Reset();
+            Assert.That(cooldown.RemainingTicks(0), Is.EqualTo(0));
+            Assert.That(cooldown.TryConsume(0, 1), Is.True);
         }
 
         [Test]

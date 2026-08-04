@@ -1,0 +1,6 @@
+Tasks: 1 total,   0 running,   1 sleeping,   0 stopped,   0 zombie
+  Mem:  7860080K total,  7509728K used,   350352K free,     7584K buffers
+ Swap:  4304980K total,    70144K used,  4234836K free,  3936544K cached
+800%cpu 157%user   0%nice  73%sys 560%idle   0%iow   0%irq  10%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+30158 u0_a432      10 -10  20G 573M 340M S 96.6   7.4   8:50.02 com.example.battleraja.m11

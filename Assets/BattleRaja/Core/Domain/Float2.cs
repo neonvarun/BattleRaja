@@ -12,8 +12,15 @@ namespace BattleRaja.Core.Domain
 
         public float X { get; }
         public float Y { get; }
+        public bool IsFinite => !float.IsNaN(X) && !float.IsInfinity(X) && !float.IsNaN(Y) && !float.IsInfinity(Y);
         public float SqrMagnitude => (X * X) + (Y * Y);
         public float Magnitude => MathF.Sqrt(SqrMagnitude);
+
+        public float SqrMagnitudeFrom(Float2 origin)
+        {
+            var delta = this - origin;
+            return delta.SqrMagnitude;
+        }
 
         public Float2 Normalized
         {

@@ -9,13 +9,21 @@
 - Product vision: drafted
 - Autonomous M1–M11 sequential execution: active; milestone gates and external
   service approvals remain explicit.
+- Latest validated repository HEAD: `af2e0d8` (docs-only evidence continuation after exact platform candidate `7ad7e42` and runtime source `a5fdde8`); the current repository includes
+  the connected Bazaar architecture prefab and explicit production-scene contract after the authority-driven Maya decoy,
+  fighter displacement, Dhol, production movement and authority-first damage/healing
+  checkpoints; production-flow EventSystem creation is
+  Input System-only and the selected-fighter HUD path is covered by the current
+  regression suite; Maya decoy perception refresh, authority-routed combat events and
+  production Pehel charge/capture/damage/throw resolution and the Bazaar gadget
+  pickup/use route are covered by regression.
 - Root agent rules: active
 - Milestone 0: complete and committed locally
 - Unity project: verified at the repository root with URP and MovementLab scenes
 - Unity version: `6000.5.6f1`
 - Android toolchain: Unity-managed SDK/NDK/OpenJDK modules installed and verified; SDK/Build Tools 36.0.0, NDK r27c `27.2.12479018`, OpenJDK 17.0.18, embedded ADB 36.0.0
 - Unity Web build support: present and used successfully
-- Browser test environment: Chrome 150 and Edge 150 available; Firefox/Playwright/WebDriver unavailable
+- Browser test environment: Chrome 150, Edge 150 and Playwright CLI available; Firefox unavailable
 - Packages: Input System `1.20.0`, uGUI `2.5.0`, URP `17.5.0`, Test Framework `1.7.0`; lockfile is authoritative
 - Movement laboratory: implemented with grey-box arena, placeholder player, independent movement/aim, orthographic camera, aim indicator, desktop bindings and safe-area touch sticks
 - M1 report: `Docs/MILESTONE_REPORTS/M1.md`; technical gate passed provisionally with
@@ -33,11 +41,131 @@
   online-alpha completion is blocked by the M8 real-session precondition
 - M10: backend-neutral identity/progression interfaces and deterministic fake are present;
   real PlayFab integration is blocked pending title/account/secret approval
-- M11: release-candidate preparation, analytics/crash/release seams and truthful draft docs
+- M11: release-candidate preparation, analytics/crash/release seams, explicit Bazaar scene
+  boundary and truthful draft docs
   are present; publication, signing, online services and human/legal gates remain open
 - Backend/economy: deliberately deferred
 - Final art/audio/animation: not started
 - Git/LFS: local repository initialized and LFS configured; `origin` points to `https://github.com/neonvarun/BattleRaja.git`
+
+## Exact Goal B deterministic collision/placement evidence — 2026-08-04
+
+- Runtime source commit: `a5fdde8` (`authority: canonicalize collision and ability placement`); exact platform candidate: `7ad7e42` (`docs: record Goal B collision evidence`).
+- Repository validation: **0 errors, 0 warnings**. Full EditMode **109/109** and
+  full PlayMode **55/55** passed. The new coverage exercises immutable arena bounds,
+  deterministic ordered obstacle sliding, canonical Maya placement and canonical
+  Tiffin placement. The production Pehel regression now targets an enabled bot and
+  waits for the authority-owned throw resolution rather than assuming damage at the
+  capture frame.
+- Authority scope: production movement, Bijli/Pehel displacement, Dhol displacement
+  and Tiffin placement use the Core collision solver; Maya ignores caller-supplied
+  remote placement. Bazaar's default collision definition currently contains bounds
+  and no authored obstacles, so full arena geometry and all ability edge cases remain
+  open.
+- Android: the exact `7ad7e42` candidate produced a **94,028,145-byte** APK
+  (SHA-256 `FA0CB54C04DC9309D8B21DAE02CE1D3D8A9961DA1C77F5ADE47F0B6AD280053A`).
+  It was installed/launched only on Lava `ST5GDW23LB004392`; the activity was
+  top-resumed and the sample reported **402,013 KB PSS / 537,532 KB RSS /
+  82,088 KB Graphics / 40 KB swap**. This is development smoke evidence, not a
+  performance or size pass.
+- Web: the exact candidate produced **19 files / 133,747,764 bytes** including the
+  development debug-information text. `Web-BazaarBastion.wasm` is **121,033,616
+  bytes** (SHA-256
+  `D84155637B493182BF380FF91A9ED0D49ECE8F684FAE08E1FA85F0A68F318708`). Local HTTP
+  returned 200 for the page, data and WASM. Chrome and Edge smoke reached the menu,
+  mode, fighter-selection and active-match routes at desktop and portrait probes;
+  browser consoles had 0 errors and one known Unity persistent-data-path
+  deprecation warning after match load.
+- User-owned/generated scene YAML, Burst output, Resources, Playwright files and
+  screenshots remain untouched and unstaged.
+
+## Exact Goal A canonical adapter rebaseline evidence — 2026-08-04
+
+- Source commit: `0e531bb` (`authority: route fighter and gadget ticks through match clock`).
+- Repository validation: 0 errors, 0 warnings. Full EditMode **104/104** and full
+  PlayMode **55/55** passed after routing authority-driven Bijli, Pehel, Maya and
+  gadget adapter steps through the match controller's canonical tick event.
+- Android: clean detached-worktree build on Unity `6000.5.6f1` produced a
+  **93,986,577-byte** APK (SHA-256
+  `0D6F54E5083886E5543C261DEB918708009A12479786293968827BB7D7178AF3`). It was
+  installed/launched only on Lava `ST5GDW23LB004392` (`LAVA LXX508`); the Unity
+  activity was top-resumed. The sampled process reported **350,551 KB PSS /
+  487,160 KB RSS / 69,556 KB Graphics / 3 KB swap**.
+- Web: the exact source built successfully in the same clean detached worktree;
+  output contains **19 files / 133,693,325 bytes**, with
+  `Web-BazaarBastion.wasm` **120,983,326 bytes** (SHA-256
+  `9BC3A5451695EE90DD53C5EB0F1BECB1E7065E8DAAD5C5B895314ACC49CC47FD`). Local
+  HTTP returned 200, and Chrome plus Edge Playwright canvas smoke tests passed
+  without captured page/console errors at desktop and portrait probes.
+- Build-generated scene rewrites remain isolated to the detached worktree; the
+  main worktree's pre-existing scene YAML, Burst, Resources, Playwright and
+  screenshot changes remain untouched and unstaged. Projectile/collision authority,
+  replay, soak/performance measurements and human review remain open.
+
+## Exact Goal A source rebaseline evidence — 2026-08-04
+
+- Source commit: `7889672` (`authority: harden attack commands and canonical match ticks`).
+- Repository validation: 0 errors, 0 warnings. Full EditMode **104/104** and full
+  PlayMode **55/55** passed. The new command-authority regressions cover malformed
+  direction rejection, authority-owned weapon/faction/tick-rate configuration,
+  canonical origin derivation, phase/spawn-protection/future-tick rejection and
+  duplicate/out-of-order attack sequences.
+- Android: clean detached-worktree build on Unity `6000.5.6f1` produced a
+  **93,969,457-byte** APK (SHA-256
+  `7558B505785A8E89C847E7039E900B2B2269E42E1BDD4EC2EA72D04609EF9FA9`). It was
+  installed/launched only on Lava `ST5GDW23LB004392` (`LAVA LXX508`); the Unity
+  activity was top-resumed. The sampled process reported **399,752 KB PSS /
+  536,648 KB RSS / 81,956 KB Graphics / 368 KB swap**.
+- Web: the exact source built successfully in the same clean detached worktree;
+  output contains **19 files / 133,684,703 bytes**, with
+  `Web-BazaarBastion.wasm` **120,975,513 bytes** (SHA-256
+  `B86AF336D02063AE04729C5874D14DCC3B8FC6E15203473A7580AE6284494DDE`). Local
+  HTTP returned 200, and Chrome plus Edge Playwright canvas smoke tests passed
+  without captured page/console errors at desktop and portrait probes.
+- The detached build worktree was used to keep the main worktree's pre-existing
+  scene YAML, Burst, Resources, Playwright and screenshot changes untouched. The
+  build is technical smoke evidence only: projectile/collision authority, replay,
+  soak/performance measurements and human review remain open.
+
+## Current source rebaseline evidence — 2026-08-03
+
+- Repository validation: 0 errors, 0 warnings; full EditMode 101/101 and full PlayMode
+  54/54 passed from source commit `6f0fe8b`; authored Unity 6 object-lookup calls are
+  absent and the full test logs contain no C# compiler-warning lines; focused Pehel authority and production
+  gadget route tests pass 1/1 each in PlayMode, and production bot spawn protection has
+  a dedicated passing regression.
+- Android: current Bazaar APK `Builds/M11/Android/BattleRaja-BazaarBastion-M11.apk`
+  is 151,551,952 bytes (SHA-256
+  `11624AFA7A9DB1CDEFC66FCACA5BBEC9CEDBD4C3316AA9AA7BE153BC33141AF4`); exact APK
+  launched only on Lava `ST5GDW23LB004392` with top-resumed Unity activity and no strict
+  fatal/app-process marker. Memory snapshot: 408,290 KB PSS / 545,224 KB RSS / 82,088 KB Graphics.
+- Web: `Builds/M11/Web-BazaarBastion` contains 19 files / 133,581,884 bytes;
+  `Web-BazaarBastion.wasm` SHA-256
+  `3663611AE374B5B481905341DA451BE335A0A79C704C888D856ACBA8E1D9C585`; local port 8139
+  returned HTTP 200 and Playwright `brweb5` reported 0 errors/0 warnings. Visual flow and
+  results/rematch captures are recorded. A later bounded smoke sample recorded
+  120,872,306 bytes of WASM transfer and 5.603 ms mean browser rAF; gadget-use capture,
+  formal performance closure, multi-browser coverage and human review remain open.
+
+## Phase 1 authority attack-command continuation — 2026-08-03
+
+- Source commit `583106e` adds `OfflineMatchAuthority.TryAcceptAttack`, authority-owned
+  weapon cooldown/tick ordering and the production `CombatAttackController` submission
+  seam. Duplicate/out-of-order commands, defeated actors, invalid/non-finite inputs and
+  cooldown violations are rejected before presentation projectile spawning.
+- Repository validation is **0 errors / 0 warnings**. Full EditMode is **102/102** and
+  full PlayMode is **55/55**, including the new authority foundation and production
+  attack-routing regressions. Core assemblies remain Unity/vendor independent and the
+  presentation mutation scan is clean.
+- Exact Android artifact is **151,541,453 bytes**, SHA-256
+  `10CD9FBC5B720519797702A43BA922F352A28AB6058DDDCBE561C6F7B37CC609`; it was installed
+  and launched only on Lava `ST5GDW23LB004392` (`LAVA LXX508`).
+- The exact-source Web rebuild was started but stopped at the owner's request before
+  Unity reported success. The previous successful Web artifact remains historical only;
+  no fresh Web pass is claimed for `583106e`.
+- Phase 1 remains **In progress**: projectile collision, remaining presentation-owned
+  state, broader authority migration, soak/performance evidence and real network
+  authority are still open.
 
 ## M1 execution evidence — 2026-08-02
 
@@ -137,12 +265,22 @@
   cross-device persistence, account recovery or economy deployment is claimed.
 - Evidence and test/build status are recorded in `Docs/MILESTONE_REPORTS/M10.md`.
 
-## M11 execution evidence — 2026-08-02
+## M11 execution evidence — 2026-08-03
 
 - Release candidate configuration rejects admin tools/secrets; bounded development analytics
   and unavailable crash adapter are compile-safe and service-neutral.
 - Closed-test, rollback/support, store-draft and privacy/data-safety worksheets are in `Docs/`.
 - M11 artifact, test and smoke evidence is recorded in `Docs/MILESTONE_REPORTS/M11.md`.
+- Current continuation HEAD `d993a5b` includes authority-driven Bazaar movement,
+  fighter displacement and production Maya decoy lifetime/health,
+  functional bounded aim assist,
+  authoritative offline assist attribution and focus-hardened Web keyboard/pointer input
+  plus an Input System-only project baseline with legacy-scene compatibility bridge,
+  in addition to the authority-driven spatial gadget collection
+  coverage, immediate live Results/Rematch publication, three repeated rematch cleanup
+  cycles and the complete eight-step tutorial walkthrough. Fresh latest-HEAD regression
+  is 100/100 EditMode and 51/51 PlayMode; the latest development APK/Web smoke artifacts
+  and Lava runtime capture are recorded in `Docs/QA/LATEST_HEAD_BASELINE.md`.
 - No public publication, store submission, signing-key use, paid service, legal acceptance or
   final approval is claimed.
 - External blockers and exact owner actions are tracked in `Docs/EXTERNAL_SERVICE_GATES.md`.

@@ -1,22 +1,27 @@
 using System.Collections;
 using System.Linq;
+using BattleRaja.Core.Application;
+using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.AI;
 using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Match;
+using BattleRaja.Presentation.Visuals;
 using BattleRaja.Presentation.Gadgets;
+using BattleRaja.Presentation.Movement;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using UnityEngine.UI;
 
 namespace BattleRaja.Tests.PlayMode
 {
     public sealed class VerticalSlicePlayModeTests
     {
         [UnitySetUp]
-        public IEnumerator LoadLab()
+        public IEnumerator LoadBazaarBastion()
         {
-            yield return SceneManager.LoadSceneAsync("MovementLab", LoadSceneMode.Single);
+            yield return SceneManager.LoadSceneAsync("BazaarBastion", LoadSceneMode.Single);
             PlayModeTestHelpers.DisableBots();
             yield return null;
         }
@@ -24,8 +29,12 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator SceneContainsBijliPehelAndMayaDefinitions()
         {
-            var ids = Object.FindObjectsByType<BijliFighterController>(FindObjectsSortMode.None)
+            var ids = Object.FindObjectsByType<BijliFighterController>()
                 .Select(controller => controller.Definition.FighterId.Value)
+                .Concat(Object.FindObjectsByType<PehelFighterController>()
+                    .Select(controller => controller.Definition.FighterId.Value))
+                .Concat(Object.FindObjectsByType<MayaFighterController>()
+                    .Select(controller => controller.Definition.FighterId.Value))
                 .Distinct()
                 .ToArray();
             Assert.That(ids, Does.Contain("fighter.bijli"));
@@ -36,11 +45,433 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator ProductionSceneUsesFighterSpecificAbilityControllers()
+        {
+            Assert.That(Object.FindObjectsByType<PehelFighterController>(), Has.Length.GreaterThanOrEqualTo(1));
+            Assert.That(Object.FindObjectsByType<MayaFighterController>(), Has.Length.GreaterThanOrEqualTo(1));
+            Assert.That(GameObject.Find("BazaarBastion"), Is.Not.Null);
+            Assert.That(GameObject.Find("BazaarArchitecture"), Is.Not.Null);
+            var production = Object.FindAnyObjectByType<BazaarBastionScene>();
+            Assert.That(production, Is.Not.Null);
+            Assert.That(Object.FindAnyObjectByType<MovementLabScene>(), Is.Null,
+                "The production scene must not retain the MovementLab scene contract.");
+            Assert.That(production.Player, Is.Not.Null);
+            Assert.That(production.MatchController, Is.Not.Null);
+            Assert.That(production.DamageResolver, Is.Not.Null);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ProductionBotsResolveTheirOwnFighterAbilityControllers()
+        {
+            var brains = Object.FindObjectsByType<BotBrain>();
+            Assert.That(brains, Has.Length.GreaterThanOrEqualTo(1));
+            for (var i = 0; i < brains.Length; i++)
+            {
+                Assert.That(brains[i].AbilityController, Is.Not.Null, brains[i].name);
+                var pehel = brains[i].GetComponent<PehelFighterController>();
+                var maya = brains[i].GetComponent<MayaFighterController>();
+                var bijli = brains[i].GetComponent<BijliFighterController>();
+                var expected = pehel != null
+                    ? (IFighterAbilityController)pehel
+                    : maya != null ? maya : bijli;
+                Assert.That(brains[i].AbilityController, Is.SameAs(expected), brains[i].name);
+            }
+
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ProductionBotsRespectSpawnProtectionBeforeCombat()
+        {
+            var player = PlayModeTestHelpers.FindPlayer<CombatHealth>();
+            var brains = Object.FindObjectsByType<BotBrain>();
+            Assert.That(brains, Has.Length.EqualTo(7));
+            for (var i = 0; i < brains.Length; i++) brains[i].enabled = true;
+
+            var initialHealth = player.Snapshot.CurrentHealth;
+            yield return new WaitForSeconds(4f);
+
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            Assert.That(match.CurrentPhase, Is.EqualTo(MatchPhase.SpawnProtection));
+            Assert.That(player.Snapshot.CurrentHealth, Is.EqualTo(initialHealth),
+                "Bots must not deal combat damage during load warmup or spawn protection.");
+        }
+
+        [UnityTest]
+        public IEnumerator PehelChargeThrowRunsThroughTheLiveController()
+        {
+            var pehelObject = new GameObject("PehelRuntimeProbe");
+            var pehelHealth = pehelObject.AddComponent<CombatHealth>();
+            var pehelTarget = pehelObject.AddComponent<CombatTarget>();
+            var pehel = pehelObject.AddComponent<PehelFighterController>();
+            pehelObject.transform.position = new Vector3(10f, 1f, -8f);
+
+            var targetObject = new GameObject("PehelRuntimeTarget");
+            var targetHealth = targetObject.AddComponent<CombatHealth>();
+            var target = targetObject.AddComponent<CombatTarget>();
+            targetObject.AddComponent<CharacterController>();
+            targetObject.transform.position = pehelObject.transform.position + Vector3.right * 1.4f;
+
+            yield return null;
+
+            pehelTarget.Configure(9001, CombatFaction.Enemy, pehelHealth);
+            target.Configure(9002, CombatFaction.Player, targetHealth);
+            Physics.SyncTransforms();
+            Assert.That(Physics.OverlapSphere(pehelObject.transform.position, 2.2f)
+                .Any(collider => collider.GetComponentInParent<CombatTarget>() == target), Is.True);
+            var chargeStartTargetPosition = targetObject.transform.position;
+            var beforeHealth = targetHealth.Snapshot.CurrentHealth;
+            pehel.Submit(AbilityCommandFactory.Create(
+                pehelTarget.Id,
+                1,
+                pehel.AbilityId,
+                new Float2(1f, 0f),
+                true));
+
+            yield return new WaitForSeconds(0.6f);
+
+            Assert.That(pehel.CapturedTargetId.Value, Is.EqualTo(target.Id.Value));
+            Assert.That(targetHealth.Snapshot.CurrentHealth, Is.LessThan(beforeHealth));
+            Assert.That(pehel.AbilityCooldownRemaining, Is.GreaterThan(0f));
+            Assert.That(targetObject.transform.position.x, Is.GreaterThan(chargeStartTargetPosition.x));
+
+            Object.Destroy(pehelObject);
+            Object.Destroy(targetObject);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator MayaDecoySpawnsFollowsAndCanBeDestroyedByCombat()
+        {
+            var mayaObject = new GameObject("MayaRuntimeProbe");
+            var mayaHealth = mayaObject.AddComponent<CombatHealth>();
+            var ownerTarget = mayaObject.AddComponent<CombatTarget>();
+            var maya = mayaObject.AddComponent<MayaFighterController>();
+            mayaObject.transform.position = new Vector3(10f, 1f, 6f);
+
+            var attackerObject = new GameObject("MayaRuntimeAttacker");
+            var attackerHealth = attackerObject.AddComponent<CombatHealth>();
+            var attacker = attackerObject.AddComponent<CombatTarget>();
+            var botObject = new GameObject("MayaRuntimeObserver");
+            var botHealth = botObject.AddComponent<CombatHealth>();
+            var botTarget = botObject.AddComponent<CombatTarget>();
+            var botSensor = botObject.AddComponent<BotPerceptionSensor>();
+            yield return null;
+
+            ownerTarget.Configure(9010, CombatFaction.Enemy, mayaHealth);
+            attacker.Configure(9011, CombatFaction.Player, attackerHealth);
+            botTarget.Configure(9012, CombatFaction.Player, botHealth);
+            var resolver = Object.FindAnyObjectByType<CombatDamageResolver>();
+
+            maya.Submit(AbilityCommandFactory.Create(
+                ownerTarget.Id,
+                1,
+                maya.AbilityId,
+                Float2.Up,
+                true));
+            yield return null;
+
+            Assert.That(maya.IsDecoyActive, Is.True);
+            var decoy = GameObject.Find("MayaDecoy");
+            Assert.That(decoy, Is.Not.Null);
+            var decoyTarget = decoy.GetComponent<CombatTarget>();
+            var decoyHealth = decoy.GetComponent<CombatHealth>();
+            Assert.That(decoyTarget, Is.Not.Null);
+            Assert.That(decoyHealth, Is.Not.Null);
+            Assert.That(decoyTarget.Faction, Is.Not.EqualTo(attacker.Faction));
+            var observed = botSensor.Capture();
+            Assert.That(observed.Targets.Take(observed.TargetCount).Any(target => target.Id == decoyTarget.Id), Is.True,
+                "A bot perception sensor must observe a decoy spawned after its Awake phase.");
+
+            var beforeFollow = decoy.transform.position;
+            maya.transform.position += Vector3.right * 3f;
+            yield return new WaitForSeconds(0.5f);
+            Assert.That(decoy.transform.position.x, Is.GreaterThan(beforeFollow.x));
+
+            var result = resolver.Resolve(
+                decoyTarget,
+                new DamageRequest(
+                    attacker.Id,
+                    decoyTarget.Id,
+                    attacker.Faction,
+                    decoyHealth.Snapshot.CurrentHealth,
+                    DamageType.Projectile,
+                    new Float2(1f, 0f),
+                    1),
+                allowSelfHit: false,
+                allowFriendlyFire: false,
+                simulationTick: 1);
+            Assert.That(result.Applied, Is.True);
+            yield return null;
+            Assert.That(maya.IsDecoyActive, Is.False);
+            Assert.That(GameObject.Find("MayaDecoy"), Is.Null);
+
+            Object.Destroy(mayaObject);
+            Object.Destroy(attackerObject);
+            Object.Destroy(botObject);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ProductionSceneHasReadableFighterAndAudioPresentation()
+        {
+            Assert.That(Object.FindObjectsByType<FighterPresentation>(), Has.Length.GreaterThanOrEqualTo(8));
+            Assert.That(Object.FindObjectsByType<BattleRajaAudioDirector>(), Has.Length.EqualTo(1));
+            var visual = Object.FindAnyObjectByType<FighterPresentation>();
+            Assert.That(visual.CurrentAnimation, Is.EqualTo(FighterPresentation.AnimationState.Idle).Or.EqualTo(FighterPresentation.AnimationState.Locomotion));
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator ExistingOfflineMatchAndGadgetSystemsRemainPresent()
         {
-            Assert.That(Object.FindFirstObjectByType<OfflineMatchController>(), Is.Not.Null);
-            Assert.That(Object.FindObjectsByType<GadgetUser>(FindObjectsSortMode.None), Has.Length.EqualTo(8));
+            Assert.That(Object.FindAnyObjectByType<OfflineMatchController>(), Is.Not.Null);
+            Assert.That(Object.FindObjectsByType<GadgetUser>(), Has.Length.EqualTo(8));
             yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ProductionGadgetPickupAndUseRunsThroughAuthority()
+        {
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            var player = PlayModeTestHelpers.FindPlayer<MovementPlayerAgent>();
+            var user = player != null ? player.GetComponent<GadgetUser>() : null;
+            var dhol = Object.FindObjectsByType<GadgetPickup>()
+                .First(pickup => pickup.GadgetId.Equals(GadgetDefinition.DholBurst.GadgetId));
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(player, Is.Not.Null);
+            Assert.That(user, Is.Not.Null);
+            Assert.That(dhol, Is.Not.Null);
+            Assert.That(match.AuthorityDrivenMovement, Is.True);
+
+            player.ExternalCommandMode = true;
+            dhol.transform.position = player.transform.position;
+            match.StartMatch();
+            yield return new WaitForSecondsRealtime(0.25f);
+
+            Assert.That(user.HasGadget, Is.True,
+                $"feedback={user.Feedback} player={player.transform.position} pickup={dhol.transform.position} active={dhol.IsAvailable}");
+            Assert.That(user.HeldGadget, Is.EqualTo(GadgetDefinition.DholBurst.GadgetId));
+            Assert.That(dhol.IsAvailable, Is.False);
+            Assert.That(user.UseHeld(), Is.True);
+            Assert.That(user.HasGadget, Is.False);
+            Assert.That(user.Feedback, Is.EqualTo("Dhol Burst"));
+        }
+
+        [UnityTest]
+        public IEnumerator ProductionMatchRoutesMovementThroughAuthoritySnapshots()
+        {
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            var player = Object.FindObjectsByType<MovementPlayerAgent>()
+                .First(agent => agent.ActorId == 1);
+            Assert.That(match.AuthorityDrivenMovement, Is.True);
+            Assert.That(match.Simulation.TryGetSnapshot(new CombatEntityId(1), out var before), Is.True);
+
+            var previousTimeScale = Time.timeScale;
+            Time.timeScale = 1f;
+            try
+            {
+                player.Submit(new MovementCommand(1, 1, new Float2(1f, 0f), new Float2(1f, 0f)));
+                yield return new WaitForSecondsRealtime(0.2f);
+
+                Assert.That(match.Simulation.TryGetSnapshot(new CombatEntityId(1), out var after), Is.True);
+                Assert.That(after.Position.X, Is.GreaterThan(before.Position.X));
+                Assert.That(player.LastAuthoritativePosition.x, Is.EqualTo(after.Position.X).Within(0.001f));
+                Assert.That(player.LastAuthoritativePosition.z, Is.EqualTo(after.Position.Y).Within(0.001f));
+            }
+            finally
+            {
+                Time.timeScale = previousTimeScale;
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator ProductionBijliAbilityRoutesDisplacementThroughAuthority()
+        {
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            var player = Object.FindObjectsByType<MovementPlayerAgent>()
+                .First(agent => agent.ActorId == 1);
+            var bijli = player.GetComponent<BijliFighterController>();
+            Assert.That(bijli, Is.Not.Null);
+            Assert.That(player.AuthorityDrivenMovement, Is.True);
+            Assert.That(match.Simulation.TryGetSnapshot(new CombatEntityId(1), out var before), Is.True);
+
+            bijli.Submit(AbilityCommandFactory.Create(
+                new CombatEntityId(1),
+                1,
+                bijli.AbilityId,
+                new Float2(1f, 0f),
+                true));
+            yield return new WaitForSecondsRealtime(0.4f);
+
+            Assert.That(match.Simulation.TryGetSnapshot(new CombatEntityId(1), out var after), Is.True);
+            Assert.That(after.Position.X, Is.GreaterThan(before.Position.X));
+            Assert.That(player.LastAuthoritativePosition.x, Is.EqualTo(after.Position.X).Within(0.001f));
+        }
+
+        [UnityTest]
+        public IEnumerator ProductionPehelChargeThrowUsesAuthoritySnapshots()
+        {
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            var pehel = Object.FindObjectsByType<PehelFighterController>()
+                .Where(controller => controller.isActiveAndEnabled &&
+                    controller.GetComponent<MovementPlayerAgent>()?.AuthorityDrivenMovement == true &&
+                    controller.GetComponent<BotBrain>() != null)
+                .OrderBy(controller => controller.GetComponent<MovementPlayerAgent>().ActorId)
+                .First();
+            var pehelAgent = pehel.GetComponent<MovementPlayerAgent>();
+            var player = PlayModeTestHelpers.FindPlayer<CombatTarget>();
+            var playerAgent = player.GetComponent<MovementPlayerAgent>();
+            Assert.That(match, Is.Not.Null);
+            Assert.That(pehelAgent, Is.Not.Null);
+            Assert.That(player, Is.Not.Null);
+            Assert.That(playerAgent, Is.Not.Null);
+
+            var pehelPosition = new Float2(-4f, 0f);
+            var playerPosition = new Float2(-2.6f, 0f);
+            match.Simulation.SetPosition(pehelAgent.ActorId > 0 ? new CombatEntityId(pehelAgent.ActorId) : default, pehelPosition);
+            match.Simulation.SetPosition(player.Id, playerPosition);
+            pehelAgent.ApplyAuthoritativePosition(pehelPosition);
+            playerAgent.ApplyAuthoritativePosition(playerPosition);
+            pehelAgent.ResetMovement(new Float2(1f, 0f));
+            playerAgent.ResetMovement(Float2.Up);
+            Physics.SyncTransforms();
+
+            var beforeHealth = player.Health.Snapshot.CurrentHealth;
+            pehel.Submit(AbilityCommandFactory.Create(
+                new CombatEntityId(pehelAgent.ActorId),
+                1,
+                pehel.AbilityId,
+                new Float2(1f, 0f),
+                true));
+
+            // Allow the canonical match tick to advance through startup, active,
+            // capture and recovery even when the editor is compiling/importing in
+            // the background. The test still fails if the authority never captures.
+            var captureTimeout = 2f;
+            while (captureTimeout > 0f &&
+                (pehel.CapturedTargetId != player.Id || player.Health.Snapshot.CurrentHealth >= beforeHealth))
+            {
+                captureTimeout -= Time.unscaledDeltaTime;
+                yield return null;
+            }
+
+            Assert.That(pehel.CapturedTargetId, Is.EqualTo(player.Id));
+            Assert.That(player.Health.Snapshot.CurrentHealth, Is.LessThan(beforeHealth));
+            Assert.That(pehel.AbilityCooldownRemaining, Is.GreaterThan(0f));
+            Assert.That(match.Simulation.TryGetSnapshot(player.Id, out var targetSnapshot), Is.True);
+            Assert.That(targetSnapshot.Position.X, Is.GreaterThan(playerPosition.X));
+        }
+
+        [UnityTest]
+        public IEnumerator ProductionMayaDecoyRoutesLifetimeAndDamageThroughAuthority()
+        {
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            var maya = Object.FindObjectsByType<MayaFighterController>()
+                .First(controller => controller.GetComponent<MovementPlayerAgent>() != null &&
+                    controller.GetComponent<MovementPlayerAgent>().AuthorityDrivenMovement &&
+                    controller.GetComponent<BotBrain>() != null);
+            var agent = maya.GetComponent<MovementPlayerAgent>();
+            var ownerId = new CombatEntityId(agent.ActorId);
+            Assert.That(match, Is.Not.Null);
+            Assert.That(maya, Is.Not.Null);
+            Assert.That(match.TryGetMayaDecoySnapshot(ownerId, out _), Is.False);
+
+            maya.Submit(AbilityCommandFactory.Create(ownerId, 1, maya.AbilityId, Float2.Up, true));
+            yield return new WaitForSecondsRealtime(0.25f);
+
+            Assert.That(match.TryGetMayaDecoySnapshot(ownerId, out var spawned), Is.True);
+            Assert.That(spawned.Active, Is.True);
+            var decoy = Object.FindObjectsByType<CombatTarget>()
+                .First(target => target.Id == spawned.DecoyId);
+            var resolver = Object.FindAnyObjectByType<CombatDamageResolver>();
+            Assert.That(resolver, Is.Not.Null);
+            var attackerId = new CombatEntityId(ownerId.Value == 1 ? 2 : 1);
+            var result = resolver.Resolve(
+                decoy,
+                new DamageRequest(
+                    attackerId,
+                    spawned.DecoyId,
+                    CombatFaction.Player,
+                    spawned.MaxHealth,
+                    DamageType.Projectile,
+                    Float2.Up,
+                    2),
+                allowSelfHit: false,
+                allowFriendlyFire: false,
+                simulationTick: 2);
+
+            Assert.That(result.Applied, Is.True);
+            yield return null;
+            Assert.That(match.TryGetMayaDecoySnapshot(ownerId, out var after), Is.True);
+            Assert.That(after.Active, Is.False);
+            Assert.That(maya.IsDecoyActive, Is.False);
+        }
+
+        [UnityTest]
+        public IEnumerator TouchControlsExposeReadableActionLabels()
+        {
+            Assert.That(GameObject.Find("AttackButton")?.GetComponentInChildren<Text>(true)?.text, Is.EqualTo("ATTACK"));
+            Assert.That(GameObject.Find("AbilityButton")?.GetComponentInChildren<Text>(true)?.text, Is.EqualTo("ABILITY"));
+            Assert.That(GameObject.Find("GadgetButton")?.GetComponentInChildren<Text>(true)?.text, Is.EqualTo("GADGET"));
+            yield return null;
+        }
+
+        [Test]
+        public void NarrowViewportsExpandOrthographicFramingWithoutChangingLandscapeSize()
+        {
+            var landscape = TopDownCameraController.CalculateResponsiveOrthographicSize(9.5f, 16f / 9f, 16f / 9f);
+            var portrait = TopDownCameraController.CalculateResponsiveOrthographicSize(9.5f, 390f / 600f, 16f / 9f);
+
+            Assert.That(landscape, Is.EqualTo(9.5f).Within(0.0001f));
+            Assert.That(portrait, Is.GreaterThan(landscape));
+        }
+
+        [Test]
+        public void CompactMatchStatusKeepsZoneTelemetryReadable()
+        {
+            var status = OfflineMatchHud.FormatMatchStatus(
+                BattleRaja.Core.Domain.MatchPhase.SpawnProtection,
+                8,
+                14f,
+                8f,
+                BattleRaja.Core.Domain.AandhiState.Warning,
+                2.5f,
+                compact: true);
+
+            Assert.That(status, Does.Contain("\n"));
+            Assert.That(status, Does.Contain("Z 14.0 > 8.0"));
+            Assert.That(status, Does.Contain("WARN 2.5s"));
+        }
+
+        [Test]
+        public void ResultsFormatterListsPlacementsAndCombatStats()
+        {
+            var results = new[]
+            {
+                new MatchParticipantSnapshot(new CombatEntityId(2), Float2.Zero, 0, 100, false, 2, 1, 40, 2, 12f),
+                new MatchParticipantSnapshot(new CombatEntityId(1), Float2.Zero, 100, 100, true, 1, 3, 120, 1, 25f)
+            };
+
+            var text = OfflineMatchHud.FormatResults(results, compact: false);
+
+            Assert.That(text, Does.Contain("WINNER 1"));
+            Assert.That(text, Does.Contain("#1 PLAYER 1  KOs 3  AST 1  DMG 120  SURV 25.0s"));
+            Assert.That(text, Does.Contain("#2 PLAYER 2  KOs 1  AST 2  DMG 40  SURV 12.0s"));
+        }
+
+        [Test]
+        public void FighterHudUsesSelectedFighterIdentity()
+        {
+            var pehel = BijliHud.FormatStatus(ProductionFighter.Pehel, 61, 85, "BOLT READY", "CHARGE READY");
+            var maya = BijliHud.FormatStatus(ProductionFighter.Maya, 58, 80, "BOLT 0.2s", "DECOY ACTIVE");
+
+            Assert.That(pehel, Does.StartWith("PEHEL   HP 61/85"));
+            Assert.That(pehel, Does.Contain("CHARGE READY"));
+            Assert.That(maya, Does.StartWith("MAYA   HP 58/80"));
+            Assert.That(maya, Does.Contain("DECOY ACTIVE"));
         }
     }
 }
