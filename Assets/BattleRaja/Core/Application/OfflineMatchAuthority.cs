@@ -71,7 +71,13 @@ namespace BattleRaja.Core.Application
         UnknownActor = 2,
         DefeatedActor = 3,
         OutOfOrder = 4,
-        Cooldown = 5
+        Cooldown = 5,
+        Warmup = 6,
+        SpawnProtection = 7,
+        FutureTick = 8,
+        InvalidSequence = 9,
+        Resolution = 10,
+        InvalidLoadout = 11
     }
 
     public readonly struct MatchAuthorityAttack
@@ -82,12 +88,39 @@ namespace BattleRaja.Core.Application
             bool accepted,
             MatchAuthorityAttackFailure failure,
             int cooldownTicksRemaining)
+            : this(
+                actorId,
+                simulationTick,
+                accepted,
+                failure,
+                cooldownTicksRemaining,
+                ProjectileWeaponDefinition.TrainingBolt,
+                CombatFaction.Neutral,
+                Float2.Zero,
+                Float2.Up)
+        {
+        }
+
+        public MatchAuthorityAttack(
+            CombatEntityId actorId,
+            int simulationTick,
+            bool accepted,
+            MatchAuthorityAttackFailure failure,
+            int cooldownTicksRemaining,
+            ProjectileWeaponDefinition weapon,
+            CombatFaction faction,
+            Float2 origin,
+            Float2 direction)
         {
             ActorId = actorId;
             SimulationTick = simulationTick;
             Accepted = accepted;
             Failure = failure;
             CooldownTicksRemaining = cooldownTicksRemaining;
+            Weapon = weapon;
+            Faction = faction;
+            Origin = origin;
+            Direction = direction;
         }
 
         public CombatEntityId ActorId { get; }
@@ -95,6 +128,10 @@ namespace BattleRaja.Core.Application
         public bool Accepted { get; }
         public MatchAuthorityAttackFailure Failure { get; }
         public int CooldownTicksRemaining { get; }
+        public ProjectileWeaponDefinition Weapon { get; }
+        public CombatFaction Faction { get; }
+        public Float2 Origin { get; }
+        public Float2 Direction { get; }
     }
 
     public readonly struct MatchAuthorityDecoy
@@ -246,6 +283,9 @@ namespace BattleRaja.Core.Application
         private readonly Dictionary<CombatEntityId, int> _lastAbilityDisplacementTicks = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<CombatEntityId, WeaponCooldownState> _attackCooldowns = new Dictionary<CombatEntityId, WeaponCooldownState>();
         private readonly Dictionary<CombatEntityId, int> _lastAttackTicks = new Dictionary<CombatEntityId, int>();
+        private readonly Dictionary<CombatEntityId, int> _lastAttackSequences = new Dictionary<CombatEntityId, int>();
+        private readonly Dictionary<CombatEntityId, ProjectileWeaponDefinition> _participantWeapons = new Dictionary<CombatEntityId, ProjectileWeaponDefinition>();
+        private readonly Dictionary<CombatEntityId, int> _participantTickRates = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<CombatEntityId, ChargeThrowRuntime> _pehelChargeRuntimes = new Dictionary<CombatEntityId, ChargeThrowRuntime>();
         private readonly Dictionary<CombatEntityId, int> _lastPehelCommandTicks = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<CombatEntityId, int> _lastPehelStepTicks = new Dictionary<CombatEntityId, int>();
@@ -259,6 +299,8 @@ namespace BattleRaja.Core.Application
         private double _outsideDamageAccumulator;
         private int _lastSimulationTick = -1;
         private int _nextStationId = 1;
+        private const int MaxAttackInputLeadTicks = 1;
+        private const float MuzzleOffset = 0.7f;
 
         public OfflineMatchAuthority(OfflineMatchDefinition definition, float outsideDamageTickSeconds = 1f)
         {
@@ -272,6 +314,8 @@ namespace BattleRaja.Core.Application
         }
 
         public OfflineMatchSimulation Simulation => _simulation;
+        public int CurrentSimulationTick => _lastSimulationTick;
+        public MatchPhase CurrentPhase => _simulation != null ? _simulation.Phase : MatchPhase.LoadWarmup;
 
         public bool HasParticipant(CombatEntityId id)
         {
@@ -318,6 +362,9 @@ namespace BattleRaja.Core.Application
             _lastAbilityDisplacementTicks.Clear();
             _attackCooldowns.Clear();
             _lastAttackTicks.Clear();
+            _lastAttackSequences.Clear();
+            _participantWeapons.Clear();
+            _participantTickRates.Clear();
             _pehelChargeRuntimes.Clear();
             _lastPehelCommandTicks.Clear();
             _lastPehelStepTicks.Clear();
@@ -338,6 +385,9 @@ namespace BattleRaja.Core.Application
                 _lastAbilityDisplacementTicks[spawns[i].Id] = -1;
                 _attackCooldowns[spawns[i].Id] = new WeaponCooldownState();
                 _lastAttackTicks[spawns[i].Id] = -1;
+                _lastAttackSequences[spawns[i].Id] = -1;
+                _participantWeapons[spawns[i].Id] = ProjectileWeaponDefinition.TrainingBolt;
+                _participantTickRates[spawns[i].Id] = 30;
                 _lastDecoySpawnTicks[spawns[i].Id] = -1;
             }
 
@@ -359,6 +409,27 @@ namespace BattleRaja.Core.Application
             }
 
             _participantFactions[actorId] = faction;
+        }
+
+        /// <summary>
+        /// Registers the immutable weapon configuration for a participant at match
+        /// setup. Runtime attack commands never supply or select their own weapon,
+        /// faction, cooldown or tick rate.
+        /// </summary>
+        public void ConfigureWeapon(CombatEntityId actorId, ProjectileWeaponDefinition weapon, int tickRate)
+        {
+            if (!HasParticipant(actorId))
+            {
+                throw new ArgumentException("Weapon configuration requires a registered match participant.", nameof(actorId));
+            }
+
+            if (tickRate <= 0 || !weapon.IsValid(out _))
+            {
+                throw new ArgumentOutOfRangeException(nameof(weapon), "Weapon configuration must be valid and use a positive tick rate.");
+            }
+
+            _participantWeapons[actorId] = weapon;
+            _participantTickRates[actorId] = tickRate;
         }
 
         public bool SetPosition(CombatEntityId id, Float2 position) => RequireSimulation().SetPosition(id, position);
@@ -442,15 +513,12 @@ namespace BattleRaja.Core.Application
         /// command ordering, alive-state validation and cooldown ownership stay in
         /// the transport-independent authority.
         /// </summary>
-        public MatchAuthorityAttack TryAcceptAttack(
-            AttackCommand command,
-            ProjectileWeaponDefinition definition,
-            int tickRate)
+        public MatchAuthorityAttack TryAcceptAttack(AttackCommand command)
         {
             var actorId = command.InstigatorId;
-            if (!command.Pressed || command.SimulationTick < 0 || tickRate <= 0 ||
+            if (!command.Pressed || command.SimulationTick < 0 || command.InputSequence < 0 ||
                 !command.Origin.IsFinite || !command.Direction.IsFinite ||
-                !definition.IsValid(out _))
+                command.Direction.SqrMagnitude <= 0.000001f)
             {
                 return new MatchAuthorityAttack(
                     actorId,
@@ -461,6 +529,8 @@ namespace BattleRaja.Core.Application
             }
 
             if (!_attackCooldowns.TryGetValue(actorId, out var cooldown) ||
+                !_participantWeapons.TryGetValue(actorId, out var definition) ||
+                !_participantTickRates.TryGetValue(actorId, out var tickRate) ||
                 !RequireSimulation().TryGetSnapshot(actorId, out var snapshot))
             {
                 return new MatchAuthorityAttack(
@@ -469,6 +539,42 @@ namespace BattleRaja.Core.Application
                     false,
                     MatchAuthorityAttackFailure.UnknownActor,
                     0);
+            }
+
+            if (!definition.IsValid(out _))
+            {
+                return new MatchAuthorityAttack(
+                    actorId,
+                    command.SimulationTick,
+                    false,
+                    MatchAuthorityAttackFailure.InvalidLoadout,
+                    0);
+            }
+
+            if (CurrentPhase == MatchPhase.LoadWarmup)
+            {
+                return new MatchAuthorityAttack(actorId, command.SimulationTick, false, MatchAuthorityAttackFailure.Warmup, 0);
+            }
+
+            if (CurrentPhase == MatchPhase.SpawnProtection)
+            {
+                return new MatchAuthorityAttack(actorId, command.SimulationTick, false, MatchAuthorityAttackFailure.SpawnProtection, 0);
+            }
+
+            if (CurrentPhase == MatchPhase.Resolution)
+            {
+                return new MatchAuthorityAttack(actorId, command.SimulationTick, false, MatchAuthorityAttackFailure.Resolution, 0);
+            }
+
+            var latestAllowedTick = checked(_lastSimulationTick + 1 + MaxAttackInputLeadTicks);
+            if (command.SimulationTick > latestAllowedTick)
+            {
+                return new MatchAuthorityAttack(
+                    actorId,
+                    command.SimulationTick,
+                    false,
+                    MatchAuthorityAttackFailure.FutureTick,
+                    cooldown.RemainingTicks(_lastSimulationTick));
             }
 
             if (!snapshot.Alive)
@@ -491,7 +597,18 @@ namespace BattleRaja.Core.Application
                     cooldown.RemainingTicks(command.SimulationTick));
             }
 
+            if (_lastAttackSequences.TryGetValue(actorId, out var lastSequence) && command.InputSequence <= lastSequence)
+            {
+                return new MatchAuthorityAttack(
+                    actorId,
+                    command.SimulationTick,
+                    false,
+                    MatchAuthorityAttackFailure.OutOfOrder,
+                    cooldown.RemainingTicks(command.SimulationTick));
+            }
+
             _lastAttackTicks[actorId] = command.SimulationTick;
+            _lastAttackSequences[actorId] = command.InputSequence;
             var intervalTicks = Math.Max(1, (int)Math.Ceiling(definition.FireIntervalSeconds * tickRate));
             if (!cooldown.TryConsume(command.SimulationTick, intervalTicks))
             {
@@ -503,18 +620,40 @@ namespace BattleRaja.Core.Application
                     cooldown.RemainingTicks(command.SimulationTick));
             }
 
+            var canonicalDirection = command.Direction.Normalized;
+            var canonicalOrigin = snapshot.Position + canonicalDirection * MuzzleOffset;
+            var faction = _participantFactions.TryGetValue(actorId, out var configuredFaction)
+                ? configuredFaction
+                : CombatFaction.Neutral;
             return new MatchAuthorityAttack(
                 actorId,
                 command.SimulationTick,
                 true,
                 MatchAuthorityAttackFailure.None,
-                cooldown.RemainingTicks(command.SimulationTick));
+                cooldown.RemainingTicks(command.SimulationTick),
+                definition,
+                faction,
+                canonicalOrigin,
+                canonicalDirection);
+        }
+
+        /// <summary>
+        /// Compatibility overload for old presentation/tests. The supplied weapon
+        /// and tick rate are deliberately ignored; match configuration is authoritative.
+        /// </summary>
+        public MatchAuthorityAttack TryAcceptAttack(
+            AttackCommand command,
+            ProjectileWeaponDefinition ignoredDefinition,
+            int ignoredTickRate)
+        {
+            return TryAcceptAttack(command);
         }
 
         public float GetAttackCooldownRemaining(CombatEntityId actorId, int tickRate, int currentTick)
         {
-            if (tickRate <= 0 || !_attackCooldowns.TryGetValue(actorId, out var cooldown)) return 0f;
-            return cooldown.RemainingSeconds(currentTick, tickRate);
+            if (!_attackCooldowns.TryGetValue(actorId, out var cooldown) ||
+                !_participantTickRates.TryGetValue(actorId, out var configuredTickRate)) return 0f;
+            return cooldown.RemainingSeconds(currentTick, configuredTickRate);
         }
 
         /// <summary>

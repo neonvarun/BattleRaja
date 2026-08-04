@@ -23,6 +23,11 @@ namespace BattleRaja.Presentation.Combat
         private ProjectileWeaponDefinition _definition;
         private FixedSimulationClock _clock;
         private int _simulationTick;
+        private int _inputSequence;
+
+        public ProjectileWeaponDefinition AuthorityWeaponDefinition => ResolveDefinition();
+        public int AuthorityTickRate => Mathf.Max(1, simulationTickRate);
+        public CombatFaction AuthorityFaction => faction;
 
         public int ActiveProjectileCount => projectilePool != null ? projectilePool.ActiveCount : 0;
         public float CooldownRemaining
@@ -34,15 +39,15 @@ namespace BattleRaja.Presentation.Combat
                 {
                     return match.GetAttackCooldownRemaining(
                         new CombatEntityId(actorId),
-                        _clock.TickRate,
-                        _clock.Tick);
+                        AuthorityTickRate,
+                        match.SimulationTick);
                 }
 
                 return _cooldown != null ? _cooldown.RemainingSeconds(_clock.Tick, _clock.TickRate) : 0f;
             }
         }
 
-        private bool UsesAuthority => match != null && match.Simulation != null &&
+        private bool UsesAuthority => match != null && match.AuthorityDrivenMovement && match.Simulation != null &&
             match.IsAuthorityActor(new CombatEntityId(actorId));
 
         public void ConfigureFighter(FighterDefinitionAsset definition)
@@ -65,10 +70,32 @@ namespace BattleRaja.Presentation.Combat
                 : (weapon != null ? weapon.ToDomain() : ProjectileWeaponDefinition.TrainingBolt);
             _cooldown = new WeaponCooldownState();
             _clock = new FixedSimulationClock(Mathf.Max(1, simulationTickRate));
+            _inputSequence = 0;
+        }
+
+        private void Start()
+        {
+            if (match != null)
+            {
+                match.SimulationTickAdvanced += OnCanonicalSimulationTick;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (match != null)
+            {
+                match.SimulationTickAdvanced -= OnCanonicalSimulationTick;
+            }
         }
 
         private void Update()
         {
+            if (UsesAuthority && match.IsMatchStarted)
+            {
+                return;
+            }
+
             var attackHeld = inputAdapter != null && inputAdapter.isActiveAndEnabled && inputAdapter.IsAttackHeld;
             var steps = _clock.Consume(Time.deltaTime);
             for (var step = 0; step < steps; step++)
@@ -88,17 +115,49 @@ namespace BattleRaja.Presentation.Combat
             }
         }
 
-        public void Submit(AttackCommand command)
+        private void OnCanonicalSimulationTick(int simulationTick, float fixedDeltaSeconds)
         {
-            if (!command.Pressed || projectilePool == null || !_definition.IsValid(out _))
+            if (!isActiveAndEnabled || !UsesAuthority || inputAdapter == null || !inputAdapter.isActiveAndEnabled ||
+                !inputAdapter.IsAttackHeld)
             {
                 return;
             }
 
+            var direction = movementAgent != null ? movementAgent.AimDirection : Float2.Up;
+            var origin = new Float2(transform.position.x, transform.position.z) + direction * 0.7f;
+            Submit(AttackCommandFactory.Create(
+                new CombatEntityId(actorId),
+                simulationTick,
+                origin,
+                direction,
+                true,
+                _inputSequence++));
+        }
+
+        public void Submit(AttackCommand command)
+        {
+            if (!command.Pressed || !_definition.IsValid(out _))
+            {
+                return;
+            }
+
+            var spawnDefinition = _definition;
+            var spawnFaction = faction;
+            var spawnCommand = command;
+
             if (UsesAuthority)
             {
-                var authority = match.TryAcceptAttack(command, _definition, _clock.TickRate);
+                var authority = match.TryAcceptAttack(command);
                 if (!authority.Accepted) return;
+                spawnDefinition = authority.Weapon;
+                spawnFaction = authority.Faction;
+                spawnCommand = new AttackCommand(
+                    command.InstigatorId,
+                    authority.SimulationTick,
+                    authority.Origin,
+                    authority.Direction,
+                    command.Pressed,
+                    command.InputSequence);
             }
             else
             {
@@ -106,12 +165,22 @@ namespace BattleRaja.Presentation.Combat
                 if (!_cooldown.TryConsume(command.SimulationTick, intervalTicks)) return;
             }
 
-            if (projectilePool.Spawn(command, _definition, faction) != null)
+            if (projectilePool != null && projectilePool.Spawn(spawnCommand, spawnDefinition, spawnFaction) != null)
             {
                 GetComponent<FighterPresentation>()?.NotifyAttack();
             }
         }
 
-        public void ResetAttackState() => _cooldown?.Reset();
+        public void ResetAttackState()
+        {
+            _cooldown?.Reset();
+            _inputSequence = 0;
+        }
+
+        private ProjectileWeaponDefinition ResolveDefinition()
+        {
+            if (fighterDefinition != null) return fighterDefinition.ToDomain().BasicAttack;
+            return weapon != null ? weapon.ToDomain() : ProjectileWeaponDefinition.TrainingBolt;
+        }
     }
 }

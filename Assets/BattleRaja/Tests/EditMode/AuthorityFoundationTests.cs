@@ -97,6 +97,10 @@ namespace BattleRaja.Tests.EditMode
                 new MatchSpawn(new CombatEntityId(2), new Float2(8f, 0f), 100)
             });
 
+            // Commands are rejected during load warmup/spawn protection. Advance the
+            // authority clock to the opening phase before exercising attack ordering.
+            authority.Advance(8f);
+
             var first = authority.TryAcceptAttack(
                 new AttackCommand(actorId, 1, Float2.Zero, Float2.Up, true),
                 ProjectileWeaponDefinition.TrainingBolt,
@@ -113,6 +117,7 @@ namespace BattleRaja.Tests.EditMode
                 new AttackCommand(actorId, 2, Float2.Zero, Float2.Up, true),
                 ProjectileWeaponDefinition.TrainingBolt,
                 30);
+            for (var i = 0; i < 10; i++) authority.Advance(1f / 30f);
             var afterCooldown = authority.TryAcceptAttack(
                 new AttackCommand(actorId, 12, Float2.Zero, Float2.Up, true),
                 ProjectileWeaponDefinition.TrainingBolt,
@@ -124,6 +129,58 @@ namespace BattleRaja.Tests.EditMode
             Assert.That(older.Failure, Is.EqualTo(MatchAuthorityAttackFailure.OutOfOrder));
             Assert.That(cooldown.Failure, Is.EqualTo(MatchAuthorityAttackFailure.Cooldown));
             Assert.That(afterCooldown.Accepted, Is.True);
+        }
+
+        [Test]
+        public void MatchAuthorityRejectsWarmupSpawnProtectionAndFarFutureAttacks()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            var actorId = new CombatEntityId(1);
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(actorId, Float2.Zero, 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(8f, 0f), 100)
+            });
+
+            var warmup = authority.TryAcceptAttack(new AttackCommand(actorId, 1, Float2.Zero, Float2.Up, true));
+            Assert.That(warmup.Failure, Is.EqualTo(MatchAuthorityAttackFailure.Warmup));
+
+            authority.Advance(3f);
+            var protectedAttack = authority.TryAcceptAttack(new AttackCommand(actorId, 1, Float2.Zero, Float2.Up, true));
+            Assert.That(protectedAttack.Failure, Is.EqualTo(MatchAuthorityAttackFailure.SpawnProtection));
+
+            authority.Advance(5f);
+            var future = authority.TryAcceptAttack(new AttackCommand(actorId, 99, Float2.Zero, Float2.Up, true));
+            Assert.That(future.Failure, Is.EqualTo(MatchAuthorityAttackFailure.FutureTick));
+        }
+
+        [Test]
+        public void MatchAuthorityUsesConfiguredWeaponAndCanonicalOriginInsteadOfCommandValues()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            var actorId = new CombatEntityId(1);
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(actorId, new Float2(2f, 3f), 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(8f, 0f), 100)
+            });
+            authority.ConfigureFaction(actorId, CombatFaction.Player);
+            authority.ConfigureWeapon(actorId, ProjectileWeaponDefinition.BijliElectricBolt, 30);
+            authority.Advance(8f);
+
+            var result = authority.TryAcceptAttack(new AttackCommand(
+                actorId,
+                1,
+                new Float2(999f, 999f),
+                new Float2(1f, 0f),
+                true,
+                42));
+
+            Assert.That(result.Accepted, Is.True);
+            Assert.That(result.Weapon.Damage, Is.EqualTo(ProjectileWeaponDefinition.BijliElectricBolt.Damage));
+            Assert.That(result.Faction, Is.EqualTo(CombatFaction.Player));
+            Assert.That(result.Origin, Is.EqualTo(new Float2(2.7f, 3f)));
+            Assert.That(result.Direction, Is.EqualTo(new Float2(1f, 0f)));
         }
 
         [Test]

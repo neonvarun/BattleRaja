@@ -91,6 +91,10 @@ namespace BattleRaja.Tests.PlayMode
             var player = Object.FindObjectsByType<MovementPlayerAgent>()
                 .First(agent => agent.ActorId == 1);
             var attack = player.GetComponent<CombatAttackController>();
+            // Production authority rejects attacks during load warmup and spawn
+            // protection. Move the pure match state into the opening phase without
+            // waiting eight wall-clock seconds in this regression.
+            for (var i = 0; i < 8; i++) match.Simulation.Advance(1f);
             var origin = new Float2(player.transform.position.x, player.transform.position.z);
             var command = new AttackCommand(player.GetComponent<CombatTarget>().Id, 1, origin, Float2.Up, true);
 

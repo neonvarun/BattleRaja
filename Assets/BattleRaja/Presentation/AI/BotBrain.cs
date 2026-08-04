@@ -35,7 +35,9 @@ namespace BattleRaja.Presentation.AI
         private int _nextDecisionTick;
         private int _decisionIntervalTicks;
         private int _simulationTick;
+        private int _attackInputSequence;
         private bool _abilityIssued;
+        private bool _subscribedToCanonicalTick;
         private readonly Stopwatch _decisionTimer = new Stopwatch();
 
         public BotDecision CurrentDecision => _decision;
@@ -46,7 +48,13 @@ namespace BattleRaja.Presentation.AI
 
         public void SetMatchController(OfflineMatchController controller)
         {
+            if (_subscribedToCanonicalTick && matchController != null)
+            {
+                matchController.SimulationTickAdvanced -= OnCanonicalSimulationTick;
+                _subscribedToCanonicalTick = false;
+            }
             matchController = controller;
+            SubscribeToCanonicalTick();
         }
 
         public bool CombatEnabled => matchController == null ||
@@ -70,10 +78,32 @@ namespace BattleRaja.Presentation.AI
             _navigation = new BotNavigationRecovery();
             _random = new SeededRandom((uint)seed);
             _decision = new BotDecision(BotDecisionState.Explore, default, Float2.Zero, Float2.Up, false, false, 0f, 0, false);
+            _attackInputSequence = 0;
             if (movementAgent != null)
             {
                 movementAgent.ExternalCommandMode = true;
             }
+        }
+
+        private void Start()
+        {
+            SubscribeToCanonicalTick();
+        }
+
+        private void OnDestroy()
+        {
+            if (_subscribedToCanonicalTick && matchController != null)
+            {
+                matchController.SimulationTickAdvanced -= OnCanonicalSimulationTick;
+                _subscribedToCanonicalTick = false;
+            }
+        }
+
+        private void SubscribeToCanonicalTick()
+        {
+            if (_subscribedToCanonicalTick || !isActiveAndEnabled || matchController == null) return;
+            matchController.SimulationTickAdvanced += OnCanonicalSimulationTick;
+            _subscribedToCanonicalTick = true;
         }
 
         private void Update()
@@ -83,14 +113,24 @@ namespace BattleRaja.Presentation.AI
                 return;
             }
 
+            if (matchController != null && matchController.IsMatchStarted)
+            {
+                return;
+            }
+
             var steps = _clock.Consume(Time.deltaTime);
-            for (var step = 0; step < steps; step++) SimulateTick(_clock.GetConsumedTick(step));
+            for (var step = 0; step < steps; step++) SimulateTick(_clock.GetConsumedTick(step), (float)_clock.StepSeconds);
         }
 
-        private void SimulateTick(int simulationTick)
+        private void OnCanonicalSimulationTick(int simulationTick, float fixedDeltaSeconds)
+        {
+            if (!isActiveAndEnabled || matchController == null || !matchController.IsMatchStarted) return;
+            SimulateTick(simulationTick, fixedDeltaSeconds);
+        }
+
+        private void SimulateTick(int simulationTick, float fixedDeltaSeconds)
         {
             _simulationTick = simulationTick;
-            var fixedDeltaSeconds = (float)_clock.StepSeconds;
             var stuck = _navigation.Observe(
                 new Float2(transform.position.x, transform.position.z),
                 _decision.Movement,
@@ -120,7 +160,8 @@ namespace BattleRaja.Presentation.AI
                     _simulationTick,
                     origin,
                     _decision.Aim,
-                    true));
+                    true,
+                    _attackInputSequence++));
             }
 
             if (CombatEnabled && _abilityController != null && _decision.Ability && !_abilityIssued)

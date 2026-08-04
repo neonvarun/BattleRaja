@@ -29,6 +29,12 @@ namespace BattleRaja.Presentation.Match
         private bool _playerSpectating;
         private bool _resultsShown;
 
+        /// <summary>
+        /// The single match tick source. Authority-relevant presentation adapters
+        /// subscribe here instead of constructing independent simulation clocks.
+        /// </summary>
+        public event Action<int, float> SimulationTickAdvanced;
+
         public OfflineMatchSimulation Simulation => _authority != null ? _authority.Simulation : null;
         public MatchPhase CurrentPhase => Simulation != null ? Simulation.Phase : MatchPhase.LoadWarmup;
         public float ZoneRadius { get; private set; }
@@ -42,6 +48,8 @@ namespace BattleRaja.Presentation.Match
         public bool ResultsShown => _resultsShown;
         public MatchParticipantSnapshot[] Results { get; private set; }
         public int SimulationTick => _simulationClock != null ? _simulationClock.Tick : 0;
+        public bool IsMatchStarted => _authority != null && Simulation != null;
+        public float SimulationStepSeconds => _simulationClock != null ? (float)_simulationClock.StepSeconds : 1f / Mathf.Max(1, simulationTickRate);
         public double SimulationInterpolationAlpha => _simulationClock != null ? _simulationClock.InterpolationAlpha : 0d;
         public bool AuthorityDrivenMovement => authorityDrivenMovement;
 
@@ -82,7 +90,19 @@ namespace BattleRaja.Presentation.Match
             int tickRate)
         {
             return _authority != null
-                ? _authority.TryAcceptAttack(command, definition, tickRate)
+                ? _authority.TryAcceptAttack(command)
+                : new MatchAuthorityAttack(
+                    command.InstigatorId,
+                    command.SimulationTick,
+                    false,
+                    MatchAuthorityAttackFailure.UnknownActor,
+                    0);
+        }
+
+        public MatchAuthorityAttack TryAcceptAttack(AttackCommand command)
+        {
+            return _authority != null
+                ? _authority.TryAcceptAttack(command)
                 : new MatchAuthorityAttack(
                     command.InstigatorId,
                     command.SimulationTick,
@@ -212,6 +232,7 @@ namespace BattleRaja.Presentation.Match
             for (var step = 0; step < simulationSteps; step++)
             {
                 var simulationTick = _simulationClock.GetConsumedTick(step);
+                SimulationTickAdvanced?.Invoke(simulationTick, (float)_simulationClock.StepSeconds);
                 for (var i = 0; i < _actors.Count; i++)
                 {
                     var actor = _actors[i];
@@ -297,6 +318,14 @@ namespace BattleRaja.Presentation.Match
             {
                 var actor = _actors[i];
                 _authority.ConfigureFaction(actor.Target.Id, actor.Target.Faction);
+                var attack = actor.Transform.GetComponent<CombatAttackController>();
+                if (attack != null)
+                {
+                    _authority.ConfigureWeapon(
+                        actor.Target.Id,
+                        attack.AuthorityWeaponDefinition,
+                        attack.AuthorityTickRate);
+                }
                 actor.Agent.AuthorityDrivenMovement = authorityDrivenMovement;
                 actor.Transform.GetComponent<BotBrain>()?.SetMatchController(this);
                 if (authorityDrivenMovement)
