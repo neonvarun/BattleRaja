@@ -9,7 +9,7 @@
 - Product vision: drafted
 - Autonomous M1–M11 sequential execution: active; milestone gates and external
   service approvals remain explicit.
-- Latest validated runtime source HEAD: `a5fdde8` (current Goal B deterministic collision/placement slice; exact-source platform evidence is recorded below with a current-HEAD caveat); the current repository includes
+- Latest validated repository HEAD: `7ad7e42` (docs-only evidence continuation after runtime source `a5fdde8`); the current repository includes
   the connected Bazaar architecture prefab and explicit production-scene contract after the authority-driven Maya decoy,
   fighter displacement, Dhol, production movement and authority-first damage/healing
   checkpoints; production-flow EventSystem creation is
@@ -50,7 +50,7 @@
 
 ## Exact Goal B deterministic collision/placement evidence — 2026-08-04
 
-- Source commit: `a5fdde8` (`authority: canonicalize collision and ability placement`).
+- Runtime source commit: `a5fdde8` (`authority: canonicalize collision and ability placement`); exact platform candidate: `7ad7e42` (`docs: record Goal B collision evidence`).
 - Repository validation: **0 errors, 0 warnings**. Full EditMode **109/109** and
   full PlayMode **55/55** passed. The new coverage exercises immutable arena bounds,
   deterministic ordered obstacle sliding, canonical Maya placement and canonical
@@ -62,10 +62,20 @@
   remote placement. Bazaar's default collision definition currently contains bounds
   and no authored obstacles, so full arena geometry and all ability edge cases remain
   open.
-- Android/Web: no platform build was generated from `a5fdde8`. The latest successful
-  exact-source APK/Web artifacts are from `0e531bb` in the detached-worktree Goal A2
-  evidence below; this commit therefore has test/validation evidence but not a fresh
-  current-HEAD Android/Web smoke pass.
+- Android: the exact `7ad7e42` candidate produced a **94,028,145-byte** APK
+  (SHA-256 `FA0CB54C04DC9309D8B21DAE02CE1D3D8A9961DA1C77F5ADE47F0B6AD280053A`).
+  It was installed/launched only on Lava `ST5GDW23LB004392`; the activity was
+  top-resumed and the sample reported **402,013 KB PSS / 537,532 KB RSS /
+  82,088 KB Graphics / 40 KB swap**. This is development smoke evidence, not a
+  performance or size pass.
+- Web: the exact candidate produced **19 files / 133,747,764 bytes** including the
+  development debug-information text. `Web-BazaarBastion.wasm` is **121,033,616
+  bytes** (SHA-256
+  `D84155637B493182BF380FF91A9ED0D49ECE8F684FAE08E1FA85F0A68F318708`). Local HTTP
+  returned 200 for the page, data and WASM. Chrome and Edge smoke reached the menu,
+  mode, fighter-selection and active-match routes at desktop and portrait probes;
+  browser consoles had 0 errors and one known Unity persistent-data-path
+  deprecation warning after match load.
 - User-owned/generated scene YAML, Burst output, Resources, Playwright files and
   screenshots remain untouched and unstaged.
 

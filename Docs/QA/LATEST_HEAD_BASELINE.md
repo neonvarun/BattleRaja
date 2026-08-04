@@ -2,11 +2,12 @@
 
 Date: 2026-08-04
 Branch: `codex/product-completion`
-Latest validated runtime source HEAD: `a5fdde8` (`authority: canonicalize collision and ability placement`)
-Latest runtime-bearing candidate: `a5fdde8` (Goal B deterministic bounds/placement slice; platform artifacts below remain from `0e531bb`)
+Latest validated repository HEAD: `7ad7e42` (`docs: record Goal B collision evidence`)
+Latest validated runtime source: `a5fdde8` (`authority: canonicalize collision and ability placement`)
+Latest runtime-bearing candidate: `a5fdde8`; exact-source platform candidate: `7ad7e42` (docs-only after the runtime commit)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
-## Goal B deterministic collision and placement slice (`a5fdde8`, 2026-08-04)
+## Goal B deterministic collision and placement slice (`a5fdde8`; exact platform candidate `7ad7e42`, 2026-08-04)
 
 This focused slice adds a Unity/vendor-free arena collision contract and deterministic
 axis-separated bounds/ordered-AABB solver. Production authority movement, Bijli/Pehel
@@ -15,20 +16,26 @@ authority positions; Maya decoy placement ignores caller-supplied remote positio
 The current Bazaar Bastion default contract has bounds and no authored obstacles yet,
 so this is not a complete arena-collision or ability-completion claim. Projectile
 travel/collision, stable combat event IDs, atomic match resolution, replay/soak and
-Photon remain out of scope.
+Photon remain out of scope. The exact platform candidate is `7ad7e42`, whose only
+change after `a5fdde8` is evidence documentation.
 
 | Check | Command/result | Evidence |
 | --- | --- | --- |
-| Source commit | `a5fdde8` on `codex/product-completion`; only the focused authority/test files were committed; pre-existing scene/Burst/Resources/Playwright/screenshot changes remain unstaged | `git rev-parse`, 2026-08-04 |
+| Source commit | Runtime `a5fdde8`; exact platform candidate `7ad7e42` on `codex/product-completion`; only focused authority/test/docs files were committed; pre-existing scene/Burst/Resources/Playwright/screenshot changes remain unstaged | `git rev-parse`, 2026-08-04 |
 | Repository validation | `Tools\\Validation\\validate.ps1 -RequireUnityProject ...` — **0 errors, 0 warnings** | command output from 2026-08-04 |
 | Full EditMode | **109/109 passed**, 0 failed, 0 skipped | `Builds/GoalB/TestResults/collision-editmode-final.xml` |
 | Full PlayMode | **55/55 passed**, 0 failed, 0 skipped | `Builds/GoalB/TestResults/collision-playmode-final.xml` |
 | Collision/placement coverage | Bounds clamp, deterministic obstacle slide/order, canonical Maya placement and canonical Tiffin origin tests pass; production Pehel fixture now selects an enabled bot and waits for authority throw resolution | `Assets/BattleRaja/Tests/EditMode/ArenaCollisionTests.cs`, `Assets/BattleRaja/Tests/PlayMode/VerticalSlicePlayModeTests.cs` |
-| Android/Web artifacts | **Not rebuilt from `a5fdde8`**. The latest successful platform artifacts remain the exact `0e531bb` detached-worktree APK/Web evidence recorded below; no current-HEAD platform pass is claimed | `0e531bb` artifact rows |
+| Android build | Exact candidate `7ad7e42` built with `BuildAndroidBazaarBastionDevelopment`; APK **94,028,145 bytes**, SHA-256 `FA0CB54C04DC9309D8B21DAE02CE1D3D8A9961DA1C77F5ADE47F0B6AD280053A` | `C:\Projects\BattleRaja-GoalB-Validation\\Builds\\M11\\Android\\BattleRaja-BazaarBastion-M11.apk`, `Builds/M11/Logs/android-build.log` |
+| Lava runtime | Exact APK installed/launched only on `ST5GDW23LB004392` (`LAVA LXX508`); Unity activity was top-resumed; sampled memory **402,013 KB PSS / 537,532 KB RSS / 82,088 KB Graphics / 40 KB swap** | `C:\Projects\BattleRaja-GoalB-Validation\\Builds\\GoalB\\Android\\lava-exact-a5fdde8.png`, ADB output from 2026-08-04 |
+| Web build | Exact candidate `7ad7e42` built successfully; **19 files / 133,747,764 bytes** including the development debug-information text; `Web-BazaarBastion.wasm` **121,033,616 bytes**, SHA-256 `D84155637B493182BF380FF91A9ED0D49ECE8F684FAE08E1FA85F0A68F318708` | `C:\Projects\BattleRaja-GoalB-Validation\\Builds\\M11\\Web-BazaarBastion`, `Builds/M11/Logs/web-build.log` |
+| Web serve/smoke | Local HTTP `127.0.0.1:8142/index.html`, WASM and data requests returned **200**. Chrome and Edge canvas smoke passed at 1280×720, 1024×768 and 390×844; offline mode, fighter selection and active-match routes were reached. Browser console had **0 errors** and one known Unity persistent-data-path deprecation warning after match load | `C:\Projects\BattleRaja-GoalB-Validation\\.playwright-cli\\*.png`, `console-*.log`, 2026-08-04 |
+| Web visual probe | Menu, mode, fighter-selection, Chrome active-match and Edge active-match captures were inspected; no blank canvas or fatal browser error observed. Portrait menu remains readable but is still prototype UI and not human approval | detached-worktree Playwright screenshots, 2026-08-04 |
 
 The project remains prototype evidence. The committed Goal B slice does not include
 generated scene rewrites or authored obstacle data, and it does not close presentation
-projectile authority, atomic events, performance/soak, visual QA or human review.
+projectile authority, atomic events, performance/soak, visual QA or human review. The
+platform smoke is current-source evidence, not a performance or release pass.
 
 ## Goal A canonical adapter continuation (`0e531bb`, 2026-08-04)
 
