@@ -295,6 +295,47 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator ProductionBotPerceptionSeesAdjacentEnemyThroughOpenLane()
+        {
+            PlayModeTestHelpers.DisableBots();
+            yield return null;
+            var agents = Object.FindObjectsByType<MovementPlayerAgent>()
+                .OrderBy(agent => agent.ActorId).ToArray();
+            Assert.That(agents.Length, Is.GreaterThanOrEqualTo(3));
+            var shooter = agents[1].GetComponent<BotPerceptionSensor>();
+            var enemy = agents[2];
+
+            // The y=-8 lane crosses no authored Bazaar obstacle.
+            shooter.transform.position = new Vector3(-11f, 1f, -8f);
+            enemy.transform.position = new Vector3(-8f, 1f, -8f);
+            Physics.SyncTransforms();
+
+            var openSnapshot = shooter.Capture();
+            var observed = openSnapshot.Targets.Take(openSnapshot.TargetCount)
+                .FirstOrDefault(candidate => candidate.Id == new CombatEntityId(enemy.ActorId));
+            Assert.That(observed.Id, Is.EqualTo(new CombatEntityId(enemy.ActorId)));
+            Assert.That(observed.HasLineOfSight, Is.True,
+                "An adjacent enemy on an open lane must be perceived; endpoint hulls must not block line of sight.");
+
+            var blocker = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            blocker.transform.position = new Vector3(-9.5f, 1f, -8f);
+            blocker.name = "LosProbeBlocker";
+            Physics.SyncTransforms();
+            try
+            {
+                var blockedSnapshot = shooter.Capture();
+                var blocked = blockedSnapshot.Targets.Take(blockedSnapshot.TargetCount)
+                    .FirstOrDefault(candidate => candidate.Id == new CombatEntityId(enemy.ActorId));
+                Assert.That(blocked.HasLineOfSight, Is.False,
+                    "Genuine cover between actors must block bot line of sight.");
+            }
+            finally
+            {
+                Object.Destroy(blocker);
+            }
+        }
+
+        [UnityTest]
         public IEnumerator ProductionMatchRoutesMovementThroughAuthoritySnapshots()
         {
             var match = Object.FindAnyObjectByType<OfflineMatchController>();

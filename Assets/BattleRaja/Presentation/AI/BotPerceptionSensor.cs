@@ -17,6 +17,8 @@ namespace BattleRaja.Presentation.AI
 
         private CombatTarget[] _targets = new CombatTarget[0];
         private BotObservedTarget[] _observations = new BotObservedTarget[16];
+        private readonly RaycastHit[] _lineOfSightHits = new RaycastHit[8];
+        private Transform _selfRoot;
 
         public BotPerceptionSnapshot LastSnapshot { get; private set; }
 
@@ -26,6 +28,7 @@ namespace BattleRaja.Presentation.AI
             selfTarget = selfTarget != null ? selfTarget : GetComponent<CombatTarget>();
             eye = eye != null ? eye : transform;
             match = match != null ? match : FindAnyObjectByType<OfflineMatchController>();
+            _selfRoot = selfTarget != null ? selfTarget.transform.root : transform.root;
             RefreshTargets();
         }
 
@@ -51,8 +54,44 @@ namespace BattleRaja.Presentation.AI
                 }
 
                 var targetPosition = candidate.transform.position;
-                var direction = targetPosition - eye.position;
-                var visible = !Physics.Linecast(eye.position, targetPosition, lineOfSightMask, QueryTriggerInteraction.Ignore);
+                var toTarget = targetPosition - eye.position;
+                var distance = toTarget.magnitude;
+                bool visible;
+                if (distance <= 0.0001f)
+                {
+                    visible = true;
+                }
+                else
+                {
+                    // A plain Linecast would terminate inside the target's own
+                    // CharacterController hull and always report a block. Cast a
+                    // bounded ray and ignore colliders belonging to either
+                    // endpoint actor; genuine cover between them still blocks.
+                    var hits = Physics.RaycastNonAlloc(
+                        eye.position,
+                        toTarget / distance,
+                        _lineOfSightHits,
+                        distance,
+                        lineOfSightMask,
+                        QueryTriggerInteraction.Ignore);
+                    visible = true;
+                    for (var hitIndex = 0; hitIndex < hits; hitIndex++)
+                    {
+                        var hitCollider = _lineOfSightHits[hitIndex].collider;
+                        // Fighter hulls (including both endpoints and third
+                        // parties) never occlude perception; only world cover
+                        // such as walls and stalls blocks line of sight.
+                        var hitTarget = hitCollider != null ? hitCollider.GetComponentInParent<CombatTarget>() : null;
+                        if (hitTarget != null)
+                        {
+                            continue;
+                        }
+
+                        visible = false;
+                        break;
+                    }
+                }
+
                 _observations[count++] = new BotObservedTarget(
                     candidate.Id,
                     candidate.Faction,
