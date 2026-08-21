@@ -16,6 +16,7 @@ namespace BattleRaja.Presentation.Match
     {
         [SerializeField] private CombatDamageResolver damageResolver;
         [SerializeField] private TopDownCameraController cameraController;
+        [SerializeField] private CombatProjectilePool projectilePool;
         [SerializeField] private MatchPickup[] pickups;
         [SerializeField] private GadgetPickup[] gadgetPickups;
         [SerializeField] private float outsideDamageTickSeconds = 1f;
@@ -212,6 +213,7 @@ namespace BattleRaja.Presentation.Match
         {
             damageResolver = damageResolver != null ? damageResolver : FindAnyObjectByType<CombatDamageResolver>();
             cameraController = cameraController != null ? cameraController : FindAnyObjectByType<TopDownCameraController>();
+            projectilePool = projectilePool != null ? projectilePool : FindAnyObjectByType<CombatProjectilePool>();
             pickups = pickups != null && pickups.Length > 0 ? pickups : FindObjectsByType<MatchPickup>();
             gadgetPickups = gadgetPickups != null && gadgetPickups.Length > 0 ? gadgetPickups : FindObjectsByType<GadgetPickup>();
             CacheActors();
@@ -250,6 +252,10 @@ namespace BattleRaja.Presentation.Match
 
                 var authorityTick = _authority.Advance(simulationTick, (float)_simulationClock.StepSeconds);
                 var tick = authorityTick.Result;
+                if (projectilePool != null)
+                {
+                    projectilePool.Reconcile(authorityTick.ProjectileSnapshots);
+                }
                 ZoneCenter = tick.ZoneCenter;
                 NextZoneCenter = tick.NextZoneCenter;
                 ZoneRadius = tick.ZoneRadius;

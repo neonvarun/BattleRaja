@@ -68,9 +68,12 @@ namespace BattleRaja.Core.Domain
             {
                 new MatchPhaseDefinition(MatchPhase.LoadWarmup, 3f, 14f, 0),
                 new MatchPhaseDefinition(MatchPhase.SpawnProtection, 5f, 14f, 0),
-                new MatchPhaseDefinition(MatchPhase.Opening, 90f, 14f, 5, 8f),
-                new MatchPhaseDefinition(MatchPhase.Pressure, 120f, 8f, 10, 8f),
-                new MatchPhaseDefinition(MatchPhase.FinalCircle, 80f, 3.5f, 20)
+                // Opening holds the full arena through a long warning window so
+                // looting and early rotation happen before the first squeeze
+                // toward the Pressure ring (target 4-6 minute matches).
+                new MatchPhaseDefinition(MatchPhase.Opening, 105f, 14f, 5, 50f),
+                new MatchPhaseDefinition(MatchPhase.Pressure, 115f, 11f, 10, 25f),
+                new MatchPhaseDefinition(MatchPhase.FinalCircle, 78f, 4f, 20)
             });
     }
 

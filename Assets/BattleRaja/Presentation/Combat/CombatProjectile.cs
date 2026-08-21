@@ -63,9 +63,34 @@ namespace BattleRaja.Presentation.Combat
             gameObject.SetActive(false);
         }
 
+        /// <summary>
+        /// Binds a pooled shell to an authority-owned projectile. Motion is
+        /// driven exclusively by authoritative snapshots; no local simulation.
+        /// </summary>
+        public void LaunchAuthoritative(in DomainProjectileSnapshot snapshot, float height)
+        {
+            _projectileId = snapshot.ProjectileId;
+            _instigatorId = snapshot.InstigatorId;
+            _instigatorFaction = snapshot.Faction;
+            _direction = snapshot.Direction;
+            _hitTracker.Clear();
+            transform.position = new Vector3(snapshot.Position.X, height, snapshot.Position.Y);
+            transform.forward = new Vector3(snapshot.Direction.X, 0f, snapshot.Direction.Y);
+            _active = true;
+            gameObject.SetActive(true);
+        }
+
+        public void SyncAuthoritative(in DomainProjectileSnapshot snapshot, float height)
+        {
+            if (!_active) return;
+            transform.position = new Vector3(snapshot.Position.X, height, snapshot.Position.Y);
+        }
+
         private void Update()
         {
-            if (!_active)
+            // Authority-owned shells (id > 0) are position-driven by canonical
+            // snapshots and must not run a local simulation.
+            if (!_active || _projectileId > 0 || _simulation == null)
             {
                 return;
             }

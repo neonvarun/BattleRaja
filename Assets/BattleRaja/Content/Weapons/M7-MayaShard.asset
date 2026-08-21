@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc102c84753730a45bdaaa64d35a168d, type: 3}
   m_Name: M7-MayaShard
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Combat.ProjectileWeaponAsset
-  damage: 12
+  damage: 9
   fireIntervalSeconds: 0.3
   projectileSpeed: 16
   maxRange: 18

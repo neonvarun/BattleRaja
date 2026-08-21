@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc102c84753730a45bdaaa64d35a168d, type: 3}
   m_Name: M3-BijliElectricBolt
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Combat.ProjectileWeaponAsset
-  damage: 18
+  damage: 12
   fireIntervalSeconds: 0.42
   projectileSpeed: 14
   maxRange: 16

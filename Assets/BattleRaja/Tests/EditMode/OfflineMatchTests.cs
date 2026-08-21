@@ -38,14 +38,15 @@ namespace BattleRaja.Tests.EditMode
             Assert.That(opening.ZoneRadius, Is.InRange(13.9f, 14f));
             simulation.SetPosition(new CombatEntityId(1), new Float2(14.5f, 0f));
             var openingMidpoint = simulation.Advance(45f);
-            Assert.That(openingMidpoint.ZoneRadius, Is.InRange(11.1f, 11.4f));
-            var pressure = simulation.Advance(45f);
+            Assert.That(openingMidpoint.AandhiState, Is.EqualTo(AandhiState.Warning));
+            Assert.That(openingMidpoint.ZoneRadius, Is.EqualTo(14f).Within(0.05f));
+            var pressure = simulation.Advance(60f);
             Assert.That(pressure.Phase, Is.EqualTo(MatchPhase.Pressure));
-            Assert.That(pressure.ZoneRadius, Is.InRange(7.9f, 8f));
+            Assert.That(pressure.ZoneRadius, Is.InRange(10.9f, 11f));
             Assert.That(pressure.OutsideCount, Is.GreaterThanOrEqualTo(1));
             Assert.That(pressure.OutsideDamagePerSecond, Is.EqualTo(10));
             var pressureMidpoint = simulation.Advance(60f);
-            Assert.That(pressureMidpoint.ZoneRadius, Is.InRange(5.8f, 6f));
+            Assert.That(pressureMidpoint.ZoneRadius, Is.InRange(8.1f, 8.5f));
         }
 
         [Test]
@@ -55,16 +56,16 @@ namespace BattleRaja.Tests.EditMode
             simulation.Start(CreateSpawns());
             var warning = simulation.Advance(8f);
             Assert.That(warning.AandhiState, Is.EqualTo(AandhiState.Warning));
-            Assert.That(warning.WarningRemainingSeconds, Is.EqualTo(8f).Within(0.0001f));
+            Assert.That(warning.WarningRemainingSeconds, Is.EqualTo(50f).Within(0.0001f));
             Assert.That(warning.ZoneRadius, Is.EqualTo(14f).Within(0.0001f));
-            Assert.That(warning.NextZoneRadius, Is.EqualTo(8f).Within(0.0001f));
+            Assert.That(warning.NextZoneRadius, Is.EqualTo(11f).Within(0.0001f));
 
-            simulation.Advance(4f);
-            var closing = simulation.Advance(4.1f);
+            simulation.Advance(49f);
+            var closing = simulation.Advance(2f);
             Assert.That(closing.AandhiState, Is.EqualTo(AandhiState.Closing));
             Assert.That(closing.WarningRemainingSeconds, Is.EqualTo(0f));
             Assert.That(closing.ZoneRadius, Is.LessThan(14f));
-            Assert.That(closing.ZoneRadius, Is.GreaterThan(8f));
+            Assert.That(closing.ZoneRadius, Is.GreaterThan(11f));
         }
 
         [Test]
@@ -175,7 +176,7 @@ namespace BattleRaja.Tests.EditMode
             var tick = simulation.Advance(8f);
 
             Assert.That(tick.NextZoneCenter, Is.EqualTo(tick.ZoneCenter));
-            Assert.That(tick.NextZoneRadius, Is.EqualTo(8f).Within(0.0001f));
+            Assert.That(tick.NextZoneRadius, Is.EqualTo(11f).Within(0.0001f));
         }
 
         [Test]

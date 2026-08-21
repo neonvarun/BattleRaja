@@ -12,11 +12,11 @@ namespace BattleRaja.Presentation.AI
     public sealed class BotBrain : MonoBehaviour
     {
         [SerializeField] private int seed = 10;
-        [SerializeField] private int reactionDelayTicks = 8;
-        [Range(0f, 1f)] [SerializeField] private float aimNoise = 0.10f;
-        [Range(0f, 1f)] [SerializeField] private float retreatHealthFraction = 0.22f;
-        [Min(0.1f)] [SerializeField] private float preferredRange = 5.5f;
-        [Min(0.02f)] [SerializeField] private float decisionIntervalSeconds = 0.16f;
+    [SerializeField] private int reactionDelayTicks = 15;
+    [Range(0f, 1f)] [SerializeField] private float aimNoise = 0.18f;
+    [Range(0f, 1f)] [SerializeField] private float retreatHealthFraction = 0.22f;
+    [Min(0.1f)] [SerializeField] private float preferredRange = 6.5f;
+    [Min(0.02f)] [SerializeField] private float decisionIntervalSeconds = 0.20f;
         [Min(0.1f)] [SerializeField] private float stuckTimeoutSeconds = 0.7f;
         [SerializeField] private MovementPlayerAgent movementAgent;
         [SerializeField] private CombatAttackController attackController;

@@ -261,6 +261,40 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator ProductionProjectileViewsRetireThroughAuthoritySnapshots()
+        {
+            PlayModeTestHelpers.DisableBots();
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            var pool = Object.FindAnyObjectByType<CombatProjectilePool>();
+            var player = Object.FindObjectsByType<MovementPlayerAgent>()
+                .First(agent => agent.ActorId == 1);
+            var attack = player.GetComponent<CombatAttackController>();
+            Assert.That(match.AuthorityDrivenMovement, Is.True);
+
+            for (var i = 0; i < 8; i++) match.Simulation.Advance(1f);
+
+            var origin = new Float2(player.transform.position.x, player.transform.position.z + 0.7f);
+            attack.Submit(new AttackCommand(new CombatEntityId(1), match.SimulationTick, origin, Float2.Up, true));
+            // Wait past one canonical 30 Hz tick so the controller has reconciled
+            // the authority-owned shell into the pool.
+            yield return new WaitForSecondsRealtime(0.25f);
+
+            Assert.That(pool.AuthoritativeShellCount, Is.GreaterThanOrEqualTo(1));
+
+            // The authority resolves the bolt against arena geometry or an actor;
+            // the view shell must retire through snapshot reconciliation instead
+            // of free-running past canonical despawn.
+            var timeout = Time.realtimeSinceStartup + 6f;
+            while (Time.realtimeSinceStartup < timeout && pool.AuthoritativeShellCount > 0)
+            {
+                yield return new WaitForSecondsRealtime(0.1f);
+            }
+
+            Assert.That(pool.ActiveCount, Is.EqualTo(0));
+            Assert.That(pool.AuthoritativeShellCount, Is.EqualTo(0));
+        }
+
+        [UnityTest]
         public IEnumerator ProductionMatchRoutesMovementThroughAuthoritySnapshots()
         {
             var match = Object.FindAnyObjectByType<OfflineMatchController>();

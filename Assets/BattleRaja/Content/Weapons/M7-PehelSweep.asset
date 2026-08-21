@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc102c84753730a45bdaaa64d35a168d, type: 3}
   m_Name: M7-PehelSweep
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Combat.ProjectileWeaponAsset
-  damage: 28
+  damage: 20
   fireIntervalSeconds: 0.72
   projectileSpeed: 10
   maxRange: 5.5

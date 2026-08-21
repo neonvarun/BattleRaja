@@ -14,11 +14,15 @@ namespace BattleRaja.Presentation.Combat
         [SerializeField] private CombatImpactFeedbackPool impactPool;
 
         private readonly Stack<CombatProjectile> _available = new Stack<CombatProjectile>();
+        private readonly Dictionary<int, CombatProjectile> _authoritativeShells =
+            new Dictionary<int, CombatProjectile>();
+        private readonly List<int> _staleShellIds = new List<int>(8);
         private int _createdCount;
 
         public int CreatedCount => _createdCount;
         public int ActiveCount { get; private set; }
         public float ProjectileHeight => projectileHeight;
+        public int AuthoritativeShellCount => _authoritativeShells.Count;
 
         private void Awake()
         {
@@ -42,22 +46,130 @@ namespace BattleRaja.Presentation.Combat
                 return null;
             }
 
+            var projectile = AcquireShell();
+            if (projectile == null)
+            {
+                return null;
+            }
+
+            projectile.Launch(command, definition, faction, this, damageResolver, impactPool, projectileId);
+            if (projectileId > 0)
+            {
+                _authoritativeShells[projectileId] = projectile;
+            }
+
+            return projectile;
+        }
+
+        /// <summary>
+        /// Applies one authoritative tick of projectile snapshots. Shells bound to
+        /// authority projectiles are spawned, moved and retired here so the visible
+        /// flight and impact timing always match the canonical match state.
+        /// </summary>
+        public void Reconcile(IReadOnlyList<DomainProjectileSnapshot> snapshots)
+        {
+            var liveIds = new HashSet<int>();
+            if (snapshots != null)
+            {
+                for (var i = 0; i < snapshots.Count; i++)
+                {
+                    var snapshot = snapshots[i];
+                    liveIds.Add(snapshot.ProjectileId);
+
+                    if (!_authoritativeShells.TryGetValue(snapshot.ProjectileId, out var shell))
+                    {
+                        shell = AcquireShell();
+                        if (shell == null) continue;
+                        _authoritativeShells.Add(snapshot.ProjectileId, shell);
+                        shell.LaunchAuthoritative(in snapshot, ProjectileHeight);
+                    }
+                    else
+                    {
+                        shell.SyncAuthoritative(in snapshot, ProjectileHeight);
+                    }
+
+                    if (!snapshot.IsActive)
+                    {
+                        RetireShell(shell, snapshot.DespawnReason, snapshot.Position,
+                            IsSuccessfulHitReason(snapshot.DespawnReason));
+                        _authoritativeShells.Remove(snapshot.ProjectileId);
+                    }
+                }
+            }
+
+            // Safety: retire shells whose authority ids vanished without a
+            // terminal snapshot in this tick.
+            if (_authoritativeShells.Count > 0)
+            {
+                _staleShellIds.Clear();
+                foreach (var pair in _authoritativeShells)
+                {
+                    if (!liveIds.Contains(pair.Key))
+                    {
+                        _staleShellIds.Add(pair.Key);
+                    }
+                }
+
+                for (var i = 0; i < _staleShellIds.Count; i++)
+                {
+                    var shell = _authoritativeShells[_staleShellIds[i]];
+                    RetireShell(shell, ProjectileDespawnReason.PoolReset, default, false);
+                    _authoritativeShells.Remove(_staleShellIds[i]);
+                }
+            }
+        }
+
+        private static bool IsSuccessfulHitReason(ProjectileDespawnReason reason) =>
+            reason == ProjectileDespawnReason.HitActor ||
+            reason == ProjectileDespawnReason.HitDecoy ||
+            reason == ProjectileDespawnReason.HitStation;
+
+        private CombatProjectile AcquireShell()
+        {
             if (_available.Count == 0 && _createdCount >= maxCount)
             {
                 return null;
             }
 
-            var projectile = _available.Count > 0 ? _available.Pop() : CreateProjectile();
             ActiveCount++;
-            projectile.Launch(command, definition, faction, this, damageResolver, impactPool, projectileId);
-            return projectile;
+            return _available.Count > 0 ? _available.Pop() : CreateProjectile();
         }
 
         internal void Release(CombatProjectile projectile, ProjectileDespawnReason reason)
         {
+            // Local-lab shells manage their own impact feedback before despawning.
             if (projectile == null)
             {
                 return;
+            }
+
+            projectile.ResetProjectile();
+            _available.Push(projectile);
+            ActiveCount = Mathf.Max(0, ActiveCount - 1);
+        }
+
+        private void RetireShell(
+            CombatProjectile projectile,
+            ProjectileDespawnReason reason,
+            Float2 position,
+            bool successfulHit)
+        {
+            if (projectile == null)
+            {
+                return;
+            }
+
+            var shellId = projectile.ProjectileId;
+            if (shellId > 0)
+            {
+                _authoritativeShells.Remove(shellId);
+            }
+
+            var worldPosition = new Vector3(position.X, ProjectileHeight, position.Y);
+            if (successfulHit || reason == ProjectileDespawnReason.HitWall ||
+                reason == ProjectileDespawnReason.Collision)
+            {
+                impactPool?.Play(worldPosition, successfulHit);
             }
 
             projectile.ResetProjectile();
