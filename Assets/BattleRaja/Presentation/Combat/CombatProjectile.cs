@@ -5,6 +5,8 @@ namespace BattleRaja.Presentation.Combat
 {
     public sealed class CombatProjectile : MonoBehaviour
     {
+        private const int MaxLocalHits = 16;
+
         private ProjectileSimulation _simulation;
         private ProjectileWeaponDefinition _definition;
         private CombatEntityId _instigatorId;
@@ -16,6 +18,8 @@ namespace BattleRaja.Presentation.Combat
         private Float2 _direction;
         private int _projectileId;
         private bool _active;
+        private readonly ProjectileHitTracker _hitTracker = new ProjectileHitTracker();
+        private readonly Collider[] _hitBuffer = new Collider[MaxLocalHits];
 
         public bool IsActive => _active;
         public int ProjectileId => _projectileId;
@@ -37,6 +41,7 @@ namespace BattleRaja.Presentation.Combat
             _impactPool = impactPool;
             _direction = command.Direction;
             _projectileId = projectileId;
+            _hitTracker.Clear();
             _simulation = new ProjectileSimulation(
                 command.Origin,
                 command.Direction,
@@ -54,6 +59,7 @@ namespace BattleRaja.Presentation.Combat
         {
             _active = false;
             _projectileId = 0;
+            _hitTracker.Clear();
             gameObject.SetActive(false);
         }
 
@@ -69,12 +75,101 @@ namespace BattleRaja.Presentation.Combat
             {
                 var step = _simulation.Step((float)_clock.StepSeconds);
                 transform.position = new Vector3(step.Position.X, _pool != null ? _pool.ProjectileHeight : 1f, step.Position.Y);
+
+                // Authority projectiles (id > 0) are resolved by the canonical
+                // match authority; local lab projectiles keep the M2 contract of
+                // presentation-side collision feeding the central damage resolver.
+                if (_projectileId <= 0 && ResolveLocalHit())
+                {
+                    return;
+                }
+
                 if (step.Expired)
                 {
                     Despawn(step.Reason);
                     return;
                 }
             }
+        }
+
+        private bool ResolveLocalHit()
+        {
+            if (_damageResolver == null)
+            {
+                return false;
+            }
+
+            var hits = Physics.OverlapSphereNonAlloc(
+                transform.position,
+                Mathf.Max(0.01f, _definition.Radius),
+                _hitBuffer,
+                _definition.CollisionLayerMask);
+
+            CombatTarget actorTarget = null;
+            var staticBlocked = false;
+            for (var i = 0; i < hits; i++)
+            {
+                var collider = _hitBuffer[i];
+                if (collider == null || collider.isTrigger)
+                {
+                    continue;
+                }
+
+                var target = collider.GetComponentInParent<CombatTarget>();
+                if (target == null || target.Health == null)
+                {
+                    staticBlocked = true;
+                    continue;
+                }
+
+                if (!_definition.AllowSelfHit && target.Id.Equals(_instigatorId))
+                {
+                    continue;
+                }
+
+                if (!_definition.AllowFriendlyFire && target.Faction == _instigatorFaction &&
+                    !target.Id.Equals(_instigatorId))
+                {
+                    continue;
+                }
+
+                if (!_hitTracker.TryRegister(target.Id))
+                {
+                    continue;
+                }
+
+                actorTarget = target;
+                break;
+            }
+
+            if (actorTarget != null)
+            {
+                var request = new DamageRequest(
+                    _instigatorId,
+                    actorTarget.Id,
+                    _instigatorFaction,
+                    _definition.Damage,
+                    DamageType.Projectile,
+                    _direction,
+                    0);
+                var result = _damageResolver.Resolve(
+                    actorTarget,
+                    request,
+                    _definition.AllowSelfHit,
+                    _definition.AllowFriendlyFire);
+                _impactPool?.Play(actorTarget.transform.position, result.Applied);
+                Despawn(ProjectileDespawnReason.HitActor);
+                return true;
+            }
+
+            if (staticBlocked)
+            {
+                _impactPool?.Play(transform.position, false);
+                Despawn(ProjectileDespawnReason.HitWall);
+                return true;
+            }
+
+            return false;
         }
 
         public void Despawn(ProjectileDespawnReason reason)

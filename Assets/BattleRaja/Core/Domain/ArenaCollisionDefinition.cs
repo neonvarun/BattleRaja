@@ -153,41 +153,48 @@ namespace BattleRaja.Core.Domain
             var nearestT = maxDistance;
             var hitOccurred = false;
 
-            // Check arena outer boundary walls
+            // Check arena outer boundary walls with full slab entry/exit logic so
+            // rays that start inside the inset play area (every projectile does)
+            // register the exit crossing as the wall contact.
             var minX = Minimum.X + ActorRadius;
             var maxX = Maximum.X - ActorRadius;
             var minY = Minimum.Y + ActorRadius;
             var maxY = Maximum.Y - ActorRadius;
 
+            var boundaryEnter = float.NegativeInfinity;
+            var boundaryExit = float.PositiveInfinity;
+
             if (Math.Abs(direction.X) > 1e-6f)
             {
                 var tx1 = (minX - start.X) / direction.X;
                 var tx2 = (maxX - start.X) / direction.X;
-                var txMin = Math.Min(tx1, tx2);
-                if (txMin > 0f && txMin < nearestT)
-                {
-                    var yAtTx = start.Y + direction.Y * txMin;
-                    if (yAtTx >= minY && yAtTx <= maxY)
-                    {
-                        nearestT = txMin;
-                        hitOccurred = true;
-                    }
-                }
+                boundaryEnter = Math.Max(boundaryEnter, Math.Min(tx1, tx2));
+                boundaryExit = Math.Min(boundaryExit, Math.Max(tx1, tx2));
+            }
+            else if (start.X < minX || start.X > maxX)
+            {
+                return false;
             }
 
             if (Math.Abs(direction.Y) > 1e-6f)
             {
                 var ty1 = (minY - start.Y) / direction.Y;
                 var ty2 = (maxY - start.Y) / direction.Y;
-                var tyMin = Math.Min(ty1, ty2);
-                if (tyMin > 0f && tyMin < nearestT)
+                boundaryEnter = Math.Max(boundaryEnter, Math.Min(ty1, ty2));
+                boundaryExit = Math.Min(boundaryExit, Math.Max(ty1, ty2));
+            }
+            else if (start.Y < minY || start.Y > maxY)
+            {
+                return false;
+            }
+
+            if (boundaryExit >= Math.Max(boundaryEnter, 0f))
+            {
+                var boundaryDistance = boundaryEnter > 0f ? boundaryEnter : boundaryExit;
+                if (boundaryDistance < nearestT)
                 {
-                    var xAtTy = start.X + direction.X * tyMin;
-                    if (xAtTy >= minX && xAtTy <= maxX)
-                    {
-                        nearestT = tyMin;
-                        hitOccurred = true;
-                    }
+                    nearestT = boundaryDistance;
+                    hitOccurred = true;
                 }
             }
 

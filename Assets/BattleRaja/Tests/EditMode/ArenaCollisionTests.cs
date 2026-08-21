@@ -11,7 +11,10 @@ namespace BattleRaja.Tests.EditMode
         {
             var solver = new DeterministicCollisionSolver(ArenaCollisionDefinition.BazaarBastion);
 
-            var result = solver.Move(new Float2(0f, 0f), new Float2(100f, -100f));
+            // Start inside the south-east open quadrant so the straight run to the
+            // maximum-bounds corner crosses no authored Bazaar obstacle; the test
+            // isolates bounds clamping from obstacle sliding (covered separately).
+            var result = solver.Move(new Float2(11.5f, -8f), new Float2(100f, -100f));
 
             Assert.That(result.Position.X, Is.EqualTo(12.75f).Within(0.0001f));
             Assert.That(result.Position.Y, Is.EqualTo(-8.75f).Within(0.0001f));

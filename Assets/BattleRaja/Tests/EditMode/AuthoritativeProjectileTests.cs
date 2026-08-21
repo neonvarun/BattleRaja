@@ -43,7 +43,9 @@ namespace BattleRaja.Tests.EditMode
             var spawns = new List<MatchSpawn>
             {
                 new MatchSpawn(p1, new Float2(0f, 0f), 100),
-                new MatchSpawn(p2, new Float2(5f, 0f), 100)
+                // Place the enemy on the unobstructed north lane: the +X lane at
+                // y=0 is blocked by the authored NarrowLaneEast obstacle.
+                new MatchSpawn(p2, new Float2(0f, 5f), 100)
             };
 
             authority.Start(spawns);
@@ -60,8 +62,8 @@ namespace BattleRaja.Tests.EditMode
 
             var currentTick = authority.CurrentSimulationTick + 1;
 
-            // Fire attack from p1 towards p2 at (5, 0)
-            var attackCmd = new AttackCommand(p1, currentTick, new Float2(0.7f, 0f), new Float2(1f, 0f), true, 1);
+            // Fire attack from p1 towards p2 at (0, 5)
+            var attackCmd = new AttackCommand(p1, currentTick, new Float2(0f, 0.7f), new Float2(0f, 1f), true, 1);
             var attackResult = authority.TryAcceptAttack(attackCmd);
 
             Assert.IsTrue(attackResult.Accepted);
@@ -71,7 +73,7 @@ namespace BattleRaja.Tests.EditMode
             Assert.IsTrue(authority.Simulation.TryGetSnapshot(p2, out var snapshotBefore));
             Assert.AreEqual(100, snapshotBefore.CurrentHealth);
 
-            // Advance simulation step (fixedDeltaSeconds = 0.5f, speed = 20 -> dist = 10, hits enemy at 5)
+            // Advance simulation step (fixedDeltaSeconds = 0.5f, speed = 20 -> dist = 10, hits enemy at y=5)
             var tick = authority.Advance(currentTick, 0.5f);
 
             Assert.AreEqual(1, tick.ProjectileSnapshots.Length);
@@ -91,9 +93,13 @@ namespace BattleRaja.Tests.EditMode
             var authority = new OfflineMatchAuthority(definition);
 
             var p1 = new CombatEntityId(1);
+            var p2 = new CombatEntityId(2);
+            // The simulation requires at least two separated valid spawns; p2
+            // parks far away and never interacts with this wall-sweep fixture.
             var spawns = new List<MatchSpawn>
             {
-                new MatchSpawn(p1, new Float2(-13f, 0f), 100)
+                new MatchSpawn(p1, new Float2(-11f, 0f), 100),
+                new MatchSpawn(p2, new Float2(13f, 8f), 100)
             };
 
             authority.Start(spawns);
@@ -108,8 +114,8 @@ namespace BattleRaja.Tests.EditMode
 
             var currentTick = authority.CurrentSimulationTick + 1;
 
-            // Fire attack directly west towards wall at X = -14.5
-            var attackCmd = new AttackCommand(p1, currentTick, new Float2(-13.7f, 0f), new Float2(-1f, 0f), true, 1);
+            // Fire attack directly west towards the boundary wall at X = -12.75
+            var attackCmd = new AttackCommand(p1, currentTick, new Float2(-11.7f, 0f), new Float2(-1f, 0f), true, 1);
             var attackResult = authority.TryAcceptAttack(attackCmd);
 
             Assert.IsTrue(attackResult.Accepted);
