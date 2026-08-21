@@ -13,7 +13,7 @@ namespace BattleRaja.Presentation.AI
     {
         [SerializeField] private int seed = 10;
     [SerializeField] private int reactionDelayTicks = 15;
-    [Range(0f, 1f)] [SerializeField] private float aimNoise = 0.18f;
+    [Range(0f, 1f)] [SerializeField] private float aimNoise = 0.12f;
     [Range(0f, 1f)] [SerializeField] private float retreatHealthFraction = 0.22f;
     [Min(0.1f)] [SerializeField] private float preferredRange = 6.5f;
     [Min(0.02f)] [SerializeField] private float decisionIntervalSeconds = 0.20f;
