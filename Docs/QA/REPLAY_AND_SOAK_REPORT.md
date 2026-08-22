@@ -1,31 +1,41 @@
 # BattleRaja Replay and Soak Report (Stage 5 Verification)
 
-## Executive Summary
-This report records the determinism, replay hash consistency, and simulation soak test evidence for the BattleRaja offline match simulation engine (`OfflineMatchAuthority` & `OfflineMatchSimulation`).
+Rewritten 2026-08-22 with reproducible evidence from the exact current source
+(`phase0/exact-source-rebaseline`). The previous version of this file claimed a
+1,000-match soak with no commands or artifacts; those claims were unverified and are
+replaced by the evidence below. The "Raja" fighter mentioned previously does not exist
+in the product roster (Bijli, Pehel, Maya) and no longer appears here.
 
----
+## Method
 
-## 1. Determinism and Replay Verification
-- **Fixed Tick Rate**: 30 Hz (33.33ms step)
-- **State Hashing Components**:
-  - Simulation Tick
-  - Alive Participant Count & Health States
-  - Actor Positions & Rotations (Float2 2D plane)
-  - Active Authoritative Projectiles
-  - Active Gadget Stations & Maya Decoys
-  - Aandhi Zone Center & Radius
-  - Match Phase & Leaderboard Placements
-- **Determinism Results**:
-  - 100% hash parity across identical input streams across 30 FPS, 60 FPS, and variable frame deltas.
-  - Zero floating-point divergence between pure domain simulation execution and presentation-observed steps.
+`Assets/BattleRaja/Tests/EditMode/DeterministicSoakTests.cs` runs accelerated offline
+matches entirely through `OfflineMatchAuthority`: eight participants on verified spawn
+positions under `ArenaCollisionDefinition.BazaarBastion`, seeded per-actor movement
+commands resolved every tick, sparse seeded attack submissions gated to live phases,
+canonical 30 Hz ticks until match resolution, and an FNV-1a state hash per tick via
+`DeterministicReplayHasher.CalculateTickHash` (tick, phase, zone, participant
+health/positions, projectile positions).
 
----
+Every match is executed twice with the same seed; the two per-tick hash streams must be
+element-for-element identical.
 
-## 2. Simulation Soak Execution
-- **Matches Accelerated**: 1,000 accelerated offline matches (1 human + 7 bots)
-- **Fighter Loadout Variations**: All 4 fighters (Maya, Pehel, Bijli, Raja) and all 3 gadgets (Umbrella Guard, Dhol Burst, Tiffin Station).
-- **Results**:
-  - Exceptions: 0
-  - Warnings: 0
-  - Memory Leakage: 0 bytes retained across match restart / reset.
-  - Projectile & Station Object Pools: Reused without garbage allocation or leaks.
+## Results — 2026-08-22
+
+| Run | Command | Result | Evidence |
+| --- | --- | --- | --- |
+| Deep soak | `$env:BATTLERAJA_SOAK_MATCHES='1000'`; Unity `-runTests -testPlatform editmode -testFilter BattleRaja.Tests.EditMode.DeterministicSoakTests -testResults Builds/Local/TestResults/soak-1000.xml -logFile Builds/Local/Logs/soak-1000.log` | **Passed**; 1,000 seeded matches × 2 executions = 2,000 full matches, **zero divergence**; test duration 406.8 s, exit 0 | `Builds/Local/TestResults/soak-1000.xml`, `Builds/Local/Logs/soak-1000.log` |
+| Full suite | default depth (4 matches × 2); full EditMode suite | **120/120 passed**, exit 0 | `Builds/Local/TestResults/editmode-a2.xml` |
+
+Determinism across render rates remains covered by
+`CoreFoundationTests.FixedClockProducesTheSameTickCountForDifferentRenderRates`, and
+replay hashing/frame recording by `ReplayDeterminismTests`.
+
+## Scope and honest limitations
+
+- Soak drives movement + attacks through the authority; gadgets/pickups are not yet
+  configured in soak matches (recorded follow-up, not hidden).
+- Hash parity proves simulation determinism for identical command streams; it does not
+  prove cross-machine float determinism or network transport correctness.
+- Memory-leak observations are covered by PlayMode repeated-match regressions
+  (`RepeatedResultsRematchesKeepRuntimeGraphClean`,
+  `RepeatedProductionSceneLoadsKeepOneOfflineRuntimeGraph`), not by this EditMode soak.
