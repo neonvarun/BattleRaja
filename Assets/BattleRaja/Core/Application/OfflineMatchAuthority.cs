@@ -154,7 +154,8 @@ namespace BattleRaja.Core.Application
             int currentHealth,
             int maxHealth,
             float remainingSeconds,
-            float cooldownRemaining)
+            float cooldownRemaining,
+            int abilityExecutionId = 0)
         {
             OwnerId = ownerId;
             DecoyId = decoyId;
@@ -165,6 +166,7 @@ namespace BattleRaja.Core.Application
             MaxHealth = maxHealth;
             RemainingSeconds = remainingSeconds;
             CooldownRemaining = cooldownRemaining;
+            AbilityExecutionId = abilityExecutionId;
         }
 
         public CombatEntityId OwnerId { get; }
@@ -176,6 +178,41 @@ namespace BattleRaja.Core.Application
         public int MaxHealth { get; }
         public float RemainingSeconds { get; }
         public float CooldownRemaining { get; }
+
+        /// <summary>Stable authority-assigned ability identity for the spawn that
+        /// created this decoy (0 for rejected/local snapshots).</summary>
+        public int AbilityExecutionId { get; }
+    }
+
+    /// <summary>Immutable authority verdict for one validated ability start.</summary>
+    public readonly struct MatchAuthorityAbilityStart
+    {
+        public MatchAuthorityAbilityStart(
+            CombatEntityId actorId,
+            ContentId abilityId,
+            int simulationTick,
+            bool accepted,
+            int abilityExecutionId)
+        {
+            ActorId = actorId;
+            AbilityId = abilityId;
+            SimulationTick = simulationTick;
+            Accepted = accepted;
+            AbilityExecutionId = abilityExecutionId;
+        }
+
+        public static MatchAuthorityAbilityStart Rejected(
+            CombatEntityId actorId,
+            ContentId abilityId,
+            int simulationTick) => new MatchAuthorityAbilityStart(actorId, abilityId, simulationTick, false, 0);
+
+        public CombatEntityId ActorId { get; }
+        public ContentId AbilityId { get; }
+        public int SimulationTick { get; }
+        public bool Accepted { get; }
+
+        /// <summary>Stable authority-assigned ability identity; 0 when rejected.</summary>
+        public int AbilityExecutionId { get; }
     }
 
     /// <summary>
@@ -241,12 +278,28 @@ namespace BattleRaja.Core.Application
     public readonly struct MatchAuthorityTick
     {
         public MatchAuthorityTick(MatchTickResult result, DamageRequest[] outsideDamageRequests)
-            : this(0, result, outsideDamageRequests, Array.Empty<GadgetHealingIntent>(), Array.Empty<int>(), Array.Empty<DomainProjectileSnapshot>())
+            : this(
+                0,
+                result,
+                Array.Empty<CombatDamageEvent>(),
+                Array.Empty<GadgetHealingIntent>(),
+                Array.Empty<int>(),
+                Array.Empty<DomainProjectileSnapshot>(),
+                Array.Empty<MatchPickupCollectionIntent>(),
+                Array.Empty<GadgetPickupCollectionIntent>())
         {
         }
 
         public MatchAuthorityTick(int simulationTick, MatchTickResult result, DamageRequest[] outsideDamageRequests)
-            : this(simulationTick, result, outsideDamageRequests, Array.Empty<GadgetHealingIntent>(), Array.Empty<int>(), Array.Empty<DomainProjectileSnapshot>())
+            : this(
+                simulationTick,
+                result,
+                Array.Empty<CombatDamageEvent>(),
+                Array.Empty<GadgetHealingIntent>(),
+                Array.Empty<int>(),
+                Array.Empty<DomainProjectileSnapshot>(),
+                Array.Empty<MatchPickupCollectionIntent>(),
+                Array.Empty<GadgetPickupCollectionIntent>())
         {
         }
 
@@ -256,32 +309,77 @@ namespace BattleRaja.Core.Application
             DamageRequest[] outsideDamageRequests,
             GadgetHealingIntent[] gadgetHealingIntents,
             int[] expiredStationIds)
-            : this(simulationTick, result, outsideDamageRequests, gadgetHealingIntents, expiredStationIds, Array.Empty<DomainProjectileSnapshot>())
+            : this(
+                simulationTick,
+                result,
+                ConvertLegacyRequests(outsideDamageRequests),
+                gadgetHealingIntents,
+                expiredStationIds,
+                Array.Empty<DomainProjectileSnapshot>(),
+                Array.Empty<MatchPickupCollectionIntent>(),
+                Array.Empty<GadgetPickupCollectionIntent>())
         {
+        }
+
+        /// <summary>Compatibility shim for pre-atomic callers that only had raw
+        /// Aandhi requests; legacy requests are surfaced as unapplied damage
+        /// events so old call sites keep compiling without double application.</summary>
+        private static CombatDamageEvent[] ConvertLegacyRequests(DamageRequest[] requests)
+        {
+            if (requests == null || requests.Length == 0) return Array.Empty<CombatDamageEvent>();
+            var events = new CombatDamageEvent[requests.Length];
+            for (var i = 0; i < requests.Length; i++)
+            {
+                var request = requests[i];
+                events[i] = new CombatDamageEvent(request, 0, false, 0, request.SimulationTick);
+            }
+
+            return events;
         }
 
         public MatchAuthorityTick(
             int simulationTick,
             MatchTickResult result,
-            DamageRequest[] outsideDamageRequests,
+            CombatDamageEvent[] damageEvents,
             GadgetHealingIntent[] gadgetHealingIntents,
             int[] expiredStationIds,
-            DomainProjectileSnapshot[] projectileSnapshots)
+            DomainProjectileSnapshot[] projectileSnapshots,
+            MatchPickupCollectionIntent[] pickupCollections,
+            GadgetPickupCollectionIntent[] gadgetCollections)
         {
             SimulationTick = simulationTick;
             Result = result;
-            OutsideDamageRequests = outsideDamageRequests ?? Array.Empty<DamageRequest>();
+            DamageEvents = damageEvents ?? Array.Empty<CombatDamageEvent>();
             GadgetHealingIntents = gadgetHealingIntents ?? Array.Empty<GadgetHealingIntent>();
             ExpiredStationIds = expiredStationIds ?? Array.Empty<int>();
             ProjectileSnapshots = projectileSnapshots ?? Array.Empty<DomainProjectileSnapshot>();
+            PickupCollections = pickupCollections ?? Array.Empty<MatchPickupCollectionIntent>();
+            GadgetCollections = gadgetCollections ?? Array.Empty<GadgetPickupCollectionIntent>();
         }
 
         public int SimulationTick { get; }
         public MatchTickResult Result { get; }
-        public DamageRequest[] OutsideDamageRequests { get; }
+
+        /// <summary>
+        /// Authoritative damage already applied inside this tick (Aandhi and any
+        /// other authority-resolved sources surfaced per event). Presentation
+        /// mirrors these to views; it must never re-apply them.
+        /// </summary>
+        public CombatDamageEvent[] DamageEvents { get; }
+
+        /// <summary>
+        /// Canonical healing already applied inside this tick. Amount is the
+        /// applied value; EventId is stable per healing identity stream.
+        /// </summary>
         public GadgetHealingIntent[] GadgetHealingIntents { get; }
         public int[] ExpiredStationIds { get; }
         public DomainProjectileSnapshot[] ProjectileSnapshots { get; }
+
+        /// <summary>Health pickups collected atomically within this tick.</summary>
+        public MatchPickupCollectionIntent[] PickupCollections { get; }
+
+        /// <summary>Gadget pickups collected atomically within this tick.</summary>
+        public GadgetPickupCollectionIntent[] GadgetCollections { get; }
     }
 
     /// <summary>
@@ -316,6 +414,7 @@ namespace BattleRaja.Core.Application
         private readonly Dictionary<CombatEntityId, DecoyRuntime> _mayaDecoys = new Dictionary<CombatEntityId, DecoyRuntime>();
         private readonly Dictionary<CombatEntityId, int> _lastDecoySpawnTicks = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<CombatEntityId, int> _lastDecoyDamageTicks = new Dictionary<CombatEntityId, int>();
+        private readonly Dictionary<CombatEntityId, int> _decoyExecutionIds = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<int, GadgetStationRuntime> _stations = new Dictionary<int, GadgetStationRuntime>();
         private readonly MatchEventIdentityTracker _identityTracker = new MatchEventIdentityTracker();
         private readonly List<AuthoritativeProjectile> _activeProjectiles = new List<AuthoritativeProjectile>();
@@ -417,6 +516,7 @@ namespace BattleRaja.Core.Application
             _mayaDecoys.Clear();
             _lastDecoySpawnTicks.Clear();
             _lastDecoyDamageTicks.Clear();
+            _decoyExecutionIds.Clear();
             _stations.Clear();
             _identityTracker.Reset();
             _activeProjectiles.Clear();
@@ -743,15 +843,19 @@ namespace BattleRaja.Core.Application
         /// presentation controller submits only the common command and local
         /// input context; cooldown and state validation stay here.
         /// </summary>
-        public bool TryStartPehelCharge(AbilityCommand command, Float2 movement, Float2 facing)
+        public MatchAuthorityAbilityStart TryStartPehelCharge(AbilityCommand command, Float2 movement, Float2 facing)
         {
+            var rejected = MatchAuthorityAbilityStart.Rejected(
+                command.InstigatorId,
+                FighterSpecialDefinition.PehelChargeThrow.AbilityId,
+                command.SimulationTick);
             if (!command.Pressed || !command.AbilityId.Equals(FighterSpecialDefinition.PehelChargeThrow.AbilityId) ||
                 command.SimulationTick < 0 ||
                 (_lastPehelCommandTicks.TryGetValue(command.InstigatorId, out var lastTick) && command.SimulationTick <= lastTick) ||
                 !RequireSimulation().TryGetSnapshot(command.InstigatorId, out var snapshot) ||
                 !snapshot.Alive)
             {
-                return false;
+                return rejected;
             }
 
             if (!_pehelChargeRuntimes.TryGetValue(command.InstigatorId, out var runtime))
@@ -760,9 +864,14 @@ namespace BattleRaja.Core.Application
                 _pehelChargeRuntimes[command.InstigatorId] = runtime;
             }
 
-            if (!runtime.TryStart(command, movement, facing)) return false;
+            if (!runtime.TryStart(command, movement, facing)) return rejected;
             _lastPehelCommandTicks[command.InstigatorId] = command.SimulationTick;
-            return true;
+            return new MatchAuthorityAbilityStart(
+                command.InstigatorId,
+                command.AbilityId,
+                command.SimulationTick,
+                true,
+                _identityTracker.NextAbilityExecutionId());
         }
 
         public MatchAuthorityChargeThrowState GetPehelChargeState(CombatEntityId actorId)
@@ -1016,6 +1125,7 @@ namespace BattleRaja.Core.Application
             }
 
             _lastDecoySpawnTicks[ownerId] = simulationTick;
+            _decoyExecutionIds[ownerId] = _identityTracker.NextAbilityExecutionId();
             return GetMayaDecoySnapshot(ownerId);
         }
 
@@ -1182,60 +1292,123 @@ namespace BattleRaja.Core.Application
             AdvanceMayaDecoys(fixedDeltaSeconds, simulation);
             var projectileSnapshots = AdvanceProjectiles(simulationTick, fixedDeltaSeconds, simulation);
             var result = simulation.Advance(fixedDeltaSeconds);
+            var tickSnapshots = simulation.GetSnapshots();
             var healingIntents = new List<GadgetHealingIntent>();
             var expiredStationIds = new List<int>();
-            AdvanceStations(fixedDeltaSeconds, simulation.GetSnapshots(), healingIntents, expiredStationIds);
-            if (result.OutsideDamagePerSecond <= 0)
+            AdvanceStations(fixedDeltaSeconds, tickSnapshots, healingIntents, expiredStationIds);
+            var damageEvents = ApplyOutsideZoneDamage(simulationTick, fixedDeltaSeconds, result, tickSnapshots);
+            var pickupCollections = new List<MatchPickupCollectionIntent>(_pickups.Length);
+            var gadgetCollections = new List<GadgetPickupCollectionIntent>(_gadgetPickups.Length);
+            ResolveItemCollections(tickSnapshots, pickupCollections, gadgetCollections);
+
+            return new MatchAuthorityTick(
+                simulationTick,
+                result,
+                damageEvents,
+                healingIntents.ToArray(),
+                expiredStationIds.ToArray(),
+                projectileSnapshots,
+                pickupCollections.ToArray(),
+                gadgetCollections.ToArray());
+        }
+
+        /// <summary>
+        /// Applies accumulated Aandhi exposure inside the canonical tick and
+        /// emits immutable applied-damage events. Presentation never feeds zone
+        /// damage back into Core.
+        /// </summary>
+        private CombatDamageEvent[] ApplyOutsideZoneDamage(
+            int simulationTick,
+            float fixedDeltaSeconds,
+            MatchTickResult result,
+            MatchParticipantSnapshot[] snapshots)
+        {
+            if (result.OutsideCount <= 0 || result.OutsideDamagePerSecond <= 0)
             {
                 _outsideDamageAccumulator = 0d;
-                return new MatchAuthorityTick(
-                    simulationTick,
-                    result,
-                    Array.Empty<DamageRequest>(),
-                    healingIntents.ToArray(),
-                    expiredStationIds.ToArray(),
-                    projectileSnapshots);
+                return Array.Empty<CombatDamageEvent>();
             }
 
             _outsideDamageAccumulator += fixedDeltaSeconds;
             if (_outsideDamageAccumulator < _outsideDamageTickSeconds)
             {
-                return new MatchAuthorityTick(
-                    simulationTick,
-                    result,
-                    Array.Empty<DamageRequest>(),
-                    healingIntents.ToArray(),
-                    expiredStationIds.ToArray(),
-                    projectileSnapshots);
+                return Array.Empty<CombatDamageEvent>();
             }
 
-            var requests = new List<DamageRequest>(result.OutsideCount);
+            var events = new List<CombatDamageEvent>(result.OutsideCount);
             while (_outsideDamageAccumulator >= _outsideDamageTickSeconds)
             {
                 _outsideDamageAccumulator -= _outsideDamageTickSeconds;
-                var snapshots = simulation.GetSnapshots();
                 for (var i = 0; i < snapshots.Length; i++)
                 {
                     var snapshot = snapshots[i];
                     if (!snapshot.Alive || Float2.Distance(snapshot.Position, result.ZoneCenter) <= result.ZoneRadius) continue;
-                    requests.Add(new DamageRequest(
+                    var request = new DamageRequest(
                         new CombatEntityId(-99),
                         snapshot.Id,
                         CombatFaction.Neutral,
                         result.OutsideDamagePerSecond,
                         DamageType.Aandhi,
                         Float2.Zero,
-                        simulationTick));
+                        simulationTick);
+                    _participantFactions.TryGetValue(snapshot.Id, out var targetFaction);
+                    var resolved = ResolveDamage(request, targetFaction, allowSelfHit: true, allowFriendlyFire: true);
+                    if (!resolved.Result.Applied) continue;
+                    events.Add(new CombatDamageEvent(
+                        resolved.Request,
+                        resolved.Result.AmountApplied,
+                        resolved.Result.TargetDefeated,
+                        resolved.CurrentHealthAfter,
+                        simulationTick,
+                        RequireSimulation().LastDamageEventId));
                 }
             }
 
-            return new MatchAuthorityTick(
-                simulationTick,
-                result,
-                requests.ToArray(),
-                healingIntents.ToArray(),
-                expiredStationIds.ToArray(),
-                projectileSnapshots);
+            return events.ToArray();
+        }
+
+        /// <summary>
+        /// Resolves pickup proximity, collector selection, canonical healing and
+        /// gadget inventory mutation atomically within the caller's tick.
+        /// </summary>
+        private void ResolveItemCollections(
+            MatchParticipantSnapshot[] snapshots,
+            List<MatchPickupCollectionIntent> pickupCollections,
+            List<GadgetPickupCollectionIntent> gadgetCollections)
+        {
+            for (var i = 0; i < _pickups.Length; i++)
+            {
+                var runtime = _pickups[i];
+                if (!runtime.IsAvailable) continue;
+                var definition = runtime.Definition;
+                if (!TrySelectCollector(snapshots, definition.Position, definition.CollectionRadius, true, out var collector)) continue;
+                var result = runtime.TryCollect(collector.CurrentHealth, collector.MaxHealth);
+                if (!result.Collected) continue;
+                var appliedHeal = RequireSimulation().Heal(collector.Id, result.HealAmount);
+                if (appliedHeal <= 0) continue;
+                pickupCollections.Add(new MatchPickupCollectionIntent(
+                    definition.PickupId,
+                    collector.Id,
+                    appliedHeal,
+                    _identityTracker.NextCollectionEventId(),
+                    _identityTracker.NextHealingEventId()));
+            }
+
+            for (var i = 0; i < _gadgetPickups.Length; i++)
+            {
+                var runtime = _gadgetPickups[i];
+                var definition = runtime.Definition;
+                if (!runtime.IsAvailable) continue;
+                if (!TrySelectCollector(snapshots, definition.Position, definition.CollectionRadius, false, out var collector)) continue;
+                if (!_gadgetInventories.TryGetValue(collector.Id, out var inventory) || inventory.HasGadget) continue;
+                var result = runtime.TryCollect(false);
+                if (!result.Collected || !inventory.TryPickup(result.GadgetId)) continue;
+                gadgetCollections.Add(new GadgetPickupCollectionIntent(
+                    definition.PickupId,
+                    collector.Id,
+                    result.GadgetId,
+                    _identityTracker.NextCollectionEventId()));
+            }
         }
 
         private DomainProjectileSnapshot[] AdvanceProjectiles(
@@ -1448,85 +1621,10 @@ namespace BattleRaja.Core.Application
         /// Resolves pickup proximity and collector selection from the authoritative
         /// simulation snapshot. Unity only applies the returned intents to its views.
         /// </summary>
-        public MatchAuthorityCollections CollectNearby()
-        {
-            var simulation = RequireSimulation();
-            var snapshots = simulation.GetSnapshots();
-            var pickupCollections = new List<MatchPickupCollectionIntent>(_pickups.Length);
-            var gadgetCollections = new List<GadgetPickupCollectionIntent>(_gadgetPickups.Length);
-
-            for (var i = 0; i < _pickups.Length; i++)
-            {
-                var runtime = _pickups[i];
-                if (!runtime.IsAvailable) continue;
-                var definition = runtime.Definition;
-                if (!TrySelectCollector(snapshots, definition.Position, definition.CollectionRadius, true, out var collector)) continue;
-                var result = runtime.TryCollect(collector.CurrentHealth, collector.MaxHealth);
-                if (result.Collected)
-                {
-                    pickupCollections.Add(new MatchPickupCollectionIntent(
-                        definition.PickupId,
-                        collector.Id,
-                        result.HealAmount));
-                }
-            }
-
-            for (var i = 0; i < _gadgetPickups.Length; i++)
-            {
-                var runtime = _gadgetPickups[i];
-                if (!runtime.IsAvailable) continue;
-                var definition = runtime.Definition;
-                if (!TrySelectCollector(snapshots, definition.Position, definition.CollectionRadius, false, out var collector) ||
-                    !_gadgetInventories.TryGetValue(collector.Id, out var inventory) || inventory.HasGadget) continue;
-                var result = runtime.TryCollect(false);
-                if (result.Collected && inventory.TryPickup(result.GadgetId))
-                {
-                    gadgetCollections.Add(new GadgetPickupCollectionIntent(
-                        definition.PickupId,
-                        collector.Id,
-                        result.GadgetId));
-                }
-            }
-
-            return new MatchAuthorityCollections(pickupCollections.ToArray(), gadgetCollections.ToArray());
-        }
-
-        public MatchPickupCollectResult TryCollectPickup(int pickupId, int currentHealth, int maxHealth)
-        {
-            var index = FindPickupIndex(pickupId);
-            return index < 0
-                ? new MatchPickupCollectResult(false, 0)
-                : _pickups[index].TryCollect(currentHealth, maxHealth);
-        }
-
         public bool IsPickupAvailable(int pickupId)
         {
             var index = FindPickupIndex(pickupId);
             return index >= 0 && _pickups[index].IsAvailable;
-        }
-
-        public GadgetPickupCollectResult TryCollectGadget(int pickupId, bool hasGadget)
-        {
-            var index = FindGadgetPickupIndex(pickupId);
-            if (index < 0)
-            {
-                return new GadgetPickupCollectResult(false, default(ContentId));
-            }
-
-            return _gadgetPickups[index].TryCollect(hasGadget);
-        }
-
-        public GadgetPickupCollectResult TryCollectGadget(CombatEntityId collectorId, int pickupId)
-        {
-            var index = FindGadgetPickupIndex(pickupId);
-            if (index < 0 || !_gadgetInventories.TryGetValue(collectorId, out var inventory))
-            {
-                return new GadgetPickupCollectResult(false, default(ContentId));
-            }
-
-            var result = _gadgetPickups[index].TryCollect(inventory.HasGadget);
-            if (result.Collected) inventory.TryPickup(result.GadgetId);
-            return result;
         }
 
         public GadgetUseResult TryUseGadget(GadgetUseCommand command)
@@ -1612,7 +1710,7 @@ namespace BattleRaja.Core.Application
                 guard.Activate(effect.Definition, command.Direction);
             }
 
-            return new GadgetUseResult(true, GadgetUseFailure.None, effect);
+            return new GadgetUseResult(true, GadgetUseFailure.None, effect, _identityTracker.NextGadgetUseId());
         }
 
         public DamageRequest ApplyDamageMitigation(DamageRequest request)
@@ -1708,7 +1806,7 @@ namespace BattleRaja.Core.Application
             return new CombatEntityId(100000 + ownerId.Value);
         }
 
-        private static MatchAuthorityDecoy CreateDecoySnapshot(CombatEntityId ownerId, DecoyRuntime decoy)
+        private MatchAuthorityDecoy CreateDecoySnapshot(CombatEntityId ownerId, DecoyRuntime decoy)
         {
             return new MatchAuthorityDecoy(
                 ownerId,
@@ -1719,7 +1817,8 @@ namespace BattleRaja.Core.Application
                 decoy.CurrentHealth,
                 decoy.MaxHealth,
                 decoy.RemainingSeconds,
-                decoy.CooldownRemaining);
+                decoy.CooldownRemaining,
+                _decoyExecutionIds.TryGetValue(ownerId, out var executionId) ? executionId : 0);
         }
 
         private void AdvanceStations(
@@ -1729,12 +1828,25 @@ namespace BattleRaja.Core.Application
             List<int> expiredStationIds)
         {
             if (_stations.Count == 0) return;
+            var stationIds = new List<int>(_stations.Keys);
+            stationIds.Sort();
             var expired = new List<int>();
-            foreach (var pair in _stations)
+            foreach (var stationId in stationIds)
             {
-                var step = pair.Value.Advance(fixedDeltaSeconds, snapshots);
-                for (var i = 0; i < step.Healing.Length; i++) healingIntents.Add(step.Healing[i]);
-                if (step.Expired) expired.Add(pair.Key);
+                var step = _stations[stationId].Advance(fixedDeltaSeconds, snapshots);
+                for (var i = 0; i < step.Healing.Length; i++)
+                {
+                    var requested = step.Healing[i];
+                    var applied = RequireSimulation().Heal(requested.TargetId, requested.Amount);
+                    if (applied <= 0) continue;
+                    healingIntents.Add(new GadgetHealingIntent(
+                        requested.StationId,
+                        requested.TargetId,
+                        applied,
+                        _identityTracker.NextHealingEventId()));
+                }
+
+                if (step.Expired) expired.Add(stationId);
             }
 
             for (var i = 0; i < expired.Count; i++)

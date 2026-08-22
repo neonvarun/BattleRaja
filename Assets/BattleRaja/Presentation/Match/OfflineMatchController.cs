@@ -119,9 +119,14 @@ namespace BattleRaja.Presentation.Match
                 : 0f;
         }
 
-        public bool TryStartPehelCharge(AbilityCommand command, Float2 movement, Float2 facing)
+        public MatchAuthorityAbilityStart TryStartPehelCharge(AbilityCommand command, Float2 movement, Float2 facing)
         {
-            return _authority != null && _authority.TryStartPehelCharge(command, movement, facing);
+            return _authority != null
+                ? _authority.TryStartPehelCharge(command, movement, facing)
+                : MatchAuthorityAbilityStart.Rejected(
+                    command.InstigatorId,
+                    command.AbilityId,
+                    command.SimulationTick);
         }
 
         public MatchAuthorityChargeThrowState GetPehelChargeState(CombatEntityId actorId)
@@ -262,14 +267,10 @@ namespace BattleRaja.Presentation.Match
                 NextZoneRadius = tick.NextZoneRadius;
                 AandhiState = tick.AandhiState;
                 AandhiWarningRemainingSeconds = tick.WarningRemainingSeconds;
-                if (authorityTick.OutsideDamageRequests.Length > 0)
-                {
-                    ApplyOutsideDamage(authorityTick);
-                }
-
+                ApplyAuthoritativeDamageEvents(authorityTick);
                 ApplyGadgetAuthorityIntents(authorityTick);
-
-                CollectNearbyItems();
+                ApplyAuthoritativeCollections(authorityTick);
+                MirrorItemAvailability();
                 UpdateSpectator(tick);
                 if (tick.MatchEnded)
                 {
@@ -393,26 +394,39 @@ namespace BattleRaja.Presentation.Match
             _resultsShown = true;
         }
 
-        private void ApplyOutsideDamage(MatchAuthorityTick authorityTick)
+        /// <summary>
+        /// Mirrors damage already applied inside the canonical tick to Unity
+        /// health views. Presentation-only; no gameplay mutation occurs here.
+        /// </summary>
+        private void ApplyAuthoritativeDamageEvents(MatchAuthorityTick authorityTick)
         {
-            for (var i = 0; i < authorityTick.OutsideDamageRequests.Length; i++)
+            for (var i = 0; i < authorityTick.DamageEvents.Length; i++)
             {
-                var request = authorityTick.OutsideDamageRequests[i];
-                var actor = _actors.FirstOrDefault(binding => binding.Target.Id == request.TargetId);
-                if (actor == null || actor.Health.Snapshot.IsDefeated) continue;
-                damageResolver?.Resolve(actor.Target, request, allowSelfHit: true, allowFriendlyFire: true, authorityTick.SimulationTick);
+                var damageEvent = authorityTick.DamageEvents[i];
+                if (damageEvent.AmountApplied <= 0) continue;
+                var actor = _actors.FirstOrDefault(binding => binding.Target.Id == damageEvent.TargetId);
+                if (actor == null) continue;
+                actor.Health.ApplyAuthoritativeDamage(
+                    damageEvent.Request,
+                    new global::BattleRaja.Core.Domain.DamageResult(
+                        true,
+                        damageEvent.AmountApplied,
+                        damageEvent.TargetDefeated,
+                        global::BattleRaja.Core.Domain.DamageRejectionReason.None),
+                    damageEvent.CurrentHealthAfter,
+                    damageEvent.SimulationTick);
             }
         }
 
         private void ApplyGadgetAuthorityIntents(MatchAuthorityTick authorityTick)
         {
+            // Healing was applied inside the canonical tick; mirror views only.
             for (var i = 0; i < authorityTick.GadgetHealingIntents.Length; i++)
             {
                 var intent = authorityTick.GadgetHealingIntents[i];
                 var actor = _actors.FirstOrDefault(binding => binding.Target.Id == intent.TargetId);
                 if (actor != null)
                 {
-                    _authority.ApplyHealing(intent.TargetId, intent.Amount);
                     ApplyAuthoritativeHealth(actor);
                 }
             }
@@ -433,44 +447,35 @@ namespace BattleRaja.Presentation.Match
             }
         }
 
-        private void CollectNearbyItems()
+        /// <summary>
+        /// Mirrors atomic in-tick collections to Unity views: pickup health
+        /// snapshots and gadget display inventory. Canonical mutation already
+        /// happened inside the tick.
+        /// </summary>
+        private void ApplyAuthoritativeCollections(MatchAuthorityTick authorityTick)
         {
-            var collections = _authority.CollectNearby();
-            for (var i = 0; i < collections.PickupCollections.Length; i++)
+            for (var i = 0; i < authorityTick.PickupCollections.Length; i++)
             {
-                var collection = collections.PickupCollections[i];
+                var collection = authorityTick.PickupCollections[i];
                 var actor = _actors.FirstOrDefault(binding => binding.Target.Id == collection.CollectorId);
-                if (actor != null)
-                {
-                    _authority.ApplyHealing(collection.CollectorId, collection.HealAmount);
-                    ApplyAuthoritativeHealth(actor);
-                }
-                if (pickups != null && collection.PickupId >= 0 && collection.PickupId < pickups.Length)
-                {
-                    pickups[collection.PickupId]?.SetAvailable(false);
-                }
+                if (actor != null) ApplyAuthoritativeHealth(actor);
             }
 
-            for (var i = 0; i < collections.GadgetCollections.Length; i++)
+            for (var i = 0; i < authorityTick.GadgetCollections.Length; i++)
             {
-                var collection = collections.GadgetCollections[i];
+                var collection = authorityTick.GadgetCollections[i];
                 var actor = _actors.FirstOrDefault(binding => binding.Target.Id == collection.CollectorId);
-                var user = actor?.Transform.GetComponent<GadgetUser>();
-                if (user != null)
-                {
-                    user.TryPickupFromAuthority(collection.GadgetId);
-                }
-                if (gadgetPickups != null && collection.PickupId >= 0 && collection.PickupId < gadgetPickups.Length)
-                {
-                    gadgetPickups[collection.PickupId]?.SetAvailable(false);
-                }
+                actor?.Transform.GetComponent<GadgetUser>()?.TryPickupFromAuthority(collection.GadgetId);
             }
+        }
 
+        private void MirrorItemAvailability()
+        {
             if (pickups != null)
             {
                 for (var i = 0; i < pickups.Length; i++)
                 {
-                    pickups[i]?.SetAvailable(_authority.IsPickupAvailable(i));
+                    pickups[i]?.SetAvailable(_authority != null && _authority.IsPickupAvailable(i));
                 }
             }
 
@@ -478,7 +483,7 @@ namespace BattleRaja.Presentation.Match
             {
                 for (var i = 0; i < gadgetPickups.Length; i++)
                 {
-                    gadgetPickups[i]?.SetAvailable(_authority.IsGadgetPickupAvailable(i));
+                    gadgetPickups[i]?.SetAvailable(_authority != null && _authority.IsGadgetPickupAvailable(i));
                 }
             }
         }

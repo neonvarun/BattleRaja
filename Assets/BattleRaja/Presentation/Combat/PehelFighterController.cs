@@ -158,7 +158,7 @@ namespace BattleRaja.Presentation.Combat
             var facing = movementAgent != null ? movementAgent.AimDirection : Float2.Up;
             if (UsesAuthorityCharge)
             {
-                if (_match.TryStartPehelCharge(command, movement, facing))
+                if (_match.TryStartPehelCharge(command, movement, facing).Accepted)
                 {
                     GetComponent<FighterPresentation>()?.NotifyAbility();
                 }

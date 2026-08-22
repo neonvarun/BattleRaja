@@ -227,16 +227,29 @@ namespace BattleRaja.Core.Domain
 
     public readonly struct GadgetHealingIntent
     {
-        public GadgetHealingIntent(int stationId, CombatEntityId targetId, int amount)
+        public GadgetHealingIntent(int stationId, CombatEntityId targetId, int amount, int eventId = 0)
         {
             StationId = stationId;
             TargetId = targetId;
             Amount = amount;
+            EventId = eventId;
         }
 
         public int StationId { get; }
         public CombatEntityId TargetId { get; }
+
+        /// <summary>
+        /// Canonical health amount actually applied by match authority. Intent
+        /// emitters before atomic resolution may carry the requested amount;
+        /// authoritative tick results always carry the applied amount.
+        /// </summary>
         public int Amount { get; }
+
+        /// <summary>
+        /// Stable authority-assigned healing identity (0 while unassigned).
+        /// Assigned only after canonical validation/application succeeds.
+        /// </summary>
+        public int EventId { get; }
     }
 
     public readonly struct GadgetStationDamageResult
@@ -385,16 +398,23 @@ namespace BattleRaja.Core.Domain
 
     public readonly struct GadgetUseResult
     {
-        public GadgetUseResult(bool used, GadgetUseFailure failure, GadgetEffect effect)
+        public GadgetUseResult(bool used, GadgetUseFailure failure, GadgetEffect effect, int eventId = 0)
         {
             Used = used;
             Failure = failure;
             Effect = effect;
+            EventId = eventId;
         }
 
         public bool Used { get; }
         public GadgetUseFailure Failure { get; }
         public GadgetEffect Effect { get; }
+
+        /// <summary>
+        /// Stable authority-assigned gadget-use identity (0 while unassigned
+        /// or rejected). Rejected/cooldown attempts never consume an identity.
+        /// </summary>
+        public int EventId { get; }
     }
 
     public sealed class GadgetRuntime

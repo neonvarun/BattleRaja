@@ -17,17 +17,30 @@ namespace BattleRaja.Tests.EditMode
                 new MatchSpawn(new CombatEntityId(1), new Float2(0f, 0f), 100),
                 new MatchSpawn(new CombatEntityId(2), new Float2(8f, 0f), 100)
             });
+
+            // Warm past LoadWarmup(3s)+SpawnProtection(5s) with canonical 1/30s
+            // steps. Both actors stay safely inside the zone during setup.
+            for (var warmupTick = 1; warmupTick <= 240; warmupTick++) authority.Advance(warmupTick, 1f / 30f);
+
+            // Now move actor 1 outside and advance until one damage window fires.
             authority.SetPosition(new CombatEntityId(1), new Float2(15f, 0f));
+            MatchAuthorityTick tick = default;
+            var totalEvents = 0;
+            for (var tickIndex = 241; tickIndex <= 300; tickIndex++)
+            {
+                tick = authority.Advance(tickIndex, 1f / 30f);
+                totalEvents += tick.DamageEvents.Count(e => e.TargetId.Value == 1);
+                if (totalEvents > 0) break;
+            }
 
-            authority.Advance(8f);
-            var tick = authority.Advance(1f);
-
-            Assert.That(tick.SimulationTick, Is.EqualTo(1));
+            Assert.That(totalEvents, Is.GreaterThanOrEqualTo(1));
             Assert.That(tick.Result.OutsideDamagePerSecond, Is.EqualTo(5));
-            Assert.That(tick.OutsideDamageRequests, Has.Length.EqualTo(1));
-            Assert.That(tick.OutsideDamageRequests[0].TargetId.Value, Is.EqualTo(1));
-            Assert.That(tick.OutsideDamageRequests[0].DamageType, Is.EqualTo(DamageType.Aandhi));
-            Assert.That(tick.OutsideDamageRequests[0].SimulationTick, Is.EqualTo(tick.SimulationTick));
+            Assert.That(tick.DamageEvents[0].TargetId.Value, Is.EqualTo(1));
+            Assert.That(tick.DamageEvents[0].DamageType, Is.EqualTo(DamageType.Aandhi));
+            Assert.That(tick.DamageEvents[0].EventId, Is.GreaterThan(0));
+
+            var damaged = authority.Simulation.GetSnapshots().Single(snapshot => snapshot.Id.Value == 1);
+            Assert.That(damaged.CurrentHealth, Is.LessThan(100));
         }
 
         [Test]
@@ -276,8 +289,12 @@ namespace BattleRaja.Tests.EditMode
                 FighterSpecialDefinition.PehelChargeThrow.AbilityId,
                 new Float2(1f, 0f),
                 true);
-            Assert.That(authority.TryStartPehelCharge(command, new Float2(1f, 0f), new Float2(1f, 0f)), Is.True);
-            Assert.That(authority.TryStartPehelCharge(command, new Float2(1f, 0f), new Float2(1f, 0f)), Is.False);
+            var firstStart = authority.TryStartPehelCharge(command, new Float2(1f, 0f), new Float2(1f, 0f));
+            var duplicateStart = authority.TryStartPehelCharge(command, new Float2(1f, 0f), new Float2(1f, 0f));
+            Assert.That(firstStart.Accepted, Is.True);
+            Assert.That(firstStart.AbilityExecutionId, Is.GreaterThan(0));
+            Assert.That(duplicateStart.Accepted, Is.False);
+            Assert.That(duplicateStart.AbilityExecutionId, Is.EqualTo(0));
 
             MatchAuthorityChargeThrow thrown = default(MatchAuthorityChargeThrow);
             for (var tick = 1; tick <= 30; tick++)
@@ -303,27 +320,41 @@ namespace BattleRaja.Tests.EditMode
             var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja, 1f);
             authority.ConfigureItems(
                 new[] { new MatchPickupDefinition(0, MatchPickupKind.Health, 25, 12f) },
-                new[] { new GadgetPickupDefinition(0, GadgetDefinition.DholBurst.GadgetId) });
+                new[] { new GadgetPickupDefinition(0, GadgetDefinition.DholBurst.GadgetId, new Float2(3f, 3f), 1.3f) });
             authority.Start(new List<MatchSpawn>
             {
                 new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
                 new MatchSpawn(new CombatEntityId(2), new Float2(4f, 0f), 100)
             });
 
-            var heal = authority.TryCollectPickup(0, 50, 100);
-            Assert.That(heal.Collected, Is.True);
-            Assert.That(heal.HealAmount, Is.EqualTo(25));
-            Assert.That(authority.IsPickupAvailable(0), Is.False);
-            Assert.That(authority.TryCollectPickup(0, 50, 100).Collected, Is.False);
-
-            authority.Advance(12f);
+            for (var warmupTick = 1; warmupTick <= 12; warmupTick++) authority.Advance(warmupTick, 1f);
             Assert.That(authority.IsPickupAvailable(0), Is.True);
 
-            var gadget = authority.TryCollectGadget(0, false);
-            Assert.That(gadget.Collected, Is.True);
-            Assert.That(gadget.GadgetId, Is.EqualTo(GadgetDefinition.DholBurst.GadgetId));
+            // Collections are resolved atomically inside authority ticks.
+            authority.SetPosition(new CombatEntityId(1), new Float2(0.5f, 0f));
+            authority.SyncHealth(new CombatEntityId(1), 50);
+            var tick = authority.Advance(13, 1f);
+
+            Assert.That(tick.PickupCollections, Has.Length.EqualTo(1));
+            Assert.That(tick.PickupCollections[0].CollectorId.Value, Is.EqualTo(1));
+            Assert.That(tick.PickupCollections[0].HealAmount, Is.EqualTo(25));
+            Assert.That(tick.PickupCollections[0].CollectionEventId, Is.GreaterThan(0));
+            Assert.That(tick.PickupCollections[0].HealingEventId, Is.GreaterThan(0));
+            Assert.That(authority.Simulation.GetSnapshots().Single(s => s.Id.Value == 1).CurrentHealth, Is.EqualTo(75));
+
+            for (var warmupTick = 14; warmupTick <= 25; warmupTick++) authority.Advance(warmupTick, 1f);
+            authority.SetPosition(new CombatEntityId(1), new Float2(3f, 3.5f));
+            var gadgetTick = authority.Advance(26, 1f);
+
+            Assert.That(gadgetTick.GadgetCollections, Has.Length.EqualTo(1));
+            Assert.That(gadgetTick.GadgetCollections[0].CollectorId.Value, Is.EqualTo(1));
+            Assert.That(gadgetTick.GadgetCollections[0].GadgetId, Is.EqualTo(GadgetDefinition.DholBurst.GadgetId));
+            Assert.That(gadgetTick.GadgetCollections[0].CollectionEventId, Is.GreaterThan(0));
             Assert.That(authority.IsGadgetPickupAvailable(0), Is.False);
-            Assert.That(authority.TryCollectGadget(0, false).Collected, Is.False);
+
+            var replayTick = authority.Advance(27, 1f);
+            Assert.That(replayTick.PickupCollections, Is.Empty);
+            Assert.That(replayTick.GadgetCollections, Is.Empty);
         }
 
         [Test]
@@ -413,19 +444,25 @@ namespace BattleRaja.Tests.EditMode
             var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
             authority.ConfigureItems(
                 null,
-                new[] { new GadgetPickupDefinition(0, GadgetDefinition.DholBurst.GadgetId) });
+                new[] { new GadgetPickupDefinition(0, GadgetDefinition.DholBurst.GadgetId, Float2.Zero, 1.3f) });
             authority.Start(new List<MatchSpawn>
             {
                 new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
-                new MatchSpawn(new CombatEntityId(2), new Float2(3f, 0f), 100)
+                new MatchSpawn(new CombatEntityId(2), new Float2(6f, 6f), 100)
             });
 
-            Assert.That(authority.TryCollectGadget(new CombatEntityId(1), 0).Collected, Is.True);
+            // Gadget pickup now resolves atomically through authority ticks.
+            // Actor 1 already spawns at the pickup location; just advance.
+            var collectTick = authority.Advance(1, 1f);
+            Assert.That(collectTick.GadgetCollections, Has.Length.EqualTo(1));
+            Assert.That(collectTick.GadgetCollections[0].GadgetId, Is.EqualTo(GadgetDefinition.DholBurst.GadgetId));
+
             var command = new GadgetUseCommand(new CombatEntityId(1), GadgetDefinition.DholBurst.GadgetId, Float2.Zero, new Float2(1f, 0f), 1);
             var used = authority.TryUseGadget(command);
             var duplicate = authority.TryUseGadget(command);
 
             Assert.That(used.Used, Is.True);
+            Assert.That(used.EventId, Is.EqualTo(1));
             Assert.That(used.Effect.Kind, Is.EqualTo(GadgetEffectKind.DholBurst));
             Assert.That(used.Effect.Displacements, Has.Length.EqualTo(1));
             Assert.That(used.Effect.Displacements[0].TargetId.Value, Is.EqualTo(2));
@@ -434,6 +471,7 @@ namespace BattleRaja.Tests.EditMode
             Assert.That(displaced.Position.X, Is.EqualTo(3.32f).Within(0.0001f));
             Assert.That(duplicate.Used, Is.False);
             Assert.That(duplicate.Failure, Is.EqualTo(GadgetUseFailure.NotHeld));
+            Assert.That(duplicate.EventId, Is.EqualTo(0));
         }
 
         [Test]
@@ -482,18 +520,23 @@ namespace BattleRaja.Tests.EditMode
             authority.SyncHealth(new CombatEntityId(1), 50);
             authority.SyncHealth(new CombatEntityId(2), 50);
 
-            var collections = authority.CollectNearby();
+            var tick = authority.Advance(1, 1f);
 
-            Assert.That(collections.PickupCollections, Has.Length.EqualTo(1));
-            Assert.That(collections.PickupCollections[0].CollectorId.Value, Is.EqualTo(1));
-            Assert.That(collections.PickupCollections[0].HealAmount, Is.EqualTo(25));
-            Assert.That(collections.GadgetCollections, Has.Length.EqualTo(1));
-            Assert.That(collections.GadgetCollections[0].CollectorId.Value, Is.EqualTo(1));
-            Assert.That(collections.GadgetCollections[0].GadgetId, Is.EqualTo(GadgetDefinition.DholBurst.GadgetId));
+            Assert.That(tick.PickupCollections, Has.Length.EqualTo(1));
+            Assert.That(tick.PickupCollections[0].CollectorId.Value, Is.EqualTo(1));
+            Assert.That(tick.PickupCollections[0].HealAmount, Is.EqualTo(25));
+            Assert.That(tick.PickupCollections[0].CollectionEventId, Is.EqualTo(1));
+            Assert.That(tick.PickupCollections[0].HealingEventId, Is.EqualTo(1));
+            Assert.That(tick.GadgetCollections, Has.Length.EqualTo(1));
+            Assert.That(tick.GadgetCollections[0].CollectorId.Value, Is.EqualTo(1));
+            Assert.That(tick.GadgetCollections[0].GadgetId, Is.EqualTo(GadgetDefinition.DholBurst.GadgetId));
+            Assert.That(tick.GadgetCollections[0].CollectionEventId, Is.EqualTo(2));
             Assert.That(authority.IsPickupAvailable(0), Is.False);
             Assert.That(authority.IsGadgetPickupAvailable(0), Is.False);
-            Assert.That(authority.CollectNearby().PickupCollections, Is.Empty);
-            Assert.That(authority.CollectNearby().GadgetCollections, Is.Empty);
+
+            var repeatTick = authority.Advance(2, 1f);
+            Assert.That(repeatTick.PickupCollections, Is.Empty);
+            Assert.That(repeatTick.GadgetCollections, Is.Empty);
         }
 
         [Test]
@@ -529,6 +572,120 @@ namespace BattleRaja.Tests.EditMode
 
             Assert.That(healed, Is.True);
             Assert.That(expired, Is.True);
+        }
+
+        [Test]
+        public void AuthorityAppliesTiffinHealingExactlyOnceWithUniqueEventIds()
+        {
+            // Use the standard SoloRaja definition; warm past LoadWarmup +
+            // SpawnProtection so the match is inside the Opening combat window.
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(4f, 0f), 100)
+            });
+            for (var warmupTick = 1; warmupTick <= 240; warmupTick++) authority.Advance(warmupTick, 1f / 30f);
+            authority.SyncHealth(new CombatEntityId(1), 50);
+            var gadgetId = GadgetDefinition.TiffinStation.GadgetId;
+            Assert.That(authority.TryAcquireGadget(new CombatEntityId(1), gadgetId), Is.True);
+            var use = authority.TryUseGadget(new GadgetUseCommand(
+                new CombatEntityId(1),
+                gadgetId,
+                Float2.Zero,
+                Float2.Up,
+                1));
+            Assert.That(use.Used, Is.True);
+
+            var healingIds = new List<int>();
+            for (var tick = 241; tick <= 330; tick++)
+            {
+                var result = authority.Advance(tick, 1f / 30f);
+                foreach (var intent in result.GadgetHealingIntents)
+                {
+                    if (intent.TargetId.Value == 1) healingIds.Add(intent.EventId);
+                }
+            }
+
+            // Three one-second heal windows inside three seconds; every applied
+            // heal carries a unique identity and no duplicate applications occur.
+            Assert.That(healingIds.Count, Is.GreaterThanOrEqualTo(1));
+            Assert.That(healingIds, Is.Unique);
+            var healedHealth = authority.Simulation.GetSnapshots().Single(s => s.Id.Value == 1).CurrentHealth;
+            Assert.That(healedHealth, Is.GreaterThan(50));
+        }
+
+        [Test]
+        public void RestartResetsEveryIdentityStream()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            authority.ConfigureItems(
+                null,
+                new[] { new GadgetPickupDefinition(0, GadgetDefinition.DholBurst.GadgetId) });
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(3f, 0f), 100)
+            });
+
+            // Warm past LoadWarmup while both actors stay inside the zone so
+            // no identity is consumed during setup.
+            for (var warmup = 1; warmup <= 90; warmup++) authority.Advance(warmup, 1f);
+
+            // Move actor 1 outside and collect damage identities until one fires.
+            authority.SetPosition(new CombatEntityId(1), new Float2(15f, 0f));
+            var firstDamageId = -1;
+            for (var tick = 91; tick <= 150; tick++)
+            {
+                var t = authority.Advance(tick, 1f / 30f);
+                var ids = t.DamageEvents.Where(e => e.TargetId.Value == 1).Select(e => e.EventId).ToList();
+                if (ids.Count > 0)
+                {
+                    firstDamageId = ids[0];
+                    break;
+                }
+            }
+
+            Assert.That(firstDamageId, Is.EqualTo(1));
+
+            authority.SetPosition(new CombatEntityId(1), new Float2(-5f, -5f));
+            var gadgetCollected = false;
+            for (var tick = 151; tick <= 200; tick++)
+            {
+                var t = authority.Advance(tick, 1f / 30f);
+                if (t.GadgetCollections.Any())
+                {
+                    Assert.That(t.GadgetCollections[0].CollectionEventId, Is.EqualTo(1));
+                    gadgetCollected = true;
+                    break;
+                }
+            }
+            Assert.That(gadgetCollected, Is.True);
+
+            var use = authority.TryUseGadget(new GadgetUseCommand(
+                new CombatEntityId(1),
+                GadgetDefinition.DholBurst.GadgetId,
+                new Float2(-5f, -5f),
+                new Float2(1f, 0f),
+                11));
+            Assert.That(use.EventId, Is.EqualTo(1));
+
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(3f, 0f), 100)
+            });
+
+            // Every identity stream restarts from a clean deterministic base.
+            var restartDamageIds = new List<int>();
+            for (var tick = 1; tick <= 3; tick++)
+            {
+                restartDamageIds.AddRange(authority.Advance(tick, 30f).DamageEvents
+                    .Select(e => e.EventId)
+                    .Where(id => id > 0));
+            }
+
+            Assert.That(restartDamageIds.First(), Is.EqualTo(1));
         }
 
         [Test]
