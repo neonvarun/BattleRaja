@@ -1313,6 +1313,210 @@ namespace BattleRaja.Core.Application
         }
 
         /// <summary>
+        /// Builds a canonical post-tick digest from authority-owned mutable
+        /// state. The replay hasher delegates here because these fields are the
+        /// authority's private invariants and must not be exposed mutably.
+        /// </summary>
+        public ulong CalculateDeterministicTickHash(
+            MatchAuthorityTick tick,
+            MatchParticipantSnapshot[] snapshots)
+        {
+            var hash = MatchStateHashBuilder.Create();
+            var result = tick.Result;
+            hash.CombineInt(tick.SimulationTick);
+            hash.CombineInt((int)result.Phase);
+            hash.CombineFloat(result.ZoneCenter.X);
+            hash.CombineFloat(result.ZoneCenter.Y);
+            hash.CombineFloat(result.NextZoneCenter.X);
+            hash.CombineFloat(result.NextZoneCenter.Y);
+            hash.CombineFloat(result.ZoneRadius);
+            hash.CombineFloat(result.NextZoneRadius);
+            hash.CombineInt((int)result.AandhiState);
+            hash.CombineFloat(result.WarningRemainingSeconds);
+            hash.CombineInt(result.OutsideDamagePerSecond);
+            hash.CombineInt(result.OutsideCount);
+            hash.CombineBool(result.MatchEnded);
+            hash.CombineInt(result.WinnerId.Value);
+
+            var counters = _identityTracker.Snapshot();
+            hash.CombineInt(counters.AttackExecutionId);
+            hash.CombineInt(counters.ProjectileId);
+            hash.CombineInt(counters.AbilityExecutionId);
+            hash.CombineInt(counters.GadgetUseId);
+            hash.CombineInt(counters.DamageEventId);
+            hash.CombineInt(counters.HealingEventId);
+            hash.CombineInt(counters.CollectionEventId);
+            hash.CombineInt(counters.EliminationEventId);
+            hash.CombineFloat((float)_outsideDamageAccumulator);
+
+            snapshots = snapshots ?? RequireSimulation().GetSnapshots();
+            for (var i = 0; i < snapshots.Length; i++)
+            {
+                var s = snapshots[i];
+                hash.CombineInt(s.Id.Value);
+                hash.CombineFloat(s.Position.X);
+                hash.CombineFloat(s.Position.Y);
+                hash.CombineInt(s.CurrentHealth);
+                hash.CombineInt(s.MaxHealth);
+                hash.CombineBool(s.Alive);
+                hash.CombineInt(s.Placement);
+                hash.CombineInt(s.Eliminations);
+                hash.CombineInt(s.DamageDealt);
+                hash.CombineInt(s.Assists);
+                hash.CombineFloat(s.SurvivalTimeSeconds);
+
+                _participantWeapons.TryGetValue(s.Id, out var weapon);
+                hash.CombineContentId(weapon.WeaponId);
+                hash.CombineInt(weapon.Damage);
+                hash.CombineFloat(weapon.FireIntervalSeconds);
+                hash.CombineFloat(weapon.ProjectileSpeed);
+                hash.CombineFloat(weapon.MaxRange);
+                hash.CombineFloat(weapon.LifetimeSeconds);
+                hash.CombineFloat(weapon.Radius);
+                hash.CombineInt(weapon.CollisionLayerMask);
+                hash.CombineBool(weapon.AllowSelfHit);
+                hash.CombineBool(weapon.AllowFriendlyFire);
+                _participantTickRates.TryGetValue(s.Id, out var tickRate);
+                hash.CombineInt(tickRate);
+                _participantFactions.TryGetValue(s.Id, out var faction);
+                hash.CombineInt((int)faction);
+                _movementTunings.TryGetValue(s.Id, out var tuning);
+                hash.CombineFloat(tuning.MaxSpeed);
+                hash.CombineFloat(tuning.Acceleration);
+                hash.CombineFloat(tuning.Deceleration);
+                hash.CombineFloat(tuning.RotationSpeed);
+                hash.CombineFloat(tuning.MovementDeadZone);
+                hash.CombineFloat(tuning.AimDeadZone);
+                hash.CombineFloat(tuning.InputSensitivity);
+                _movementMotors.TryGetValue(s.Id, out var motor);
+                hash.CombineFloat(motor.Velocity.X);
+                hash.CombineFloat(motor.Velocity.Y);
+                hash.CombineFloat(motor.AimDirection.X);
+                hash.CombineFloat(motor.AimDirection.Y);
+                _lastMovementTicks.TryGetValue(s.Id, out var lastMovementTick);
+                hash.CombineInt(lastMovementTick);
+                _lastAbilityDisplacementTicks.TryGetValue(s.Id, out var lastDisplacementTick);
+                hash.CombineInt(lastDisplacementTick);
+                _attackCooldowns.TryGetValue(s.Id, out var attackCooldown);
+                hash.CombineInt(attackCooldown.RemainingTicks(tick.SimulationTick));
+                _lastAttackTicks.TryGetValue(s.Id, out var lastAttackTick);
+                hash.CombineInt(lastAttackTick);
+                _lastAttackSequences.TryGetValue(s.Id, out var lastAttackSequence);
+                hash.CombineInt(lastAttackSequence);
+
+                _gadgetInventories.TryGetValue(s.Id, out var inventory);
+                hash.CombineContentId(inventory.HeldGadget);
+                _gadgetRuntimes.TryGetValue(s.Id, out var gadgetRuntime);
+                hash.CombineFloat(gadgetRuntime.CooldownRemaining);
+                _umbrellaGuards.TryGetValue(s.Id, out var umbrella);
+                hash.CombineBool(umbrella.IsActive);
+                hash.CombineFloat(umbrella.RemainingSeconds);
+                hash.CombineFloat(umbrella.Direction.X);
+                hash.CombineFloat(umbrella.Direction.Y);
+
+                _pehelChargeRuntimes.TryGetValue(s.Id, out var charge);
+                hash.CombineInt(charge == null ? 0 : (int)charge.State);
+                if (charge != null)
+                {
+                    hash.CombineFloat(charge.Direction.X);
+                    hash.CombineFloat(charge.Direction.Y);
+                    hash.CombineFloat(charge.PhaseRemaining);
+                    hash.CombineFloat(charge.CooldownRemaining);
+                    hash.CombineInt(charge.CapturedTargetId.Value);
+                    hash.CombineBool(charge.HasCapturedTarget);
+                }
+
+                _mayaDecoys.TryGetValue(s.Id, out var decoy);
+                if (decoy != null)
+                {
+                    hash.CombineBool(decoy.IsActive);
+                    hash.CombineBool(decoy.IsTargetable);
+                    hash.CombineFloat(decoy.Position.X);
+                    hash.CombineFloat(decoy.Position.Y);
+                    hash.CombineInt(decoy.CurrentHealth);
+                    hash.CombineInt(decoy.MaxHealth);
+                    hash.CombineFloat(decoy.RemainingSeconds);
+                    hash.CombineFloat(decoy.CooldownRemaining);
+                    _decoyExecutionIds.TryGetValue(s.Id, out var decoyExecutionId);
+                    hash.CombineInt(decoyExecutionId);
+                }
+
+                _lastPehelCommandTicks.TryGetValue(s.Id, out var lastPehelCommand);
+                hash.CombineInt(lastPehelCommand);
+                _lastPehelStepTicks.TryGetValue(s.Id, out var lastPehelStep);
+                hash.CombineInt(lastPehelStep);
+                _lastPehelThrowTicks.TryGetValue(s.Id, out var lastPehelThrow);
+                hash.CombineInt(lastPehelThrow);
+                _lastDecoySpawnTicks.TryGetValue(s.Id, out var lastDecoySpawn);
+                hash.CombineInt(lastDecoySpawn);
+                _lastDecoyDamageTicks.TryGetValue(s.Id, out var lastDecoyDamage);
+                hash.CombineInt(lastDecoyDamage);
+            }
+
+            for (var i = 0; i < _pickups.Length; i++)
+            {
+                var pickup = _pickups[i];
+                hash.CombineInt(pickup.Definition.PickupId);
+                hash.CombineInt((int)pickup.Definition.Kind);
+                hash.CombineInt(pickup.Definition.Value);
+                hash.CombineFloat(pickup.Definition.RespawnSeconds);
+                hash.CombineFloat(pickup.Definition.Position.X);
+                hash.CombineFloat(pickup.Definition.Position.Y);
+                hash.CombineFloat(pickup.Definition.CollectionRadius);
+                hash.CombineBool(pickup.IsAvailable);
+                hash.CombineFloat(pickup.RespawnRemaining);
+            }
+
+            for (var i = 0; i < _gadgetPickups.Length; i++)
+            {
+                var pickup = _gadgetPickups[i];
+                hash.CombineInt(pickup.Definition.PickupId);
+                hash.CombineContentId(pickup.Definition.GadgetId);
+                hash.CombineFloat(pickup.Definition.Position.X);
+                hash.CombineFloat(pickup.Definition.Position.Y);
+                hash.CombineFloat(pickup.Definition.CollectionRadius);
+                hash.CombineBool(pickup.IsAvailable);
+            }
+
+            foreach (var pair in _stations)
+            {
+                var station = pair.Value;
+                hash.CombineInt(station.StationId);
+                hash.CombineFloat(station.Position.X);
+                hash.CombineFloat(station.Position.Y);
+                hash.CombineFloat(station.RemainingSeconds);
+                hash.CombineFloat(station.HealAccumulator);
+                hash.CombineInt(station.CurrentHealth);
+                hash.CombineBool(station.IsActive);
+            }
+
+            var projectileSnapshots = tick.ProjectileSnapshots;
+            for (var i = 0; i < projectileSnapshots.Length; i++)
+            {
+                var p = projectileSnapshots[i];
+                hash.CombineInt(p.ProjectileId);
+                hash.CombineInt(p.AttackExecutionId);
+                hash.CombineInt(p.InstigatorId.Value);
+                hash.CombineContentId(p.WeaponId);
+                hash.CombineInt(p.SpawnTick);
+                hash.CombineFloat(p.Position.X);
+                hash.CombineFloat(p.Position.Y);
+                hash.CombineFloat(p.Direction.X);
+                hash.CombineFloat(p.Direction.Y);
+                hash.CombineFloat(p.Speed);
+                hash.CombineFloat(p.Radius);
+                hash.CombineFloat(p.RemainingRange);
+                hash.CombineFloat(p.RemainingLifetime);
+                hash.CombineInt((int)p.Faction);
+                hash.CombineBool(p.IsActive);
+                hash.CombineInt((int)p.DespawnReason);
+                hash.CombineInt(p.HitTargetId.Value);
+            }
+
+            return hash.Value;
+        }
+
+        /// <summary>
         /// Applies accumulated Aandhi exposure inside the canonical tick and
         /// emits immutable applied-damage events. Presentation never feeds zone
         /// damage back into Core.

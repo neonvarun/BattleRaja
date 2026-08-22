@@ -43,6 +43,16 @@ namespace BattleRaja.Core.Domain
             _eliminationEventId = 0;
         }
 
+        public MatchEventIdentityCounters Snapshot() => new MatchEventIdentityCounters(
+            _attackExecutionId,
+            _projectileId,
+            _abilityExecutionId,
+            _gadgetUseId,
+            _damageEventId,
+            _healingEventId,
+            _collectionEventId,
+            _eliminationEventId);
+
         private static int Increment(ref int field)
         {
             if (field >= int.MaxValue - 1)
@@ -56,5 +66,37 @@ namespace BattleRaja.Core.Domain
 
             return field;
         }
+    }
+
+    public readonly struct MatchEventIdentityCounters
+    {
+        public MatchEventIdentityCounters(
+            int attackExecutionId,
+            int projectileId,
+            int abilityExecutionId,
+            int gadgetUseId,
+            int damageEventId,
+            int healingEventId,
+            int collectionEventId,
+            int eliminationEventId)
+        {
+            AttackExecutionId = attackExecutionId;
+            ProjectileId = projectileId;
+            AbilityExecutionId = abilityExecutionId;
+            GadgetUseId = gadgetUseId;
+            DamageEventId = damageEventId;
+            HealingEventId = healingEventId;
+            CollectionEventId = collectionEventId;
+            EliminationEventId = eliminationEventId;
+        }
+
+        public int AttackExecutionId { get; }
+        public int ProjectileId { get; }
+        public int AbilityExecutionId { get; }
+        public int GadgetUseId { get; }
+        public int DamageEventId { get; }
+        public int HealingEventId { get; }
+        public int CollectionEventId { get; }
+        public int EliminationEventId { get; }
     }
 }

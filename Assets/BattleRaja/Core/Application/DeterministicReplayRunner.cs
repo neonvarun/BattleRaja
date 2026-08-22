@@ -61,6 +61,15 @@ namespace BattleRaja.Core.Application
     public static class DeterministicReplayHasher
     {
         public static ulong CalculateTickHash(
+            OfflineMatchAuthority authority,
+            MatchAuthorityTick tick,
+            MatchParticipantSnapshot[] snapshots)
+        {
+            if (authority == null) throw new ArgumentNullException(nameof(authority));
+            return authority.CalculateDeterministicTickHash(tick, snapshots);
+        }
+
+        public static ulong CalculateTickHash(
             int simulationTick,
             MatchPhase phase,
             Float2 zoneCenter,
@@ -139,5 +148,44 @@ namespace BattleRaja.Core.Application
         public ulong ExpectedHash { get; }
         public ulong ActualHash { get; }
         public string Description { get; }
+    }
+
+    public struct MatchStateHashBuilder
+    {
+        private const ulong FnvOffsetBasis = 14695981039346656037UL;
+        private const ulong FnvPrime = 1099511628211UL;
+
+        private ulong _hash;
+
+        public static MatchStateHashBuilder Create() => new MatchStateHashBuilder { _hash = FnvOffsetBasis };
+
+        public void CombineInt(int value)
+        {
+            unchecked
+            {
+                _hash ^= (ulong)(byte)value;
+                _hash *= FnvPrime;
+                _hash ^= (ulong)(byte)(value >> 8);
+                _hash *= FnvPrime;
+                _hash ^= (ulong)(byte)(value >> 16);
+                _hash *= FnvPrime;
+                _hash ^= (ulong)(byte)(value >> 24);
+                _hash *= FnvPrime;
+            }
+        }
+
+        public void CombineBool(bool value) => CombineInt(value ? 1 : 0);
+
+        public void CombineFloat(float value) => CombineInt((int)(value * 1000f));
+
+        public void CombineContentId(ContentId value)
+        {
+            CombineInt((int)value.Kind);
+            var text = value.Value ?? string.Empty;
+            CombineInt(text.Length);
+            for (var i = 0; i < text.Length; i++) CombineInt(text[i]);
+        }
+
+        public ulong Value => _hash;
     }
 }

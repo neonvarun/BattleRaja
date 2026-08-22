@@ -307,6 +307,7 @@ namespace BattleRaja.Core.Domain
         public int StationId { get; }
         public Float2 Position { get; }
         public float RemainingSeconds => Math.Max(0f, _remaining);
+        public float HealAccumulator => _healAccumulator;
         public int CurrentHealth => Math.Max(0, _health);
         public bool IsActive => _remaining > 0f && _health > 0;
 
@@ -356,6 +357,7 @@ namespace BattleRaja.Core.Domain
         private Float2 _direction = Float2.Up;
 
         public float RemainingSeconds => Math.Max(0f, _remaining);
+        public Float2 Direction => _direction;
         public bool IsActive => _remaining > 0f;
 
         public void Activate(GadgetDefinition definition, Float2 direction)

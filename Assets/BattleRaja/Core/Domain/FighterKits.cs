@@ -101,8 +101,10 @@ namespace BattleRaja.Core.Domain
         public ChargeThrowState State => _state;
         public bool IsMovementLocked => _state != ChargeThrowState.Ready && _state != ChargeThrowState.Cooldown;
         public float CooldownRemaining => _cooldownRemaining;
+        public float PhaseRemaining => _phaseRemaining;
         public Float2 Direction => _direction;
         public CombatEntityId CapturedTargetId => _capturedTargetId;
+        public bool HasCapturedTarget => _hasCapturedTarget;
 
         public bool TryStart(AbilityCommand command, Float2 movement, Float2 facing)
         {

@@ -57,13 +57,34 @@ namespace BattleRaja.Tests.EditMode
             const float step = 1f / 30f;
             const int maxTicks = 9300; // full Solo Raja duration plus margin at 30 Hz
 
+            var fighters = new[]
+            {
+                FighterDefinition.Bijli,
+                FighterDefinition.Pehel,
+                FighterDefinition.Maya
+            };
             var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            authority.ConfigureItems(
+                new[]
+                {
+                    new MatchPickupDefinition(0, MatchPickupKind.Health, 35, 20f, new Float2(11f, 0f), 1.2f),
+                    new MatchPickupDefinition(1, MatchPickupKind.Health, 35, 20f, new Float2(0f, 7.2f), 1.2f),
+                    new MatchPickupDefinition(2, MatchPickupKind.Health, 35, 20f, new Float2(-11f, 0f), 1.2f)
+                },
+                new[]
+                {
+                    new GadgetPickupDefinition(0, GadgetDefinition.DholBurst.GadgetId, new Float2(7.78f, 5.3f), 1.3f),
+                    new GadgetPickupDefinition(1, GadgetDefinition.UmbrellaGuard.GadgetId, new Float2(-8.5f, 7.2f), 1.3f),
+                    new GadgetPickupDefinition(2, GadgetDefinition.TiffinStation.GadgetId, new Float2(-8.5f, -6.8f), 1.3f)
+                });
             authority.Start(CreateRingSpawns());
             for (var i = 1; i <= 8; i++)
             {
                 var actorId = new CombatEntityId(i);
+                var fighter = fighters[(i - 1) % fighters.Length];
                 authority.ConfigureFaction(actorId, i == 1 ? CombatFaction.Player : CombatFaction.Enemy);
-                authority.ConfigureWeapon(actorId, ProjectileWeaponDefinition.BijliElectricBolt, 30);
+                authority.ConfigureWeapon(actorId, fighter.BasicAttack, 30);
+                authority.ConfigureMovement(actorId, fighter.Movement);
             }
 
             // Single monotonic tick stream: commands are simply gated by phase
@@ -73,6 +94,13 @@ namespace BattleRaja.Tests.EditMode
             var sequences = new int[8];
             var directions = new Float2[8];
             for (var i = 0; i < 8; i++) directions[i] = new Float2(1f, 0f);
+            var gadgetIds = new Dictionary<int, ContentId>
+            {
+                { 2, GadgetDefinition.DholBurst.GadgetId },
+                { 4, GadgetDefinition.UmbrellaGuard.GadgetId },
+                { 6, GadgetDefinition.TiffinStation.GadgetId }
+            };
+            var pehelAbilityId = FighterSpecialDefinition.PehelChargeThrow.AbilityId;
 
             for (var tick = 1; tick <= maxTicks; tick++)
             {
@@ -91,7 +119,7 @@ namespace BattleRaja.Tests.EditMode
                         i,
                         tick,
                         new MovementInputFrame(directions[i - 1], directions[i - 1]),
-                        MovementTuning.Default);
+                        fighters[(i - 1) % fighters.Length].Movement);
                     authority.ResolveMovement(command, step);
 
                     var phase = authority.CurrentPhase;
@@ -109,16 +137,48 @@ namespace BattleRaja.Tests.EditMode
                             true,
                             sequences[i - 1]));
                     }
+
+                    if (phase != MatchPhase.LoadWarmup &&
+                        phase != MatchPhase.SpawnProtection &&
+                        phase != MatchPhase.Resolution)
+                    {
+                        if ((i == 2 || i == 5 || i == 8) && rng.Next(100) < 4)
+                        {
+                            authority.TryStartPehelCharge(AbilityCommandFactory.Create(
+                                actorId,
+                                tick,
+                                pehelAbilityId,
+                                directions[i - 1],
+                                true), directions[i - 1], directions[i - 1]);
+                        }
+
+                        if (i == 2 || i == 5 || i == 8)
+                        {
+                            authority.AdvancePehelCharge(actorId, tick, step, FighterSpecialDefinition.PehelChargeThrow.Magnitude);
+                        }
+
+                        if ((i == 3 || i == 6) && rng.Next(100) < 4)
+                        {
+                            authority.TrySpawnMayaDecoy(actorId, tick, snapshot.Position);
+                        }
+
+                        if (gadgetIds.TryGetValue(i, out var gadgetId) && rng.Next(100) < 5)
+                        {
+                            authority.TryUseGadget(new GadgetUseCommand(
+                                actorId,
+                                gadgetId,
+                                snapshot.Position,
+                                directions[i - 1],
+                                tick));
+                        }
+                    }
                 }
 
                 var result = authority.Advance(tick, step);
                 hashes.Add(DeterministicReplayHasher.CalculateTickHash(
-                    result.SimulationTick,
-                    result.Result.Phase,
-                    result.Result.ZoneCenter,
-                    result.Result.ZoneRadius,
-                    authority.Simulation.GetSnapshots(),
-                    result.ProjectileSnapshots));
+                    authority,
+                    result,
+                    authority.Simulation.GetSnapshots()));
 
                 if (authority.CurrentPhase == MatchPhase.Resolution) break;
             }
