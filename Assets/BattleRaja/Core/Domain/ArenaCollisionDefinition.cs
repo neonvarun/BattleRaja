@@ -114,17 +114,30 @@ namespace BattleRaja.Core.Domain
             if (!point.IsFinite) return true;
             var r = radius > 0f ? radius : ActorRadius;
 
+            // Boundary comparisons tolerate a margin well beyond the collision
+            // solver's own face epsilon (0.0001), because runtime floating-point
+            // evaluation may carry extra intermediate precision. Every position
+            // the solver can produce must classify as unblocked.
+            const float boundaryEpsilon = 0.0005f;
+
             // Check arena outer bounds
-            if (point.X < Minimum.X + r || point.X > Maximum.X - r ||
-                point.Y < Minimum.Y + r || point.Y > Maximum.Y - r)
+            if (point.X < Minimum.X + r - boundaryEpsilon || point.X > Maximum.X - r + boundaryEpsilon ||
+                point.Y < Minimum.Y + r - boundaryEpsilon || point.Y > Maximum.Y - r + boundaryEpsilon)
             {
                 return true;
             }
 
-            // Check obstacles
+            // Check obstacles. The margin shrinks the footprint so every
+            // position the collision solver can produce (resting one solver
+            // epsilon outside an expanded face) classifies as unblocked;
+            // only points embedded meaningfully inside count as blocked.
             for (var i = 0; i < _obstacles.Length; i++)
             {
-                if (_obstacles[i].Contains(point, r))
+                var obstacle = _obstacles[i];
+                if (point.X >= obstacle.Minimum.X - r + boundaryEpsilon &&
+                    point.X <= obstacle.Maximum.X + r - boundaryEpsilon &&
+                    point.Y >= obstacle.Minimum.Y - r + boundaryEpsilon &&
+                    point.Y <= obstacle.Maximum.Y + r - boundaryEpsilon)
                 {
                     return true;
                 }
