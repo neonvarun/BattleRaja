@@ -155,6 +155,36 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void MatchAuthorityRejectsStaleAttackCommandsAndAnchorsCooldownToAuthorityClock()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            var actorId = new CombatEntityId(1);
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(actorId, Float2.Zero, 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(8f, 0f), 100)
+            });
+
+            authority.Advance(8f);
+            var first = authority.TryAcceptAttack(new AttackCommand(actorId, 1, Float2.Zero, Float2.Up, true));
+            Assert.That(first.Accepted, Is.True);
+
+            // Advance the authority well past the TrainingBolt cooldown so only
+            // a stale caller-supplied tick could allow an extra immediate shot.
+            for (var i = 0; i < 30; i++) authority.Advance(1f / 30f);
+
+            // Tick 15 sits inside the first shot's already-expired-by-authority-
+            // time cooldown window but far behind the authority clock; it must be
+            // rejected instead of consuming its cooldown entirely in the past.
+            var stale = authority.TryAcceptAttack(new AttackCommand(actorId, 15, Float2.Zero, Float2.Up, true, 2));
+            Assert.That(stale.Accepted, Is.False);
+            Assert.That(stale.Failure, Is.EqualTo(MatchAuthorityAttackFailure.StaleTick));
+
+            var current = authority.TryAcceptAttack(new AttackCommand(actorId, 31, Float2.Zero, Float2.Up, true, 3));
+            Assert.That(current.Accepted, Is.True);
+        }
+
+        [Test]
         public void MatchAuthorityUsesConfiguredWeaponAndCanonicalOriginInsteadOfCommandValues()
         {
             var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);

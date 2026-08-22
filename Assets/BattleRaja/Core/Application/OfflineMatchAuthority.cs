@@ -77,7 +77,8 @@ namespace BattleRaja.Core.Application
         FutureTick = 8,
         InvalidSequence = 9,
         Resolution = 10,
-        InvalidLoadout = 11
+        InvalidLoadout = 11,
+        StaleTick = 12
     }
 
     public readonly struct MatchAuthorityAttack
@@ -325,6 +326,7 @@ namespace BattleRaja.Core.Application
         private int _lastSimulationTick = -1;
         private int _nextStationId = 1;
         private const int MaxAttackInputLeadTicks = 1;
+    private const int MaxAttackInputStalenessTicks = 2;
         private const float MuzzleOffset = 0.7f;
 
         public OfflineMatchAuthority(OfflineMatchDefinition definition, float outsideDamageTickSeconds = 1f)
@@ -624,6 +626,16 @@ namespace BattleRaja.Core.Application
                     cooldown.RemainingTicks(_lastSimulationTick));
             }
 
+            if (command.SimulationTick < _lastSimulationTick - MaxAttackInputStalenessTicks)
+            {
+                return new MatchAuthorityAttack(
+                    actorId,
+                    command.SimulationTick,
+                    false,
+                    MatchAuthorityAttackFailure.StaleTick,
+                    cooldown.RemainingTicks(_lastSimulationTick));
+            }
+
             if (!snapshot.Alive)
             {
                 return new MatchAuthorityAttack(
@@ -631,7 +643,7 @@ namespace BattleRaja.Core.Application
                     command.SimulationTick,
                     false,
                     MatchAuthorityAttackFailure.DefeatedActor,
-                    cooldown.RemainingTicks(command.SimulationTick));
+                    cooldown.RemainingTicks(_lastSimulationTick));
             }
 
             if (_lastAttackTicks.TryGetValue(actorId, out var lastTick) && command.SimulationTick <= lastTick)
@@ -641,7 +653,7 @@ namespace BattleRaja.Core.Application
                     command.SimulationTick,
                     false,
                     MatchAuthorityAttackFailure.OutOfOrder,
-                    cooldown.RemainingTicks(command.SimulationTick));
+                    cooldown.RemainingTicks(_lastSimulationTick));
             }
 
             if (_lastAttackSequences.TryGetValue(actorId, out var lastSequence) && command.InputSequence <= lastSequence)
@@ -651,20 +663,23 @@ namespace BattleRaja.Core.Application
                     command.SimulationTick,
                     false,
                     MatchAuthorityAttackFailure.OutOfOrder,
-                    cooldown.RemainingTicks(command.SimulationTick));
+                    cooldown.RemainingTicks(_lastSimulationTick));
             }
 
-            _lastAttackTicks[actorId] = command.SimulationTick;
+            // Cooldowns are anchored to the authority clock, never to a
+            // caller-supplied tick, so stale commands cannot compress fire rate.
+            var cooldownAnchor = Math.Max(command.SimulationTick, _lastSimulationTick);
+            _lastAttackTicks[actorId] = cooldownAnchor;
             _lastAttackSequences[actorId] = command.InputSequence;
             var intervalTicks = Math.Max(1, (int)Math.Ceiling(definition.FireIntervalSeconds * tickRate));
-            if (!cooldown.TryConsume(command.SimulationTick, intervalTicks))
+            if (!cooldown.TryConsume(cooldownAnchor, intervalTicks))
             {
                 return new MatchAuthorityAttack(
                     actorId,
                     command.SimulationTick,
                     false,
                     MatchAuthorityAttackFailure.Cooldown,
-                    cooldown.RemainingTicks(command.SimulationTick));
+                    cooldown.RemainingTicks(cooldownAnchor));
             }
 
             var canonicalDirection = command.Direction.Normalized;
@@ -695,7 +710,7 @@ namespace BattleRaja.Core.Application
                 command.SimulationTick,
                 true,
                 MatchAuthorityAttackFailure.None,
-                cooldown.RemainingTicks(command.SimulationTick),
+                cooldown.RemainingTicks(cooldownAnchor),
                 definition,
                 faction,
                 canonicalOrigin,
