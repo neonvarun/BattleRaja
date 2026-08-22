@@ -1,16 +1,28 @@
 # Product completion status
 
-Updated: 2026-08-04
+Updated: 2026-08-22
 Classification: **prototype**
 
-Latest continuation: `af2e0d8` + `7ad7e42` + `a5fdde8` + `0e531bb` + `7889672` + `583106e` + `6f0fe8b` + `3af3e42` + `aa8e994` + `a72045d` + `b05f558` + `42e93e7` + `d67dd48` + `efbb1ac` + `8f190cd` + `26b11cc` + `d993a5b` + `9100e69` + `78fa990` + `204e4f0` + `678acb0` (2026-08-04).
-The production Bazaar scene now has an explicit `BazaarBastionScene` contract, a connected
-architecture prefab and no
-longer carries the `MovementLabScene` marker; production-flow EventSystem creation is
-Input System-only, the live HUD reflects the selected fighter, and resolved combat events
-enter through the match authority boundary.
+Latest continuation: Phase 0 exact-current-source rebaseline — local `main` tip `35d723f`
+baseline (validate 0/0, EditMode 114/114, PlayMode 57/57, Android APK
+`77B2BD04…A43D2A`, Lava launch clean, Chrome/Edge smoke clean), followed by the
+`phase0/exact-source-rebaseline` branch: `17a8c75` lands the documented weapon retune
+in Core definitions and `c78433a` syncs scene serialization plus removes tracked test
+artifacts, with fresh post-fix evidence recorded in `Docs/QA/LATEST_HEAD_BASELINE.md`.
+The production Bazaar scene retains its explicit `BazaarBastionScene` contract,
+connected architecture prefab and authority-routed combat path.
 
 This file records evidence-backed status only. Allowed status values are: `Not started`, `In progress`, `Passed with evidence`, `Blocked`, and `Human review required`.
+
+## Phase 0 rebaseline continuation — 2026-08-22
+
+Exact-current-source evidence replaced stale `af2e0d8`/`7ad7e42`/`a5fdde8` references.
+Key correction: the 2026-08-21 weapon-damage balance entry (Bijli 12 / Pehel sweep 20 /
+Maya shard 9) had never been applied to the authoritative Core definitions, so prior
+builds shipped unretuned damage; definitions now carry the documented values and are
+covered by `BijliFoundationTests`. Recurring worktree churn (asset flips, scene field
+re-sync, tracked Unity Test Framework performance artifacts) was eliminated at the root.
+Full tables: `Docs/QA/LATEST_HEAD_BASELINE.md`.
 
 ## Goal B deterministic collision/placement continuation — 2026-08-04
 

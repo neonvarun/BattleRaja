@@ -1,5 +1,63 @@
 # Latest HEAD baseline
 
+Date: 2026-08-22
+Branch: `phase0/exact-source-rebaseline` (based on local `main`, which is ahead of `origin/main` by 5 focused commits)
+Latest validated repository HEAD: `c78433a` (`chore(scene): sync serialized scene fields and drop tracked test artifacts`)
+Balance-fix runtime source: `17a8c75` (`fix(balance): land documented weapon retune in Core definitions`)
+Pre-fix baseline source: `35d723f` (`fix: bot perception no longer treats fighter hulls as line-of-sight blockers`; the tip of local `main` before this branch)
+Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
+
+## Phase 0 exact-current-source rebaseline (2026-08-22)
+
+Fresh evidence captured from the exact current sources after a handoff snapshot that
+was recorded against stale HEADs (`d64da36` and older). Two bounded commits were made
+on this branch after the pre-fix baseline was captured; both are documented below.
+The worktree contained recurring editor churn; its root cause was diagnosed and fixed
+rather than re-stashed (see the weapon-retune correction note in
+`Docs/BALANCE_CHANGELOG.md`).
+
+### Pre-fix baseline — source `35d723f`
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository state | Local `main` ahead of `origin/main` by 4 unpushed commits; worktree dirtied only by editor churn (weapon assets contradicting BALANCE_CHANGELOG, scene field-sync) plus tracked test artifacts; churn preserved in git stash `phase0-rebaseline-preserved` | `git log origin/main..main`, 2026-08-22 |
+| Repository validation | `Tools\Validation\validate.ps1 -RequireUnityProject -UnityExe ...6000.5.6f1...` — **0 errors, 0 warnings** | command output, 2026-08-22 |
+| Full EditMode | **114/114 passed**, 0 failed, 0 skipped | `Builds/Local/TestResults/editmode.xml` |
+| Full PlayMode | **57/57 passed**, 0 failed, 0 skipped | `Builds/Local/TestResults/playmode.xml` |
+| Android build | `BuildAndroidBazaarBastionDevelopment` succeeded; APK **165,864,897 bytes**, SHA-256 `77B2BD047B525505AC47B6745C22E2A2799522D2D377C67BA7576ED399A43D2A`; build log had no C# error/warning lines | `Builds/M11/Android/BattleRaja-BazaarBastion-M11.apk`, `Builds/M11/Logs/android-build.log` |
+| Lava runtime | Exact APK installed/launched only on `ST5GDW23LB004392`; `UnityPlayerGameActivity` top-resumed; sampled memory **426,104 KB PSS / 529,736 KB RSS / 84,136 KB Graphics / 436 KB swap**; 0 fatal/AndroidRuntime-crash/SIGSEGV markers in sampled logcat | ADB output, 2026-08-22 |
+| Web build | `BuildWebBazaarBastionDevelopment` succeeded; **19 files / 134,007,166 bytes**; `Web-BazaarBastion.wasm` **121,275,261 bytes**, SHA-256 `F931B040E3F59B0DC9D32FD9F5FCE1A09DDB70154F6C4CB81273354087C3FDC0`; no C# error/warning lines | `Builds/M11/Web-BazaarBastion`, `Builds/M11/Logs/web-build.log` |
+| Web serve/smoke | Local HTTP `127.0.0.1:8015/index.html` returned **200**; Playwright Chromium smoke: Chrome 1280×720, Chrome 390×844 portrait, Edge 1280×720 each rendered the main menu canvas with **52 console messages, 0 errors, 0 failed requests** | temp Playwright harness screenshots, 2026-08-22 |
+
+### Defect found during rebaseline
+
+The 2026-08-21 balance entry recorded Bijli/Pehel/Maya damage as 12/20/9 but only in
+serialized `.asset` files; the authoritative Core definitions still carried 18/28/12,
+and `BuildEntrypoints` re-syncs assets from definitions, silently reverting every
+regeneration and shipping unretuned damage in all prior builds. Fixed at `17a8c75`
+(see `Docs/BALANCE_CHANGELOG.md` correction note). The same diagnosis closed the
+recurring "phase0-preserved-wip" stash churn.
+
+### Post-fix evidence — source `17a8c75` (+ scene/artifact chore `c78433a`)
+
+| Check | Command/result | Evidence |
+| --- | --- | --- |
+| Repository validation | **0 errors, 0 warnings** | command output, 2026-08-22 |
+| Full EditMode | **114/114 passed**, exit 0 | `Builds/Local/TestResults/editmode-balancefix.xml` |
+| Full PlayMode | **57/57 passed**, exit 0 | `Builds/Local/TestResults/playmode-balancefix.xml` |
+| Asset stability | Weapon assets remained 12/20/9 through full test reruns and both player builds; the pre-fix asset flip churn no longer occurs | `Select-String` on `M3/M7-*.asset`, 2026-08-22 |
+| Android build | Succeeded from `17a8c75`; APK **165,864,870 bytes**, SHA-256 `FB8AD7D705B51728FAAD2FA37F486647A94A24AED9DC8BE4D4B9FD7928E69542` | `Builds/M11/Android/BattleRaja-BazaarBastion-M11.apk` |
+| Lava runtime | Exact fixed APK installed/launched only on `ST5GDW23LB004392`; activity top-resumed; sampled memory **422,823 KB PSS / 526,444 KB RSS / 82,088 KB Graphics / 452 KB swap**; sampled logcat showed only informational AndroidRuntime VM lines from an unrelated system process | ADB output, 2026-08-22 |
+| Web build | Succeeded; **19 files / 134,007,148 bytes**; `Web-BazaarBastion.wasm` **121,275,261 bytes**, SHA-256 `C0FE8D7DBD320F07687B6647CB0D9EBF9129749C5FE7A2ECEFBF42349676C184` | `Builds/M11/Web-BazaarBastion` |
+| Web serve/smoke | HTTP **200**; Chrome 1280×720, Chrome 390×844 and Edge 1280×720 each rendered the menu with **52 console messages, 0 errors** | temp Playwright harness output, 2026-08-22 |
+
+Scope remains prototype/closed-alpha-foundation evidence: this baseline does not close
+performance measurement, soak, visual/human review, Photon or PlayFab gates.
+
+## Historical baselines (pre-2026-08-22)
+
+### 2026-08-04 snapshot
+
 Date: 2026-08-04
 Branch: `codex/product-completion`
 Latest validated repository HEAD: `af2e0d8` (`docs: record exact Goal B platform evidence`)

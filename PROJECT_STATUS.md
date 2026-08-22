@@ -9,14 +9,17 @@
 - Product vision: drafted
 - Autonomous M1–M11 sequential execution: active; milestone gates and external
   service approvals remain explicit.
-- Latest validated repository HEAD: `af2e0d8` (docs-only evidence continuation after exact platform candidate `7ad7e42` and runtime source `a5fdde8`); the current repository includes
-  the connected Bazaar architecture prefab and explicit production-scene contract after the authority-driven Maya decoy,
-  fighter displacement, Dhol, production movement and authority-first damage/healing
-  checkpoints; production-flow EventSystem creation is
-  Input System-only and the selected-fighter HUD path is covered by the current
-  regression suite; Maya decoy perception refresh, authority-routed combat events and
-  production Pehel charge/capture/damage/throw resolution and the Bazaar gadget
-  pickup/use route are covered by regression.
+- Phase 0 exact-current-source rebaseline (2026-08-22): fresh validate/test/build/
+  Lava/Chrome/Edge evidence captured for local `main` tip `35d723f` and the
+  `phase0/exact-source-rebaseline` branch (`17a8c75` weapon-retune correction,
+  `c78433a` scene/artifact chore). The rebaseline diagnosed that the 2026-08-21
+  weapon-damage retune existed only in serialized assets while the Core definitions
+  still shipped 18/28/12; the documented 12/20/9 targets are now authoritative in
+  code (see `Docs/BALANCE_CHANGELOG.md` and `Docs/QA/LATEST_HEAD_BASELINE.md`).
+- Latest validated repository HEAD: `c78433a`; local `main` remains ahead of
+  `origin/main` by 4 commits plus this branch (unpushed); EditMode **114/114** and
+  PlayMode **57/57** pass at both recorded sources with validation at 0 errors /
+  0 warnings.
 - Root agent rules: active
 - Milestone 0: complete and committed locally
 - Unity project: verified at the repository root with URP and MovementLab scenes
