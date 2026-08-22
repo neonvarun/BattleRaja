@@ -1118,3 +1118,29 @@ Record every material choice here. Do not silently overwrite old decisions.
   `Tools/Validation/validate.ps1`, and the Phase 1 continuation in
   `Docs/QA/LATEST_HEAD_BASELINE.md`.
 - **Owner:** Human project owner
+
+### ADR-053 - Anchor attack cooldowns to the canonical match clock
+
+- **Date:** 2026-08-22
+- **Status:** Accepted
+- **Context:** The Phase 1 authority audit found that `TryAcceptAttack` bounded
+  caller-supplied command ticks above (`FutureTick`) but not below. A producer could
+  submit long-outdated ticks that passed per-actor ordering checks and consume weapon
+  cooldown entirely in the past, bypassing fire rate.
+- **Options considered:** Trust producer ticks with ordering checks only; clamp cooldown
+  consumption silently; or reject clearly stale input and anchor consumption/reporting to
+  `max(command tick, authority tick)`.
+- **Decision:** Reject commands older than `MaxAttackInputStalenessTicks` (2) behind the
+  canonical clock with a distinct `MatchAuthorityAttackFailure.StaleTick` reason, and
+  anchor accepted attacks' cooldown consumption and reporting to
+  `max(command.SimulationTick, _lastSimulationTick)`. Production controllers and bots
+  already stamp commands with the current canonical tick, so no production behavior
+  changes; the rejection window only affects untrusted/lagging producers.
+- **Consequences:** Fire-rate policy can no longer be compressed by replayed or lagging
+  input regardless of producer behavior. Gadget use (`GadgetRuntime.TryUse`) and ability
+  commands still validate only per-actor monotonicity without an authority-clock
+  staleness window; closing that residual asymmetry is tracked as bounded follow-up work.
+- **Evidence/sources:** `OfflineMatchAuthority.TryAcceptAttack`,
+  `AuthorityFoundationTests.MatchAuthorityRejectsStaleAttackCommandsAndAnchorsCooldownToAuthorityClock`
+  (EditMode 115/115), PlayMode 57/57 at commit `ee573ad`, validate.ps1 0 errors/0 warnings.
+- **Owner:** Human project owner

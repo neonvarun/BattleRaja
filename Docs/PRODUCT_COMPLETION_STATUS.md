@@ -24,6 +24,22 @@ covered by `BijliFoundationTests`. Recurring worktree churn (asset flips, scene 
 re-sync, tracked Unity Test Framework performance artifacts) was eliminated at the root.
 Full tables: `Docs/QA/LATEST_HEAD_BASELINE.md`.
 
+## Phase 1 authority audit closure — 2026-08-22
+
+A full audit of `OfflineMatchAuthority` against the Phase 1 checklist found one real
+gap: attack commands bounded caller ticks above but not below, allowing stale-tick
+submissions to consume weapon cooldown in the past (fire-rate bypass). Fixed at
+`ee573ad` (ADR-053): stale commands are rejected with a distinct `StaleTick` failure and
+accepted attacks anchor cooldown consumption/reporting to the canonical clock. The rest
+of the checklist verified clean from source: canonical monotonic 30 Hz tick, complete
+rejection matrix, authority-owned roster/loadout/faction/origin/tick-rate/cooldown,
+same-tick hits from different attackers preserved by construction, scene-reload cleanup
+covered by two PlayMode regressions, presentation mutation/vendor scans active, and all
+production gameplay consumers on the fixed simulation clock (scene-side clocks are
+lab-only fallbacks or per-tick authority reconciliations). Residual open items: gadget/
+ability commands still lack an authority-clock staleness window; transport-level
+duplicate-event dedup remains Phase 8 scope.
+
 ## Goal B deterministic collision/placement continuation — 2026-08-04
 
 Runtime source `a5fdde8` adds the Core `ArenaCollisionDefinition` and deterministic bounds/
