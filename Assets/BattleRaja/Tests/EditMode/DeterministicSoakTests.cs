@@ -8,8 +8,9 @@ namespace BattleRaja.Tests.EditMode
 {
     /// <summary>
     /// Real deterministic soak evidence for the offline authority: seeded
-    /// accelerated matches run twice; per-tick state hash streams must be
-    /// byte-identical between the original and replayed runs.
+    /// matches generate complete input streams, execute them through the
+    /// authority, then replay those recorded streams against canonical
+    /// per-tick state hashes.
     ///
     /// Default depth keeps the routine suite fast. Deeper soaks are executed
     /// by setting BATTLERAJA_SOAK_MATCHES and running this fixture via
@@ -27,32 +28,37 @@ namespace BattleRaja.Tests.EditMode
         public void AcceleratedSeededMatchesReproduceIdenticalHashStreams()
         {
             var matchCount = SoakMatchCount;
-            var seeds = new uint[matchCount];
-            var originals = new ulong[matchCount][];
-            for (var match = 0; match < matchCount; match++)
-            {
-                seeds[match] = (uint)(match * 7919 + 13);
-                originals[match] = RunSeededMatch(seeds[match]);
-            }
+            var executor = new DeterministicReplayExecutor();
 
             for (var match = 0; match < matchCount; match++)
             {
-                var replayed = RunSeededMatch(seeds[match]);
+                var seed = (uint)(match * 7919 + 13);
+                var replay = CreateSeededReplay(seed);
+
+                var original = executor.Execute(replay, false);
                 Assert.That(
-                    replayed.Length,
-                    Is.EqualTo(originals[match].Length),
-                    $"match {match} (seed {seeds[match]}) produced a different tick count");
-                for (var tick = 0; tick < replayed.Length; tick++)
+                    original.Succeeded,
+                    Is.True,
+                    $"match {match} (seed {seed}) failed execution: {original.Description}");
+                Assert.That(
+                    original.ActualHashes,
+                    Has.Count.GreaterThan(60),
+                    $"match {match} (seed {seed}) ended suspiciously early");
+
+                for (var tick = 0; tick < original.ActualHashes.Count; tick++)
                 {
-                    Assert.That(
-                        replayed[tick],
-                        Is.EqualTo(originals[match][tick]),
-                        $"match {match} (seed {seeds[match]}) diverged at tick {tick + 1}");
+                    replay.TickStateHashes[tick] = original.ActualHashes[tick];
                 }
+
+                var verified = executor.Execute(replay);
+                Assert.That(
+                    verified.Succeeded,
+                    Is.True,
+                    $"match {match} (seed {seed}) diverged: {verified.Description} at tick {verified.DivergenceTick}");
             }
         }
 
-        private static ulong[] RunSeededMatch(uint seed)
+        private static MatchReplayFile CreateSeededReplay(uint seed)
         {
             const float step = 1f / 30f;
             const int maxTicks = 9300; // full Solo Raja duration plus margin at 30 Hz
@@ -63,128 +69,174 @@ namespace BattleRaja.Tests.EditMode
                 FighterDefinition.Pehel,
                 FighterDefinition.Maya
             };
-            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
-            authority.ConfigureItems(
-                new[]
-                {
-                    new MatchPickupDefinition(0, MatchPickupKind.Health, 35, 20f, new Float2(11f, 0f), 1.2f),
-                    new MatchPickupDefinition(1, MatchPickupKind.Health, 35, 20f, new Float2(0f, 7.2f), 1.2f),
-                    new MatchPickupDefinition(2, MatchPickupKind.Health, 35, 20f, new Float2(-11f, 0f), 1.2f)
-                },
-                new[]
-                {
-                    new GadgetPickupDefinition(0, GadgetDefinition.DholBurst.GadgetId, new Float2(7.78f, 5.3f), 1.3f),
-                    new GadgetPickupDefinition(1, GadgetDefinition.UmbrellaGuard.GadgetId, new Float2(-8.5f, 7.2f), 1.3f),
-                    new GadgetPickupDefinition(2, GadgetDefinition.TiffinStation.GadgetId, new Float2(-8.5f, -6.8f), 1.3f)
-                });
-            authority.Start(CreateRingSpawns());
-            for (var i = 1; i <= 8; i++)
+            var spawns = CreateRingSpawns();
+            var pickups = new[]
             {
-                var actorId = new CombatEntityId(i);
-                var fighter = fighters[(i - 1) % fighters.Length];
-                authority.ConfigureFaction(actorId, i == 1 ? CombatFaction.Player : CombatFaction.Enemy);
-                authority.ConfigureWeapon(actorId, fighter.BasicAttack, 30);
-                authority.ConfigureMovement(actorId, fighter.Movement);
+                new MatchPickupDefinition(0, MatchPickupKind.Health, 35, 20f, new Float2(11f, 0f), 1.2f),
+                new MatchPickupDefinition(1, MatchPickupKind.Health, 35, 20f, new Float2(0f, 7.2f), 1.2f),
+                new MatchPickupDefinition(2, MatchPickupKind.Health, 35, 20f, new Float2(-11f, 0f), 1.2f)
+            };
+            var gadgetPickups = new[]
+            {
+                new GadgetPickupDefinition(0, GadgetDefinition.DholBurst.GadgetId, new Float2(7.78f, 5.3f), 1.3f),
+                new GadgetPickupDefinition(1, GadgetDefinition.UmbrellaGuard.GadgetId, new Float2(-8.5f, 7.2f), 1.3f),
+                new GadgetPickupDefinition(2, GadgetDefinition.TiffinStation.GadgetId, new Float2(-8.5f, -6.8f), 1.3f)
+            };
+            var participants = new List<MatchReplayParticipant>(spawns.Count);
+            for (var i = 0; i < spawns.Count; i++)
+            {
+                var fighter = fighters[i % fighters.Length];
+                participants.Add(new MatchReplayParticipant(
+                    spawns[i].Id,
+                    i == 0 ? CombatFaction.Player : CombatFaction.Enemy,
+                    fighter.BasicAttack,
+                    fighter.Movement,
+                    fighter.FighterId,
+                    30));
             }
 
-            // Single monotonic tick stream: commands are simply gated by phase
-            // while the authority passes through warmup/spawn protection.
+            var header = new MatchReplayHeader(
+                "1.0.0-bazaar",
+                seed,
+                spawns.ToArray(),
+                step,
+                MatchReplayScenario.SoloRaja,
+                participants.ToArray(),
+                pickups,
+                gadgetPickups);
+            var replay = new MatchReplayFile(header);
+
             var rng = new Random(unchecked((int)seed));
-            var hashes = new List<ulong>(maxTicks);
-            var sequences = new int[8];
-            var directions = new Float2[8];
-            for (var i = 0; i < 8; i++) directions[i] = new Float2(1f, 0f);
+            var sequences = new int[spawns.Count];
+            var directions = new Float2[spawns.Count];
+            for (var i = 0; i < spawns.Count; i++) directions[i] = new Float2(1f, 0f);
+
             var gadgetIds = new Dictionary<int, ContentId>
             {
-                { 2, GadgetDefinition.DholBurst.GadgetId },
-                { 4, GadgetDefinition.UmbrellaGuard.GadgetId },
-                { 6, GadgetDefinition.TiffinStation.GadgetId }
+                { 1, GadgetDefinition.DholBurst.GadgetId },
+                { 3, GadgetDefinition.UmbrellaGuard.GadgetId },
+                { 5, GadgetDefinition.TiffinStation.GadgetId }
             };
             var pehelAbilityId = FighterSpecialDefinition.PehelChargeThrow.AbilityId;
+            var mayaAbilityId = FighterSpecialDefinition.MayaDecoy.AbilityId;
 
             for (var tick = 1; tick <= maxTicks; tick++)
             {
-                for (var i = 1; i <= 8; i++)
+                var phase = CalculatePhase((tick - 1) * step);
+                if (phase == MatchPhase.Resolution) break;
+
+                for (var i = 0; i < spawns.Count; i++)
                 {
-                    var actorId = new CombatEntityId(i);
-                    if (tick % 24 == i % 24 || directions[i - 1].SqrMagnitude < 0.01f)
+                    if ((tick + i) % 24 == 0 || directions[i].SqrMagnitude < 0.01f)
                     {
                         var angle = (float)(rng.NextDouble() * Math.PI * 2.0);
-                        directions[i - 1] = new Float2(MathF.Cos(angle), MathF.Sin(angle));
-                    }
-
-                    if (!authority.Simulation.TryGetSnapshot(actorId, out var snapshot) || !snapshot.Alive) continue;
-
-                    var command = MovementCommandFactory.Create(
-                        i,
-                        tick,
-                        new MovementInputFrame(directions[i - 1], directions[i - 1]),
-                        fighters[(i - 1) % fighters.Length].Movement);
-                    authority.ResolveMovement(command, step);
-
-                    var phase = authority.CurrentPhase;
-                    if (rng.Next(100) < 6 &&
-                        phase != MatchPhase.LoadWarmup &&
-                        phase != MatchPhase.SpawnProtection &&
-                        phase != MatchPhase.Resolution)
-                    {
-                        sequences[i - 1]++;
-                        authority.TryAcceptAttack(new AttackCommand(
-                            actorId,
-                            tick,
-                            Float2.Zero,
-                            directions[i - 1],
-                            true,
-                            sequences[i - 1]));
-                    }
-
-                    if (phase != MatchPhase.LoadWarmup &&
-                        phase != MatchPhase.SpawnProtection &&
-                        phase != MatchPhase.Resolution)
-                    {
-                        if ((i == 2 || i == 5 || i == 8) && rng.Next(100) < 4)
-                        {
-                            authority.TryStartPehelCharge(AbilityCommandFactory.Create(
-                                actorId,
-                                tick,
-                                pehelAbilityId,
-                                directions[i - 1],
-                                true), directions[i - 1], directions[i - 1]);
-                        }
-
-                        if (i == 2 || i == 5 || i == 8)
-                        {
-                            authority.AdvancePehelCharge(actorId, tick, step, FighterSpecialDefinition.PehelChargeThrow.Magnitude);
-                        }
-
-                        if ((i == 3 || i == 6) && rng.Next(100) < 4)
-                        {
-                            authority.TrySpawnMayaDecoy(actorId, tick, snapshot.Position);
-                        }
-
-                        if (gadgetIds.TryGetValue(i, out var gadgetId) && rng.Next(100) < 5)
-                        {
-                            authority.TryUseGadget(new GadgetUseCommand(
-                                actorId,
-                                gadgetId,
-                                snapshot.Position,
-                                directions[i - 1],
-                                tick));
-                        }
+                        directions[i] = new Float2(MathF.Cos(angle), MathF.Sin(angle));
                     }
                 }
 
-                var result = authority.Advance(tick, step);
-                hashes.Add(DeterministicReplayHasher.CalculateTickHash(
-                    authority,
-                    result,
-                    authority.Simulation.GetSnapshots()));
+                var movements = new MovementCommand[spawns.Count];
+                var attacks = new List<AttackCommand>();
+                var abilities = new List<MatchReplayAbilityCommand>();
+                var gadgets = new List<GadgetUseCommand>();
 
-                if (authority.CurrentPhase == MatchPhase.Resolution) break;
+                for (var i = 0; i < spawns.Count; i++)
+                {
+                    var actorValue = i + 1;
+                    movements[i] = MovementCommandFactory.Create(
+                        actorValue,
+                        tick,
+                        new MovementInputFrame(directions[i], directions[i]),
+                        participants[i].Movement);
+                }
+
+                if (phase != MatchPhase.LoadWarmup && phase != MatchPhase.SpawnProtection)
+                {
+                    for (var i = 0; i < spawns.Count; i++)
+                    {
+                        if (rng.Next(100) >= 6) continue;
+                        sequences[i]++;
+                        attacks.Add(new AttackCommand(
+                            spawns[i].Id,
+                            tick,
+                            Float2.Zero,
+                            directions[i],
+                            true,
+                            sequences[i]));
+                    }
+
+                    for (var i = 0; i < spawns.Count; i++)
+                    {
+                        var isPehel = participants[i].FighterId.Equals(FighterDefinition.Pehel.FighterId);
+                        var isMaya = participants[i].FighterId.Equals(FighterDefinition.Maya.FighterId);
+                        if (isPehel && rng.Next(100) < 4)
+                        {
+                            abilities.Add(new MatchReplayAbilityCommand(
+                                AbilityCommandFactory.Create(
+                                    spawns[i].Id,
+                                    tick,
+                                    pehelAbilityId,
+                                    directions[i],
+                                    true),
+                                directions[i],
+                                directions[i],
+                                false,
+                                Float2.Zero));
+                        }
+
+                        if (isMaya && rng.Next(100) < 4)
+                        {
+                            abilities.Add(new MatchReplayAbilityCommand(
+                                AbilityCommandFactory.Create(
+                                    spawns[i].Id,
+                                    tick,
+                                    mayaAbilityId,
+                                    directions[i],
+                                    true),
+                                directions[i],
+                                directions[i],
+                                true,
+                                spawns[i].Position));
+                        }
+                    }
+
+                    foreach (var pair in gadgetIds)
+                    {
+                        if (rng.Next(100) >= 5) continue;
+                        var index = pair.Key;
+                        gadgets.Add(new GadgetUseCommand(
+                            spawns[index].Id,
+                            pair.Value,
+                            spawns[index].Position,
+                            directions[index],
+                            tick));
+                    }
+                }
+
+                replay.AddFrame(new MatchReplayFrame(
+                    tick,
+                    movements,
+                    attacks.ToArray(),
+                    abilities.ToArray(),
+                    gadgets.ToArray()), 0UL);
+
+                // Use elapsed-derived phases so command generation does not
+                // accumulate floating-point drift across thousands of ticks.
+                if (CalculatePhase(tick * step) == MatchPhase.Resolution) break;
             }
 
-            Assert.That(hashes.Count, Is.GreaterThan(60), "soak match ended suspiciously early");
-            return hashes.ToArray();
+            return replay;
+        }
+
+        private static MatchPhase CalculatePhase(float elapsedSeconds)
+        {
+            var phases = OfflineMatchDefinition.SoloRaja.Phases;
+            for (var i = 0; i < phases.Length; i++)
+            {
+                if (elapsedSeconds < phases[i].DurationSeconds) return phases[i].Phase;
+                elapsedSeconds -= phases[i].DurationSeconds;
+            }
+
+            return MatchPhase.Resolution;
         }
 
         private static List<MatchSpawn> CreateRingSpawns()
@@ -192,14 +244,14 @@ namespace BattleRaja.Tests.EditMode
             // Hand-verified unblocked positions under ArenaCollisionDefinition.BazaarBastion.
             return new List<MatchSpawn>
             {
-                new MatchSpawn(new CombatEntityId(1), new Float2(11f, 0f), 100),
-                new MatchSpawn(new CombatEntityId(2), new Float2(7.78f, 5.3f), 100),
-                new MatchSpawn(new CombatEntityId(3), new Float2(0f, 7.2f), 100),
-                new MatchSpawn(new CombatEntityId(4), new Float2(-8.5f, 7.2f), 100),
-                new MatchSpawn(new CombatEntityId(5), new Float2(-11f, 0f), 100),
-                new MatchSpawn(new CombatEntityId(6), new Float2(-8.5f, -6.8f), 100),
-                new MatchSpawn(new CombatEntityId(7), new Float2(0f, -7.5f), 100),
-                new MatchSpawn(new CombatEntityId(8), new Float2(8.5f, -6.8f), 100)
+                new MatchSpawn(new CombatEntityId(1), new Float2(11f, 0f), FighterDefinition.Bijli.MaxHealth),
+                new MatchSpawn(new CombatEntityId(2), new Float2(7.78f, 5.3f), FighterDefinition.Pehel.MaxHealth),
+                new MatchSpawn(new CombatEntityId(3), new Float2(0f, 7.2f), FighterDefinition.Maya.MaxHealth),
+                new MatchSpawn(new CombatEntityId(4), new Float2(-8.5f, 7.2f), FighterDefinition.Bijli.MaxHealth),
+                new MatchSpawn(new CombatEntityId(5), new Float2(-11f, 0f), FighterDefinition.Pehel.MaxHealth),
+                new MatchSpawn(new CombatEntityId(6), new Float2(-8.5f, -6.8f), FighterDefinition.Maya.MaxHealth),
+                new MatchSpawn(new CombatEntityId(7), new Float2(0f, -7.5f), FighterDefinition.Bijli.MaxHealth),
+                new MatchSpawn(new CombatEntityId(8), new Float2(8.5f, -6.8f), FighterDefinition.Pehel.MaxHealth)
             };
         }
     }
