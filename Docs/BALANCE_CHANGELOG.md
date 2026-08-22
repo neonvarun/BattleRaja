@@ -28,3 +28,11 @@ Record every fighter, weapon, gadget, Aandhi or match-rule balance change with:
   ProductionProjectileViewsRetireThroughAuthoritySnapshots regression; device
   re-verification recorded after this entry.
 - Follow-up result: pending full-length physical match pacing review (human gate).
+- **Correction 2026-08-22 (`phase0/exact-source-rebaseline`):** the three weapon-damage
+  values in this entry were recorded only in the serialized `.asset` files and never
+  applied to the authoritative Core definitions
+  (`FighterDefinition.Pehel/Maya.BasicAttack`, `ProjectileWeaponDefinition.BijliElectricBolt`),
+  so every editor regeneration silently reverted the assets to 18/28/12 and all prior
+  builds shipped those unretuned values. The definitions now carry the documented
+  targets (Bijli 12, Pehel sweep 20, Maya shard 9), assets are synced from code by the
+  editor entrypoint, and `BijliFoundationTests` pins Bijli bolt damage at 12.

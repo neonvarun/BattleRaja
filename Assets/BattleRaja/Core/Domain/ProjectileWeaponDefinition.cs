@@ -70,7 +70,7 @@ namespace BattleRaja.Core.Domain
             allowFriendlyFire: false);
 
         public static ProjectileWeaponDefinition BijliElectricBolt => new ProjectileWeaponDefinition(
-            damage: 18,
+            damage: 12,
             fireIntervalSeconds: 0.42f,
             projectileSpeed: 14f,
             maxRange: 16f,

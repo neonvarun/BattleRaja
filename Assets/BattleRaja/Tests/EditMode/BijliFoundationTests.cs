@@ -12,7 +12,7 @@ namespace BattleRaja.Tests.EditMode
 
             Assert.That(definition.IsValid(out var reason), Is.True, reason);
             Assert.That(definition.FighterId.Value, Is.EqualTo("fighter.bijli"));
-            Assert.That(definition.BasicAttack.Damage, Is.EqualTo(18));
+            Assert.That(definition.BasicAttack.Damage, Is.EqualTo(12));
             Assert.That(definition.Ability.AbilityId.Value, Is.EqualTo("ability.bijli.electric_dash"));
             Assert.That(definition.FighterId.Equals(ContentId.Attack("fighter.bijli")), Is.False);
         }

@@ -62,7 +62,7 @@ namespace BattleRaja.Core.Domain
             "Pehel",
             maxHealth: 125,
             new MovementTuning(4.8f, 21f, 27f, 600f, 0.12f, 0.14f, 1f),
-            new ProjectileWeaponDefinition(28, 0.72f, 10f, 5.5f, 0.7f, 0.45f, ~0, false, false),
+            new ProjectileWeaponDefinition(20, 0.72f, 10f, 5.5f, 0.7f, 0.45f, ~0, false, false),
             new DashAbilityDefinition(ContentId.Ability("ability.pehel.charge_throw"), 4.5f, 3.2f, 0.18f, 0.24f, 0.4f, 0.5f));
 
         public static FighterDefinition Maya => new FighterDefinition(
@@ -70,7 +70,7 @@ namespace BattleRaja.Core.Domain
             "Maya",
             maxHealth: 72,
             new MovementTuning(6.2f, 27f, 33f, 780f, 0.12f, 0.14f, 1f),
-            new ProjectileWeaponDefinition(12, 0.3f, 16f, 18f, 1.2f, 0.12f, ~0, false, false),
+            new ProjectileWeaponDefinition(9, 0.3f, 16f, 18f, 1.2f, 0.12f, ~0, false, false),
             new DashAbilityDefinition(ContentId.Ability("ability.maya.decoy"), 7f, 2.6f, 0.12f, 0.2f, 0.28f, 0.3f));
     }
 }
