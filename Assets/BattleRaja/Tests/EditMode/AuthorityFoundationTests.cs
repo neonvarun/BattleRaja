@@ -9,6 +9,29 @@ namespace BattleRaja.Tests.EditMode
     public sealed class AuthorityFoundationTests
     {
         [Test]
+        public void AuthorityCollectsGadgetPickupDuringCanonicalTick()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            authority.ConfigureItems(
+                null,
+                new[] { new GadgetPickupDefinition(0, GadgetDefinition.DholBurst.GadgetId) });
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(3f, 0f), 100)
+            });
+
+            Assert.That(authority.IsGadgetPickupAvailable(0), Is.True, "available before tick");
+
+            var tick = authority.Advance(1, 1f / 30f);
+
+            Assert.That(authority.IsGadgetPickupAvailable(0), Is.False, "consumed after tick");
+            Assert.That(tick.GadgetCollections, Has.Length.EqualTo(1), "one collection intent");
+            Assert.That(tick.GadgetCollections[0].GadgetId, Is.EqualTo(GadgetDefinition.DholBurst.GadgetId));
+            Assert.That(tick.GadgetCollections[0].CollectionEventId, Is.EqualTo(1));
+        }
+
+        [Test]
         public void MatchAuthorityEmitsZoneDamageIntentsOutsideTheCurrentZone()
         {
             var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja, 1f);
@@ -444,16 +467,16 @@ namespace BattleRaja.Tests.EditMode
             var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
             authority.ConfigureItems(
                 null,
-                new[] { new GadgetPickupDefinition(0, GadgetDefinition.DholBurst.GadgetId, Float2.Zero, 1.3f) });
+                new[] { new GadgetPickupDefinition(0, GadgetDefinition.DholBurst.GadgetId) });
             authority.Start(new List<MatchSpawn>
             {
                 new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
-                new MatchSpawn(new CombatEntityId(2), new Float2(6f, 6f), 100)
+                new MatchSpawn(new CombatEntityId(2), new Float2(3f, 0f), 100)
             });
 
             // Gadget pickup now resolves atomically through authority ticks.
             // Actor 1 already spawns at the pickup location; just advance.
-            var collectTick = authority.Advance(1, 1f);
+            var collectTick = authority.Advance(1, 1f / 30f);
             Assert.That(collectTick.GadgetCollections, Has.Length.EqualTo(1));
             Assert.That(collectTick.GadgetCollections[0].GadgetId, Is.EqualTo(GadgetDefinition.DholBurst.GadgetId));
 
@@ -621,21 +644,21 @@ namespace BattleRaja.Tests.EditMode
             var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
             authority.ConfigureItems(
                 null,
-                new[] { new GadgetPickupDefinition(0, GadgetDefinition.DholBurst.GadgetId) });
+                new[] { new GadgetPickupDefinition(0, GadgetDefinition.DholBurst.GadgetId, new Float2(8f, -8f), 1.3f) });
             authority.Start(new List<MatchSpawn>
             {
                 new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
                 new MatchSpawn(new CombatEntityId(2), new Float2(3f, 0f), 100)
             });
 
-            // Warm past LoadWarmup while both actors stay inside the zone so
-            // no identity is consumed during setup.
-            for (var warmup = 1; warmup <= 90; warmup++) authority.Advance(warmup, 1f);
+            // Warm past LoadWarmup(3s) + SpawnProtection(5s). Both actors stay
+            // inside the zone so no damage identity is consumed during setup.
+            for (var warmup = 1; warmup <= 240; warmup++) authority.Advance(warmup, 1f / 30f);
 
             // Move actor 1 outside and collect damage identities until one fires.
             authority.SetPosition(new CombatEntityId(1), new Float2(15f, 0f));
             var firstDamageId = -1;
-            for (var tick = 91; tick <= 150; tick++)
+            for (var tick = 241; tick <= 300; tick++)
             {
                 var t = authority.Advance(tick, 1f / 30f);
                 var ids = t.DamageEvents.Where(e => e.TargetId.Value == 1).Select(e => e.EventId).ToList();
@@ -648,9 +671,9 @@ namespace BattleRaja.Tests.EditMode
 
             Assert.That(firstDamageId, Is.EqualTo(1));
 
-            authority.SetPosition(new CombatEntityId(1), new Float2(-5f, -5f));
+            authority.SetPosition(new CombatEntityId(1), new Float2(8f, -8f));
             var gadgetCollected = false;
-            for (var tick = 151; tick <= 200; tick++)
+            for (var tick = 301; tick <= 360; tick++)
             {
                 var t = authority.Advance(tick, 1f / 30f);
                 if (t.GadgetCollections.Any())
@@ -665,7 +688,7 @@ namespace BattleRaja.Tests.EditMode
             var use = authority.TryUseGadget(new GadgetUseCommand(
                 new CombatEntityId(1),
                 GadgetDefinition.DholBurst.GadgetId,
-                new Float2(-5f, -5f),
+                new Float2(8f, -8f),
                 new Float2(1f, 0f),
                 11));
             Assert.That(use.EventId, Is.EqualTo(1));
@@ -675,12 +698,13 @@ namespace BattleRaja.Tests.EditMode
                 new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
                 new MatchSpawn(new CombatEntityId(2), new Float2(3f, 0f), 100)
             });
+            authority.SetPosition(new CombatEntityId(1), new Float2(15f, 0f));
 
             // Every identity stream restarts from a clean deterministic base.
             var restartDamageIds = new List<int>();
-            for (var tick = 1; tick <= 3; tick++)
+            for (var tick = 1; tick <= 300; tick++)
             {
-                restartDamageIds.AddRange(authority.Advance(tick, 30f).DamageEvents
+                restartDamageIds.AddRange(authority.Advance(tick, 1f / 30f).DamageEvents
                     .Select(e => e.EventId)
                     .Where(id => id > 0));
             }
