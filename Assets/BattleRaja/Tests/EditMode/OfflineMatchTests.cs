@@ -128,6 +128,37 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void SameTickDamageFromDifferentAttackersIsPreservedWithSequentialEventIds()
+        {
+            var simulation = new OfflineMatchSimulation(OfflineMatchDefinition.SoloRaja);
+            simulation.Start(CreateSpawns(3));
+            simulation.Advance(2f);
+
+            // Two distinct attackers damage the same target inside the same tick;
+            // both legitimate hits must be preserved independently.
+            var firstAttack = new DamageRequest(new CombatEntityId(1), new CombatEntityId(2), CombatFaction.Player, 30, DamageType.Projectile);
+            Assert.That(simulation.ApplyDamage(firstAttack, CombatFaction.Enemy, false, false).Applied, Is.True);
+            var secondAttack = new DamageRequest(new CombatEntityId(3), new CombatEntityId(2), CombatFaction.Player, 20, DamageType.Ability);
+            Assert.That(simulation.ApplyDamage(secondAttack, CombatFaction.Enemy, false, false).Applied, Is.True);
+
+            // Each recorded event receives a stable sequential identity.
+            Assert.That(simulation.EmittedDamageEventCount, Is.EqualTo(2));
+            Assert.That(simulation.LastDamageEventId, Is.EqualTo(2));
+
+            var finishing = new DamageRequest(new CombatEntityId(1), new CombatEntityId(2), CombatFaction.Player, 60, DamageType.Projectile);
+            var finishResult = simulation.ApplyDamage(finishing, CombatFaction.Enemy, false, false);
+            Assert.That(finishResult.TargetDefeated, Is.True);
+            Assert.That(finishResult.Applied, Is.True);
+
+            // A rejected retransmission of the same finishing hit consumes no identity.
+            Assert.That(simulation.RecordDamage(new CombatDamageEvent(finishing, 60, true, 0, 99)), Is.False);
+            Assert.That(simulation.EmittedDamageEventCount, Is.EqualTo(3));
+
+            var snapshots = simulation.GetSnapshots();
+            Assert.That(snapshots[1].Alive, Is.False);
+        }
+
+        [Test]
         public void TimeoutRanksSeveralSurvivorsAndAssignsEveryPlacement()
         {
             var simulation = new OfflineMatchSimulation(OfflineMatchDefinition.SoloRaja);

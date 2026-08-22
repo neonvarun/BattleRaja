@@ -175,15 +175,24 @@ namespace BattleRaja.Core.Domain
         private readonly OfflineMatchDefinition _definition;
         private readonly List<ParticipantState> _participants = new List<ParticipantState>(8);
         private readonly Dictionary<CombatEntityId, Dictionary<CombatEntityId, int>> _damageContributions = new Dictionary<CombatEntityId, Dictionary<CombatEntityId, int>>();
+        private readonly MatchEventIdentityTracker _identityTracker = new MatchEventIdentityTracker();
         private float _elapsed;
         private MatchPhase _phase = MatchPhase.LoadWarmup;
         private bool _started;
         private int _nextPlacement;
+        private int _lastDamageEventId;
+        private int _emittedDamageEvents;
 
         public OfflineMatchSimulation(OfflineMatchDefinition definition)
         {
             _definition = definition;
         }
+
+        /// <summary>Stable identity assigned to the most recently recorded damage event.</summary>
+        public int LastDamageEventId => _lastDamageEventId;
+
+        /// <summary>Count of recorded (non-rejected) damage events; identities are sequential per match.</summary>
+        public int EmittedDamageEventCount => _emittedDamageEvents;
 
         public MatchPhase Phase => _phase;
         public float ElapsedSeconds => _elapsed;
@@ -303,6 +312,13 @@ namespace BattleRaja.Core.Domain
             var target = Find(damageEvent.TargetId);
             if (target == null || !target.Alive) return false;
 
+            // Identity is assigned only after validation so rejected or
+            // duplicate submissions never consume a stable event ID.
+            _lastDamageEventId = damageEvent.EventId != 0
+                ? damageEvent.EventId
+                : _identityTracker.NextDamageEventId();
+            _emittedDamageEvents++;
+
             target.CurrentHealth = Math.Max(0, Math.Min(target.MaxHealth, damageEvent.CurrentHealthAfter));
             var instigator = Find(damageEvent.InstigatorId);
             if (instigator != null && instigator.Id != target.Id)
@@ -414,10 +430,13 @@ namespace BattleRaja.Core.Domain
         {
             _participants.Clear();
             _damageContributions.Clear();
+            _identityTracker.Reset();
             _elapsed = 0f;
             _phase = MatchPhase.LoadWarmup;
             _nextPlacement = 0;
             _started = false;
+            _lastDamageEventId = 0;
+            _emittedDamageEvents = 0;
         }
 
         private void UpdatePhase()

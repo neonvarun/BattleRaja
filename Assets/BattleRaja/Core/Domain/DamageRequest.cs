@@ -95,13 +95,15 @@ namespace BattleRaja.Core.Domain
             int amountApplied,
             bool targetDefeated,
             int currentHealthAfter,
-            int simulationTick)
+            int simulationTick,
+            int eventId = 0)
         {
             Request = request;
             AmountApplied = amountApplied;
             TargetDefeated = targetDefeated;
             CurrentHealthAfter = currentHealthAfter;
             SimulationTick = simulationTick;
+            EventId = eventId;
         }
 
         public DamageRequest Request { get; }
@@ -112,5 +114,12 @@ namespace BattleRaja.Core.Domain
         public bool TargetDefeated { get; }
         public int CurrentHealthAfter { get; }
         public int SimulationTick { get; }
+
+        /// <summary>
+        /// Stable authority-assigned identity (0 while unassigned). Assigned by
+        /// the match simulation when the event is recorded, so transports can
+        /// reject retransmissions independently per event.
+        /// </summary>
+        public int EventId { get; }
     }
 }
