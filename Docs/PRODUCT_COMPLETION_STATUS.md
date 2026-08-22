@@ -36,9 +36,10 @@ rejection matrix, authority-owned roster/loadout/faction/origin/tick-rate/cooldo
 same-tick hits from different attackers preserved by construction, scene-reload cleanup
 covered by two PlayMode regressions, presentation mutation/vendor scans active, and all
 production gameplay consumers on the fixed simulation clock (scene-side clocks are
-lab-only fallbacks or per-tick authority reconciliations). Residual open items: gadget/
-ability commands still lack an authority-clock staleness window; transport-level
-duplicate-event dedup remains Phase 8 scope.
+lab-only fallbacks or per-tick authority reconciliations). Follow-up verification
+confirmed gadget and ability cooldowns are authority-time-based (not tick-derived), so
+they cannot bypass rate limits; transport-level duplicate-event dedup remains Phase 8
+scope.
 
 ## Goal B deterministic collision/placement continuation — 2026-08-04
 

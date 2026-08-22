@@ -1137,9 +1137,12 @@ Record every material choice here. Do not silently overwrite old decisions.
   already stamp commands with the current canonical tick, so no production behavior
   changes; the rejection window only affects untrusted/lagging producers.
 - **Consequences:** Fire-rate policy can no longer be compressed by replayed or lagging
-  input regardless of producer behavior. Gadget use (`GadgetRuntime.TryUse`) and ability
-  commands still validate only per-actor monotonicity without an authority-clock
-  staleness window; closing that residual asymmetry is tracked as bounded follow-up work.
+  input regardless of producer behavior. Follow-up verification confirmed gadget use
+  (`GadgetRuntime`), Pehel charge (`ChargeThrowRuntime`) and Maya decoy (`DecoyRuntime`)
+  cooldowns are already seconds-based and advanced only by authority fixed steps, so
+  their caller-supplied ticks carry ordering identity only and cannot bypass any rate
+  limit; no further staleness window is required there. Transport-level duplicate-event
+  dedup remains Phase 8 scope.
 - **Evidence/sources:** `OfflineMatchAuthority.TryAcceptAttack`,
   `AuthorityFoundationTests.MatchAuthorityRejectsStaleAttackCommandsAndAnchorsCooldownToAuthorityClock`
   (EditMode 115/115), PlayMode 57/57 at commit `ee573ad`, validate.ps1 0 errors/0 warnings.

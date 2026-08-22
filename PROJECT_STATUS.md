@@ -23,8 +23,9 @@
 - Phase 1 authority audit (2026-08-22): complete at `ee573ad` with EditMode **115/115**
   and PlayMode **57/57**. One real gap found and fixed — stale attack ticks could bypass
   weapon cooldown; commands are now rejected as `StaleTick` beyond a 2-tick window and
-  cooldowns anchor to the canonical clock (ADR-053). Remaining Phase 1 follow-ups:
-  gadget/ability staleness windows and transport-level duplicate-event dedup (Phase 8).
+  cooldowns anchor to the canonical clock (ADR-053). Gadget/ability cooldowns verified
+  authority-time-based (no bypass path); transport-level duplicate-event dedup remains
+  Phase 8 scope.
 - Root agent rules: active
 - Milestone 0: complete and committed locally
 - Unity project: verified at the repository root with URP and MovementLab scenes
