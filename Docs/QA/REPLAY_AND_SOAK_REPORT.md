@@ -1,41 +1,55 @@
-# BattleRaja Replay and Soak Report (Stage 5 Verification)
+# BattleRaja Replay and Soak Report
 
-Rewritten 2026-08-22 with reproducible evidence from the exact current source
-(`phase0/exact-source-rebaseline`). The previous version of this file claimed a
-1,000-match soak with no commands or artifacts; those claims were unverified and are
-replaced by the evidence below. The "Raja" fighter mentioned previously does not exist
-in the product roster (Bijli, Pehel, Maya) and no longer appears here.
+## Current method — 2026-08-23
 
-## Method
+Validated at local and remote `main` commit `1412802`
+(`soak: verify recorded complete replay input streams`).
 
-`Assets/BattleRaja/Tests/EditMode/DeterministicSoakTests.cs` runs accelerated offline
-matches entirely through `OfflineMatchAuthority`: eight participants on verified spawn
-positions under `ArenaCollisionDefinition.BazaarBastion`, seeded per-actor movement
-commands resolved every tick, sparse seeded attack submissions gated to live phases,
-canonical 30 Hz ticks until match resolution, and an FNV-1a state hash per tick via
-`DeterministicReplayHasher.CalculateTickHash` (tick, phase, zone, participant
-health/positions, projectile positions).
+`Assets/BattleRaja/Tests/EditMode/DeterministicSoakTests.cs` now builds a
+complete replay for every seeded match. The header records the fixed 30 Hz step,
+Solo Raja scenario, all eight spawns, fighter-specific weapon and movement setup,
+factions, health pickups, gadget pickups, and arena version. Every frame records
+the ordered movement, attack, ability, Maya-decoy context, and gadget-use inputs.
 
-Every match is executed twice with the same seed; the two per-tick hash streams must be
-element-for-element identical.
+The soak covers Bijli, Pehel, Maya, canonical attacks and projectiles, health
+pickup collection, Dhol Burst, Umbrella Guard, Tiffin Station, Pehel charge,
+Maya decoys, Aandhi phases, elimination, and terminal resolution. For every seed
+it first executes the generated stream without an expected hash file to capture
+the authoritative hashes, writes those hashes into the replay, then executes the
+exact recorded stream again with full hash verification.
 
-## Results — 2026-08-22
+`DeterministicReplayHasher.CalculateTickHash` delegates to the authority's
+canonical digest. It includes tick/phase/zone state, participant statistics and
+positions, movement motors, attack cooldowns and sequences, weapon configuration,
+gadget inventories/cooldowns, guards, charge runtimes, decoys, stations, pickup
+availability and timers, identity counters, projectiles, match end, and winner.
 
-| Run | Command | Result | Evidence |
-| --- | --- | --- | --- |
-| Deep soak | `$env:BATTLERAJA_SOAK_MATCHES='1000'`; Unity `-runTests -testPlatform editmode -testFilter BattleRaja.Tests.EditMode.DeterministicSoakTests -testResults Builds/Local/TestResults/soak-1000.xml -logFile Builds/Local/Logs/soak-1000.log` | **Passed**; 1,000 seeded matches × 2 executions = 2,000 full matches, **zero divergence**; test duration 406.8 s, exit 0 | `Builds/Local/TestResults/soak-1000.xml`, `Builds/Local/Logs/soak-1000.log` |
-| Full suite | default depth (4 matches × 2); full EditMode suite | **120/120 passed**, exit 0 | `Builds/Local/TestResults/editmode-a2.xml` |
+## Deep-soak result — 2026-08-23
 
-Determinism across render rates remains covered by
-`CoreFoundationTests.FixedClockProducesTheSameTickCountForDifferentRenderRates`, and
-replay hashing/frame recording by `ReplayDeterminismTests`.
+- Source: `1412802`, clean except the owner-protected scene/prompt working-tree files.
+- Command environment: `BATTLERAJA_SOAK_MATCHES=1000`.
+- Command filter:
+  `BattleRaja.Tests.EditMode.DeterministicSoakTests.AcceleratedSeededMatchesReproduceIdenticalHashStreams`.
+- Result: **passed**; 1 test / 1 passed / 0 failed / 0 skipped.
+- Execution scope: **1,000 seeded matches x 2 executions = 2,000 full matches**.
+- Recorded-replay divergence: **zero**.
+- NUnit duration: **416.1411007 seconds**.
+- XML evidence:
+  `Builds/Local/TestResults/deep-soak-1000.xml`.
+- Log evidence:
+  `Builds/Local/Logs/deep-soak-1000.log`; Unity reported
+  `Test run completed. Exiting with code 0 (Ok). Run completed.`
+- Full EditMode at the same source after the deep soak: **125/125 passed**
+  (`Builds/Local/TestResults/editmode-head.xml`).
+
+Non-fatal startup log entries included a transient Unity licensing signature/token
+message followed by successful Personal entitlement resolution, plus a warning that
+an empty Gameplay assembly has no scripts. No C# compilation error or test failure was
+present.
 
 ## Scope and honest limitations
 
-- Soak drives movement + attacks through the authority; gadgets/pickups are not yet
-  configured in soak matches (recorded follow-up, not hidden).
-- Hash parity proves simulation determinism for identical command streams; it does not
-  prove cross-machine float determinism or network transport correctness.
-- Memory-leak observations are covered by PlayMode repeated-match regressions
-  (`RepeatedResultsRematchesKeepRuntimeGraphClean`,
-  `RepeatedProductionSceneLoadsKeepOneOfflineRuntimeGraph`), not by this EditMode soak.
+- Same-machine stream parity does not prove cross-machine floating-point determinism.
+- This EditMode soak does not prove memory-leak freedom; repeated-runtime PlayMode checks remain the relevant evidence.
+- Replay execution is currently Core/Application test coverage; production presentation capture and durable replay-file serialization are not yet wired.
+- Network transport correctness is out of scope for this offline authority soak.

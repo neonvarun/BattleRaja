@@ -16,10 +16,9 @@
   weapon-damage retune existed only in serialized assets while the Core definitions
   still shipped 18/28/12; the documented 12/20/9 targets are now authoritative in
   code (see `Docs/BALANCE_CHANGELOG.md` and `Docs/QA/LATEST_HEAD_BASELINE.md`).
-- Latest validated repository HEAD: `c78433a`; local `main` remains ahead of
-  `origin/main` by 4 commits plus this branch (unpushed); EditMode **114/114** and
-  PlayMode **57/57** pass at both recorded sources with validation at 0 errors /
-  0 warnings.
+- Latest validated repository HEAD: `1412802` on local and remote `main`;
+  EditMode **125/125** passes with repository validation at 0 errors / 0 warnings.
+  Exact-source deep replay/soak evidence is recorded in `Docs/QA/REPLAY_AND_SOAK_REPORT.md`.
 - Phase 1 authority audit (2026-08-22): complete at `ee573ad` with EditMode **115/115**
   and PlayMode **57/57**. One real gap found and fixed — stale attack ticks could bypass
   weapon cooldown; commands are now rejected as `StaleTick` beyond a 2-tick window and
@@ -32,12 +31,17 @@
   defect fixed (`IsPointBlocked` float-fragile boundary comparisons) and three new
   deterministic fixtures pin corner clamping, thin-wall no-tunneling and a seeded-walk
   footprint invariant.
-- Phase 3 authoritative-projectile audit (2026-08-22): in progress. Core-owned
-  projectile travel/collision, stable attack/projectile IDs, decoy duplicate rejection
-  and same-tick multi-attacker preservation verified from source. Recorded gap: only
-  attack-execution and projectile identities are wired into production; damage/healing/
-  collection/elimination/gadget-use event IDs are tracker-ready but never stamped onto
-  events (offline-safe, required for Phase 8 transport dedup).
+- Phase 3 authoritative-projectile/event-identity audit (2026-08-23): complete at
+  `5fa12e3`. Aandhi damage, healing, pickups, gadget collection/use, ability starts,
+  projectiles and related identity streams are resolved or emitted through canonical
+  authority ticks and covered by deterministic regressions. EditMode **123/123** passed.
+- Phase 4 replay/determinism/soak completion (2026-08-23): implemented through
+  `1412802`. Canonical authority hashes cover cooldowns, inventories, pickups, stations,
+  decoys, ability runtimes, identity counters, projectiles and terminal match state.
+  The executable replay runner reconstructs complete setup and input streams. The deep
+  soak executed **1,000 seeds x 2 = 2,000 matches** with **zero divergence** in
+  **416.1411007 s**; EditMode **125/125** also passed at the same source. Exact Android/Web
+  regression and production capture wiring remain open.
 - Root agent rules: active
 - Milestone 0: complete and committed locally
 - Unity project: verified at the repository root with URP and MovementLab scenes
