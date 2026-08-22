@@ -3102,6 +3102,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Match.OfflineMatchController
   damageResolver: {fileID: 1969483346}
   cameraController: {fileID: 1628052109}
+  projectilePool: {fileID: 0}
   pickups: []
   gadgetPickups: []
   outsideDamageTickSeconds: 1
@@ -3281,7 +3282,7 @@ Transform:
   - {fileID: 1069708111}
   - {fileID: 1385153230}
   - {fileID: 1000055193}
-  - {fileID: 1706950450}
+  - {fileID: 1721662738}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1047434719
@@ -5250,7 +5251,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1706950449
+--- !u!1 &1721662737
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5258,8 +5259,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1706950450}
-  - component: {fileID: 1706950451}
+  - component: {fileID: 1721662738}
+  - component: {fileID: 1721662739}
   m_Layer: 0
   m_Name: TutorialOverlay
   m_TagString: Untagged
@@ -5267,13 +5268,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1706950450
+--- !u!4 &1721662738
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1706950449}
+  m_GameObject: {fileID: 1721662737}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -5282,13 +5283,13 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1047434718}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1706950451
+--- !u!114 &1721662739
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1706950449}
+  m_GameObject: {fileID: 1721662737}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1355ddb553c94718a8b3a7de3ba09be4, type: 3}

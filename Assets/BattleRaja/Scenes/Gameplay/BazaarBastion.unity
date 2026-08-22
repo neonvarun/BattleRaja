@@ -540,6 +540,7 @@ MonoBehaviour:
   fighterController: {fileID: 0}
   perception: {fileID: 0}
   gadgetUser: {fileID: 0}
+  matchController: {fileID: 0}
 --- !u!114 &243717753
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -605,6 +606,7 @@ MonoBehaviour:
   inputAdapter: {fileID: 0}
   movementAgent: {fileID: 0}
   projectilePool: {fileID: 1585441182}
+  match: {fileID: 0}
   simulationTickRate: 30
 --- !u!114 &243717756
 MonoBehaviour:
@@ -1324,6 +1326,7 @@ MonoBehaviour:
   inputAdapter: {fileID: 331243773}
   movementAgent: {fileID: 331243768}
   projectilePool: {fileID: 1585441182}
+  match: {fileID: 0}
   simulationTickRate: 30
 --- !u!120 &331243776
 LineRenderer:
@@ -1863,6 +1866,7 @@ MonoBehaviour:
   fighterController: {fileID: 392919029}
   perception: {fileID: 0}
   gadgetUser: {fileID: 0}
+  matchController: {fileID: 0}
 --- !u!114 &392919020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1903,6 +1907,7 @@ MonoBehaviour:
   inputAdapter: {fileID: 0}
   movementAgent: {fileID: 0}
   projectilePool: {fileID: 1585441182}
+  match: {fileID: 0}
   simulationTickRate: 30
 --- !u!114 &392919023
 MonoBehaviour:
@@ -2524,6 +2529,7 @@ MonoBehaviour:
   fighterController: {fileID: 0}
   perception: {fileID: 0}
   gadgetUser: {fileID: 0}
+  matchController: {fileID: 0}
 --- !u!114 &795220285
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2589,6 +2595,7 @@ MonoBehaviour:
   inputAdapter: {fileID: 0}
   movementAgent: {fileID: 0}
   projectilePool: {fileID: 1585441182}
+  match: {fileID: 0}
   simulationTickRate: 30
 --- !u!114 &795220288
 MonoBehaviour:
@@ -3228,6 +3235,7 @@ MonoBehaviour:
   fighterController: {fileID: 989590247}
   perception: {fileID: 0}
   gadgetUser: {fileID: 0}
+  matchController: {fileID: 0}
 --- !u!114 &989590238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3268,6 +3276,7 @@ MonoBehaviour:
   inputAdapter: {fileID: 0}
   movementAgent: {fileID: 0}
   projectilePool: {fileID: 1585441182}
+  match: {fileID: 0}
   simulationTickRate: 30
 --- !u!114 &989590241
 MonoBehaviour:
@@ -5040,6 +5049,7 @@ MonoBehaviour:
   fighterController: {fileID: 0}
   perception: {fileID: 0}
   gadgetUser: {fileID: 0}
+  matchController: {fileID: 0}
 --- !u!114 &1574973498
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5105,6 +5115,7 @@ MonoBehaviour:
   inputAdapter: {fileID: 0}
   movementAgent: {fileID: 0}
   projectilePool: {fileID: 1585441182}
+  match: {fileID: 0}
   simulationTickRate: 30
 --- !u!114 &1574973501
 MonoBehaviour:
@@ -5840,6 +5851,7 @@ MonoBehaviour:
   fighterController: {fileID: 0}
   perception: {fileID: 0}
   gadgetUser: {fileID: 0}
+  matchController: {fileID: 0}
 --- !u!114 &1715868713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5905,6 +5917,7 @@ MonoBehaviour:
   inputAdapter: {fileID: 0}
   movementAgent: {fileID: 0}
   projectilePool: {fileID: 1585441182}
+  match: {fileID: 0}
   simulationTickRate: 30
 --- !u!114 &1715868716
 MonoBehaviour:
@@ -6116,6 +6129,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Match.OfflineMatchController
   damageResolver: {fileID: 1585441181}
   cameraController: {fileID: 988681426}
+  projectilePool: {fileID: 0}
   pickups: []
   gadgetPickups: []
   outsideDamageTickSeconds: 1
@@ -7135,6 +7149,7 @@ MonoBehaviour:
   fighterController: {fileID: 0}
   perception: {fileID: 0}
   gadgetUser: {fileID: 0}
+  matchController: {fileID: 0}
 --- !u!114 &2058019583
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7200,6 +7215,7 @@ MonoBehaviour:
   inputAdapter: {fileID: 0}
   movementAgent: {fileID: 0}
   projectilePool: {fileID: 1585441182}
+  match: {fileID: 0}
   simulationTickRate: 30
 --- !u!114 &2058019586
 MonoBehaviour:
