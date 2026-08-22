@@ -32,6 +32,12 @@
   defect fixed (`IsPointBlocked` float-fragile boundary comparisons) and three new
   deterministic fixtures pin corner clamping, thin-wall no-tunneling and a seeded-walk
   footprint invariant.
+- Phase 3 authoritative-projectile audit (2026-08-22): in progress. Core-owned
+  projectile travel/collision, stable attack/projectile IDs, decoy duplicate rejection
+  and same-tick multi-attacker preservation verified from source. Recorded gap: only
+  attack-execution and projectile identities are wired into production; damage/healing/
+  collection/elimination/gadget-use event IDs are tracker-ready but never stamped onto
+  events (offline-safe, required for Phase 8 transport dedup).
 - Root agent rules: active
 - Milestone 0: complete and committed locally
 - Unity project: verified at the repository root with URP and MovementLab scenes

@@ -55,6 +55,28 @@ diagonal corner clamping, no tunneling through the 0.45-thick lane wall under 30
 displacements, and a 400-step seeded walk invariant. Evidence: validate 0/0,
 EditMode **118/118**, PlayMode **57/57**.
 
+## Phase 3 authoritative-projectile audit (in progress) — 2026-08-22
+
+Verified from source at `669c4a9`: projectile travel/collision/target selection are
+Core-owned (`OfflineMatchAuthority.AdvanceProjectiles` sweeps walls, actors, decoys and
+stations inside the canonical tick); every accepted attack receives a stable
+attack-execution ID and projectile ID from `MatchEventIdentityTracker`; Maya decoy
+damage rejects duplicates; Aandhi damage and Tiffin healing emit typed intents inside
+`Advance`; same-tick hits from different attackers are preserved by construction
+(per-instigator damage contributions, no target/tick dedup).
+
+**Recorded gap:** only attack-execution and projectile identities are wired into
+production events. The tracker's damage/healing/collection/elimination/gadget-use
+identity generators exist and are unit-tested but are never stamped onto emitted
+events or persisted anywhere. Offline play is structurally safe because each event is
+applied exactly once through a single in-process authority call (projectiles despawn on
+contact; decoy damage has explicit duplicate rejection), so this is not an offline
+correctness defect — but stable per-event identities on emitted
+`CombatDamageEvent`/healing/collection/elimination records are required before any
+transport can reject retransmitted events (Phase 8). Closing it requires cross-layer
+plumbing (Domain event structs → authority emission → presentation consumption) and is
+recorded as bounded future work rather than silently claimed.
+
 ## Goal B deterministic collision/placement continuation — 2026-08-04
 
 Runtime source `a5fdde8` adds the Core `ArenaCollisionDefinition` and deterministic bounds/
