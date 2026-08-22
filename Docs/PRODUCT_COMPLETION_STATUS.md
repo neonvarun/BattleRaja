@@ -41,6 +41,20 @@ confirmed gadget and ability cooldowns are authority-time-based (not tick-derive
 they cannot bypass rate limits; transport-level duplicate-event dedup remains Phase 8
 scope.
 
+## Phase 2 collision/ability/movement verification — 2026-08-22
+
+Verified from source at `669c4a9`: authored Bazaar obstacle set (11 stable-ID AABBs),
+bounds clamping, axis-separated swept movement with slide preservation, spawn
+separation validation, and all ability displacements (Bijli dash, Pehel charge/throw,
+Maya placement, Dhol displacement, Tiffin placement) resolving through the
+`DeterministicCollisionSolver`. One defect found and fixed: `IsPointBlocked` boundary
+comparisons were float-fragile at solver contact positions (probe showed bit-identical
+operands comparing unequal under Mono); the query now uses a 0.0005 inward margin so
+every solver-produced position classifies as unblocked. New deterministic fixtures pin
+diagonal corner clamping, no tunneling through the 0.45-thick lane wall under 30-unit
+displacements, and a 400-step seeded walk invariant. Evidence: validate 0/0,
+EditMode **118/118**, PlayMode **57/57**.
+
 ## Goal B deterministic collision/placement continuation — 2026-08-04
 
 Runtime source `a5fdde8` adds the Core `ArenaCollisionDefinition` and deterministic bounds/

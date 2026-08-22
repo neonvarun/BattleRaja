@@ -26,6 +26,12 @@
   cooldowns anchor to the canonical clock (ADR-053). Gadget/ability cooldowns verified
   authority-time-based (no bypass path); transport-level duplicate-event dedup remains
   Phase 8 scope.
+- Phase 2 collision/ability/movement verification (2026-08-22): complete at `669c4a9`
+  with EditMode **118/118** and PlayMode **57/57**. Solver, authored Bazaar geometry,
+  spawn separation and all ability displacements verified from source; one query-API
+  defect fixed (`IsPointBlocked` float-fragile boundary comparisons) and three new
+  deterministic fixtures pin corner clamping, thin-wall no-tunneling and a seeded-walk
+  footprint invariant.
 - Root agent rules: active
 - Milestone 0: complete and committed locally
 - Unity project: verified at the repository root with URP and MovementLab scenes
