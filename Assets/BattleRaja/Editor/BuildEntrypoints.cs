@@ -247,7 +247,10 @@ namespace BattleRaja.Editor
             CreatePickup("HealthPickup_C", new Vector3(0f, 0.35f, -1f), arena.transform, impactMaterial);
             CreateGadgetPickup("GadgetPickup_Umbrella", GadgetDefinition.UmbrellaGuard.GadgetId.Value, new Vector3(-8f, 0.35f, 0f), arena.transform, indicatorMaterial);
             CreateGadgetPickup("GadgetPickup_Dhol", GadgetDefinition.DholBurst.GadgetId.Value, new Vector3(8f, 0.35f, 0f), arena.transform, indicatorMaterial);
-            CreateGadgetPickup("GadgetPickup_Tiffin", GadgetDefinition.TiffinStation.GadgetId.Value, new Vector3(0f, 0.35f, 6f), arena.transform, indicatorMaterial);
+            // Keep the tutorial-relevant healing gadget on the player's protected
+            // south lane. The old north placement overlapped the (0, 7) bot spawn,
+            // allowing a bot to consume it before a human could reach the route.
+            CreateGadgetPickup("GadgetPickup_Tiffin", GadgetDefinition.TiffinStation.GadgetId.Value, new Vector3(0f, 0.35f, -4.8f), arena.transform, indicatorMaterial);
             var matchObject = new GameObject("OfflineMatch");
             matchObject.transform.SetParent(arena.transform);
             var matchController = matchObject.AddComponent<OfflineMatchController>();
@@ -337,6 +340,17 @@ namespace BattleRaja.Editor
             var productionScene = EditorSceneManager.OpenScene(BazaarBastionScenePath, OpenSceneMode.Single);
             var arena = GameObject.Find("BazaarBastion");
             if (arena == null) throw new BuildFailedException("Bazaar Bastion root was not found while validating the production scene.");
+
+            // Keep the tutorial-relevant healing gadget on the player's protected
+            // south lane in the authored production scene as well as in fresh
+            // development-scene generation. The former north placement overlaps
+            // the (0, 7) bot spawn and lets a bot consume the route before a human.
+            var tiffinPickup = arena.GetComponentsInChildren<GadgetPickup>(true)
+                .FirstOrDefault(pickup => pickup.GadgetId.Equals(GadgetDefinition.TiffinStation.GadgetId));
+            if (tiffinPickup != null)
+            {
+                tiffinPickup.transform.localPosition = new Vector3(0f, 0.35f, -4.8f);
+            }
 
             var labMarker = arena.GetComponent<MovementLabScene>();
             if (labMarker != null) UnityEngine.Object.DestroyImmediate(labMarker);

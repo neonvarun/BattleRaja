@@ -4451,7 +4451,7 @@ Transform:
   m_GameObject: {fileID: 1483267580}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.35, z: 6}
+  m_LocalPosition: {x: 0, y: 0.35, z: -4.8}
   m_LocalScale: {x: 0.55, y: 0.22, z: 0.55}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5329,6 +5329,7 @@ MonoBehaviour:
   prewarmCount: 8
   lifetimeSeconds: 0.16
   impactMaterial: {fileID: 2100000, guid: 0e3b08575a75ef84e97768343882a8e2, type: 2}
+  reducedFlashMode: 0
 --- !u!4 &1585441184
 Transform:
   m_ObjectHideFlags: 0
@@ -5395,6 +5396,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Gadgets.GadgetHud
   user: {fileID: 331243765}
   statusText: {fileID: 790963843}
+  pickups: []
+  proximityRadius: 2.6
 --- !u!1 &1684566184
 GameObject:
   m_ObjectHideFlags: 0

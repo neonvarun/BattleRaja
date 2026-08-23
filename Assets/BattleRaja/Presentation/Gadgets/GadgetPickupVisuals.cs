@@ -86,6 +86,11 @@ namespace BattleRaja.Presentation.Gadgets
                 CreatePrimitive("UmbrellaHandle", PrimitiveType.Cube, root, new Vector3(0.12f, 0.14f, 0f), new Vector3(0.08f, 0.22f, 0.08f), highlight, Quaternion.Euler(0f, 0f, -30f));
                 CreatePrimitive("UmbrellaStripe", PrimitiveType.Cube, root, new Vector3(0f, 0.68f, 0f), new Vector3(0.12f, 0.03f, 0.58f), highlight, Quaternion.Euler(0f, 45f, 0f));
             }
+
+            // A tall, low-cost beacon makes the pickup discoverable from the
+            // overhead camera without changing its collider or authority position.
+            CreatePrimitive("PickupBeacon", PrimitiveType.Cube, root, new Vector3(0f, 1.08f, 0f), new Vector3(0.055f, 0.72f, 0.055f), highlight);
+            CreatePrimitive("PickupBeaconTop", PrimitiveType.Cube, root, new Vector3(0f, 1.48f, 0f), new Vector3(0.24f, 0.055f, 0.24f), accent, Quaternion.Euler(0f, 45f, 0f));
         }
 
         private GameObject CreatePrimitive(string name, PrimitiveType type, Transform parent, Vector3 position, Vector3 scale, Material material, Quaternion rotation = default(Quaternion))

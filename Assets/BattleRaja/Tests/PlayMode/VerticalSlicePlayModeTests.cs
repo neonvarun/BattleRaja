@@ -247,6 +247,14 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(match.AuthorityDrivenMovement, Is.True);
 
             player.ExternalCommandMode = true;
+            // The production route intentionally starts the player close to
+            // Tiffin. Move the other fixtures away so this Dhol-specific
+            // regression remains deterministic and exercises only the pickup
+            // under test.
+            foreach (var other in Object.FindObjectsByType<GadgetPickup>())
+            {
+                if (other != dhol) other.transform.position += new Vector3(100f, 0f, 100f);
+            }
             dhol.transform.position = player.transform.position;
             match.StartMatch();
             yield return new WaitForSecondsRealtime(0.25f);
@@ -258,6 +266,45 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(user.UseHeld(), Is.True);
             Assert.That(user.HasGadget, Is.False);
             Assert.That(user.Feedback, Is.EqualTo("Dhol Burst"));
+        }
+
+        [UnityTest]
+        public IEnumerator ProductionTiffinPickupIsReachableFromPlayerSpawn()
+        {
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            var player = PlayModeTestHelpers.FindPlayer<MovementPlayerAgent>();
+            var user = player != null ? player.GetComponent<GadgetUser>() : null;
+            var tiffin = Object.FindObjectsByType<GadgetPickup>()
+                .First(pickup => pickup.GadgetId.Equals(GadgetDefinition.TiffinStation.GadgetId));
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(player, Is.Not.Null);
+            Assert.That(user, Is.Not.Null);
+            Assert.That(Vector3.Distance(player.transform.position, tiffin.transform.position), Is.LessThan(3f),
+                "The tutorial gadget must be reachable from the protected player spawn.");
+            Assert.That(Object.FindObjectsByType<BotBrain>()
+                .All(bot => Vector3.Distance(bot.transform.position, tiffin.transform.position) > 2f), Is.True,
+                "No bot spawn may overlap the tutorial gadget pickup.");
+
+            player.ExternalCommandMode = true;
+            match.StartMatch();
+            var previousTimeScale = Time.timeScale;
+            Time.timeScale = 1f;
+            for (var i = 0; i < 150 && !user.HasGadget; i++)
+            {
+                // Queue the intent every rendered frame. The match controller
+                // rewrites it to its consumed canonical tick before authority
+                // resolution, so this test does not depend on render-frame timing.
+                player.Submit(new MovementCommand(1, 1, Float2.Up, Float2.Up));
+                yield return new WaitForSecondsRealtime(1f / 30f);
+            }
+
+            Time.timeScale = previousTimeScale;
+
+            Assert.That(user.HasGadget, Is.True,
+                $"feedback={user.Feedback} player={player.transform.position} pickup={tiffin.transform.position} active={tiffin.IsAvailable}");
+            Assert.That(user.HeldGadget, Is.EqualTo(GadgetDefinition.TiffinStation.GadgetId));
+            Assert.That(tiffin.IsAvailable, Is.False);
         }
 
         [UnityTest]
@@ -506,6 +553,8 @@ namespace BattleRaja.Tests.PlayMode
             {
                 Assert.That(pickup.transform.Find("GadgetIdentityVisual"), Is.Not.Null,
                     pickup.name + " is missing its gadget identity visual");
+                Assert.That(pickup.transform.Find("GadgetIdentityVisual/PickupBeacon"), Is.Not.Null,
+                    pickup.name + " is missing its pickup beacon");
             }
 
             yield return null;
