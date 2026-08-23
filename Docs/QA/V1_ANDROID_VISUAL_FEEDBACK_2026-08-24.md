@@ -24,6 +24,11 @@ Exact runtime-source validation is **0 errors / 0 warnings**.
   justified before a Play submission.
 - Raw menu, memory, thermal/battery and logcat files are outside the repository at
   `C:\Users\USER\AppData\Local\Temp\battleraja-final-head-lava\`.
+- The same Lava run opened Settings & Accessibility. Left-handed, reduced-flashes and
+  high-contrast toggles visibly changed the persisted summary and high-contrast panel;
+  captures are `settings.png`, `settings-accessibility-on3.png` and
+  `menu-accessibility-on3.png` in that raw directory. This is an interaction probe, not
+  final touch/accessibility approval.
 
 The device sample is bounded only: **257,340 KB PSS**, **393,462 KB RSS**, **83,862 KB
 Graphics**, **83 KB swap**, and SurfaceView log windows around 59.45–60.59 FPS. This is
