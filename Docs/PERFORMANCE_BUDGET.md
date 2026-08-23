@@ -1,6 +1,7 @@
 # Android and Web Performance Budget
 
-**Status:** M1 movement path has been implemented with allocation-avoidance constraints, but formal frame-time/profiler budgets remain unmeasured.
+**Status:** Android evidence is current for the exact V1 presentation candidate, but formal
+frame-time/profiler budgets and human performance approval remain open.
 
 ## V1.0 Android candidate measurement — 2026-08-23
 
@@ -8,15 +9,16 @@ The release-shaped offline Android candidate was installed and exercised only on
 `ST5GDW23LB004392` from the disposable verification copy. This is bounded technical
 evidence, not a performance sign-off:
 
-- APK: **40,418,923 bytes**, SHA-256
-  `629C8BA2E7F3C2B4A4911D32A72E0957EE7564C0783A415E4C6617C21F105FC9`.
-- Device process sample: **279,283 KB PSS**, **414,748 KB RSS**, **95,544 KB Graphics**,
-  **64 KB swap**; one `top` sample reported approximately **81.8% CPU**.
-- Explicit Android frame pacing raised the presentation target to 60 FPS. Buffer-queue
-  logs contained consecutive one-second windows around **59.47–60.62 FPS**, one transient
-  **45.31 FPS** window and a 272 ms maximum frame. This is near-60 evidence with a
-  hitch, not a stable target pass.
-- Thermal status was 0 in the sample; CPU/GPU were about 42.4 C, skin about 39.2 C and
+- Exact source: `24feb5d7c08301ebb44548fbd0f10ffe78b6e9ec`.
+- APK: **40,430,947 bytes**, SHA-256
+  `1699EA241EA9BC85985F05A4EB1BC0C24854CF96571685F6AF51744312DD6E46`.
+- Device process sample: **284,282 KB PSS**, **420,364 KB RSS**, **99,896 KB Graphics**,
+  **77 KB swap**; one `top` sample reported approximately **81.8% CPU**.
+- Android `gfxinfo` for the final APK exposed only the Unity SurfaceView/render-node
+  summary and no frame/jank histogram. No exact-current FPS or stable frame-pacing pass
+  is claimed from this sample.
+- Thermal status was 0 in the sample; current-HAL CPU/GPU were about 42.7 C, skin about
+  39.4 C and
   battery about 35 C. This is not a thermal or battery soak.
 - Raw files and screenshots: `C:\Projects\BattleRaja-v1-verify-20260823b\Builds\V1\Lava\`.
 

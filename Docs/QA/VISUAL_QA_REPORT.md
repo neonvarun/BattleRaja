@@ -1,29 +1,29 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-23
-Runtime-bearing candidate: `b22cfe34ffa1401d89acd5ebf93aef83b4cea9a6` (offline Android release-shaped candidate)
-Current validated runtime source HEAD: `b22cfe34ffa1401d89acd5ebf93aef83b4cea9a6`
+Runtime-bearing candidate: `24feb5d7c08301ebb44548fbd0f10ffe78b6e9ec` (offline Android release-shaped candidate)
+Current validated runtime source HEAD: `24feb5d7c08301ebb44548fbd0f10ffe78b6e9ec`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://127.0.0.1:8139/index.html`
 
 ## Offline Android V1 candidate visual pass — 2026-08-23
 
-Exact candidate source: `b22cfe34ffa1401d89acd5ebf93aef83b4cea9a6`.
+Exact candidate source: `24feb5d7c08301ebb44548fbd0f10ffe78b6e9ec`.
 
 The current Android-first candidate was installed and inspected only on Lava
 `ST5GDW23LB004392` from the disposable verification copy. External captures are under
 `C:\Projects\BattleRaja-v1-verify-20260823b\Builds\V1\Lava\`:
 
-- `menu-final.png` shows the original shield/bolt identity, offline loop summary and
+- `release-final-menu.png` shows the original shield/bolt identity, offline loop summary and
   reachable tutorial, settings/accessibility and help routes.
-- `fighter-latest.png` shows Bijli/Pehel/Maya cards, fighter-specific accents and concise
+- `release-final-fighters.png` shows Bijli/Pehel/Maya cards, distinct vector glyphs and concise
   ability hints. The persisted selection is visible and intentional.
-- `match-final.png` shows the eight-actor Bazaar Bastion opening, HUD, Aandhi state and
+- `release-final-match.png` shows the eight-actor Bazaar Bastion opening, brighter runtime key
+  lighting, HUD, Aandhi state and
   circular twin-stick/action controls with no square underlays.
-- `combat-final.png` shows a movement swipe plus attack/ability interaction and active
-  combat feedback.
-- `release-60fps-match2.png` shows an active Pehel match from the non-development
-  release-shaped APK, including eight actors, HUD, controls and Aandhi state.
+- The current UI code adds vector hero/fighter identity graphics, haptic settings and
+  event-driven pickup, gadget, zone and result cues. These remain replaceable placeholder
+  presentation and do not constitute final art approval.
 
 This is a technical visual inspection, not human approval. The candidate still uses
 replaceable procedural/placeholder presentation, a temporary package identity and a
@@ -31,8 +31,16 @@ debug-signed APK; final touch ergonomics, accessibility, pacing, audio, cultural
 store review remain open. Gadget pickup/use and complete tutorial/results/rematch
 observation still require a dedicated human run on the exact candidate.
 
-The latest Lava frame log records consecutive 59.47–60.62 FPS windows with one transient
-45.31 FPS hitch. This is bounded technical evidence, not a human performance approval.
+## Reference-app observation (Lava, read-only)
+
+The installed Brawl Stars package was opened only to inspect high-level usability patterns:
+landscape home composition, a clear primary Play action, edge-anchored resources/panels and
+high-contrast icon labels. BattleRaja uses original shield/bolt, vector fighter and Bazaar
+presentation; no Brawl Stars branding, characters, UI art, arena or audio was copied. Smash
+Karts was not installed on the approved device, so it was not installed or inspected.
+
+The final Lava `gfxinfo` capture exposed no frame/jank histogram. This is bounded technical
+evidence, not a human performance approval; stable FPS and long-run pacing remain open.
 
 ## Current HEAD smoke — 2026-08-03
 

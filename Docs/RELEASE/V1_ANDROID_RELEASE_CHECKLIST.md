@@ -33,11 +33,12 @@ The exact V1 source was validated in disposable copy
 `C:\Projects\BattleRaja-v1-verify-20260823b`:
 
 - Unity `6000.5.6f1` (`0e0577a1a2ac`), validation **0 errors / 0 warnings**.
-- EditMode **125/125** and PlayMode **61/61** passed.
-- Release-shaped Lava APK: **40,418,923 bytes**, SHA-256
-  `629C8BA2E7F3C2B4A4911D32A72E0957EE7564C0783A415E4C6617C21F105FC9`.
-- Debug-signed AAB: **36,249,028 bytes**, SHA-256
-  `C6D19FCB9FFDF1FC525371CDBD751732F2EE738E00F9F09C259D15DEAD756D1B`;
+- Exact runtime source: `24feb5d7c08301ebb44548fbd0f10ffe78b6e9ec`.
+- EditMode **125/125** and PlayMode **63/63** passed.
+- Release-shaped Lava APK: **40,430,947 bytes**, SHA-256
+  `1699EA241EA9BC85985F05A4EB1BC0C24854CF96571685F6AF51744312DD6E46`.
+- Debug-signed AAB: **36,261,037 bytes**, SHA-256
+  `ADD545042DD2397EDE9B7908C9C7BE3954F4E5232500315E6662F36B9C64B0D9`;
   base manifest present, 8 ARM64 libraries, 0 other ABIs, 450 entries, all ARM64
   ELF LOAD segments statically aligned to `0x4000`.
 - Lava screenshots and raw metrics are recorded in

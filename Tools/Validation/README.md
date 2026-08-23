@@ -37,3 +37,14 @@ pwsh -File Tools/Validation/check_android_bundle.ps1 `
   -Require16KPageAlignment `
   -ReadElfPath 'C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Data\PlaybackEngines\AndroidPlayer\NDK\toolchains\llvm\prebuilt\windows-x86_64\bin\llvm-readelf.exe'
 ```
+
+`check_store_creative.ps1` performs a dependency-free PNG dimension check for the draft
+icon, feature graphic and optional screenshot directory. It is intentionally report-only
+until `-RequireFinal` is supplied; a passing dimension check is not legal, cultural, brand,
+or human visual approval:
+
+```powershell
+pwsh -File Tools/Validation/check_store_creative.ps1
+pwsh -File Tools/Validation/check_store_creative.ps1 -ScreenshotDirectory 'C:\path\to\reviewed-captures'
+pwsh -File Tools/Validation/check_store_creative.ps1 -RequireFinal
+```

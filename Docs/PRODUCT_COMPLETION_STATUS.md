@@ -4,8 +4,8 @@ Updated: 2026-08-23
 Classification: **prototype**
 
 Latest continuation: offline Android V1 release-shaped candidate — branch
-`codex/v1-playstore-release` runtime source `b22cfe34`. Exact-source evidence now
-includes validation 0/0, EditMode **125/125**, PlayMode **61/61**, a non-development
+`codex/v1-playstore-release` runtime source `24feb5d7`. Exact-source evidence now
+includes validation 0/0, EditMode **125/125**, PlayMode **63/63**, a non-development
 debug-signed APK installed and exercised on Lava, near-60-FPS frame windows, and a
 static 16 KB AAB alignment check. The project remains a prototype: final signing,
 package identity, long-run performance, human playtest, store/legal and Play Console
@@ -13,7 +13,7 @@ gates remain open; Photon, PlayFab and Web release are out of scope.
 
 ## Android V1.0 release-shaped candidate — 2026-08-23
 
-Exact candidate source: `b22cfe34ffa1401d89acd5ebf93aef83b4cea9a6` on
+Exact candidate source: `24feb5d7c08301ebb44548fbd0f10ffe78b6e9ec` on
 `codex/v1-playstore-release`.
 
 The current working-tree V1 slice adds the product-facing offline Android route: branded
@@ -22,13 +22,13 @@ tutorial/help/settings surfaces, original placeholder identity art, code-driven 
 visual feedback, portrait-safe circular touch controls, and a debug-signed/non-publishable
 AAB entrypoint.
 Repository validation is **0 errors / 0 warnings**, EditMode is **125/125**, and PlayMode
-is **61/61**. The Lava-only smoke candidate installed and exercised successfully; exact
+is **63/63**. The Lava-only smoke candidate installed and exercised successfully; exact
 APK/AAB hashes, screenshots and measurements are in
 `Docs/QA/V1_ANDROID_EVIDENCE_2026-08-23.md`.
 
 This does **not** change the classification. The candidate remains **prototype** because
 the package ID and signing identity are temporary, the legacy icon warning and runtime
-16 KB environment are open, the latest Lava sample contains one 45.31-FPS hitch and only
+16 KB environment are open, the latest Lava sample does not expose a frame histogram and has only
 bounded CPU/thermal observations, and performance, accessibility, visual, cultural,
 store/legal and Play Console gates require human review. Photon Fusion, PlayFab and
 online release work remain intentionally out of scope.

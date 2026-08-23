@@ -7,8 +7,8 @@ working tree. It is evidence for a release-shaped prototype, not Play Store appr
 
 - Repository: `neonvarun/BattleRaja`
 - Branch: `codex/v1-playstore-release`
-- Source commit: `b22cfe34ffa1401d89acd5ebf93aef83b4cea9a6`
-  (`android: add release-shaped performance validation target`); the artifacts were
+- Source commit: `24feb5d7c08301ebb44548fbd0f10ffe78b6e9ec`
+  (`ui: polish offline android candidate presentation`); the artifacts were
   built from that exact committed change set in the disposable verification copy.
 - This evidence document is a follow-up documentation commit; the runtime artifact
   source remains the code commit above.
@@ -24,7 +24,7 @@ working tree. It is evidence for a release-shaped prototype, not Play Store appr
 | --- | --- | --- |
 | Repository validation | Passed with evidence: 0 errors, 0 warnings | `Tools/Validation/validate.ps1 -RequireUnityProject -UnityExe ...6000.5.6f1...` |
 | EditMode | Passed with evidence: 125/125 | `Builds/V1/TestResults/editmode-v1-final.xml` |
-| PlayMode | Passed with evidence: 61/61 | `Builds/V1/TestResults/playmode-v1-final.xml` |
+| PlayMode | Passed with evidence: 63/63 | `Builds/V1/TestResults/playmode-release-polish-final.xml` |
 | Source diff hygiene | Passed with evidence: `git diff --check` clean | local command output |
 
 ## Android artifacts
@@ -36,8 +36,8 @@ rewrite the working tree.
 ### Release-shaped APK used for Lava performance and interaction checks
 
 - Path: `C:\Projects\BattleRaja-v1-verify-20260823b\Builds\V1\Android\BattleRaja-V1.0-release-candidate.apk`
-- Size: **40,418,923 bytes**
-- SHA-256: `629C8BA2E7F3C2B4A4911D32A72E0957EE7564C0783A415E4C6617C21F105FC9`
+- Size: **40,430,947 bytes**
+- SHA-256: `1699EA241EA9BC85985F05A4EB1BC0C24854CF96571685F6AF51744312DD6E46`
 - Install: succeeded on `ST5GDW23LB004392`
 - Package/version observed on device: `com.example.battleraja.m11`, version name `1.0.0`,
   version code `100`, target SDK 36, minimum SDK 28
@@ -47,8 +47,8 @@ rewrite the working tree.
 ### Debug-signed release-shaped AAB
 
 - Path: `C:\Projects\BattleRaja-v1-verify-20260823b\Builds\V1\Android\BattleRaja-V1.0-release-candidate.aab`
-- Size: **36,249,028 bytes**
-- SHA-256: `C6D19FCB9FFDF1FC525371CDBD751732F2EE738E00F9F09C259D15DEAD756D1B`
+- Size: **36,261,037 bytes**
+- SHA-256: `ADD545042DD2397EDE9B7908C9C7BE3954F4E5232500315E6662F36B9C64B0D9`
 - Bundle inspection: base manifest present; 8 ARM64 native libraries; 0 other ABIs;
   450 archive entries; all eight ARM64 ELF libraries have `0x4000` LOAD alignment
   (static 16 KB check passed)
@@ -60,40 +60,37 @@ rewrite the working tree.
 Inspected captures are stored outside the repository at
 `C:\Projects\BattleRaja-v1-verify-20260823b\Builds\V1\Lava\`:
 
-- `menu-final.png`: branded offline menu with Play Offline, Tutorial Replay, Settings &
+- `release-final-menu.png`: branded offline menu with Play Offline, Tutorial Replay, Settings &
   Accessibility, and Help & Controls
-- `menu-authoritative.png`: fresh post-build menu capture from the latest APK install
-- `fighter-latest.png`: three-fighter selection with persisted-selection behavior
-- `match-final.png`: Bazaar Bastion opening, eight actors, HUD, circular twin-stick and
-  action controls without square underlays
-- `combat-final.png`: movement swipe plus attack/ability interaction; active match and
-  Aandhi warning visible
-- `release-60fps-match2.png`: active Pehel match from the release-shaped APK with eight
-  actors, HUD, controls and no Development Build label
+- `release-final-mode.png`: solo offline mode route
+- `release-final-fighters.png`: three-fighter selection with distinct vector identities
+- `release-final-match.png`: Bazaar Bastion opening, eight actors, HUD, controls and no
+  square underlays
+- `release-final-gfxinfo.txt`, `release-final-meminfo.txt`, `release-final-top.txt`,
+  `release-final-thermal.txt` and `release-final-logcat.txt`: bounded device samples
 
-The device log had no `FATAL EXCEPTION`, `AndroidRuntime` crash, Unity exception or
-missing-reference marker in the captured application slice. The release-shaped APK's
-buffer-queue sample reported consecutive one-second windows around **59.47–60.62 FPS**;
-one transient window fell to **45.31 FPS** with a 272 ms maximum frame, so this is a
-bounded near-60 observation and not a stable performance pass.
+The device log had no application `FATAL EXCEPTION`, `AndroidRuntime` crash, Unity exception or
+missing-reference marker in the captured application slice. Android `gfxinfo` exposed only
+the Unity SurfaceView/render-node summary for this final APK, without a frame/jank histogram;
+therefore no exact-current FPS or stable frame-pacing pass is claimed here.
 
 ## Measured device sample
 
 Raw files are outside source under the same Lava evidence directory:
 
-- `release-60fps-match2-frame-log.txt` — buffer-queue frame windows around 59.47–60.62
-  FPS with one 45.31 FPS transient hitch.
-- `release-60fps-match2-meminfo.txt` — **279,283 KB PSS**, **414,748 KB RSS**,
-  **95,544 KB Graphics**, **64 KB swap**.
-- `release-60fps-match2-top.txt` — one sample at approximately **81.8% CPU** for the
+- `release-final-gfxinfo.txt` — Unity's SurfaceView did not expose a frame/jank histogram
+  in this sample; no FPS pass is claimed from this file.
+- `release-final-meminfo.txt` — **284,282 KB PSS**, **420,364 KB RSS**,
+  **99,896 KB Graphics**, **77 KB swap**.
+- `release-final-top.txt` — one sample at approximately **81.8% CPU** for the
   process.
-- `release-60fps-match2-thermal.txt` — thermal status 0; sampled CPU/GPU about 42.4 C,
-  skin about 39.2 C and battery about 35 C.
-- `release-60fps-match2-logcat.txt` — application log slice used for crash-marker review.
+- `release-final-thermal.txt` — thermal status 0; current-HAL CPU/GPU about 42.7 C,
+  skin about 39.4 C and battery about 35 C.
+- `release-final-logcat.txt` — application log slice used for crash-marker review.
 
-These measurements keep the candidate classified as a prototype: the one-frame hitch,
-single CPU sample, repeated-match behavior, longer thermal/battery series and human
-performance review still require deliberate follow-up.
+These measurements keep the candidate classified as a prototype: frame pacing, single-sample
+CPU data, repeated-match behavior, longer thermal/battery series and human performance review
+still require deliberate follow-up.
 
 ## Known release blockers
 
