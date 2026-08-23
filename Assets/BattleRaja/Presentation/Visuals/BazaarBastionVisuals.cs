@@ -67,6 +67,7 @@ namespace BattleRaja.Presentation.Visuals
             var mint = CreateMaterial("V1 Mint", new Color(0.28f, 0.82f, 0.70f, 1f));
             var violet = CreateMaterial("V1 Violet", new Color(0.55f, 0.22f, 0.75f, 1f));
             var cream = CreateMaterial("V1 Cream", new Color(1f, 0.84f, 0.52f, 1f));
+            var gold = CreateMaterial("V1 Gold", new Color(1f, 0.78f, 0.16f, 1f));
             var dark = CreateMaterial("V1 Ink", new Color(0.07f, 0.10f, 0.14f, 1f));
             var sand = CreateMaterial("V1 Sand", new Color(0.78f, 0.53f, 0.30f, 1f));
             var rose = CreateMaterial("V1 Rose", new Color(0.92f, 0.22f, 0.38f, 1f));
