@@ -4,7 +4,8 @@ Updated: 2026-08-24
 Classification: **prototype**
 
 Latest continuation: offline Android V1 release-shaped candidate — branch
-`codex/v1-playstore-release` runtime source `d825832`. Exact-source evidence now
+`codex/v1-playstore-release` runtime source `c6badbf` (latest checkout `649d0bb`,
+editor/test-only warning cleanup). Exact-source evidence now
 includes validation 0/0, EditMode **125/125**, PlayMode **66/66**, a non-development
 debug-signed APK installed and exercised on Lava, render-only fighter/impact/gadget
 feedback, a successful player-owned Tiffin pickup/use capture, and a static 16 KB AAB
@@ -12,6 +13,19 @@ alignment check.
 The project remains a prototype: final signing,
 package identity, long-run performance, human playtest, store/legal and Play Console
 gates remain open; Photon, PlayFab and Web release are out of scope.
+
+## Current V1 visual/tutorial correction — 2026-08-24
+
+Runtime source `c6badbf` keeps the fictional Bazaar canopy, larger phone hero and
+player-owned Tiffin route, and fixes the tutorial completion state so SKIP/complete
+leaves a visible replay/menu card. The exact APK/AAB were installed/built from the
+correction source; Lava visually confirmed tutorial completion and a successful Tiffin
+use. The later checkout `649d0bb` removes authored Unity 6 lookup deprecation overloads
+from editor/test code; its full suites and warning-clean Android APK/AAB build passed.
+
+Status: **Passed with evidence** for this bounded UI/tutorial and warning-clean slice.
+The project remains **prototype**: final identity/signing, performance, accessibility,
+long-run reliability, human visual/cultural review and store/legal gates remain open.
 
 ## Android V1.0 gadget-route continuation — 2026-08-24
 
