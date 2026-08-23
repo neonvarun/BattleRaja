@@ -44,7 +44,9 @@ the remaining authored Unity 6 lookup deprecations. The disposable exact-source 
 passed EditMode **125/125** and PlayMode **66/66**. The Android build produced a
 **40,431,911-byte** APK with SHA-256
 `51D86184F6C69DD30CD249D273FA0F8F5BA96B4159D86DD1472FE4FD54320DA5`, and its log had
-**0 `CS0618` warnings** and **0 C# errors**. The build was not installed because no
+**0 `CS0618` warnings** and **0 C# errors**. The matching AAB is **36,262,033 bytes**,
+SHA-256 `518102EAE7DDB71DA9393ABE3E948A47440260C9DF8D19532AAFF14FA1BE98B0`; the
+bundle checker passed ARM64-only and `0x4000` ELF alignment. The build was not installed because no
 runtime code changed; current Lava captures remain tied to `c6badbf`.
 
 ## Current offline Android gadget-route slice — 2026-08-24

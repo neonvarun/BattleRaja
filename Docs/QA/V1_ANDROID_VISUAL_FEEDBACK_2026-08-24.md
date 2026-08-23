@@ -34,7 +34,10 @@ and PlayMode **66/66** passed in disposable copy
 `C:\Projects\BattleRaja-v1-warning-verify`. The fresh non-development APK was
 **40,431,911 bytes**, SHA-256
 `51D86184F6C69DD30CD249D273FA0F8F5BA96B4159D86DD1472FE4FD54320DA5`.
-Its Android build log contains **0 `CS0618` warnings** and **0 C# errors**. No new
+The matching AAB is **36,262,033 bytes**, SHA-256
+`518102EAE7DDB71DA9393ABE3E948A47440260C9DF8D19532AAFF14FA1BE98B0`; its bundle
+checker passed the 8-ARM64/no-other-ABI/`0x4000` alignment gate. The Android build log
+contains **0 `CS0618` warnings** and **0 C# errors**. No new
 device install was needed because the changed files are editor/test-only; the exact
 `c6badbf` correction APK remains the latest installed visual artifact.
 

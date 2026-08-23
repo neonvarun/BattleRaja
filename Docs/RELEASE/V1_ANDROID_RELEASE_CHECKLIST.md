@@ -56,8 +56,10 @@ The exact V1 source was validated in disposable copy
 
 The latest checkout also contains editor/test-only warning cleanup at `649d0bb`. Its
 fresh APK build (`51D86184F6C69DD30CD249D273FA0F8F5BA96B4159D86DD1472FE4FD54320DA5`,
-40,431,911 bytes) recorded zero `CS0618` warnings and zero C# errors; the installed
-visual artifact remains the `c6badbf` correction candidate documented above.
+40,431,911 bytes) and matching AAB (`518102EAE7DDB71DA9393ABE3E948A47440260C9DF8D19532AAFF14FA1BE98B0`,
+36,262,033 bytes) recorded zero `CS0618` warnings, zero C# errors and passed the static
+16 KB alignment check; the installed visual artifact remains the `c6badbf` correction
+candidate documented above.
 
 - Unity `6000.5.6f1` (`0e0577a1a2ac`), validation **0 errors / 0 warnings**.
 - Exact runtime source: `d825832bced4c5e07c7967d891696842eb55609a`.
