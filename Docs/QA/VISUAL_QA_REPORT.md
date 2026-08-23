@@ -1,10 +1,38 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-24
-Runtime-bearing candidate: `d825832bced4c5e07c7967d891696842eb55609a` (offline Android gadget-route slice)
-Current validated runtime source HEAD: `d825832bced4c5e07c7967d891696842eb55609a`
+Runtime-bearing candidate: `c6badbf6cf5b1c7340fa907821aeb4cbf2194bc0` (offline Android tutorial/UI correction)
+Current validated runtime source HEAD: `c6badbf6cf5b1c7340fa907821aeb4cbf2194bc0`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://127.0.0.1:8139/index.html`
+
+## Tutorial completion correction — 2026-08-24
+
+The exact `c6badbf6cf5b1c7340fa907821aeb4cbf2194bc0` APK was installed only on Lava
+`ST5GDW23LB004392`. Full validation and test suites passed (0/0, 125/125, 66/66).
+The tutorial SKIP action now leaves a visible completion card instead of exposing the
+backdrop alone; the inspected `tutorial-fix-complete.png` shows the replay and menu
+actions. This correction is technical UI evidence, not final accessibility or human
+visual approval. The preceding `abe9ae4` captures remain the exact-source visual evidence
+for the revised canopy, match resolution and rematch.
+
+## Current Android V1 visual-polish slice — 2026-08-24
+
+Exact source `abe9ae4816054e9704d13496bcd50bb7720eaa4f` was built in disposable copy
+`C:\Projects\BattleRaja-v1-visual-verify` and installed only on Lava
+`ST5GDW23LB004392`. Validation was 0/0, EditMode 125/125 and PlayMode 66/66.
+Inspected captures cover the menu, solo mode, fighter selection, active Bazaar Bastion,
+movement, match resolution and rematch, plus a gadget placement attempt. The center landmark now uses a six-panel canopy
+and gold orb; the earlier intersecting-bar shape is absent. The menu hero is larger and
+reads more clearly at the Lava landscape viewport. These are technical captures, not
+final visual or cultural approval.
+
+The placement probe returned `InvalidPlacement` after the player had moved against the
+edge of the arena. It is recorded as a truthful negative observation; the successful
+Tiffin pickup/use route remains evidenced by the prior `d825832b` captures. The same run
+reached the results panel and returned through REMATCH to a fresh match. No new Web visual
+claim was made in this Android-only continuation. Stable FPS, full tutorial, accessibility,
+audio, multi-browser parity and human review remain open.
 
 ## Offline Android gadget-route continuation — 2026-08-24
 

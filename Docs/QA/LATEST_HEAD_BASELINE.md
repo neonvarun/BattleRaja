@@ -10,6 +10,30 @@ Balance-fix runtime source: `17a8c75` (`fix(balance): land documented weapon ret
 Pre-fix baseline source: `35d723f` (`fix: bot perception no longer treats fighter hulls as line-of-sight blockers`; the tip of local `main` before this branch)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
+## Current Android V1 visual-polish source — 2026-08-24
+
+The current runtime-bearing source is `c6badbf6cf5b1c7340fa907821aeb4cbf2194bc0`
+(`fix: keep tutorial completion card visible`) on `codex/v1-playstore-release`. It retains the
+offline Android scope and the authority-backed Tiffin route from `d825832b`, while
+replacing the Bazaar center landmark's intersecting bars with a six-panel fictional
+canopy and enlarging the phone hero graphic. No networking or backend work was added.
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Repository validation | **0 errors / 0 warnings** | root `Tools/Validation/validate.ps1` |
+| Full EditMode | **125/125 passed** | disposable `C:\Projects\BattleRaja-v1-visual-verify\Builds\V1\TestResults\editmode-visual-polish4.xml` |
+| Full PlayMode | **66/66 passed** | disposable `C:\Projects\BattleRaja-v1-visual-verify\Builds\V1\TestResults\playmode-visual-polish.xml` |
+| Android APK | **40,431,923 bytes**, SHA-256 `E6CBEAD6F97C036C0C9D1663CA5972799AEF3B330D75A3D2AAA94D5E699C7DB3` | exact tutorial-fix disposable build, Lava install |
+| Android AAB | **36,262,021 bytes**, SHA-256 `124E14ABE6012B3B42D7B7741D0C647416E278E82ABFE358EF89A53BAAD64021` | base manifest, 8 ARM64 libraries, 0 other ABIs, `0x4000` ELF LOAD alignment |
+| Lava visual inspection | tutorial skip reaches visible completion card; preceding exact visual source covered menu, match, results and rematch | `C:\Projects\BattleRaja-v1-tutorial-verify\Builds\V1\Lava\tutorial-fix-complete.png` plus prior `visual-polish-*.png` |
+
+The APK/AAB remain debug-signed with temporary package ID `com.example.battleraja.m11`.
+The preceding exact visual run reached results and returned through REMATCH to a fresh
+match. The placement attempt returned `InvalidPlacement`; the previous source's successful
+Tiffin pickup/use capture remains the route evidence. Stable FPS, performance series,
+final art/audio, accessibility, signing, store, legal, cultural and human review gates
+remain open. Classification remains **prototype**.
+
 ## Current offline Android gadget-route slice — 2026-08-24
 
 Runtime source `d825832bced4c5e07c7967d891696842eb55609a` retains render-only fighter

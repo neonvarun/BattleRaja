@@ -3,6 +3,59 @@
 This is a bounded presentation slice for the offline Android V1 candidate. It is
 technical evidence, not Play Store approval or final human visual approval.
 
+## Tutorial completion correction — 2026-08-24
+
+The follow-up source `c6badbf6cf5b1c7340fa907821aeb4cbf2194bc0`
+(`fix: keep tutorial completion card visible`) closes a real Android UX defect found
+while exercising the prior visual candidate: completing or skipping the tutorial hid
+the only card while its full-screen backdrop remained, leaving a blank dark screen.
+The completion card now stays visible with `TUTORIAL COMPLETE`, `8 / 8 COMPLETE`,
+`REPLAY TUTORIAL` and `MENU` actions. Full validation remains 0/0, EditMode **125/125**
+and PlayMode **66/66** in disposable copy
+`C:\Projects\BattleRaja-v1-tutorial-verify`.
+
+The exact correction APK is **40,431,923 bytes**, SHA-256
+`E6CBEAD6F97C036C0C9D1663CA5972799AEF3B330D75A3D2AAA94D5E699C7DB3`. The exact AAB
+is **36,262,021 bytes**, SHA-256
+`124E14ABE6012B3B42D7B7741D0C647416E278E82ABFE358EF89A53BAAD64021`; bundle inspection
+again found 8 ARM64 libraries, no other ABIs and `0x4000` native ELF LOAD alignment.
+The APK was installed only on Lava `ST5GDW23LB004392`; `tutorial-fix-complete.png`
+visually confirms the completion card after tapping SKIP. This is a focused UI fix and
+does not replace the preceding exact-source Bazaar visual/results/rematch evidence.
+
+## Android V1.0 visual-polish continuation — 2026-08-24
+
+The exact current visual slice is source commit `abe9ae4816054e9704d13496bcd50bb7720eaa4f`
+(`fix: add canopy gold material`) on `codex/v1-playstore-release`. It follows the
+player-owned Tiffin route at `d825832b` without changing the authority contract.
+Validation remains **0 errors / 0 warnings**, EditMode **125/125**, and PlayMode
+**66/66** in disposable copy `C:\Projects\BattleRaja-v1-visual-verify`.
+
+This slice makes the Bazaar Bastion landmark a six-panel fictional canopy with a
+single gold orb instead of intersecting bars that could read as a sacred or unfinished
+greybox symbol. It enlarges the procedural hero illustration for phone readability.
+The visual change is presentation-only; no combat, collision, networking or service
+scope was added.
+
+The exact release-shaped APK and AAB were rebuilt from this source. APK size is
+**40,432,119 bytes**, SHA-256
+`5AFA5AFD4670520ED8B02340C117236F2B7118F824E3C819A6AD86CB7E2F2D91`. AAB size is
+**36,262,217 bytes**, SHA-256
+`01AC1DDFF458B768B0EA5E2585637FB6BDED4F4CE31706F5D8042DF16B245478`.
+The bundle checker found the base manifest, 8 ARM64 libraries, 0 other ABIs and
+all native ELF LOAD segments aligned to `0x4000`.
+
+The exact APK was installed only on Lava `ST5GDW23LB004392`. Inspected captures in
+`C:\Projects\BattleRaja-v1-visual-verify\Builds\V1\Lava\` cover the menu, solo mode,
+fighter selection, active Bazaar match, movement and a gadget-placement attempt.
+The menu and match show the revised canopy without the prior intersecting-bar shape.
+The same run reached match resolution with eight placements and a visible REMATCH/MENU
+route, then tapped REMATCH and returned to a fresh eight-actor match. The placement
+attempt returned `InvalidPlacement`; this continuation does not claim a new successful
+gadget-use capture, so the earlier successful Tiffin evidence below remains the
+authoritative gadget route evidence. Device frame/jank and human visual approval remain
+open.
+
 ## Exact source and automated gates
 
 - Repository: `neonvarun/BattleRaja`

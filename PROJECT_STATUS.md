@@ -21,18 +21,22 @@
   are recorded separately by runtime commit below. See
   `Docs/QA/M11_CLOSURE_REPORT_2026-08-23.md`.
 - Current offline Android V1.0 candidate: branch `codex/v1-playstore-release` at
-  committed source `d825832b` (`content: make tiffin route player-owned`). The candidate now
+  committed source `c6badbf` (`fix: keep tutorial completion card visible`). The candidate now
   builds Bazaar Bastion by default, exposes the branded offline flow/tutorial/settings and
   three-fighter selection, uses original source-backed fighter/gadget/arena identity
   geometry, haptic/audio feedback, circular safe-area touch surfaces, and has local
   debug-signed/non-publishable APK/AAB entrypoints. Exact candidate hashes, Lava captures and
   measured limits are recorded in `Docs/QA/V1_ANDROID_EVIDENCE_2026-08-23.md`.
 - Current V1 automated gate: repository validation **0/0**, EditMode **125/125**, and
-  PlayMode **66/66** at source `d825832` (`content: make tiffin route player-owned`).
-  This slice retains render-only fighter state motion, pooled impact halos and animated gadget
-  identity visuals, and closes the production Tiffin pickup/use route with a player-owned spawn
-  position, nearby-pickup HUD hint and authority-backed regression. Exact artifact hashes, Lava
-  captures and raw measurements are recorded in `Docs/QA/V1_ANDROID_VISUAL_FEEDBACK_2026-08-24.md`.
+  PlayMode **66/66** at source `c6badbf` (`fix: keep tutorial completion card visible`).
+  The latest presentation slice replaces the intersecting Bazaar landmark bars with a
+  fictional six-panel canopy and enlarges the phone hero graphic; the player-owned Tiffin
+  pickup/use route and its authority regression remain in the same candidate. The exact Lava
+  run also reached results and returned through REMATCH to a fresh match; a later placement
+  probe honestly returned `InvalidPlacement`. The follow-up tutorial correction keeps the
+  completion card visible after SKIP and was rebuilt/verified on Lava. Exact artifact hashes,
+  Lava captures and raw measurements are recorded in
+  `Docs/QA/V1_ANDROID_VISUAL_FEEDBACK_2026-08-24.md`.
   The project remains **prototype**; the temporary package ID, debug-signed/non-publishable
   bundle, runtime 16 KB confirmation, adaptive-icon warning, long-run performance measurements
   and human/store/legal approvals remain open. The latest release-shaped APK has no

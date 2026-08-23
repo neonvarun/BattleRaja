@@ -29,6 +29,28 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
 
 ## Latest local candidate evidence (2026-08-24)
 
+### Current visual-polish source
+
+The latest exact-source tutorial/UI correction candidate is `c6badbf6cf5b1c7340fa907821aeb4cbf2194bc0`
+from disposable copy `C:\Projects\BattleRaja-v1-tutorial-verify`:
+
+- Validation **0 errors / 0 warnings**; EditMode **125/125**; PlayMode **66/66**.
+- APK **40,431,923 bytes**, SHA-256
+  `E6CBEAD6F97C036C0C9D1663CA5972799AEF3B330D75A3D2AAA94D5E699C7DB3`.
+- AAB **36,262,021 bytes**, SHA-256
+  `124E14ABE6012B3B42D7B7741D0C647416E278E82ABFE358EF89A53BAAD64021`.
+- Bundle inspection passed: base manifest, 8 ARM64 libraries, no other ABIs and
+  `0x4000` alignment for every checked native ELF LOAD segment.
+- The exact APK was installed only on Lava. The tutorial SKIP action visibly reaches the
+  completion card with replay/menu actions. The preceding exact visual candidate covered
+  menu, mode, fighter-selection, Bazaar match, movement, match resolution and REMATCH; a
+  later gadget placement probe honestly returned `InvalidPlacement`, so the earlier
+  successful Tiffin evidence remains authoritative.
+
+The visual change is presentation-only: the Bazaar center uses a fictional six-panel
+canopy/gold-orb landmark and the menu hero is larger at the phone viewport. This remains
+a debug-signed, temporary-ID prototype candidate and is not a Play submission.
+
 The exact V1 source was validated in disposable copy
 `C:\Projects\BattleRaja-v1-verify-20260824j`:
 
