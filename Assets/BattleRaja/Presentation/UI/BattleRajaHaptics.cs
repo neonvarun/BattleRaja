@@ -23,7 +23,9 @@ namespace BattleRaja.Presentation.UI
         public static void Pulse()
         {
             if (!Enabled || Application.platform != RuntimePlatform.Android) return;
+#if UNITY_ANDROID && !UNITY_EDITOR
             Handheld.Vibrate();
+#endif
         }
     }
 }
