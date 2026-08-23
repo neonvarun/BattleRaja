@@ -79,6 +79,19 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator BootstrapMenuUsesPlayerFacingOfflineStatusCopy()
+        {
+            yield return SceneManager.LoadSceneAsync("Bootstrap", LoadSceneMode.Single);
+            yield return null;
+            yield return null;
+
+            var version = GameObject.Find("SafeArea/Version").GetComponent<Text>();
+            Assert.That(version.text, Does.Contain("OFFLINE ARCADE"));
+            Assert.That(version.text.ToUpperInvariant(), Does.Not.Contain("CANDIDATE"));
+            Assert.That(version.text.ToUpperInvariant(), Does.Not.Contain("DEBUG"));
+        }
+
+        [UnityTest]
         public IEnumerator BootstrapMenuAndFighterSelectionExposeOriginalReadabilityGraphics()
         {
             yield return SceneManager.LoadSceneAsync("Bootstrap", LoadSceneMode.Single);

@@ -489,7 +489,7 @@ namespace BattleRaja.Presentation.Flow
             var eyebrow = CreateText(_safeArea.transform, "Eyebrow", new Vector2(0.18f, 0.965f), new Vector2(0.82f, 0.995f), 12, TextAnchor.MiddleCenter, BattleRajaUiTheme.Cyan, true);
             eyebrow.text = "OFFLINE ARCADE  •  BAZAAR BASTION";
             var version = CreateText(_safeArea.transform, "Version", new Vector2(0.04f, 0.015f), new Vector2(0.52f, 0.055f), 14, TextAnchor.MiddleLeft, BattleRajaUiTheme.MutedText);
-            version.text = "OFFLINE V1.0 CANDIDATE  •  8-ACTOR MATCHES";
+            version.text = "OFFLINE ARCADE  •  8-ACTOR MATCHES";
 
             _mainMenuPanel = CreatePanel(_safeArea.transform, "MainMenuPanel");
             CreateText(_mainMenuPanel.transform, "LoopSummary", new Vector2(0.12f, 0.70f), new Vector2(0.88f, 0.88f), 17, TextAnchor.MiddleCenter, BattleRajaUiTheme.MutedText).text =
