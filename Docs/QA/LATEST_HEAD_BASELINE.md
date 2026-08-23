@@ -13,7 +13,9 @@ The V1 release-shaped candidate is recorded on `codex/v1-playstore-release` afte
 intentional offline-product changes were committed. This section supersedes the older
 closure rows for Android V1 claims.
 
-V1 candidate source commit: `1896c138484149e774bd23bee5ecd4b1064852da`.
+V1 runtime artifact source commit: `1896c138484149e774bd23bee5ecd4b1064852da`.
+Final branch tip after evidence-only documentation/validator updates:
+`607fa9fe7666e884cb12ea8a774d40453bc98b69`.
 
 | Check | Result | Evidence |
 | --- | --- | --- |

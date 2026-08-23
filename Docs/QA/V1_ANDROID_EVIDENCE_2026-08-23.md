@@ -10,6 +10,8 @@ working tree. It is evidence for a release-shaped prototype, not Play Store appr
 - Source commit: `1896c138484149e774bd23bee5ecd4b1064852da`
   (`v1: establish offline Android release candidate`); the artifacts were built from
   that exact committed change set in the disposable verification copy.
+- Final branch tip after evidence-only documentation/validator updates:
+  `607fa9fe7666e884cb12ea8a774d40453bc98b69`.
 - Unity: `6000.5.6f1` (`0e0577a1a2ac`)
 - Android target/minimum: API 36 / API 28
 - Scripting backend/ABI: IL2CPP / ARM64

@@ -22,7 +22,8 @@
   `Docs/QA/M11_CLOSURE_REPORT_2026-08-23.md`.
 - Current offline Android V1.0 candidate: branch `codex/v1-playstore-release` at
   committed source `1896c138` (`v1: establish offline Android release candidate`). The
-  candidate now builds
+  runtime artifact source is unchanged by the later evidence-only commits; final branch
+  tip is `607fa9f`. The candidate now builds
   Bazaar Bastion by default, exposes the branded offline flow/tutorial/settings and
   three-fighter selection, uses circular safe-area touch surfaces, and has a local
   debug-signed/non-publishable AAB entrypoint. Exact candidate hashes, Lava captures and measured limits are
