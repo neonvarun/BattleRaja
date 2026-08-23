@@ -18,19 +18,42 @@ namespace BattleRaja.Presentation.Visuals
         private readonly List<GameObject> _objects = new List<GameObject>(64);
         private readonly List<Material> _materials = new List<Material>(12);
         private Transform _root;
+        private GameObject _lightingObject;
 
         private void Awake()
         {
-            if (!enabledForBuilds || transform.Find("V1BastionVisuals") != null) return;
+            if (!enabledForBuilds) return;
+            EnsureLighting();
+            if (transform.Find("V1BastionVisuals") != null) return;
             BuildVisualKit();
         }
 
         private void OnDestroy()
         {
+            if (_lightingObject != null) Destroy(_lightingObject);
             for (var i = 0; i < _materials.Count; i++)
             {
                 if (_materials[i] != null) Destroy(_materials[i]);
             }
+        }
+
+        private void EnsureLighting()
+        {
+            RenderSettings.ambientMode = AmbientMode.Flat;
+            RenderSettings.ambientLight = new Color(0.22f, 0.28f, 0.34f, 1f);
+            RenderSettings.ambientIntensity = 1f;
+
+            var existingLights = FindObjectsByType<Light>();
+            if (existingLights != null && existingLights.Length > 0) return;
+
+            _lightingObject = new GameObject("BazaarKeyLight");
+            _lightingObject.transform.SetParent(transform, false);
+            _lightingObject.transform.rotation = Quaternion.Euler(52f, -28f, 0f);
+            var light = _lightingObject.AddComponent<Light>();
+            light.type = LightType.Directional;
+            light.color = new Color(1f, 0.86f, 0.72f, 1f);
+            light.intensity = 1.15f;
+            light.shadows = LightShadows.None;
         }
 
         private void BuildVisualKit()

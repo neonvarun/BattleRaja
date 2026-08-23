@@ -10,6 +10,8 @@ namespace BattleRaja.Presentation.Movement
 
     public sealed class TopDownCameraController : MonoBehaviour
     {
+        private const float PortraitFramingCapMultiplier = 3.5f;
+
         [SerializeField] private Transform followTarget;
         [SerializeField] private CameraProjectionMode projectionMode = CameraProjectionMode.Orthographic;
         [SerializeField] private Vector3 targetOffset = new Vector3(0f, 0.75f, 0f);
@@ -84,9 +86,14 @@ namespace BattleRaja.Presentation.Movement
                 return baseSize;
             }
 
-            return aspect < referenceAspect
-                ? baseSize * (referenceAspect / aspect)
-                : baseSize;
+            if (aspect >= referenceAspect) return baseSize;
+
+            // Preserve the full arena on narrow screens without letting a very tall
+            // portrait device shrink the readable play space into a postage stamp.
+            // The cap is based on the authored arena scale (28 world units wide at
+            // the V1 target) and keeps desktop framing unchanged.
+            var portraitSize = baseSize * (referenceAspect / aspect);
+            return Mathf.Min(portraitSize, baseSize * PortraitFramingCapMultiplier);
         }
 
         private void ApplyProjection()

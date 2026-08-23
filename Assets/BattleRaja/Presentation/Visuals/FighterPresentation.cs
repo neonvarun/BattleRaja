@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Movement;
+using BattleRaja.Presentation.UI;
 using UnityEngine;
 
 namespace BattleRaja.Presentation.Visuals
@@ -44,6 +45,7 @@ namespace BattleRaja.Presentation.Visuals
         private Transform _telegraph;
         private Transform _silhouetteRoot;
         private BattleRajaAudioDirector _audio;
+        private CombatTarget _target;
         private float _attackPulse;
         private float _abilityPulse;
         private float _hitRemaining;
@@ -76,8 +78,8 @@ namespace BattleRaja.Presentation.Visuals
                     : Color.white;
             }
 
-            var target = GetComponent<CombatTarget>();
-            _ringColor = ResolveRingColor(target != null ? target.Faction : CombatFaction.Enemy);
+            _target = GetComponent<CombatTarget>();
+            _ringColor = ResolveRingColor(_target != null ? _target.Faction : CombatFaction.Enemy);
             CreateReadabilityPrimitives();
             CreateFighterSilhouette();
             if (health != null) health.DamageResolved += OnDamageResolved;
@@ -192,6 +194,7 @@ namespace BattleRaja.Presentation.Visuals
             }
 
             _audio?.PlayHit();
+            if (_target != null && _target.Id.Value == 1) BattleRajaHaptics.Pulse();
             if (result.TargetDefeated) SetEliminated();
         }
 

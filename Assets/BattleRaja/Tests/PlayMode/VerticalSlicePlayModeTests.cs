@@ -499,9 +499,11 @@ namespace BattleRaja.Tests.PlayMode
         {
             var landscape = TopDownCameraController.CalculateResponsiveOrthographicSize(9.5f, 16f / 9f, 16f / 9f);
             var portrait = TopDownCameraController.CalculateResponsiveOrthographicSize(9.5f, 390f / 600f, 16f / 9f);
+            var tallPortrait = TopDownCameraController.CalculateResponsiveOrthographicSize(9.5f, 1080f / 2460f, 16f / 9f);
 
             Assert.That(landscape, Is.EqualTo(9.5f).Within(0.0001f));
             Assert.That(portrait, Is.GreaterThan(landscape));
+            Assert.That(tallPortrait, Is.LessThan(9.5f * 3.5f + 0.0001f));
         }
 
         [Test]

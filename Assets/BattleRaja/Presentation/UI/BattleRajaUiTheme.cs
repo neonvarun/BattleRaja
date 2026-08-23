@@ -18,6 +18,8 @@ namespace BattleRaja.Presentation.UI
         public static readonly Color Cyan = new Color(0.18f, 0.82f, 0.93f, 1f);
         public static readonly Color Saffron = new Color(1f, 0.56f, 0.16f, 1f);
         public static readonly Color Magenta = new Color(0.86f, 0.34f, 0.76f, 1f);
+        public static readonly Color Gold = new Color(1f, 0.82f, 0.18f, 1f);
+        public static readonly Color Mint = new Color(0.30f, 0.92f, 0.64f, 1f);
         public static readonly Color Green = new Color(0.38f, 0.92f, 0.52f, 1f);
         public static readonly Color Danger = new Color(1f, 0.30f, 0.28f, 1f);
         public static readonly Color Text = new Color(0.95f, 0.98f, 1f, 1f);

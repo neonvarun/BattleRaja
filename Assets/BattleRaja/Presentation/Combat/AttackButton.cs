@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using BattleRaja.Presentation.UI;
 
 namespace BattleRaja.Presentation.Combat
 {
@@ -10,7 +11,11 @@ namespace BattleRaja.Presentation.Combat
 
         private void Awake() => TouchControlLabel.Ensure(transform, "ATTACK");
 
-        public void OnPointerDown(PointerEventData eventData) => IsPressed = true;
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            IsPressed = true;
+            BattleRajaHaptics.Pulse();
+        }
         public void OnPointerUp(PointerEventData eventData) => IsPressed = false;
         public void OnPointerExit(PointerEventData eventData) => IsPressed = false;
         public void ResetButton() => IsPressed = false;

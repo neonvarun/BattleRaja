@@ -41,6 +41,8 @@ namespace BattleRaja.Presentation.Match
         private float _appliedTextScale = 1f;
         private bool _paused;
         private bool _compactLayout;
+        private AandhiState _lastAandhiState = AandhiState.Stable;
+        private bool _resultsCuePlayed;
 
         private void Awake()
         {
@@ -67,6 +69,7 @@ namespace BattleRaja.Presentation.Match
                 break;
             }
             LoadPreferences();
+            _lastAandhiState = match != null ? match.AandhiState : AandhiState.Stable;
             _playerInput?.SetAimAssistEnabled(_aimAssist);
             BuildCanvasUi();
             ApplyHandedLayout();
@@ -152,6 +155,7 @@ namespace BattleRaja.Presentation.Match
         private void Update()
         {
             if (match == null) return;
+            UpdateAudioCues();
             ApplyResponsiveLayout();
             var compact = _compactLayout;
             if (_statusText != null)
@@ -175,6 +179,38 @@ namespace BattleRaja.Presentation.Match
                     _resultsText.text = FormatResults(match.Results, compact);
                 }
             }
+        }
+
+        private void UpdateAudioCues()
+        {
+            var aandhiState = match.AandhiState;
+            if (aandhiState != _lastAandhiState)
+            {
+                if (aandhiState == AandhiState.Warning) _audio?.PlayZoneWarning();
+                else if (aandhiState == AandhiState.Closing) _audio?.PlayZoneClosing();
+                _lastAandhiState = aandhiState;
+            }
+
+            if (!match.ResultsShown)
+            {
+                _resultsCuePlayed = false;
+                return;
+            }
+
+            if (_resultsCuePlayed || match.Results == null) return;
+            _resultsCuePlayed = true;
+            var playerWon = false;
+            for (var i = 0; i < match.Results.Length; i++)
+            {
+                if (match.Results[i].Id.Value == 1)
+                {
+                    playerWon = match.Results[i].Placement == 1;
+                    break;
+                }
+            }
+
+            if (playerWon) _audio?.PlayVictory();
+            else _audio?.PlayDefeat();
         }
 
         public static string FormatMatchStatus(MatchPhase phase, int aliveCount, float zoneRadius, float nextZoneRadius, AandhiState aandhiState, float warningRemainingSeconds, bool compact)

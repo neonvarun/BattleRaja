@@ -79,6 +79,23 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator BootstrapMenuAndFighterSelectionExposeOriginalReadabilityGraphics()
+        {
+            yield return SceneManager.LoadSceneAsync("Bootstrap", LoadSceneMode.Single);
+            yield return null;
+            yield return null;
+
+            Assert.That(Object.FindAnyObjectByType<BattleRajaHeroGraphic>(), Is.Not.Null);
+
+            var flow = Object.FindAnyObjectByType<ProductionFlowController>();
+            flow.OpenModeSelection();
+            flow.SelectOfflineMode();
+            Assert.That(GameObject.Find("SafeArea/FighterPanel/Bijli/FighterGlyph"), Is.Not.Null);
+            Assert.That(GameObject.Find("SafeArea/FighterPanel/Pehel/FighterGlyph"), Is.Not.Null);
+            Assert.That(GameObject.Find("SafeArea/FighterPanel/Maya/FighterGlyph"), Is.Not.Null);
+        }
+
+        [UnityTest]
         public IEnumerator SettingsExposeAndPersistEffectsVolume()
         {
             const string key = "battleraja.settings.effects_volume";
@@ -108,6 +125,35 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(PlayerPrefs.GetFloat(key, 0f), Is.EqualTo(0.9f).Within(0.001f));
 
             if (hadPrevious) PlayerPrefs.SetFloat(key, previous);
+            else PlayerPrefs.DeleteKey(key);
+            PlayerPrefs.Save();
+        }
+
+        [UnityTest]
+        public IEnumerator SettingsExposeAndPersistHaptics()
+        {
+            const string key = "battleraja.settings.haptics";
+            var hadPrevious = PlayerPrefs.HasKey(key);
+            var previous = PlayerPrefs.GetInt(key, 1);
+
+            yield return SceneManager.LoadSceneAsync("Bootstrap", LoadSceneMode.Single);
+            yield return null;
+            yield return null;
+
+            var flow = Object.FindAnyObjectByType<ProductionFlowController>();
+            flow.OpenSettings();
+            yield return null;
+
+            var summary = GameObject.Find("SettingsPanel/SettingsSummary").GetComponent<Text>();
+            var haptics = GameObject.Find("SettingsPanel/Haptics").GetComponent<Button>();
+            Assert.That(haptics, Is.Not.Null);
+            var before = PlayerPrefs.GetInt(key, 1) != 0;
+
+            haptics.onClick.Invoke();
+            Assert.That(summary.text, Does.Contain(before ? "HAPTICS: OFF" : "HAPTICS: ON"));
+            Assert.That(PlayerPrefs.GetInt(key, -1), Is.EqualTo(before ? 0 : 1));
+
+            if (hadPrevious) PlayerPrefs.SetInt(key, previous);
             else PlayerPrefs.DeleteKey(key);
             PlayerPrefs.Save();
         }

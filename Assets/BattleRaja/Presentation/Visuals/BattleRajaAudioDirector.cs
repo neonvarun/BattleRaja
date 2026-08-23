@@ -26,6 +26,12 @@ namespace BattleRaja.Presentation.Visuals
         private AudioClip _abilityClip;
         private AudioClip _hitClip;
         private AudioClip _eliminationClip;
+        private AudioClip _pickupClip;
+        private AudioClip _gadgetClip;
+        private AudioClip _zoneWarningClip;
+        private AudioClip _zoneClosingClip;
+        private AudioClip _victoryClip;
+        private AudioClip _defeatClip;
         private bool _started;
 
         public bool IsStarted => _started;
@@ -58,6 +64,12 @@ namespace BattleRaja.Presentation.Visuals
             _abilityClip = CreateTone("AbilityCue", 420f, 0.16f);
             _hitClip = CreateTone("HitCue", 120f, 0.08f);
             _eliminationClip = CreateTone("EliminationCue", 90f, 0.22f);
+            _pickupClip = CreateTone("PickupCue", 860f, 0.10f);
+            _gadgetClip = CreateTone("GadgetCue", 520f, 0.18f);
+            _zoneWarningClip = CreateTone("ZoneWarningCue", 260f, 0.24f);
+            _zoneClosingClip = CreateTone("ZoneClosingCue", 180f, 0.30f);
+            _victoryClip = CreateTone("VictoryCue", 760f, 0.40f);
+            _defeatClip = CreateTone("DefeatCue", 150f, 0.34f);
             _musicClip = CreateMusicLoop();
             _musicSource.clip = _musicClip;
             ApplyVolumes();
@@ -69,6 +81,12 @@ namespace BattleRaja.Presentation.Visuals
             if (_abilityClip != null) Destroy(_abilityClip);
             if (_hitClip != null) Destroy(_hitClip);
             if (_eliminationClip != null) Destroy(_eliminationClip);
+            if (_pickupClip != null) Destroy(_pickupClip);
+            if (_gadgetClip != null) Destroy(_gadgetClip);
+            if (_zoneWarningClip != null) Destroy(_zoneWarningClip);
+            if (_zoneClosingClip != null) Destroy(_zoneClosingClip);
+            if (_victoryClip != null) Destroy(_victoryClip);
+            if (_defeatClip != null) Destroy(_defeatClip);
             if (_musicClip != null) Destroy(_musicClip);
         }
 
@@ -109,6 +127,12 @@ namespace BattleRaja.Presentation.Visuals
         public void PlayAbility() => Play(_abilityClip);
         public void PlayHit() => Play(_hitClip);
         public void PlayElimination() => Play(_eliminationClip);
+        public void PlayPickup() => Play(_pickupClip);
+        public void PlayGadget() => Play(_gadgetClip);
+        public void PlayZoneWarning() => Play(_zoneWarningClip);
+        public void PlayZoneClosing() => Play(_zoneClosingClip);
+        public void PlayVictory() => Play(_victoryClip);
+        public void PlayDefeat() => Play(_defeatClip);
 
         private void Play(AudioClip clip)
         {
