@@ -25,3 +25,15 @@ pwsh -File Tools/Validation/check_android_bundle.ps1 `
   -AabPath Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab `
   -RequireArm64
 ```
+
+For the Android 16 KB static gate, add Unity's NDK `llvm-readelf.exe`; the checker
+extracts each ARM64 library, verifies every ELF `LOAD` segment is aligned to `0x4000`,
+and removes only its temporary extraction directory:
+
+```powershell
+pwsh -File Tools/Validation/check_android_bundle.ps1 `
+  -AabPath Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab `
+  -RequireArm64 `
+  -Require16KPageAlignment `
+  -ReadElfPath 'C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Data\PlaybackEngines\AndroidPlayer\NDK\toolchains\llvm\prebuilt\windows-x86_64\bin\llvm-readelf.exe'
+```

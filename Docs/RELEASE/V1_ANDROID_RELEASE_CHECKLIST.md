@@ -21,7 +21,7 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
 | Signing | Not started | Approve upload key/Play App Signing path; never commit the key |
 | Target API | Configured to API 36 | Recheck against current Play policy at upload time |
 | 64-bit | Passed with evidence for the current debug-signed AAB: 8 ARM64 libraries, 0 other ABIs | Re-run inspection after any package/plugin change |
-| 16 KB pages | Not yet evidenced for this exact AAB | Run alignment checks and a 16 KB Android environment install |
+| 16 KB pages | Static evidence passed: zipalign `-P 16` and all eight ARM64 ELF LOAD segments at `0x4000`; runtime 16 KB environment still open | Re-run the checker after any package/plugin change and install on a 16 KB Android environment when available |
 | Permissions | Forced Internet and SD-card permissions are disabled | Inspect the merged manifest after each plugin/build change |
 | Device QA | Automated smoke passed on Lava (`ST5GDW23LB004392`); human review open | Owner performs touch, accessibility, battery and thermal review |
 | Store/legal | Draft only | Approve privacy, data-safety, content rating, cultural and legal copy |

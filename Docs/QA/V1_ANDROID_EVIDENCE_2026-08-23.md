@@ -91,7 +91,9 @@ performance review and optimization pass.
 - Final application ID, branding, signing/upload key and Play App Signing path are not
   approved.
 - Adaptive icon configuration still emits Unity's legacy-icon deprecation warning.
-- 16 KB native-page compatibility has not been demonstrated for this exact AAB.
+- Static 16 KB checks passed for this exact AAB: `zipalign -c -P 16` succeeded and all
+  eight ARM64 ELF libraries reported `0x4000` alignment for every LOAD segment. A
+  runtime install on a dedicated 16 KB-page Android environment remains open.
 - The package is debug-signed/non-publishable and has not been uploaded to Play Console.
 - Store copy, data-safety declaration, content rating, privacy/legal and cultural review
   remain human gates.
