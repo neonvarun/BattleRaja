@@ -1,7 +1,7 @@
 # Latest HEAD baseline
 
 Date: 2026-08-24
-Branch: `codex/v1-playstore-release` (15 commits ahead of local and remote `main`)
+Branch: `codex/v1-playstore-release` (ahead of local and remote `main`; exact count is recorded by Git)
 Local/remote `main`: `ca6ec3e17e695042664cf3bdbf9889b259b33144`
 Latest validated runtime source: `d825832bced4c5e07c7967d891696842eb55609a`
 Current documentation HEAD: `786d37576d593b92df1e75fe781adc57ec8ea322`
