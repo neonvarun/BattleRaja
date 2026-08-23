@@ -7,19 +7,22 @@ technical evidence, not Play Store approval or final human visual approval.
 
 - Repository: `neonvarun/BattleRaja`
 - Branch: `codex/v1-playstore-release`
-- Runtime source: `df9adb0519ba3284ce6cd86c10778b5e117cc1e3`
-  (`presentation: deepen offline combat readability`)
+- Runtime source: `d825832bced4c5e07c7967d891696842eb55609a`
+  (`content: make tiffin route player-owned`)
 - Unity: `6000.5.6f1` (`0e0577a1a2ac`)
 - Disposable verification copy:
   `C:\Projects\BattleRaja-v1-verify-20260824e`
 - Repository validation: **0 errors / 0 warnings**
 - EditMode: **125/125 passed**
-- PlayMode: **65/65 passed** (one new visual-feedback regression)
+- PlayMode: **66/66 passed** (including the production Tiffin reachability regression)
 
-The new runtime behavior is presentation-only: fighter silhouette parts receive
-state-specific procedural pose motion, impact feedback uses a bounded pooled halo
-plus impact shape, and gadget identity visuals bob/rotate/pulse. No authority,
-damage, input, inventory or match-state rule was changed.
+The current slice keeps the existing render-only fighter motion, pooled impact
+feedback and animated gadget identity visuals, and makes the production Tiffin
+route player-owned: the pickup is authored near the protected player spawn,
+other gadget pickups are kept out of the initial claim radius, the HUD exposes a
+nearby-pickup hint, and a PlayMode regression proves the authority pickup/use
+path. The beacon is presentation-only; pickup ownership, inventory and use still
+resolve through the authority.
 
 ## Android artifacts
 
@@ -28,8 +31,8 @@ Unity scene generation and build output did not touch the tracked checkout.
 
 | Artifact | Size | SHA-256 |
 | --- | ---: | --- |
-| `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk` | 40,428,259 bytes | `2E51CCF590149A6726302F0AFB56070D85BB6E9669FC084FC4BF4C6D5A6AB217` |
-| `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab` | 36,258,342 bytes | `2B7CD24E01287E80B03C15824B593867C1B5A0AFF3347065D850343830F9204A` |
+| `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk` | 40,429,675 bytes | `50FD2D7F9C29F4888F2965810F9FD8130F7C2857F2A15AD7E3A5CF5908E7BFCC` |
+| `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab` | 36,259,768 bytes | `052F9CAB180E15AEEC0C2D8DCAB47187C53C58F07629C69F81A647697DB9FBF1` |
 
 The AAB check passed: base manifest present, 8 ARM64 libraries, 0 other ABIs,
 450 entries, and every checked ARM64 ELF LOAD segment aligned to `0x4000`.
@@ -41,7 +44,7 @@ The APK/AAB remains debug-signed with the temporary package ID
 Only Lava serial `ST5GDW23LB004392` was used. The APK installed successfully and
 `com.unity3d.player.UnityPlayerGameActivity` was top-resumed. Captures and raw
 logs are outside the repository under
-`C:\Projects\BattleRaja-v1-verify-20260824e\Builds\V1\Lava\`:
+`C:\Projects\BattleRaja-v1-verify-20260824j\Builds\V1\Lava\`:
 
 - `visual-feedback-menu.png`: offline menu with Play Offline, Tutorial Replay,
   Settings & Accessibility, and Help & Controls.
@@ -52,10 +55,10 @@ logs are outside the repository under
   readable HUD, twin-stick controls and distinct fighter identities.
 - `visual-feedback-combat.png`: post-warmup interaction probe with attack and
   ability input; no fatal application marker was observed.
-- `visual-feedback-gadget-route.png` and `visual-feedback-gadget-route2.png`:
-  touch movement probes toward the production gadget route.
-- `visual-feedback-gadget-use.png`: gadget button probe while the HUD still
-  reported `No gadget held`.
+- `v1-match-near.png`: match opening with the player HUD showing
+  `GADGET [G] tiffin_station` and the authority pickup event.
+- `v1-tiffin-used.png`: post-use capture showing `GADGET [G] empty`, the
+  cooldown and the visible Tiffin Station near the player.
 - `visual-feedback-menu-ui.xml` and `visual-feedback-match-ui.xml`: Unity's
   canvas is exposed as one full-screen surface, so semantic button bounds were
   unavailable; coordinate taps were used only for this bounded smoke probe.
@@ -63,9 +66,11 @@ logs are outside the repository under
   `visual-feedback-meminfo.txt`, and `visual-feedback-gfxinfo.txt`: raw runtime
   evidence and crash-marker/performance inspection.
 
-The sampled device memory was **281,375 KB PSS**, **418,520 KB RSS**, **94,896 KB
+The sampled device memory was **285,919 KB PSS**, **422,810 KB RSS**, **100,226 KB
 Graphics**, and **69 KB swap**. `gfxinfo` did not expose a usable frame/jank
-histogram, so no stable-FPS or performance pass is claimed.
+histogram, so no stable-FPS or performance pass is claimed. The captured app
+logcat contained no fatal exception, AndroidRuntime, SIGSEGV, SIGABRT,
+NullReferenceException or MissingReferenceException marker.
 
 ## Reference-app boundary
 
@@ -79,9 +84,8 @@ this pass.
 
 ## Open evidence gap
 
-The automated PlayMode gadget regression remains green, and the source-backed
-gadget identities render in the match. This Lava pass did **not** capture a
-successful human-facing gadget pickup and use; the HUD remained empty during the
-route probe. Tutorial completion, results/rematch, accessibility, touch ergonomics,
-long-run performance, final art/audio, signing, store/legal and cultural review
-remain open. The project remains classified as **prototype**.
+The production Tiffin pickup/use route is now captured on Lava and the automated
+authority regression remains green. Tutorial completion, results/rematch,
+accessibility, touch ergonomics, long-run performance, final art/audio, signing,
+store/legal and cultural review remain open. The project remains classified as
+**prototype**.

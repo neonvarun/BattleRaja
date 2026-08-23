@@ -30,26 +30,28 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
 ## Latest local candidate evidence (2026-08-24)
 
 The exact V1 source was validated in disposable copy
-`C:\Projects\BattleRaja-v1-verify-20260824e`:
+`C:\Projects\BattleRaja-v1-verify-20260824j`:
 
 - Unity `6000.5.6f1` (`0e0577a1a2ac`), validation **0 errors / 0 warnings**.
-- Exact runtime source: `df9adb0519ba3284ce6cd86c10778b5e117cc1e3`.
-- EditMode **125/125** and PlayMode **65/65** passed.
-- Release-shaped Lava APK: **40,428,259 bytes**, SHA-256
-  `2E51CCF590149A6726302F0AFB56070D85BB6E9669FC084FC4BF4C6D5A6AB217`.
-- Debug-signed AAB: **36,258,342 bytes**, SHA-256
-  `2B7CD24E01287E80B03C15824B593867C1B5A0AFF3347065D850343830F9204A`;
+- Exact runtime source: `d825832bced4c5e07c7967d891696842eb55609a`.
+- EditMode **125/125** and PlayMode **66/66** passed.
+- Release-shaped Lava APK: **40,429,675 bytes**, SHA-256
+  `50FD2D7F9C29F4888F2965810F9FD8130F7C2857F2A15AD7E3A5CF5908E7BFCC`.
+- Debug-signed AAB: **36,259,768 bytes**, SHA-256
+  `052F9CAB180E15AEEC0C2D8DCAB47187C53C58F07629C69F81A647697DB9FBF1`;
   base manifest present, 8 ARM64 libraries, 0 other ABIs, 450 entries, all ARM64
   ELF LOAD segments statically aligned to `0x4000`.
 - Lava screenshots and raw metrics are recorded in
-  `Docs/QA/V1_ANDROID_VISUAL_FEEDBACK_2026-08-24.md` (raw files remain outside source).
+  `Docs/QA/V1_ANDROID_VISUAL_FEEDBACK_2026-08-24.md`; the Tiffin pickup/use route is
+  now visually captured (raw files remain outside source).
 
 This evidence is a release-shaped prototype candidate. The APK/AAB is debug-signed and
 not publishable, the package ID remains temporary, legacy icon configuration still emits
 a Unity deprecation warning, runtime 16 KB confirmation, performance, store/legal and
 human review gates remain open.
-The exact Lava visual pass did not capture successful gadget pickup/use, so that remains an
-explicit evidence gate even though the automated authority regression is green.
+The exact Lava visual pass captured successful Tiffin pickup/use. Tutorial completion,
+results/rematch observation, touch/accessibility, performance, signing, store/legal and
+human review remain explicit gates even though the automated authority regression is green.
 
 ## Local artifact command
 

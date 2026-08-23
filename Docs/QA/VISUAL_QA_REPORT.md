@@ -1,39 +1,37 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-24
-Runtime-bearing candidate: `df9adb0519ba3284ce6cd86c10778b5e117cc1e3` (offline Android visual-feedback slice)
-Current validated runtime source HEAD: `df9adb0519ba3284ce6cd86c10778b5e117cc1e3`
+Runtime-bearing candidate: `d825832bced4c5e07c7967d891696842eb55609a` (offline Android gadget-route slice)
+Current validated runtime source HEAD: `d825832bced4c5e07c7967d891696842eb55609a`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://127.0.0.1:8139/index.html`
 
-## Offline Android visual-feedback continuation — 2026-08-24
+## Offline Android gadget-route continuation — 2026-08-24
 
-The exact source `df9adb0519ba3284ce6cd86c10778b5e117cc1e3` was built and installed
+The exact source `d825832bced4c5e07c7967d891696842eb55609a` was built and installed
 only on Lava `ST5GDW23LB004392` from disposable copy
-`C:\Projects\BattleRaja-v1-verify-20260824e`. The presentation slice adds state-specific
-fighter silhouette motion, a pooled impact halo/shape and animated gadget identity visuals;
-authority and gameplay rules are unchanged. Full automated gates passed: validation 0/0,
-EditMode 125/125 and PlayMode 65/65.
+`C:\Projects\BattleRaja-v1-verify-20260824j`. The slice retains state-specific fighter
+silhouette motion, a pooled impact halo/shape and animated gadget identity visuals, and
+places the production Tiffin pickup near the protected player spawn. Full automated gates
+passed: validation 0/0, EditMode 125/125 and PlayMode 66/66.
 
 Inspected captures are outside source under
-`C:\Projects\BattleRaja-v1-verify-20260824e\Builds\V1\Lava\`:
+`C:\Projects\BattleRaja-v1-verify-20260824j\Builds\V1\Lava\`:
 
-- `visual-feedback-menu.png`, `visual-feedback-mode.png`,
-  `visual-feedback-match-opening.png` and `visual-feedback-match.png` show the reachable
-  offline flow, selection route, Bazaar Bastion and eight-actor match composition.
-- `visual-feedback-combat.png` shows the post-warmup attack/ability probe. The bounded
-  capture is not a frame-perfect proof of every transient effect, but no fatal application
-  log marker was found.
-- `visual-feedback-gadget-route.png`, `visual-feedback-gadget-route2.png` and
-  `visual-feedback-gadget-use.png` document the touch route attempt. The HUD remained
-  `GADGET [G] empty`, so successful pickup/use remains unverified on-device.
+- `v1-menu.png`, `v1-mode.png`, `v1-fighter.png` and `v1-match-near.png` show the
+  reachable offline flow, selection route, Bazaar Bastion and eight-actor match.
+- `v1-match-near.png` shows the player HUD receiving `tiffin_station` from the
+  production pickup route; `v1-tiffin-used.png` shows the held slot empty after use,
+  the cooldown and the visible Tiffin Station.
+- The bounded interaction capture is not frame-perfect proof of every transient effect,
+  but no fatal application marker was found in the sampled logcat.
 
 The Android UI tree exposes Unity as one full-screen surface without semantic button nodes;
 coordinate taps were therefore used for this limited smoke probe and are recorded as a
 tooling limitation. The sampled `gfxinfo` still exposed no usable frame/jank histogram;
 stable FPS is not claimed. The debug-signed temporary package, final art/audio, touch and
-accessibility approval, tutorial/results observation, gadget-use capture, performance series,
-store/legal and cultural review remain open.
+accessibility approval, tutorial/results observation, performance series, store/legal and
+cultural review remain open.
 
 ## Offline Android V1 candidate visual pass — 2026-08-23
 

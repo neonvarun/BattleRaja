@@ -1,30 +1,31 @@
 # Latest HEAD baseline
 
 Date: 2026-08-24
-Branch: `codex/v1-playstore-release` (12 commits ahead of local and remote `main`)
+Branch: `codex/v1-playstore-release` (13 commits ahead of local and remote `main`)
 Local/remote `main`: `ca6ec3e17e695042664cf3bdbf9889b259b33144`
-Latest validated repository HEAD: `df9adb0519ba3284ce6cd86c10778b5e117cc1e3`
+Latest validated repository HEAD: `d825832bced4c5e07c7967d891696842eb55609a`
 Balance-fix runtime source: `17a8c75` (`fix(balance): land documented weapon retune in Core definitions`)
 Pre-fix baseline source: `35d723f` (`fix: bot perception no longer treats fighter hulls as line-of-sight blockers`; the tip of local `main` before this branch)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
-## Current offline Android visual-feedback slice — 2026-08-24
+## Current offline Android gadget-route slice — 2026-08-24
 
-Runtime source `df9adb0519ba3284ce6cd86c10778b5e117cc1e3` adds render-only fighter
-state motion, pooled impact halos and animated gadget identity visuals. Full details and
-the exact artifacts/captures are in
+Runtime source `d825832bced4c5e07c7967d891696842eb55609a` retains render-only fighter
+state motion, pooled impact halos and animated gadget identity visuals, and makes the
+production Tiffin pickup/use route player-owned. Full details and the exact
+artifacts/captures are in
 `Docs/QA/V1_ANDROID_VISUAL_FEEDBACK_2026-08-24.md`.
 
 | Check | Result | Evidence |
 | --- | --- | --- |
 | Repository validation | **0 errors / 0 warnings** | `Tools/Validation/validate.ps1 -RequireUnityProject -UnityExe ...6000.5.6f1...` |
 | Full EditMode | **125/125 passed** | disposable `...20260824e/Builds/V1/TestResults/editmode-visual-feedback.xml` |
-| Full PlayMode | **65/65 passed** | disposable `...20260824e/Builds/V1/TestResults/playmode-visual-feedback.xml` |
-| Android APK | **40,428,259 bytes**, SHA-256 `2E51CCF590149A6726302F0AFB56070D85BB6E9669FC084FC4BF4C6D5A6AB217` | installed/launched on Lava only |
-| Android AAB | **36,258,342 bytes**, SHA-256 `2B7CD24E01287E80B03C15824B593867C1B5A0AFF3347065D850343830F9204A` | 8 ARM64 libraries; static 16 KB alignment passed |
-| Lava visual smoke | Menu, mode, fighter selection, match, movement and attack/ability probe; no fatal marker | raw captures outside source |
-| Gadget visual smoke | Pickup/use was attempted but not captured successfully; remains open | `visual-feedback-gadget-*.png` |
-| Device sample | **281,375 KB PSS / 418,520 KB RSS / 94,896 KB Graphics / 69 KB swap**; no usable frame histogram | raw Lava dumps |
+| Full PlayMode | **66/66 passed** | disposable `...20260824j/Builds/V1/TestResults/playmode-route2.xml` |
+| Android APK | **40,429,675 bytes**, SHA-256 `50FD2D7F9C29F4888F2965810F9FD8130F7C2857F2A15AD7E3A5CF5908E7BFCC` | installed/launched on Lava only |
+| Android AAB | **36,259,768 bytes**, SHA-256 `052F9CAB180E15AEEC0C2D8DCAB47187C53C58F07629C69F81A647697DB9FBF1` | 8 ARM64 libraries; static 16 KB alignment passed |
+| Lava visual smoke | Menu, mode, fighter selection, match, movement, attack/ability and Tiffin use; no fatal marker | raw captures outside source |
+| Gadget visual smoke | Tiffin pickup and use captured; authority HUD and visible station confirmed | `v1-match-near.png`, `v1-tiffin-used.png` |
+| Device sample | **285,919 KB PSS / 422,810 KB RSS / 100,226 KB Graphics / 69 KB swap**; no usable frame histogram | raw Lava dumps |
 
 Classification remains **prototype**. The debug-signed temporary package, runtime 16 KB
 environment, FPS/performance series, successful gadget-use capture, human review and store

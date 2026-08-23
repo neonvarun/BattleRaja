@@ -4,28 +4,31 @@ Updated: 2026-08-24
 Classification: **prototype**
 
 Latest continuation: offline Android V1 release-shaped candidate — branch
-`codex/v1-playstore-release` runtime source `df9adb0`. Exact-source evidence now
-includes validation 0/0, EditMode **125/125**, PlayMode **65/65**, a non-development
+`codex/v1-playstore-release` runtime source `d825832`. Exact-source evidence now
+includes validation 0/0, EditMode **125/125**, PlayMode **66/66**, a non-development
 debug-signed APK installed and exercised on Lava, render-only fighter/impact/gadget
-feedback, source-backed visual/store drafts, and a static 16 KB AAB alignment check.
+feedback, a successful player-owned Tiffin pickup/use capture, and a static 16 KB AAB
+alignment check.
 The project remains a prototype: final signing,
 package identity, long-run performance, human playtest, store/legal and Play Console
 gates remain open; Photon, PlayFab and Web release are out of scope.
 
-## Android V1.0 visual-feedback continuation — 2026-08-24
+## Android V1.0 gadget-route continuation — 2026-08-24
 
-Exact candidate source: `df9adb0519ba3284ce6cd86c10778b5e117cc1e3` on
+Exact candidate source: `d825832bced4c5e07c7967d891696842eb55609a` on
 `codex/v1-playstore-release`.
 
-This bounded presentation slice adds state-specific procedural motion to fighter identity
-parts, a pooled impact halo/shape cue, and animated gadget identity visuals. Authority,
-damage, input, inventory and match rules are unchanged. Validation is 0/0, EditMode
-**125/125**, and PlayMode **65/65**. Exact APK/AAB hashes, Lava captures, the Brawl Stars
-read-only reference note and the unsuccessful gadget-use visual probe are recorded in
+This bounded slice retains the render-only fighter/impact/gadget feedback and makes the
+production Tiffin route player-owned: the pickup is near the protected player spawn,
+other pickups cannot claim it first, the HUD reports a nearby pickup, and the authority
+pickup/use path is covered by PlayMode and captured on Lava. Validation is 0/0, EditMode
+**125/125**, and PlayMode **66/66**. Exact APK/AAB hashes, Lava captures, the Brawl Stars
+read-only reference note and raw device measurements are recorded in
 `Docs/QA/V1_ANDROID_VISUAL_FEEDBACK_2026-08-24.md`.
 
-Status: **Passed with evidence** for this presentation slice; human visual approval,
-successful gadget pickup/use capture and release gates remain open.
+Status: **Passed with evidence** for this offline gadget-route slice; tutorial completion,
+results/rematch observation, human visual approval, accessibility, performance and release
+gates remain open.
 
 ## Android V1.0 release-shaped candidate — 2026-08-23
 
