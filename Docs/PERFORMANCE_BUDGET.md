@@ -17,6 +17,11 @@ observations, but remains a smoke measurement rather than a performance pass:
   native ELF LOAD segments aligned to `0x4000`.
 - Current process sample during the offline match: **304,939 KB PSS**, **452,134 KB RSS**,
   **17,394 KB Graphics**, **76 KB swap**.
+- A single active-match shell sample reported **78% user + 21% kernel** for the process
+  in `dumpsys cpuinfo` and **94.1% instantaneous CPU** in `top`. HAL temperatures were
+  **42.45 C CPU/GPU**, **37.93 C skin** and **33.0 C battery**, with thermal status **0**;
+  battery level was **37%** while USB-powered. These are short observations, not a
+  sustained thermal, battery or CPU-budget result.
 - `dumpsys gfxinfo` again reported **0 total frames** and an empty histogram for the
   Unity SurfaceView, so no stable-FPS, frame-pacing or GPU conclusion is claimed.
 - Raw files: `C:\Projects\BattleRaja-v1-tutorial-verify\Builds\V1\Lava\`.
