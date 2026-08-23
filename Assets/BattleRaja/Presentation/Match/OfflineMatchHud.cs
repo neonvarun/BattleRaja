@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Movement;
+using BattleRaja.Presentation.UI;
 using BattleRaja.Presentation.Visuals;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -36,6 +37,8 @@ namespace BattleRaja.Presentation.Match
         private bool _leftHanded;
         private bool _reducedFlashes;
         private bool _aimAssist;
+        private float _textScale;
+        private float _appliedTextScale = 1f;
         private bool _paused;
         private bool _compactLayout;
 
@@ -55,6 +58,7 @@ namespace BattleRaja.Presentation.Match
             }
 
             _audio = FindAnyObjectByType<BattleRajaAudioDirector>();
+            EnsureTouchSurfaces();
             var movementAgents = FindObjectsByType<MovementPlayerAgent>();
             for (var i = 0; i < movementAgents.Length; i++)
             {
@@ -67,6 +71,77 @@ namespace BattleRaja.Presentation.Match
             BuildCanvasUi();
             ApplyHandedLayout();
             ApplyReducedFlashes();
+            ApplyTextScale();
+            BattleRajaUiTheme.ApplyContrast(canvas != null ? canvas.transform : null, _highContrast);
+        }
+
+        private static void EnsureTouchSurfaces()
+        {
+            EnsureTouchSurface("MovementStick", new Color(0.25f, 0.70f, 1f, 0.18f), true);
+            EnsureTouchSurface("AimStick", new Color(1f, 0.64f, 0.22f, 0.18f), true);
+            EnsureTouchSurface("AttackButton", new Color(1f, 0.36f, 0.18f, 0.28f), true);
+            EnsureTouchSurface("AbilityButton", new Color(0.36f, 0.78f, 1f, 0.30f), true);
+            EnsureTouchSurface("GadgetButton", new Color(0.72f, 0.32f, 0.95f, 0.30f), true);
+
+            var movement = GameObject.Find("MovementStick");
+            var aim = GameObject.Find("AimStick");
+            EnsureTouchSurface(movement != null ? "MovementStick/Knob" : string.Empty, new Color(0.25f, 0.70f, 1f, 0.72f), false);
+            EnsureTouchSurface(aim != null ? "AimStick/Knob" : string.Empty, new Color(1f, 0.64f, 0.22f, 0.72f), false);
+        }
+
+        private static void EnsureTouchSurface(string objectPath, Color color, bool ring)
+        {
+            if (string.IsNullOrEmpty(objectPath)) return;
+            var objectToStyle = GameObject.Find(objectPath);
+            if (objectToStyle == null) return;
+
+            var directSurface = objectToStyle.GetComponent<BattleRajaTouchSurface>();
+            if (directSurface != null)
+            {
+                directSurface.Configure(color, ring);
+                directSurface.raycastTarget = true;
+                return;
+            }
+
+            var legacyImage = objectToStyle.GetComponent<Image>();
+            if (legacyImage == null)
+            {
+                var newSurface = objectToStyle.AddComponent<BattleRajaTouchSurface>();
+                newSurface.Configure(color, ring);
+                newSurface.raycastTarget = true;
+                return;
+            }
+
+            // Unity defers Destroy(Image) until the end of the frame and rejects a
+            // second Graphic on the same GameObject in the meantime. Keep the
+            // authored Image as a transparent, non-raycast fallback and render the
+            // circular treatment on a child overlay instead. Pointer events still
+            // bubble to the authored control component on the parent.
+            legacyImage.enabled = false;
+            legacyImage.color = new Color(legacyImage.color.r, legacyImage.color.g, legacyImage.color.b, 0f);
+            legacyImage.raycastTarget = false;
+
+            var visualObject = objectToStyle.transform.Find("BattleRajaTouchSurface");
+            if (visualObject == null)
+            {
+                visualObject = new GameObject("BattleRajaTouchSurface", typeof(RectTransform)).transform;
+                visualObject.SetParent(objectToStyle.transform, false);
+                visualObject.SetAsLastSibling();
+            }
+
+            var visualRect = visualObject as RectTransform;
+            if (visualRect != null)
+            {
+                visualRect.anchorMin = Vector2.zero;
+                visualRect.anchorMax = Vector2.one;
+                visualRect.offsetMin = Vector2.zero;
+                visualRect.offsetMax = Vector2.zero;
+                visualRect.localScale = Vector3.one;
+            }
+
+            var surface = visualObject.GetComponent<BattleRajaTouchSurface>() ?? visualObject.gameObject.AddComponent<BattleRajaTouchSurface>();
+            surface.Configure(color, ring);
+            surface.raycastTarget = true;
         }
 
         private void OnDestroy()
@@ -162,6 +237,8 @@ namespace BattleRaja.Presentation.Match
             rootRect.offsetMax = Vector2.zero;
 
             _statusText = CreateText(root.transform, "MatchStatus", new Vector2(0.42f, 0.94f), new Vector2(0.84f, 0.99f), 24, TextAnchor.UpperLeft);
+            CreatePanel(root.transform, "MatchStatusCard", new Vector2(0.39f, 0.925f), new Vector2(0.99f, 0.995f), BattleRajaUiTheme.Surface);
+            _statusText.transform.SetAsLastSibling();
             _spectatorText = CreateText(root.transform, "SpectatorStatus", new Vector2(0.42f, 0.88f), new Vector2(0.84f, 0.93f), 22, TextAnchor.UpperLeft);
             CreateButton(root.transform, "Pause", "PAUSE", new Vector2(0.86f, 0.92f), new Vector2(0.98f, 0.985f), ToggleSettings);
             CreateButton(root.transform, "Spectate", "SPECTATE", new Vector2(0.38f, 0.02f), new Vector2(0.52f, 0.085f), CycleSpectator);
@@ -174,12 +251,14 @@ namespace BattleRaja.Presentation.Match
 
             _settingsPanel = CreatePanel(root.transform, "SettingsPanel", new Vector2(0.58f, 0.16f), new Vector2(0.96f, 0.86f), new Color(0.03f, 0.06f, 0.1f, 0.97f));
             CreateText(_settingsPanel.transform, "SettingsTitle", new Vector2(0.08f, 0.84f), new Vector2(0.92f, 0.96f), 26, TextAnchor.MiddleCenter).text = "SETTINGS";
-            CreateButton(_settingsPanel.transform, "CloseSettings", "CLOSE", new Vector2(0.52f, 0.04f), new Vector2(0.92f, 0.16f), ToggleSettings);
-            CreateButton(_settingsPanel.transform, "ReturnToMenu", "RETURN TO MENU", new Vector2(0.08f, 0.04f), new Vector2(0.48f, 0.16f), ReturnToMenu);
+            CreateButton(_settingsPanel.transform, "CloseSettings", "CLOSE", new Vector2(0.52f, 0.01f), new Vector2(0.92f, 0.075f), ToggleSettings);
+            CreateButton(_settingsPanel.transform, "ReturnToMenu", "RETURN TO MENU", new Vector2(0.08f, 0.01f), new Vector2(0.48f, 0.075f), ReturnToMenu);
             CreateButton(_settingsPanel.transform, "LeftHanded", "LEFT-HANDED", new Vector2(0.08f, 0.65f), new Vector2(0.92f, 0.76f), ToggleLeftHanded);
             CreateButton(_settingsPanel.transform, "ReducedFlashes", "REDUCED FLASHES", new Vector2(0.08f, 0.50f), new Vector2(0.92f, 0.61f), ToggleReducedFlashes);
             CreateButton(_settingsPanel.transform, "HighContrast", "HIGH CONTRAST", new Vector2(0.08f, 0.35f), new Vector2(0.92f, 0.46f), ToggleHighContrast);
             _aimAssistButton = CreateButton(_settingsPanel.transform, "AimAssist", "AIM ASSIST", new Vector2(0.08f, 0.20f), new Vector2(0.92f, 0.31f), ToggleAimAssist);
+            CreateButton(_settingsPanel.transform, "TextDown", "TEXT -", new Vector2(0.08f, 0.09f), new Vector2(0.44f, 0.18f), DecreaseTextScale);
+            CreateButton(_settingsPanel.transform, "TextUp", "TEXT +", new Vector2(0.56f, 0.09f), new Vector2(0.92f, 0.18f), IncreaseTextScale);
             _settingsPanel.SetActive(false);
             RefreshAimAssistLabel();
             ApplyResponsiveLayout();
@@ -189,19 +268,20 @@ namespace BattleRaja.Presentation.Match
         {
             if (_statusText == null || _spectatorText == null || Screen.height <= 0) return;
             var compact = (float)Screen.width / Screen.height < 0.75f;
-            if (compact == _compactLayout && _statusText.fontSize == (compact ? 18 : 22)) return;
+            var targetStatusSize = Mathf.RoundToInt((compact ? 18f : 22f) * _textScale);
+            if (compact == _compactLayout && _statusText.fontSize == targetStatusSize) return;
 
             _compactLayout = compact;
             var statusRect = _statusText.rectTransform;
             statusRect.anchorMin = compact ? new Vector2(0.42f, 0.90f) : new Vector2(0.42f, 0.94f);
             statusRect.anchorMax = new Vector2(0.98f, 0.99f);
-            _statusText.fontSize = compact ? 18 : 22;
-            if (_resultsText != null) _resultsText.fontSize = compact ? 16 : 20;
+            _statusText.fontSize = targetStatusSize;
+            if (_resultsText != null) _resultsText.fontSize = Mathf.RoundToInt((compact ? 16f : 20f) * _textScale);
 
             var spectatorRect = _spectatorText.rectTransform;
             spectatorRect.anchorMin = compact ? new Vector2(0.42f, 0.84f) : new Vector2(0.42f, 0.88f);
             spectatorRect.anchorMax = compact ? new Vector2(0.98f, 0.89f) : new Vector2(0.98f, 0.93f);
-            _spectatorText.fontSize = compact ? 16 : 20;
+            _spectatorText.fontSize = Mathf.RoundToInt((compact ? 16f : 20f) * _textScale);
         }
 
         private void ToggleSettings()
@@ -243,10 +323,36 @@ namespace BattleRaja.Presentation.Match
             var movement = GameObject.Find("MovementStick")?.GetComponent<RectTransform>();
             var aim = GameObject.Find("AimStick")?.GetComponent<RectTransform>();
             if (movement == null || aim == null) return;
-            movement.anchorMin = _leftHanded ? new Vector2(0.83f, 0.2f) : new Vector2(0.17f, 0.2f);
+            var compact = Screen.height > 0 && (float)Screen.width / Screen.height < 0.75f;
+            var stickY = compact ? 0.18f : 0.20f;
+            var actionY = compact ? 0.34f : 0.49f;
+            movement.anchorMin = _leftHanded ? new Vector2(0.83f, stickY) : new Vector2(0.17f, stickY);
             movement.anchorMax = movement.anchorMin;
-            aim.anchorMin = _leftHanded ? new Vector2(0.17f, 0.2f) : new Vector2(0.83f, 0.2f);
+            aim.anchorMin = _leftHanded ? new Vector2(0.17f, stickY) : new Vector2(0.83f, stickY);
             aim.anchorMax = aim.anchorMin;
+
+            var attack = GameObject.Find("AttackButton")?.GetComponent<RectTransform>();
+            var ability = GameObject.Find("AbilityButton")?.GetComponent<RectTransform>();
+            var gadget = GameObject.Find("GadgetButton")?.GetComponent<RectTransform>();
+            SetActionAnchor(attack, new Vector2(_leftHanded ? 0.07f : 0.93f, actionY));
+            SetActionAnchor(ability, new Vector2(_leftHanded ? 0.20f : 0.80f, actionY));
+            SetActionAnchor(gadget, new Vector2(_leftHanded ? 0.33f : 0.67f, actionY));
+            SetActionSize(attack, compact ? 146f : 170f);
+            SetActionSize(ability, compact ? 122f : 140f);
+            SetActionSize(gadget, compact ? 106f : 120f);
+        }
+
+        private static void SetActionAnchor(RectTransform rect, Vector2 anchor)
+        {
+            if (rect == null) return;
+            rect.anchorMin = anchor;
+            rect.anchorMax = anchor;
+        }
+
+        private static void SetActionSize(RectTransform rect, float size)
+        {
+            if (rect == null) return;
+            rect.sizeDelta = new Vector2(size, size);
         }
 
         private void ToggleReducedFlashes()
@@ -270,6 +376,7 @@ namespace BattleRaja.Presentation.Match
             _highContrast = !_highContrast;
             PlayerPrefs.SetInt("battleraja.settings.high_contrast", _highContrast ? 1 : 0);
             PlayerPrefs.Save();
+            BattleRajaUiTheme.ApplyContrast(canvas != null ? canvas.transform : null, _highContrast);
         }
 
         private void ToggleAimAssist()
@@ -279,6 +386,24 @@ namespace BattleRaja.Presentation.Match
             PlayerPrefs.Save();
             _playerInput?.SetAimAssistEnabled(_aimAssist);
             RefreshAimAssistLabel();
+        }
+
+        private void IncreaseTextScale()
+        {
+            _textScale = Mathf.Clamp(_textScale + 0.1f, 0.9f, 1.3f);
+            PlayerPrefs.SetFloat("battleraja.settings.text_scale", _textScale);
+            PlayerPrefs.Save();
+            ApplyTextScale();
+            ApplyResponsiveLayout();
+        }
+
+        private void DecreaseTextScale()
+        {
+            _textScale = Mathf.Clamp(_textScale - 0.1f, 0.9f, 1.3f);
+            PlayerPrefs.SetFloat("battleraja.settings.text_scale", _textScale);
+            PlayerPrefs.Save();
+            ApplyTextScale();
+            ApplyResponsiveLayout();
         }
 
         private void RefreshAimAssistLabel()
@@ -294,6 +419,20 @@ namespace BattleRaja.Presentation.Match
             _reducedFlashes = PlayerPrefs.GetInt("battleraja.settings.reduced_flashes", 0) != 0;
             _highContrast = PlayerPrefs.GetInt("battleraja.settings.high_contrast", 0) != 0;
             _aimAssist = PlayerPrefs.GetInt("battleraja.settings.aim_assist", 0) != 0;
+            _textScale = Mathf.Clamp(PlayerPrefs.GetFloat("battleraja.settings.text_scale", 1f), 0.9f, 1.3f);
+        }
+
+        private void ApplyTextScale()
+        {
+            if (canvas == null || _appliedTextScale <= 0.001f) return;
+            var ratio = _textScale / _appliedTextScale;
+            foreach (var text in canvas.GetComponentsInChildren<Text>(true))
+            {
+                if (text == null || text == _statusText || text == _spectatorText || text == _resultsText) continue;
+                text.fontSize = Mathf.Clamp(Mathf.RoundToInt(text.fontSize * ratio), 12, 48);
+            }
+
+            _appliedTextScale = _textScale;
         }
 
         private static GameObject CreatePanel(Transform parent, string name, Vector2 min, Vector2 max, Color color)
@@ -306,6 +445,7 @@ namespace BattleRaja.Presentation.Match
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
             panel.GetComponent<Image>().color = color;
+            BattleRajaUiTheme.StylePanel(panel, color);
             return panel;
         }
 
@@ -319,12 +459,7 @@ namespace BattleRaja.Presentation.Match
             rect.offsetMin = new Vector2(8f, 4f);
             rect.offsetMax = new Vector2(-8f, -4f);
             var text = objectToCreate.GetComponent<Text>();
-            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            text.fontSize = size;
-            text.alignment = alignment;
-            text.color = Color.white;
-            text.horizontalOverflow = HorizontalWrapMode.Wrap;
-            text.verticalOverflow = VerticalWrapMode.Overflow;
+            BattleRajaUiTheme.StyleText(text, size, alignment);
             return text;
         }
 
@@ -337,11 +472,11 @@ namespace BattleRaja.Presentation.Match
             rect.anchorMax = max;
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
-            buttonObject.GetComponent<Image>().color = new Color(0.08f, 0.23f, 0.31f, 0.94f);
             var text = CreateText(buttonObject.transform, name + "Label", Vector2.zero, Vector2.one, 18, TextAnchor.MiddleCenter);
             text.text = label;
             var button = buttonObject.GetComponent<Button>();
             button.onClick.AddListener(action);
+            BattleRajaUiTheme.StyleButton(button, name == "Rematch" || name == "Pause");
             return button;
         }
     }

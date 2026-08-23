@@ -1,6 +1,7 @@
 using BattleRaja.Core.Application;
 using BattleRaja.Presentation.Match;
 using BattleRaja.Presentation.Movement;
+using BattleRaja.Presentation.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -112,6 +113,23 @@ namespace BattleRaja.Presentation.Flow
             safeRect.offsetMin = Vector2.zero;
             safeRect.offsetMax = Vector2.zero;
 
+            var backdropObject = new GameObject("TutorialBackdrop", typeof(RectTransform), typeof(BattleRajaUiBackdrop));
+            backdropObject.transform.SetParent(safe.transform, false);
+            var backdropRect = backdropObject.GetComponent<RectTransform>();
+            backdropRect.anchorMin = Vector2.zero;
+            backdropRect.anchorMax = Vector2.one;
+            backdropRect.offsetMin = Vector2.zero;
+            backdropRect.offsetMax = Vector2.zero;
+            backdropObject.transform.SetAsFirstSibling();
+
+            var logoObject = new GameObject("TutorialMark", typeof(RectTransform), typeof(BattleRajaLogoGraphic));
+            logoObject.transform.SetParent(safe.transform, false);
+            var logoRect = logoObject.GetComponent<RectTransform>();
+            logoRect.anchorMin = new Vector2(0.46f, 0.885f);
+            logoRect.anchorMax = new Vector2(0.54f, 0.965f);
+            logoRect.offsetMin = Vector2.zero;
+            logoRect.offsetMax = Vector2.zero;
+
             _panel = new GameObject("TutorialPanel", typeof(RectTransform), typeof(Image));
             _panel.transform.SetParent(safe.transform, false);
             var panelRect = _panel.GetComponent<RectTransform>();
@@ -119,7 +137,7 @@ namespace BattleRaja.Presentation.Flow
             panelRect.anchorMax = new Vector2(0.90f, 0.96f);
             panelRect.offsetMin = Vector2.zero;
             panelRect.offsetMax = Vector2.zero;
-            _panel.GetComponent<Image>().color = new Color(0.02f, 0.06f, 0.09f, 0.94f);
+            BattleRajaUiTheme.StylePanel(_panel, BattleRajaUiTheme.Surface);
 
             _title = CreateText(_panel.transform, "Title", new Vector2(0.04f, 0.68f), new Vector2(0.96f, 0.94f), 28, TextAnchor.MiddleCenter);
             _body = CreateText(_panel.transform, "Body", new Vector2(0.07f, 0.32f), new Vector2(0.93f, 0.68f), 20, TextAnchor.MiddleCenter);
@@ -187,12 +205,7 @@ namespace BattleRaja.Presentation.Flow
             rect.offsetMin = new Vector2(8f, 4f);
             rect.offsetMax = new Vector2(-8f, -4f);
             var text = objectToCreate.GetComponent<Text>();
-            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            text.fontSize = size;
-            text.alignment = alignment;
-            text.color = Color.white;
-            text.horizontalOverflow = HorizontalWrapMode.Wrap;
-            text.verticalOverflow = VerticalWrapMode.Overflow;
+            BattleRajaUiTheme.StyleText(text, size, alignment);
             return text;
         }
 
@@ -205,11 +218,11 @@ namespace BattleRaja.Presentation.Flow
             rect.anchorMax = max;
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
-            buttonObject.GetComponent<Image>().color = new Color(0.08f, 0.28f, 0.35f, 0.96f);
             var text = CreateText(buttonObject.transform, name + "Label", Vector2.zero, Vector2.one, 16, TextAnchor.MiddleCenter);
             text.text = label;
             var button = buttonObject.GetComponent<Button>();
             button.onClick.AddListener(action);
+            BattleRajaUiTheme.StyleButton(button, name == "Advance");
             return button;
         }
     }

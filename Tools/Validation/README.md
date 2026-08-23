@@ -16,3 +16,12 @@ The first form is suitable before Unity installation. The second form is the pos
 ```powershell
 pwsh -File Tools/Validation/update_package_manifest.ps1
 ```
+
+`check_android_bundle.ps1` reports the exact AAB hash/size and verifies that the base module
+contains ARM64 native libraries before the owner performs bundletool and Play Console checks:
+
+```powershell
+pwsh -File Tools/Validation/check_android_bundle.ps1 `
+  -AabPath Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab `
+  -RequireArm64
+```

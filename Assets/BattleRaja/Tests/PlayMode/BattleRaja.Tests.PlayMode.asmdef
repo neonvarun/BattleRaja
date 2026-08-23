@@ -5,7 +5,8 @@
     "BattleRaja.Core.Domain",
     "BattleRaja.Core.Application",
     "BattleRaja.Gameplay",
-    "BattleRaja.Presentation"
+    "BattleRaja.Presentation",
+    "Unity.InputSystem"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

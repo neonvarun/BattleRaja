@@ -7,6 +7,23 @@ Balance-fix runtime source: `17a8c75` (`fix(balance): land documented weapon ret
 Pre-fix baseline source: `35d723f` (`fix: bot perception no longer treats fighter hulls as line-of-sight blockers`; the tip of local `main` before this branch)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
+## Current offline Android V1 candidate — 2026-08-23
+
+The V1 release-shaped candidate is recorded on `codex/v1-playstore-release` after the
+intentional offline-product changes were committed. This section supersedes the older
+closure rows for Android V1 claims.
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Repository validation | **0 errors / 0 warnings** | `Tools/Validation/validate.ps1 -RequireUnityProject -UnityExe ...6000.5.6f1...` |
+| Full EditMode | **125/125 passed** | `Builds/V1/TestResults/editmode-v1-final.xml` |
+| Full PlayMode | **61/61 passed** | `Builds/V1/TestResults/playmode-v1-final.xml` |
+| Android development APK | **166,221,332 bytes**, SHA-256 `9A93BF85AC5CD557C5DC1E1A166B99F18137F2D45F5EDDE5F6C4790F5F13F5F7` | disposable verification copy, Lava install |
+| Android release-shaped AAB | **36,250,956 bytes**, SHA-256 `78CFF3B021B41A2194E9F961D506CC376A92D8D24AC3D7ECFD4CE258976645EC` | base manifest, 8 ARM64 libraries, 0 other ABIs, 450 entries |
+| Lava runtime | Menu, fighter selection, match opening, movement, attack/ability interaction; no app fatal markers | `Docs/QA/V1_ANDROID_EVIDENCE_2026-08-23.md`, raw evidence outside source |
+| Performance sample | **462,618 KB PSS / 593,576 KB RSS / 99,988 KB Graphics / 75 KB swap**, one ~96.9% CPU sample, visible ~30 FPS cadence | Lava `dumpsys`/logcat files outside source |
+| Release boundary | Prototype; package ID/signing/adaptive icon/16 KB/human/store/legal/performance gates open | V1 evidence and release checklist |
+
 ## M11 closure slice - 2026-08-23
 
 Bounded performance/UX closure stopped for owner-requested clean publication.

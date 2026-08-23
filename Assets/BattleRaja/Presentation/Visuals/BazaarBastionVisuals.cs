@@ -1,0 +1,167 @@
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Rendering;
+
+namespace BattleRaja.Presentation.Visuals
+{
+    /// <summary>
+    /// Runtime-only, original placeholder art kit for Bazaar Bastion. It replaces the
+    /// unbroken greybox silhouette with a compact toy-box market landmark while leaving
+    /// the authored collision and authority data untouched. Every generated object is
+    /// render-only and has its collider removed, so it cannot change gameplay outcomes.
+    /// </summary>
+    public sealed class BazaarBastionVisuals : MonoBehaviour
+    {
+        [SerializeField] private bool enabledForBuilds = true;
+        [SerializeField] private int decorationQuality = 1;
+
+        private readonly List<GameObject> _objects = new List<GameObject>(64);
+        private readonly List<Material> _materials = new List<Material>(12);
+        private Transform _root;
+
+        private void Awake()
+        {
+            if (!enabledForBuilds || transform.Find("V1BastionVisuals") != null) return;
+            BuildVisualKit();
+        }
+
+        private void OnDestroy()
+        {
+            for (var i = 0; i < _materials.Count; i++)
+            {
+                if (_materials[i] != null) Destroy(_materials[i]);
+            }
+        }
+
+        private void BuildVisualKit()
+        {
+            _root = new GameObject("V1BastionVisuals").transform;
+            _root.SetParent(transform, false);
+
+            var clay = CreateMaterial("V1 Clay", new Color(0.82f, 0.25f, 0.12f, 1f));
+            var saffron = CreateMaterial("V1 Saffron", new Color(1f, 0.57f, 0.13f, 1f));
+            var teal = CreateMaterial("V1 Teal", new Color(0.08f, 0.42f, 0.45f, 1f));
+            var mint = CreateMaterial("V1 Mint", new Color(0.28f, 0.82f, 0.70f, 1f));
+            var violet = CreateMaterial("V1 Violet", new Color(0.55f, 0.22f, 0.75f, 1f));
+            var cream = CreateMaterial("V1 Cream", new Color(1f, 0.84f, 0.52f, 1f));
+            var dark = CreateMaterial("V1 Ink", new Color(0.07f, 0.10f, 0.14f, 1f));
+            var sand = CreateMaterial("V1 Sand", new Color(0.78f, 0.53f, 0.30f, 1f));
+            var rose = CreateMaterial("V1 Rose", new Color(0.92f, 0.22f, 0.38f, 1f));
+
+            // A small central landmark gives the arena a readable centre without blocking
+            // the existing navigation lanes. It is intentionally low and collider-free.
+            CreateCylinder("PlazaOuter", new Vector3(0f, 0.035f, 0f), new Vector3(9.2f, 0.05f, 9.2f), dark);
+            CreateCylinder("PlazaInner", new Vector3(0f, 0.062f, 0f), new Vector3(7.4f, 0.035f, 7.4f), sand);
+            CreateCylinder("BastionPlinth", new Vector3(0f, 0.08f, 0f), new Vector3(2.5f, 0.16f, 2.5f), teal);
+            CreateCylinder("BastionCrown", new Vector3(0f, 1.05f, 0f), new Vector3(0.55f, 1.0f, 0.55f), saffron);
+            CreateBlock("BastionCrownTop", new Vector3(0f, 2.10f, 0f), new Vector3(2.2f, 0.18f, 0.45f), cream, Quaternion.Euler(0f, 0f, 0f));
+            CreateBlock("BastionCrownTopCross", new Vector3(0f, 2.10f, 0f), new Vector3(0.45f, 0.18f, 2.2f), cream, Quaternion.Euler(0f, 0f, 0f));
+
+            CreateGroundStripe("RouteStripeNorth", new Vector3(0f, 0.012f, 7.4f), new Vector3(15.5f, 0.025f, 0.22f), saffron);
+            CreateGroundStripe("RouteStripeSouth", new Vector3(0f, 0.012f, -7.4f), new Vector3(15.5f, 0.025f, 0.22f), mint);
+            CreateGroundStripe("RouteStripeWest", new Vector3(-11.4f, 0.014f, 0f), new Vector3(0.22f, 0.025f, 12.5f), violet);
+            CreateGroundStripe("RouteStripeEast", new Vector3(11.4f, 0.014f, 0f), new Vector3(0.22f, 0.025f, 12.5f), clay);
+
+            for (var i = 0; i < 8; i++)
+            {
+                var angle = i * 45f * Mathf.Deg2Rad;
+                var position = new Vector3(Mathf.Cos(angle) * 5.8f, 0.10f, Mathf.Sin(angle) * 5.8f);
+                var markerMaterial = i % 2 == 0 ? cream : rose;
+                CreateBlock("PlazaMarker" + i, position, new Vector3(0.58f, 0.08f, 0.28f), markerMaterial, Quaternion.Euler(0f, -i * 45f, 0f));
+            }
+
+            CreateMarketStall("StallNorthWest", new Vector3(-9.8f, 0f, 7.5f), clay, saffron, Quaternion.Euler(0f, 12f, 0f));
+            CreateMarketStall("StallNorthEast", new Vector3(9.8f, 0f, 7.5f), teal, cream, Quaternion.Euler(0f, -12f, 0f));
+            CreateMarketStall("StallSouthWest", new Vector3(-9.8f, 0f, -7.5f), violet, mint, Quaternion.Euler(0f, -12f, 0f));
+            CreateMarketStall("StallSouthEast", new Vector3(9.8f, 0f, -7.5f), clay, cream, Quaternion.Euler(0f, 12f, 0f));
+
+            if (decorationQuality > 0)
+            {
+                CreateBanner("BannerNorth", new Vector3(0f, 3.0f, 9.2f), saffron, Quaternion.Euler(0f, 180f, 0f));
+                CreateBanner("BannerSouth", new Vector3(0f, 3.0f, -9.2f), mint, Quaternion.identity);
+                CreateBanner("BannerWest", new Vector3(-13.2f, 3.0f, 0f), violet, Quaternion.Euler(0f, 90f, 0f));
+                CreateBanner("BannerEast", new Vector3(13.2f, 3.0f, 0f), clay, Quaternion.Euler(0f, -90f, 0f));
+                CreateLantern("LanternNorth", new Vector3(-4.8f, 2.6f, 8.6f), cream, dark);
+                CreateLantern("LanternSouth", new Vector3(4.8f, 2.6f, -8.6f), cream, dark);
+                CreateLantern("LanternWest", new Vector3(-8.7f, 2.2f, -4.8f), mint, dark);
+                CreateLantern("LanternEast", new Vector3(8.7f, 2.2f, 4.8f), saffron, dark);
+            }
+        }
+
+        private void CreateMarketStall(string name, Vector3 position, Material wall, Material canopy, Quaternion rotation)
+        {
+            var root = new GameObject(name).transform;
+            root.SetParent(_root, false);
+            root.localPosition = position;
+            root.localRotation = rotation;
+            CreateBlock("Counter", new Vector3(0f, 0.65f, 0f), new Vector3(2.6f, 0.8f, 1.0f), wall, Quaternion.identity, root);
+            CreateBlock("Canopy", new Vector3(0f, 2.15f, 0f), new Vector3(3.0f, 0.14f, 1.4f), canopy, Quaternion.Euler(0f, 0f, 3f), root);
+            CreateCylinder("PostA", new Vector3(-1.2f, 1.45f, 0f), new Vector3(0.10f, 0.85f, 0.10f), wall, root);
+            CreateCylinder("PostB", new Vector3(1.2f, 1.45f, 0f), new Vector3(0.10f, 0.85f, 0.10f), wall, root);
+        }
+
+        private void CreateBanner(string name, Vector3 position, Material material, Quaternion rotation)
+        {
+            CreateBlock(name, position, new Vector3(0.10f, 1.1f, 0.75f), material, rotation);
+            CreateBlock(name + "Top", position + Vector3.up * 0.72f, new Vector3(0.14f, 0.10f, 0.95f), material, rotation);
+        }
+
+        private void CreateLantern(string name, Vector3 position, Material glow, Material frame)
+        {
+            CreateCylinder(name + "Frame", position, new Vector3(0.28f, 0.32f, 0.28f), frame);
+            CreateCylinder(name + "Glow", position + Vector3.down * 0.03f, new Vector3(0.18f, 0.23f, 0.18f), glow);
+        }
+
+        private void CreateGroundStripe(string name, Vector3 position, Vector3 scale, Material material)
+        {
+            CreateBlock(name, position, scale, material, Quaternion.identity);
+        }
+
+        private GameObject CreateBlock(string name, Vector3 position, Vector3 scale, Material material, Quaternion rotation, Transform parent = null)
+        {
+            var objectToCreate = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            objectToCreate.name = name;
+            objectToCreate.transform.SetParent(parent != null ? parent : _root, false);
+            objectToCreate.transform.localPosition = position;
+            objectToCreate.transform.localRotation = rotation;
+            objectToCreate.transform.localScale = scale;
+            ConfigureRenderer(objectToCreate, material);
+            _objects.Add(objectToCreate);
+            return objectToCreate;
+        }
+
+        private GameObject CreateCylinder(string name, Vector3 position, Vector3 scale, Material material, Transform parent = null)
+        {
+            var objectToCreate = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            objectToCreate.name = name;
+            objectToCreate.transform.SetParent(parent != null ? parent : _root, false);
+            objectToCreate.transform.localPosition = position;
+            objectToCreate.transform.localScale = scale;
+            ConfigureRenderer(objectToCreate, material);
+            _objects.Add(objectToCreate);
+            return objectToCreate;
+        }
+
+        private void ConfigureRenderer(GameObject objectToConfigure, Material material)
+        {
+            var collider = objectToConfigure.GetComponent<Collider>();
+            if (collider != null) Destroy(collider);
+            var renderer = objectToConfigure.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.sharedMaterial = material;
+                renderer.shadowCastingMode = ShadowCastingMode.On;
+                renderer.receiveShadows = true;
+            }
+        }
+
+        private Material CreateMaterial(string name, Color color)
+        {
+            var shader = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard");
+            var material = new Material(shader) { name = name, color = color };
+            if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", color);
+            _materials.Add(material);
+            return material;
+        }
+    }
+}

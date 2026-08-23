@@ -8,6 +8,7 @@ using BattleRaja.Presentation.Match;
 using BattleRaja.Presentation.Movement;
 using BattleRaja.Presentation.Gadgets;
 using BattleRaja.Presentation.Flow;
+using BattleRaja.Presentation.UI;
 using BattleRaja.Presentation.Visuals;
 using BattleRaja.Infrastructure.Networking;
 using UnityEditor;
@@ -45,6 +46,7 @@ namespace BattleRaja.Editor
         private const string PehelWeaponAssetPath = "Assets/BattleRaja/Content/Weapons/M7-PehelSweep.asset";
         private const string MayaWeaponAssetPath = "Assets/BattleRaja/Content/Weapons/M7-MayaShard.asset";
         private const string DevelopmentApplicationId = "com.example.battleraja.m11";
+        private const string V1IconAssetPath = "Assets/BattleRaja/Art/V1/BattleRaja-AppIcon-Candidate.png";
         private const string GadgetAssetFolder = "Assets/BattleRaja/Content/Gadgets";
 
         public static void CreateBootstrapScene()
@@ -579,7 +581,7 @@ namespace BattleRaja.Editor
         public static void BuildAndroidDevelopment()
         {
             CreateBootstrapScene();
-            CreateMovementLabScene();
+            CreateBazaarBastionScene();
             CreateTutorialArenaScene();
             ValidateProject();
 
@@ -589,7 +591,13 @@ namespace BattleRaja.Editor
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel28;
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
             PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
-            Build("Builds/M11/Android/BattleRaja-M11.apk", BuildTarget.Android);
+            ApplyCandidateAndroidIcon();
+            Build(
+                "Builds/M11/Android/BattleRaja-M11.apk",
+                BuildTarget.Android,
+                BootstrapScenePath,
+                TutorialArenaScenePath,
+                BazaarBastionScenePath);
         }
 
         public static void BuildAndroidCurrentSceneDevelopment()
@@ -608,14 +616,19 @@ namespace BattleRaja.Editor
         public static void BuildWebDevelopment()
         {
             CreateBootstrapScene();
-            CreateMovementLabScene();
+            CreateBazaarBastionScene();
             CreateTutorialArenaScene();
             ValidateProject();
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WebGL, BuildTarget.WebGL);
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
             PlayerSettings.WebGL.template = "PROJECT:BattleRaja";
-            Build("Builds/M11/Web", BuildTarget.WebGL);
+            Build(
+                "Builds/M11/Web",
+                BuildTarget.WebGL,
+                BootstrapScenePath,
+                TutorialArenaScenePath,
+                BazaarBastionScenePath);
         }
 
         public static void BuildWebCurrentSceneDevelopment()
@@ -641,7 +654,45 @@ namespace BattleRaja.Editor
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel28;
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
             PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
+            ApplyCandidateAndroidIcon();
             Build("Builds/M11/Android/BattleRaja-BazaarBastion-M11.apk", BuildTarget.Android, BootstrapScenePath, TutorialArenaScenePath, BazaarBastionScenePath);
+        }
+
+        /// <summary>
+        /// Produces an unsigned/non-publishable release-shaped App Bundle for local
+        /// Play checks. Signing, package identity approval and Play Console upload stay
+        /// outside this method and require the owner's explicit release gate.
+        /// </summary>
+        public static void BuildAndroidV1ReleaseCandidate()
+        {
+            CreateBootstrapScene();
+            CreateBazaarBastionScene();
+            CreateTutorialArenaScene();
+            ValidateProject();
+
+            EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
+            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, DevelopmentApplicationId);
+            PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
+            PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel28;
+            PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
+            PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
+            ApplyCandidateAndroidIcon();
+            PlayerSettings.Android.useCustomKeystore = false;
+            EditorUserBuildSettings.buildAppBundle = true;
+            try
+            {
+                Build(
+                    "Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab",
+                    BuildTarget.Android,
+                    BuildOptions.None,
+                    BootstrapScenePath,
+                    TutorialArenaScenePath,
+                    BazaarBastionScenePath);
+            }
+            finally
+            {
+                EditorUserBuildSettings.buildAppBundle = false;
+            }
         }
 
         public static void BuildWebBazaarBastionDevelopment()
@@ -659,6 +710,23 @@ namespace BattleRaja.Editor
 
         private static void Build(string outputPath, BuildTarget target, params string[] scenePaths)
         {
+            Build(outputPath, target, BuildOptions.Development | BuildOptions.AllowDebugging, scenePaths);
+        }
+
+        private static void ApplyCandidateAndroidIcon()
+        {
+            var icon = AssetDatabase.LoadAssetAtPath<Texture2D>(V1IconAssetPath);
+            if (icon == null)
+            {
+                Debug.LogWarning($"BattleRaja V1 icon candidate was not found at {V1IconAssetPath}; retaining the current PlayerSettings icon.");
+                return;
+            }
+
+            PlayerSettings.SetIcons(NamedBuildTarget.Android, new[] { icon }, IconKind.Any);
+        }
+
+        private static void Build(string outputPath, BuildTarget target, BuildOptions buildOptions, params string[] scenePaths)
+        {
             if (scenePaths == null || scenePaths.Length == 0)
             {
                 scenePaths = new[] { MovementLabScenePath };
@@ -669,7 +737,7 @@ namespace BattleRaja.Editor
                 scenes = scenePaths,
                 locationPathName = outputPath,
                 target = target,
-                options = BuildOptions.Development | BuildOptions.AllowDebugging
+                options = buildOptions
             };
 
             var report = BuildPipeline.BuildPlayer(options);
@@ -678,7 +746,7 @@ namespace BattleRaja.Editor
                 throw new BuildFailedException($"{target} build failed: {report.summary.result}. See the Unity build log.");
             }
 
-            Debug.Log($"{target} M11 development build succeeded: {report.summary.outputPath} ({report.summary.totalSize} bytes).");
+            Debug.Log($"{target} BattleRaja build succeeded: {report.summary.outputPath} ({report.summary.totalSize} bytes).");
         }
 
         private static GameObject CreateBlock(string name, Vector3 position, Vector3 scale, Material material, Transform parent)
@@ -949,13 +1017,13 @@ namespace BattleRaja.Editor
 
         private static GadgetUseButton CreateGadgetButton(Transform parent)
         {
-            var buttonObject = new GameObject("GadgetButton", typeof(RectTransform), typeof(Image), typeof(GadgetUseButton));
+            var buttonObject = new GameObject("GadgetButton", typeof(RectTransform), typeof(BattleRajaTouchSurface), typeof(GadgetUseButton));
             buttonObject.transform.SetParent(parent, false);
             var rect = buttonObject.GetComponent<RectTransform>();
             rect.anchorMin = new Vector2(0.67f, 0.49f);
             rect.anchorMax = new Vector2(0.67f, 0.49f);
             rect.sizeDelta = new Vector2(120f, 120f);
-            buttonObject.GetComponent<Image>().color = new Color(0.72f, 0.32f, 0.95f, 0.30f);
+            buttonObject.GetComponent<BattleRajaTouchSurface>().Configure(new Color(0.72f, 0.32f, 0.95f, 0.30f), true);
             return buttonObject.GetComponent<GadgetUseButton>();
         }
 
@@ -985,29 +1053,25 @@ namespace BattleRaja.Editor
 
         private static AttackButton CreateAttackButton(Transform parent)
         {
-            var buttonObject = new GameObject("AttackButton", typeof(RectTransform), typeof(Image), typeof(AttackButton));
+            var buttonObject = new GameObject("AttackButton", typeof(RectTransform), typeof(BattleRajaTouchSurface), typeof(AttackButton));
             buttonObject.transform.SetParent(parent, false);
             var rect = buttonObject.GetComponent<RectTransform>();
             rect.anchorMin = new Vector2(0.91f, 0.49f);
             rect.anchorMax = new Vector2(0.91f, 0.49f);
             rect.sizeDelta = new Vector2(170f, 170f);
-            var image = buttonObject.GetComponent<Image>();
-            image.color = new Color(1f, 0.36f, 0.18f, 0.28f);
-            image.raycastTarget = true;
+            buttonObject.GetComponent<BattleRajaTouchSurface>().Configure(new Color(1f, 0.36f, 0.18f, 0.28f), true);
             return buttonObject.GetComponent<AttackButton>();
         }
 
         private static AbilityButton CreateAbilityButton(Transform parent)
         {
-            var buttonObject = new GameObject("AbilityButton", typeof(RectTransform), typeof(Image), typeof(AbilityButton));
+            var buttonObject = new GameObject("AbilityButton", typeof(RectTransform), typeof(BattleRajaTouchSurface), typeof(AbilityButton));
             buttonObject.transform.SetParent(parent, false);
             var rect = buttonObject.GetComponent<RectTransform>();
             rect.anchorMin = new Vector2(0.79f, 0.49f);
             rect.anchorMax = new Vector2(0.79f, 0.49f);
             rect.sizeDelta = new Vector2(140f, 140f);
-            var image = buttonObject.GetComponent<Image>();
-            image.color = new Color(0.36f, 0.78f, 1f, 0.30f);
-            image.raycastTarget = true;
+            buttonObject.GetComponent<BattleRajaTouchSurface>().Configure(new Color(0.36f, 0.78f, 1f, 0.30f), true);
             return buttonObject.GetComponent<AbilityButton>();
         }
 
@@ -1038,23 +1102,22 @@ namespace BattleRaja.Editor
 
         private static VirtualStick CreateStick(string name, Transform parent, Vector2 anchor, Color color)
         {
-            var stickObject = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(VirtualStick));
+            var stickObject = new GameObject(name, typeof(RectTransform), typeof(BattleRajaTouchSurface), typeof(VirtualStick));
             stickObject.transform.SetParent(parent, false);
             var rect = stickObject.GetComponent<RectTransform>();
             rect.anchorMin = anchor;
             rect.anchorMax = anchor;
             rect.sizeDelta = new Vector2(220f, 220f);
-            var image = stickObject.GetComponent<Image>();
-            image.color = color;
-            image.raycastTarget = true;
+            stickObject.GetComponent<BattleRajaTouchSurface>().Configure(color, true);
+            TouchControlLabel.Ensure(stickObject.transform, name == "MovementStick" ? "MOVE" : "AIM");
 
-            var knobObject = new GameObject("Knob", typeof(RectTransform), typeof(Image));
+            var knobObject = new GameObject("Knob", typeof(RectTransform), typeof(BattleRajaTouchSurface));
             knobObject.transform.SetParent(stickObject.transform, false);
             var knobRect = knobObject.GetComponent<RectTransform>();
             knobRect.anchorMin = new Vector2(0.5f, 0.5f);
             knobRect.anchorMax = new Vector2(0.5f, 0.5f);
             knobRect.sizeDelta = new Vector2(94f, 94f);
-            knobObject.GetComponent<Image>().color = new Color(color.r, color.g, color.b, 0.72f);
+            knobObject.GetComponent<BattleRajaTouchSurface>().Configure(new Color(color.r, color.g, color.b, 0.72f), false);
 
             var stick = stickObject.GetComponent<VirtualStick>();
             SetObjectReference(stick, "knob", knobRect);

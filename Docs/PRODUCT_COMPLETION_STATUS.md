@@ -11,6 +11,24 @@ The project remains a prototype/closed-alpha foundation: final art/audio, perfor
 budget approval, human playtest approval, real networking, backend services and release
 gates remain open.
 
+## Android V1.0 release-shaped candidate — 2026-08-23
+
+The current working-tree V1 slice adds the product-facing offline Android route: branded
+Bootstrap flow, Bazaar Bastion as the default build scene, three-fighter selection,
+tutorial/help/settings surfaces, original placeholder identity art, code-driven audio and
+visual feedback, portrait-safe circular touch controls, and an unsigned AAB entrypoint.
+Repository validation is **0 errors / 0 warnings**, EditMode is **125/125**, and PlayMode
+is **61/61**. The Lava-only smoke candidate installed and exercised successfully; exact
+APK/AAB hashes, screenshots and measurements are in
+`Docs/QA/V1_ANDROID_EVIDENCE_2026-08-23.md`.
+
+This does **not** change the classification. The candidate remains **prototype** because
+the package ID and signing identity are temporary, the legacy icon warning and 16 KB
+page-size check are open, one Lava sample is approximately 462 MiB PSS / 97% CPU with
+visible ~30 FPS cadence, and performance, accessibility, visual, cultural, store/legal
+and Play Console gates require human review. Photon Fusion, PlayFab and online release
+work remain intentionally out of scope.
+
 This file records evidence-backed status only. Allowed status values are: `Not started`, `In progress`, `Passed with evidence`, `Blocked`, and `Human review required`.
 
 ## Phase 0 rebaseline continuation — 2026-08-22

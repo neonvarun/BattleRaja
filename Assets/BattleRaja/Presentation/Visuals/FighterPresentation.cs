@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Movement;
@@ -35,10 +36,13 @@ namespace BattleRaja.Presentation.Visuals
         private MaterialPropertyBlock _bodyProperties;
         private Material _ringMaterial;
         private Material _barMaterial;
+        private readonly List<GameObject> _ownedObjects = new List<GameObject>(16);
+        private readonly List<Material> _ownedMaterials = new List<Material>(16);
         private Transform _ring;
         private Transform _healthBar;
         private Transform _healthFill;
         private Transform _telegraph;
+        private Transform _silhouetteRoot;
         private BattleRajaAudioDirector _audio;
         private float _attackPulse;
         private float _abilityPulse;
@@ -48,6 +52,8 @@ namespace BattleRaja.Presentation.Visuals
         private Color _ringColor = new Color(0.18f, 0.78f, 1f, 1f);
         private bool _eliminated;
         private bool _victory;
+        private bool _silhouetteBuilt;
+        private bool _flashApplied;
         private Vector3 _bodyBaseLocalPosition;
 
         public AnimationState CurrentAnimation { get; private set; } = AnimationState.Idle;
@@ -73,6 +79,7 @@ namespace BattleRaja.Presentation.Visuals
             var target = GetComponent<CombatTarget>();
             _ringColor = ResolveRingColor(target != null ? target.Faction : CombatFaction.Enemy);
             CreateReadabilityPrimitives();
+            CreateFighterSilhouette();
             if (health != null) health.DamageResolved += OnDamageResolved;
             UpdateHealthBar();
         }
@@ -80,8 +87,15 @@ namespace BattleRaja.Presentation.Visuals
         private void OnDestroy()
         {
             if (health != null) health.DamageResolved -= OnDamageResolved;
-            if (_ringMaterial != null) Destroy(_ringMaterial);
-            if (_barMaterial != null) Destroy(_barMaterial);
+            for (var i = 0; i < _ownedObjects.Count; i++)
+            {
+                if (_ownedObjects[i] != null) Destroy(_ownedObjects[i]);
+            }
+
+            for (var i = 0; i < _ownedMaterials.Count; i++)
+            {
+                if (_ownedMaterials[i] != null) Destroy(_ownedMaterials[i]);
+            }
         }
 
         private void Update()
@@ -117,6 +131,19 @@ namespace BattleRaja.Presentation.Visuals
                 var pulse = _attackPulse > 0f ? 1.08f : _abilityPulse > 0f ? 1.14f : 1f;
                 bodyRenderer.transform.localPosition = _bodyBaseLocalPosition + Vector3.up * bob;
                 bodyRenderer.transform.localScale = Vector3.one * pulse;
+                if (_silhouetteRoot != null)
+                {
+                    _silhouetteRoot.localPosition = Vector3.up * bob;
+                    _silhouetteRoot.localScale = Vector3.one * pulse;
+                }
+            }
+
+            if (_flashApplied && _hitRemaining <= 0f && bodyRenderer != null && !_eliminated)
+            {
+                bodyRenderer.GetPropertyBlock(_bodyProperties);
+                _bodyProperties.SetColor("_BaseColor", _baseBodyColor);
+                bodyRenderer.SetPropertyBlock(_bodyProperties);
+                _flashApplied = false;
             }
 
             if (_telegraph != null)
@@ -161,6 +188,7 @@ namespace BattleRaja.Presentation.Visuals
                 bodyRenderer.GetPropertyBlock(_bodyProperties);
                 _bodyProperties.SetColor("_BaseColor", new Color(1f, 0.9f, 0.22f, 1f));
                 bodyRenderer.SetPropertyBlock(_bodyProperties);
+                _flashApplied = true;
             }
 
             _audio?.PlayHit();
@@ -177,6 +205,8 @@ namespace BattleRaja.Presentation.Visuals
                 _bodyProperties.SetColor("_BaseColor", new Color(0.22f, 0.22f, 0.25f, 1f));
                 bodyRenderer.SetPropertyBlock(_bodyProperties);
             }
+
+            _flashApplied = false;
 
             if (_ringMaterial != null) _ringMaterial.color = new Color(0.86f, 0.12f, 0.12f, 1f);
             _audio?.PlayElimination();
@@ -233,11 +263,72 @@ namespace BattleRaja.Presentation.Visuals
             _telegraph = telegraphObject.transform;
         }
 
-        private static Material CreateMaterial(Color color)
+        private void CreateFighterSilhouette()
+        {
+            if (_silhouetteBuilt) return;
+            _silhouetteBuilt = true;
+            _silhouetteRoot = new GameObject("FighterIdentitySilhouette").transform;
+            _silhouetteRoot.SetParent(transform, false);
+            _silhouetteRoot.localPosition = new Vector3(0f, 0.74f, 0f);
+
+            var bijli = GetComponent<BijliFighterController>();
+            var pehel = GetComponent<PehelFighterController>();
+            var maya = GetComponent<MayaFighterController>();
+            if (bijli != null && bijli.enabled)
+            {
+                var cyan = CreateMaterial(new Color(0.12f, 0.82f, 0.95f, 1f));
+                var gold = CreateMaterial(new Color(1f, 0.78f, 0.12f, 1f));
+                CreateVisualPrimitive("BijliCrest", PrimitiveType.Cube, new Vector3(0f, 0.55f, 0f), new Vector3(0.16f, 0.34f, 0.12f), Quaternion.Euler(0f, 0f, -18f), cyan);
+                CreateVisualPrimitive("BijliCrestGold", PrimitiveType.Cube, new Vector3(0.08f, 0.66f, -0.02f), new Vector3(0.12f, 0.22f, 0.14f), Quaternion.Euler(0f, 0f, 26f), gold);
+                CreateVisualPrimitive("BijliSparkL", PrimitiveType.Cube, new Vector3(-0.28f, 0.31f, 0f), new Vector3(0.08f, 0.25f, 0.08f), Quaternion.Euler(0f, 0f, -24f), cyan);
+                CreateVisualPrimitive("BijliSparkR", PrimitiveType.Cube, new Vector3(0.28f, 0.31f, 0f), new Vector3(0.08f, 0.25f, 0.08f), Quaternion.Euler(0f, 0f, 24f), gold);
+                return;
+            }
+
+            if (pehel != null && pehel.enabled)
+            {
+                var clay = CreateMaterial(new Color(0.88f, 0.34f, 0.16f, 1f));
+                var cream = CreateMaterial(new Color(1f, 0.72f, 0.34f, 1f));
+                CreateVisualPrimitive("PehelShoulderL", PrimitiveType.Sphere, new Vector3(-0.34f, 0.27f, 0f), new Vector3(0.30f, 0.20f, 0.34f), Quaternion.identity, clay);
+                CreateVisualPrimitive("PehelShoulderR", PrimitiveType.Sphere, new Vector3(0.34f, 0.27f, 0f), new Vector3(0.30f, 0.20f, 0.34f), Quaternion.identity, clay);
+                CreateVisualPrimitive("PehelBrow", PrimitiveType.Cube, new Vector3(0f, 0.58f, -0.02f), new Vector3(0.42f, 0.10f, 0.16f), Quaternion.identity, cream);
+                CreateVisualPrimitive("PehelGuardL", PrimitiveType.Sphere, new Vector3(-0.46f, -0.02f, -0.02f), new Vector3(0.18f, 0.18f, 0.18f), Quaternion.identity, cream);
+                CreateVisualPrimitive("PehelGuardR", PrimitiveType.Sphere, new Vector3(0.46f, -0.02f, -0.02f), new Vector3(0.18f, 0.18f, 0.18f), Quaternion.identity, cream);
+                return;
+            }
+
+            if (maya != null && maya.enabled)
+            {
+                var violet = CreateMaterial(new Color(0.70f, 0.26f, 0.86f, 1f));
+                var mint = CreateMaterial(new Color(0.18f, 0.88f, 0.70f, 1f));
+                CreateVisualPrimitive("MayaHood", PrimitiveType.Sphere, new Vector3(0f, 0.40f, 0f), new Vector3(0.56f, 0.28f, 0.42f), Quaternion.identity, violet);
+                CreateVisualPrimitive("MayaScarf", PrimitiveType.Cube, new Vector3(0f, 0.10f, -0.16f), new Vector3(0.50f, 0.10f, 0.12f), Quaternion.Euler(0f, 12f, 0f), mint);
+                CreateVisualPrimitive("MayaCharmL", PrimitiveType.Sphere, new Vector3(-0.34f, 0.05f, -0.10f), new Vector3(0.12f, 0.18f, 0.12f), Quaternion.identity, mint);
+                CreateVisualPrimitive("MayaCharmR", PrimitiveType.Sphere, new Vector3(0.34f, 0.05f, -0.10f), new Vector3(0.12f, 0.18f, 0.12f), Quaternion.identity, violet);
+            }
+        }
+
+        private GameObject CreateVisualPrimitive(string name, PrimitiveType type, Vector3 position, Vector3 scale, Quaternion rotation, Material material)
+        {
+            var objectToCreate = GameObject.CreatePrimitive(type);
+            objectToCreate.name = name;
+            objectToCreate.transform.SetParent(_silhouetteRoot, false);
+            objectToCreate.transform.localPosition = position;
+            objectToCreate.transform.localRotation = rotation;
+            objectToCreate.transform.localScale = scale;
+            RemoveCollider(objectToCreate);
+            var renderer = objectToCreate.GetComponent<Renderer>();
+            if (renderer != null) renderer.sharedMaterial = material;
+            _ownedObjects.Add(objectToCreate);
+            return objectToCreate;
+        }
+
+        private Material CreateMaterial(Color color)
         {
             var shader = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard");
             var material = new Material(shader) { color = color };
             if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", color);
+            _ownedMaterials.Add(material);
             return material;
         }
 

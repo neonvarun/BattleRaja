@@ -20,6 +20,17 @@
   at this tip. Exact-source platform candidates and full test/platform evidence
   are recorded separately by runtime commit below. See
   `Docs/QA/M11_CLOSURE_REPORT_2026-08-23.md`.
+- Current offline Android V1.0 candidate: branch `codex/v1-playstore-release` at base
+  `ca6ec3e` plus the intentional V1 working-tree changes. The candidate now builds
+  Bazaar Bastion by default, exposes the branded offline flow/tutorial/settings and
+  three-fighter selection, uses circular safe-area touch surfaces, and has a local
+  unsigned AAB entrypoint. Exact candidate hashes, Lava captures and measured limits are
+  recorded in `Docs/QA/V1_ANDROID_EVIDENCE_2026-08-23.md`.
+- Current V1 automated gate: repository validation **0/0**, EditMode **125/125**, and
+  PlayMode **61/61**. The project remains **prototype**; the temporary package ID,
+  unsigned bundle, adaptive-icon warning, 16 KB evidence, performance measurements and
+  human/store/legal approvals remain open. Photon and PlayFab are not part of this V1
+  release candidate.
 - Prior full baseline at runtime-bearing source `73237c8`: EditMode **125/125**,
   PlayMode **57/57**, deep soak **2,000 matches / zero divergence**, Lava
   launch/resume, and Chrome+Edge six-route Web smoke all pass. Repository

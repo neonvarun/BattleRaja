@@ -2,6 +2,26 @@
 
 **Status:** M1 movement path has been implemented with allocation-avoidance constraints, but formal frame-time/profiler budgets remain unmeasured.
 
+## V1.0 Android candidate measurement — 2026-08-23
+
+The current offline Android candidate was installed and exercised only on Lava
+`ST5GDW23LB004392` from the disposable verification copy. This is a bounded smoke
+measurement, not a performance pass:
+
+- APK: **166,221,332 bytes**, SHA-256
+  `9A93BF85AC5CD557C5DC1E1A166B99F18137F2D45F5EDDE5F6C4790F5F13F5F7`.
+- Device process sample: **462,618 KB PSS**, **593,576 KB RSS**, **99,988 KB Graphics**,
+  **75 KB swap**; one `top` sample reported approximately **96.9% CPU**.
+- The Android `gfxinfo` command exposed the Unity `ViewRootImpl` but no frame/jank
+  histogram for the native SurfaceView. Device buffer-queue logs were visibly around
+  **30 FPS** during the inspected match.
+- Thermal thresholds were readable, but no temperature/battery time series was captured.
+- Raw files and screenshots: `C:\Projects\BattleRaja-v1-verify-20260823b\Builds\V1\Lava\`.
+
+Interpretation: the offline loop is runnable on the approved phone, but the sample does
+not establish a stable 60 FPS target, an acceptable memory budget, thermal safety,
+battery behavior or repeated-match cleanup. Those remain owner-reviewed release gates.
+
 ## Target classes
 
 - Low tier: 30 FPS

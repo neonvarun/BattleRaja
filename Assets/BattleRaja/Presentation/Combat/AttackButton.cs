@@ -21,7 +21,7 @@ namespace BattleRaja.Presentation.Combat
     /// control surfaces data-light, while the runtime label makes the action discoverable
     /// on Android and Web without changing input semantics.
     /// </summary>
-    internal static class TouchControlLabel
+    public static class TouchControlLabel
     {
         public static void Ensure(Transform parent, string value)
         {

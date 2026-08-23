@@ -1,8 +1,11 @@
 using System.Collections;
 using BattleRaja.Core.Application;
 using BattleRaja.Presentation.Flow;
+using BattleRaja.Presentation.UI;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
@@ -36,12 +39,43 @@ namespace BattleRaja.Tests.PlayMode
             flow.OpenModeSelection();
             flow.SelectOfflineMode();
             Assert.That(flow.State, Is.EqualTo(ProductionFlowState.FighterSelection));
+            // The selected fighter is intentionally persisted for the product, so
+            // this route test must choose its expected fixture explicitly rather
+            // than depending on another test's PlayerPrefs state.
+            flow.SelectBijli();
             Assert.That(flow.SelectedFighter, Is.EqualTo(ProductionFighter.Bijli));
 
             flow.ReturnToMenu();
             flow.SelectOnlineMode();
             Assert.That(flow.State, Is.EqualTo(ProductionFlowState.Error));
             Assert.That(flow.ErrorCode, Is.EqualTo("ONLINE_UNAVAILABLE"));
+        }
+
+        [UnityTest]
+        public IEnumerator BootstrapUsesInputSystemUiModuleForTouch()
+        {
+            yield return SceneManager.LoadSceneAsync("Bootstrap", LoadSceneMode.Single);
+            yield return null;
+
+            var eventSystem = Object.FindAnyObjectByType<EventSystem>();
+            Assert.That(eventSystem, Is.Not.Null);
+            Assert.That(eventSystem.GetComponent<InputSystemUIInputModule>(), Is.Not.Null);
+            Assert.That(eventSystem.GetComponent<StandaloneInputModule>(), Is.Null);
+        }
+
+        [UnityTest]
+        public IEnumerator BootstrapMenuUsesProductIdentityAndNoDeveloperPointerControl()
+        {
+            yield return SceneManager.LoadSceneAsync("Bootstrap", LoadSceneMode.Single);
+            yield return null;
+            yield return null;
+
+            var logo = Object.FindAnyObjectByType<BattleRajaLogoGraphic>();
+            var backdrop = Object.FindAnyObjectByType<BattleRajaUiBackdrop>();
+            Assert.That(logo, Is.Not.Null);
+            Assert.That(backdrop, Is.Not.Null);
+            Assert.That(GameObject.Find("SafeArea/MainMenuPanel/Help"), Is.Not.Null);
+            Assert.That(GameObject.Find("SafeArea/MainMenuPanel/Quit"), Is.Null);
         }
 
         [UnityTest]

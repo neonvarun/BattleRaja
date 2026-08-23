@@ -2,8 +2,11 @@ using System;
 using System.Collections;
 using BattleRaja.Core.Application;
 using BattleRaja.Presentation.Movement;
+using BattleRaja.Presentation.UI;
+using BattleRaja.Presentation.Visuals;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.EnhancedTouch;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
@@ -24,6 +27,7 @@ namespace BattleRaja.Presentation.Flow
         private const string AimAssistKey = "battleraja.settings.aim_assist";
         private const string MusicVolumeKey = "battleraja.settings.music_volume";
         private const string EffectsVolumeKey = "battleraja.settings.effects_volume";
+        private const string TextScaleKey = "battleraja.settings.text_scale";
 
         [SerializeField] private string gameplaySceneName = "BazaarBastion";
         [SerializeField] private string tutorialSceneName = "TutorialArena";
@@ -37,9 +41,15 @@ namespace BattleRaja.Presentation.Flow
         private bool _aimAssist;
         private float _musicVolume;
         private float _effectsVolume;
+        private float _textScale;
+        private float _appliedTextScale = 1f;
         private bool _loading;
+        private BattleRajaAudioDirector _audio;
+        private bool _enhancedTouchEnabled;
 
         private GameObject _safeArea;
+        private BattleRajaUiBackdrop _backdrop;
+        private BattleRajaLogoGraphic _logo;
         private GameObject _mainMenuPanel;
         private GameObject _modePanel;
         private GameObject _fighterPanel;
@@ -62,9 +72,24 @@ namespace BattleRaja.Presentation.Flow
         private void Awake()
         {
             LoadPreferences();
+            // Explicitly enable the native touch event stream for Android. The UI
+            // module still owns routing, while EnhancedTouch keeps physical touch
+            // devices active when the bootstrap EventSystem is created at runtime.
+            EnhancedTouchSupport.Enable();
+            _enhancedTouchEnabled = true;
             EnsureEventSystem();
             EnsureCanvas();
+            EnsureAudioDirector();
             BuildCanvasUi();
+            ApplyAudioPreferences();
+            ApplyTextScale();
+        }
+
+        private void OnDestroy()
+        {
+            if (!_enhancedTouchEnabled) return;
+            EnhancedTouchSupport.Disable();
+            _enhancedTouchEnabled = false;
         }
 
         private IEnumerator Start()
@@ -179,6 +204,7 @@ namespace BattleRaja.Presentation.Flow
         {
             _musicVolume = Mathf.Clamp01(_musicVolume + 0.1f);
             SavePreferences();
+            ApplyAudioPreferences();
             RefreshSettingsSummary();
         }
 
@@ -186,6 +212,7 @@ namespace BattleRaja.Presentation.Flow
         {
             _musicVolume = Mathf.Clamp01(_musicVolume - 0.1f);
             SavePreferences();
+            ApplyAudioPreferences();
             RefreshSettingsSummary();
         }
 
@@ -193,6 +220,7 @@ namespace BattleRaja.Presentation.Flow
         {
             _effectsVolume = Mathf.Clamp01(_effectsVolume + 0.1f);
             SavePreferences();
+            ApplyAudioPreferences();
             RefreshSettingsSummary();
         }
 
@@ -200,6 +228,23 @@ namespace BattleRaja.Presentation.Flow
         {
             _effectsVolume = Mathf.Clamp01(_effectsVolume - 0.1f);
             SavePreferences();
+            ApplyAudioPreferences();
+            RefreshSettingsSummary();
+        }
+
+        public void IncreaseTextScale()
+        {
+            _textScale = Mathf.Clamp(_textScale + 0.1f, 0.9f, 1.3f);
+            SavePreferences();
+            ApplyTextScale();
+            RefreshSettingsSummary();
+        }
+
+        public void DecreaseTextScale()
+        {
+            _textScale = Mathf.Clamp(_textScale - 0.1f, 0.9f, 1.3f);
+            SavePreferences();
+            ApplyTextScale();
             RefreshSettingsSummary();
         }
 
@@ -341,11 +386,11 @@ namespace BattleRaja.Presentation.Flow
             {
                 case ProductionFlowState.MainMenu:
                     _mainMenuPanel.SetActive(true);
-                    SetHeader("BATTLE RAJA", "A compact offline battle royale prototype");
+                    SetHeader("BATTLE RAJA", "SOLO RAJA  •  1 RAJA + 7 RIVALS  •  NO INTERNET REQUIRED");
                     break;
                 case ProductionFlowState.ModeSelection:
                     _modePanel.SetActive(true);
-                    SetHeader("CHOOSE MODE", "Online rooms remain locked until the approved Fusion session gate is complete.");
+                    SetHeader("SOLO RAJA", "Choose your fighter, then drop into Bazaar Bastion.");
                     break;
                 case ProductionFlowState.FighterSelection:
                     _fighterPanel.SetActive(true);
@@ -410,27 +455,57 @@ namespace BattleRaja.Presentation.Flow
             safeRect.offsetMin = Vector2.zero;
             safeRect.offsetMax = Vector2.zero;
 
-            _titleText = CreateText(_safeArea.transform, "Title", new Vector2(0.08f, 0.78f), new Vector2(0.92f, 0.94f), 42, TextAnchor.MiddleCenter);
-            _messageText = CreateText(_safeArea.transform, "Message", new Vector2(0.12f, 0.70f), new Vector2(0.88f, 0.79f), 20, TextAnchor.MiddleCenter);
+            var backdropObject = new GameObject("BattleRajaBackdrop", typeof(RectTransform), typeof(BattleRajaUiBackdrop));
+            backdropObject.transform.SetParent(_safeArea.transform, false);
+            var backdropRect = backdropObject.GetComponent<RectTransform>();
+            backdropRect.anchorMin = Vector2.zero;
+            backdropRect.anchorMax = Vector2.one;
+            backdropRect.offsetMin = Vector2.zero;
+            backdropRect.offsetMax = Vector2.zero;
+            _backdrop = backdropObject.GetComponent<BattleRajaUiBackdrop>();
+            backdropObject.transform.SetAsFirstSibling();
+
+            var logoObject = new GameObject("BattleRajaMark", typeof(RectTransform), typeof(BattleRajaLogoGraphic));
+            logoObject.transform.SetParent(_safeArea.transform, false);
+            var logoRect = logoObject.GetComponent<RectTransform>();
+            logoRect.anchorMin = new Vector2(0.42f, 0.80f);
+            logoRect.anchorMax = new Vector2(0.58f, 0.96f);
+            logoRect.offsetMin = Vector2.zero;
+            logoRect.offsetMax = Vector2.zero;
+            _logo = logoObject.GetComponent<BattleRajaLogoGraphic>();
+
+            _titleText = CreateText(_safeArea.transform, "Title", new Vector2(0.08f, 0.69f), new Vector2(0.92f, 0.79f), 42, TextAnchor.MiddleCenter);
+            _messageText = CreateText(_safeArea.transform, "Message", new Vector2(0.10f, 0.62f), new Vector2(0.90f, 0.70f), 20, TextAnchor.MiddleCenter);
+            var eyebrow = CreateText(_safeArea.transform, "Eyebrow", new Vector2(0.18f, 0.965f), new Vector2(0.82f, 0.995f), 12, TextAnchor.MiddleCenter, BattleRajaUiTheme.Cyan, true);
+            eyebrow.text = "OFFLINE ARCADE  •  BAZAAR BASTION";
+            var version = CreateText(_safeArea.transform, "Version", new Vector2(0.04f, 0.015f), new Vector2(0.52f, 0.055f), 14, TextAnchor.MiddleLeft, BattleRajaUiTheme.MutedText);
+            version.text = "OFFLINE V1.0 CANDIDATE  •  8-ACTOR MATCHES";
 
             _mainMenuPanel = CreatePanel(_safeArea.transform, "MainMenuPanel");
+            CreateText(_mainMenuPanel.transform, "LoopSummary", new Vector2(0.12f, 0.70f), new Vector2(0.88f, 0.88f), 17, TextAnchor.MiddleCenter, BattleRajaUiTheme.MutedText).text =
+                "1 RAJA  •  7 RIVALS\nREAD THE ZONE  •  GRAB A GADGET  •  SURVIVE";
             CreateButton(_mainMenuPanel.transform, "Offline", "PLAY OFFLINE", new Vector2(0.28f, 0.53f), new Vector2(0.72f, 0.63f), OpenModeSelection);
-            CreateButton(_mainMenuPanel.transform, "Online", "ONLINE (LOCKED)", new Vector2(0.28f, 0.40f), new Vector2(0.72f, 0.50f), SelectOnlineMode);
-            CreateButton(_mainMenuPanel.transform, "Tutorial", "TUTORIAL REPLAY", new Vector2(0.28f, 0.27f), new Vector2(0.72f, 0.37f), OpenTutorial);
-            CreateButton(_mainMenuPanel.transform, "Settings", "SETTINGS", new Vector2(0.28f, 0.14f), new Vector2(0.72f, 0.24f), OpenSettings);
-            CreateButton(_mainMenuPanel.transform, "Quit", "FOCUS / POINTER HELP", new Vector2(0.28f, 0.01f), new Vector2(0.72f, 0.11f), ReleasePointerFocus);
+            CreateButton(_mainMenuPanel.transform, "Tutorial", "TUTORIAL REPLAY", new Vector2(0.28f, 0.39f), new Vector2(0.72f, 0.49f), OpenTutorial);
+            CreateButton(_mainMenuPanel.transform, "Settings", "SETTINGS & ACCESSIBILITY", new Vector2(0.28f, 0.25f), new Vector2(0.72f, 0.35f), OpenSettings);
+            CreateButton(_mainMenuPanel.transform, "Help", "HELP & CONTROLS", new Vector2(0.28f, 0.11f), new Vector2(0.72f, 0.21f), OpenTutorial);
 
             _modePanel = CreatePanel(_safeArea.transform, "ModePanel");
-            CreateButton(_modePanel.transform, "Offline", "OFFLINE  •  1 HUMAN + 7 BOTS", new Vector2(0.18f, 0.54f), new Vector2(0.82f, 0.66f), SelectOfflineMode);
-            CreateButton(_modePanel.transform, "Online", "ONLINE  •  UNAVAILABLE", new Vector2(0.18f, 0.39f), new Vector2(0.82f, 0.51f), SelectOnlineMode);
-            CreateButton(_modePanel.transform, "Back", "BACK", new Vector2(0.32f, 0.16f), new Vector2(0.68f, 0.28f), ReturnToMenu);
+            CreateButton(_modePanel.transform, "Offline", "DROP IN  •  1 RAJA + 7 BOTS", new Vector2(0.18f, 0.49f), new Vector2(0.82f, 0.63f), SelectOfflineMode, true);
+            CreateText(_modePanel.transform, "ModeHint", new Vector2(0.14f, 0.33f), new Vector2(0.86f, 0.46f), 18, TextAnchor.MiddleCenter).text = "Every match is deterministic, replayable and playable without an account.";
+            CreateButton(_modePanel.transform, "Back", "BACK TO MENU", new Vector2(0.32f, 0.14f), new Vector2(0.68f, 0.26f), ReturnToMenu);
 
             _fighterPanel = CreatePanel(_safeArea.transform, "FighterPanel");
             _fighterSummaryText = CreateText(_fighterPanel.transform, "FighterSummary", new Vector2(0.12f, 0.72f), new Vector2(0.88f, 0.84f), 22, TextAnchor.MiddleCenter);
-            CreateButton(_fighterPanel.transform, "Bijli", "BIJLI  •  ELECTRIC DASH", new Vector2(0.10f, 0.52f), new Vector2(0.31f, 0.65f), SelectBijli);
-            CreateButton(_fighterPanel.transform, "Pehel", "PEHEL  •  CHARGE THROW", new Vector2(0.395f, 0.52f), new Vector2(0.605f, 0.65f), SelectPehel);
-            CreateButton(_fighterPanel.transform, "Maya", "MAYA  •  DECOY", new Vector2(0.69f, 0.52f), new Vector2(0.90f, 0.65f), SelectMaya);
-            CreateButton(_fighterPanel.transform, "Start", "START OFFLINE MATCH", new Vector2(0.22f, 0.28f), new Vector2(0.78f, 0.41f), BeginOfflineMatch);
+            var bijliButton = CreateButton(_fighterPanel.transform, "Bijli", "BIJLI\nELECTRIC DASH", new Vector2(0.08f, 0.49f), new Vector2(0.31f, 0.65f), SelectBijli);
+            var pehelButton = CreateButton(_fighterPanel.transform, "Pehel", "PEHEL\nCHARGE THROW", new Vector2(0.385f, 0.49f), new Vector2(0.615f, 0.65f), SelectPehel);
+            var mayaButton = CreateButton(_fighterPanel.transform, "Maya", "MAYA\nDECOY", new Vector2(0.69f, 0.49f), new Vector2(0.92f, 0.65f), SelectMaya);
+            BattleRajaUiTheme.StyleButton(bijliButton, BattleRajaUiTheme.Cyan);
+            BattleRajaUiTheme.StyleButton(pehelButton, BattleRajaUiTheme.Saffron);
+            BattleRajaUiTheme.StyleButton(mayaButton, BattleRajaUiTheme.Magenta);
+            CreateText(_fighterPanel.transform, "BijliHint", new Vector2(0.08f, 0.42f), new Vector2(0.31f, 0.49f), 13, TextAnchor.MiddleCenter, BattleRajaUiTheme.MutedText).text = "BURST • MID-RANGE";
+            CreateText(_fighterPanel.transform, "PehelHint", new Vector2(0.385f, 0.42f), new Vector2(0.615f, 0.49f), 13, TextAnchor.MiddleCenter, BattleRajaUiTheme.MutedText).text = "CAPTURE • THROW";
+            CreateText(_fighterPanel.transform, "MayaHint", new Vector2(0.69f, 0.42f), new Vector2(0.92f, 0.49f), 13, TextAnchor.MiddleCenter, BattleRajaUiTheme.MutedText).text = "DECOY • MISDIRECT";
+            CreateButton(_fighterPanel.transform, "Start", "START SOLO RAJA", new Vector2(0.22f, 0.28f), new Vector2(0.78f, 0.41f), BeginOfflineMatch, true);
             CreateButton(_fighterPanel.transform, "Back", "BACK", new Vector2(0.32f, 0.10f), new Vector2(0.68f, 0.22f), OpenModeSelection);
 
             _loadingPanel = CreatePanel(_safeArea.transform, "LoadingPanel");
@@ -446,7 +521,9 @@ namespace BattleRaja.Presentation.Flow
             CreateButton(_settingsPanel.transform, "MusicUp", "MUSIC +", new Vector2(0.57f, 0.30f), new Vector2(0.87f, 0.40f), IncreaseMusicVolume);
             CreateButton(_settingsPanel.transform, "EffectsDown", "EFFECTS -", new Vector2(0.13f, 0.18f), new Vector2(0.43f, 0.28f), DecreaseEffectsVolume);
             CreateButton(_settingsPanel.transform, "EffectsUp", "EFFECTS +", new Vector2(0.57f, 0.18f), new Vector2(0.87f, 0.28f), IncreaseEffectsVolume);
-            CreateButton(_settingsPanel.transform, "Close", "CLOSE", new Vector2(0.32f, 0.05f), new Vector2(0.68f, 0.15f), CloseSettings);
+            CreateButton(_settingsPanel.transform, "TextDown", "TEXT -", new Vector2(0.13f, 0.06f), new Vector2(0.43f, 0.16f), DecreaseTextScale);
+            CreateButton(_settingsPanel.transform, "TextUp", "TEXT +", new Vector2(0.57f, 0.06f), new Vector2(0.87f, 0.16f), IncreaseTextScale);
+            CreateButton(_settingsPanel.transform, "Close", "CLOSE", new Vector2(0.32f, 0.005f), new Vector2(0.68f, 0.055f), CloseSettings);
 
             _errorPanel = CreatePanel(_safeArea.transform, "ErrorPanel");
             _errorText = CreateText(_errorPanel.transform, "ErrorText", new Vector2(0.12f, 0.51f), new Vector2(0.88f, 0.73f), 24, TextAnchor.MiddleCenter);
@@ -463,11 +540,45 @@ namespace BattleRaja.Presentation.Flow
             canvas = FindAnyObjectByType<Canvas>();
         }
 
+        private void EnsureAudioDirector()
+        {
+            _audio = FindAnyObjectByType<BattleRajaAudioDirector>();
+            if (_audio != null) return;
+
+            var audioObject = new GameObject("AudioDirector");
+            audioObject.transform.SetParent(transform, false);
+            audioObject.AddComponent<AudioSource>();
+            _audio = audioObject.AddComponent<BattleRajaAudioDirector>();
+        }
+
         private static void EnsureEventSystem()
         {
-            if (EventSystem.current != null) return;
-            var eventObject = new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
-            eventObject.GetComponent<EventSystem>().sendNavigationEvents = true;
+            var eventSystem = EventSystem.current;
+            if (eventSystem == null)
+            {
+                var eventObject = new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
+                eventSystem = eventObject.GetComponent<EventSystem>();
+            }
+
+            // Bootstrap and older authored scenes can still contain the legacy
+            // StandaloneInputModule. The project is Input System-only, so leave one
+            // EventSystem in place but replace the legacy module before the first
+            // interactive frame. This is required for physical Android touch input.
+            var legacy = eventSystem.GetComponent<StandaloneInputModule>();
+            if (legacy != null)
+            {
+                legacy.enabled = false;
+                Destroy(legacy);
+            }
+
+            var modern = eventSystem.GetComponent<InputSystemUIInputModule>();
+            if (modern == null)
+            {
+                modern = eventSystem.gameObject.AddComponent<InputSystemUIInputModule>();
+            }
+
+            modern.enabled = true;
+            eventSystem.sendNavigationEvents = true;
         }
 
         private void LoadPreferences()
@@ -479,6 +590,7 @@ namespace BattleRaja.Presentation.Flow
             _aimAssist = PlayerPrefs.GetInt(AimAssistKey, 0) != 0;
             _musicVolume = PlayerPrefs.GetFloat(MusicVolumeKey, 0.8f);
             _effectsVolume = PlayerPrefs.GetFloat(EffectsVolumeKey, 1f);
+            _textScale = Mathf.Clamp(PlayerPrefs.GetFloat(TextScaleKey, 1f), 0.9f, 1.3f);
         }
 
         private void SavePreferences()
@@ -490,7 +602,16 @@ namespace BattleRaja.Presentation.Flow
             PlayerPrefs.SetInt(AimAssistKey, _aimAssist ? 1 : 0);
             PlayerPrefs.SetFloat(MusicVolumeKey, _musicVolume);
             PlayerPrefs.SetFloat(EffectsVolumeKey, _effectsVolume);
+            PlayerPrefs.SetFloat(TextScaleKey, _textScale);
             PlayerPrefs.Save();
+            ApplyAudioPreferences();
+        }
+
+        private void ApplyAudioPreferences()
+        {
+            if (_audio == null) return;
+            _audio.SetMusicVolume(_musicVolume);
+            _audio.SetEffectsVolume(_effectsVolume);
         }
 
         private void RefreshFighterSummary()
@@ -505,22 +626,27 @@ namespace BattleRaja.Presentation.Flow
             _settingsSummaryText.text =
                 $"LEFT-HANDED: {(_leftHanded ? "ON" : "OFF")}    REDUCED FLASHES: {(_reducedFlashes ? "ON" : "OFF")}\n" +
                 $"HIGH CONTRAST: {(_highContrast ? "ON" : "OFF")}    AIM ASSIST: {(_aimAssist ? "ON" : "OFF")}\n" +
-                $"MUSIC: {Mathf.RoundToInt(_musicVolume * 100f)}%    EFFECTS: {Mathf.RoundToInt(_effectsVolume * 100f)}%";
+                $"MUSIC: {Mathf.RoundToInt(_musicVolume * 100f)}%    EFFECTS: {Mathf.RoundToInt(_effectsVolume * 100f)}%\n" +
+                $"TEXT SIZE: {Mathf.RoundToInt(_textScale * 100f)}%";
+        }
+
+        private void ApplyTextScale()
+        {
+            if (_safeArea == null || _appliedTextScale <= 0.001f) return;
+            var ratio = _textScale / _appliedTextScale;
+            foreach (var text in _safeArea.GetComponentsInChildren<Text>(true))
+            {
+                if (text == null || text == _settingsSummaryText) continue;
+                text.fontSize = Mathf.Clamp(Mathf.RoundToInt(text.fontSize * ratio), 12, 64);
+            }
+
+            _appliedTextScale = _textScale;
         }
 
         private void ApplyContrast()
         {
             if (_safeArea == null) return;
-            var images = _safeArea.GetComponentsInChildren<Image>(true);
-            for (var i = 0; i < images.Length; i++)
-            {
-                if (_highContrast)
-                {
-                    images[i].color = images[i].gameObject.name.EndsWith("Panel", StringComparison.Ordinal)
-                        ? new Color(0f, 0f, 0f, 0.98f)
-                        : Color.white;
-                }
-            }
+            BattleRajaUiTheme.ApplyContrast(_safeArea.transform, _highContrast);
         }
 
         private void SetHeader(string title, string message)
@@ -573,11 +699,11 @@ namespace BattleRaja.Presentation.Flow
             rect.anchorMax = new Vector2(0.92f, 0.68f);
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
-            panel.GetComponent<Image>().color = new Color(0.03f, 0.07f, 0.11f, 0.96f);
+            BattleRajaUiTheme.StylePanel(panel);
             return panel;
         }
 
-        private static Text CreateText(Transform parent, string name, Vector2 min, Vector2 max, int size, TextAnchor alignment)
+        private static Text CreateText(Transform parent, string name, Vector2 min, Vector2 max, int size, TextAnchor alignment, Color? color = null, bool bold = false)
         {
             var objectToCreate = new GameObject(name, typeof(RectTransform), typeof(Text));
             objectToCreate.transform.SetParent(parent, false);
@@ -587,16 +713,11 @@ namespace BattleRaja.Presentation.Flow
             rect.offsetMin = new Vector2(8f, 4f);
             rect.offsetMax = new Vector2(-8f, -4f);
             var text = objectToCreate.GetComponent<Text>();
-            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            text.fontSize = size;
-            text.alignment = alignment;
-            text.color = Color.white;
-            text.horizontalOverflow = HorizontalWrapMode.Wrap;
-            text.verticalOverflow = VerticalWrapMode.Overflow;
+            BattleRajaUiTheme.StyleText(text, size, alignment, color, bold);
             return text;
         }
 
-        private static Button CreateButton(Transform parent, string name, string label, Vector2 min, Vector2 max, UnityEngine.Events.UnityAction action)
+        private static Button CreateButton(Transform parent, string name, string label, Vector2 min, Vector2 max, UnityEngine.Events.UnityAction action, bool primary = false)
         {
             var buttonObject = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
             buttonObject.transform.SetParent(parent, false);
@@ -605,11 +726,11 @@ namespace BattleRaja.Presentation.Flow
             rect.anchorMax = max;
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
-            buttonObject.GetComponent<Image>().color = new Color(0.08f, 0.28f, 0.35f, 0.96f);
             var text = CreateText(buttonObject.transform, name + "Label", Vector2.zero, Vector2.one, 18, TextAnchor.MiddleCenter);
             text.text = label;
             var button = buttonObject.GetComponent<Button>();
             button.onClick.AddListener(action);
+            BattleRajaUiTheme.StyleButton(button, primary);
             return button;
         }
 

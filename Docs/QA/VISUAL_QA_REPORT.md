@@ -6,6 +6,27 @@ Current validated runtime source HEAD: `583106e`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://127.0.0.1:8139/index.html`
 
+## Offline Android V1 candidate visual pass — 2026-08-23
+
+The current Android-first candidate was installed and inspected only on Lava
+`ST5GDW23LB004392` from the disposable verification copy. External captures are under
+`C:\Projects\BattleRaja-v1-verify-20260823b\Builds\V1\Lava\`:
+
+- `menu-final.png` shows the original shield/bolt identity, offline loop summary and
+  reachable tutorial, settings/accessibility and help routes.
+- `fighter-latest.png` shows Bijli/Pehel/Maya cards, fighter-specific accents and concise
+  ability hints. The persisted selection is visible and intentional.
+- `match-final.png` shows the eight-actor Bazaar Bastion opening, HUD, Aandhi state and
+  circular twin-stick/action controls with no square underlays.
+- `combat-final.png` shows a movement swipe plus attack/ability interaction and active
+  combat feedback.
+
+This is a technical visual inspection, not human approval. The candidate still uses
+replaceable procedural/placeholder presentation, a temporary package identity and a
+development APK; final touch ergonomics, accessibility, pacing, audio, cultural and
+store review remain open. Gadget pickup/use and complete tutorial/results/rematch
+observation still require a dedicated human run on the exact candidate.
+
 ## Current HEAD smoke — 2026-08-03
 
 - The rebuilt Web candidate from `6f0fe8b` returned HTTP 200 on port 8139. Playwright

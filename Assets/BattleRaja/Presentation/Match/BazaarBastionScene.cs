@@ -1,5 +1,6 @@
 using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Movement;
+using BattleRaja.Presentation.Visuals;
 using UnityEngine;
 
 namespace BattleRaja.Presentation.Match
@@ -22,5 +23,15 @@ namespace BattleRaja.Presentation.Match
         public OfflineMatchController MatchController => matchController;
         public CombatProjectilePool ProjectilePool => projectilePool;
         public CombatDamageResolver DamageResolver => damageResolver;
+
+        private void Awake()
+        {
+            // The art kit is presentation-only and generated at runtime, so scene
+            // collision/authority data remains authored and reviewable.
+            if (GetComponent<BazaarBastionVisuals>() == null)
+            {
+                gameObject.AddComponent<BazaarBastionVisuals>();
+            }
+        }
     }
 }

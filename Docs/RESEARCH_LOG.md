@@ -295,3 +295,30 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   provider, retention/legal policy and service pricing remain unresolved.
 - **Recheck trigger/date:** After owner supplies PlayFab title/account access and before any
   real identity, economy or leaderboard claim.
+
+### V1.0 Android Play release hardening (2026-08-23)
+
+- **Question:** Which Android requirements must the offline V1.0 candidate satisfy before a
+  Play Console submission can be considered?
+- **Primary sources:** [Google Play target API requirements](https://support.google.com/googleplay/android-developer/answer/11926878?hl=en-GB_ALL),
+  [Android 16 KB page-size guidance](https://developer.android.com/guide/practices/page-sizes),
+  [Play Console app setup and signing](https://support.google.com/googleplay/android-developer/answer/9859152?hl=en),
+  and [Unity 6000.5.0f1 release notes](https://unity.com/releases/editor/whats-new/6000.5.0f1).
+- **Relevant claims:** New Google Play submissions and updates must target Android 16/API 36
+  from 31 August 2026; 64-bit apps targeting Android 15/API 35+ must support 16 KB pages
+  before the 2027 enforcement date; Play uploads use an Android App Bundle and require a
+  signed application; Unity 6000.5 includes the Android 16/API 36 toolchain direction but
+  the exact project build still needs an artifact-level 16 KB alignment check.
+- **Decision impact:** Keep Unity 6000.5.6f1, ARM64, IL2CPP, target API 36 and min API 28;
+  add a local release-shaped AAB entrypoint without signing or uploading; verify native
+  library alignment from the actual bundle before any Play gate; keep the current example
+  package identifier explicitly blocked for release until the owner approves the final
+  application ID and signing identity.
+- **Local evidence:** ProjectSettings already targets API 36 and requests no forced Internet
+  or SD-card permission; the V1 release entrypoint is now source-controlled but its AAB and
+  16 KB report are generated only during the release validation run.
+- **Uncertainty:** Final package name, signing key, Play App Signing choice, content-rating/
+  data-safety declarations, developer verification and device-specific 16 KB install proof
+  remain human/release gates.
+- **Recheck trigger/date:** Before the first signed AAB, after any Unity/Android package
+  change, and before Play Console upload.
