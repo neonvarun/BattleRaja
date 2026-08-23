@@ -437,14 +437,16 @@ namespace BattleRaja.Presentation.Flow
             _loadingText = CreateText(_loadingPanel.transform, "LoadingText", new Vector2(0.14f, 0.44f), new Vector2(0.86f, 0.58f), 26, TextAnchor.MiddleCenter);
 
             _settingsPanel = CreatePanel(_safeArea.transform, "SettingsPanel");
-            _settingsSummaryText = CreateText(_settingsPanel.transform, "SettingsSummary", new Vector2(0.12f, 0.61f), new Vector2(0.88f, 0.86f), 20, TextAnchor.MiddleCenter);
-            CreateButton(_settingsPanel.transform, "LeftHanded", "LEFT-HANDED", new Vector2(0.13f, 0.48f), new Vector2(0.43f, 0.58f), ToggleLeftHanded);
-            CreateButton(_settingsPanel.transform, "Flashes", "REDUCED FLASHES", new Vector2(0.57f, 0.48f), new Vector2(0.87f, 0.58f), ToggleReducedFlashes);
-            CreateButton(_settingsPanel.transform, "Contrast", "HIGH CONTRAST", new Vector2(0.13f, 0.35f), new Vector2(0.43f, 0.45f), ToggleHighContrast);
-            CreateButton(_settingsPanel.transform, "AimAssist", "AIM ASSIST", new Vector2(0.57f, 0.35f), new Vector2(0.87f, 0.45f), ToggleAimAssist);
-            CreateButton(_settingsPanel.transform, "MusicDown", "MUSIC −", new Vector2(0.13f, 0.22f), new Vector2(0.43f, 0.32f), DecreaseMusicVolume);
-            CreateButton(_settingsPanel.transform, "MusicUp", "MUSIC +", new Vector2(0.57f, 0.22f), new Vector2(0.87f, 0.32f), IncreaseMusicVolume);
-            CreateButton(_settingsPanel.transform, "Close", "CLOSE", new Vector2(0.32f, 0.08f), new Vector2(0.68f, 0.18f), CloseSettings);
+            _settingsSummaryText = CreateText(_settingsPanel.transform, "SettingsSummary", new Vector2(0.12f, 0.66f), new Vector2(0.88f, 0.90f), 20, TextAnchor.MiddleCenter);
+            CreateButton(_settingsPanel.transform, "LeftHanded", "LEFT-HANDED", new Vector2(0.13f, 0.54f), new Vector2(0.43f, 0.64f), ToggleLeftHanded);
+            CreateButton(_settingsPanel.transform, "Flashes", "REDUCED FLASHES", new Vector2(0.57f, 0.54f), new Vector2(0.87f, 0.64f), ToggleReducedFlashes);
+            CreateButton(_settingsPanel.transform, "Contrast", "HIGH CONTRAST", new Vector2(0.13f, 0.42f), new Vector2(0.43f, 0.52f), ToggleHighContrast);
+            CreateButton(_settingsPanel.transform, "AimAssist", "AIM ASSIST", new Vector2(0.57f, 0.42f), new Vector2(0.87f, 0.52f), ToggleAimAssist);
+            CreateButton(_settingsPanel.transform, "MusicDown", "MUSIC -", new Vector2(0.13f, 0.30f), new Vector2(0.43f, 0.40f), DecreaseMusicVolume);
+            CreateButton(_settingsPanel.transform, "MusicUp", "MUSIC +", new Vector2(0.57f, 0.30f), new Vector2(0.87f, 0.40f), IncreaseMusicVolume);
+            CreateButton(_settingsPanel.transform, "EffectsDown", "EFFECTS -", new Vector2(0.13f, 0.18f), new Vector2(0.43f, 0.28f), DecreaseEffectsVolume);
+            CreateButton(_settingsPanel.transform, "EffectsUp", "EFFECTS +", new Vector2(0.57f, 0.18f), new Vector2(0.87f, 0.28f), IncreaseEffectsVolume);
+            CreateButton(_settingsPanel.transform, "Close", "CLOSE", new Vector2(0.32f, 0.05f), new Vector2(0.68f, 0.15f), CloseSettings);
 
             _errorPanel = CreatePanel(_safeArea.transform, "ErrorPanel");
             _errorText = CreateText(_errorPanel.transform, "ErrorText", new Vector2(0.12f, 0.51f), new Vector2(0.88f, 0.73f), 24, TextAnchor.MiddleCenter);

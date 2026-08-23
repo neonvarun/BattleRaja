@@ -157,6 +157,24 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator EndedAuthorityStateAlwaysPublishesResultsPanel()
+        {
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            var simulation = match.Simulation;
+            for (var id = 10; id <= 16; id++) simulation.SyncHealth(new BattleRaja.Core.Domain.CombatEntityId(id), 0);
+            simulation.Advance(0.1f);
+
+            Assert.That(simulation.IsEnded, Is.True);
+            yield return null;
+            yield return null;
+
+            Assert.That(match.ResultsShown, Is.True);
+            var panel = Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+                .First(item => item.name == "ResultsPanel").gameObject;
+            Assert.That(panel.activeSelf, Is.True);
+        }
+
+        [UnityTest]
         public IEnumerator LiveResultsSurfaceAppearsAndRematchReloadsMatch()
         {
             PlayModeTestHelpers.DisableBots();

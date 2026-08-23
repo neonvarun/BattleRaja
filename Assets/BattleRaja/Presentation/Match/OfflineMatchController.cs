@@ -230,8 +230,16 @@ namespace BattleRaja.Presentation.Match
 
         private void Update()
         {
-            if (Simulation == null || Simulation.IsEnded)
+            if (Simulation == null)
             {
+                return;
+            }
+
+            // Terminal authority state is immutable. Republishing is idempotent and
+            // guarantees the HUD cannot miss the exact frame that ended the tick.
+            if (Simulation.IsEnded)
+            {
+                PublishResults();
                 return;
             }
 
