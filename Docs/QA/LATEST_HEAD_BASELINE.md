@@ -7,6 +7,21 @@ Balance-fix runtime source: `17a8c75` (`fix(balance): land documented weapon ret
 Pre-fix baseline source: `35d723f` (`fix: bot perception no longer treats fighter hulls as line-of-sight blockers`; the tip of local `main` before this branch)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
+## M11 closure slice - 2026-08-23
+
+Bounded performance/UX closure stopped for owner-requested clean publication.
+Full details and limitations: `Docs/QA/M11_CLOSURE_REPORT_2026-08-23.md`.
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Starting repository | `main` aligned at `9c91f76`, clean; two stashes preserved | preflight output |
+| Baseline validation | **0 errors / 0 warnings** | detached exact-source `9c91f76` validation |
+| Baseline Android | exact APK **94,253,553 bytes**, SHA-256 `7ED0E10DDB2FD1F2D0D2C0E64584AC4BE8840CFBE2262E00C375E311FBEC81EB`; Lava cold launch passed | `Builds/Local/M11Closure/2026-08-23/artifact-manifest.json`, device captures |
+| Baseline Web | **19 files / 134,170,348 bytes**; WASM **121,427,473 bytes**, SHA-256 `BB722EC437DE934CDDEEF06D1A594604A46F495BDE14A442C138A3ECAF8B14CB`; Chrome/Edge six routes passed with 0 errors/failed requests | `webperf/chrome-performance.json`, `edge-performance.json`, screenshots |
+| Runtime fixes/tests | `c11954b` EditMode **125/125**, PlayMode **59/59**; `5d6eeb8` PlayMode **59/59** | `TestResults/editmode-final.xml`, `playmode-final.xml`, `playmode-tutorial-fix.xml` |
+| Platform candidate | `c11954b` APK **97,529,808 bytes**, SHA-256 `B12C2BCD3C749D1D5ABAF01A2E37C71816B9E8B8AE71BEBC9EA8D1744A952502`; Web **19 files / 134,170,499 bytes**; WASM SHA-256 `8D6B5673D598D881FF62A3B45AF24A18828BB75497BC757CF802003FF97F31EE` | `final-artifact-manifest.json` |
+| Not claimed at final tip | Android/Web rebuild/install/smoke, 20-device rematch cycle, parsed CPU/GPU/frame profiling, human UX approval | closure report remaining-gates table |
+
 ## Milestone 11 Phase 3-5 exact-source regression — 2026-08-23
 
 Validated from detached exact-source worktree `C:\Projects\BattleRaja-headbuild`

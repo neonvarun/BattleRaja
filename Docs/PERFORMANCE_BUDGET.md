@@ -24,6 +24,32 @@
 
 Never claim optimisation without profiling evidence.
 
+## M11 closure baseline - 2026-08-23 (`9c91f76`)
+
+Raw captures and JSON summaries live under ignored
+`Builds/Local/M11Closure/2026-08-23/`. These are development-build measurements,
+not release-budget sign-off.
+
+- Lava menu PSS/RSS/Graphics/Swap: **407,918 / 535,216 / 82,088 / 74 KB**.
+- Active pressure PSS/RSS/Graphics/Swap: **460,776 / 588,808 / 99,436 / 65 KB**.
+- Late Aandhi/spectator PSS/RSS/Graphics/Swap:
+  **466,716 / 594,800 / 101,484 / 65 KB**.
+- Battery sample: 28% while USB-powered; temperature **34.0 C**.
+- Chrome and Edge each passed three viewports with zero console errors/failed
+  requests. Browser rAF means were **5.009-5.066 ms**; observed maxima reached
+  **34.3 ms**. These are browser frame observations, not Unity profiler FPS.
+- Local uncompressed cold transfer: **134,069,638 bytes**, including WASM
+  encoded body **121,427,473 bytes**. Warm sampled transfer remained
+  **121,428,073 bytes** because WASM was refetched while `.data` reused cache.
+- Background suspension/return passed in Chrome and Edge with no errors/failed
+  requests.
+
+Still open: parsed frame percentiles, Unity Profiler CPU/render/GPU/GC/draw-call/
+triangle/texture/mesh/audio capture, thermal soak, repeated physical rematches,
+production compression/cache headers, WAN/mobile-browser load, release/AAB size,
+and human performance approval. Raw Perfetto traces exist, but no trace processor
+was installed on this host.
+
 ## Latest bounded smoke measurements — 2026-08-03 (`42e93e7` runtime / `e90ad19` docs)
 
 These are bounded runtime observations, not release-performance sign-off. The raw

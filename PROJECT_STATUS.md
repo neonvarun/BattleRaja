@@ -16,9 +16,13 @@
   weapon-damage retune existed only in serialized assets while the Core definitions
   still shipped 18/28/12; the documented 12/20/9 targets are now authoritative in
   code (see `Docs/BALANCE_CHANGELOG.md` and `Docs/QA/LATEST_HEAD_BASELINE.md`).
-- Latest validated repository HEAD: `73237c8` on local and remote `main`;
-  EditMode **125/125**, PlayMode **57/57**, deep soak **2,000 matches / zero divergence**,
-  Lava launch/resume, and Chrome+Edge six-route Web smoke all pass. Repository
+- Latest closure candidate: `5d6eeb8` on local `main`; PlayMode **59/59** passes
+  at this tip. Exact-source platform candidates and full test/platform evidence
+  are recorded separately by runtime commit below. See
+  `Docs/QA/M11_CLOSURE_REPORT_2026-08-23.md`.
+- Prior full baseline at runtime-bearing source `73237c8`: EditMode **125/125**,
+  PlayMode **57/57**, deep soak **2,000 matches / zero divergence**, Lava
+  launch/resume, and Chrome+Edge six-route Web smoke all pass. Repository
   validation is **0 errors / 0 warnings**. See `Docs/QA/LATEST_HEAD_BASELINE.md`.
 - Phase 1 authority audit (2026-08-22): complete at `ee573ad` with EditMode **115/115**
   and PlayMode **57/57**. One real gap found and fixed — stale attack ticks could bypass
