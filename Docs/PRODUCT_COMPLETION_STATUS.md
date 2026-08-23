@@ -4,7 +4,7 @@ Updated: 2026-08-24
 Classification: **prototype**
 
 Latest continuation: offline Android V1 release-shaped candidate — branch
-`codex/v1-playstore-release` runtime source `c6badbf` (latest checkout `649d0bb`,
+`codex/v1-playstore-release` runtime source `c6badbf` (latest checkout `46724ac`,
 editor/test-only warning cleanup). Exact-source evidence now
 includes validation 0/0, EditMode **125/125**, PlayMode **66/66**, a non-development
 debug-signed APK installed and exercised on Lava, render-only fighter/impact/gadget
