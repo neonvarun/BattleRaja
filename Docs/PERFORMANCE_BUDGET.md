@@ -3,6 +3,29 @@
 **Status:** Android evidence is current for the exact V1 presentation candidate, but formal
 frame-time/profiler budgets and human performance approval remain open.
 
+## Latest Android V1 bounded observation — 2026-08-24
+
+The tutorial-completion correction candidate was rebuilt from `c6badbf6cf5b1c7340fa907821aeb4cbf2194bc0`
+and exercised only on Lava `ST5GDW23LB004392`. This updates artifact-size and memory
+observations, but remains a smoke measurement rather than a performance pass:
+
+- APK: **40,431,923 bytes**, SHA-256
+  `E6CBEAD6F97C036C0C9D1663CA5972799AEF3B330D75A3D2AAA94D5E699C7DB3`.
+- AAB: **36,262,021 bytes**, SHA-256
+  `124E14ABE6012B3B42D7B7741D0C647416E278E82ABFE358EF89A53BAAD64021`.
+- Static bundle check: base manifest, 8 ARM64 libraries, no other ABIs and all checked
+  native ELF LOAD segments aligned to `0x4000`.
+- Current process sample during the offline match: **304,939 KB PSS**, **452,134 KB RSS**,
+  **17,394 KB Graphics**, **76 KB swap**.
+- `dumpsys gfxinfo` again reported **0 total frames** and an empty histogram for the
+  Unity SurfaceView, so no stable-FPS, frame-pacing or GPU conclusion is claimed.
+- Raw files: `C:\Projects\BattleRaja-v1-tutorial-verify\Builds\V1\Lava\`.
+
+The smaller non-development artifact is encouraging for the V1 candidate, but it does
+not establish a product memory budget, thermal/battery behavior, repeated-match growth,
+CPU/GPU/GC/draw-call cost or low-end Android performance. Those measurements and human
+approval remain open.
+
 ## V1.0 Android candidate measurement — 2026-08-23
 
 The release-shaped offline Android candidate was installed and exercised only on Lava
