@@ -15,8 +15,10 @@ a fresh offline Android package boundary. Validation is **0 errors / 0 warnings*
 ARM64-only (7 native libraries) and passed static 16 KB alignment.
 
 The exact APK was installed only on Lava `ST5GDW23LB004392`. The branded portrait
-offline menu was visible, the Unity activity was top-resumed, and the captured log
-contains no fatal/ANR/SIGSEGV marker. `aapt` and installed-package inspection show
+offline menu was visible, the Unity activity was focused, and the captured log
+contains no fatal/ANR/SIGSEGV marker. A nonfatal optional Play Core
+`AssetPackManager` `ClassNotFoundException` was present during Unity's asset-pack
+probe. `aapt` and installed-package inspection show
 `VIBRATE` and Unity's dynamic-receiver permission only; `INTERNET` and
 `ACCESS_NETWORK_STATE` are absent. Raw files are outside the repository under
 `C:\Users\USER\AppData\Local\Temp\battleraja-root-offline-manifest-lava\`.

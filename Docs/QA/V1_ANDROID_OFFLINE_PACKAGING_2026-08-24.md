@@ -46,8 +46,10 @@ inspection remains required before Play submission.
 
 Only Lava serial `ST5GDW23LB004392` was used. The exact APK installed successfully,
 launched into the branded offline menu, and left
-`com.unity3d.player.UnityPlayerGameActivity` top-resumed. The post-launch log sample
-contains no `FATAL EXCEPTION`, `ANR`, `SIGSEGV`, or Unity exception marker. Raw files
+`com.unity3d.player.UnityPlayerGameActivity` focused in the launch capture. The
+post-launch log sample contains no `FATAL EXCEPTION`, `ANR`, or `SIGSEGV`; it does
+contain a nonfatal optional Play Core `AssetPackManager` `ClassNotFoundException`
+from Unity's asset-pack probe. Raw files
 are outside the repository at
 `C:\Users\USER\AppData\Local\Temp\battleraja-root-offline-manifest-lava\`.
 
