@@ -72,7 +72,7 @@ namespace BattleRaja.Presentation.Flow
         private void Refresh()
         {
             _showing = !_steps.IsComplete;
-            _panel.SetActive(true);
+            _panel.SetActive(_showing);
             if (_steps.IsComplete)
             {
                 _title.text = "TUTORIAL COMPLETE";

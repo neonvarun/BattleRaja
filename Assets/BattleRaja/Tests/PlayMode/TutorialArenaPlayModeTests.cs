@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using BattleRaja.Core.Application;
 using BattleRaja.Presentation.AI;
 using BattleRaja.Presentation.Flow;
@@ -39,6 +40,12 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(overlay.CurrentStep, Is.EqualTo(TutorialStep.Complete));
         }
 
+        private static GameObject FindSceneObject(string name)
+        {
+            return Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+                .First(item => item.name == name).gameObject;
+        }
+
         [UnityTest]
         public IEnumerator TutorialWalkthroughPublishesAllEightStepsAndPersistsCompletion()
         {
@@ -53,7 +60,7 @@ namespace BattleRaja.Tests.PlayMode
             yield return null;
 
             var overlay = Object.FindAnyObjectByType<TutorialOverlay>();
-            var panel = GameObject.Find("TutorialPanel");
+            var panel = FindSceneObject("TutorialPanel");
             Assert.That(overlay, Is.Not.Null);
             Assert.That(panel, Is.Not.Null);
             var title = panel.transform.Find("Title").GetComponent<Text>();
@@ -73,6 +80,7 @@ namespace BattleRaja.Tests.PlayMode
             }
 
             Assert.That(overlay.CurrentStep, Is.EqualTo(TutorialStep.Complete));
+            Assert.That(panel.activeSelf, Is.False);
             Assert.That(title.text, Does.Contain("TUTORIAL COMPLETE"));
             Assert.That(progress.text, Does.Contain("8 / 8 COMPLETE"));
             Assert.That(PlayerPrefs.GetInt(completedKey, 0), Is.EqualTo(1));
@@ -80,8 +88,10 @@ namespace BattleRaja.Tests.PlayMode
             overlay.Replay();
             Assert.That(overlay.CurrentStep, Is.EqualTo(TutorialStep.Movement));
             Assert.That(title.text, Does.Contain("MOVEMENT"));
+            Assert.That(panel.activeSelf, Is.True);
             overlay.Skip();
             Assert.That(overlay.CurrentStep, Is.EqualTo(TutorialStep.Complete));
+            Assert.That(panel.activeSelf, Is.False);
 
             if (hadPrevious) PlayerPrefs.SetInt(completedKey, previous);
             else PlayerPrefs.DeleteKey(completedKey);
