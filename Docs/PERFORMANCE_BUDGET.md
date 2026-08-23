@@ -9,18 +9,18 @@ The release-shaped offline Android candidate was installed and exercised only on
 `ST5GDW23LB004392` from the disposable verification copy. This is bounded technical
 evidence, not a performance sign-off:
 
-- Exact source: `24feb5d7c08301ebb44548fbd0f10ffe78b6e9ec`.
-- APK: **40,430,947 bytes**, SHA-256
-  `1699EA241EA9BC85985F05A4EB1BC0C24854CF96571685F6AF51744312DD6E46`.
-- Device process sample: **284,282 KB PSS**, **420,364 KB RSS**, **99,896 KB Graphics**,
-  **77 KB swap**; one `top` sample reported approximately **81.8% CPU**.
+- Exact source: `ab5b12ad7c86f425243fc3f2a9cbc83ae97e6f6d`.
+- APK: **40,420,983 bytes**, SHA-256
+  `E70241D83E6DBDA977EECF9F476502FD68B89799438DBA06F024423D575E5532`.
+- Device process sample: **285,509 KB PSS**, **421,336 KB RSS**, **99,160 KB Graphics**,
+  **79 KB swap**.
 - Android `gfxinfo` for the final APK exposed only the Unity SurfaceView/render-node
   summary and no frame/jank histogram. No exact-current FPS or stable frame-pacing pass
   is claimed from this sample.
 - Thermal status was 0 in the sample; current-HAL CPU/GPU were about 42.7 C, skin about
   39.4 C and
   battery about 35 C. This is not a thermal or battery soak.
-- Raw files and screenshots: `C:\Projects\BattleRaja-v1-verify-20260823b\Builds\V1\Lava\`.
+- Raw files and screenshots: `C:\Projects\BattleRaja-v1-verify-20260823c\Builds\V1\Lava\`.
 
 Interpretation: the offline loop is runnable on the approved phone and the prior default
 30-FPS presentation cap is no longer representative of the release-shaped APK. The

@@ -4,25 +4,25 @@ Updated: 2026-08-23
 Classification: **prototype**
 
 Latest continuation: offline Android V1 release-shaped candidate — branch
-`codex/v1-playstore-release` runtime source `24feb5d7`. Exact-source evidence now
-includes validation 0/0, EditMode **125/125**, PlayMode **63/63**, a non-development
-debug-signed APK installed and exercised on Lava, near-60-FPS frame windows, and a
+`codex/v1-playstore-release` runtime source `ab5b12a`. Exact-source evidence now
+includes validation 0/0, EditMode **125/125**, PlayMode **64/64**, a non-development
+debug-signed APK installed and exercised on Lava, source-backed visual/store drafts, and a
 static 16 KB AAB alignment check. The project remains a prototype: final signing,
 package identity, long-run performance, human playtest, store/legal and Play Console
 gates remain open; Photon, PlayFab and Web release are out of scope.
 
 ## Android V1.0 release-shaped candidate — 2026-08-23
 
-Exact candidate source: `24feb5d7c08301ebb44548fbd0f10ffe78b6e9ec` on
+Exact candidate source: `ab5b12ad7c86f425243fc3f2a9cbc83ae97e6f6d` on
 `codex/v1-playstore-release`.
 
-The current working-tree V1 slice adds the product-facing offline Android route: branded
-Bootstrap flow, Bazaar Bastion as the default build scene, three-fighter selection,
-tutorial/help/settings surfaces, original placeholder identity art, code-driven audio and
-visual feedback, portrait-safe circular touch controls, and a debug-signed/non-publishable
-AAB entrypoint.
-Repository validation is **0 errors / 0 warnings**, EditMode is **125/125**, and PlayMode
-is **63/63**. The Lava-only smoke candidate installed and exercised successfully; exact
+The current V1 slice adds the product-facing offline Android route: branded Bootstrap flow,
+Bazaar Bastion as the default build scene, three-fighter selection, tutorial/help/settings
+surfaces, original source-backed fighter/gadget/arena identity art, code-driven audio and
+visual feedback, portrait-safe circular touch controls, and debug-signed/non-publishable
+APK/AAB entrypoints. Repository validation is **0 errors / 0 warnings**, EditMode is
+**125/125**, and PlayMode is **64/64**. The Lava-only smoke candidate installed and exercised
+successfully; exact
 APK/AAB hashes, screenshots and measurements are in
 `Docs/QA/V1_ANDROID_EVIDENCE_2026-08-23.md`.
 

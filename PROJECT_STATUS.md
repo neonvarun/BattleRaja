@@ -21,15 +21,14 @@
   are recorded separately by runtime commit below. See
   `Docs/QA/M11_CLOSURE_REPORT_2026-08-23.md`.
 - Current offline Android V1.0 candidate: branch `codex/v1-playstore-release` at
-  committed source `24feb5d7` (`ui: polish offline android candidate presentation`).
-  The candidate now builds
-  Bazaar Bastion by default, exposes the branded offline flow/tutorial/settings and
-  three-fighter selection, uses original vector hero/fighter identity, haptic/audio
-  feedback, circular safe-area touch surfaces, and has a local
-  debug-signed/non-publishable AAB entrypoint. Exact candidate hashes, Lava captures and measured limits are
-  recorded in `Docs/QA/V1_ANDROID_EVIDENCE_2026-08-23.md`.
+  committed source `ab5b12a` (`art: add original offline V1 visual kit`). The candidate now
+  builds Bazaar Bastion by default, exposes the branded offline flow/tutorial/settings and
+  three-fighter selection, uses original source-backed fighter/gadget/arena identity
+  geometry, haptic/audio feedback, circular safe-area touch surfaces, and has local
+  debug-signed/non-publishable APK/AAB entrypoints. Exact candidate hashes, Lava captures and
+  measured limits are recorded in `Docs/QA/V1_ANDROID_EVIDENCE_2026-08-23.md`.
 - Current V1 automated gate: repository validation **0/0**, EditMode **125/125**, and
-  PlayMode **63/63** at source `24feb5d7`. The project remains **prototype**; the temporary package ID,
+  PlayMode **64/64** at source `ab5b12a`. The project remains **prototype**; the temporary package ID,
   debug-signed/non-publishable bundle, runtime 16 KB confirmation, adaptive-icon warning,
   long-run performance measurements and human/store/legal approvals remain open. The
   latest release-shaped APK has no exact-current frame histogram from `gfxinfo`, so stable

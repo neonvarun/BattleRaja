@@ -30,15 +30,15 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
 ## Latest local candidate evidence (2026-08-23)
 
 The exact V1 source was validated in disposable copy
-`C:\Projects\BattleRaja-v1-verify-20260823b`:
+`C:\Projects\BattleRaja-v1-verify-20260823c`:
 
 - Unity `6000.5.6f1` (`0e0577a1a2ac`), validation **0 errors / 0 warnings**.
-- Exact runtime source: `24feb5d7c08301ebb44548fbd0f10ffe78b6e9ec`.
-- EditMode **125/125** and PlayMode **63/63** passed.
-- Release-shaped Lava APK: **40,430,947 bytes**, SHA-256
-  `1699EA241EA9BC85985F05A4EB1BC0C24854CF96571685F6AF51744312DD6E46`.
-- Debug-signed AAB: **36,261,037 bytes**, SHA-256
-  `ADD545042DD2397EDE9B7908C9C7BE3954F4E5232500315E6662F36B9C64B0D9`;
+- Exact runtime source: `ab5b12ad7c86f425243fc3f2a9cbc83ae97e6f6d`.
+- EditMode **125/125** and PlayMode **64/64** passed.
+- Release-shaped Lava APK: **40,420,983 bytes**, SHA-256
+  `E70241D83E6DBDA977EECF9F476502FD68B89799438DBA06F024423D575E5532`.
+- Debug-signed AAB: **36,251,072 bytes**, SHA-256
+  `4B22FD2DADD26FB1A5FEA96FE5EAA19BC2D0EC4F130F87009969D38562FE84C6`;
   base manifest present, 8 ARM64 libraries, 0 other ABIs, 450 entries, all ARM64
   ELF LOAD segments statically aligned to `0x4000`.
 - Lava screenshots and raw metrics are recorded in

@@ -1,9 +1,9 @@
 # Latest HEAD baseline
 
 Date: 2026-08-23
-Branch: `codex/v1-playstore-release` (8 commits ahead of local and remote `main`)
+Branch: `codex/v1-playstore-release` (10 commits ahead of local and remote `main`)
 Local/remote `main`: `ca6ec3e17e695042664cf3bdbf9889b259b33144`
-Latest validated repository HEAD: `24feb5d7c08301ebb44548fbd0f10ffe78b6e9ec`
+Latest validated repository HEAD: `ab5b12ad7c86f425243fc3f2a9cbc83ae97e6f6d`
 Balance-fix runtime source: `17a8c75` (`fix(balance): land documented weapon retune in Core definitions`)
 Pre-fix baseline source: `35d723f` (`fix: bot perception no longer treats fighter hulls as line-of-sight blockers`; the tip of local `main` before this branch)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
@@ -14,7 +14,7 @@ The V1 release-shaped candidate is recorded on `codex/v1-playstore-release` afte
 intentional offline-product changes were committed. This section supersedes the older
 closure rows for Android V1 claims.
 
-V1 runtime artifact source commit: `24feb5d7c08301ebb44548fbd0f10ffe78b6e9ec`.
+V1 runtime artifact source commit: `ab5b12ad7c86f425243fc3f2a9cbc83ae97e6f6d`.
 The evidence/doc update follows that focused runtime commit; generated Unity/build
 outputs remain outside the repository.
 
@@ -22,11 +22,11 @@ outputs remain outside the repository.
 | --- | --- | --- |
 | Repository validation | **0 errors / 0 warnings** | `Tools/Validation/validate.ps1 -RequireUnityProject -UnityExe ...6000.5.6f1...` |
 | Full EditMode | **125/125 passed** | `Builds/V1/TestResults/editmode-v1-final.xml` |
-| Full PlayMode | **63/63 passed** | `Builds/V1/TestResults/playmode-release-polish-final.xml` |
-| Android release-shaped APK | **40,430,947 bytes**, SHA-256 `1699EA241EA9BC85985F05A4EB1BC0C24854CF96571685F6AF51744312DD6E46` | non-development debug-signed APK, installed on Lava |
-| Android release-shaped AAB | **36,261,037 bytes**, SHA-256 `ADD545042DD2397EDE9B7908C9C7BE3954F4E5232500315E6662F36B9C64B0D9` | base manifest, 8 ARM64 libraries, 0 other ABIs, 450 entries; static 16 KB alignment passed |
-| Lava runtime | Menu, fighter selection, match opening, movement, attack/ability interaction; no app fatal markers | `Docs/QA/V1_ANDROID_EVIDENCE_2026-08-23.md`, raw evidence outside source |
-| Performance sample | **284,282 KB PSS / 420,364 KB RSS / 99,896 KB Graphics / 77 KB swap**, one ~81.8% CPU sample; bounded thermal sample, no frame histogram exposed by `gfxinfo` | Lava `dumpsys`/log files outside source |
+| Full PlayMode | **64/64 passed** | `C:\Projects\BattleRaja-v1-verify-20260823c\Builds\V1\TestResults\playmode-visual-kit-run.xml` |
+| Android release-shaped APK | **40,420,983 bytes**, SHA-256 `E70241D83E6DBDA977EECF9F476502FD68B89799438DBA06F024423D575E5532` | non-development debug-signed APK, installed on Lava |
+| Android release-shaped AAB | **36,251,072 bytes**, SHA-256 `4B22FD2DADD26FB1A5FEA96FE5EAA19BC2D0EC4F130F87009969D38562FE84C6` | base manifest, 8 ARM64 libraries, 0 other ABIs, 450 entries; static 16 KB alignment passed |
+| Lava runtime | Menu, mode, fighter selection, match opening, movement and attack/ability interaction; distinct fighter/arena identities; no app fatal markers | `Docs/QA/V1_ANDROID_EVIDENCE_2026-08-23.md`, raw evidence outside source |
+| Performance sample | **285,509 KB PSS / 421,336 KB RSS / 99,160 KB Graphics / 79 KB swap**; no frame histogram exposed by `gfxinfo` | Lava `dumpsys`/log files outside source |
 | Release boundary | Prototype; package ID/signing/adaptive icon/16 KB/human/store/legal/performance gates open | V1 evidence and release checklist |
 
 ## M11 closure slice - 2026-08-23

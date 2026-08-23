@@ -7,8 +7,8 @@ working tree. It is evidence for a release-shaped prototype, not Play Store appr
 
 - Repository: `neonvarun/BattleRaja`
 - Branch: `codex/v1-playstore-release`
-- Source commit: `24feb5d7c08301ebb44548fbd0f10ffe78b6e9ec`
-  (`ui: polish offline android candidate presentation`); the artifacts were
+- Source commit: `ab5b12ad7c86f425243fc3f2a9cbc83ae97e6f6d`
+  (`art: add original offline V1 visual kit`); the artifacts were
   built from that exact committed change set in the disposable verification copy.
 - This evidence document is a follow-up documentation commit; the runtime artifact
   source remains the code commit above.
@@ -24,20 +24,20 @@ working tree. It is evidence for a release-shaped prototype, not Play Store appr
 | --- | --- | --- |
 | Repository validation | Passed with evidence: 0 errors, 0 warnings | `Tools/Validation/validate.ps1 -RequireUnityProject -UnityExe ...6000.5.6f1...` |
 | EditMode | Passed with evidence: 125/125 | `Builds/V1/TestResults/editmode-v1-final.xml` |
-| PlayMode | Passed with evidence: 63/63 | `Builds/V1/TestResults/playmode-release-polish-final.xml` |
+| PlayMode | Passed with evidence: 64/64 | `C:\Projects\BattleRaja-v1-verify-20260823c\Builds\V1\TestResults\playmode-visual-kit-run.xml` |
 | Source diff hygiene | Passed with evidence: `git diff --check` clean | local command output |
 
 ## Android artifacts
 
 The builds were run in the disposable copy
-`C:\Projects\BattleRaja-v1-verify-20260823b`, so Unity scene generation did not
+`C:\Projects\BattleRaja-v1-verify-20260823c`, so Unity scene generation did not
 rewrite the working tree.
 
 ### Release-shaped APK used for Lava performance and interaction checks
 
-- Path: `C:\Projects\BattleRaja-v1-verify-20260823b\Builds\V1\Android\BattleRaja-V1.0-release-candidate.apk`
-- Size: **40,430,947 bytes**
-- SHA-256: `1699EA241EA9BC85985F05A4EB1BC0C24854CF96571685F6AF51744312DD6E46`
+- Path: `C:\Projects\BattleRaja-v1-verify-20260823c\Builds\V1\Android\BattleRaja-V1.0-release-candidate.apk`
+- Size: **40,420,983 bytes**
+- SHA-256: `E70241D83E6DBDA977EECF9F476502FD68B89799438DBA06F024423D575E5532`
 - Install: succeeded on `ST5GDW23LB004392`
 - Package/version observed on device: `com.example.battleraja.m11`, version name `1.0.0`,
   version code `100`, target SDK 36, minimum SDK 28
@@ -46,9 +46,9 @@ rewrite the working tree.
 
 ### Debug-signed release-shaped AAB
 
-- Path: `C:\Projects\BattleRaja-v1-verify-20260823b\Builds\V1\Android\BattleRaja-V1.0-release-candidate.aab`
-- Size: **36,261,037 bytes**
-- SHA-256: `ADD545042DD2397EDE9B7908C9C7BE3954F4E5232500315E6662F36B9C64B0D9`
+- Path: `C:\Projects\BattleRaja-v1-verify-20260823c\Builds\V1\Android\BattleRaja-V1.0-release-candidate.aab`
+- Size: **36,251,072 bytes**
+- SHA-256: `4B22FD2DADD26FB1A5FEA96FE5EAA19BC2D0EC4F130F87009969D38562FE84C6`
 - Bundle inspection: base manifest present; 8 ARM64 native libraries; 0 other ABIs;
   450 archive entries; all eight ARM64 ELF libraries have `0x4000` LOAD alignment
   (static 16 KB check passed)
@@ -58,16 +58,18 @@ rewrite the working tree.
 ## Lava runtime evidence
 
 Inspected captures are stored outside the repository at
-`C:\Projects\BattleRaja-v1-verify-20260823b\Builds\V1\Lava\`:
+`C:\Projects\BattleRaja-v1-verify-20260823c\Builds\V1\Lava\`:
 
-- `release-final-menu.png`: branded offline menu with Play Offline, Tutorial Replay, Settings &
+- `visual-kit-menu.png`: branded offline menu with Play Offline, Tutorial Replay, Settings &
   Accessibility, and Help & Controls
-- `release-final-mode.png`: solo offline mode route
-- `release-final-fighters.png`: three-fighter selection with distinct vector identities
-- `release-final-match.png`: Bazaar Bastion opening, eight actors, HUD, controls and no
+- `visual-kit-mode.png`: solo offline mode route
+- `visual-kit-fighters.png`: three-fighter selection with distinct fighter glyphs
+- `visual-kit-match.png`, `visual-kit-combat.png` and `visual-kit-active.png`: Bazaar Bastion
+  opening/active match, eight actors, HUD, controls and distinct arena/fighter silhouettes
   square underlays
-- `release-final-gfxinfo.txt`, `release-final-meminfo.txt`, `release-final-top.txt`,
-  `release-final-thermal.txt` and `release-final-logcat.txt`: bounded device samples
+- `visual-kit-moved.png`: a touch movement probe showing the player moved through the arena
+- `visual-kit-logcat.txt`, `visual-kit-logcat-combat.txt` and `visual-kit-meminfo.txt`: bounded
+  device samples
 
 The device log had no application `FATAL EXCEPTION`, `AndroidRuntime` crash, Unity exception or
 missing-reference marker in the captured application slice. Android `gfxinfo` exposed only
@@ -78,15 +80,12 @@ therefore no exact-current FPS or stable frame-pacing pass is claimed here.
 
 Raw files are outside source under the same Lava evidence directory:
 
-- `release-final-gfxinfo.txt` — Unity's SurfaceView did not expose a frame/jank histogram
+- `visual-kit-gfxinfo.txt` — Unity's SurfaceView did not expose a frame/jank histogram
   in this sample; no FPS pass is claimed from this file.
-- `release-final-meminfo.txt` — **284,282 KB PSS**, **420,364 KB RSS**,
-  **99,896 KB Graphics**, **77 KB swap**.
-- `release-final-top.txt` — one sample at approximately **81.8% CPU** for the
-  process.
-- `release-final-thermal.txt` — thermal status 0; current-HAL CPU/GPU about 42.7 C,
-  skin about 39.4 C and battery about 35 C.
-- `release-final-logcat.txt` — application log slice used for crash-marker review.
+- `visual-kit-meminfo.txt` — **285,509 KB PSS**, **421,336 KB RSS**,
+  **99,160 KB Graphics**, **79 KB swap**.
+- `visual-kit-logcat.txt` and `visual-kit-logcat-combat.txt` — application log slices used for
+  crash-marker review; no fatal application markers were found.
 
 These measurements keep the candidate classified as a prototype: frame pacing, single-sample
 CPU data, repeated-match behavior, longer thermal/battery series and human performance review
@@ -105,4 +104,7 @@ still require deliberate follow-up.
   remain human gates.
 - Final tutorial completion, results/rematch, settings/accessibility and repeated-match
   cleanup need explicit human observation on the exact candidate.
+- Gadget pickup/use remains a human-facing evidence gap; the source-backed pickup and station
+  identities are covered by PlayMode regression and render in the match, but a successful
+  collection/use moment was not captured on Lava in this pass.
 - Photon Fusion and PlayFab remain deliberately out of scope for this offline V1 build.

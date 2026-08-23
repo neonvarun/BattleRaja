@@ -1,32 +1,33 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-23
-Runtime-bearing candidate: `24feb5d7c08301ebb44548fbd0f10ffe78b6e9ec` (offline Android release-shaped candidate)
-Current validated runtime source HEAD: `24feb5d7c08301ebb44548fbd0f10ffe78b6e9ec`
+Runtime-bearing candidate: `ab5b12ad7c86f425243fc3f2a9cbc83ae97e6f6d` (offline Android release-shaped candidate)
+Current validated runtime source HEAD: `ab5b12ad7c86f425243fc3f2a9cbc83ae97e6f6d`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://127.0.0.1:8139/index.html`
 
 ## Offline Android V1 candidate visual pass — 2026-08-23
 
-Exact candidate source: `24feb5d7c08301ebb44548fbd0f10ffe78b6e9ec`.
+Exact candidate source: `ab5b12ad7c86f425243fc3f2a9cbc83ae97e6f6d`.
 
 The current Android-first candidate was installed and inspected only on Lava
 `ST5GDW23LB004392` from the disposable verification copy. External captures are under
-`C:\Projects\BattleRaja-v1-verify-20260823b\Builds\V1\Lava\`:
+`C:\Projects\BattleRaja-v1-verify-20260823c\Builds\V1\Lava\`:
 
-- `release-final-menu.png` shows the original shield/bolt identity, offline loop summary and
+- `visual-kit-menu.png` shows the original shield/bolt identity, offline loop summary and
   reachable tutorial, settings/accessibility and help routes.
-- `release-final-fighters.png` shows Bijli/Pehel/Maya cards, distinct vector glyphs and concise
+- `visual-kit-fighters.png` shows Bijli/Pehel/Maya cards, distinct vector glyphs and concise
   ability hints. The persisted selection is visible and intentional.
-- `release-final-match.png` shows the eight-actor Bazaar Bastion opening, brighter runtime key
-  lighting, HUD, Aandhi state and
+- `visual-kit-match.png` and `visual-kit-combat.png` show the eight-actor Bazaar Bastion opening,
+  brighter runtime key lighting, distinct silhouettes, HUD and
   circular twin-stick/action controls with no square underlays.
+- `visual-kit-moved.png` shows a real touch movement probe with the player displaced in the arena.
 - The current UI code adds vector hero/fighter identity graphics, haptic settings and
   event-driven pickup, gadget, zone and result cues. These remain replaceable placeholder
   presentation and do not constitute final art approval.
 
 This is a technical visual inspection, not human approval. The candidate still uses
-replaceable procedural/placeholder presentation, a temporary package identity and a
+replaceable source-backed placeholder presentation, a temporary package identity and a
 debug-signed APK; final touch ergonomics, accessibility, pacing, audio, cultural and
 store review remain open. Gadget pickup/use and complete tutorial/results/rematch
 observation still require a dedicated human run on the exact candidate.
