@@ -11,6 +11,30 @@ Balance-fix runtime source: `17a8c75` (`fix(balance): land documented weapon ret
 Pre-fix baseline source: `35d723f` (`fix: bot perception no longer treats fighter hulls as line-of-sight blockers`; the tip of local `main` before this branch)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
+## Exact current checkout release-shaped Android evidence — 2026-08-24
+
+The checked-out source is now `46724ac2dfa403f40f58669240e61918c2a94d1b`
+(`Revert "android: disable forced internet permission for V1"`). The two short-lived
+Android permission experiments immediately before this commit were reverted completely;
+the runtime source is therefore unchanged from the warning-clean V1 candidate. Exact
+HEAD validation again reports **0 errors / 0 warnings**. The last full suites on the
+runtime-equivalent source remain **125/125 EditMode** and **66/66 PlayMode**; the current
+HEAD changes contain no gameplay or editor source changes after that run.
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Release-shaped APK | **40,431,927 bytes**, SHA-256 `0694958A43F1BADD30E697095F249733992F9D6904E10E1923CD0CAF01010C78` | `C:\Projects\BattleRaja-v1-final-verify\Builds\V1\Android\BattleRaja-V1.0-release-candidate.apk` |
+| Release-shaped AAB | **36,262,036 bytes**, SHA-256 `906D85FA00E4A9787A0C1DE892DC3F27A098ACF21BB1735E08C977565A1D09A4` | `C:\Projects\BattleRaja-v1-final-verify\Builds\V1\Android\BattleRaja-V1.0-release-candidate.aab` |
+| AAB structure | base manifest, 8 ARM64 libraries, 0 other ABIs, 450 entries | `check_android_bundle.ps1`; all native LOAD segments `0x4000` |
+| APK manifest | package `com.example.battleraja.m11`, version `1.0.0`/code `100`, target API 36; `VIBRATE`, Unity dynamic-receiver permission, `INTERNET` and `ACCESS_NETWORK_STATE` remain | `aapt dump badging/permissions`; remove or justify network permissions before Play submission |
+| Lava launch | foreground Unity activity, branded offline menu, no fatal/ANR/SIGSEGV markers | `C:\Users\USER\AppData\Local\Temp\battleraja-final-head-lava\menu.png` and `logcat.txt` |
+| Bounded device sample | 257,340 KB PSS / 393,462 KB RSS / 83,862 KB Graphics / 83 KB swap; SurfaceView log samples around 59.45–60.59 FPS | `C:\Users\USER\AppData\Local\Temp\battleraja-final-head-lava\meminfo.txt`, `logcat-postlaunch.txt` |
+
+This remains technical release-candidate evidence, not a Play approval: the package ID,
+signing identity, manifest permission review, sustained performance, accessibility,
+human visual/cultural review and store/legal gates remain open. The Web and Photon/PlayFab
+scopes remain intentionally untouched.
+
 ## Current Android V1 visual-polish source — 2026-08-24
 
 The current runtime-bearing source is `c6badbf6cf5b1c7340fa907821aeb4cbf2194bc0`

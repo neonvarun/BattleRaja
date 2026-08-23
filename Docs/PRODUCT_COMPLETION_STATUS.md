@@ -14,6 +14,13 @@ The project remains a prototype: final signing,
 package identity, long-run performance, human playtest, store/legal and Play Console
 gates remain open; Photon, PlayFab and Web release are out of scope.
 
+Exact current checkout is now `46724ac2dfa403f40f58669240e61918c2a94d1b`. It revalidates at
+0 errors/0 warnings and has exact current release-shaped APK/AAB hashes recorded in
+`Docs/QA/LATEST_HEAD_BASELINE.md`. Lava launch evidence is current for that checkout;
+the manifest still requests `INTERNET` and `ACCESS_NETWORK_STATE`, so permission review,
+signing, package identity, sustained performance, human review and Play/legal gates keep
+the classification at **prototype**.
+
 ## Current V1 visual/tutorial correction — 2026-08-24
 
 Runtime source `c6badbf` keeps the fictional Bazaar canopy, larger phone hero and

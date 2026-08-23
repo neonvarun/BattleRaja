@@ -10,8 +10,10 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
 - One local human plus seven deterministic bots in Bazaar Bastion.
 - Bijli, Pehel and Maya; Umbrella Guard, Dhol Burst and Tiffin Station; Aandhi; tutorial;
   spectator; results; rematch; local settings.
-- No account, network permission, online room or server-owned progression is required by the
-  offline candidate.
+- No account, online room or server-owned progression is used by the offline candidate.
+  The current merged Android manifest still carries `INTERNET` and
+  `ACCESS_NETWORK_STATE` for preserved future-facing Unity/Fusion infrastructure; remove
+  or explicitly justify those permissions before Play submission.
 
 ## Current release gates
 
@@ -22,12 +24,29 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
 | Target API | Configured to API 36 | Recheck against current Play policy at upload time |
 | 64-bit | Passed with evidence for the current debug-signed AAB: 8 ARM64 libraries, 0 other ABIs | Re-run inspection after any package/plugin change |
 | 16 KB pages | Static evidence passed: zipalign `-P 16` and all eight ARM64 ELF LOAD segments at `0x4000`; runtime 16 KB environment still open | Re-run the checker after any package/plugin change and install on a 16 KB Android environment when available |
-| Permissions | Forced Internet and SD-card permissions are disabled | Inspect the merged manifest after each plugin/build change |
+| Permissions | Runtime is offline, but `INTERNET` and `ACCESS_NETWORK_STATE` remain in the merged manifest; no SD-card permission is present | Remove or document the network permissions, then inspect the final merged manifest |
 | Device QA | Automated smoke passed on Lava (`ST5GDW23LB004392`); human review open | Owner performs touch, accessibility, battery and thermal review |
 | Store/legal | Draft only | Approve privacy, data-safety, content rating, cultural and legal copy |
 | Play Console | Not started | Owner creates the app and decides rollout/release track |
 
 ## Latest local candidate evidence (2026-08-24)
+
+### Exact current checkout artifact
+
+Current checkout source: `46724ac2dfa403f40f58669240e61918c2a94d1b`.
+
+- Exact validation: **0 errors / 0 warnings**.
+- APK: **40,431,927 bytes**, SHA-256
+  `0694958A43F1BADD30E697095F249733992F9D6904E10E1923CD0CAF01010C78`.
+- AAB: **36,262,036 bytes**, SHA-256
+  `906D85FA00E4A9787A0C1DE892DC3F27A098ACF21BB1735E08C977565A1D09A4`.
+- AAB checker: 8 ARM64 libraries, 0 other ABIs, all checked native LOAD segments at
+  `0x4000`.
+- Lava-only launch: `UnityPlayerGameActivity` top-resumed, branded offline menu visible,
+  no fatal/ANR/SIGSEGV marker. Raw captures remain outside the repository.
+- Manifest: package `com.example.battleraja.m11`, version `1.0.0`, code `100`, target API
+  36; `VIBRATE`, `INTERNET`, `ACCESS_NETWORK_STATE` and Unity's dynamic-receiver
+  permission are present. This is a release gate, not a Play submission.
 
 ### Current visual-polish source
 

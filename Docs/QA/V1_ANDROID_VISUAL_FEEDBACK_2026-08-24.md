@@ -3,6 +3,31 @@
 This is a bounded presentation slice for the offline Android V1 candidate. It is
 technical evidence, not Play Store approval or final human visual approval.
 
+## Exact current checkout artifact and Lava launch — 2026-08-24
+
+The current checkout is `46724ac2dfa403f40f58669240e61918c2a94d1b`. The source changes
+after the warning-clean V1 candidate are documentation/revert bookkeeping only; no
+runtime gameplay code changed. Exact HEAD validation is **0 errors / 0 warnings**.
+
+- APK: **40,431,927 bytes**, SHA-256
+  `0694958A43F1BADD30E697095F249733992F9D6904E10E1923CD0CAF01010C78`.
+- AAB: **36,262,036 bytes**, SHA-256
+  `906D85FA00E4A9787A0C1DE892DC3F27A098ACF21BB1735E08C977565A1D09A4`.
+- Static bundle validation: base manifest, 8 ARM64 libraries, no other ABIs and all
+  checked ELF LOAD segments aligned to `0x4000`.
+- The exact APK was installed only on Lava `ST5GDW23LB004392`. It launched the branded
+  offline menu with `UnityPlayerGameActivity` top-resumed and no fatal/ANR/SIGSEGV marker.
+- The APK manifest still contains `INTERNET` and `ACCESS_NETWORK_STATE` because the
+  preserved future-facing Unity/Fusion build graph contributes them. The game does not
+  start an online session in V1, but the permission must be removed or explicitly
+  justified before a Play submission.
+- Raw menu, memory, thermal/battery and logcat files are outside the repository at
+  `C:\Users\USER\AppData\Local\Temp\battleraja-final-head-lava\`.
+
+The device sample is bounded only: **257,340 KB PSS**, **393,462 KB RSS**, **83,862 KB
+Graphics**, **83 KB swap**, and SurfaceView log windows around 59.45–60.59 FPS. This is
+not sustained performance approval.
+
 ## Tutorial completion correction — 2026-08-24
 
 The follow-up source `c6badbf6cf5b1c7340fa907821aeb4cbf2194bc0`
