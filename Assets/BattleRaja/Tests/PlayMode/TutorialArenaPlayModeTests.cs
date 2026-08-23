@@ -80,7 +80,7 @@ namespace BattleRaja.Tests.PlayMode
             }
 
             Assert.That(overlay.CurrentStep, Is.EqualTo(TutorialStep.Complete));
-            Assert.That(panel.activeSelf, Is.False);
+            Assert.That(panel.activeSelf, Is.True);
             Assert.That(title.text, Does.Contain("TUTORIAL COMPLETE"));
             Assert.That(progress.text, Does.Contain("8 / 8 COMPLETE"));
             Assert.That(PlayerPrefs.GetInt(completedKey, 0), Is.EqualTo(1));
@@ -91,7 +91,7 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(panel.activeSelf, Is.True);
             overlay.Skip();
             Assert.That(overlay.CurrentStep, Is.EqualTo(TutorialStep.Complete));
-            Assert.That(panel.activeSelf, Is.False);
+            Assert.That(panel.activeSelf, Is.True);
 
             if (hadPrevious) PlayerPrefs.SetInt(completedKey, previous);
             else PlayerPrefs.DeleteKey(completedKey);

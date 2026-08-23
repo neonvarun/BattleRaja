@@ -72,8 +72,11 @@ namespace BattleRaja.Presentation.Flow
 
         private void Refresh()
         {
-            _showing = !_steps.IsComplete;
-            _panel.SetActive(_showing);
+            // Keep the completion card visible. The tutorial backdrop deliberately covers
+            // the arena, so hiding the panel on completion would leave a blank dark screen
+            // with no way to replay or leave the tutorial.
+            _showing = true;
+            _panel.SetActive(true);
             if (_steps.IsComplete)
             {
                 _title.text = "TUTORIAL COMPLETE";
