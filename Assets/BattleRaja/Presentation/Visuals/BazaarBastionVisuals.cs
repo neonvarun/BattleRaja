@@ -79,9 +79,22 @@ namespace BattleRaja.Presentation.Visuals
             CreateCylinder("PlazaOuter", new Vector3(0f, 0.035f, 0f), new Vector3(9.2f, 0.05f, 9.2f), dark);
             CreateCylinder("PlazaInner", new Vector3(0f, 0.062f, 0f), new Vector3(7.4f, 0.035f, 7.4f), sand);
             CreateCylinder("BastionPlinth", new Vector3(0f, 0.08f, 0f), new Vector3(2.5f, 0.16f, 2.5f), teal);
-            CreateCylinder("BastionCrown", new Vector3(0f, 1.05f, 0f), new Vector3(0.55f, 1.0f, 0.55f), saffron);
-            CreateBlock("BastionCrownTop", new Vector3(0f, 2.10f, 0f), new Vector3(2.2f, 0.18f, 0.45f), cream, Quaternion.Euler(0f, 0f, 0f));
-            CreateBlock("BastionCrownTopCross", new Vector3(0f, 2.10f, 0f), new Vector3(0.45f, 0.18f, 2.2f), cream, Quaternion.Euler(0f, 0f, 0f));
+            CreateCylinder("BastionCrown", new Vector3(0f, 0.76f, 0f), new Vector3(0.55f, 0.66f, 0.55f), saffron);
+            CreateCylinder("BastionCrownCap", new Vector3(0f, 1.48f, 0f), new Vector3(1.48f, 0.12f, 1.48f), cream);
+            CreateCylinder("BastionCrownOrb", new Vector3(0f, 1.78f, 0f), new Vector3(0.28f, 0.28f, 0.28f), gold);
+            // The old prototype used two intersecting bars here. Besides reading as a
+            // greybox cross from the elevated camera, that shape risked accidental
+            // sacred-signifier readings. A six-panel bazaar canopy keeps the landmark
+            // playful, fictional and legible without changing the authored collision.
+            for (var panel = 0; panel < 6; panel++)
+            {
+                var angle = panel * 60f;
+                var radians = angle * Mathf.Deg2Rad;
+                var panelPosition = new Vector3(Mathf.Sin(radians) * 0.72f, 1.62f, Mathf.Cos(radians) * 0.72f);
+                var panelMaterial = panel % 2 == 0 ? saffron : teal;
+                CreateBlock("BastionAwning" + panel, panelPosition, new Vector3(0.92f, 0.08f, 0.44f), panelMaterial, Quaternion.Euler(0f, angle, 8f));
+                CreateCylinder("BastionAwningTassel" + panel, panelPosition + new Vector3(Mathf.Sin(radians) * 0.28f, -0.18f, Mathf.Cos(radians) * 0.28f), new Vector3(0.08f, 0.16f, 0.08f), panel % 2 == 0 ? cream : mint);
+            }
 
             // Layered floor tiles and a gate-like landmark give the arena a place identity
             // from the mobile camera while all geometry remains collider-free decoration.

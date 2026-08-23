@@ -32,7 +32,11 @@ namespace BattleRaja.Presentation.UI
             var center = rect.center;
             var width = Mathf.Max(1f, rect.width);
             var height = Mathf.Max(1f, rect.height);
-            var unit = Mathf.Min(width, height) * 0.42f;
+            // Give the identity illustration enough scale to read on a phone. The
+            // previous token-sized mark left a large dead zone above the primary action;
+            // this remains a lightweight vector mesh while making the three fighter
+            // silhouettes legible before the first tap.
+            var unit = Mathf.Min(width, height) * 0.62f;
 
             AddCircle(vertexHelper, center + new Vector2(0f, -height * 0.03f), unit * 0.70f, new Color(0f, 0f, 0f, 0.20f), 32);
 

@@ -538,6 +538,12 @@ namespace BattleRaja.Tests.PlayMode
             var arena = Object.FindAnyObjectByType<BazaarBastionScene>();
             Assert.That(arena, Is.Not.Null);
             Assert.That(arena.transform.Find("V1BastionVisuals"), Is.Not.Null);
+            Assert.That(arena.transform.Find("V1BastionVisuals/BastionCrownOrb"), Is.Not.Null,
+                "Bazaar must expose the original canopy landmark instead of a flat greybox marker");
+            Assert.That(arena.transform.Find("V1BastionVisuals/BastionAwning0"), Is.Not.Null,
+                "Bazaar central canopy panels must be present");
+            Assert.That(arena.transform.Find("V1BastionVisuals/BastionCrownTopCross"), Is.Null,
+                "The deprecated cross-shaped prototype landmark must not return");
 
             var fighters = Object.FindObjectsByType<FighterPresentation>();
             Assert.That(fighters, Has.Length.EqualTo(8));
