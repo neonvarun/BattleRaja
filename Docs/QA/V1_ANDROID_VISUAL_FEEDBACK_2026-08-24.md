@@ -5,8 +5,9 @@ technical evidence, not Play Store approval or final human visual approval.
 
 ## Exact current offline packaging candidate — 2026-08-24
 
-The checkout at `1bb54ac10bb8f951f753e23bbbc178e523fda6d6` now has a fresh offline
-Android package boundary. Validation is **0 errors / 0 warnings**, EditMode is
+The final documentation checkout is `e1b0360daa003d8fdcd9ad193d019d27045ce900`,
+with runtime/package source `f4425d6` (documentation-only continuation). It now has
+a fresh offline Android package boundary. Validation is **0 errors / 0 warnings**, EditMode is
 **125/125**, and PlayMode is **66/66**. The APK is **39,529,326 bytes** with SHA-256
 `AE74717B597C4CBCFDECF7D8DB719C177100F495CC084ABFD0E1EA6AAD3E2C52`; the AAB is
 **35,357,477 bytes** with SHA-256

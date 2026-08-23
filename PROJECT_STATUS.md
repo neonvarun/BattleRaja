@@ -21,7 +21,8 @@
   are recorded separately by runtime commit below. See
   `Docs/QA/M11_CLOSURE_REPORT_2026-08-23.md`.
 - Current exact offline Android V1 checkout: branch `codex/v1-playstore-release` at
-  `1bb54ac10bb8f951f753e23bbbc178e523fda6d6`. Repository validation is **0/0**;
+  documentation tip `e1b0360daa003d8fdcd9ad193d019d27045ce900` with runtime/package
+  source `f4425d6`. Repository validation is **0/0**;
   exact-current EditMode is **125/125** and PlayMode is **66/66**. The fresh
   release-shaped APK is **39,529,326 bytes** (SHA-256
   `AE74717B597C4CBCFDECF7D8DB719C177100F495CC084ABFD0E1EA6AAD3E2C52`) and the AAB is

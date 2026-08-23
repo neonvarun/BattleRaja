@@ -13,8 +13,9 @@ Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.
 
 ## Exact current offline packaging baseline — 2026-08-24
 
-The current checkout is `1bb54ac10bb8f951f753e23bbbc178e523fda6d6` on
-`codex/v1-playstore-release`. Repository validation is **0 errors / 0 warnings**;
+The final documentation checkout is `e1b0360daa003d8fdcd9ad193d019d27045ce900` on
+`codex/v1-playstore-release`; runtime/package source is `f4425d6`. Repository validation is
+**0 errors / 0 warnings**;
 fresh exact-current EditMode is **125/125** and PlayMode is **66/66**. The release-
 shaped APK is **39,529,326 bytes**, SHA-256
 `AE74717B597C4CBCFDECF7D8DB719C177100F495CC084ABFD0E1EA6AAD3E2C52`; the AAB is
