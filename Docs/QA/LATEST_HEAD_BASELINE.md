@@ -13,11 +13,14 @@ Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.
 
 ## Exact current checkout release-shaped Android evidence — 2026-08-24
 
-The checked-out source is now `46724ac2dfa403f40f58669240e61918c2a94d1b`
+The checked-out branch tip is now `357dfdf1e6289c172dab60e514f555ba3d5bc914`;
+the release artifacts below were built from the immediately preceding runtime-equivalent
+source `46724ac2dfa403f40f58669240e61918c2a94d1b`
 (`Revert "android: disable forced internet permission for V1"`). The two short-lived
 Android permission experiments immediately before this commit were reverted completely;
-the runtime source is therefore unchanged from the warning-clean V1 candidate. Exact
-HEAD validation again reports **0 errors / 0 warnings**. The last full suites on the
+the runtime source is therefore unchanged from the warning-clean V1 candidate. The two
+commits after the build contain documentation only. Exact-source validation at the
+runtime-equivalent checkout reports **0 errors / 0 warnings**. The last full suites on the
 runtime-equivalent source remain **125/125 EditMode** and **66/66 PlayMode**; the current
 HEAD changes contain no gameplay or editor source changes after that run.
 

@@ -27,9 +27,10 @@
   geometry, haptic/audio feedback, circular safe-area touch surfaces, and has local
   debug-signed/non-publishable APK/AAB entrypoints. Exact candidate hashes, Lava captures and
   measured limits are recorded in `Docs/QA/V1_ANDROID_EVIDENCE_2026-08-23.md`.
-- Exact current checkout: `46724ac2dfa403f40f58669240e61918c2a94d1b`. The current source
-  revalidates at **0 errors / 0 warnings** and has exact release-shaped APK/AAB artifacts
-  rebuilt from this checkout. APK SHA-256 is
+- Exact current checkout: `357dfdf1e6289c172dab60e514f555ba3d5bc914` (documentation-only
+  continuation after runtime-equivalent build source `46724ac2dfa403f40f58669240e61918c2a94d1b`).
+  The runtime source revalidates at **0 errors / 0 warnings** and has exact release-shaped
+  APK/AAB artifacts rebuilt from that source. APK SHA-256 is
   `0694958A43F1BADD30E697095F249733992F9D6904E10E1923CD0CAF01010C78`; AAB SHA-256 is
   `906D85FA00E4A9787A0C1DE892DC3F27A098ACF21BB1735E08C977565A1D09A4`. The AAB is
   ARM64-only with static 16 KB alignment; the APK launched on Lava

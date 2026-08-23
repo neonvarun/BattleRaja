@@ -33,7 +33,8 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
 
 ### Exact current checkout artifact
 
-Current checkout source: `46724ac2dfa403f40f58669240e61918c2a94d1b`.
+Current branch tip: `357dfdf1e6289c172dab60e514f555ba3d5bc914`; runtime-equivalent build
+source: `46724ac2dfa403f40f58669240e61918c2a94d1b`.
 
 - Exact validation: **0 errors / 0 warnings**.
 - APK: **40,431,927 bytes**, SHA-256

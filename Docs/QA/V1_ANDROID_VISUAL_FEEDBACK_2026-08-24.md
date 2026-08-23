@@ -5,9 +5,10 @@ technical evidence, not Play Store approval or final human visual approval.
 
 ## Exact current checkout artifact and Lava launch — 2026-08-24
 
-The current checkout is `46724ac2dfa403f40f58669240e61918c2a94d1b`. The source changes
-after the warning-clean V1 candidate are documentation/revert bookkeeping only; no
-runtime gameplay code changed. Exact HEAD validation is **0 errors / 0 warnings**.
+The current branch tip is `357dfdf1e6289c172dab60e514f555ba3d5bc914`; the artifacts below
+were built from runtime-equivalent source `46724ac2dfa403f40f58669240e61918c2a94d1b`.
+The commits after that build are documentation only; no runtime gameplay code changed.
+Exact runtime-source validation is **0 errors / 0 warnings**.
 
 - APK: **40,431,927 bytes**, SHA-256
   `0694958A43F1BADD30E697095F249733992F9D6904E10E1923CD0CAF01010C78`.
