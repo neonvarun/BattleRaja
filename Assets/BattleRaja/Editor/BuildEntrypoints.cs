@@ -665,19 +665,7 @@ namespace BattleRaja.Editor
         /// </summary>
         public static void BuildAndroidV1ReleaseCandidate()
         {
-            CreateBootstrapScene();
-            CreateBazaarBastionScene();
-            CreateTutorialArenaScene();
-            ValidateProject();
-
-            EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
-            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, DevelopmentApplicationId);
-            PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
-            PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel28;
-            PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
-            PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
-            ApplyCandidateAndroidIcon();
-            PlayerSettings.Android.useCustomKeystore = false;
+            PrepareAndroidV1ReleaseCandidate();
             EditorUserBuildSettings.buildAppBundle = true;
             try
             {
@@ -693,6 +681,41 @@ namespace BattleRaja.Editor
             {
                 EditorUserBuildSettings.buildAppBundle = false;
             }
+        }
+
+        /// <summary>
+        /// Produces a non-development debug-signed APK with the same scenes and player
+        /// settings as the release-shaped bundle. It exists for Lava performance and
+        /// interaction validation; it is not a publishable signed artifact.
+        /// </summary>
+        public static void BuildAndroidV1ReleaseCandidateApk()
+        {
+            PrepareAndroidV1ReleaseCandidate();
+            EditorUserBuildSettings.buildAppBundle = false;
+            Build(
+                "Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk",
+                BuildTarget.Android,
+                BuildOptions.None,
+                BootstrapScenePath,
+                TutorialArenaScenePath,
+                BazaarBastionScenePath);
+        }
+
+        private static void PrepareAndroidV1ReleaseCandidate()
+        {
+            CreateBootstrapScene();
+            CreateBazaarBastionScene();
+            CreateTutorialArenaScene();
+            ValidateProject();
+
+            EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
+            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, DevelopmentApplicationId);
+            PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
+            PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel28;
+            PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
+            PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
+            ApplyCandidateAndroidIcon();
+            PlayerSettings.Android.useCustomKeystore = false;
         }
 
         public static void BuildWebBazaarBastionDevelopment()
