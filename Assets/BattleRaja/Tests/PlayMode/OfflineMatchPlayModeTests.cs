@@ -169,7 +169,7 @@ namespace BattleRaja.Tests.PlayMode
             yield return null;
 
             Assert.That(match.ResultsShown, Is.True);
-            var panel = Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+            var panel = Object.FindObjectsByType<Transform>(FindObjectsInactive.Include)
                 .First(item => item.name == "ResultsPanel").gameObject;
             Assert.That(panel.activeSelf, Is.True);
         }

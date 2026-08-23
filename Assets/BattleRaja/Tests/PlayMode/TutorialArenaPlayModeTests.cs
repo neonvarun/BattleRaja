@@ -42,7 +42,7 @@ namespace BattleRaja.Tests.PlayMode
 
         private static GameObject FindSceneObject(string name)
         {
-            return Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+            return Object.FindObjectsByType<Transform>(FindObjectsInactive.Include)
                 .First(item => item.name == name).gameObject;
         }
 

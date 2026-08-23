@@ -16,7 +16,7 @@ namespace BattleRaja.Editor
         [MenuItem("BattleRaja/Audit & Bake Bazaar Obstacles")]
         public static void BakeObstaclesFromCurrentScene()
         {
-            var renderers = UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsSortMode.InstanceID);
+            var renderers = UnityEngine.Object.FindObjectsByType<Renderer>();
             var obstacleList = new List<ArenaObstacle>();
             var nextId = 1;
 
