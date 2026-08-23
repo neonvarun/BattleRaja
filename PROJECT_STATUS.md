@@ -43,6 +43,10 @@
   and human/store/legal approvals remain open. The latest release-shaped APK has no
   exact-current frame histogram from `gfxinfo`, so stable FPS is not claimed;
   Photon and PlayFab are not part of this V1 release candidate.
+- Latest checkout continuation `649d0bb` removes the remaining authored Unity 6 lookup
+  deprecation overloads from editor/test code. Full EditMode **125/125**, PlayMode **66/66**,
+  and a fresh Android build passed with **0 `CS0618` warnings** and **0 C# errors**; runtime
+  evidence remains correctly attributed to `c6badbf` because no player runtime code changed.
 - Prior full baseline at runtime-bearing source `73237c8`: EditMode **125/125**,
   PlayMode **57/57**, deep soak **2,000 matches / zero divergence**, Lava
   launch/resume, and Chrome+Edge six-route Web smoke all pass. Repository

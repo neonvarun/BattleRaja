@@ -35,6 +35,17 @@ a truthful negative observation. Stable FPS, performance series, final art/audio
 accessibility, signing, store, legal, cultural and human review gates remain open.
 Classification remains **prototype**.
 
+## Latest source warning-clean continuation — 2026-08-24
+
+Checkout source now includes `649d0bb` (`fix: remove obsolete Unity lookup overloads`).
+This is editor/test-only, so the runtime-bearing candidate remains `c6badbf`; it removes
+the remaining authored Unity 6 lookup deprecations. The disposable exact-source run
+passed EditMode **125/125** and PlayMode **66/66**. The Android build produced a
+**40,431,911-byte** APK with SHA-256
+`51D86184F6C69DD30CD249D273FA0F8F5BA96B4159D86DD1472FE4FD54320DA5`, and its log had
+**0 `CS0618` warnings** and **0 C# errors**. The build was not installed because no
+runtime code changed; current Lava captures remain tied to `c6badbf`.
+
 ## Current offline Android gadget-route slice — 2026-08-24
 
 Runtime source `d825832bced4c5e07c7967d891696842eb55609a` retains render-only fighter

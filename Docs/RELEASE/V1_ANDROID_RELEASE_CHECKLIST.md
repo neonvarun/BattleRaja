@@ -54,6 +54,11 @@ a debug-signed, temporary-ID prototype candidate and is not a Play submission.
 The exact V1 source was validated in disposable copy
 `C:\Projects\BattleRaja-v1-verify-20260824j`:
 
+The latest checkout also contains editor/test-only warning cleanup at `649d0bb`. Its
+fresh APK build (`51D86184F6C69DD30CD249D273FA0F8F5BA96B4159D86DD1472FE4FD54320DA5`,
+40,431,911 bytes) recorded zero `CS0618` warnings and zero C# errors; the installed
+visual artifact remains the `c6badbf` correction candidate documented above.
+
 - Unity `6000.5.6f1` (`0e0577a1a2ac`), validation **0 errors / 0 warnings**.
 - Exact runtime source: `d825832bced4c5e07c7967d891696842eb55609a`.
 - EditMode **125/125** and PlayMode **66/66** passed.

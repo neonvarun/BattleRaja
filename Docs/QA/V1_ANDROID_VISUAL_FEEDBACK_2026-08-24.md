@@ -26,6 +26,18 @@ same exact correction APK also auto-collected the player-owned Tiffin Station at
 `tutorial-fix-gadget-after.png` shows the held slot empty, a 13.8-second cooldown and the
 visible deployed station after a valid use.
 
+## Unity warning-clean continuation — 2026-08-24
+
+The latest source commit `649d0bb` (`fix: remove obsolete Unity lookup overloads`) is
+editor/test-only and leaves the `c6badbf` runtime unchanged. Full EditMode **125/125**
+and PlayMode **66/66** passed in disposable copy
+`C:\Projects\BattleRaja-v1-warning-verify`. The fresh non-development APK was
+**40,431,911 bytes**, SHA-256
+`51D86184F6C69DD30CD249D273FA0F8F5BA96B4159D86DD1472FE4FD54320DA5`.
+Its Android build log contains **0 `CS0618` warnings** and **0 C# errors**. No new
+device install was needed because the changed files are editor/test-only; the exact
+`c6badbf` correction APK remains the latest installed visual artifact.
+
 ## Android V1.0 visual-polish continuation — 2026-08-24
 
 The exact current visual slice is source commit `abe9ae4816054e9704d13496bcd50bb7720eaa4f`
