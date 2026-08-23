@@ -7,9 +7,9 @@ working tree. It is evidence for a release-shaped prototype, not Play Store appr
 
 - Repository: `neonvarun/BattleRaja`
 - Branch: `codex/v1-playstore-release`
-- Source: the final V1 candidate commit is recorded in the follow-up exact-source
-  baseline entry after commit; this evidence was built from the same intentional V1
-  change set in the disposable verification copy.
+- Source commit: `1896c138484149e774bd23bee5ecd4b1064852da`
+  (`v1: establish offline Android release candidate`); the artifacts were built from
+  that exact committed change set in the disposable verification copy.
 - Unity: `6000.5.6f1` (`0e0577a1a2ac`)
 - Android target/minimum: API 36 / API 28
 - Scripting backend/ABI: IL2CPP / ARM64

@@ -13,6 +13,9 @@ gates remain open.
 
 ## Android V1.0 release-shaped candidate — 2026-08-23
 
+Exact candidate source: `1896c138484149e774bd23bee5ecd4b1064852da` on
+`codex/v1-playstore-release`.
+
 The current working-tree V1 slice adds the product-facing offline Android route: branded
 Bootstrap flow, Bazaar Bastion as the default build scene, three-fighter selection,
 tutorial/help/settings surfaces, original placeholder identity art, code-driven audio and

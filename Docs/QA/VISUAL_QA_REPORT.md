@@ -8,6 +8,8 @@ Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://
 
 ## Offline Android V1 candidate visual pass — 2026-08-23
 
+Exact candidate source: `1896c138484149e774bd23bee5ecd4b1064852da`.
+
 The current Android-first candidate was installed and inspected only on Lava
 `ST5GDW23LB004392` from the disposable verification copy. External captures are under
 `C:\Projects\BattleRaja-v1-verify-20260823b\Builds\V1\Lava\`:

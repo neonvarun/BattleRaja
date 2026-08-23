@@ -13,6 +13,8 @@ The V1 release-shaped candidate is recorded on `codex/v1-playstore-release` afte
 intentional offline-product changes were committed. This section supersedes the older
 closure rows for Android V1 claims.
 
+V1 candidate source commit: `1896c138484149e774bd23bee5ecd4b1064852da`.
+
 | Check | Result | Evidence |
 | --- | --- | --- |
 | Repository validation | **0 errors / 0 warnings** | `Tools/Validation/validate.ps1 -RequireUnityProject -UnityExe ...6000.5.6f1...` |
