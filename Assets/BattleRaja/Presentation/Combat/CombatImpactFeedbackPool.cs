@@ -8,11 +8,13 @@ namespace BattleRaja.Presentation.Combat
         [SerializeField] private int prewarmCount = 8;
         [SerializeField] private float lifetimeSeconds = 0.16f;
         [SerializeField] private Material impactMaterial;
+        [SerializeField] private bool reducedFlashMode;
 
         private readonly List<ImpactInstance> _instances = new List<ImpactInstance>();
 
         public int CreatedCount => _instances.Count;
         public int ActiveCount { get; private set; }
+        public bool ReducedFlashMode { get => reducedFlashMode; set => reducedFlashMode = value; }
 
         private void Awake()
         {
@@ -36,11 +38,19 @@ namespace BattleRaja.Presentation.Combat
                 if (instance.Remaining <= 0f)
                 {
                     instance.Object.SetActive(false);
+                    if (instance.Halo != null) instance.Halo.gameObject.SetActive(false);
                     ActiveCount = Mathf.Max(0, ActiveCount - 1);
                 }
                 else
                 {
-                    instance.Object.transform.localScale = Vector3.one * (0.3f + (1f - instance.Remaining / lifetimeSeconds) * 0.45f);
+                    var lifetime = Mathf.Max(0.01f, instance.Lifetime);
+                    var progress = 1f - instance.Remaining / lifetime;
+                    instance.Object.transform.localScale = Vector3.one * (0.22f + progress * 0.46f);
+                    if (instance.Halo != null)
+                    {
+                        instance.Halo.localScale = new Vector3(0.30f + progress * 0.86f, 0.012f, 0.30f + progress * 0.86f);
+                        instance.Halo.localRotation = Quaternion.Euler(0f, progress * 90f, 0f);
+                    }
                     _instances[i] = instance;
                 }
             }
@@ -50,12 +60,24 @@ namespace BattleRaja.Presentation.Combat
         {
             var instance = FindAvailable() ?? CreateInstance();
             instance.Object.transform.position = position;
-            instance.Object.transform.localScale = Vector3.one * 0.3f;
+            if (instance.Halo != null) instance.Halo.position = position + Vector3.up * 0.02f;
+            instance.Object.transform.localScale = Vector3.one * 0.22f;
             instance.Object.SetActive(true);
-            instance.Remaining = Mathf.Max(0.01f, lifetimeSeconds);
+            instance.Lifetime = Mathf.Max(0.01f, reducedFlashMode ? lifetimeSeconds * 0.6f : lifetimeSeconds);
+            instance.Remaining = instance.Lifetime;
             instance.Renderer.GetPropertyBlock(instance.Properties);
-            instance.Properties.SetColor("_BaseColor", successfulHit ? new Color(1f, 0.82f, 0.18f) : new Color(0.75f, 0.75f, 0.78f));
+            var color = successfulHit ? new Color(1f, 0.82f, 0.18f) : new Color(0.75f, 0.75f, 0.78f);
+            instance.Properties.SetColor("_BaseColor", color);
             instance.Renderer.SetPropertyBlock(instance.Properties);
+            if (instance.Halo != null)
+            {
+                instance.Halo.localScale = Vector3.one * 0.30f;
+                instance.Halo.localRotation = Quaternion.identity;
+                instance.Halo.gameObject.SetActive(true);
+                instance.HaloRenderer.GetPropertyBlock(instance.HaloProperties);
+                instance.HaloProperties.SetColor("_BaseColor", color);
+                instance.HaloRenderer.SetPropertyBlock(instance.HaloProperties);
+            }
             ActiveCount++;
         }
 
@@ -90,12 +112,33 @@ namespace BattleRaja.Presentation.Combat
             }
 
             objectToPool.SetActive(false);
+            var haloObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            haloObject.name = "PooledImpactHalo";
+            haloObject.transform.SetParent(transform, false);
+            haloObject.transform.localScale = new Vector3(0.30f, 0.012f, 0.30f);
+            var haloCollider = haloObject.GetComponent<Collider>();
+            if (haloCollider != null)
+            {
+                Destroy(haloCollider);
+            }
+
+            var haloRenderer = haloObject.GetComponent<Renderer>();
+            if (impactMaterial != null)
+            {
+                haloRenderer.sharedMaterial = impactMaterial;
+            }
+
+            haloObject.SetActive(false);
             var instance = new ImpactInstance
             {
                 Object = objectToPool,
                 Renderer = renderer,
                 Properties = new MaterialPropertyBlock(),
-                Remaining = 0f
+                Remaining = 0f,
+                Lifetime = Mathf.Max(0.01f, lifetimeSeconds),
+                Halo = haloObject.transform,
+                HaloRenderer = haloRenderer,
+                HaloProperties = new MaterialPropertyBlock()
             };
             _instances.Add(instance);
             return instance;
@@ -107,6 +150,10 @@ namespace BattleRaja.Presentation.Combat
             public Renderer Renderer;
             public MaterialPropertyBlock Properties;
             public float Remaining;
+            public float Lifetime;
+            public Transform Halo;
+            public Renderer HaloRenderer;
+            public MaterialPropertyBlock HaloProperties;
         }
     }
 }

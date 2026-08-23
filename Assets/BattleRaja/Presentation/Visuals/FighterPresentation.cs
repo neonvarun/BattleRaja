@@ -39,6 +39,10 @@ namespace BattleRaja.Presentation.Visuals
         private Material _barMaterial;
         private readonly List<GameObject> _ownedObjects = new List<GameObject>(32);
         private readonly List<Material> _ownedMaterials = new List<Material>(20);
+        private readonly List<Transform> _silhouetteParts = new List<Transform>(24);
+        private readonly List<Vector3> _silhouetteBasePositions = new List<Vector3>(24);
+        private readonly List<Quaternion> _silhouetteBaseRotations = new List<Quaternion>(24);
+        private readonly List<Vector3> _silhouetteBaseScales = new List<Vector3>(24);
         private Transform _ring;
         private Transform _healthBar;
         private Transform _healthFill;
@@ -61,6 +65,7 @@ namespace BattleRaja.Presentation.Visuals
         public AnimationState CurrentAnimation { get; private set; } = AnimationState.Idle;
         public bool IsEliminated => _eliminated;
         public bool IsVictory => _victory;
+        public int AnimatedPartCount => _silhouetteParts.Count;
         public bool ReducedFlashMode { get => reducedFlashMode; set => reducedFlashMode = value; }
 
         private void Awake()
@@ -117,6 +122,7 @@ namespace BattleRaja.Presentation.Visuals
             if (_eliminated)
             {
                 CurrentAnimation = _victory ? AnimationState.Victory : AnimationState.Eliminated;
+                ApplySilhouetteAnimation();
                 if (_ring != null) _ring.localScale = Vector3.one * (1.0f + Mathf.Sin(Time.time * 4f) * 0.06f);
                 return;
             }
@@ -139,6 +145,8 @@ namespace BattleRaja.Presentation.Visuals
                     _silhouetteRoot.localScale = Vector3.one * pulse;
                 }
             }
+
+            ApplySilhouetteAnimation();
 
             if (_flashApplied && _hitRemaining <= 0f && bodyRenderer != null && !_eliminated)
             {
@@ -213,6 +221,62 @@ namespace BattleRaja.Presentation.Visuals
 
             if (_ringMaterial != null) _ringMaterial.color = new Color(0.86f, 0.12f, 0.12f, 1f);
             _audio?.PlayElimination();
+        }
+
+        private void ApplySilhouetteAnimation()
+        {
+            if (_silhouetteParts.Count == 0) return;
+
+            var time = Time.time;
+            for (var i = 0; i < _silhouetteParts.Count; i++)
+            {
+                var part = _silhouetteParts[i];
+                if (part == null) continue;
+
+                var position = _silhouetteBasePositions[i];
+                var rotation = _silhouetteBaseRotations[i];
+                var scale = _silhouetteBaseScales[i];
+                var phase = time * 7.5f + i * 0.37f;
+                var sway = Mathf.Sin(phase);
+
+                switch (CurrentAnimation)
+                {
+                    case AnimationState.Locomotion:
+                        position.y += Mathf.Abs(sway) * 0.045f;
+                        rotation *= Quaternion.Euler(0f, 0f, sway * 5f);
+                        break;
+                    case AnimationState.Attack:
+                        position.z -= 0.06f;
+                        rotation *= Quaternion.Euler(0f, sway * 8f, -sway * 10f);
+                        scale *= 1f + Mathf.Abs(sway) * 0.06f;
+                        break;
+                    case AnimationState.Ability:
+                        position.y += 0.06f + Mathf.Abs(sway) * 0.07f;
+                        rotation *= Quaternion.Euler(0f, sway * 14f, sway * 8f);
+                        scale *= 1.04f + Mathf.Abs(sway) * 0.08f;
+                        break;
+                    case AnimationState.Hit:
+                    case AnimationState.Knockback:
+                        position.x += 0.05f * Mathf.Sign(sway == 0f ? 1f : sway);
+                        rotation *= Quaternion.Euler(0f, 0f, -sway * 12f);
+                        break;
+                    case AnimationState.Eliminated:
+                    case AnimationState.Defeat:
+                        position.y -= 0.12f;
+                        rotation *= Quaternion.Euler(0f, 0f, -18f);
+                        scale = Vector3.Scale(scale, new Vector3(1.08f, 0.72f, 1.08f));
+                        break;
+                    case AnimationState.Victory:
+                        position.y += 0.10f + Mathf.Abs(sway) * 0.04f;
+                        rotation *= Quaternion.Euler(0f, sway * 8f, sway * 6f);
+                        scale *= 1.05f;
+                        break;
+                }
+
+                part.localPosition = position;
+                part.localRotation = rotation;
+                part.localScale = scale;
+            }
         }
 
         private void UpdateHealthBar()
@@ -345,6 +409,10 @@ namespace BattleRaja.Presentation.Visuals
             var renderer = objectToCreate.GetComponent<Renderer>();
             if (renderer != null) renderer.sharedMaterial = material;
             _ownedObjects.Add(objectToCreate);
+            _silhouetteParts.Add(objectToCreate.transform);
+            _silhouetteBasePositions.Add(position);
+            _silhouetteBaseRotations.Add(objectToCreate.transform.localRotation);
+            _silhouetteBaseScales.Add(scale);
             return objectToCreate;
         }
 

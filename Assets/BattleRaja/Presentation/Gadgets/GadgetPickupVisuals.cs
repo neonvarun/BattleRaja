@@ -13,6 +13,10 @@ namespace BattleRaja.Presentation.Gadgets
     {
         private readonly List<GameObject> _objects = new List<GameObject>(12);
         private readonly List<Material> _materials = new List<Material>(4);
+        private Transform _identityRoot;
+        private Vector3 _identityBasePosition;
+
+        public Transform IdentityRoot => _identityRoot;
 
         private void Awake()
         {
@@ -33,6 +37,15 @@ namespace BattleRaja.Presentation.Gadgets
             }
         }
 
+        private void Update()
+        {
+            if (_identityRoot == null) return;
+            var bob = Mathf.Sin(Time.time * 3.2f) * 0.05f;
+            _identityRoot.localPosition = _identityBasePosition + Vector3.up * bob;
+            _identityRoot.Rotate(0f, 32f * Time.deltaTime, 0f, Space.Self);
+            _identityRoot.localScale = Vector3.one * (1f + Mathf.Sin(Time.time * 4.8f) * 0.04f);
+        }
+
         private void Build()
         {
             var pickup = GetComponent<GadgetPickup>();
@@ -40,6 +53,8 @@ namespace BattleRaja.Presentation.Gadgets
             var root = new GameObject("GadgetIdentityVisual").transform;
             root.SetParent(transform, false);
             root.localPosition = Vector3.up * 0.28f;
+            _identityRoot = root;
+            _identityBasePosition = root.localPosition;
 
             var pedestal = CreateMaterial(new Color(0.03f, 0.09f, 0.13f, 1f));
             var accent = id.IndexOf("dhol", System.StringComparison.OrdinalIgnoreCase) >= 0

@@ -512,6 +512,26 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator ProductionVisualKitAnimatesFighterPartsAndPooledImpactCues()
+        {
+            var fighter = Object.FindAnyObjectByType<FighterPresentation>();
+            var impactPool = Object.FindAnyObjectByType<CombatImpactFeedbackPool>();
+            Assert.That(fighter, Is.Not.Null);
+            Assert.That(fighter.AnimatedPartCount, Is.GreaterThan(0));
+            Assert.That(impactPool, Is.Not.Null);
+
+            fighter.NotifyAbility();
+            yield return null;
+            Assert.That(fighter.CurrentAnimation, Is.EqualTo(FighterPresentation.AnimationState.Ability));
+
+            var activeBefore = impactPool.ActiveCount;
+            impactPool.Play(fighter.transform.position, true);
+            Assert.That(impactPool.ActiveCount, Is.EqualTo(activeBefore + 1));
+            yield return new WaitForSeconds(0.22f);
+            Assert.That(impactPool.ActiveCount, Is.LessThanOrEqualTo(activeBefore));
+        }
+
+        [UnityTest]
         public IEnumerator TouchControlsExposeReadableActionLabels()
         {
             Assert.That(GameObject.Find("AttackButton")?.GetComponentInChildren<Text>(true)?.text, Is.EqualTo("ATTACK"));
