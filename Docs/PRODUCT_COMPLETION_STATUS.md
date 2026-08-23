@@ -5,7 +5,7 @@ Classification: **prototype**
 
 Latest continuation: offline Android V1 release-shaped candidate — branch
 `codex/v1-playstore-release` at final documentation checkout
-`e1b0360daa003d8fdcd9ad193d019d27045ce900` (runtime/package source `f4425d6`).
+`HEAD` (runtime/package source `f4425d6`).
 Exact-current validation is 0/0, EditMode **125/125**, and PlayMode **66/66**. The
 fresh APK is **39,529,326 bytes** (`AE74717B597C4CBCFDECF7D8DB719C177100F495CC084ABFD0E1EA6AAD3E2C52`)
 and the AAB is **35,357,477 bytes**

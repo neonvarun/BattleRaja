@@ -34,8 +34,8 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
 
 ### Exact offline packaging hardening
 
-The final documentation checkout is `e1b0360daa003d8fdcd9ad193d019d27045ce900` on
-`codex/v1-playstore-release`; runtime/package source is `f4425d6`. Validation is
+The final documentation checkout is `HEAD` on `codex/v1-playstore-release`;
+runtime/package source is `f4425d6`. Validation is
 **0 errors / 0 warnings**; EditMode is
 **125/125** and PlayMode is **66/66**. The fresh release-shaped APK is **39,529,326
 bytes** (SHA-256

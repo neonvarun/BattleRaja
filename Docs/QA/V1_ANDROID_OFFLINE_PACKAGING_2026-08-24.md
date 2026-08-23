@@ -8,7 +8,7 @@ visual/performance sign-off.
 
 - Repository: `neonvarun/BattleRaja`
 - Branch: `codex/v1-playstore-release`
-- Final documentation checkout: `e1b0360daa003d8fdcd9ad193d019d27045ce900`
+- Final documentation checkout: `HEAD` on `codex/v1-playstore-release`
 - Runtime/package source: `f4425d6` (the final checkout adds documentation only)
 - Unity: `6000.5.6f1`
 - Repository validation: **0 errors / 0 warnings**

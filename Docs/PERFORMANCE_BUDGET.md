@@ -5,8 +5,7 @@ frame-time/profiler budgets and human performance approval remain open.
 
 ## Exact offline packaging observation — 2026-08-24
 
-The runtime/package source `f4425d6` (final documentation checkout
-`e1b0360daa003d8fdcd9ad193d019d27045ce900`) produced a fresh
+The runtime/package source `f4425d6` (final documentation checkout `HEAD`) produced a fresh
 offline release-shaped APK of **39,529,326 bytes** and AAB of **35,357,477 bytes**.
 The AAB is ARM64-only and passed the static 16 KB alignment check. The exact APK
 launched on Lava `ST5GDW23LB004392`; a bounded menu sample recorded no fatal/ANR/SIGSEGV
