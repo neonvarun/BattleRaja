@@ -28,11 +28,14 @@
   debug-signed/non-publishable APK/AAB entrypoints. Exact candidate hashes, Lava captures and
   measured limits are recorded in `Docs/QA/V1_ANDROID_EVIDENCE_2026-08-23.md`.
 - Current V1 automated gate: repository validation **0/0**, EditMode **125/125**, and
-  PlayMode **64/64** at source `ab5b12a`. The project remains **prototype**; the temporary package ID,
-  debug-signed/non-publishable bundle, runtime 16 KB confirmation, adaptive-icon warning,
-  long-run performance measurements and human/store/legal approvals remain open. The
-  latest release-shaped APK has no exact-current frame histogram from `gfxinfo`, so stable
-  FPS is not claimed;
+  PlayMode **65/65** at source `df9adb0` (`presentation: deepen offline combat readability`).
+  This slice adds render-only fighter state motion, pooled impact halos and animated gadget
+  identity visuals. Exact artifact hashes, Lava captures and the failed gadget-use probe are
+  recorded in `Docs/QA/V1_ANDROID_VISUAL_FEEDBACK_2026-08-24.md`. The project remains
+  **prototype**; the temporary package ID, debug-signed/non-publishable bundle, runtime 16 KB
+  confirmation, adaptive-icon warning, long-run performance measurements and human/store/legal
+  approvals remain open. The latest release-shaped APK has no exact-current frame histogram from
+  `gfxinfo`, so stable FPS is not claimed;
   Photon and PlayFab are not part of this V1 release candidate.
 - Prior full baseline at runtime-bearing source `73237c8`: EditMode **125/125**,
   PlayMode **57/57**, deep soak **2,000 matches / zero divergence**, Lava

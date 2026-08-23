@@ -27,27 +27,29 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
 | Store/legal | Draft only | Approve privacy, data-safety, content rating, cultural and legal copy |
 | Play Console | Not started | Owner creates the app and decides rollout/release track |
 
-## Latest local candidate evidence (2026-08-23)
+## Latest local candidate evidence (2026-08-24)
 
 The exact V1 source was validated in disposable copy
-`C:\Projects\BattleRaja-v1-verify-20260823c`:
+`C:\Projects\BattleRaja-v1-verify-20260824e`:
 
 - Unity `6000.5.6f1` (`0e0577a1a2ac`), validation **0 errors / 0 warnings**.
-- Exact runtime source: `ab5b12ad7c86f425243fc3f2a9cbc83ae97e6f6d`.
-- EditMode **125/125** and PlayMode **64/64** passed.
-- Release-shaped Lava APK: **40,420,983 bytes**, SHA-256
-  `E70241D83E6DBDA977EECF9F476502FD68B89799438DBA06F024423D575E5532`.
-- Debug-signed AAB: **36,251,072 bytes**, SHA-256
-  `4B22FD2DADD26FB1A5FEA96FE5EAA19BC2D0EC4F130F87009969D38562FE84C6`;
+- Exact runtime source: `df9adb0519ba3284ce6cd86c10778b5e117cc1e3`.
+- EditMode **125/125** and PlayMode **65/65** passed.
+- Release-shaped Lava APK: **40,428,259 bytes**, SHA-256
+  `2E51CCF590149A6726302F0AFB56070D85BB6E9669FC084FC4BF4C6D5A6AB217`.
+- Debug-signed AAB: **36,258,342 bytes**, SHA-256
+  `2B7CD24E01287E80B03C15824B593867C1B5A0AFF3347065D850343830F9204A`;
   base manifest present, 8 ARM64 libraries, 0 other ABIs, 450 entries, all ARM64
   ELF LOAD segments statically aligned to `0x4000`.
 - Lava screenshots and raw metrics are recorded in
-  `Docs/QA/V1_ANDROID_EVIDENCE_2026-08-23.md` (raw files remain outside source).
+  `Docs/QA/V1_ANDROID_VISUAL_FEEDBACK_2026-08-24.md` (raw files remain outside source).
 
 This evidence is a release-shaped prototype candidate. The APK/AAB is debug-signed and
 not publishable, the package ID remains temporary, legacy icon configuration still emits
 a Unity deprecation warning, runtime 16 KB confirmation, performance, store/legal and
 human review gates remain open.
+The exact Lava visual pass did not capture successful gadget pickup/use, so that remains an
+explicit evidence gate even though the automated authority regression is green.
 
 ## Local artifact command
 
