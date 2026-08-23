@@ -4,23 +4,20 @@ Updated: 2026-08-24
 Classification: **prototype**
 
 Latest continuation: offline Android V1 release-shaped candidate — branch
-`codex/v1-playstore-release` runtime source `c6badbf` (current branch tip `357dfdf`,
-editor/test-only warning cleanup). Exact-source evidence now
-includes validation 0/0, EditMode **125/125**, PlayMode **66/66**, a non-development
-debug-signed APK installed and exercised on Lava, render-only fighter/impact/gadget
-feedback, a successful player-owned Tiffin pickup/use capture, and a static 16 KB AAB
-alignment check.
-The project remains a prototype: final signing,
-package identity, long-run performance, human playtest, store/legal and Play Console
-gates remain open; Photon, PlayFab and Web release are out of scope.
+`codex/v1-playstore-release` at exact checkout `1bb54ac10bb8f951f753e23bbbc178e523fda6d6`.
+Exact-current validation is 0/0, EditMode **125/125**, and PlayMode **66/66**. The
+fresh APK is **39,529,326 bytes** (`AE74717B597C4CBCFDECF7D8DB719C177100F495CC084ABFD0E1EA6AAD3E2C52`)
+and the AAB is **35,357,477 bytes**
+(`8EB49EFC8D58D144E5A792224FC9A3570FF4E37F121E06B6E55093C9D4D5F5E7`); the AAB is
+ARM64-only and passed static 16 KB alignment. The APK was installed and exercised
+only on Lava, and the inspected package has no `INTERNET` or `ACCESS_NETWORK_STATE`.
+The same checkout produced a successful Web build and local HTTP/Edge loader smoke.
 
-Exact current branch tip is now `357dfdf1e6289c172dab60e514f555ba3d5bc914`; its runtime
-content is documentation-equivalent to build source `46724ac2dfa403f40f58669240e61918c2a94d1b`.
-That runtime source revalidates at 0 errors/0 warnings and has exact release-shaped APK/AAB hashes recorded in
-`Docs/QA/LATEST_HEAD_BASELINE.md`. Lava launch evidence is current for that checkout;
-the manifest still requests `INTERNET` and `ACCESS_NETWORK_STATE`, so permission review,
-signing, package identity, sustained performance, human review and Play/legal gates keep
-the classification at **prototype**.
+This is still a **prototype**: final signing and package identity, sustained
+performance, full interactive Web QA, touch/accessibility and human visual review,
+store/legal/Play Console gates remain open. Photon and PlayFab remain out of scope.
+The complete packaging evidence is in
+`Docs/QA/V1_ANDROID_OFFLINE_PACKAGING_2026-08-24.md`.
 
 ## Current V1 visual/tutorial correction — 2026-08-24
 

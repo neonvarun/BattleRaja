@@ -3,6 +3,27 @@
 This is a bounded presentation slice for the offline Android V1 candidate. It is
 technical evidence, not Play Store approval or final human visual approval.
 
+## Exact current offline packaging candidate — 2026-08-24
+
+The checkout at `1bb54ac10bb8f951f753e23bbbc178e523fda6d6` now has a fresh offline
+Android package boundary. Validation is **0 errors / 0 warnings**, EditMode is
+**125/125**, and PlayMode is **66/66**. The APK is **39,529,326 bytes** with SHA-256
+`AE74717B597C4CBCFDECF7D8DB719C177100F495CC084ABFD0E1EA6AAD3E2C52`; the AAB is
+**35,357,477 bytes** with SHA-256
+`8EB49EFC8D58D144E5A792224FC9A3570FF4E37F121E06B6E55093C9D4D5F5E7`. The AAB is
+ARM64-only (7 native libraries) and passed static 16 KB alignment.
+
+The exact APK was installed only on Lava `ST5GDW23LB004392`. The branded portrait
+offline menu was visible, the Unity activity was top-resumed, and the captured log
+contains no fatal/ANR/SIGSEGV marker. `aapt` and installed-package inspection show
+`VIBRATE` and Unity's dynamic-receiver permission only; `INTERNET` and
+`ACCESS_NETWORK_STATE` are absent. Raw files are outside the repository under
+`C:\Users\USER\AppData\Local\Temp\battleraja-root-offline-manifest-lava\`.
+
+This is packaging and launch evidence, not final touch/accessibility or performance
+approval. The Web build was also refreshed from this checkout; its separate loader
+smoke is recorded in `Docs/QA/V1_ANDROID_OFFLINE_PACKAGING_2026-08-24.md`.
+
 ## Exact current checkout artifact and Lava launch — 2026-08-24
 
 The current branch tip is `357dfdf1e6289c172dab60e514f555ba3d5bc914`; the artifacts below

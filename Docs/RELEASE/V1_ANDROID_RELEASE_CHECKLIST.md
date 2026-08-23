@@ -11,9 +11,10 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
 - Bijli, Pehel and Maya; Umbrella Guard, Dhol Burst and Tiffin Station; Aandhi; tutorial;
   spectator; results; rematch; local settings.
 - No account, online room or server-owned progression is used by the offline candidate.
-  The current merged Android manifest still carries `INTERNET` and
-  `ACCESS_NETWORK_STATE` for preserved future-facing Unity/Fusion infrastructure; remove
-  or explicitly justify those permissions before Play submission.
+  The exact offline packaging candidate removes `INTERNET` and
+  `ACCESS_NETWORK_STATE` from the APK while retaining the future-facing Fusion files
+  outside the Android runtime. Final signed-bundle inspection is still required before
+  Play submission.
 
 ## Current release gates
 
@@ -24,12 +25,29 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
 | Target API | Configured to API 36 | Recheck against current Play policy at upload time |
 | 64-bit | Passed with evidence for the current debug-signed AAB: 8 ARM64 libraries, 0 other ABIs | Re-run inspection after any package/plugin change |
 | 16 KB pages | Static evidence passed: zipalign `-P 16` and all eight ARM64 ELF LOAD segments at `0x4000`; runtime 16 KB environment still open | Re-run the checker after any package/plugin change and install on a 16 KB Android environment when available |
-| Permissions | Runtime is offline, but `INTERNET` and `ACCESS_NETWORK_STATE` remain in the merged manifest; no SD-card permission is present | Remove or document the network permissions, then inspect the final merged manifest |
+| Permissions | **Passed for the exact debug APK**: `VIBRATE` and Unity's dynamic-receiver permission only; no `INTERNET`, `ACCESS_NETWORK_STATE` or SD-card permission | Recheck the final signed AAB/APK and document any future online permission change |
 | Device QA | Automated smoke passed on Lava (`ST5GDW23LB004392`); human review open | Owner performs touch, accessibility, battery and thermal review |
 | Store/legal | Draft only | Approve privacy, data-safety, content rating, cultural and legal copy |
 | Play Console | Not started | Owner creates the app and decides rollout/release track |
 
 ## Latest local candidate evidence (2026-08-24)
+
+### Exact offline packaging hardening
+
+The current checkout is `1bb54ac10bb8f951f753e23bbbc178e523fda6d6` on
+`codex/v1-playstore-release`. Validation is **0 errors / 0 warnings**; EditMode is
+**125/125** and PlayMode is **66/66**. The fresh release-shaped APK is **39,529,326
+bytes** (SHA-256
+`AE74717B597C4CBCFDECF7D8DB719C177100F495CC084ABFD0E1EA6AAD3E2C52`) and the AAB is
+**35,357,477 bytes** (SHA-256
+`8EB49EFC8D58D144E5A792224FC9A3570FF4E37F121E06B6E55093C9D4D5F5E7`). The AAB
+contains 7 ARM64 libraries, no other ABIs, and passed static 16 KB ELF alignment.
+
+`aapt dump permissions` and Lava `dumpsys package` show `VIBRATE` plus Unity's
+dynamic-receiver permission only; `INTERNET` and `ACCESS_NETWORK_STATE` are absent.
+The APK installed and launched only on Lava `ST5GDW23LB004392`, with the branded
+offline menu visible and no fatal/ANR/SIGSEGV marker. Raw captures are recorded in
+`Docs/QA/V1_ANDROID_OFFLINE_PACKAGING_2026-08-24.md`.
 
 ### Exact current checkout artifact
 

@@ -3,6 +3,23 @@
 **Status:** Android evidence is current for the exact V1 presentation candidate, but formal
 frame-time/profiler budgets and human performance approval remain open.
 
+## Exact offline packaging observation — 2026-08-24
+
+The current checkout `1bb54ac10bb8f951f753e23bbbc178e523fda6d6` produced a fresh
+offline release-shaped APK of **39,529,326 bytes** and AAB of **35,357,477 bytes**.
+The AAB is ARM64-only and passed the static 16 KB alignment check. The exact APK
+launched on Lava `ST5GDW23LB004392`; a bounded menu sample recorded no fatal/ANR/SIGSEGV
+markers. This reduces the package artifact from the earlier ~40 MB candidate, but it
+does not establish a memory, CPU, GPU, GC, frame-pacing, thermal, battery or repeated-
+match budget.
+
+The same checkout produced a successful Web build with a current WASM of
+119,799,945 bytes (SHA-256
+`05EF2D0A69EE3E6DD8B7552913E892D749266135F216F17061560FAFDA8BD09F`). Local HTTP
+returned 200 and Edge headless reached the Unity loader. This is a build/loader smoke
+measurement only; cold/warm interactive load, compression/cache headers, WebAssembly
+memory and full route performance remain open.
+
 ## Exact current checkout sample — 2026-08-24
 
 The current branch tip is `357dfdf1e6289c172dab60e514f555ba3d5bc914`; its runtime content

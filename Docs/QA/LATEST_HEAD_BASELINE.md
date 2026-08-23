@@ -11,6 +11,30 @@ Balance-fix runtime source: `17a8c75` (`fix(balance): land documented weapon ret
 Pre-fix baseline source: `35d723f` (`fix: bot perception no longer treats fighter hulls as line-of-sight blockers`; the tip of local `main` before this branch)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
+## Exact current offline packaging baseline — 2026-08-24
+
+The current checkout is `1bb54ac10bb8f951f753e23bbbc178e523fda6d6` on
+`codex/v1-playstore-release`. Repository validation is **0 errors / 0 warnings**;
+fresh exact-current EditMode is **125/125** and PlayMode is **66/66**. The release-
+shaped APK is **39,529,326 bytes**, SHA-256
+`AE74717B597C4CBCFDECF7D8DB719C177100F495CC084ABFD0E1EA6AAD3E2C52`; the AAB is
+**35,357,477 bytes**, SHA-256
+`8EB49EFC8D58D144E5A792224FC9A3570FF4E37F121E06B6E55093C9D4D5F5E7`. The AAB has
+7 ARM64 native libraries, no other ABIs, and passed static 16 KB ELF alignment.
+
+The APK was installed only on Lava `ST5GDW23LB004392`, where the branded offline
+menu was captured and no fatal/ANR/SIGSEGV marker appeared. Its inspected permission
+set is `VIBRATE` plus Unity's dynamic receiver only; `INTERNET` and
+`ACCESS_NETWORK_STATE` are absent. This packaging boundary retains the imported
+Fusion files but excludes their Android runtime assemblies from the offline APK.
+
+The exact checkout also built Web successfully. The current Web output contains
+19 files (about 132.1 MB); WASM is **119,799,945 bytes**, SHA-256
+`05EF2D0A69EE3E6DD8B7552913E892D749266135F216F17061560FAFDA8BD09F`. Local HTTP
+returned 200 and Edge headless reached the Unity loader; full interactive browser
+route approval remains open. Raw Android captures are outside the repository at
+`C:\Users\USER\AppData\Local\Temp\battleraja-root-offline-manifest-lava\`.
+
 ## Exact current checkout release-shaped Android evidence — 2026-08-24
 
 The checked-out branch tip is now `357dfdf1e6289c172dab60e514f555ba3d5bc914`;
