@@ -40,15 +40,15 @@ rewrite the working tree.
 - Package/version observed on device: `com.example.battleraja.m11`, version name `1.0.0`,
   version code `100`, target SDK 36, minimum SDK 28
 
-### Unsigned release-shaped AAB
+### Debug-signed release-shaped AAB
 
 - Path: `C:\Projects\BattleRaja-v1-verify-20260823b\Builds\V1\Android\BattleRaja-V1.0-release-candidate.aab`
 - Size: **36,250,956 bytes**
 - SHA-256: `78CFF3B021B41A2194E9F961D506CC376A92D8D24AC3D7ECFD4CE258976645EC`
 - Bundle inspection: base manifest present; 8 ARM64 native libraries; 0 other ABIs;
   450 archive entries
-- Signing/package identity: intentionally not release-ready; temporary package ID and
-  no owner-approved keystore were used
+- Signing/package identity: intentionally not release-ready; the temporary package ID
+  uses Unity's Android Debug certificate and no owner-approved release keystore was used
 
 ## Lava runtime evidence
 
@@ -92,7 +92,7 @@ performance review and optimization pass.
   approved.
 - Adaptive icon configuration still emits Unity's legacy-icon deprecation warning.
 - 16 KB native-page compatibility has not been demonstrated for this exact AAB.
-- The package is unsigned/non-publishable and has not been uploaded to Play Console.
+- The package is debug-signed/non-publishable and has not been uploaded to Play Console.
 - Store copy, data-safety declaration, content rating, privacy/legal and cultural review
   remain human gates.
 - Final tutorial completion, results/rematch, settings/accessibility and repeated-match

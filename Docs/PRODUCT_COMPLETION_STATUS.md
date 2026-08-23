@@ -19,7 +19,8 @@ Exact candidate source: `1896c138484149e774bd23bee5ecd4b1064852da` on
 The current working-tree V1 slice adds the product-facing offline Android route: branded
 Bootstrap flow, Bazaar Bastion as the default build scene, three-fighter selection,
 tutorial/help/settings surfaces, original placeholder identity art, code-driven audio and
-visual feedback, portrait-safe circular touch controls, and an unsigned AAB entrypoint.
+visual feedback, portrait-safe circular touch controls, and a debug-signed/non-publishable
+AAB entrypoint.
 Repository validation is **0 errors / 0 warnings**, EditMode is **125/125**, and PlayMode
 is **61/61**. The Lava-only smoke candidate installed and exercised successfully; exact
 APK/AAB hashes, screenshots and measurements are in

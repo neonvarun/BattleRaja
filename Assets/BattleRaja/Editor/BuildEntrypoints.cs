@@ -659,9 +659,9 @@ namespace BattleRaja.Editor
         }
 
         /// <summary>
-        /// Produces an unsigned/non-publishable release-shaped App Bundle for local
-        /// Play checks. Signing, package identity approval and Play Console upload stay
-        /// outside this method and require the owner's explicit release gate.
+        /// Produces a debug-signed/non-publishable release-shaped App Bundle for local
+        /// Play checks. The owner-approved release key, package identity and Play Console
+        /// upload stay outside this method and require the explicit release gate.
         /// </summary>
         public static void BuildAndroidV1ReleaseCandidate()
         {

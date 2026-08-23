@@ -20,7 +20,7 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
 | Product/package identity | Blocked: build entrypoint still uses `com.example.battleraja.m11` | Approve final application ID and branding |
 | Signing | Not started | Approve upload key/Play App Signing path; never commit the key |
 | Target API | Configured to API 36 | Recheck against current Play policy at upload time |
-| 64-bit | Passed with evidence for the current unsigned AAB: 8 ARM64 libraries, 0 other ABIs | Re-run inspection after any package/plugin change |
+| 64-bit | Passed with evidence for the current debug-signed AAB: 8 ARM64 libraries, 0 other ABIs | Re-run inspection after any package/plugin change |
 | 16 KB pages | Not yet evidenced for this exact AAB | Run alignment checks and a 16 KB Android environment install |
 | Permissions | Forced Internet and SD-card permissions are disabled | Inspect the merged manifest after each plugin/build change |
 | Device QA | Automated smoke passed on Lava (`ST5GDW23LB004392`); human review open | Owner performs touch, accessibility, battery and thermal review |
@@ -36,7 +36,7 @@ The exact V1 source was validated in disposable copy
 - EditMode **125/125** and PlayMode **61/61** passed.
 - Lava APK: **166,221,332 bytes**, SHA-256
   `9A93BF85AC5CD557C5DC1E1A166B99F18137F2D45F5EDDE5F6C4790F5F13F5F7`.
-- Unsigned AAB: **36,250,956 bytes**, SHA-256
+- Debug-signed AAB: **36,250,956 bytes**, SHA-256
   `78CFF3B021B41A2194E9F961D506CC376A92D8D24AC3D7ECFD4CE258976645EC`;
   base manifest present, 8 ARM64 libraries, 0 other ABIs, 450 entries.
 - Lava screenshots and raw metrics are recorded in

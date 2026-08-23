@@ -25,11 +25,11 @@
   candidate now builds
   Bazaar Bastion by default, exposes the branded offline flow/tutorial/settings and
   three-fighter selection, uses circular safe-area touch surfaces, and has a local
-  unsigned AAB entrypoint. Exact candidate hashes, Lava captures and measured limits are
+  debug-signed/non-publishable AAB entrypoint. Exact candidate hashes, Lava captures and measured limits are
   recorded in `Docs/QA/V1_ANDROID_EVIDENCE_2026-08-23.md`.
 - Current V1 automated gate: repository validation **0/0**, EditMode **125/125**, and
   PlayMode **61/61**. The project remains **prototype**; the temporary package ID,
-  unsigned bundle, adaptive-icon warning, 16 KB evidence, performance measurements and
+  debug-signed/non-publishable bundle, adaptive-icon warning, 16 KB evidence, performance measurements and
   human/store/legal approvals remain open. Photon and PlayFab are not part of this V1
   release candidate.
 - Prior full baseline at runtime-bearing source `73237c8`: EditMode **125/125**,
