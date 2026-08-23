@@ -1,16 +1,15 @@
 # Product completion status
 
-Updated: 2026-08-22
+Updated: 2026-08-23
 Classification: **prototype**
 
-Latest continuation: Phase 0 exact-current-source rebaseline — local `main` tip `35d723f`
-baseline (validate 0/0, EditMode 114/114, PlayMode 57/57, Android APK
-`77B2BD04…A43D2A`, Lava launch clean, Chrome/Edge smoke clean), followed by the
-`phase0/exact-source-rebaseline` branch: `17a8c75` lands the documented weapon retune
-in Core definitions and `c78433a` syncs scene serialization plus removes tracked test
-artifacts, with fresh post-fix evidence recorded in `Docs/QA/LATEST_HEAD_BASELINE.md`.
-The production Bazaar scene retains its explicit `BazaarBastionScene` contract,
-connected architecture prefab and authority-routed combat path.
+Latest continuation: Milestone 11 authority/replay closure — local and remote `main`
+runtime-bearing source `73237c8`. Exact-source evidence now includes validation 0/0,
+EditMode **125/125**, PlayMode **57/57**, a **1,000-seed x2 / zero-divergence** replay
+soak, an exact APK installed and resumed on Lava, and Chrome+Edge six-route Web smoke.
+The project remains a prototype/closed-alpha foundation: final art/audio, performance
+budget approval, human playtest approval, real networking, backend services and release
+gates remain open.
 
 This file records evidence-backed status only. Allowed status values are: `Not started`, `In progress`, `Passed with evidence`, `Blocked`, and `Human review required`.
 
@@ -55,27 +54,34 @@ diagonal corner clamping, no tunneling through the 0.45-thick lane wall under 30
 displacements, and a 400-step seeded walk invariant. Evidence: validate 0/0,
 EditMode **118/118**, PlayMode **57/57**.
 
-## Phase 3 authoritative-projectile audit (in progress) — 2026-08-22
+## Phase 3 authoritative-projectile/event-identity audit — complete 2026-08-23
 
-Verified from source at `669c4a9`: projectile travel/collision/target selection are
-Core-owned (`OfflineMatchAuthority.AdvanceProjectiles` sweeps walls, actors, decoys and
-stations inside the canonical tick); every accepted attack receives a stable
-attack-execution ID and projectile ID from `MatchEventIdentityTracker`; Maya decoy
-damage rejects duplicates; Aandhi damage and Tiffin healing emit typed intents inside
-`Advance`; same-tick hits from different attackers are preserved by construction
-(per-instigator damage contributions, no target/tick dedup).
+Closed at `5fa12e3`: projectile travel/collision/target selection remain Core-owned;
+Aandhi damage, station healing, health/gadget collection, gadget use and ability starts
+resolve inside the canonical authority tick; validated events carry stable authority
+identities; rejected commands do not consume them; restart resets every stream. Same-tick
+hits retain per-instigator attribution. Presentation consumes immutable applied events
+rather than feeding simulation state back. Transport-level duplicate suppression remains
+future Phase 8 work.
 
-**Recorded gap:** only attack-execution and projectile identities are wired into
-production events. The tracker's damage/healing/collection/elimination/gadget-use
-identity generators exist and are unit-tested but are never stamped onto emitted
-events or persisted anywhere. Offline play is structurally safe because each event is
-applied exactly once through a single in-process authority call (projectiles despawn on
-contact; decoy damage has explicit duplicate rejection), so this is not an offline
-correctness defect — but stable per-event identities on emitted
-`CombatDamageEvent`/healing/collection/elimination records are required before any
-transport can reject retransmitted events (Phase 8). Closing it requires cross-layer
-plumbing (Domain event structs → authority emission → presentation consumption) and is
-recorded as bounded future work rather than silently claimed.
+## Phase 4 executable replay and soak closure — complete 2026-08-23
+
+Implemented through `1412802`: replay headers now carry complete match setup, frames
+carry ordered movement/attack/ability/decoy/gadget inputs, and
+`DeterministicReplayExecutor` reconstructs and verifies exact authority streams. The
+canonical hash includes cooldowns, inventories, pickups, stations, decoys, ability
+runtimes, movement/cooldown state, identity counters, projectiles and terminal result.
+The integrated deep soak executed **1,000 seeds x 2 = 2,000 matches** with zero divergence
+in **416.1411007 seconds**. Production presentation capture/durable serialization remain
+bounded future work.
+
+## Phase 5 exact-source regression evidence — passed 2026-08-23
+
+At runtime source `73237c8`, validation was 0 errors/0 warnings, EditMode **125/125**,
+PlayMode **57/57**, Lava install/launch/home/resume had no fatal markers, and Chrome plus
+Edge each reached mode, fighter-selection and active-match states at desktop/tablet/portrait
+viewports with 0 console errors and 0 failed requests. Artifact hashes, memory samples and
+paths are recorded in `Docs/QA/LATEST_HEAD_BASELINE.md`.
 
 ## Goal B deterministic collision/placement continuation — 2026-08-04
 
@@ -90,26 +96,26 @@ runtime commit) now has fresh Android/Web smoke evidence. Goal B is therefore st
 
 | Area | Status | Evidence / boundary |
 | --- | --- | --- |
-| Unity project and package baseline | Passed with evidence | Unity `6000.5.6f1`; latest validated repository HEAD `af2e0d8`, exact platform candidate `7ad7e42`, runtime source `a5fdde8`; Photon Fusion `2.1.1 Stable 2177`; Input System-only handler with legacy-scene compatibility bridge; repository validation clean; authored Unity 6 object-lookup warnings removed; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
+| Unity project and package baseline | Passed with evidence | Unity `6000.5.6f1`; runtime-bearing source `73237c8`; Input System-only handler with legacy-scene compatibility bridge; validation **0 errors / 0 warnings**; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
 | Photon Fusion import | Passed with evidence | Fusion 2.1.1 stable build 2177 is present and imported; no public multiplayer claim |
-| EditMode and PlayMode regression baseline | Passed with evidence | Exact Goal B source `a5fdde8` passes **109/109 EditMode** and **55/55 PlayMode** tests, including deterministic collision/placement and authority-driven Pehel regressions; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
-| Android smoke build | Passed with evidence | Exact platform candidate `7ad7e42` APK (**94,028,145** bytes; SHA-256 `FA0CB54C04DC9309D8B21DAE02CE1D3D8A9961DA1C77F5ADE47F0B6AD280053A`) installed/launched only on Lava `ST5GDW23LB004392` (`LAVA LXX508`); Unity activity remained top-resumed. Memory snapshot: 402,013 KB PSS / 537,532 KB RSS / 82,088 KB Graphics / 40 KB swap. This is a development smoke artifact, not a size/performance pass. |
-| Web smoke build | Passed with evidence | Exact platform candidate `7ad7e42` Web build contains 19 files / 133,747,764 bytes including development debug-information text; `Web-BazaarBastion.wasm` is 121,033,616 bytes (SHA-256 `D84155637B493182BF380FF91A9ED0D49ECE8F684FAE08E1FA85F0A68F318708`). Local HTTP returned 200 for page/data/WASM. Chrome and Edge Playwright canvas smoke reached menu, mode, fighter-selection and active-match routes at desktop and portrait probes; consoles had 0 errors plus one known Unity persistent-data-path deprecation warning after match load. This is a development smoke artifact; compressed transfer, cold/warm load, mobile interaction and final performance remain open. |
+| EditMode and PlayMode regression baseline | Passed with evidence | Source `73237c8` passes **125/125 EditMode** and **57/57 PlayMode** tests; deep recorded-replay soak passes **2,000 matches** with zero divergence; see `Docs/QA/LATEST_HEAD_BASELINE.md` |
+| Android smoke build | Passed with evidence | Exact-source BazaarBastion APK (**94,258,745** bytes; SHA-256 `F7E76A5DFB88633047075BB9EA28655F15B9CA65FE1EAE3205D165A4EB56A376`) installed/launched only on Lava `ST5GDW23LB004392`; activity remained top-resumed through home/resume. Memory snapshot: **418,669 KB PSS / 523,264 KB RSS / 82,088 KB Graphics / 460 KB swap**, no fatal markers. Development smoke only, not a size/performance pass. |
+| Web smoke build | Passed with evidence | Exact-source Web build contains **19 files / 134,170,277 bytes**; WASM is **121,427,473 bytes** (SHA-256 `BB722EC437DE934CDDEEF06D1A594604A46F495BDE14A442C138A3ECAF8B14CB`). HTTP returned **200** for page/data/framework/WASM. Chrome and Edge each reached mode, fighter-selection and active-match routes at desktop/tablet/portrait sizes with **0 console errors** and **0 failed requests**. Development smoke only; compressed transfer/cold-load/final performance remain open. |
 | Timeout/winner correctness | Passed with evidence | Deterministic timeout ranking and complete placements implemented; phase-1 EditMode 59/59 and PlayMode 27/27 pass |
 | Eliminations and match statistics | Passed with evidence | Instigator-aware combat events now record damage dealt, eliminations, deterministic non-finisher assists, survival time and duplicate-credit prevention; fresh EditMode 90/90 and PlayMode 43/43 pass |
-| Explicit fixed simulation clock | In progress | Goal A's canonical match-controller tick event drives production attack, bot, Bijli, Pehel, Maya and gadget command/ability steps. Local MovementLab clocks and presentation projectile timing remain intentionally separate. Replay recording, broader consolidation and soak coverage remain open |
+| Explicit fixed simulation clock | Passed with evidence | Canonical authority tick drives production attack, bot, fighter ability, Aandhi, pickup/gadget and projectile resolution. Complete replay streams and a 2,000-match zero-divergence soak verify it. Lab-only fallback clocks remain intentionally separate; final device performance approval remains open |
 | Continuously interpolated Aandhi | Passed with evidence | Warning/closing state, next-radius preview and deterministic interpolation are exposed; EditMode 70/70 and PlayMode 27/27 pass |
 | Bot current/next-zone awareness | Passed with evidence | Bot snapshots carry explicit current/next zone centre/radius data and proactively reposition from the fixed clock; EditMode 71/71 and PlayMode 27/27 pass |
-| Authoritative rule separation | In progress | Goal A makes production attack configuration, phase/protection/tick/sequence checks, canonical origin/direction and cooldown ownership authority-driven. Goal B adds deterministic bounds/ordered-obstacle collision and canonical production movement, Bijli/Pehel/Dhol displacement, Maya placement and Tiffin placement. The default Bazaar definition still has no authored obstacles; projectile collision, remaining presentation adapters, stable event IDs, atomic resolution and network transport remain open |
+| Authoritative rule separation | Passed with evidence | Offline attack configuration, phase/protection/tick/sequence checks, cooldowns, collision, movement, abilities, events and projectile resolution are authority-owned with stable identities and atomic tick application. Network transport/trusted public-server operation remain explicitly out of scope |
 | Bazaar Bastion production vertical slice | Passed with evidence | `BazaarBastion.unity` has a dedicated `BazaarBastionScene` contract, zero `MovementLabScene` markers and a connected `Content/Prefabs/BazaarArchitecture.prefab`; full 100/100 EditMode and 51/51 PlayMode pass after prefab extraction. Existing Lava/Web smoke evidence remains from `d993a5b`; actor prefab extraction, greybox replacement and human review are required |
-| Fighter roster, progression, and complete offline loop | In progress | Common ability/movement interfaces select fighter-specific Pehel Charge Throw and Maya Decoy adapters; production Pehel charge/capture/damage/throw, attack-command acceptance and Bazaar gadget pickup/use now have authority-routed PlayMode coverage. Goal B routes current displacement/placement through the collision authority. Production bot spawn protection is covered by a dedicated PlayMode regression. Latest regression is 109/109 EditMode and 55/55 PlayMode. Progression, full-loop reliability/soak, final presentation and audio remain |
+| Fighter roster, progression, and complete offline loop | In progress | All three fighters, attacks, abilities, gadgets, pickups, Aandhi and terminal resolution are authority-routed and covered by **125/125 EditMode**, **57/57 PlayMode**, and the 2,000-match replay soak. Match progression/rewards persistence and final presentation/audio remain |
 | Visual/audio placeholder foundation | Passed with evidence | `FighterPresentation` supplies replaceable colour rings, health bars, code-driven action states, attack/ability telegraphs and hit/elimination feedback; `BattleRajaAudioDirector` supplies original procedural cues, volume hooks and Web gesture-gated startup. Final art, animation clips, VFX, authored audio and visual approval remain open |
 | Canvas match UI foundation | Passed with evidence | `OfflineMatchHud` provides anchored match/zone status, pause/settings, spectator, full-placement results/rematch, locally persisted presentation settings and a functional bounded aim-assist toggle. Pure aim-assist/results tests plus fresh 94/94 EditMode and 45/45 PlayMode regression pass; localization assets, controller rebinding and human UI approval remain open; see ADR-024, ADR-040 and latest-head evidence |
-| Production flow and fighter selection | Passed with evidence | `ProductionFlowMachine` is pure/application-owned and covered by 81 EditMode tests. Bootstrap Canvas navigation covers main menu, offline/online mode selection, fighter selection, async match loading, explicit service error/retry, settings and safe-area/focus behavior. `TutorialStepMachine` and `TutorialArenaPlayModeTests` cover the replayable tutorial route; Web screenshots in `Docs/QA/Visual/Flow/` show the 1280×720 route. Full match-loop reliability, Lava smoke for the exact APK and final authored UX remain open |
-| Visual and interaction QA | In progress | Exact candidate `7ad7e42` Web Playwright smoke reports 0 errors and one known Unity persistent-data-path deprecation warning after match load; inspected captures include menu at 1280×720, 1024×768 and 390×844, mode/fighter selection, and active match in Chrome and Edge. Lava menu capture is also inspected. Gadget use, loading-state human observation, touch ergonomics, multi-browser coverage and final human approval remain open |
+| Production flow and fighter selection | Passed with evidence | `ProductionFlowMachine` is pure/application-owned and covered by automated tests. Bootstrap Canvas navigation covers menu, offline mode selection, fighter selection, async match loading, settings, safe-area/focus and error/retry behavior; exact-source Web smoke reaches active matches in Chrome/Edge at three viewports, and the exact APK launches/resumes on Lava. Final authored UX and human review remain |
+| Visual and interaction QA | In progress | Exact-source Chrome/Edge smoke visually verified mode, fighter selection and active match at 1280x720, 1024x768 and 390x844 with 0 console errors/failed requests; exact APK launched/resumed on Lava. Gadget-use observation, touch ergonomics, accessibility and final human approval remain open |
 | Real Photon multiplayer | Not started | Imported SDK is not an adapter or multiplayer validation |
 | PlayFab/backend/economy | Not started | No production backend claim |
-| Performance, soak, multi-browser, and release gates | In progress | Current bounded active-match Lava sample records 460,165 KB PSS, 597,680 KB RSS, 101,480 KB Graphics and 240 KB swap; process samples report 87% instantaneous `top` CPU and 50% user / 13% kernel in `dumpsys cpuinfo`. Chrome 150 local Web sample records 120,872,306-byte WASM transfer and 5.603 ms mean browser rAF. Unity 6 obsolete PlayerSettings and object-lookup calls are now removed from authored code and the fresh Android/Web compile logs contain 0 CS0618 lines. These are smoke observations; frame-time/FPS/GPU/GC, repeated-match growth, thermal/battery, cold-load and multi-browser release measurements remain open; see `Docs/PERFORMANCE_BUDGET.md` and `Docs/QA/Performance/runtime-smoke-20260803.md` |
+| Performance, soak, multi-browser, and release gates | In progress | Deep deterministic soak now covers 2,000 matches with zero divergence. Current Lava sample records **418,669 KB PSS / 523,264 KB RSS / 82,088 KB Graphics / 460 KB swap**. Six Chrome/Edge viewport routes pass with 0 errors/failed requests. These are smoke observations; frame-time/FPS/GPU/GC, thermal/battery, cold-load and release budgets remain open; see `Docs/PERFORMANCE_BUDGET.md` and `Docs/QA/LATEST_HEAD_BASELINE.md` |
 | CI, security and release preparation | In progress | Read-only static validation/LFS/secret checks are defined in `.github/workflows/repository-validation.yml` and documented in `Docs/CI.md`; Unity licensed tests/builds, artifact retention, dependency review, AAB/signing, publication and legal/privacy approval remain owner-gated |
 | Visual/audio/UI approval | Human review required | Current smoke screenshots show greybox/prototype presentation |
 

@@ -1,11 +1,34 @@
 # Latest HEAD baseline
 
-Date: 2026-08-22
-Branch: `phase0/exact-source-rebaseline` (based on local `main`, which is ahead of `origin/main` by 5 focused commits)
-Latest validated repository HEAD: `c78433a` (`chore(scene): sync serialized scene fields and drop tracked test artifacts`)
+Date: 2026-08-23
+Branch: `main` (local and remote aligned)
+Latest validated repository HEAD: `73237c8` (`docs: record complete replay and deep soak evidence`)
 Balance-fix runtime source: `17a8c75` (`fix(balance): land documented weapon retune in Core definitions`)
 Pre-fix baseline source: `35d723f` (`fix: bot perception no longer treats fighter hulls as line-of-sight blockers`; the tip of local `main` before this branch)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
+
+## Milestone 11 Phase 3-5 exact-source regression — 2026-08-23
+
+Validated from detached exact-source worktree `C:\Projects\BattleRaja-headbuild`
+at `73237c8`. The main checkout's owner-protected scene/prompt changes were not
+used, staged, committed, or overwritten.
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Repository validation | **0 errors / 0 warnings** | `Tools\Validation\validate.ps1` |
+| Full EditMode | **125/125 passed**, 0 failed/skipped | `Builds/Local/TestResults/editmode-final.xml`, `Builds/Local/Logs/editmode-final.log` |
+| Full PlayMode | **57/57 passed**, 0 failed/skipped; duration **40.8994214 s** | `Builds/Local/TestResults/playmode-head.xml`, `Builds/Local/Logs/playmode-head.log` |
+| Deep replay soak | **1,000 seeds x 2 = 2,000 matches**, zero divergence, duration **416.1411007 s** | `Builds/Local/TestResults/deep-soak-1000.xml`, `Builds/Local/Logs/deep-soak-1000.log`, `Docs/QA/REPLAY_AND_SOAK_REPORT.md` |
+| Android build | BazaarBastion development APK succeeded; APK **94,258,745 bytes**; SHA-256 `F7E76A5DFB88633047075BB9EA28655F15B9CA65FE1EAE3205D165A4EB56A376`; two known editor `CS0618` warnings, no C# errors/build failure | `C:\Projects\BattleRaja-headbuild\Builds\M11\Android\BattleRaja-BazaarBastion-M11.apk`, `C:\Projects\BattleRaja-headbuild\Builds\M11\Logs\android-build.log` |
+| Lava Android runtime | Installed/launched only on Lava `ST5GDW23LB004392`; `UnityPlayerGameActivity` was top-resumed; sampled memory **418,669 KB PSS / 523,264 KB RSS / 82,088 KB Graphics / 460 KB swap**; home/resume returned to top-resumed activity; sampled app logcat had no fatal exception, SIGSEGV/SIGABRT marker | ADB output, `Builds/Local/Device/lava-head-logcat.txt`, `Builds/Local/Device/lava-head-logcat-resume.txt` |
+| Web build | BazaarBastion development Web succeeded; **19 files / 134,170,277 bytes**; WASM **121,427,473 bytes**, SHA-256 `BB722EC437DE934CDDEEF06D1A594604A46F495BDE14A442C138A3ECAF8B14CB`; same two known editor warnings, no C# errors/build failure | `C:\Projects\BattleRaja-headbuild\Builds\M11\Web-BazaarBastion`, `C:\Projects\BattleRaja-headbuild\Builds\M11\Logs\web-build.log` |
+| Web serve | Local HTTP returned **200** for page, data, framework and WASM | Python HTTP server on `127.0.0.1:8016`, server request log |
+| Chrome + Edge smoke | Chrome and Edge each passed desktop **1280x720**, tablet **1024x768**, and portrait **390x844**: mode selection, fighter selection with Bijli selected, and active match were visually verified. Totals: **6/6 routes passed**, console errors **0**, failed requests **0** | `Builds/Local/WebSmoke/smoke-results.json`, `Builds/Local/WebSmoke/*-mode.png`, `*-fighter.png`, `*-match.png` |
+
+Build-time scene generation normalized TutorialArena YAML in the detached worktree,
+and Unity removed orphan Photon `.meta` files whose binary payloads are intentionally
+untracked/prohibited at runtime. These changes stayed isolated to the disposable
+detached worktree and were not copied back to `main`.
 
 ## Phase 0 exact-current-source rebaseline (2026-08-22)
 

@@ -16,9 +16,10 @@
   weapon-damage retune existed only in serialized assets while the Core definitions
   still shipped 18/28/12; the documented 12/20/9 targets are now authoritative in
   code (see `Docs/BALANCE_CHANGELOG.md` and `Docs/QA/LATEST_HEAD_BASELINE.md`).
-- Latest validated repository HEAD: `1412802` on local and remote `main`;
-  EditMode **125/125** passes with repository validation at 0 errors / 0 warnings.
-  Exact-source deep replay/soak evidence is recorded in `Docs/QA/REPLAY_AND_SOAK_REPORT.md`.
+- Latest validated repository HEAD: `73237c8` on local and remote `main`;
+  EditMode **125/125**, PlayMode **57/57**, deep soak **2,000 matches / zero divergence**,
+  Lava launch/resume, and Chrome+Edge six-route Web smoke all pass. Repository
+  validation is **0 errors / 0 warnings**. See `Docs/QA/LATEST_HEAD_BASELINE.md`.
 - Phase 1 authority audit (2026-08-22): complete at `ee573ad` with EditMode **115/115**
   and PlayMode **57/57**. One real gap found and fixed — stale attack ticks could bypass
   weapon cooldown; commands are now rejected as `StaleTick` beyond a 2-tick window and
@@ -40,8 +41,14 @@
   decoys, ability runtimes, identity counters, projectiles and terminal match state.
   The executable replay runner reconstructs complete setup and input streams. The deep
   soak executed **1,000 seeds x 2 = 2,000 matches** with **zero divergence** in
-  **416.1411007 s**; EditMode **125/125** also passed at the same source. Exact Android/Web
-  regression and production capture wiring remain open.
+  **416.1411007 s**; EditMode **125/125** also passed at the same source. Production
+  presentation capture wiring remains open.
+- Phase 5 exact-source regression (2026-08-23): passed at runtime-bearing source
+  `73237c8`. Full EditMode **125/125**, PlayMode **57/57**, validation **0/0**, the
+  recorded-replay deep soak above, exact APK install/launch/home/resume on Lava, and
+  Chrome/Edge desktop/tablet/portrait Web smoke are complete. Evidence is recorded in
+  `Docs/QA/LATEST_HEAD_BASELINE.md`. Human visual/performance approval and publication
+  gates remain open.
 - Root agent rules: active
 - Milestone 0: complete and committed locally
 - Unity project: verified at the repository root with URP and MovementLab scenes
