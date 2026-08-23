@@ -17,6 +17,11 @@ PluginImporter:
   validateReferences: 1
   platformData:
   - first:
+      Android: Android
+    second:
+      enabled: 0
+      settings: {}
+  - first:
       Any: 
     second:
       enabled: 1
