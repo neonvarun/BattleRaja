@@ -4,23 +4,27 @@
 
 ## V1.0 Android candidate measurement — 2026-08-23
 
-The current offline Android candidate was installed and exercised only on Lava
-`ST5GDW23LB004392` from the disposable verification copy. This is a bounded smoke
-measurement, not a performance pass:
+The release-shaped offline Android candidate was installed and exercised only on Lava
+`ST5GDW23LB004392` from the disposable verification copy. This is bounded technical
+evidence, not a performance sign-off:
 
-- APK: **166,221,332 bytes**, SHA-256
-  `9A93BF85AC5CD557C5DC1E1A166B99F18137F2D45F5EDDE5F6C4790F5F13F5F7`.
-- Device process sample: **462,618 KB PSS**, **593,576 KB RSS**, **99,988 KB Graphics**,
-  **75 KB swap**; one `top` sample reported approximately **96.9% CPU**.
-- The Android `gfxinfo` command exposed the Unity `ViewRootImpl` but no frame/jank
-  histogram for the native SurfaceView. Device buffer-queue logs were visibly around
-  **30 FPS** during the inspected match.
-- Thermal thresholds were readable, but no temperature/battery time series was captured.
+- APK: **40,418,923 bytes**, SHA-256
+  `629C8BA2E7F3C2B4A4911D32A72E0957EE7564C0783A415E4C6617C21F105FC9`.
+- Device process sample: **279,283 KB PSS**, **414,748 KB RSS**, **95,544 KB Graphics**,
+  **64 KB swap**; one `top` sample reported approximately **81.8% CPU**.
+- Explicit Android frame pacing raised the presentation target to 60 FPS. Buffer-queue
+  logs contained consecutive one-second windows around **59.47–60.62 FPS**, one transient
+  **45.31 FPS** window and a 272 ms maximum frame. This is near-60 evidence with a
+  hitch, not a stable target pass.
+- Thermal status was 0 in the sample; CPU/GPU were about 42.4 C, skin about 39.2 C and
+  battery about 35 C. This is not a thermal or battery soak.
 - Raw files and screenshots: `C:\Projects\BattleRaja-v1-verify-20260823b\Builds\V1\Lava\`.
 
-Interpretation: the offline loop is runnable on the approved phone, but the sample does
-not establish a stable 60 FPS target, an acceptable memory budget, thermal safety,
-battery behavior or repeated-match cleanup. Those remain owner-reviewed release gates.
+Interpretation: the offline loop is runnable on the approved phone and the prior default
+30-FPS presentation cap is no longer representative of the release-shaped APK. The
+sample still does not establish an acceptable memory budget, long-run frame pacing,
+thermal/battery behavior, or repeated-match cleanup. Those remain owner-reviewed release
+gates.
 
 ## Target classes
 

@@ -3,17 +3,17 @@
 Updated: 2026-08-23
 Classification: **prototype**
 
-Latest continuation: Milestone 11 authority/replay closure — local and remote `main`
-runtime-bearing source `73237c8`. Exact-source evidence now includes validation 0/0,
-EditMode **125/125**, PlayMode **57/57**, a **1,000-seed x2 / zero-divergence** replay
-soak, an exact APK installed and resumed on Lava, and Chrome+Edge six-route Web smoke.
-The project remains a prototype/closed-alpha foundation: final art/audio, performance
-budget approval, human playtest approval, real networking, backend services and release
-gates remain open.
+Latest continuation: offline Android V1 release-shaped candidate — branch
+`codex/v1-playstore-release` runtime source `b22cfe34`. Exact-source evidence now
+includes validation 0/0, EditMode **125/125**, PlayMode **61/61**, a non-development
+debug-signed APK installed and exercised on Lava, near-60-FPS frame windows, and a
+static 16 KB AAB alignment check. The project remains a prototype: final signing,
+package identity, long-run performance, human playtest, store/legal and Play Console
+gates remain open; Photon, PlayFab and Web release are out of scope.
 
 ## Android V1.0 release-shaped candidate — 2026-08-23
 
-Exact candidate source: `1896c138484149e774bd23bee5ecd4b1064852da` on
+Exact candidate source: `b22cfe34ffa1401d89acd5ebf93aef83b4cea9a6` on
 `codex/v1-playstore-release`.
 
 The current working-tree V1 slice adds the product-facing offline Android route: branded
@@ -27,11 +27,11 @@ APK/AAB hashes, screenshots and measurements are in
 `Docs/QA/V1_ANDROID_EVIDENCE_2026-08-23.md`.
 
 This does **not** change the classification. The candidate remains **prototype** because
-the package ID and signing identity are temporary, the legacy icon warning and 16 KB
-page-size check are open, one Lava sample is approximately 462 MiB PSS / 97% CPU with
-visible ~30 FPS cadence, and performance, accessibility, visual, cultural, store/legal
-and Play Console gates require human review. Photon Fusion, PlayFab and online release
-work remain intentionally out of scope.
+the package ID and signing identity are temporary, the legacy icon warning and runtime
+16 KB environment are open, the latest Lava sample contains one 45.31-FPS hitch and only
+bounded CPU/thermal observations, and performance, accessibility, visual, cultural,
+store/legal and Play Console gates require human review. Photon Fusion, PlayFab and
+online release work remain intentionally out of scope.
 
 This file records evidence-backed status only. Allowed status values are: `Not started`, `In progress`, `Passed with evidence`, `Blocked`, and `Human review required`.
 

@@ -1,8 +1,9 @@
 # Latest HEAD baseline
 
 Date: 2026-08-23
-Branch: `main` (local and remote aligned)
-Latest validated repository HEAD: `73237c8` (`docs: record complete replay and deep soak evidence`)
+Branch: `codex/v1-playstore-release` (6 commits ahead of local and remote `main`)
+Local/remote `main`: `ca6ec3e17e695042664cf3bdbf9889b259b33144`
+Latest validated repository HEAD: `b22cfe34ffa1401d89acd5ebf93aef83b4cea9a6`
 Balance-fix runtime source: `17a8c75` (`fix(balance): land documented weapon retune in Core definitions`)
 Pre-fix baseline source: `35d723f` (`fix: bot perception no longer treats fighter hulls as line-of-sight blockers`; the tip of local `main` before this branch)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
@@ -13,19 +14,19 @@ The V1 release-shaped candidate is recorded on `codex/v1-playstore-release` afte
 intentional offline-product changes were committed. This section supersedes the older
 closure rows for Android V1 claims.
 
-V1 runtime artifact source commit: `1896c138484149e774bd23bee5ecd4b1064852da`.
-Final branch tip after evidence-only documentation/validator updates:
-`607fa9fe7666e884cb12ea8a774d40453bc98b69`.
+V1 runtime artifact source commit: `b22cfe34ffa1401d89acd5ebf93aef83b4cea9a6`.
+The evidence/doc update follows that focused runtime commit; generated Unity/build
+outputs remain outside the repository.
 
 | Check | Result | Evidence |
 | --- | --- | --- |
 | Repository validation | **0 errors / 0 warnings** | `Tools/Validation/validate.ps1 -RequireUnityProject -UnityExe ...6000.5.6f1...` |
 | Full EditMode | **125/125 passed** | `Builds/V1/TestResults/editmode-v1-final.xml` |
 | Full PlayMode | **61/61 passed** | `Builds/V1/TestResults/playmode-v1-final.xml` |
-| Android development APK | **166,221,332 bytes**, SHA-256 `9A93BF85AC5CD557C5DC1E1A166B99F18137F2D45F5EDDE5F6C4790F5F13F5F7` | disposable verification copy, Lava install |
-| Android release-shaped AAB | **36,250,956 bytes**, SHA-256 `78CFF3B021B41A2194E9F961D506CC376A92D8D24AC3D7ECFD4CE258976645EC` | base manifest, 8 ARM64 libraries, 0 other ABIs, 450 entries |
+| Android release-shaped APK | **40,418,923 bytes**, SHA-256 `629C8BA2E7F3C2B4A4911D32A72E0957EE7564C0783A415E4C6617C21F105FC9` | non-development debug-signed APK, installed on Lava |
+| Android release-shaped AAB | **36,249,028 bytes**, SHA-256 `C6D19FCB9FFDF1FC525371CDBD751732F2EE738E00F9F09C259D15DEAD756D1B` | base manifest, 8 ARM64 libraries, 0 other ABIs, 450 entries; static 16 KB alignment passed |
 | Lava runtime | Menu, fighter selection, match opening, movement, attack/ability interaction; no app fatal markers | `Docs/QA/V1_ANDROID_EVIDENCE_2026-08-23.md`, raw evidence outside source |
-| Performance sample | **462,618 KB PSS / 593,576 KB RSS / 99,988 KB Graphics / 75 KB swap**, one ~96.9% CPU sample, visible ~30 FPS cadence | Lava `dumpsys`/logcat files outside source |
+| Performance sample | **279,283 KB PSS / 414,748 KB RSS / 95,544 KB Graphics / 64 KB swap**, one ~81.8% CPU sample, 59.47–60.62 FPS windows with one 45.31 FPS hitch | Lava `dumpsys`/frame-log files outside source |
 | Release boundary | Prototype; package ID/signing/adaptive icon/16 KB/human/store/legal/performance gates open | V1 evidence and release checklist |
 
 ## M11 closure slice - 2026-08-23

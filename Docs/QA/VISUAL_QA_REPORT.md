@@ -1,14 +1,14 @@
 # BattleRaja visual and interaction QA report
 
-Date: 2026-08-03
-Runtime-bearing candidate: `583106e` (offline attack-command authority over the Unity 6 warning-clean baseline)
-Current validated runtime source HEAD: `583106e`
+Date: 2026-08-23
+Runtime-bearing candidate: `b22cfe34ffa1401d89acd5ebf93aef83b4cea9a6` (offline Android release-shaped candidate)
+Current validated runtime source HEAD: `b22cfe34ffa1401d89acd5ebf93aef83b4cea9a6`
 Unity: `6000.5.6f1`
 Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://127.0.0.1:8139/index.html`
 
 ## Offline Android V1 candidate visual pass — 2026-08-23
 
-Exact candidate source: `1896c138484149e774bd23bee5ecd4b1064852da`.
+Exact candidate source: `b22cfe34ffa1401d89acd5ebf93aef83b4cea9a6`.
 
 The current Android-first candidate was installed and inspected only on Lava
 `ST5GDW23LB004392` from the disposable verification copy. External captures are under
@@ -22,12 +22,17 @@ The current Android-first candidate was installed and inspected only on Lava
   circular twin-stick/action controls with no square underlays.
 - `combat-final.png` shows a movement swipe plus attack/ability interaction and active
   combat feedback.
+- `release-60fps-match2.png` shows an active Pehel match from the non-development
+  release-shaped APK, including eight actors, HUD, controls and Aandhi state.
 
 This is a technical visual inspection, not human approval. The candidate still uses
 replaceable procedural/placeholder presentation, a temporary package identity and a
-development APK; final touch ergonomics, accessibility, pacing, audio, cultural and
+debug-signed APK; final touch ergonomics, accessibility, pacing, audio, cultural and
 store review remain open. Gadget pickup/use and complete tutorial/results/rematch
 observation still require a dedicated human run on the exact candidate.
+
+The latest Lava frame log records consecutive 59.47–60.62 FPS windows with one transient
+45.31 FPS hitch. This is bounded technical evidence, not a human performance approval.
 
 ## Current HEAD smoke — 2026-08-03
 
