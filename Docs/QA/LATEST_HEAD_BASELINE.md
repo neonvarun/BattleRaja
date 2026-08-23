@@ -4,7 +4,8 @@ Date: 2026-08-24
 Branch: `codex/v1-playstore-release` (ahead of local and remote `main`; exact count is recorded by Git)
 Local/remote `main`: `ca6ec3e17e695042664cf3bdbf9889b259b33144`
 Latest validated runtime source: `d825832bced4c5e07c7967d891696842eb55609a`
-Current documentation HEAD: `786d37576d593b92df1e75fe781adc57ec8ea322`
+Documentation updates are in the focused commits following that runtime source;
+the checked-out Git HEAD is the authoritative current documentation state.
 Balance-fix runtime source: `17a8c75` (`fix(balance): land documented weapon retune in Core definitions`)
 Pre-fix baseline source: `35d723f` (`fix: bot perception no longer treats fighter hulls as line-of-sight blockers`; the tip of local `main` before this branch)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
