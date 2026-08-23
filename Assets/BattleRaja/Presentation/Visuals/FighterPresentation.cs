@@ -37,8 +37,8 @@ namespace BattleRaja.Presentation.Visuals
         private MaterialPropertyBlock _bodyProperties;
         private Material _ringMaterial;
         private Material _barMaterial;
-        private readonly List<GameObject> _ownedObjects = new List<GameObject>(16);
-        private readonly List<Material> _ownedMaterials = new List<Material>(16);
+        private readonly List<GameObject> _ownedObjects = new List<GameObject>(32);
+        private readonly List<Material> _ownedMaterials = new List<Material>(20);
         private Transform _ring;
         private Transform _healthBar;
         private Transform _healthFill;
@@ -279,12 +279,19 @@ namespace BattleRaja.Presentation.Visuals
             var maya = GetComponent<MayaFighterController>();
             if (bijli != null && bijli.enabled)
             {
-                var cyan = CreateMaterial(new Color(0.12f, 0.82f, 0.95f, 1f));
+                var cyan = CreateMaterial(new Color(0.08f, 0.82f, 0.98f, 1f));
                 var gold = CreateMaterial(new Color(1f, 0.78f, 0.12f, 1f));
-                CreateVisualPrimitive("BijliCrest", PrimitiveType.Cube, new Vector3(0f, 0.55f, 0f), new Vector3(0.16f, 0.34f, 0.12f), Quaternion.Euler(0f, 0f, -18f), cyan);
-                CreateVisualPrimitive("BijliCrestGold", PrimitiveType.Cube, new Vector3(0.08f, 0.66f, -0.02f), new Vector3(0.12f, 0.22f, 0.14f), Quaternion.Euler(0f, 0f, 26f), gold);
-                CreateVisualPrimitive("BijliSparkL", PrimitiveType.Cube, new Vector3(-0.28f, 0.31f, 0f), new Vector3(0.08f, 0.25f, 0.08f), Quaternion.Euler(0f, 0f, -24f), cyan);
-                CreateVisualPrimitive("BijliSparkR", PrimitiveType.Cube, new Vector3(0.28f, 0.31f, 0f), new Vector3(0.08f, 0.25f, 0.08f), Quaternion.Euler(0f, 0f, 24f), gold);
+                var ink = CreateMaterial(new Color(0.03f, 0.12f, 0.18f, 1f));
+                // A compact runner silhouette: visor, shoulder fins and a split bolt crest
+                // remain legible from the overhead Lava camera without affecting collision.
+                CreateVisualPrimitive("BijliVisor", PrimitiveType.Cube, new Vector3(0f, 0.37f, -0.28f), new Vector3(0.38f, 0.12f, 0.10f), Quaternion.identity, ink);
+                CreateVisualPrimitive("BijliShoulderL", PrimitiveType.Capsule, new Vector3(-0.34f, 0.16f, 0f), new Vector3(0.18f, 0.30f, 0.18f), Quaternion.Euler(0f, 0f, 28f), cyan);
+                CreateVisualPrimitive("BijliShoulderR", PrimitiveType.Capsule, new Vector3(0.34f, 0.16f, 0f), new Vector3(0.18f, 0.30f, 0.18f), Quaternion.Euler(0f, 0f, -28f), gold);
+                CreateVisualPrimitive("BijliCrest", PrimitiveType.Cube, new Vector3(-0.08f, 0.58f, 0f), new Vector3(0.18f, 0.42f, 0.14f), Quaternion.Euler(0f, 0f, -22f), cyan);
+                CreateVisualPrimitive("BijliCrestGold", PrimitiveType.Cube, new Vector3(0.12f, 0.68f, -0.02f), new Vector3(0.14f, 0.28f, 0.16f), Quaternion.Euler(0f, 0f, 26f), gold);
+                CreateVisualPrimitive("BijliSparkL", PrimitiveType.Cube, new Vector3(-0.38f, 0.32f, 0f), new Vector3(0.08f, 0.28f, 0.08f), Quaternion.Euler(0f, 0f, -24f), cyan);
+                CreateVisualPrimitive("BijliSparkR", PrimitiveType.Cube, new Vector3(0.38f, 0.32f, 0f), new Vector3(0.08f, 0.28f, 0.08f), Quaternion.Euler(0f, 0f, 24f), gold);
+                CreateVisualPrimitive("BijliTrailTab", PrimitiveType.Cube, new Vector3(0f, 0.02f, 0.38f), new Vector3(0.24f, 0.10f, 0.32f), Quaternion.Euler(0f, 0f, 8f), cyan);
                 return;
             }
 
@@ -292,11 +299,18 @@ namespace BattleRaja.Presentation.Visuals
             {
                 var clay = CreateMaterial(new Color(0.88f, 0.34f, 0.16f, 1f));
                 var cream = CreateMaterial(new Color(1f, 0.72f, 0.34f, 1f));
-                CreateVisualPrimitive("PehelShoulderL", PrimitiveType.Sphere, new Vector3(-0.34f, 0.27f, 0f), new Vector3(0.30f, 0.20f, 0.34f), Quaternion.identity, clay);
-                CreateVisualPrimitive("PehelShoulderR", PrimitiveType.Sphere, new Vector3(0.34f, 0.27f, 0f), new Vector3(0.30f, 0.20f, 0.34f), Quaternion.identity, clay);
-                CreateVisualPrimitive("PehelBrow", PrimitiveType.Cube, new Vector3(0f, 0.58f, -0.02f), new Vector3(0.42f, 0.10f, 0.16f), Quaternion.identity, cream);
-                CreateVisualPrimitive("PehelGuardL", PrimitiveType.Sphere, new Vector3(-0.46f, -0.02f, -0.02f), new Vector3(0.18f, 0.18f, 0.18f), Quaternion.identity, cream);
-                CreateVisualPrimitive("PehelGuardR", PrimitiveType.Sphere, new Vector3(0.46f, -0.02f, -0.02f), new Vector3(0.18f, 0.18f, 0.18f), Quaternion.identity, cream);
+                var ink = CreateMaterial(new Color(0.16f, 0.08f, 0.08f, 1f));
+                // A broad grappler silhouette: shoulder guards, belt, brow and gauntlets
+                // make Pehel read as a tank even when the health bar is hidden.
+                CreateVisualPrimitive("PehelChest", PrimitiveType.Cube, new Vector3(0f, 0.10f, -0.02f), new Vector3(0.74f, 0.34f, 0.46f), Quaternion.identity, clay);
+                CreateVisualPrimitive("PehelBelt", PrimitiveType.Cube, new Vector3(0f, -0.15f, -0.04f), new Vector3(0.84f, 0.13f, 0.50f), Quaternion.identity, cream);
+                CreateVisualPrimitive("PehelShoulderL", PrimitiveType.Sphere, new Vector3(-0.42f, 0.27f, 0f), new Vector3(0.38f, 0.25f, 0.40f), Quaternion.identity, clay);
+                CreateVisualPrimitive("PehelShoulderR", PrimitiveType.Sphere, new Vector3(0.42f, 0.27f, 0f), new Vector3(0.38f, 0.25f, 0.40f), Quaternion.identity, clay);
+                CreateVisualPrimitive("PehelBrow", PrimitiveType.Cube, new Vector3(0f, 0.62f, -0.16f), new Vector3(0.54f, 0.13f, 0.18f), Quaternion.identity, cream);
+                CreateVisualPrimitive("PehelVisor", PrimitiveType.Cube, new Vector3(0f, 0.42f, -0.28f), new Vector3(0.38f, 0.10f, 0.10f), Quaternion.identity, ink);
+                CreateVisualPrimitive("PehelGuardL", PrimitiveType.Sphere, new Vector3(-0.52f, -0.02f, -0.02f), new Vector3(0.24f, 0.24f, 0.24f), Quaternion.identity, cream);
+                CreateVisualPrimitive("PehelGuardR", PrimitiveType.Sphere, new Vector3(0.52f, -0.02f, -0.02f), new Vector3(0.24f, 0.24f, 0.24f), Quaternion.identity, cream);
+                CreateVisualPrimitive("PehelBackPennant", PrimitiveType.Cube, new Vector3(0f, 0.44f, 0.34f), new Vector3(0.10f, 0.42f, 0.22f), Quaternion.Euler(0f, 0f, -12f), cream);
                 return;
             }
 
@@ -304,10 +318,18 @@ namespace BattleRaja.Presentation.Visuals
             {
                 var violet = CreateMaterial(new Color(0.70f, 0.26f, 0.86f, 1f));
                 var mint = CreateMaterial(new Color(0.18f, 0.88f, 0.70f, 1f));
-                CreateVisualPrimitive("MayaHood", PrimitiveType.Sphere, new Vector3(0f, 0.40f, 0f), new Vector3(0.56f, 0.28f, 0.42f), Quaternion.identity, violet);
-                CreateVisualPrimitive("MayaScarf", PrimitiveType.Cube, new Vector3(0f, 0.10f, -0.16f), new Vector3(0.50f, 0.10f, 0.12f), Quaternion.Euler(0f, 12f, 0f), mint);
-                CreateVisualPrimitive("MayaCharmL", PrimitiveType.Sphere, new Vector3(-0.34f, 0.05f, -0.10f), new Vector3(0.12f, 0.18f, 0.12f), Quaternion.identity, mint);
-                CreateVisualPrimitive("MayaCharmR", PrimitiveType.Sphere, new Vector3(0.34f, 0.05f, -0.10f), new Vector3(0.12f, 0.18f, 0.12f), Quaternion.identity, violet);
+                var ink = CreateMaterial(new Color(0.08f, 0.05f, 0.14f, 1f));
+                // A hooded trickster silhouette uses a wide cloak, mask and asymmetric
+                // charms. Its mint accents remain visible even when its colour ring is
+                // disabled for high-contrast mode.
+                CreateVisualPrimitive("MayaCloak", PrimitiveType.Capsule, new Vector3(0f, 0.05f, 0.04f), new Vector3(0.70f, 0.54f, 0.54f), Quaternion.identity, violet);
+                CreateVisualPrimitive("MayaHood", PrimitiveType.Sphere, new Vector3(0f, 0.44f, 0f), new Vector3(0.68f, 0.38f, 0.54f), Quaternion.identity, violet);
+                CreateVisualPrimitive("MayaMask", PrimitiveType.Cube, new Vector3(0f, 0.36f, -0.30f), new Vector3(0.42f, 0.16f, 0.10f), Quaternion.Euler(0f, 0f, -8f), ink);
+                CreateVisualPrimitive("MayaScarf", PrimitiveType.Cube, new Vector3(0f, 0.08f, -0.22f), new Vector3(0.62f, 0.12f, 0.14f), Quaternion.Euler(0f, 12f, 0f), mint);
+                CreateVisualPrimitive("MayaCharmL", PrimitiveType.Sphere, new Vector3(-0.42f, 0.02f, -0.14f), new Vector3(0.16f, 0.24f, 0.16f), Quaternion.identity, mint);
+                CreateVisualPrimitive("MayaCharmR", PrimitiveType.Sphere, new Vector3(0.42f, 0.12f, -0.10f), new Vector3(0.14f, 0.22f, 0.14f), Quaternion.identity, violet);
+                CreateVisualPrimitive("MayaTailL", PrimitiveType.Cube, new Vector3(-0.32f, -0.08f, 0.28f), new Vector3(0.18f, 0.12f, 0.36f), Quaternion.Euler(0f, -18f, 0f), mint);
+                CreateVisualPrimitive("MayaTailR", PrimitiveType.Cube, new Vector3(0.32f, -0.08f, 0.28f), new Vector3(0.18f, 0.12f, 0.36f), Quaternion.Euler(0f, 18f, 0f), violet);
             }
         }
 

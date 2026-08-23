@@ -70,6 +70,9 @@ namespace BattleRaja.Presentation.Visuals
             var dark = CreateMaterial("V1 Ink", new Color(0.07f, 0.10f, 0.14f, 1f));
             var sand = CreateMaterial("V1 Sand", new Color(0.78f, 0.53f, 0.30f, 1f));
             var rose = CreateMaterial("V1 Rose", new Color(0.92f, 0.22f, 0.38f, 1f));
+            var jade = CreateMaterial("V1 Jade", new Color(0.10f, 0.62f, 0.48f, 1f));
+            var brick = CreateMaterial("V1 Brick", new Color(0.58f, 0.18f, 0.12f, 1f));
+            var sky = CreateMaterial("V1 Sky", new Color(0.18f, 0.55f, 0.76f, 1f));
 
             // A small central landmark gives the arena a readable centre without blocking
             // the existing navigation lanes. It is intentionally low and collider-free.
@@ -79,6 +82,13 @@ namespace BattleRaja.Presentation.Visuals
             CreateCylinder("BastionCrown", new Vector3(0f, 1.05f, 0f), new Vector3(0.55f, 1.0f, 0.55f), saffron);
             CreateBlock("BastionCrownTop", new Vector3(0f, 2.10f, 0f), new Vector3(2.2f, 0.18f, 0.45f), cream, Quaternion.Euler(0f, 0f, 0f));
             CreateBlock("BastionCrownTopCross", new Vector3(0f, 2.10f, 0f), new Vector3(0.45f, 0.18f, 2.2f), cream, Quaternion.Euler(0f, 0f, 0f));
+
+            // Layered floor tiles and a gate-like landmark give the arena a place identity
+            // from the mobile camera while all geometry remains collider-free decoration.
+            CreateFloorTileBand("TileBandNorth", new Vector3(0f, 0.018f, 4.4f), new Vector3(13.5f, 0.018f, 0.68f), teal, cream);
+            CreateFloorTileBand("TileBandSouth", new Vector3(0f, 0.019f, -4.4f), new Vector3(13.5f, 0.018f, 0.68f), mint, cream);
+            CreateGate("BastionGateNorth", new Vector3(0f, 0f, 9.0f), teal, saffron, cream);
+            CreateGate("BastionGateSouth", new Vector3(0f, 0f, -9.0f), violet, mint, cream);
 
             CreateGroundStripe("RouteStripeNorth", new Vector3(0f, 0.012f, 7.4f), new Vector3(15.5f, 0.025f, 0.22f), saffron);
             CreateGroundStripe("RouteStripeSouth", new Vector3(0f, 0.012f, -7.4f), new Vector3(15.5f, 0.025f, 0.22f), mint);
@@ -108,6 +118,69 @@ namespace BattleRaja.Presentation.Visuals
                 CreateLantern("LanternSouth", new Vector3(4.8f, 2.6f, -8.6f), cream, dark);
                 CreateLantern("LanternWest", new Vector3(-8.7f, 2.2f, -4.8f), mint, dark);
                 CreateLantern("LanternEast", new Vector3(8.7f, 2.2f, 4.8f), saffron, dark);
+                CreateCrateStack("CratesNorthWest", new Vector3(-7.0f, 0.0f, 5.8f), brick, saffron);
+                CreateCrateStack("CratesSouthEast", new Vector3(7.0f, 0.0f, -5.8f), teal, cream);
+                CreateRug("RugWest", new Vector3(-8.0f, 0.03f, 0f), new Vector3(2.4f, 0.025f, 4.8f), violet, mint);
+                CreateRug("RugEast", new Vector3(8.0f, 0.03f, 0f), new Vector3(2.4f, 0.025f, 4.8f), clay, saffron);
+                CreatePalmCluster("PalmNorthEast", new Vector3(10.4f, 0f, 5.0f), jade, mint);
+                CreatePalmCluster("PalmSouthWest", new Vector3(-10.4f, 0f, -5.0f), jade, sky);
+            }
+        }
+
+        private void CreateFloorTileBand(string name, Vector3 position, Vector3 scale, Material primary, Material secondary)
+        {
+            CreateBlock(name, position, scale, primary, Quaternion.identity);
+            for (var i = -4; i <= 4; i++)
+            {
+                var tile = new Vector3(position.x + i * 1.45f, position.y + 0.018f, position.z);
+                CreateBlock(name + "Tile" + i, tile, new Vector3(0.72f, 0.022f, scale.z * 1.2f), secondary, Quaternion.Euler(0f, (i & 1) == 0 ? 0f : 45f, 0f));
+            }
+        }
+
+        private void CreateGate(string name, Vector3 position, Material pillar, Material trim, Material cap)
+        {
+            var root = new GameObject(name).transform;
+            root.SetParent(_root, false);
+            root.localPosition = position;
+            CreateBlock("Left", new Vector3(-2.7f, 1.15f, 0f), new Vector3(0.48f, 2.3f, 0.48f), pillar, Quaternion.identity, root);
+            CreateBlock("Right", new Vector3(2.7f, 1.15f, 0f), new Vector3(0.48f, 2.3f, 0.48f), pillar, Quaternion.identity, root);
+            CreateBlock("Lintel", new Vector3(0f, 2.25f, 0f), new Vector3(5.9f, 0.42f, 0.52f), trim, Quaternion.identity, root);
+            CreateBlock("Cap", new Vector3(0f, 2.58f, 0f), new Vector3(6.4f, 0.12f, 0.70f), cap, Quaternion.Euler(0f, 0f, 2f), root);
+            CreateBlock("Pennant", new Vector3(0f, 3.02f, 0f), new Vector3(0.12f, 0.70f, 0.08f), trim, Quaternion.identity, root);
+        }
+
+        private void CreateCrateStack(string name, Vector3 position, Material crate, Material trim)
+        {
+            var root = new GameObject(name).transform;
+            root.SetParent(_root, false);
+            root.localPosition = position;
+            CreateBlock("CrateA", new Vector3(-0.48f, 0.42f, 0f), new Vector3(0.82f, 0.82f, 0.82f), crate, Quaternion.Euler(0f, 12f, 0f), root);
+            CreateBlock("CrateB", new Vector3(0.38f, 0.40f, 0.08f), new Vector3(0.76f, 0.76f, 0.76f), trim, Quaternion.Euler(0f, -18f, 0f), root);
+            CreateBlock("CrateTop", new Vector3(-0.04f, 1.16f, 0.02f), new Vector3(0.70f, 0.54f, 0.70f), crate, Quaternion.Euler(0f, 22f, 0f), root);
+            CreateBlock("Strap", new Vector3(-0.04f, 1.16f, -0.36f), new Vector3(0.48f, 0.10f, 0.06f), trim, Quaternion.identity, root);
+        }
+
+        private void CreateRug(string name, Vector3 position, Vector3 scale, Material baseMaterial, Material stripeMaterial)
+        {
+            CreateBlock(name, position, scale, baseMaterial, Quaternion.identity);
+            var stripeScale = new Vector3(scale.x * 0.82f, scale.y * 1.35f, 0.12f);
+            for (var i = -2; i <= 2; i++)
+            {
+                CreateBlock(name + "Stripe" + i, position + new Vector3(0f, 0.02f, i * 0.72f), stripeScale, stripeMaterial, Quaternion.identity);
+            }
+        }
+
+        private void CreatePalmCluster(string name, Vector3 position, Material trunk, Material leaves)
+        {
+            var root = new GameObject(name).transform;
+            root.SetParent(_root, false);
+            root.localPosition = position;
+            CreateCylinder("Trunk", new Vector3(0f, 1.0f, 0f), new Vector3(0.18f, 1.0f, 0.18f), trunk, root);
+            for (var i = 0; i < 5; i++)
+            {
+                var angle = i * 72f * Mathf.Deg2Rad;
+                var leafPosition = new Vector3(Mathf.Cos(angle) * 0.58f, 2.0f, Mathf.Sin(angle) * 0.58f);
+                CreateBlock("Leaf" + i, leafPosition, new Vector3(0.16f, 0.06f, 0.72f), leaves, Quaternion.Euler(0f, -i * 72f, -18f), root);
             }
         }
 

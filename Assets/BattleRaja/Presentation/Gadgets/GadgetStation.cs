@@ -39,6 +39,10 @@ namespace BattleRaja.Presentation.Gadgets
             _health = GetComponent<CombatHealth>();
             if (_health == null) _health = gameObject.AddComponent<CombatHealth>();
             _health.SetMaxHealthForGadget(maxHealth);
+            if (GetComponent<GadgetStationVisuals>() == null)
+            {
+                gameObject.AddComponent<GadgetStationVisuals>();
+            }
         }
 
         private void Update()

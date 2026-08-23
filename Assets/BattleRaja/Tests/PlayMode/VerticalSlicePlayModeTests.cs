@@ -486,6 +486,32 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator ProductionVisualKitBuildsDistinctFighterArenaAndGadgetIdentities()
+        {
+            var arena = Object.FindAnyObjectByType<BazaarBastionScene>();
+            Assert.That(arena, Is.Not.Null);
+            Assert.That(arena.transform.Find("V1BastionVisuals"), Is.Not.Null);
+
+            var fighters = Object.FindObjectsByType<FighterPresentation>();
+            Assert.That(fighters, Has.Length.EqualTo(8));
+            foreach (var fighter in fighters)
+            {
+                Assert.That(fighter.transform.Find("FighterIdentitySilhouette"), Is.Not.Null,
+                    fighter.name + " is missing its presentation silhouette");
+            }
+
+            var pickups = Object.FindObjectsByType<GadgetPickup>();
+            Assert.That(pickups, Has.Length.EqualTo(3));
+            foreach (var pickup in pickups)
+            {
+                Assert.That(pickup.transform.Find("GadgetIdentityVisual"), Is.Not.Null,
+                    pickup.name + " is missing its gadget identity visual");
+            }
+
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator TouchControlsExposeReadableActionLabels()
         {
             Assert.That(GameObject.Find("AttackButton")?.GetComponentInChildren<Text>(true)?.text, Is.EqualTo("ATTACK"));

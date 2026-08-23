@@ -46,7 +46,7 @@ namespace BattleRaja.Editor
         private const string PehelWeaponAssetPath = "Assets/BattleRaja/Content/Weapons/M7-PehelSweep.asset";
         private const string MayaWeaponAssetPath = "Assets/BattleRaja/Content/Weapons/M7-MayaShard.asset";
         private const string DevelopmentApplicationId = "com.example.battleraja.m11";
-        private const string V1IconAssetPath = "Assets/BattleRaja/Art/V1/BattleRaja-AppIcon-Candidate.png";
+        private const string V1IconAssetPath = "Assets/BattleRaja/Art/V1/BattleRaja-AppIcon-PlayStore.png";
         private const string GadgetAssetFolder = "Assets/BattleRaja/Content/Gadgets";
 
         public static void CreateBootstrapScene()

@@ -231,6 +231,7 @@ namespace BattleRaja.Presentation.Combat
             _decoyObject.transform.position = new Vector3(snapshot.Position.X, 1f, snapshot.Position.Y);
             _decoyObject.transform.localScale = Vector3.one * 0.9f;
             if (decoyMaterial != null) _decoyObject.GetComponent<Renderer>().sharedMaterial = decoyMaterial;
+            _decoyObject.AddComponent<MayaDecoyVisuals>();
             _decoyHealth = _decoyObject.AddComponent<CombatHealth>();
             _decoyHealth.ConfigureMaxHealth(Mathf.Max(1, snapshot.MaxHealth));
             var target = _decoyObject.AddComponent<CombatTarget>();

@@ -11,6 +11,14 @@ namespace BattleRaja.Presentation.Gadgets
         public ContentId GadgetId => ContentId.Gadget(gadgetId);
         public bool IsAvailable => available;
 
+        private void Awake()
+        {
+            if (GetComponent<GadgetPickupVisuals>() == null)
+            {
+                gameObject.AddComponent<GadgetPickupVisuals>();
+            }
+        }
+
         public bool TryCollect(GadgetUser user)
         {
             if (!available || user == null) return false;

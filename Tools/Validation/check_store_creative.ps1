@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
-    [string]$IconPath = 'Assets/BattleRaja/Art/V1/BattleRaja-AppIcon-Candidate.png',
-    [string]$FeatureGraphicPath = 'Assets/BattleRaja/Art/V1/BattleRaja-FeatureArt-Candidate.png',
+    [string]$IconPath = 'Assets/BattleRaja/Art/V1/BattleRaja-AppIcon-PlayStore.png',
+    [string]$FeatureGraphicPath = 'Assets/BattleRaja/Art/V1/BattleRaja-FeatureGraphic-PlayStore.png',
     [string]$ScreenshotDirectory,
     [switch]$RequireFinal
 )
