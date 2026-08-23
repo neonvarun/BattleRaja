@@ -25,14 +25,15 @@ canopy and enlarging the phone hero graphic. No networking or backend work was a
 | Full PlayMode | **66/66 passed** | disposable `C:\Projects\BattleRaja-v1-visual-verify\Builds\V1\TestResults\playmode-visual-polish.xml` |
 | Android APK | **40,431,923 bytes**, SHA-256 `E6CBEAD6F97C036C0C9D1663CA5972799AEF3B330D75A3D2AAA94D5E699C7DB3` | exact tutorial-fix disposable build, Lava install |
 | Android AAB | **36,262,021 bytes**, SHA-256 `124E14ABE6012B3B42D7B7741D0C647416E278E82ABFE358EF89A53BAAD64021` | base manifest, 8 ARM64 libraries, 0 other ABIs, `0x4000` ELF LOAD alignment |
-| Lava visual inspection | tutorial skip reaches visible completion card; preceding exact visual source covered menu, match, results and rematch | `C:\Projects\BattleRaja-v1-tutorial-verify\Builds\V1\Lava\tutorial-fix-complete.png` plus prior `visual-polish-*.png` |
+| Lava visual inspection | tutorial skip reaches visible completion card; exact correction also shows successful Tiffin use; preceding exact visual source covered menu, match, results and rematch | `C:\Projects\BattleRaja-v1-tutorial-verify\Builds\V1\Lava\tutorial-fix-complete.png`, `tutorial-fix-gadget-after.png` plus prior `visual-polish-*.png` |
 
 The APK/AAB remain debug-signed with temporary package ID `com.example.battleraja.m11`.
 The preceding exact visual run reached results and returned through REMATCH to a fresh
-match. The placement attempt returned `InvalidPlacement`; the previous source's successful
-Tiffin pickup/use capture remains the route evidence. Stable FPS, performance series,
-final art/audio, accessibility, signing, store, legal, cultural and human review gates
-remain open. Classification remains **prototype**.
+match; the current correction run also captured a successful Tiffin pickup/use. A separate
+placement probe after moving to an edge returned `InvalidPlacement`, which is retained as
+a truthful negative observation. Stable FPS, performance series, final art/audio,
+accessibility, signing, store, legal, cultural and human review gates remain open.
+Classification remains **prototype**.
 
 ## Current offline Android gadget-route slice — 2026-08-24
 

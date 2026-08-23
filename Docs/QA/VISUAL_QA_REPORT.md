@@ -12,9 +12,11 @@ The exact `c6badbf6cf5b1c7340fa907821aeb4cbf2194bc0` APK was installed only on L
 `ST5GDW23LB004392`. Full validation and test suites passed (0/0, 125/125, 66/66).
 The tutorial SKIP action now leaves a visible completion card instead of exposing the
 backdrop alone; the inspected `tutorial-fix-complete.png` shows the replay and menu
-actions. This correction is technical UI evidence, not final accessibility or human
-visual approval. The preceding `abe9ae4` captures remain the exact-source visual evidence
-for the revised canopy, match resolution and rematch.
+actions. The same exact correction APK captured a successful player-owned Tiffin pickup/use
+at spawn in `tutorial-fix-gadget-after.png` (held slot empty, cooldown and station visible).
+This correction is technical UI evidence, not final accessibility or human visual approval.
+The preceding `abe9ae4` captures remain the exact-source visual evidence for the revised
+canopy, match resolution and rematch.
 
 ## Current Android V1 visual-polish slice — 2026-08-24
 

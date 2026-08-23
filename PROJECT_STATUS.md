@@ -32,9 +32,10 @@
   The latest presentation slice replaces the intersecting Bazaar landmark bars with a
   fictional six-panel canopy and enlarges the phone hero graphic; the player-owned Tiffin
   pickup/use route and its authority regression remain in the same candidate. The exact Lava
-  run also reached results and returned through REMATCH to a fresh match; a later placement
-  probe honestly returned `InvalidPlacement`. The follow-up tutorial correction keeps the
-  completion card visible after SKIP and was rebuilt/verified on Lava. Exact artifact hashes,
+  run also reached results and returned through REMATCH to a fresh match, and the correction
+  APK captured a successful player-owned Tiffin use. A later edge placement probe honestly
+  returned `InvalidPlacement`. The follow-up tutorial correction keeps the completion card
+  visible after SKIP and was rebuilt/verified on Lava. Exact artifact hashes,
   Lava captures and raw measurements are recorded in
   `Docs/QA/V1_ANDROID_VISUAL_FEEDBACK_2026-08-24.md`.
   The project remains **prototype**; the temporary package ID, debug-signed/non-publishable

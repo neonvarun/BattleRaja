@@ -43,9 +43,9 @@ from disposable copy `C:\Projects\BattleRaja-v1-tutorial-verify`:
   `0x4000` alignment for every checked native ELF LOAD segment.
 - The exact APK was installed only on Lava. The tutorial SKIP action visibly reaches the
   completion card with replay/menu actions. The preceding exact visual candidate covered
-  menu, mode, fighter-selection, Bazaar match, movement, match resolution and REMATCH; a
-  later gadget placement probe honestly returned `InvalidPlacement`, so the earlier
-  successful Tiffin evidence remains authoritative.
+  menu, mode, fighter-selection, Bazaar match, movement, match resolution and REMATCH. The
+  correction APK also captured a successful player-owned Tiffin use at spawn; a later edge
+  placement probe honestly returned `InvalidPlacement`.
 
 The visual change is presentation-only: the Bazaar center uses a fictional six-panel
 canopy/gold-orb landmark and the menu hero is larger at the phone viewport. This remains

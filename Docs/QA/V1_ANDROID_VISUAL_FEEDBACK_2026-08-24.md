@@ -21,7 +21,10 @@ is **36,262,021 bytes**, SHA-256
 again found 8 ARM64 libraries, no other ABIs and `0x4000` native ELF LOAD alignment.
 The APK was installed only on Lava `ST5GDW23LB004392`; `tutorial-fix-complete.png`
 visually confirms the completion card after tapping SKIP. This is a focused UI fix and
-does not replace the preceding exact-source Bazaar visual/results/rematch evidence.
+does not replace the preceding exact-source Bazaar visual/results/rematch evidence. The
+same exact correction APK also auto-collected the player-owned Tiffin Station at spawn;
+`tutorial-fix-gadget-after.png` shows the held slot empty, a 13.8-second cooldown and the
+visible deployed station after a valid use.
 
 ## Android V1.0 visual-polish continuation — 2026-08-24
 
