@@ -730,9 +730,6 @@ namespace BattleRaja.Editor
             PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
             ApplyCandidateAndroidIcon();
             PlayerSettings.Android.useCustomKeystore = false;
-            // V1 is intentionally offline-first. Do not force Unity's INTERNET
-            // permission into the Play-facing release-shaped Android artifacts.
-            PlayerSettings.Android.forceInternetPermission = false;
         }
 
         public static void BuildWebBazaarBastionDevelopment()
