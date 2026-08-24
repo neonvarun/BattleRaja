@@ -1199,3 +1199,28 @@ Record every material choice here. Do not silently overwrite old decisions.
   `ChargeThrowRuntime`, `PlayerInputAdapter`, focused authority tests, and
   `VerticalSlicePlayModeTests.ProductionBotProjectileUpdatesHealthEliminationPerceptionAndSpectator`.
 - **Owner:** Human project owner
+
+### ADR-056 - Harden deterministic replay identity and malformed input rejection
+
+- **Date:** 2026-08-25
+- **Status:** Accepted for the offline V1 replay foundation.
+- **Context:** The replay audit found that assist contributions, simulation-local damage
+  identity counters, the next station identity, arena collision content and decoy-damage tick
+  keys were absent or incomplete in canonical hashing. Station/decoy traversal relied on
+  dictionary enumeration order for projectile ties. A non-finite movement command could also
+  enter the motor and throw during a shared authority tick.
+- **Options considered:** Trust dictionary insertion order and validate only at collision;
+  expose mutable simulation internals; or add sorted read-only snapshots/content hashing and
+  reject malformed commands before mutation.
+- **Decision:** Add sorted damage-contribution snapshots to the pure simulation. Hash those
+  contributions, last/emitted damage identities and next station ID. Content-address arena bounds,
+  radius, version and ordered obstacles. Hash decoy damage by decoy ID. Sort station and decoy
+  traversal used by projectile tie-breaking. Reject non-finite movement/aim before motor evaluation.
+- **Consequences:** Replay hashes detect more future-affecting state and arena changes, while
+  projectile ties no longer depend on dictionary iteration order. One malformed command cannot halt
+  later participants in the same tick. This does not yet add Bijli dash replay support or production
+  presentation capture.
+- **Evidence/sources:** `OfflineMatchAuthority.CalculateDeterministicTickHash`,
+  `OfflineMatchSimulation.GetDamageContributions`, `ArenaCollisionDefinition.CalculateStableHash`,
+  `DeterministicReplayRunner.MatchStateHashBuilder`, focused replay/authority regressions and deep soak.
+- **Owner:** Human project owner

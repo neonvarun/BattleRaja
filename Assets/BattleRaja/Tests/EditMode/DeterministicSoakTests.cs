@@ -35,7 +35,15 @@ namespace BattleRaja.Tests.EditMode
                 var seed = (uint)(match * 7919 + 13);
                 var replay = CreateSeededReplay(seed);
 
-                var original = executor.Execute(replay, false);
+                ReplayExecutionResult original;
+                try
+                {
+                    original = executor.Execute(replay, false);
+                }
+                catch (Exception exception)
+                {
+                    throw new InvalidOperationException($"replay seed {seed} threw", exception);
+                }
                 Assert.That(
                     original.Succeeded,
                     Is.True,

@@ -82,6 +82,46 @@ namespace BattleRaja.Core.Domain
 
         public ArenaObstacle GetObstacle(int index) => _obstacles[index];
 
+        public ulong CalculateStableHash()
+        {
+            unchecked
+            {
+                const ulong offsetBasis = 14695981039346656037UL;
+                const ulong prime = 1099511628211UL;
+                var hash = offsetBasis;
+                void CombineInt(int value)
+                {
+                    hash ^= (ulong)(byte)value;
+                    hash *= prime;
+                    hash ^= (ulong)(byte)(value >> 8);
+                    hash *= prime;
+                    hash ^= (ulong)(byte)(value >> 16);
+                    hash *= prime;
+                    hash ^= (ulong)(byte)(value >> 24);
+                    hash *= prime;
+                }
+
+                void CombineFloat(float value) => CombineInt(BitConverter.SingleToInt32Bits(value));
+                foreach (var character in CollisionVersion) CombineInt(character);
+                CombineFloat(Minimum.X);
+                CombineFloat(Minimum.Y);
+                CombineFloat(Maximum.X);
+                CombineFloat(Maximum.Y);
+                CombineFloat(ActorRadius);
+                CombineInt(_obstacles.Length);
+                for (var i = 0; i < _obstacles.Length; i++)
+                {
+                    CombineInt(_obstacles[i].StableId);
+                    CombineFloat(_obstacles[i].Minimum.X);
+                    CombineFloat(_obstacles[i].Minimum.Y);
+                    CombineFloat(_obstacles[i].Maximum.X);
+                    CombineFloat(_obstacles[i].Maximum.Y);
+                }
+
+                return hash;
+            }
+        }
+
         /// <summary>
         /// Authored static obstacle geometry matching Bazaar Bastion arena.
         /// </summary>
@@ -291,4 +331,3 @@ namespace BattleRaja.Core.Domain
         }
     }
 }
-

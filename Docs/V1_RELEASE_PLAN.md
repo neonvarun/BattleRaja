@@ -129,8 +129,12 @@ The read-only audit over exact commit `33035e8` confirmed two P0 blockers:
 - Canonical-to-visible health parity through projectile damage, elimination, perception
   and spectator transition: **fixed with production PlayMode regression**; terminal
   results were already covered by the two-participant authority test.
-- Replay completeness for all fighter abilities, production streams, mutable state,
-  event identities and deterministic parity.
+- Replay completeness:
+  - Assist contributions, damage identity counters, next station ID, arena collision
+    content, decoy-damage identity keys and sorted station/decoy tie traversal are now
+    hashed: **fixed with regressions**.
+  - Bijli dash replay support, production command capture, durable serialization and
+    complete future-state coverage: **still open**.
 - Unified action eligibility across movement, attacks, abilities, gadgets, healing,
   knockback and Aandhi: **still open**.
 
@@ -175,6 +179,29 @@ detached disposable worktree at `C:\Projects\BattleRaja-p0-8eaa9e5`.
 
 This is an offline launch/lifecycle smoke only. It does not replace physical combat QA,
 sustained performance review, accessibility review or release signing/store gates.
+
+### P1 authority/replay hardening in progress - 2026-08-25
+
+- Added finite movement/aim rejection before the motor/collision solver so one malformed
+  command cannot stop later actors in the same shared tick.
+- Added content-addressed arena hashing plus canonical hashing for assist contributions,
+  simulation damage identities, next station identity and decoy damage ticks.
+- Replaced dictionary-order dependence for station/decoy projectile tie traversal with
+  deterministic sorted buffers.
+- Recorded ADR-056. Focused replay/authority regressions pass; final deep-soak evidence
+  for this follow-up are complete.
+
+#### Post-P1 automated evidence
+
+- Static validation: **0 errors / 0 warnings**.
+- Full EditMode: **130 / 130 passed**
+  (`Builds\Local\V1GameplayTruth\TestResults\editmode-replay.xml`).
+- Full PlayMode: **75 / 75 passed**
+  (`Builds\Local\V1GameplayTruth\TestResults\playmode-replay.xml`).
+- Deep recorded replay soak after replay/authority hardening:
+  `BATTLERAJA_SOAK_MATCHES=1000`, **1,000 seeds x 2 executions = 2,000 matches**,
+  zero divergence, NUnit duration **399.2625235 s**
+  (`Builds\Local\V1GameplayTruth\TestResults\deep-soak-replay.xml`).
 
 ## Later checkpoints
 

@@ -496,12 +496,24 @@ namespace BattleRaja.Core.Application
 
         public void CombineBool(bool value) => CombineInt(value ? 1 : 0);
 
+        public void CombineULong(ulong value)
+        {
+            CombineInt(unchecked((int)value));
+            CombineInt(unchecked((int)(value >> 32)));
+        }
+
         public void CombineFloat(float value) => CombineInt((int)(value * 1000f));
 
         public void CombineContentId(ContentId value)
         {
             CombineInt((int)value.Kind);
             var text = value.Value ?? string.Empty;
+            CombineText(text);
+        }
+
+        public void CombineText(string text)
+        {
+            text ??= string.Empty;
             CombineInt(text.Length);
             for (var i = 0; i < text.Length; i++) CombineInt(text[i]);
         }

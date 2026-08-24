@@ -100,6 +100,41 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void MatchAuthorityRejectsNonFiniteMovementWithoutHaltingLaterCommands()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            var actorId = new CombatEntityId(1);
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(actorId, Float2.Zero, 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(8f, 0f), 100)
+            });
+            authority.ConfigureMovement(actorId, new MovementTuning(
+                maxSpeed: 4f,
+                acceleration: 100f,
+                deceleration: 100f,
+                rotationSpeed: 720f,
+                movementDeadZone: 0f,
+                aimDeadZone: 0f,
+                inputSensitivity: 1f));
+
+            var nan = authority.ResolveMovement(
+                new MovementCommand(1, 1, new Float2(float.NaN, 0f), Float2.Up),
+                1f / 30f);
+            var infinity = authority.ResolveMovement(
+                new MovementCommand(1, 2, new Float2(float.PositiveInfinity, 0f), Float2.Up),
+                1f / 30f);
+            var valid = authority.ResolveMovement(
+                new MovementCommand(1, 3, new Float2(1f, 0f), Float2.Up),
+                1f / 30f);
+
+            Assert.That(nan.Applied, Is.False);
+            Assert.That(infinity.Applied, Is.False);
+            Assert.That(valid.Applied, Is.True);
+            Assert.That(valid.Position.X, Is.GreaterThan(0f));
+        }
+
+        [Test]
         public void MatchAuthorityResolvesAbilityDisplacementExactlyOncePerTick()
         {
             var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);

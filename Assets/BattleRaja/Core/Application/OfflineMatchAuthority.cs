@@ -419,6 +419,8 @@ namespace BattleRaja.Core.Application
         private readonly Dictionary<int, GadgetStationRuntime> _stations = new Dictionary<int, GadgetStationRuntime>();
         private readonly MatchEventIdentityTracker _identityTracker = new MatchEventIdentityTracker();
         private readonly List<AuthoritativeProjectile> _activeProjectiles = new List<AuthoritativeProjectile>();
+        private readonly List<int> _sortedStationIds = new List<int>(8);
+        private readonly List<CombatEntityId> _sortedDecoyOwnerIds = new List<CombatEntityId>(8);
         private ArenaCollisionDefinition _collisionDefinition = ArenaCollisionDefinition.BazaarBastion;
         private DeterministicCollisionSolver _collisionSolver;
         private OfflineMatchSimulation _simulation;
@@ -588,6 +590,17 @@ namespace BattleRaja.Core.Application
                 firstGroup != secondGroup;
         }
 
+        private void RefreshSortedAuthorityTargets()
+        {
+            _sortedStationIds.Clear();
+            _sortedStationIds.AddRange(_stations.Keys);
+            _sortedStationIds.Sort((left, right) => left.CompareTo(right));
+
+            _sortedDecoyOwnerIds.Clear();
+            _sortedDecoyOwnerIds.AddRange(_mayaDecoys.Keys);
+            _sortedDecoyOwnerIds.Sort((left, right) => left.Value.CompareTo(right.Value));
+        }
+
         /// <summary>
         /// Registers the immutable weapon configuration for a participant at match
         /// setup. Runtime attack commands never supply or select their own weapon,
@@ -635,6 +648,8 @@ namespace BattleRaja.Core.Application
             if (!_movementMotors.TryGetValue(actorId, out var motor) ||
                 !_movementTunings.TryGetValue(actorId, out var tuning) ||
                 command.SimulationTick < 0 ||
+                !command.Movement.IsFinite ||
+                !command.Aim.IsFinite ||
                 fixedDeltaSeconds <= 0f ||
                 float.IsNaN(fixedDeltaSeconds) ||
                 float.IsInfinity(fixedDeltaSeconds) ||
@@ -1368,6 +1383,7 @@ namespace BattleRaja.Core.Application
         {
             var hash = MatchStateHashBuilder.Create();
             var result = tick.Result;
+            hash.CombineULong(_collisionDefinition.CalculateStableHash());
             hash.CombineInt(tick.SimulationTick);
             hash.CombineInt((int)result.Phase);
             hash.CombineFloat(result.ZoneCenter.X);
@@ -1384,6 +1400,18 @@ namespace BattleRaja.Core.Application
             hash.CombineInt(result.WinnerId.Value);
 
             var counters = _identityTracker.Snapshot();
+            var simulation = RequireSimulation();
+            hash.CombineInt(simulation.LastDamageEventId);
+            hash.CombineInt(simulation.EmittedDamageEventCount);
+            hash.CombineInt(_nextStationId);
+            var damageContributions = simulation.GetDamageContributions();
+            for (var i = 0; i < damageContributions.Length; i++)
+            {
+                hash.CombineInt(damageContributions[i].TargetId.Value);
+                hash.CombineInt(damageContributions[i].InstigatorId.Value);
+                hash.CombineInt(damageContributions[i].Amount);
+            }
+
             hash.CombineInt(counters.AttackExecutionId);
             hash.CombineInt(counters.ProjectileId);
             hash.CombineInt(counters.AbilityExecutionId);
@@ -1496,7 +1524,7 @@ namespace BattleRaja.Core.Application
                 hash.CombineInt(lastPehelThrow);
                 _lastDecoySpawnTicks.TryGetValue(s.Id, out var lastDecoySpawn);
                 hash.CombineInt(lastDecoySpawn);
-                _lastDecoyDamageTicks.TryGetValue(s.Id, out var lastDecoyDamage);
+                _lastDecoyDamageTicks.TryGetValue(GetDecoyId(s.Id), out var lastDecoyDamage);
                 hash.CombineInt(lastDecoyDamage);
             }
 
@@ -1525,9 +1553,10 @@ namespace BattleRaja.Core.Application
                 hash.CombineBool(pickup.IsAvailable);
             }
 
-            foreach (var pair in _stations)
+            RefreshSortedAuthorityTargets();
+            for (var stationIndex = 0; stationIndex < _sortedStationIds.Count; stationIndex++)
             {
-                var station = pair.Value;
+                var station = _stations[_sortedStationIds[stationIndex]];
                 hash.CombineInt(station.StationId);
                 hash.CombineFloat(station.Position.X);
                 hash.CombineFloat(station.Position.Y);
@@ -1672,6 +1701,7 @@ namespace BattleRaja.Core.Application
 
             var snapshots = new List<DomainProjectileSnapshot>(_activeProjectiles.Count);
             var participantSnapshots = simulation.GetSnapshots();
+            RefreshSortedAuthorityTargets();
 
             for (var i = _activeProjectiles.Count - 1; i >= 0; i--)
             {
@@ -1730,10 +1760,10 @@ namespace BattleRaja.Core.Application
                 }
 
                 // 3. Maya Decoys
-                foreach (var pair in _mayaDecoys)
+                for (var decoyIndex = 0; decoyIndex < _sortedDecoyOwnerIds.Count; decoyIndex++)
                 {
-                    var ownerId = pair.Key;
-                    var decoy = pair.Value;
+                    var ownerId = _sortedDecoyOwnerIds[decoyIndex];
+                    var decoy = _mayaDecoys[ownerId];
                     if (!decoy.IsActive || !decoy.IsTargetable || ownerId == proj.InstigatorId) continue;
                     if (!AreDifferentCombatGroups(proj.InstigatorId, ownerId)) continue;
 
@@ -1752,11 +1782,10 @@ namespace BattleRaja.Core.Application
                 }
 
                 // 4. Tiffin Stations
-                foreach (var pair in _stations)
+                for (var stationIndex = 0; stationIndex < _sortedStationIds.Count; stationIndex++)
                 {
-                    var stationId = pair.Key;
-                    var station = pair.Value;
-                    if (!station.IsActive) continue;
+                    var stationId = _sortedStationIds[stationIndex];
+                    if (!_stations.TryGetValue(stationId, out var station) || !station.IsActive) continue;
 
                     var stationRadius = 0.55f + proj.Radius;
                     if (IntersectRayCircle(proj.Position, proj.Direction, maxDistance, station.Position, stationRadius, out var tHit))

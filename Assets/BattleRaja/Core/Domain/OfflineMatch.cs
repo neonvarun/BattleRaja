@@ -167,7 +167,21 @@ namespace BattleRaja.Core.Domain
         public int OutsideDamagePerSecond { get; }
         public int OutsideCount { get; }
         public bool MatchEnded { get; }
-        public CombatEntityId WinnerId { get; }
+    public CombatEntityId WinnerId { get; }
+    }
+
+    public readonly struct DamageContributionSnapshot
+    {
+        public DamageContributionSnapshot(CombatEntityId targetId, CombatEntityId instigatorId, int amount)
+        {
+            TargetId = targetId;
+            InstigatorId = instigatorId;
+            Amount = amount;
+        }
+
+        public CombatEntityId TargetId { get; }
+        public CombatEntityId InstigatorId { get; }
+        public int Amount { get; }
     }
 
     public sealed class OfflineMatchSimulation
@@ -411,6 +425,28 @@ namespace BattleRaja.Core.Domain
             var snapshots = new MatchParticipantSnapshot[_participants.Count];
             for (var i = 0; i < _participants.Count; i++) snapshots[i] = _participants[i].ToSnapshot();
             return snapshots;
+        }
+
+        public DamageContributionSnapshot[] GetDamageContributions()
+        {
+            var targets = new List<CombatEntityId>(_damageContributions.Keys);
+            targets.Sort((left, right) => left.Value.CompareTo(right.Value));
+            var result = new List<DamageContributionSnapshot>();
+            for (var targetIndex = 0; targetIndex < targets.Count; targetIndex++)
+            {
+                var contributions = _damageContributions[targets[targetIndex]];
+                var instigators = new List<CombatEntityId>(contributions.Keys);
+                instigators.Sort((left, right) => left.Value.CompareTo(right.Value));
+                for (var instigatorIndex = 0; instigatorIndex < instigators.Count; instigatorIndex++)
+                {
+                    result.Add(new DamageContributionSnapshot(
+                        targets[targetIndex],
+                        instigators[instigatorIndex],
+                        contributions[instigators[instigatorIndex]]));
+                }
+            }
+
+            return result.ToArray();
         }
 
         public bool TryGetSnapshot(CombatEntityId id, out MatchParticipantSnapshot snapshot)

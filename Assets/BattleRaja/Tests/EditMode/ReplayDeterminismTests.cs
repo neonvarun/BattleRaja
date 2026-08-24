@@ -84,6 +84,70 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void ArenaCollisionHashDetectsGeometryAndVersionChanges()
+        {
+            var baseline = new ArenaCollisionDefinition(
+                new Float2(-13f, -9f),
+                new Float2(13f, 9f),
+                0.45f,
+                new[] { new ArenaObstacle(1, new Float2(-1f, -1f), new Float2(1f, 1f)) },
+                "arena-v1");
+            var movedObstacle = new ArenaCollisionDefinition(
+                new Float2(-13f, -9f),
+                new Float2(13f, 9f),
+                0.45f,
+                new[] { new ArenaObstacle(1, new Float2(-0.5f, -1f), new Float2(1.5f, 1f)) },
+                "arena-v1");
+            var changedVersion = new ArenaCollisionDefinition(
+                new Float2(-13f, -9f),
+                new Float2(13f, 9f),
+                0.45f,
+                new[] { new ArenaObstacle(1, new Float2(-1f, -1f), new Float2(1f, 1f)) },
+                "arena-v2");
+
+            Assert.That(movedObstacle.CalculateStableHash(), Is.Not.EqualTo(baseline.CalculateStableHash()));
+            Assert.That(changedVersion.CalculateStableHash(), Is.Not.EqualTo(baseline.CalculateStableHash()));
+        }
+
+        [Test]
+        public void AuthorityHashDetectsSortedDamageContributionState()
+        {
+            var spawns = new List<MatchSpawn>
+            {
+                new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(3f, 0f), 100),
+                new MatchSpawn(new CombatEntityId(3), new Float2(6f, 0f), 100)
+            };
+            var baseline = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            baseline.Start(spawns);
+            var baselineTick = baseline.Advance(1, 1f / 30f);
+            var baselineHash = DeterministicReplayHasher.CalculateTickHash(
+                baseline,
+                baselineTick,
+                baseline.Simulation.GetSnapshots());
+
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            authority.Start(spawns);
+            var request = new DamageRequest(
+                new CombatEntityId(2),
+                new CombatEntityId(3),
+                CombatFaction.Enemy,
+                10,
+                DamageType.Projectile,
+                Float2.Up,
+                1);
+            authority.RecordDamage(new CombatDamageEvent(request, request.RawAmount, false, 90, 1));
+            var authorityTick = authority.Advance(1, 1f / 30f);
+            var authorityHash = DeterministicReplayHasher.CalculateTickHash(
+                authority,
+                authorityTick,
+                authority.Simulation.GetSnapshots());
+
+            Assert.That(authority.Simulation.GetDamageContributions(), Has.Length.EqualTo(1));
+            Assert.That(authorityHash, Is.Not.EqualTo(baselineHash));
+        }
+
+        [Test]
         public void ReplayExecutor_ReproducesCompleteAuthorityHashStream()
         {
             var header = CreateReplayHeader();
