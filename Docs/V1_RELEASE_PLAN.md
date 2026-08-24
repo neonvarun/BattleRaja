@@ -151,6 +151,31 @@ No large-scale art production will begin until the remaining gameplay-truth gate
 These results cover the working tree at the P0 gameplay-truth correction before any
 new Android artifact. A fresh exact-commit platform build is required after commit.
 
+### Exact P0 Android smoke — `8eaa9e5` — 2026-08-25
+
+The P0 gameplay-truth correction was committed at
+`8eaa9e5` (`authority: fix solo free-for-all health parity`) and rebuilt from a clean,
+detached disposable worktree at `C:\Projects\BattleRaja-p0-8eaa9e5`.
+
+- Static validation at exact commit: **0 errors / 0 warnings**.
+- APK path: `C:\Projects\BattleRaja-p0-8eaa9e5\Builds\M11\Android\BattleRaja-M11.apk`
+- Size/hash: **92,762,248 bytes**, SHA-256
+  `DD765F971042C9FD14749808A24EA620476AA5A1AD54AF7F9FF86F4BF2FE62D4`
+- Manifest: package `com.example.battleraja.m11`, versionName `1.0.0`, versionCode
+  `100`, min SDK 28, target/compile SDK 36, launch activity
+  `com.unity3d.player.UnityPlayerGameActivity`
+- Install: succeeded only on Lava `ST5GDW23LB004392`.
+- Launch: `UnityPlayerGameActivity` was top-resumed and visible.
+- Lifecycle: HOME made the task invisible/paused; relaunch restored it as top-resumed
+  and visible.
+- Memory sample after resume: total PSS **414,535 KB**, RSS **557,740 KB**, Graphics
+  **17,476 KB**, swap PSS **71 KB**.
+- Log scan: launch/lifecycle logcat contained no `FATAL EXCEPTION`, `ANR in`,
+  `SIGSEGV`, `NullReferenceException` or `UnityException` marker.
+
+This is an offline launch/lifecycle smoke only. It does not replace physical combat QA,
+sustained performance review, accessibility review or release signing/store gates.
+
 ## Later checkpoints
 
 - [ ] Fair fighter-specific bot AI and production match harness.
