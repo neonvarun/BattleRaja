@@ -21,7 +21,8 @@ remain open.
 - Documentation evidence anchor: the exact-source sections in this index and
   `Docs/QA/LATEST_HEAD_BASELINE.md`, updated with the release-flags candidate.
 - Runtime/validation source: `1d743b0` (`tools: add repeatable Lava performance capture`)
-- Latest runtime change: `d96d3f2` (Android lifecycle pause/resume guard)
+- Latest runtime-bearing change: `e808830` (Pehel cached actor views); the
+  preceding lifecycle change is `d96d3f2` (Android pause/resume guard).
 - Unity: `6000.5.6f1`
 - EditMode: **125/125**
 - PlayMode: **71/71**
