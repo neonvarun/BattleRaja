@@ -20,8 +20,13 @@ The wide-orientation capture is
 It shows the original enlarged hero and loop summary on the left with a clear
 right-side offline/tutorial/settings/help rail. The menu now recomputes its anchors
 when the device rotates; the portrait stack remains the alternate layout. This is a
-visual/layout check, not a physical-touch pass: the Unity UI surface still exposes no
-actionable Android UI nodes and no reliable human touch session has been approved.
+visual/layout check, not a formal physical-touch pass: the Unity UI surface still
+exposes no actionable Android UI nodes and no human accessibility session has been
+approved. One bounded diagnostic coordinate sequence against the verified landscape
+capture did navigate menu → mode → fighter selection → match opening; captures are
+`fighter-selection-diagnostic.png` and `match-opening-diagnostic.png` in the same
+temporary directory. This confirms the route is not inert, but it does not replace a
+human touch/ergonomics review.
 
 The same exact source produced a Web build containing 19 files totalling
 **132,073,844 bytes**; the WASM is **119,801,877 bytes** with SHA-256
