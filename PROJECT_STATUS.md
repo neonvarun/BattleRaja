@@ -6,6 +6,20 @@
 
 ## Current state
 
+- Exact checked-out HEAD is `a5597f5` (`visuals: add original ground mosaic and
+  UI frame treatment`). Validation is **0/0**, EditMode is **125/125**, and
+  PlayMode is **70/70**. The render-only visual slice adds a three-material
+  Bazaar ground mosaic without colliders and adds non-interactive UI frame
+  accents. A fresh development APK (`92,734,792` bytes,
+  SHA-256 `05CBD516DD429EAE8AF1882E719E2FAA95E63949C90261208215B02AF56B9A18`)
+  and release-shaped AAB (`35,310,447` bytes,
+  SHA-256 `0B32C23A9F4E656790B9470AEE80D6375FF6E264A7551956A201129D3CDA7729`)
+  were built in disposable worktree `C:\BRv1vis`; the APK was installed only
+  on Lava and reached the live offline match with no sampled fatal/ANR/SIGSEGV/
+  NullReferenceException/UnityException markers. The exact Web build remains
+  blocked and was not rerun for this Android-only visual slice. Classification
+  remains **prototype**.
+
 - Exact checked-out HEAD is `3bbe7d1` (`chore: track Unity metadata for
   presentation assets`). A fresh debug-signed V1 AAB is 35,301,185 bytes
   (`20709BDDC90F418EFFED493E209A1CA943F5F1B119017AE415672491B9FC9EFF`) and the

@@ -1,5 +1,23 @@
 # Android and Web Performance Budget
 
+## Exact current device sample — `a5597f5` — 2026-08-24
+
+The exact current visual slice was exercised in the offline match on Lava
+`ST5GDW23LB004392` using the development APK from `a5597f5`. A single shell
+sample recorded **434,681 KB PSS**, **567,248 KB RSS**, **79,244 KB Graphics**,
+and **69 KB swap**. `top` observed **113% instantaneous process CPU** on the
+device-wide 800% scale. Thermal status was **0**; current HAL readings were
+approximately **46.84 C CPU/GPU**, **41.07 C skin**, and **36.0 C battery**.
+`dumpsys gfxinfo` exposed the Unity ViewRoot/render nodes but no usable frame
+histogram. Raw output is outside the repository at
+`C:\Users\USER\AppData\Local\Temp\battleraja-a5597f5-perf.txt`.
+
+Interpretation: this confirms the new visual slice is alive on the approved
+device, but it is only a one-point smoke sample. It does **not** establish
+stable frame pacing, CPU/GPU/GC/draw-call budgets, repeated-match memory
+growth, thermal/battery endurance, or a low-end-device pass. Those release
+gates remain open.
+
 ## Exact current source update — `f463b1b` — 2026-08-24
 
 The current source is `f463b1b`. A local Android release-shaped APK built from

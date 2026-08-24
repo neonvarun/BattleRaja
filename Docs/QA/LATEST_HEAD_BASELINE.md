@@ -1,5 +1,32 @@
 # Latest HEAD baseline
 
+## Exact current visual slice — `a5597f5` — 2026-08-24
+
+The checked-out branch is `codex/v1-playstore-release` at `a5597f5`
+(`visuals: add original ground mosaic and UI frame treatment`). Repository
+validation is **0 errors / 0 warnings**, EditMode is **125/125**, and PlayMode is
+**70/70**. The change is presentation-only: Bazaar Bastion now has a single
+render-only, three-material ground mosaic with no collider, and the UI backdrop
+has a restrained cyan/warm frame treatment that is non-interactive.
+
+A fresh development APK was built from this exact source in disposable worktree
+`C:\BRv1vis` and installed only on Lava `ST5GDW23LB004392`:
+
+| Artifact | Size | SHA-256 |
+| --- | ---: | --- |
+| APK (`BattleRaja-BazaarBastion-M11.apk`) | 92,734,792 bytes | `05CBD516DD429EAE8AF1882E719E2FAA95E63949C90261208215B02AF56B9A18` |
+| AAB (`BattleRaja-V1.0-release-candidate.aab`) | 35,310,447 bytes | `0B32C23A9F4E656790B9470AEE80D6375FF6E264A7551956A201129D3CDA7729` |
+
+The APK reached the real offline match route and displayed the mosaic, fighters,
+gadget HUD, action controls and Aandhi boundary. Captures are outside the
+repository at `C:\Users\USER\AppData\Local\Temp\battleraja-a5597f5-menu.png`
+and `C:\Users\USER\AppData\Local\Temp\battleraja-a5597f5-match2.png`.
+The sampled log contained no fatal/ANR/SIGSEGV/NullReferenceException/
+UnityException markers. This is technical presentation evidence, not final
+visual, touch, accessibility, performance or Play Store approval. The exact
+Web build remains blocked by the existing Bee/Burst issue and was not rerun for
+this Android-only slice.
+
 ## Exact current packaging refresh — `3bbe7d1` — 2026-08-24
 
 The checked-out branch is `codex/v1-playstore-release` at `3bbe7d1` (Unity

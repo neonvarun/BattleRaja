@@ -3,6 +3,21 @@
 Updated: 2026-08-24
 Classification: **prototype**
 
+## Exact current visual slice — `a5597f5`
+
+Validation is **0 errors / 0 warnings**, EditMode **125/125**, and PlayMode
+**70/70**. The presentation-only slice adds a collider-free Bazaar ground
+mosaic and a non-raycast UI frame treatment. A fresh exact-source APK and AAB
+were built in disposable worktree `C:\BRv1vis`; the APK was installed only on
+Lava `ST5GDW23LB004392` and reached the real offline match with the new floor,
+HUD and Aandhi visuals. No sampled fatal/ANR/SIGSEGV/NullReferenceException/
+UnityException markers were found.
+
+Status: **Passed with evidence** for this bounded visual presentation slice.
+The project remains **prototype**: exact Web build/browser QA, sustained
+performance, touch/accessibility, human visual/cultural review, signing,
+privacy/legal and Play Store gates remain open.
+
 ## Exact current source update — `f463b1b`
 
 The branch tip is `f463b1b` (`vfx: add render-only Aandhi boundary cue`).
