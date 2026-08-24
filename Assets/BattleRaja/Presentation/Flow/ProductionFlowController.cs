@@ -598,6 +598,11 @@ namespace BattleRaja.Presentation.Flow
                 modern = eventSystem.gameObject.AddComponent<InputSystemUIInputModule>();
             }
 
+            // Runtime-created and legacy-authored EventSystems may not carry a
+            // serialized action asset. Bind Unity's supported pointer/touch and
+            // navigation actions explicitly so Android taps do not depend on
+            // editor-only component defaults.
+            modern.AssignDefaultActions();
             modern.enabled = true;
             eventSystem.sendNavigationEvents = true;
         }

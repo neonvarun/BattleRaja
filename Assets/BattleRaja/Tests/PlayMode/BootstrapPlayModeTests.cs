@@ -59,7 +59,11 @@ namespace BattleRaja.Tests.PlayMode
 
             var eventSystem = Object.FindAnyObjectByType<EventSystem>();
             Assert.That(eventSystem, Is.Not.Null);
-            Assert.That(eventSystem.GetComponent<InputSystemUIInputModule>(), Is.Not.Null);
+            var uiModule = eventSystem.GetComponent<InputSystemUIInputModule>();
+            Assert.That(uiModule, Is.Not.Null);
+            Assert.That(uiModule.actionsAsset, Is.Not.Null);
+            Assert.That(uiModule.point, Is.Not.Null);
+            Assert.That(uiModule.leftClick, Is.Not.Null);
             Assert.That(eventSystem.GetComponent<StandaloneInputModule>(), Is.Null);
         }
 

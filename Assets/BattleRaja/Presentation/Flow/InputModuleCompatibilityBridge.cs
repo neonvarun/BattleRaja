@@ -38,6 +38,7 @@ namespace BattleRaja.Presentation.Flow
                     modern = eventSystem.gameObject.AddComponent<InputSystemUIInputModule>();
                 }
 
+                modern.AssignDefaultActions();
                 modern.enabled = true;
                 Object.Destroy(legacy);
             }
