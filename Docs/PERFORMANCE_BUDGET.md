@@ -1,18 +1,16 @@
 # Android and Web Performance Budget
 
-## Exact current release candidate — `edbf4d0` — 2026-08-24
+## Exact current release candidate — `35de9f3` — 2026-08-24
 
 The analytics-disabled release-shaped Android candidate is archived inside the
-repository at `Builds/Local/V1Evidence/edbf4d0/Android`: APK **39,487,853 bytes** (SHA-256
-`2492E8FAA2C04C21D248B2D03F44BF9AEB28CBC511D65A134823A2A0F0A42811`) and AAB
-**35,314,150 bytes** (SHA-256
-`796310670ACA8912FBDBC8A3CD0ED0B7FDE3AF7023D3978296545867D304F0B7`). The AAB
+repository at `Builds/Local/V1Evidence/35de9f3/Android`: APK **39,487,017 bytes** (SHA-256
+`41432964C104C7EA58A1DECC3423F611515D909E7EFA61F85E6AC46D7BFBE389`) and AAB
+**35,313,317 bytes** (SHA-256
+`34A0BAEFBF68A6A7679244EADB342556B5F3EBA87D3AB61CACDA48CAE04BE785`). The AAB
 is ARM64-only and passed static 16 KB alignment. The exact APK installed and launched
 on Lava with no configured fatal markers; the portrait menu capture is stored at
-`Builds/Local/V1Evidence/edbf4d0/Android/lava-launch.png`. No gameplay, frame-pacing,
+`Builds/Local/V1Evidence/35de9f3/Android/lava-launch.png`. No gameplay, frame-pacing,
 thermal, battery, memory-growth or human QA pass is claimed.
-The package pair predates current-HEAD presentation fixes in `73f20a2`; rebuild
-before using it as exact-HEAD release evidence.
 
 ## Exact current release candidate — `d87d9d2` — 2026-08-24
 

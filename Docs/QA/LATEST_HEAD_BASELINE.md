@@ -1,8 +1,9 @@
 # Latest HEAD baseline
 
-## Exact Android candidate source — `edbf4d0` — 2026-08-24
+## Exact Android candidate source — `35de9f3` — 2026-08-24
 
 The checked-out source contains the presentation-only Pehel hot-path cleanup,
+the runtime safe-area HUD parenting and reduced-flash feedback propagation,
 the owner-configurable Android package identity, explicit non-development release
 flags, offline Unity Analytics/service disablement, the repeatable offline APK
 manifest gate and the current release documentation.
@@ -12,17 +13,17 @@ source and are not silently reattributed to later commits.
 Repository validation is
 **0 errors / 0 warnings**, with fresh exact-source EditMode **125/125** and
 PlayMode **71/71**. A fresh release-shaped Android package was built from exact
-source and archived inside `Builds/Local/V1Evidence/edbf4d0/Android`:
+source and archived inside `Builds/Local/V1Evidence/35de9f3/Android`:
 
 | Artifact | Size | SHA-256 |
 | --- | ---: | --- |
-| APK | 39,487,853 bytes | `2492E8FAA2C04C21D248B2D03F44BF9AEB28CBC511D65A134823A2A0F0A42811` |
-| AAB | 35,314,150 bytes | `796310670ACA8912FBDBC8A3CD0ED0B7FDE3AF7023D3978296545867D304F0B7` |
+| APK | 39,487,017 bytes | `41432964C104C7EA58A1DECC3423F611515D909E7EFA61F85E6AC46D7BFBE389` |
+| AAB | 35,313,317 bytes | `34A0BAEFBF68A6A7679244EADB342556B5F3EBA87D3AB61CACDA48CAE04BE785` |
 
 The AAB contains seven ARM64 native libraries, no other ABIs, and passed the
 static 16 KB ELF LOAD alignment check. The APK installed only on Lava
 `ST5GDW23LB004392` and launched the Unity activity. The portrait menu is
-captured at `Builds/Local/V1Evidence/edbf4d0/Android/lava-launch.png`, with the
+captured at `Builds/Local/V1Evidence/35de9f3/Android/lava-launch.png`, with the
 foreground activity recorded in `lava-window-state.txt`; this is install,
 launch and menu evidence only, not a tutorial/full-match or performance pass.
 The repository manifest gate reports temporary package
@@ -31,11 +32,6 @@ target/compile SDK 36, and only `VIBRATE` plus Unity's dynamic receiver
 permission; `INTERNET` and `ACCESS_NETWORK_STATE` are absent. Physical Lava
 interaction, sustained performance, visual and accessibility review remain open.
 
-After this artifact was built, the branch added the safe-area HUD fix and
-reduced-flash propagation in commits `894cc05`, `2e22f55` and `73f20a2`.
-Those presentation changes have green EditMode **125/125** and PlayMode
-**73/73**, but require a fresh Android rebuild before this artifact can be
-treated as exact-HEAD release evidence.
 
 ## Exact current Android candidate — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 

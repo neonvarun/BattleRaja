@@ -23,28 +23,28 @@ remain open.
 ## Exact current source
 
 - Branch: `codex/v1-playstore-release`
-- Current branch tip is `73f20a2` (`accessibility: propagate reduced flash mode`),
-  after the exact Android artifact source `edbf4d0`.
-- Exact Android candidate source: `edbf4d0`
+- Current branch tip is `35de9f3` (`docs: distinguish post-artifact presentation fixes`);
+  latest runtime-bearing source is `73f20a2` (`accessibility: propagate reduced
+  flash mode`).
+- Exact Android candidate source: `35de9f3`
 - Current runtime-bearing source: `73f20a2` (`accessibility: propagate reduced flash mode`)
 - Documentation evidence anchor: the exact-source sections in this index and
   `Docs/QA/LATEST_HEAD_BASELINE.md`, updated with the release-flags candidate.
-- The last artifact validation source is `edbf4d0`; current presentation fixes
-  are in `73f20a2` and need a fresh package rebuild before release attribution.
+- The exact-current release-shaped APK/AAB include the safe-area HUD and
+  reduced-flash fixes. They are archived under the root-only evidence policy.
 - Unity: `6000.5.6f1`
 - EditMode: **125/125**
 - PlayMode: **73/73**
 - Repository validation: **0 errors / 0 warnings**
 - Git LFS: passed
 
-The post-candidate presentation fixes keep the runtime match HUD inside the
-gameplay safe area and propagate reduced-flash settings to combat impact, hit and
-Aandhi feedback. Current tests are green, but the fresh release-shaped APK/AAB
-below were built from `edbf4d0` before these two presentation commits. The APK
-installed and launched on Lava `ST5GDW23LB004392`; the portrait menu is captured
-at `Builds/Local/V1Evidence/edbf4d0/Android/lava-launch.png`, with foreground
-window evidence in `lava-window-state.txt`. A new exact-HEAD Android rebuild is
-required before attributing release evidence to `73f20a2`.
+The current presentation fixes keep the runtime match HUD inside the gameplay
+safe area and propagate reduced-flash settings to combat impact, hit and Aandhi
+feedback. The exact-current APK installed and launched on Lava
+`ST5GDW23LB004392`; the portrait menu is captured at
+`Builds/Local/V1Evidence/35de9f3/Android/lava-launch.png`, with foreground window
+evidence in `lava-window-state.txt`. This proves install/launch/menu presentation
+only; tutorial, full-match, accessibility and performance review remain open.
 
 ## Prior Android artifacts used for the performance-tool baseline
 
@@ -66,8 +66,6 @@ candidate.
 
 - Perform the real tutorial action sequence, full match, all
   fighters/gadgets, spectator, results, rematch, settings and background/resume.
-- Rebuild the Android APK/AAB from current HEAD `73f20a2` before release review;
-  the archived artifact pair is from pre-fix source `edbf4d0`.
 - Run a sustained match/performance capture with the new
   `Tools/Validation/capture_android_performance.ps1` harness and interpret frame,
   CPU, memory, thermal and battery evidence.
