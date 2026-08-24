@@ -33,6 +33,27 @@ pwsh -File Tools/Validation/validate.ps1 -RequireUnityProject -UnityExe 'C:\Prog
 
 The first form is suitable before Unity installation. The second form is the post-bootstrap gate and fails if Unity project markers or a discoverable `Unity.exe` are absent.
 
+`run_unity_tests.ps1` runs one complete Unity EditMode or PlayMode suite and verifies the
+generated NUnit report. It intentionally omits `-quit`: Unity's test runner exits after
+writing the report, while combining `-quit` with `-runTests` can stop the editor before
+tests execute.
+
+```powershell
+pwsh -File Tools/Validation/run_unity_tests.ps1 `
+  -UnityExe 'C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe' `
+  -ProjectRoot . `
+  -TestPlatform editmode `
+  -TestResults C:\BRV1Tests\editmode.xml `
+  -LogFile C:\BRV1Tests\editmode.log
+
+pwsh -File Tools/Validation/run_unity_tests.ps1 `
+  -UnityExe 'C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe' `
+  -ProjectRoot . `
+  -TestPlatform playmode `
+  -TestResults C:\BRV1Tests\playmode.xml `
+  -LogFile C:\BRV1Tests\playmode.log
+```
+
 `update_package_manifest.ps1` refreshes byte counts and SHA-256 hashes after repository changes while excluding generated directories and the manifest itself:
 
 ```powershell
