@@ -105,7 +105,7 @@ performance and Play approval gates remain open.
 
 | Gate | Current state | Owner action |
 | --- | --- | --- |
-| Product/package identity | Blocked: build entrypoint still uses `com.example.battleraja.m11` | Approve final application ID and branding |
+| Product/package identity | Blocked: the candidate defaults to temporary `com.example.battleraja.m11`, while the build entrypoint now accepts an owner-approved application ID override | Approve final application ID and branding; rebuild and re-run the manifest gate |
 | Signing | Not started | Approve upload key/Play App Signing path; never commit the key |
 | Target API | Configured to API 36 | Recheck against current Play policy at upload time |
 | 64-bit | Passed with evidence for the current debug-signed AAB: 7 ARM64 libraries, 0 other ABIs | Re-run inspection after any package/plugin change |
