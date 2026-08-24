@@ -1,5 +1,20 @@
 # Latest HEAD baseline
 
+## Exact current source update — `ecdb25b` — 2026-08-24
+
+The checked-out branch is `codex/v1-playstore-release` at `ecdb25b`
+(`ui: hide bot diagnostics in release builds`). Repository validation is **0
+errors / 0 warnings**. A fresh Android release-candidate APK built from this
+exact source in disposable worktree `C:\Projects\BattleRaja-validate-ecdb25b`:
+
+| Artifact | Size | SHA-256 |
+| --- | ---: | --- |
+| APK | 39,465,083 bytes | `7BDEA277C28CED29367CD3A76A73DCC7DFF45EDBBCAD1F9F9415C64FA7B57AD4` |
+
+The change gates engineering bot labels to editor/development builds; no scene
+YAML was changed. The APK was not installed on Lava for this focused presentation
+change, and no current AAB, browser build or formal performance pass is claimed.
+
 ## Exact current source update — `fe80582` — 2026-08-24
 
 The checked-out branch is `codex/v1-playstore-release` at

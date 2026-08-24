@@ -1,5 +1,15 @@
 # Android and Web Performance Budget
 
+## Exact current source update — `ecdb25b` — 2026-08-24
+
+The current source is `ecdb25b`. A local Android release-shaped APK built from
+this exact source is **39,465,083 bytes** with SHA-256
+`7BDEA277C28CED29367CD3A76A73DCC7DFF45EDBBCAD1F9F9415C64FA7B57AD4`. This is a
+focused presentation-gating build only; it was not installed on Lava, and no
+new frame-time, GC, GPU, memory, thermal, battery, WebAssembly or browser
+performance measurements were taken. Existing measurements below remain
+historical unless their source is explicitly named.
+
 ## Exact current source update — `fe80582` — 2026-08-24
 
 The current exact source is `fe80582efc35368a03afea314d53e071ac1872bf`. Its

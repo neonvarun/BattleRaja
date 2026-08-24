@@ -3,6 +3,15 @@
 Updated: 2026-08-24
 Classification: **prototype**
 
+## Exact current source update — `ecdb25b`
+
+The branch tip is `ecdb25b` (`ui: hide bot diagnostics in release builds`).
+Repository validation remains **0 errors / 0 warnings** and a fresh Android
+release-shaped APK builds successfully from this source. Bot engineering labels
+are now suppressed in non-editor, non-development players. The focused build was
+not installed on Lava and does not change the prototype classification or any
+human-review gate.
+
 ## Exact current V1 source — `fe80582`
 
 The branch tip is `fe80582efc35368a03afea314d53e071ac1872bf`. Validation is

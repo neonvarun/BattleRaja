@@ -6,6 +6,14 @@
 
 ## Current state
 
+- Exact current source is `ecdb25b` (`ui: hide bot diagnostics in release builds`)
+  on `codex/v1-playstore-release`. Repository validation is **0/0** and a fresh
+  Android release-candidate APK was built locally from this source (39,465,083
+  bytes; SHA-256
+  `7BDEA277C28CED29367CD3A76A73DCC7DFF45EDBBCAD1F9F9415C64FA7B57AD4`). The
+  focused build was not installed on Lava; no current AAB/Web/performance pass is
+  claimed. Classification remains **prototype**.
+
 - Exact current V1 source is `fe80582efc35368a03afea314d53e071ac1872bf` on
   `codex/v1-playstore-release`. Validation is **0/0** and PlayMode is **70/70**;
   runtime UI now binds touchscreen position/press actions explicitly. The exact
