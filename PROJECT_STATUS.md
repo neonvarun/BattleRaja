@@ -6,6 +6,14 @@
 
 ## Current state
 
+- Exact checked-out HEAD is now `53da0f3` (`visuals: release generated ground
+  mesh on teardown`). This cleanup-only follow-up releases the runtime-created
+  Bazaar mesh on scene teardown; it preserves the tested visual slice from
+  `a5597f5`. Validation is **0/0**, EditMode **125/125**, and PlayMode **70/70**.
+  The fresh APK/AAB and Lava captures documented below are from the runtime-
+  equivalent parent because this lifecycle change does not alter the rendered
+  result. Classification remains **prototype**.
+
 - Exact checked-out HEAD is `a5597f5` (`visuals: add original ground mosaic and
   UI frame treatment`). Validation is **0/0**, EditMode is **125/125**, and
   PlayMode is **70/70**. The render-only visual slice adds a three-material

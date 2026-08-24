@@ -1,5 +1,13 @@
 # Android and Web Performance Budget
 
+## Exact current lifecycle follow-up — `53da0f3` — 2026-08-24
+
+HEAD is a cleanup-only follow-up to the visual slice at `a5597f5`: the generated
+ground mesh is explicitly released on teardown. No new artifact or performance
+sample was needed; the Lava smoke sample below remains attributed to the
+runtime-equivalent parent. Formal sustained Android/Web performance gates are
+still open.
+
 ## Exact current device sample — `a5597f5` — 2026-08-24
 
 The exact current visual slice was exercised in the offline match on Lava

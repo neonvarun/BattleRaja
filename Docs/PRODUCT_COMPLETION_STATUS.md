@@ -3,6 +3,14 @@
 Updated: 2026-08-24
 Classification: **prototype**
 
+## Exact current lifecycle follow-up — `53da0f3`
+
+The current HEAD adds explicit teardown release for the runtime-created Bazaar
+ground mesh. Validation is **0/0**, EditMode **125/125**, and PlayMode **70/70**.
+The Android artifact and Lava visual evidence are unchanged from the tested
+runtime-equivalent parent `a5597f5`; no Web build was rerun. This remains a
+cleanup-only presentation follow-up, not a new release artifact.
+
 ## Exact current visual slice — `a5597f5`
 
 Validation is **0 errors / 0 warnings**, EditMode **125/125**, and PlayMode

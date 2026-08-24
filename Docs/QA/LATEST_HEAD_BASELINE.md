@@ -1,5 +1,16 @@
 # Latest HEAD baseline
 
+## Exact current lifecycle follow-up — `53da0f3` — 2026-08-24
+
+The current HEAD is `53da0f3` (`visuals: release generated ground mesh on
+teardown`). This is a lifecycle-only follow-up to the tested visual slice at
+`a5597f5`: generated Bazaar mesh objects are now explicitly released on scene
+teardown. Repository validation is **0 errors / 0 warnings**, EditMode is
+**125/125**, and PlayMode is **70/70**. The Android artifacts and Lava captures
+below were built from the runtime-equivalent parent `a5597f5`; no new package
+was required for this cleanup-only change. Web remains unbuilt and blocked by
+the existing Bee/Burst issue.
+
 ## Exact current visual slice — `a5597f5` — 2026-08-24
 
 The checked-out branch is `codex/v1-playstore-release` at `a5597f5`
