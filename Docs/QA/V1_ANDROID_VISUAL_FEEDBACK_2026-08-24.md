@@ -1,5 +1,33 @@
 # V1 Android visual-feedback evidence — 2026-08-24
 
+## Exact current Lava route confirmation — runtime `f3dea5d` / docs HEAD `3600d8b` — 2026-08-24
+
+The exact release-shaped APK built from runtime source `f3dea5d` was installed only
+on Lava `ST5GDW23LB004392`. ADB coordinate taps derived from the 1080×2460
+capture completed the real offline route: branded menu → `PLAY OFFLINE` → offline
+mode → fighter selection → `START SOLO RAJA` → live eight-actor Bazaar Bastion
+match → Aandhi warning/closing states → resolution/results → `MENU` back to the
+branded menu. This corrects the earlier bounded probe, which tapped above the
+portrait button bounds and therefore did not test the button itself.
+
+Current route captures are outside the repository at
+`C:\Users\USER\AppData\Local\Temp\battleraja-current-f3dea5d\`:
+`menu.png`, `after-play-tap-correct.png`, `after-mode-tap.png`,
+`after-start-match.png`, `match-after-25s.png`, `match-now.png`, `match-late.png`,
+`match-result-check.png`, `match-end-check.png`, and `after-results-menu.png`.
+The launch and route log inspection found no `FATAL EXCEPTION`, `ANR in`,
+`SIGSEGV`, `NullReferenceException`, or `UnityException` markers. The route is
+technical device evidence, not human approval of touch ergonomics, accessibility,
+combat feel, sustained performance, final visual polish, or Play Store readiness.
+
+The same route also verified a real Tiffin use on Lava: after the player spawned
+with `tiffin_station`, a correctly derived left-handed compact-layout tap changed
+the HUD from `GADGET [G] tiffin_station` to `GADGET [G] empty`, showed `CD 15.3s`
+and the feedback `Tiffin Station deployed`. The before/after captures are
+`match-gadget-before.png` and `match-gadget-after.png` in the same temporary
+directory. This is technical gadget-use evidence; pickup accessibility,
+station-heal readability, touch ergonomics and human review remain open.
+
 ## Exact current touchscreen-binding slice — `fe80582` — 2026-08-24
 
 The runtime UI now adds explicit `<Touchscreen>/touch*/position` and

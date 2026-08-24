@@ -6,6 +6,23 @@
 
 ## Current state
 
+- Documentation HEAD is `3600d8b` (`docs: record current V1 bundle evidence`);
+  the latest runtime-bearing source remains `f3dea5d` because the intervening
+  commits only added tests/documentation. The exact-source Web build is still
+  blocked by the Unity Bee/Burst player stage, so no current Web artifact or
+  browser pass is claimed. Local exact-HEAD validation is **0/0**, EditMode is
+  **125/125**, and PlayMode is **70/70**. Classification remains **prototype**.
+
+- Exact current Android route evidence was refreshed on 2026-08-24 from the
+  runtime `f3dea5d` APK (the documentation HEAD is `3600d8b`) on Lava
+  `ST5GDW23LB004392`: menu → offline mode → fighter selection → live eight-actor
+  match → Aandhi closing → results → menu all completed with correctly derived
+  portrait coordinates. No fatal/ANR/SIGSEGV/UnityException markers were found.
+  A correctly derived compact-layout tap also changed the gadget HUD from held
+  `tiffin_station` to empty with `Tiffin Station deployed` feedback. This confirms
+  technical route/gadget reachability; pickup accessibility, touch ergonomics,
+  sustained performance, human visual review, signing and store gates remain open.
+
 - Exact current source is `f463b1b` (`vfx: add render-only Aandhi boundary cue`)
   on `codex/v1-playstore-release`. Repository validation is **0/0** and a fresh
   Android release-candidate APK was built locally (39,473,715 bytes; SHA-256

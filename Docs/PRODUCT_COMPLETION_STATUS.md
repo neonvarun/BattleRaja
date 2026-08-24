@@ -125,6 +125,21 @@ online release work remain intentionally out of scope.
 
 This file records evidence-backed status only. Allowed status values are: `Not started`, `In progress`, `Passed with evidence`, `Blocked`, and `Human review required`.
 
+## Latest Lava route confirmation — runtime `f3dea5d` / docs HEAD `3600d8b` — 2026-08-24
+
+Status: **Passed with evidence** for technical Android route reachability. The
+exact release-shaped APK was installed only on Lava `ST5GDW23LB004392` and the
+real portrait route completed menu → offline mode → fighter selection → live
+eight-actor match → Aandhi closing → resolution/results → menu. Corrected
+coordinate selection explains the earlier failed tap probe. Captures and the
+device-log path are recorded in `Docs/QA/V1_ANDROID_VISUAL_FEEDBACK_2026-08-24.md`.
+The same route also used the held `tiffin_station` on Lava: the HUD changed to
+`empty`, showed the cooldown, and displayed `Tiffin Station deployed`. This does
+not pass pickup accessibility, touch ergonomics, station-heal readability,
+sustained performance, human visual/cultural review, release signing, or Play
+Store approval. Local exact-HEAD validation is **0/0**, EditMode **125/125**, and
+PlayMode **70/70**; no Web artifact is attributed to this docs HEAD.
+
 ## Phase 0 rebaseline continuation — 2026-08-22
 
 Exact-current-source evidence replaced stale `af2e0d8`/`7ad7e42`/`a5fdde8` references.

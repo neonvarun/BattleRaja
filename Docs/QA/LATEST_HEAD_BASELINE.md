@@ -1,5 +1,27 @@
 # Latest HEAD baseline
 
+## Documentation HEAD route confirmation — `3600d8b` / runtime `f3dea5d` — 2026-08-24
+
+The documentation HEAD is `3600d8b` (`docs: record current V1 bundle evidence`);
+the installed runtime APK used for this route capture is the unchanged runtime
+source `f3dea5d`. On Lava `ST5GDW23LB004392`, correctly derived 1080×2460 portrait
+coordinates completed menu → offline mode → fighter selection → live eight-actor
+match → Aandhi warning/closing → results → menu. The capture directory is
+`C:\Users\USER\AppData\Local\Temp\battleraja-current-f3dea5d\` and is intentionally
+outside the repository. No fatal, ANR, SIGSEGV, NullReferenceException, or
+UnityException marker was found in the sampled route log. This is technical
+route evidence only; a compact-layout tap also changed the gadget HUD to empty
+with `Tiffin Station deployed` feedback. Pickup accessibility, touch ergonomics,
+sustained performance, human visual/cultural review, signing, and Play Store gates
+remain open. The exact Web build remains blocked in the disposable Bee/Burst
+diagnostic and no Web pass is claimed.
+
+Local exact-HEAD checks after the evidence update: repository validation **0
+errors / 0 warnings**, EditMode **125/125**, and PlayMode **70/70**. Unity's
+batch-test logs still contain the known Fusion editor custom-dependency import
+warning and licensing-client warning; these did not fail compilation or tests
+and are not counted by repository validation.
+
 ## Exact current source update — `f463b1b` — 2026-08-24
 
 The checked-out branch is `codex/v1-playstore-release` at `f463b1b`
