@@ -6,7 +6,7 @@
 
 ## Current state
 
-- The current branch tip is `9acdf33` (documentation after the exact artifact source `35de9f3`); the latest runtime-bearing source is `73f20a2` (`accessibility: propagate reduced flash mode`). Repository validation is **0/0**, fresh EditMode is **125/125**, and fresh PlayMode is **73/73**. Fresh release-shaped packages archived inside `Builds/Local/V1Evidence/35de9f3/Android` are APK **39,487,017** bytes (SHA-256 `41432964C104C7EA58A1DECC3423F611515D909E7EFA61F85E6AC46D7BFBE389`) and AAB **35,313,317** bytes (SHA-256 `34A0BAEFBF68A6A7679244EADB342556B5F3EBA87D3AB61CACDA48CAE04BE785`). The
+- The current branch tip contains documentation follow-ups after the exact artifact source `35de9f3`; the latest runtime-bearing source is `73f20a2` (`accessibility: propagate reduced flash mode`). Repository validation is **0/0**, fresh EditMode is **125/125**, and fresh PlayMode is **73/73**. Fresh release-shaped packages archived inside `Builds/Local/V1Evidence/35de9f3/Android` are APK **39,487,017** bytes (SHA-256 `41432964C104C7EA58A1DECC3423F611515D909E7EFA61F85E6AC46D7BFBE389`) and AAB **35,313,317** bytes (SHA-256 `34A0BAEFBF68A6A7679244EADB342556B5F3EBA87D3AB61CACDA48CAE04BE785`). The
   AAB is ARM64-only and passed static 16 KB alignment. Lava install and launch
   succeeded; the portrait menu is captured in
   `Builds/Local/V1Evidence/edbf4d0/Android/lava-launch.png`. This is menu-only

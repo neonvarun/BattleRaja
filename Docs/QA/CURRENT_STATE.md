@@ -23,8 +23,8 @@ remain open.
 ## Exact current source
 
 - Branch: `codex/v1-playstore-release`
-- Current branch tip contains documentation follow-up `9acdf33` after the exact
-  artifact source `35de9f3`; latest runtime-bearing source is `73f20a2`
+- Current branch tip contains documentation follow-ups after the exact artifact
+  source `35de9f3`; latest runtime-bearing source is `73f20a2`
   (`accessibility: propagate reduced flash mode`).
 - Exact Android candidate source: `35de9f3`
 - Current runtime-bearing source: `73f20a2` (`accessibility: propagate reduced flash mode`)
