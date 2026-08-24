@@ -2,6 +2,13 @@
 
 Updated: 2026-08-24
 
+## Evidence location policy
+
+All new builds, logs, screenshots and test reports must remain under the ignored
+`Builds/Local/` tree inside `C:\Projects\BattleRaja`. Historical append-only
+notes may mention retired disposable paths for provenance, but no new work should
+create or depend on evidence outside this repository root.
+
 ## Truthful classification
 
 **Prototype — Android offline release candidate in progress.**
@@ -40,7 +47,8 @@ performance-tool baseline.
 
 ## Prior Android artifacts used for the performance-tool baseline
 
-Built from `1d743b0` in disposable `C:\BRLifecycle`:
+Built from `1d743b0`; the retired disposable checkout is not part of the current
+workspace and its raw package files are not retained as current evidence:
 
 | Artifact | Bytes | SHA-256 |
 | --- | ---: | --- |

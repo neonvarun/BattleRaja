@@ -12,7 +12,7 @@ source and are not silently reattributed to later commits.
 Repository validation is
 **0 errors / 0 warnings**, with fresh exact-source EditMode **125/125** and
 PlayMode **71/71**. A fresh release-shaped Android package was built from exact
-source in disposable worktree `C:\BRV1NoAnalytics`:
+source and archived inside `Builds/Local/V1Evidence/34b5b7f/Android`:
 
 | Artifact | Size | SHA-256 |
 | --- | ---: | --- |

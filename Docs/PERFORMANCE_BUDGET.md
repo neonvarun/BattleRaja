@@ -2,8 +2,8 @@
 
 ## Exact current release candidate — `34b5b7f` — 2026-08-24
 
-The analytics-disabled release-shaped Android candidate was built from exact source in
-`C:\BRV1NoAnalytics`: APK **39,485,163 bytes** (SHA-256
+The analytics-disabled release-shaped Android candidate is archived inside the
+repository at `Builds/Local/V1Evidence/34b5b7f/Android`: APK **39,485,163 bytes** (SHA-256
 `FC285938DE68FFE9CB9B22B4BF5897B9CA89C04D2CCE7B0439E0DD6B4CC403CF`) and AAB
 **35,312,621 bytes** (SHA-256
 `12EE3175AF66E50B47BBA082FB4027507A457A1E9CBA1AD654B2479245F4C154`). The AAB

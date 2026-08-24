@@ -14,13 +14,10 @@ Product scope: offline Android V1.0, no login, no ads, no IAP, no online play.
 | Results | `V1/BattleRaja-V1-Lava-Results.png` | Real Lava results/rematch capture from exact HEAD `062066b` | Phone screenshot | Technical evidence; human review required |
 
 The screenshots are copied from actual runtime captures; no gameplay state was
-mocked, and the current copies contain no development-build label. The exact
-runtime-source `062066b` APK used for these captures is
-`C:\BRS\Builds\V1\Android\BattleRaja-V1.0-release-candidate.apk`
-(SHA-256 `C7B16D01DEA3ED3ADA1B5E5AA421B82ADBA46F5E1A0A2B0283F409BC59F3E245`).
-The matching runtime-source AAB is
-`C:\BRS\Builds\V1\Android\BattleRaja-V1.0-release-candidate.aab`
-(SHA-256 `4D3948F876580AC45A0655593DAA6FE4AF70BC9BACF78840F33EC63E8775E858`).
+mocked, and the current copies contain no development-build label. The older
+runtime package used for these captures is no longer retained outside the
+repository; the screenshot files remain at `Assets/BattleRaja/Art/V1/` and must
+be refreshed and re-reviewed against the current candidate before upload.
 Both packages are debug-signed local candidates with temporary package ID
 `com.example.battleraja.m11`; they are not upload-ready.
 These store screenshot candidates predate the tutorial action-gate source

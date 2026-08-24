@@ -43,15 +43,15 @@ pwsh -File Tools/Validation/run_unity_tests.ps1 `
   -UnityExe 'C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe' `
   -ProjectRoot . `
   -TestPlatform editmode `
-  -TestResults C:\BRV1Tests\editmode.xml `
-  -LogFile C:\BRV1Tests\editmode.log
+  -TestResults Builds\Local\TestResults\editmode.xml `
+  -LogFile Builds\Local\Logs\editmode.log
 
 pwsh -File Tools/Validation/run_unity_tests.ps1 `
   -UnityExe 'C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe' `
   -ProjectRoot . `
   -TestPlatform playmode `
-  -TestResults C:\BRV1Tests\playmode.xml `
-  -LogFile C:\BRV1Tests\playmode.log
+  -TestResults Builds\Local\TestResults\playmode.xml `
+  -LogFile Builds\Local\Logs\playmode.log
 ```
 
 `update_package_manifest.ps1` refreshes byte counts and SHA-256 hashes after repository changes while excluding generated directories and the manifest itself:

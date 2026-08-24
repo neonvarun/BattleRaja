@@ -11,7 +11,8 @@
   gate/documentation commits. The latest runtime-bearing source is `e808830` (`perf: reuse cached
   actor views for Pehel authority results`). Repository validation is **0/0**,
   fresh EditMode is **125/125**, and fresh PlayMode is **71/71**. Fresh
-  release-shaped packages from disposable `C:\BRV1NoAnalytics` are APK
+  release-shaped packages archived inside `Builds/Local/V1Evidence/34b5b7f/Android`
+  are APK
   `39,485,163` bytes (SHA-256
   `FC285938DE68FFE9CB9B22B4BF5897B9CA89C04D2CCE7B0439E0DD6B4CC403CF`) and AAB
   `35,312,621` bytes (SHA-256
