@@ -6,6 +6,14 @@
 
 ## Current state
 
+- Exact checked-out HEAD is `3bbe7d1` (`chore: track Unity metadata for
+  presentation assets`). A fresh debug-signed V1 AAB is 35,301,185 bytes
+  (`20709BDDC90F418EFFED493E209A1CA943F5F1B119017AE415672491B9FC9EFF`) and the
+  matching APK is 39,473,743 bytes
+  (`796675A71F6127AAB95B4B6C2CEB727888C77904937CAF23B1D53E3A92DFC771`). The
+  bundle is ARM64-only and passes 16 KB alignment. The APK was installed only
+  on Lava and cold-launched successfully; the exact Web build remains blocked.
+
 - Documentation HEAD is `3600d8b` (`docs: record current V1 bundle evidence`);
   the latest runtime-bearing source remains `f3dea5d` because the intervening
   commits only added tests/documentation. The exact-source Web build is still

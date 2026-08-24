@@ -1,5 +1,26 @@
 # Latest HEAD baseline
 
+## Exact current packaging refresh — `3bbe7d1` — 2026-08-24
+
+The checked-out branch is `codex/v1-playstore-release` at `3bbe7d1` (Unity
+metadata-only follow-up to the runtime source `f3dea5d`). A fresh local
+release-shaped Android bundle and APK were built in disposable worktree
+`C:\Projects\BattleRaja-v1-current`:
+
+| Artifact | Size | SHA-256 |
+| --- | ---: | --- |
+| AAB | 35,301,185 bytes | `20709BDDC90F418EFFED493E209A1CA943F5F1B119017AE415672491B9FC9EFF` |
+| APK | 39,473,743 bytes | `796675A71F6127AAB95B4B6C2CEB727888C77904937CAF23B1D53E3A92DFC771` |
+
+Bundle validation found seven arm64-v8a libraries, no other native ABIs, and
+passed 16 KB ELF LOAD alignment. The exact-current APK was installed only on
+Lava `ST5GDW23LB004392`; the cold-launch menu capture is outside the repository
+at `C:\Users\USER\AppData\Local\Temp\battleraja-current-3bbe7d1-menu.png`.
+No fatal/ANR/SIGSEGV/NullReferenceException/UnityException marker was found in
+the sampled launch log. The bundle is debug-signed and non-publishable; package
+identity, release signing, Web build, performance, accessibility, human review
+and Play Store gates remain open.
+
 ## Documentation HEAD route confirmation — `3600d8b` / runtime `f3dea5d` — 2026-08-24
 
 The documentation HEAD is `3600d8b` (`docs: record current V1 bundle evidence`);

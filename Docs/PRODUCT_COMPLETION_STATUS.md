@@ -125,6 +125,18 @@ online release work remain intentionally out of scope.
 
 This file records evidence-backed status only. Allowed status values are: `Not started`, `In progress`, `Passed with evidence`, `Blocked`, and `Human review required`.
 
+## Exact current package refresh — `3bbe7d1` — 2026-08-24
+
+Status: **Passed with evidence** for local Android package generation. The exact
+checked-out source produced a 35,301,185-byte debug-signed AAB
+(`20709BDDC90F418EFFED493E209A1CA943F5F1B119017AE415672491B9FC9EFF`) and a
+39,473,743-byte APK
+(`796675A71F6127AAB95B4B6C2CEB727888C77904937CAF23B1D53E3A92DFC771`). The
+bundle is ARM64-only and passed static 16 KB alignment checks. The APK was
+installed and cold-launched only on Lava; these artifacts are not publishable
+until the owner supplies final package identity and release signing. No exact
+HEAD Web artifact is available.
+
 ## Latest Lava route confirmation — runtime `f3dea5d` / docs HEAD `3600d8b` — 2026-08-24
 
 Status: **Passed with evidence** for technical Android route reachability. The
