@@ -82,6 +82,38 @@ if (Test-Path -LiteralPath $manifestPath) {
     }
 }
 
+# V1 is an offline, no-analytics/no-ads candidate. Keep Unity services disabled
+# in the checked-in project settings so the release privacy worksheet matches the
+# build configuration. Future online/service milestones must change this rule
+# deliberately with an updated data-safety decision.
+$projectSettingsPath = Join-Path $ProjectRoot 'ProjectSettings\ProjectSettings.asset'
+if (Test-Path -LiteralPath $projectSettingsPath) {
+    $projectSettingsText = Get-Content -LiteralPath $projectSettingsPath -Raw
+    if ($projectSettingsText -match '(?m)^\s*submitAnalytics:\s*1\s*$') {
+        Add-ValidationError 'V1 offline candidate must keep submitAnalytics disabled in ProjectSettings.asset.'
+    }
+}
+
+$unityConnectSettingsPath = Join-Path $ProjectRoot 'ProjectSettings\UnityConnectSettings.asset'
+if (Test-Path -LiteralPath $unityConnectSettingsPath) {
+    $unityConnectText = Get-Content -LiteralPath $unityConnectSettingsPath -Raw
+    foreach ($servicePattern in @(
+        '(?ms)^\s*m_Enabled:\s*1\s*$.*?UnityAnalyticsSettings:',
+        '(?ms)^\s*UnityAnalyticsSettings:\s*.*?^\s*m_Enabled:\s*1\s*$'
+    )) {
+        if ($unityConnectText -match $servicePattern) {
+            Add-ValidationError 'V1 offline candidate must keep Unity Analytics disabled in UnityConnectSettings.asset.'
+            break
+        }
+    }
+    if ($unityConnectText -match '(?ms)^\s*UnityAdsSettings:\s*.*?^\s*m_Enabled:\s*1\s*$') {
+        Add-ValidationError 'V1 offline candidate must keep Unity Ads disabled in UnityConnectSettings.asset.'
+    }
+    if ($unityConnectText -match '(?ms)^\s*PerformanceReportingSettings:\s*.*?^\s*m_Enabled:\s*1\s*$') {
+        Add-ValidationError 'V1 offline candidate must keep Performance Reporting disabled in UnityConnectSettings.asset.'
+    }
+}
+
 # Core must remain replaceable by a network/server transport. Keep its two
 # assemblies free of Unity/vendor dependencies and reject presentation code
 # reaching directly into simulation mutators.
