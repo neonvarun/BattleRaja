@@ -89,7 +89,8 @@ namespace BattleRaja.Tests.PlayMode
             yield return null;
             yield return null;
 
-            var loadingGraphic = Object.FindAnyObjectByType<BattleRajaLoadingGraphic>();
+            var loadingGraphic = GameObject.Find("SafeArea/LoadingPanel/LoadingGraphic")
+                ?.GetComponent<BattleRajaLoadingGraphic>();
             Assert.That(loadingGraphic, Is.Not.Null);
             Assert.That(loadingGraphic.Progress, Is.EqualTo(0f).Within(0.001f));
         }
