@@ -26,6 +26,27 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Evidence/sources:** Unity 6000.5.6f1 release notes; Unity 6000.5 Android dependency table; Google Play target API policy; Unity Package Registry snapshot and live package resolution in `Packages/packages-lock.json`; live toolchain evidence recorded in `Docs/RESEARCH_LOG.md`; owner instruction in the current task; `Docs/MILESTONE_0_EXECUTION_PLAN.md`.
 - **Owner:** Human project owner
 
+### ADR-054 — Keep V1 Android fully offline and disable Unity service telemetry
+
+- **Date:** 2026-08-24
+- **Status:** Accepted for the V1 offline Android candidate; revisit only through an
+  owner-approved service/data-safety decision.
+- **Context:** V1 is intended to require no account or internet connection. The project
+  configuration still had the Unity analytics-submission flag enabled even though Unity
+  Connect, Analytics, Ads and Performance Reporting services were disabled and no runtime
+  upload adapter existed.
+- **Decision:** Set `submitAnalytics: 0` in `ProjectSettings.asset`, retain all Unity
+  service `m_Enabled: 0` settings, and make repository validation fail if the offline
+  candidate re-enables analytics, Ads or Performance Reporting. Keep the bounded
+  in-memory development analytics fixture test-only and non-identifying.
+- **Consequences:** The V1 manifest/privacy worksheet now match the intended offline,
+  no-upload behavior. Any future online service or telemetry change requires a new
+  data-safety review, policy update and explicit owner approval.
+- **Evidence/sources:** `ProjectSettings/ProjectSettings.asset`,
+  `ProjectSettings/UnityConnectSettings.asset`, `Tools/Validation/validate.ps1`,
+  `Docs/PRIVACY_DATA_SAFETY_WORKSHEET.md`, and the exact analytics-disabled APK/AAB gate.
+- **Owner:** Human project owner
+
 ### ADR-012 — Milestone 11 truthful release-candidate preparation
 
 - **Date:** 2026-08-02

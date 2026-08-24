@@ -37,6 +37,16 @@ Research current primary sources before selecting technical versions, APIs, SDKs
 - **Uncertainty:** Play policy, developer verification and submission dates are time-sensitive; recheck immediately before creating the listing, signing or uploading any artifact.
 - **Recheck trigger/date:** Before Play Console setup, final signing, or any target/API/package change.
 
+### V1 offline Unity service configuration — 2026-08-24
+
+- **Date checked:** 2026-08-24
+- **Question:** Does the offline Android candidate have a runtime Unity telemetry, Ads or performance-reporting path that would conflict with the no-upload V1 scope?
+- **Primary source:** https://docs.unity3d.com/2023.1/ScriptReference/Analytics.Analytics-enabled.html ; project configuration in `ProjectSettings/UnityConnectSettings.asset` and `ProjectSettings/ProjectSettings.asset`
+- **Relevant claim:** Unity Analytics can be disabled at build/runtime; the checked-in project has Unity Connect, Analytics, Ads and Performance Reporting disabled, and the V1 release configuration now also disables the project analytics-submission flag.
+- **Decision impact:** Keep V1 offline and no-upload; make validation fail if those service settings are re-enabled without a new data-safety decision.
+- **Uncertainty:** Final signed-artifact SDK inventory and Play Console declarations still require owner/legal review.
+- **Recheck trigger/date:** Before any telemetry, crash, ads, online-service, package or signing change.
+
 ### Current Google Play V1 release-policy recheck
 
 - **Date checked:** 2026-08-24
