@@ -544,6 +544,14 @@ namespace BattleRaja.Tests.PlayMode
                 "Bazaar central canopy panels must be present");
             Assert.That(arena.transform.Find("V1BastionVisuals/BastionCrownTopCross"), Is.Null,
                 "The deprecated cross-shaped prototype landmark must not return");
+            var ground = arena.transform.Find("V1BastionVisuals/GroundMosaic");
+            Assert.That(ground, Is.Not.Null, "Bazaar must expose the render-only ground mosaic");
+            Assert.That(ground.GetComponent<Collider>(), Is.Null,
+                "The visual ground must never add authoritative collision");
+            var groundMesh = ground.GetComponent<MeshFilter>()?.sharedMesh;
+            Assert.That(groundMesh, Is.Not.Null);
+            Assert.That(groundMesh.subMeshCount, Is.EqualTo(3));
+            Assert.That(groundMesh.vertexCount, Is.GreaterThan(3000));
 
             var fighters = Object.FindObjectsByType<FighterPresentation>();
             Assert.That(fighters, Has.Length.EqualTo(8));

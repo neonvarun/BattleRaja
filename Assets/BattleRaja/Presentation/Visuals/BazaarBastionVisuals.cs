@@ -74,6 +74,14 @@ namespace BattleRaja.Presentation.Visuals
             var jade = CreateMaterial("V1 Jade", new Color(0.10f, 0.62f, 0.48f, 1f));
             var brick = CreateMaterial("V1 Brick", new Color(0.58f, 0.18f, 0.12f, 1f));
             var sky = CreateMaterial("V1 Sky", new Color(0.18f, 0.55f, 0.76f, 1f));
+            var groundBase = CreateMaterial("V1 Ground Base", new Color(0.23f, 0.18f, 0.20f, 1f));
+            var groundAlt = CreateMaterial("V1 Ground Alt", new Color(0.29f, 0.22f, 0.22f, 1f));
+            var groundAccent = CreateMaterial("V1 Ground Accent", new Color(0.40f, 0.26f, 0.22f, 1f));
+
+            // One render-only mesh replaces the flat brown plane with a quiet, readable
+            // tile rhythm. It has no collider and never participates in authority or
+            // navigation; the authored collision representation remains the source of truth.
+            CreateGroundMosaic(groundBase, groundAlt, groundAccent);
 
             // A small central landmark gives the arena a readable centre without blocking
             // the existing navigation lanes. It is intentionally low and collider-free.
@@ -225,6 +233,67 @@ namespace BattleRaja.Presentation.Visuals
         private void CreateGroundStripe(string name, Vector3 position, Vector3 scale, Material material)
         {
             CreateBlock(name, position, scale, material, Quaternion.identity);
+        }
+
+        private void CreateGroundMosaic(Material baseMaterial, Material alternateMaterial, Material accentMaterial)
+        {
+            const int grid = 32;
+            const float tileSize = 0.8f;
+            const float origin = -12.8f;
+            var ground = new GameObject("GroundMosaic", typeof(MeshFilter), typeof(MeshRenderer));
+            ground.transform.SetParent(_root, false);
+            ground.transform.localPosition = new Vector3(0f, 0.006f, 0f);
+
+            var vertices = new List<Vector3>(grid * grid * 4);
+            var uvs = new List<Vector2>(grid * grid * 4);
+            var baseTriangles = new List<int>(grid * grid * 6);
+            var alternateTriangles = new List<int>(grid * grid * 6);
+            var accentTriangles = new List<int>(grid * grid * 6);
+            for (var z = 0; z < grid; z++)
+            {
+                for (var x = 0; x < grid; x++)
+                {
+                    var minX = origin + x * tileSize;
+                    var minZ = origin + z * tileSize;
+                    var start = vertices.Count;
+                    vertices.Add(new Vector3(minX, 0f, minZ));
+                    vertices.Add(new Vector3(minX, 0f, minZ + tileSize));
+                    vertices.Add(new Vector3(minX + tileSize, 0f, minZ + tileSize));
+                    vertices.Add(new Vector3(minX + tileSize, 0f, minZ));
+                    uvs.Add(new Vector2(0f, 0f));
+                    uvs.Add(new Vector2(0f, 1f));
+                    uvs.Add(new Vector2(1f, 1f));
+                    uvs.Add(new Vector2(1f, 0f));
+
+                    var triangles = (Mathf.Abs(x - grid / 2) <= 2 && Mathf.Abs(z - grid / 2) <= 2)
+                        || x == 0 || z == 0 || x == grid - 1 || z == grid - 1
+                        ? accentTriangles
+                        : ((x + z) & 1) == 0 ? baseTriangles : alternateTriangles;
+                    triangles.Add(start);
+                    triangles.Add(start + 1);
+                    triangles.Add(start + 2);
+                    triangles.Add(start + 2);
+                    triangles.Add(start + 3);
+                    triangles.Add(start);
+                }
+            }
+
+            var mesh = new Mesh { name = "V1GroundMosaicMesh" };
+            mesh.SetVertices(vertices);
+            mesh.SetUVs(0, uvs);
+            mesh.subMeshCount = 3;
+            mesh.SetTriangles(baseTriangles, 0, true);
+            mesh.SetTriangles(alternateTriangles, 1, true);
+            mesh.SetTriangles(accentTriangles, 2, true);
+            mesh.RecalculateBounds();
+            var filter = ground.GetComponent<MeshFilter>();
+            filter.sharedMesh = mesh;
+            var renderer = ground.GetComponent<MeshRenderer>();
+            renderer.sharedMaterials = new[] { baseMaterial, alternateMaterial, accentMaterial };
+            renderer.shadowCastingMode = ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+            renderer.lightProbeUsage = LightProbeUsage.Off;
+            _objects.Add(ground);
         }
 
         private GameObject CreateBlock(string name, Vector3 position, Vector3 scale, Material material, Quaternion rotation, Transform parent = null)

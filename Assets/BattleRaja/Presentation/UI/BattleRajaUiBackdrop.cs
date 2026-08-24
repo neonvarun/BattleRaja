@@ -30,9 +30,43 @@ namespace BattleRaja.Presentation.UI
                 bottomColor,
                 topColor);
 
-            // Keep the backdrop deliberately calm behind touch controls. A previous
-            // diagonal implementation produced rectangular interpolation bands on some
-            // mobile GPUs, so the identity accents now live in the logo and button edges.
+            // Keep the backdrop calm behind touch controls while adding a restrained
+            // frame language that survives portrait cropping and desktop scaling.
+            var rail = new Color(0.22f, 0.78f, 0.82f, 0.22f);
+            var warmRail = new Color(1f, 0.62f, 0.20f, 0.18f);
+            const float railSize = 5f;
+            AddQuad(vertexHelper, new Vector2(rect.xMin + 42f, rect.yMax - railSize),
+                new Vector2(rect.xMax - 42f, rect.yMax), rail, rail);
+            AddQuad(vertexHelper, new Vector2(rect.xMin + 42f, rect.yMin),
+                new Vector2(rect.xMax - 42f, rect.yMin + railSize), warmRail, warmRail);
+            AddQuad(vertexHelper, new Vector2(rect.xMin + 18f, rect.yMin + 72f),
+                new Vector2(rect.xMin + 23f, rect.yMax - 72f), rail, rail);
+            AddQuad(vertexHelper, new Vector2(rect.xMax - 23f, rect.yMin + 72f),
+                new Vector2(rect.xMax - 18f, rect.yMax - 72f), warmRail, warmRail);
+
+            var corner = new Color(0.70f, 0.90f, 0.84f, 0.26f);
+            AddCorner(vertexHelper, rect.xMin + 42f, rect.yMax - 42f, corner, false, true);
+            AddCorner(vertexHelper, rect.xMax - 42f, rect.yMax - 42f, corner, true, true);
+            AddCorner(vertexHelper, rect.xMin + 42f, rect.yMin + 42f, corner, false, false);
+            AddCorner(vertexHelper, rect.xMax - 42f, rect.yMin + 42f, corner, true, false);
+        }
+
+        private static void AddCorner(VertexHelper vertexHelper, float x, float y, Color color, bool right, bool top)
+        {
+            const float length = 28f;
+            const float thickness = 4f;
+            var horizontalMin = right ? x - length : x;
+            var horizontalMax = right ? x : x + length;
+            var verticalMin = top ? y - length : y;
+            var verticalMax = top ? y : y + length;
+            var horizontalYMin = top ? y - thickness : y;
+            var horizontalYMax = top ? y : y + thickness;
+            var verticalXMin = right ? x - thickness : x;
+            var verticalXMax = right ? x : x + thickness;
+            AddQuad(vertexHelper, new Vector2(horizontalMin, horizontalYMin),
+                new Vector2(horizontalMax, horizontalYMax), color, color);
+            AddQuad(vertexHelper, new Vector2(verticalXMin, verticalMin),
+                new Vector2(verticalXMax, verticalMax), color, color);
         }
 
         private static void AddQuad(VertexHelper vertexHelper, Vector2 min, Vector2 max, Color bottom, Color top)
