@@ -4,22 +4,25 @@ This note records the exact current checkout after the offline packaging hardeni
 It is technical release-candidate evidence, not Play Store approval or final human
 visual/performance sign-off.
 
-## Latest Android runtime slice — `6920edd` — 2026-08-24
+## Latest exact-current Android runtime slice — `dff3a89` — 2026-08-24
 
-The latest V1 release source is `6920edd` (`android: brand V1 release splash`) on
-`codex/v1-playstore-release`. The release-shaped APK was built in the disposable
-worktree `C:\Projects\BattleRaja-validate-6920edd`, is **39,466,531 bytes**, and has
-SHA-256 `8EE99741122A548F4B893F015F9656D30B343E5056BE7E409482A37D6D6D6383`.
-The build uses Unity `6000.5.6f1`, ARM64, IL2CPP, min API 28 and target/compile API
-36. The release entrypoint writes a BattleRaja-owned splash logo and disables the
-Unity logo; the disposable build's `ProjectSettings.asset` records the icon logo,
-dark background and two-second logo duration.
+The latest V1 release source is `dff3a89` (`docs: record branded Android splash
+evidence`) on `codex/v1-playstore-release`. The release-shaped APK was built in the
+disposable worktree `C:\Projects\BattleRaja-validate-dff3a89`, is **39,466,543
+bytes**, and has SHA-256
+`A6760651223052BEFB426DA08F5434ED71922A3FF9309336C1827945474F4A91`. The matching
+AAB is **35,293,988 bytes** with SHA-256
+`567EF167654BC53A1836035297385278E2673411C7BD06A6257E550737E3CBF4`; it has 7
+ARM64 libraries, no other ABIs, and passed the static 16 KB alignment check. The
+build uses Unity `6000.5.6f1`, ARM64, IL2CPP, min API 28 and target/compile API 36.
+The release entrypoint and checked-in PlayerSettings use a BattleRaja-owned splash
+logo, dark background and no Unity logo.
 
 The exact APK was installed only on Lava `ST5GDW23LB004392`. Cold-launch captures
 and logcat are outside the repository at
-`C:\Users\USER\AppData\Local\Temp\battleraja-splash-6920edd\`; the log contains no
-fatal/ANR/SIGSEGV marker. The most recent AAB remains the earlier `6ac5c12` artifact
-until a new bundle build is run.
+`C:\Users\USER\AppData\Local\Temp\battleraja-splash-dff3a89\`; the log contains no
+fatal/ANR/SIGSEGV marker. EditMode is 125/125 and PlayMode is 69/69 on this exact
+checkout; physical touch/accessibility and human release review remain open.
 
 ## Latest Android runtime slice — `b954a72` — 2026-08-24
 

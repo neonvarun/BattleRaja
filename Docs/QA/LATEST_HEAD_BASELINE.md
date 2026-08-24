@@ -3,29 +3,32 @@
 Date: 2026-08-24
 Branch: `codex/v1-playstore-release` (ahead of local and remote `main`; exact count is recorded by Git)
 Local/remote `main`: `ca6ec3e17e695042664cf3bdbf9889b259b33144`
-Latest validated runtime source: `b954a72` (`ui: reflow match touch controls on rotation`)
-Latest checked-out runtime source: `b954a72` (`ui: reflow match touch controls on rotation`);
-documentation
-updates are in the focused commits following those source changes;
-the checked-out Git HEAD is the authoritative current documentation state.
+Latest validated runtime source: `dff3a89` (`docs: record branded Android splash evidence`)
+Latest checked-out source: `dff3a89`; the checked-out Git HEAD is the authoritative
+current documentation and release-settings state.
 Balance-fix runtime source: `17a8c75` (`fix(balance): land documented weapon retune in Core definitions`)
 Pre-fix baseline source: `35d723f` (`fix: bot perception no longer treats fighter hulls as line-of-sight blockers`; the tip of local `main` before this branch)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
 ## Exact current V1 branded-splash baseline — 2026-08-24
 
-The current HEAD is `6920edd8ce84e0be47bc518846eaa70761fd22ac` (`android: brand V1
-release splash`). Repository validation remains **0 errors / 0 warnings**. The
-release-shaped APK was built from this exact source in
-`C:\Projects\BattleRaja-validate-6920edd` and is **39,466,531 bytes** with SHA-256
-`8EE99741122A548F4B893F015F9656D30B343E5056BE7E409482A37D6D6D6383`.
+The current HEAD is `dff3a8925304fee72f391aa89047119cbbbc6f69` (`docs: record branded
+Android splash evidence`). Repository validation remains **0 errors / 0 warnings**;
+EditMode is **125/125** and PlayMode is **69/69**. The release-shaped APK was built
+from this exact source in `C:\Projects\BattleRaja-validate-dff3a89` and is
+**39,466,543 bytes** with SHA-256
+`A6760651223052BEFB426DA08F5434ED71922A3FF9309336C1827945474F4A91`. The matching
+AAB is **35,293,988 bytes** with SHA-256
+`567EF167654BC53A1836035297385278E2673411C7BD06A6257E550737E3CBF4`.
 
 The APK was installed only on Lava `ST5GDW23LB004392`. Cold-launch evidence is in
-`C:\Users\USER\AppData\Local\Temp\battleraja-splash-6920edd\`: the dark native
+`C:\Users\USER\AppData\Local\Temp\battleraja-splash-dff3a89\`: the dark native
 surface transitions to the original BattleRaja icon and then the offline menu. No
 fatal/ANR/SIGSEGV marker was found. The release entrypoint and project settings now
 disable the Unity logo for V1 and use the BattleRaja icon as the two-second splash
-logo. A fresh AAB and full post-splash route review are still required.
+logo. The AAB has 7 ARM64 libraries, no other ABIs and passed static 16 KB ELF
+alignment. Full post-splash route review, performance evidence and human approval
+are still required.
 
 ## Exact current Android control-rotation baseline — 2026-08-24
 

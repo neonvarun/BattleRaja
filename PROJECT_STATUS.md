@@ -6,14 +6,17 @@
 
 ## Current state
 
-- Latest V1 Android source is `6920edd` (`android: brand V1 release splash`) on
-  `codex/v1-playstore-release`. The exact release-shaped APK is **39,466,531 bytes**
-  (SHA-256 `8EE99741122A548F4B893F015F9656D30B343E5056BE7E409482A37D6D6D6383`),
-  built in a disposable worktree and installed only on Lava
-  `ST5GDW23LB004392`. Cold-launch evidence shows the BattleRaja icon splash and
-  offline menu with no fatal/ANR/SIGSEGV marker. A fresh AAB from this source,
-  full route QA, sustained performance evidence and human visual/touch approval
-  remain open; classification stays **prototype**.
+- Latest V1 Android source is `dff3a89` (`docs: record branded Android splash
+  evidence`) on `codex/v1-playstore-release`. The exact release-shaped APK is
+  **39,466,543 bytes** (SHA-256
+  `A6760651223052BEFB426DA08F5434ED71922A3FF9309336C1827945474F4A91`) and the
+  matching AAB is **35,293,988 bytes** (SHA-256
+  `567EF167654BC53A1836035297385278E2673411C7BD06A6257E550737E3CBF4`), both built
+  in a disposable worktree. The APK was installed only on Lava
+  `ST5GDW23LB004392`; cold-launch evidence shows the BattleRaja icon splash and
+  offline menu with no fatal/ANR/SIGSEGV marker. Full route QA, sustained
+  performance evidence and human visual/touch approval remain open; classification
+  stays **prototype**.
 
 - Product vision: drafted
 - Autonomous M1–M11 sequential execution: active; milestone gates and external

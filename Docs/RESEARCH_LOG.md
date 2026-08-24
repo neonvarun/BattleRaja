@@ -355,12 +355,12 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   original BattleRaja icon Sprite, dark ink background, two-second logo and
   `showUnityLogo = false`. Development/M11 build paths remain unchanged. Do not
   copy reference-game branding or assets.
-- **Local evidence:** Exact source `6920edd`, APK SHA-256
-  `8EE99741122A548F4B893F015F9656D30B343E5056BE7E409482A37D6D6D6383`, disposable
-  `ProjectSettings.asset` with the custom logo, and Lava captures under
-  `C:\Users\USER\AppData\Local\Temp\battleraja-splash-6920edd\`.
+- **Local evidence:** Exact current source `dff3a89`, APK SHA-256
+  `A6760651223052BEFB426DA08F5434ED71922A3FF9309336C1827945474F4A91`, AAB
+  SHA-256 `567EF167654BC53A1836035297385278E2673411C7BD06A6257E550737E3CBF4`,
+  disposable `ProjectSettings.asset` with the custom logo, and Lava captures under
+  `C:\Users\USER\AppData\Local\Temp\battleraja-splash-dff3a89\`.
 - **Uncertainty:** Final splash art, launch pacing, accessibility and Play Store
-  branding still require human approval; the current AAB has not been rebuilt from
-  this source.
+  branding still require human approval.
 - **Recheck trigger/date:** Before signing or uploading the V1 AAB, and after any
   Unity/Android player-settings change.

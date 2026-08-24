@@ -3,23 +3,25 @@
 This is a bounded presentation slice for the offline Android V1 candidate. It is
 technical evidence, not Play Store approval or final human visual approval.
 
-## Latest exact-current branded-splash slice — `6920edd` — 2026-08-24
+## Latest exact-current branded-splash slice — `dff3a89` — 2026-08-24
 
-The V1 release entrypoint now configures a BattleRaja-owned Android splash: the
-original BattleRaja icon is the only splash logo, the Unity logo is disabled, and
-the background is the product's dark ink colour. The exact release-shaped APK was
-built in the disposable worktree
-`C:\Projects\BattleRaja-validate-6920edd` and is **39,466,531 bytes** with SHA-256
-`8EE99741122A548F4B893F015F9656D30B343E5056BE7E409482A37D6D6D6383`.
+The V1 release entrypoint and checked-in PlayerSettings now configure a
+BattleRaja-owned Android splash: the original BattleRaja icon is the only splash
+logo, the Unity logo is disabled, and the background is the product's dark ink
+colour. The exact release-shaped APK was built in the disposable worktree
+`C:\Projects\BattleRaja-validate-dff3a89` and is **39,466,543 bytes** with SHA-256
+`A6760651223052BEFB426DA08F5434ED71922A3FF9309336C1827945474F4A91`. The matching
+release-shaped AAB is **35,293,988 bytes** with SHA-256
+`567EF167654BC53A1836035297385278E2673411C7BD06A6257E550737E3CBF4`.
 
 It was installed only on Lava `ST5GDW23LB004392`. Cold-launch captures are outside
 the repository at
-`C:\Users\USER\AppData\Local\Temp\battleraja-splash-6920edd\`: `t025.png` is the
+`C:\Users\USER\AppData\Local\Temp\battleraja-splash-dff3a89\`: `t025.png` is the
 dark native background, `t1000.png` shows the BattleRaja icon, and `t2800.png`
 shows the branded offline menu. The inspected log has zero `FATAL EXCEPTION`, `ANR
-in`, or `SIGSEGV` markers. This confirms the release-shaped splash path, but human
-approval of launch pacing, final art and overall product polish remains open. The
-AAB has not yet been rebuilt from `6920edd`.
+in`, or `SIGSEGV` markers. Exact-current repository validation is 0/0, EditMode is
+125/125, and PlayMode is 69/69. This confirms the release-shaped splash path, but
+human approval of launch pacing, final art and overall product polish remains open.
 
 ## Latest exact-current Android control-rotation slice — `b954a72` — 2026-08-24
 
