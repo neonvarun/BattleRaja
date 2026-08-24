@@ -4,7 +4,7 @@ Date: 2026-08-24
 Branch: `codex/v1-playstore-release` (ahead of local and remote `main`; exact count is recorded by Git)
 Local/remote `main`: `ca6ec3e17e695042664cf3bdbf9889b259b33144`
 Latest validated runtime source: `6ac5c12` (`ui: bind runtime input actions explicitly`)
-Latest checked-out source: `6ac5c12`. Documentation
+Latest checked-out runtime source: `6ac5c12`; documentation
 updates are in the focused commits following those source changes;
 the checked-out Git HEAD is the authoritative current documentation state.
 Balance-fix runtime source: `17a8c75` (`fix(balance): land documented weapon retune in Core definitions`)
