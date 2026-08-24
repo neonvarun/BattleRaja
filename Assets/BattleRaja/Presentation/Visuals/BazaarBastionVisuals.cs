@@ -17,6 +17,7 @@ namespace BattleRaja.Presentation.Visuals
 
         private readonly List<GameObject> _objects = new List<GameObject>(64);
         private readonly List<Material> _materials = new List<Material>(12);
+        private readonly List<Mesh> _meshes = new List<Mesh>(2);
         private Transform _root;
         private GameObject _lightingObject;
 
@@ -34,6 +35,10 @@ namespace BattleRaja.Presentation.Visuals
             for (var i = 0; i < _materials.Count; i++)
             {
                 if (_materials[i] != null) Destroy(_materials[i]);
+            }
+            for (var i = 0; i < _meshes.Count; i++)
+            {
+                if (_meshes[i] != null) Destroy(_meshes[i]);
             }
         }
 
@@ -286,6 +291,7 @@ namespace BattleRaja.Presentation.Visuals
             mesh.SetTriangles(alternateTriangles, 1, true);
             mesh.SetTriangles(accentTriangles, 2, true);
             mesh.RecalculateBounds();
+            _meshes.Add(mesh);
             var filter = ground.GetComponent<MeshFilter>();
             filter.sharedMesh = mesh;
             var renderer = ground.GetComponent<MeshRenderer>();
