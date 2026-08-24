@@ -1,5 +1,29 @@
 # Latest HEAD baseline
 
+## Exact current Android candidate — `1d743b0` / runtime `d96d3f2` — 2026-08-24
+
+The exact checked-out source is `1d743b0` (`tools: add repeatable Lava
+performance capture`); the latest runtime-bearing change is `d96d3f2`, which
+pauses the offline match when Android loses focus or backgrounds the app and
+resumes only the lifecycle-created pause. Full EditMode is **125/125** and
+PlayMode is **71/71**.
+
+| Artifact | Size | SHA-256 |
+| --- | ---: | --- |
+| APK (`BattleRaja-V1.0-release-candidate.apk`) | 39,486,559 bytes | `89156306717C5EB27EE193AD1D46809DFE19159112ADC3C77008D4C6A3C89DE0` |
+| AAB (`BattleRaja-V1.0-release-candidate.aab`) | 35,313,996 bytes | `F5776F6AF19EE1C0A803D76050A80E62E883710E00296EF9603CED279D2227C1` |
+
+The packages were built from exact source in disposable worktree
+`C:\BRLifecycle`. The AAB contains seven ARM64 native libraries, no other
+native ABIs, and passed the static 16 KB ELF LOAD alignment check. The APK
+installed only on Lava `ST5GDW23LB004392`; launch resolved to
+`com.example.battleraja.m11/com.unity3d.player.UnityPlayerGameActivity`, but
+the device lock screen remained active (`mDreamingLockscreen=true`). No
+interactive menu, tutorial, or full-route evidence is attributed to this
+candidate. The packages are debug-signed with temporary identity
+`com.example.battleraja.m11` and are not publishable. The repeatable capture
+harness is `Tools/Validation/capture_android_performance.ps1`.
+
 ## Exact tutorial action-gate candidate — `65e6001` — 2026-08-24
 
 The exact current runtime source is `65e6001` (`tutorial: gate progression on

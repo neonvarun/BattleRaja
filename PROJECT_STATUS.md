@@ -6,6 +6,23 @@
 
 ## Current state
 
+- Latest checked-out source is `1d743b0` (`tools: add repeatable Lava
+  performance capture`); the latest runtime-bearing change is `d96d3f2`
+  (`android: pause offline match on app lifecycle loss`). Full EditMode is
+  **125/125** and PlayMode is **71/71**, including the new background/resume
+  pause guard. Fresh release-shaped packages were built from exact source
+  `1d743b0` in disposable worktree `C:\BRLifecycle`: APK `39,486,559` bytes,
+  SHA-256
+  `89156306717C5EB27EE193AD1D46809DFE19159112ADC3C77008D4C6A3C89DE0`; AAB
+  `35,313,996` bytes, SHA-256
+  `F5776F6AF19EE1C0A803D76050A80E62E883710E00296EF9603CED279D2227C1`.
+  The AAB contains seven ARM64 native libraries, no other ABIs, and passed the
+  static 16 KB ELF alignment check. The APK installed only on Lava
+  `ST5GDW23LB004392`; launch reached the Unity activity, but the owner's lock
+  screen remained active, so no interactive route or tutorial completion claim
+  is made. Classification remains **prototype** and the packages remain
+  debug-signed with temporary package ID `com.example.battleraja.m11`.
+
 - Latest runtime-bearing source is now `65e6001` (`tutorial: gate progression on
   real offline actions`). The tutorial overlay now requires the matching arena
   action for each step, requires both pickup and use for the gadget step, and

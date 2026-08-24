@@ -16,6 +16,20 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
   outside the Android runtime. Final signed-bundle inspection is still required before
   Play submission.
 
+## Exact current candidate — `1d743b0` / runtime `d96d3f2` — 2026-08-24
+
+- Validation: **0 errors / 0 warnings**; EditMode **125/125**; PlayMode **71/71**.
+- Release-shaped APK: **39,486,559 bytes**, SHA-256
+  `89156306717C5EB27EE193AD1D46809DFE19159112ADC3C77008D4C6A3C89DE0`.
+- Release-shaped AAB: **35,313,996 bytes**, SHA-256
+  `F5776F6AF19EE1C0A803D76050A80E62E883710E00296EF9603CED279D2227C1`.
+- AAB: 7 ARM64 native libraries, 0 other ABIs, static 16 KB alignment passed.
+- Lava `ST5GDW23LB004392`: exact APK installation succeeded; launch resolved to
+  the Unity activity, but the active lock screen blocked interactive menu,
+  tutorial and match QA. No physical route claim is made from this run.
+- The Android lifecycle pause guard is automated-test covered; sustained
+  performance and human background/resume review remain open.
+
 ## Latest exact-current evidence — `6ac5c12` — 2026-08-24
 
 - Validation: **0 errors / 0 warnings**; EditMode **125/125**; PlayMode **67/67**.

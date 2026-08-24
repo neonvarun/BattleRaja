@@ -1,5 +1,17 @@
 # BattleRaja visual and interaction QA report
 
+## Exact current candidate — `1d743b0` / runtime `d96d3f2` — 2026-08-24
+
+The current exact Android candidate is the lifecycle-guard build documented in
+`Docs/QA/LATEST_HEAD_BASELINE.md`. EditMode is **125/125** and PlayMode is
+**71/71**. The APK installed only on Lava `ST5GDW23LB004392` and resolved to
+the Unity activity, but the active lock screen prevented inspection of the
+rendered menu, tutorial or match, so this report makes no screenshot or human
+visual claim for this candidate. The lifecycle pause/resume behavior is covered
+by automated PlayMode regression; physical background/resume, touch, safe-area,
+accessibility and cultural review remain open. The prior screenshots in this
+append-only report remain historical and are not silently reattributed.
+
 ## Exact current presentation update — `f463b1b` — 2026-08-24
 
 The current branch tip is `f463b1b`. The presentation now renders a world-space

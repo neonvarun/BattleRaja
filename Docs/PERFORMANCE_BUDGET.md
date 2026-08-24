@@ -1,5 +1,26 @@
 # Android and Web Performance Budget
 
+## Exact current source and capture tooling — `1d743b0` / runtime `d96d3f2` — 2026-08-24
+
+The current source has full EditMode **125/125** and PlayMode **71/71**. Fresh
+exact-source Android packages built in disposable worktree `C:\BRLifecycle` are
+an APK of **39,486,559 bytes** (SHA-256
+`89156306717C5EB27EE193AD1D46809DFE19159112ADC3C77008D4C6A3C89DE0`) and an AAB
+of **35,313,996 bytes** (SHA-256
+`F5776F6AF19EE1C0A803D76050A80E62E883710E00296EF9603CED279D2227C1`). The AAB
+is ARM64-only and passed static 16 KB alignment. The APK installed only on Lava
+`ST5GDW23LB004392`; interactive performance sampling is blocked while the
+owner's device lock screen is active. No sustained CPU, GPU, GC, frame-pacing,
+thermal, battery or repeated-match pass is claimed.
+
+`Tools/Validation/capture_android_performance.ps1` now provides a repeatable
+Lava-only sample protocol. It records device/package identity, activity,
+per-sample `meminfo`, `gfxinfo`, `cpuinfo`, `top`, thermal, battery, activity and
+logcat output, plus a manifest and configured fatal-marker scan. A one-sample
+non-launch smoke capture was recorded outside source under
+`Builds/Local/Device/Performance/script-smoke`; it is tooling validation, not a
+product performance result.
+
 ## Exact current release-shaped package — `062066b` — 2026-08-24
 
 The exact checked-out HEAD produced a local release-shaped APK of **39,482,035

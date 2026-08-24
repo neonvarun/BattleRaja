@@ -3,6 +3,22 @@
 Updated: 2026-08-24
 Classification: **prototype**
 
+## Exact current Android candidate — `1d743b0` / runtime `d96d3f2` — 2026-08-24
+
+Status: **In progress**. The runtime now pauses the offline match on Android
+focus loss/background and safely resumes only when that lifecycle pause was
+created by the HUD; controls were already reset on focus loss. EditMode is
+**125/125** and PlayMode is **71/71**. Fresh exact-source packages from
+`C:\BRLifecycle` are APK `39,486,559` bytes
+(`89156306717C5EB27EE193AD1D46809DFE19159112ADC3C77008D4C6A3C89DE0`) and AAB
+`35,313,996` bytes
+(`F5776F6AF19EE1C0A803D76050A80E62E883710E00296EF9603CED279D2227C1`). The AAB
+is ARM64-only with seven native libraries and passed static 16 KB alignment.
+Installation on Lava `ST5GDW23LB004392` succeeded; the device lock screen
+blocked interactive launch/route QA, so no physical tutorial or full-match
+claim is made. The package ID and signing remain temporary; performance,
+accessibility, human visual, legal/privacy and Play Console gates remain open.
+
 ## Exact tutorial action-gate candidate — `65e6001` — 2026-08-24
 
 Status: **In progress** for tutorial implementation and automated coverage.
