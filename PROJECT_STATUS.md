@@ -19,7 +19,7 @@
   succeeded, but the lock screen blocked interaction; no route or performance
   pass is claimed.
 
-- Documentation HEAD is `36b1f47` (`docs: record cached actor-view validation`);
+- Documentation HEAD is `2641987` (`docs: record exact e808830 Android candidate`);
   the measured runtime/validation source for the current Android package is `1d743b0`
   (`tools: add repeatable Lava performance capture`); the latest runtime-bearing change is `d96d3f2`
   (`android: pause offline match on app lifecycle loss`). Full EditMode is

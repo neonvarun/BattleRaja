@@ -17,7 +17,7 @@ remain open.
 
 - Branch: `codex/v1-playstore-release`
 - Current runtime source: `e808830` (`perf: reuse cached actor views for Pehel authority results`)
-- Documentation HEAD: `36b1f47` (`docs: record cached actor-view validation`)
+- Documentation HEAD: `2641987` (`docs: record exact e808830 Android candidate`)
 - Runtime/validation source: `1d743b0` (`tools: add repeatable Lava performance capture`)
 - Latest runtime change: `d96d3f2` (Android lifecycle pause/resume guard)
 - Unity: `6000.5.6f1`
