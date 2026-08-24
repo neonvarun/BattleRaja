@@ -1,5 +1,14 @@
 # BattleRaja visual and interaction QA report
 
+## Exact current source — `e808830` — 2026-08-24
+
+The current source contains a presentation-only Pehel actor-view cache lookup.
+It changes no rendered asset or gameplay rule. Validation is **0/0**, EditMode
+is **125/125**, and PlayMode is **71/71**. No new Android or Web visual artifact
+was produced for this cleanup; prior screenshots remain attributed to their
+recorded source commits. Human visual, touch and accessibility review remain
+open.
+
 ## Exact current candidate — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 
 The documentation HEAD is `be0c510`; the current exact Android candidate is the lifecycle-guard build documented in

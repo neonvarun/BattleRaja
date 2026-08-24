@@ -16,6 +16,7 @@ remain open.
 ## Exact current source
 
 - Branch: `codex/v1-playstore-release`
+- Current runtime source: `e808830` (`perf: reuse cached actor views for Pehel authority results`)
 - Documentation HEAD: `be0c510` (`docs: rebaseline exact Android lifecycle candidate`)
 - Runtime/validation source: `1d743b0` (`tools: add repeatable Lava performance capture`)
 - Latest runtime change: `d96d3f2` (Android lifecycle pause/resume guard)
@@ -24,6 +25,10 @@ remain open.
 - PlayMode: **71/71**
 - Repository validation: **0 errors / 0 warnings**
 - Git LFS: passed
+
+The current `e808830` change is behavior-preserving presentation cleanup and
+has no fresh Android artifact; the package table below remains attributed to
+`1d743b0`.
 
 ## Exact current Android artifacts
 

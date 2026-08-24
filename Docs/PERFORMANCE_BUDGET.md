@@ -1,5 +1,16 @@
 # Android and Web Performance Budget
 
+## Hot-path lookup cleanup — `e808830` — 2026-08-24
+
+Static inspection of the authority-driven Pehel path found a scene-wide
+`FindObjectsByType<CombatTarget>` scan in the per-tick result adapter. The
+adapter now uses the eight-actor cache already owned by
+`OfflineMatchController`; no gameplay or authority rule changed. EditMode
+125/125, PlayMode 71/71 and repository validation 0/0 pass for this source.
+No before/after device frame or allocation measurement is claimed yet; the
+repeatable Lava capture remains blocked by the locked device and must be rerun
+before any performance budget conclusion.
+
 ## Exact current source and capture tooling — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 
 The documentation HEAD is `be0c510`; the measured runtime/validation source is

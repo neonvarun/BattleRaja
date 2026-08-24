@@ -1,5 +1,17 @@
 # Latest HEAD baseline
 
+## Exact current source — `e808830` — 2026-08-24
+
+The current runtime source adds a presentation-only hot-path cleanup: Pehel's
+authority result adapter now resolves actor views through the match controller's
+existing actor cache instead of scanning all `CombatTarget` objects during
+authority charge ticks. Repository validation is **0 errors / 0 warnings**;
+fresh exact-source EditMode is **125/125** and PlayMode is **71/71**. Unity
+batch compilation exited successfully. No Android package was rebuilt for this
+behavior-preserving cleanup, so the package hashes below remain attributed to
+the measured `1d743b0` source and are not reattributed here. Physical Lava,
+sustained performance, visual and accessibility review remain open.
+
 ## Exact current Android candidate — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 
 The documentation HEAD is `be0c510` (`docs: rebaseline exact Android lifecycle

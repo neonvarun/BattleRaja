@@ -3,6 +3,16 @@
 Updated: 2026-08-24
 Classification: **prototype**
 
+## Exact current source — `e808830` — 2026-08-24
+
+Status: **In progress**. The Pehel authority presentation adapter now uses the
+match controller's cached actor views instead of a scene-wide target scan during
+authority charge result application. Repository validation is **0/0**, fresh
+EditMode is **125/125**, and fresh PlayMode is **71/71**. This is a behavior-
+preserving presentation cleanup; no new Android package was built, and prior
+APK/AAB hashes are not attributed to this commit. Device interaction,
+sustained performance, accessibility, signing and Play gates remain open.
+
 ## Exact current Android candidate — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 
 Status: **In progress**. Documentation HEAD is `be0c510`; the packages and

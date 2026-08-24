@@ -16,6 +16,15 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
   outside the Android runtime. Final signed-bundle inspection is still required before
   Play submission.
 
+## Exact current source cleanup — `e808830` — 2026-08-24
+
+The current source uses cached actor views for Pehel authority-result presentation
+instead of a scene-wide target scan. Validation is **0/0**, EditMode **125/125**
+and PlayMode **71/71**. No new APK/AAB was built for this behavior-preserving
+cleanup; the release-shaped package hashes below remain attributed to their
+recorded source commits. This does not change signing, package identity, device,
+performance or Play approval gates.
+
 ## Exact current candidate — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 
 - Validation: **0 errors / 0 warnings**; EditMode **125/125**; PlayMode **71/71**.
