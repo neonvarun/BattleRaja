@@ -21,7 +21,10 @@ static 16 KB ELF LOAD alignment check. The APK installed only on Lava
 active (`mDreamingLockscreen=true`), so no interactive route or visual claim is
 made. A one-sample capture-tool smoke recorded no fatal markers, but is not a
 product performance result. Physical Lava interaction, sustained performance,
-visual and accessibility review remain open.
+visual and accessibility review remain open. APK manifest inspection reports
+temporary package `com.example.battleraja.m11`, version `1.0.0` / code `100`,
+min SDK 28, target/compile SDK 36, and only `VIBRATE` plus Unity's dynamic
+receiver permission; `INTERNET` and `ACCESS_NETWORK_STATE` are absent.
 
 ## Exact current Android candidate — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 

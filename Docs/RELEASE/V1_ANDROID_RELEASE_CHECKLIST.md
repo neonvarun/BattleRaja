@@ -26,7 +26,11 @@ are APK `2404F4BB2EB3AAA08ED8B92CA3F658F6127F70C1D197F46D8AF1511720803271`
 `8FEF3AF9BEC7DB0F5C809B52F49B953D600EE5CCE7D680B268575B5A60E29C70`
 (35,312,622 bytes). The AAB is ARM64-only and passed static 16 KB alignment;
 installation/launch on Lava succeeded, but the lock screen blocked interaction.
-Signing, package identity, device, performance and Play approval gates remain open.
+Manifest inspection reports temporary package `com.example.battleraja.m11`,
+version `1.0.0` / code `100`, min SDK 28, target/compile SDK 36, and only
+`VIBRATE` plus Unity's dynamic receiver permission; `INTERNET` and
+`ACCESS_NETWORK_STATE` are absent. Signing, package identity, device,
+performance and Play approval gates remain open.
 
 ## Exact current candidate — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 

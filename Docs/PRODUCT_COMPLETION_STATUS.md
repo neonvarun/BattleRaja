@@ -16,6 +16,9 @@ bytes) and AAB
 bytes). The AAB is ARM64-only and passed static 16 KB alignment. Lava install
 and launch succeeded, but the active lock screen blocked interactive QA. Device
 interaction, sustained performance, accessibility, signing and Play gates remain open.
+APK manifest inspection reports temporary package `com.example.battleraja.m11`,
+version `1.0.0` / code `100`, min SDK 28, target/compile SDK 36, and only
+`VIBRATE` plus Unity's dynamic receiver permission; network permissions are absent.
 
 ## Exact current Android candidate — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 
