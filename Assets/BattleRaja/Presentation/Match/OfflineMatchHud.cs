@@ -45,10 +45,13 @@ namespace BattleRaja.Presentation.Match
         private bool _controlsLayoutInitialized;
         private AandhiState _lastAandhiState = AandhiState.Stable;
         private bool _resultsCuePlayed;
+        private AandhiZoneVisual _aandhiVisual;
 
         private void Awake()
         {
             match = match != null ? match : FindAnyObjectByType<OfflineMatchController>();
+            _aandhiVisual = GetComponent<AandhiZoneVisual>();
+            if (_aandhiVisual == null) _aandhiVisual = gameObject.AddComponent<AandhiZoneVisual>();
             canvas = canvas != null ? canvas : FindAnyObjectByType<Canvas>();
             if (canvas == null)
             {
