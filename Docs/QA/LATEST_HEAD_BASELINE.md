@@ -1,6 +1,6 @@
 # Latest HEAD baseline
 
-## Exact Android candidate source — `34b5b7f` — 2026-08-24
+## Exact Android candidate source — `edbf4d0` — 2026-08-24
 
 The checked-out source contains the presentation-only Pehel hot-path cleanup,
 the owner-configurable Android package identity, explicit non-development release
@@ -12,18 +12,20 @@ source and are not silently reattributed to later commits.
 Repository validation is
 **0 errors / 0 warnings**, with fresh exact-source EditMode **125/125** and
 PlayMode **71/71**. A fresh release-shaped Android package was built from exact
-source and archived inside `Builds/Local/V1Evidence/34b5b7f/Android`:
+source and archived inside `Builds/Local/V1Evidence/edbf4d0/Android`:
 
 | Artifact | Size | SHA-256 |
 | --- | ---: | --- |
-| APK | 39,485,163 bytes | `FC285938DE68FFE9CB9B22B4BF5897B9CA89C04D2CCE7B0439E0DD6B4CC403CF` |
-| AAB | 35,312,621 bytes | `12EE3175AF66E50B47BBA082FB4027507A457A1E9CBA1AD654B2479245F4C154` |
+| APK | 39,487,853 bytes | `2492E8FAA2C04C21D248B2D03F44BF9AEB28CBC511D65A134823A2A0F0A42811` |
+| AAB | 35,314,150 bytes | `796310670ACA8912FBDBC8A3CD0ED0B7FDE3AF7023D3978296545867D304F0B7` |
 
 The AAB contains seven ARM64 native libraries, no other ABIs, and passed the
 static 16 KB ELF LOAD alignment check. The APK installed only on Lava
-`ST5GDW23LB004392` and launched the Unity activity; the lock screen remained
-active (`mDreamingLockscreen=true`), so no interactive route or visual claim is
-made. The repository manifest gate reports temporary package
+`ST5GDW23LB004392` and launched the Unity activity. The portrait menu is
+captured at `Builds/Local/V1Evidence/edbf4d0/Android/lava-launch.png`, with the
+foreground activity recorded in `lava-window-state.txt`; this is install,
+launch and menu evidence only, not a tutorial/full-match or performance pass.
+The repository manifest gate reports temporary package
 `com.example.battleraja.m11`, version `1.0.0` / code `100`, min SDK 28,
 target/compile SDK 36, and only `VIBRATE` plus Unity's dynamic receiver
 permission; `INTERNET` and `ACCESS_NETWORK_STATE` are absent. Physical Lava

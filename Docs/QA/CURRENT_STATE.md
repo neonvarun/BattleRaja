@@ -23,27 +23,29 @@ remain open.
 ## Exact current source
 
 - Branch: `codex/v1-playstore-release`
-- Current branch tip contains the release-gate and documentation commits after
-  the exact Android candidate source `34b5b7f` (`release: disable offline
-  analytics and document Play privacy gates`).
-- Exact Android candidate source: `34b5b7f`
-- Current runtime-bearing source: `e808830` (`perf: reuse cached actor views for Pehel authority results`)
+- Current branch tip contains documentation follow-ups after exact candidate
+  source `edbf4d0` (`docs: keep release evidence inside project root`).
+- Exact Android candidate source: `edbf4d0`
+- Current runtime-bearing source: `2231d35` (`performance: reduce offline HUD update churn`)
 - Documentation evidence anchor: the exact-source sections in this index and
   `Docs/QA/LATEST_HEAD_BASELINE.md`, updated with the release-flags candidate.
-- Runtime/validation source: `1d743b0` (`tools: add repeatable Lava performance capture`)
-- Latest runtime-bearing change: `e808830` (Pehel cached actor views); the
-  preceding lifecycle change is `d96d3f2` (Android pause/resume guard).
+- Runtime/validation source for the current candidate: `2231d35` (`performance:
+  reduce offline HUD update churn`). Earlier lifecycle/performance commits remain
+  historical evidence only.
 - Unity: `6000.5.6f1`
 - EditMode: **125/125**
 - PlayMode: **71/71**
 - Repository validation: **0 errors / 0 warnings**
 - Git LFS: passed
 
-The current `e808830` change is behavior-preserving presentation cleanup. Its
-fresh release-shaped APK/AAB are recorded in the exact-current baseline; the
-APK installed and launched on Lava, but the lock screen prevented interaction.
-The package table below remains the prior lifecycle candidate for the separate
-performance-tool baseline.
+The current `2231d35` change is behavior-preserving presentation cleanup. Its
+fresh release-shaped APK/AAB are recorded in the exact-current baseline. The APK
+installed and launched on Lava `ST5GDW23LB004392`; the portrait menu is captured
+at `Builds/Local/V1Evidence/edbf4d0/Android/lava-launch.png`, with foreground
+window evidence in `lava-window-state.txt`. This proves install/launch/menu
+presentation only; tutorial, full-match, accessibility and performance review
+remain unperformed. The package table below remains the prior lifecycle
+candidate for the separate performance-tool baseline.
 
 ## Prior Android artifacts used for the performance-tool baseline
 
@@ -63,7 +65,7 @@ candidate.
 
 ## Current open gates
 
-- Unlock Lava and perform the real tutorial action sequence, full match, all
+- Perform the real tutorial action sequence, full match, all
   fighters/gadgets, spectator, results, rematch, settings and background/resume.
 - Run a sustained match/performance capture with the new
   `Tools/Validation/capture_android_performance.ps1` harness and interpret frame,

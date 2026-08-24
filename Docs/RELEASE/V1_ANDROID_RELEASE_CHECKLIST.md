@@ -53,19 +53,21 @@ pwsh -File Tools/Validation/check_v1_release_candidate.ps1 `
 This gate is technical and local only. It does not sign, upload, publish, or approve
 the final identity, privacy/Data Safety, content rating, cultural review or Play track.
 
-## Exact Android candidate source — `34b5b7f` — 2026-08-24
+## Exact Android candidate source — `edbf4d0` — 2026-08-24
 
 The current source retains the cached actor views for Pehel authority-result
 presentation, adds the owner-configurable package identity seam, explicit
 non-development release flags, disabled offline Unity Analytics/services and retains
 the repeatable offline APK manifest gate. Validation is **0/0**, EditMode **125/125**
 and PlayMode **71/71**. Fresh release-shaped packages archived inside
-`Builds/Local/V1Evidence/34b5b7f/Android` are APK
-`FC285938DE68FFE9CB9B22B4BF5897B9CA89C04D2CCE7B0439E0DD6B4CC403CF`
-(39,485,163 bytes) and AAB
-`12EE3175AF66E50B47BBA082FB4027507A457A1E9CBA1AD654B2479245F4C154`
-(35,312,621 bytes). The AAB is ARM64-only and passed static 16 KB alignment;
-installation/launch on Lava succeeded, but the lock screen blocked interaction.
+`Builds/Local/V1Evidence/edbf4d0/Android` are APK
+`2492E8FAA2C04C21D248B2D03F44BF9AEB28CBC511D65A134823A2A0F0A42811`
+(39,487,853 bytes) and AAB
+`796310670ACA8912FBDBC8A3CD0ED0B7FDE3AF7023D3978296545867D304F0B7`
+(35,314,150 bytes). The AAB is ARM64-only and passed static 16 KB alignment;
+installation/launch on Lava succeeded and the portrait menu was captured in
+`Builds/Local/V1Evidence/edbf4d0/Android/lava-launch.png`; no interactive route
+pass is claimed.
 Manifest inspection reports temporary package `com.example.battleraja.m11`,
 version `1.0.0` / code `100`, min SDK 28, target/compile SDK 36, and only
 `VIBRATE` plus Unity's dynamic receiver permission; `INTERNET` and

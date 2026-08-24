@@ -6,20 +6,12 @@
 
 ## Current state
 
-- The exact Android candidate source is `34b5b7f` (`release: disable offline
-  analytics and document Play privacy gates`); the current branch tip also contains later release
-  gate/documentation commits. The latest runtime-bearing source is `e808830` (`perf: reuse cached
-  actor views for Pehel authority results`). Repository validation is **0/0**,
-  fresh EditMode is **125/125**, and fresh PlayMode is **71/71**. Fresh
-  release-shaped packages archived inside `Builds/Local/V1Evidence/34b5b7f/Android`
-  are APK
-  `39,485,163` bytes (SHA-256
-  `FC285938DE68FFE9CB9B22B4BF5897B9CA89C04D2CCE7B0439E0DD6B4CC403CF`) and AAB
-  `35,312,621` bytes (SHA-256
-  `12EE3175AF66E50B47BBA082FB4027507A457A1E9CBA1AD654B2479245F4C154`). The
+- The exact Android candidate source is `edbf4d0` (`docs: keep release evidence inside project root`); the latest runtime-bearing source is `2231d35` (`performance: reduce offline HUD update churn`). Repository validation is **0/0**, fresh EditMode is **125/125**, and fresh PlayMode is **71/71**. Fresh release-shaped packages archived inside `Builds/Local/V1Evidence/edbf4d0/Android` are APK **39,487,853** bytes (SHA-256 `2492E8FAA2C04C21D248B2D03F44BF9AEB28CBC511D65A134823A2A0F0A42811`) and AAB **35,314,150** bytes (SHA-256 `796310670ACA8912FBDBC8A3CD0ED0B7FDE3AF7023D3978296545867D304F0B7`). The
   AAB is ARM64-only and passed static 16 KB alignment. Lava install and launch
-  succeeded, but the lock screen blocked interaction; no route or performance
-  pass is claimed.
+  succeeded; the portrait menu is captured in
+  `Builds/Local/V1Evidence/edbf4d0/Android/lava-launch.png`. This is menu-only
+  evidence; no tutorial, full-match, accessibility or performance pass is
+  claimed.
 
 - Documentation evidence is anchored by the exact-source sections in
   `Docs/QA/CURRENT_STATE.md` and `Docs/QA/LATEST_HEAD_BASELINE.md`, updated with
