@@ -1,5 +1,30 @@
 # Latest HEAD baseline
 
+## Exact tutorial action-gate candidate — `65e6001` — 2026-08-24
+
+The exact current runtime source is `65e6001` (`tutorial: gate progression on
+real offline actions`). Tutorial progression is now authority/telemetry-driven:
+the continue button remains locked until the required movement, aim, attack,
+ability, gadget collection/use, Aandhi, elimination or victory action has been
+observed. Replay reloads a fresh tutorial arena. EditMode is **125/125** and
+PlayMode is **70/70**.
+
+| Artifact | Size | SHA-256 |
+| --- | ---: | --- |
+| APK (`BattleRaja-V1.0-release-candidate.apk`) | 39,484,371 bytes | `0F9AD792D2479ADC1F57BCCACF28921DB327A6D926990560762A7FC977DD7DB8` |
+| AAB (`BattleRaja-V1.0-release-candidate.aab`) | 35,311,798 bytes | `F0049D127717FE7EB1BF8FB6F13E7699133F76FBA135EB18960AD48AE01EEAE7` |
+
+Both packages were built from the exact source in disposable worktree
+`C:\BRTutorial`. The AAB contains seven ARM64 native libraries, no other native
+ABIs, and passed the static 16 KB ELF LOAD alignment check. The APK installed
+successfully on the approved Lava device `ST5GDW23LB004392`. The device was
+locked during the attempted interactive run, so the screenshots are lock-screen
+captures and do not constitute tutorial UI or action-by-action evidence. The
+tutorial remains **In progress / Human review required** until the owner unlocks
+Lava and performs the real flow. These debug-signed packages use temporary
+identity `com.example.battleraja.m11` and are not publishable. No Web build was
+attempted for this Android-only V1 scope.
+
 ## Exact runtime release-shaped Android package baseline — `062066b` — 2026-08-24
 
 The latest runtime-bearing source is `062066b` (`docs: align exact head after

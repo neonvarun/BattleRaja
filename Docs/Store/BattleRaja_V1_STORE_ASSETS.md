@@ -23,6 +23,9 @@ The matching runtime-source AAB is
 (SHA-256 `4D3948F876580AC45A0655593DAA6FE4AF70BC9BACF78840F33EC63E8775E858`).
 Both packages are debug-signed local candidates with temporary package ID
 `com.example.battleraja.m11`; they are not upload-ready.
+These store screenshot candidates predate the tutorial action-gate source
+`65e6001` and must be refreshed and re-reviewed against the final signed AAB
+before upload.
 The feature graphic is marketing artwork depicting the same fictional
 Bazaar Bastion setting and three fighters, but it is not a screenshot and must
 not be presented as in-game capture.

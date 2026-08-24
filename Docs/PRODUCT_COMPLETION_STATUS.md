@@ -3,6 +3,24 @@
 Updated: 2026-08-24
 Classification: **prototype**
 
+## Exact tutorial action-gate candidate — `65e6001` — 2026-08-24
+
+Status: **In progress** for tutorial implementation and automated coverage.
+The exact runtime source now requires each tutorial step's corresponding arena
+action before `CONTINUE` unlocks; the gadget step requires both collection and
+use, and replay reloads a fresh arena. EditMode is **125/125** and PlayMode is
+**70/70**. The exact release-shaped APK is `39,484,371` bytes
+(`0F9AD792D2479ADC1F57BCCACF28921DB327A6D926990560762A7FC977DD7DB8`) and the
+AAB is `35,311,798` bytes
+(`F0049D127717FE7EB1BF8FB6F13E7699133F76FBA135EB18960AD48AE01EEAE7`), both
+built in disposable worktree `C:\BRTutorial`. The AAB is ARM64-only with seven
+native libraries and passed static 16 KB alignment. Installation on Lava
+`ST5GDW23LB004392` succeeded, but the device lock screen prevented interactive
+QA; therefore no physical action-by-action tutorial completion is claimed.
+The packages are debug-signed with temporary package ID
+`com.example.battleraja.m11`; signing, package identity, human review,
+performance, accessibility, Web and Play Store gates remain open.
+
 ## Exact runtime release-shaped Android package baseline — `062066b` — 2026-08-24
 
 Fresh exact-source Android packages were built from runtime source `062066b` in

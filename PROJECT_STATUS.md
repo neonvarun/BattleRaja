@@ -6,6 +6,23 @@
 
 ## Current state
 
+- Latest runtime-bearing source is now `65e6001` (`tutorial: gate progression on
+  real offline actions`). The tutorial overlay now requires the matching arena
+  action for each step, requires both pickup and use for the gadget step, and
+  reloads a fresh tutorial arena for replay. EditMode is **125/125** and
+  PlayMode is **70/70** after the change. A fresh release-shaped APK
+  (`39,484,371` bytes, SHA-256
+  `0F9AD792D2479ADC1F57BCCACF28921DB327A6D926990560762A7FC977DD7DB8`) and
+  AAB (`35,311,798` bytes, SHA-256
+  `F0049D127717FE7EB1BF8FB6F13E7699133F76FBA135EB18960AD48AE01EEAE7`) were
+  built in disposable worktree `C:\BRTutorial`. The AAB is ARM64-only with
+  seven native libraries and passed the static 16 KB ELF alignment check. The
+  APK installed successfully on Lava `ST5GDW23LB004392`, but interactive
+  tutorial QA is blocked by the owner's active device lock screen; no physical
+  action-by-action completion claim is made. The packages remain debug-signed
+  with temporary package ID `com.example.battleraja.m11` and are not
+  publishable. Classification remains **prototype**.
+
 - Latest runtime-bearing source is `062066b` (`docs: align exact head after
   visual cleanup`). A fresh release-shaped APK (`39,482,035` bytes, SHA-256
   `C7B16D01DEA3ED3ADA1B5E5AA421B82ADBA46F5E1A0A2B0283F409BC59F3E245`) and
