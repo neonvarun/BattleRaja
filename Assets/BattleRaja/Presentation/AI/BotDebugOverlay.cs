@@ -5,7 +5,7 @@ namespace BattleRaja.Presentation.AI
     public sealed class BotDebugOverlay : MonoBehaviour
     {
         [SerializeField] private BotBrain brain;
-        [SerializeField] private bool showOverlay = true;
+        [SerializeField] private bool showOverlay;
 
         private void Awake()
         {
@@ -14,6 +14,14 @@ namespace BattleRaja.Presentation.AI
 
         private void OnGUI()
         {
+#if !UNITY_EDITOR
+            // Engineering labels are useful in the editor and development builds,
+            // but they must never ship in the player-facing release surface.
+            if (!Debug.isDebugBuild)
+            {
+                return;
+            }
+#endif
             if (!showOverlay || brain == null || Camera.main == null)
             {
                 return;
