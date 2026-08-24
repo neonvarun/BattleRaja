@@ -6,15 +6,15 @@
 
 ## Current state
 
-- Checked-out source is `ddff490` (`release: make Android package identity
-  owner-configurable`); the latest runtime-bearing source is `e808830` (`perf: reuse cached
+- Checked-out source is `d87d9d2` (`release: disable development flags for V1
+  candidate`); the latest runtime-bearing source is `e808830` (`perf: reuse cached
   actor views for Pehel authority results`). Repository validation is **0/0**,
   fresh EditMode is **125/125**, and fresh PlayMode is **71/71**. Fresh
-  release-shaped packages from disposable `C:\BRV1PackageOverride` are APK
-  `39,485,163` bytes (SHA-256
-  `BDF6473920ABB05F7FE35BDF9960CD1C025756AE576B1934F2982D3FBCA282D6`) and AAB
-  `35,312,608` bytes (SHA-256
-  `9A7EB0397524E00B7928EC0BE13F692F92AEE2C9B8804BC23712AF21F19899F6`). The
+  release-shaped packages from disposable `C:\BRV1ReleaseFlags` are APK
+  `39,485,159` bytes (SHA-256
+  `0BC68BB6AE87355CCB6443EDF9ECE10539FEB03DF48D03A893FCDD4063D03B74`) and AAB
+  `35,312,590` bytes (SHA-256
+  `504001EAE4CAB9D6BB538B8876EFEC315107DD1D7EFE1E581BD5B2CF93440860`). The
   AAB is ARM64-only and passed static 16 KB alignment. Lava install and launch
   succeeded, but the lock screen blocked interaction; no route or performance
   pass is claimed.

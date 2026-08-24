@@ -16,7 +16,7 @@ remain open.
 ## Exact current source
 
 - Branch: `codex/v1-playstore-release`
-- Current checked-out source: `ddff490` (`release: make Android package identity owner-configurable`)
+- Current checked-out source: `d87d9d2` (`release: disable development flags for V1 candidate`)
 - Current runtime-bearing source: `e808830` (`perf: reuse cached actor views for Pehel authority results`)
 - Documentation evidence anchor: `3acfd0e` (`docs: update current evidence head`)
 - Runtime/validation source: `1d743b0` (`tools: add repeatable Lava performance capture`)

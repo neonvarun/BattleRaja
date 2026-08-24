@@ -16,17 +16,18 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
   outside the Android runtime. Final signed-bundle inspection is still required before
   Play submission.
 
-## Exact current source — `ddff490` — 2026-08-24
+## Exact current source — `d87d9d2` — 2026-08-24
 
 The current source retains the cached actor views for Pehel authority-result
-presentation, adds the owner-configurable package identity seam and retains the
-repeatable offline APK manifest gate. Validation is **0/0**, EditMode **125/125**
+presentation, adds the owner-configurable package identity seam, explicit
+non-development release flags and retains the repeatable offline APK manifest
+gate. Validation is **0/0**, EditMode **125/125**
 and PlayMode **71/71**. Fresh release-shaped packages from
-`C:\BRV1PackageOverride` are APK
-`BDF6473920ABB05F7FE35BDF9960CD1C025756AE576B1934F2982D3FBCA282D6`
-(39,485,163 bytes) and AAB
-`9A7EB0397524E00B7928EC0BE13F692F92AEE2C9B8804BC23712AF21F19899F6`
-(35,312,608 bytes). The AAB is ARM64-only and passed static 16 KB alignment;
+`C:\BRV1ReleaseFlags` are APK
+`0BC68BB6AE87355CCB6443EDF9ECE10539FEB03DF48D03A893FCDD4063D03B74`
+(39,485,159 bytes) and AAB
+`504001EAE4CAB9D6BB538B8876EFEC315107DD1D7EFE1E581BD5B2CF93440860`
+(35,312,590 bytes). The AAB is ARM64-only and passed static 16 KB alignment;
 installation/launch on Lava succeeded, but the lock screen blocked interaction.
 Manifest inspection reports temporary package `com.example.battleraja.m11`,
 version `1.0.0` / code `100`, min SDK 28, target/compile SDK 36, and only

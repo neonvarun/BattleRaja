@@ -1,9 +1,10 @@
 # BattleRaja visual and interaction QA report
 
-## Exact current source — `ddff490` — 2026-08-24
+## Exact current source — `d87d9d2` — 2026-08-24
 
 The current source contains the presentation-only Pehel actor-view cache lookup,
-the owner-configurable Android package identity seam, the repeatable offline APK
+the owner-configurable Android package identity seam, explicit non-development
+release flags, the repeatable offline APK
 manifest gate and current release documentation. It
 changes no rendered asset or gameplay rule. Validation is **0/0**, EditMode is
 **125/125**, and PlayMode is **71/71**. A fresh exact-source Android package was
