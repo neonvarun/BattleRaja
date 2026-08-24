@@ -10,9 +10,14 @@ source in disposable worktree `C:\Projects\BattleRaja-validate-aandhi`:
 | Artifact | Size | SHA-256 |
 | --- | ---: | --- |
 | APK | 39,473,715 bytes | `ADFE38B3C11DE2119D7180967C48165682095C4818F9FD0140FB694F1198A666` |
+| AAB | 35,301,175 bytes | `C19A238FB31530EAC2AA920ED7B760F76C91D2590B6C27506887FED8170766B8` |
 
 The cue is render-only: it draws the current boundary and warning-state next
 boundary from the existing match snapshot. The APK was not installed on Lava.
+The matching AAB was built at
+`C:\Projects\BattleRaja-v1-aab-current\Builds\V1\Android\BattleRaja-V1.0-release-candidate.aab`;
+bundle validation found a base manifest, seven arm64-v8a libraries, no other
+native ABIs, and passed 16 KB ELF LOAD alignment checks.
 The exact Web build was attempted locally but the Unity Web Bee/Burst backend
 repeatedly returned exit code 4 without producing a completed player; no Web
 artifact or browser smoke pass is claimed for this source.

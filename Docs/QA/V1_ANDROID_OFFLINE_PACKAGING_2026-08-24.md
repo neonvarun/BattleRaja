@@ -1,5 +1,24 @@
 # V1 offline Android packaging evidence — 2026-08-24
 
+## Exact current source refresh — `f3dea5d` — 2026-08-24
+
+The current branch tip is `f3dea5d`. A matching release-shaped APK and AAB were
+built in `C:\Projects\BattleRaja-v1-aab-current`:
+
+| Artifact | Size | SHA-256 |
+| --- | ---: | --- |
+| APK | 39,473,723 bytes | `C9E89273E16EF5DBCA587C64B59C40557D3597092C851BE632F152E2283779BC` |
+| AAB | 35,301,175 bytes | `C19A238FB31530EAC2AA920ED7B760F76C91D2590B6C27506887FED8170766B8` |
+
+The AAB contains seven arm64-v8a native libraries, no other native ABIs, and
+passed the repository 16 KB ELF LOAD-alignment check. The APK was installed only
+on Lava `ST5GDW23LB004392`; the portrait menu launched without fatal, ANR or
+SIGSEGV markers. The inspected current-source captures are outside the repository
+at `C:\Users\USER\AppData\Local\Temp\battleraja-current-f3dea5d\`.
+Coordinate tapping did not establish a formal menu-to-match route, so physical
+touch/accessibility review remains open. The AAB has not been signed with an
+owner release key or uploaded to Play Console.
+
 This note records the exact current checkout after the offline packaging hardening.
 It is technical release-candidate evidence, not Play Store approval or final human
 visual/performance sign-off.

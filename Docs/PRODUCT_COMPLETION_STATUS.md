@@ -7,9 +7,11 @@ Classification: **prototype**
 
 The branch tip is `f463b1b` (`vfx: add render-only Aandhi boundary cue`).
 Repository validation remains **0 errors / 0 warnings** and the Android
-release-shaped APK builds successfully. The exact Web build is currently blocked
+release-shaped APK and AAB build successfully. The exact AAB is 35,301,175 bytes
+with SHA-256 `C19A238FB31530EAC2AA920ED7B760F76C91D2590B6C27506887FED8170766B8`;
+bundle checks found arm64-only native libraries and passed 16 KB alignment. The exact Web build is currently blocked
 by a Unity Web Bee/Burst backend exit-code-4 failure, so no browser smoke result
-is attributed to this source. The APK was not installed on Lava; prototype and
+is attributed to this source. The APK/AAB were not installed or uploaded; prototype and
 human-review gates remain unchanged.
 
 ## Exact current source update — `ecdb25b`

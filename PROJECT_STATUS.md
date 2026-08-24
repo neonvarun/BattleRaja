@@ -10,6 +10,9 @@
   on `codex/v1-playstore-release`. Repository validation is **0/0** and a fresh
   Android release-candidate APK was built locally (39,473,715 bytes; SHA-256
   `ADFE38B3C11DE2119D7180967C48165682095C4818F9FD0140FB694F1198A666`). The
+  matching AAB is 35,301,175 bytes with SHA-256
+  `C19A238FB31530EAC2AA920ED7B760F76C91D2590B6C27506887FED8170766B8`; bundle
+  checks found arm64-only native libraries and passed 16 KB alignment. The
   Aandhi cue is render-only and consumes the match snapshot. The exact Web build
   is blocked by Unity Web Bee/Burst exit code 4 with no completed artifact; no
   browser smoke pass or Lava install is claimed. Classification remains
