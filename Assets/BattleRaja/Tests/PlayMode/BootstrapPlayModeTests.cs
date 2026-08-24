@@ -219,5 +219,35 @@ namespace BattleRaja.Tests.PlayMode
             else PlayerPrefs.DeleteKey(key);
             PlayerPrefs.Save();
         }
+
+        [UnityTest]
+        public IEnumerator SettingsToggleLabelsExposeTheirCurrentState()
+        {
+            const string key = "battleraja.settings.reduced_flashes";
+            var hadPrevious = PlayerPrefs.HasKey(key);
+            var previous = PlayerPrefs.GetInt(key, 0);
+            PlayerPrefs.SetInt(key, 0);
+            PlayerPrefs.Save();
+
+            yield return SceneManager.LoadSceneAsync("Bootstrap", LoadSceneMode.Single);
+            yield return null;
+            yield return null;
+
+            var flow = Object.FindAnyObjectByType<ProductionFlowController>();
+            flow.OpenSettings();
+            yield return null;
+
+            var toggle = GameObject.Find("SettingsPanel/Flashes").GetComponent<Button>();
+            Assert.That(toggle.GetComponentInChildren<Text>().text, Does.Contain("REDUCED FLASHES  OFF"));
+
+            toggle.onClick.Invoke();
+            Assert.That(toggle.GetComponentInChildren<Text>().text, Does.Contain("REDUCED FLASHES  ON"));
+            Assert.That(GameObject.Find("SettingsPanel/SettingsSummary").GetComponent<Text>().text,
+                Does.Contain("REDUCED FLASHES: ON"));
+
+            if (hadPrevious) PlayerPrefs.SetInt(key, previous);
+            else PlayerPrefs.DeleteKey(key);
+            PlayerPrefs.Save();
+        }
     }
 }

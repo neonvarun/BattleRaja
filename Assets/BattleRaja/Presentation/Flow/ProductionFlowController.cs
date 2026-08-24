@@ -67,6 +67,11 @@ namespace BattleRaja.Presentation.Flow
         private BattleRajaLoadingGraphic _loadingGraphic;
         private Text _errorText;
         private Text _settingsSummaryText;
+        private Button _leftHandedButton;
+        private Button _reducedFlashesButton;
+        private Button _highContrastButton;
+        private Button _aimAssistButton;
+        private Button _hapticsButton;
 
         public ProductionFlowState State => _flow.State;
         public ProductionGameMode Mode => _flow.Mode;
@@ -556,16 +561,16 @@ namespace BattleRaja.Presentation.Flow
 
             _settingsPanel = CreatePanel(_safeArea.transform, "SettingsPanel");
             _settingsSummaryText = CreateText(_settingsPanel.transform, "SettingsSummary", new Vector2(0.12f, 0.66f), new Vector2(0.88f, 0.90f), 20, TextAnchor.MiddleCenter);
-            CreateButton(_settingsPanel.transform, "LeftHanded", "LEFT-HANDED", new Vector2(0.13f, 0.54f), new Vector2(0.43f, 0.64f), ToggleLeftHanded);
-            CreateButton(_settingsPanel.transform, "Flashes", "REDUCED FLASHES", new Vector2(0.57f, 0.54f), new Vector2(0.87f, 0.64f), ToggleReducedFlashes);
-            CreateButton(_settingsPanel.transform, "Contrast", "HIGH CONTRAST", new Vector2(0.13f, 0.42f), new Vector2(0.43f, 0.52f), ToggleHighContrast);
-            CreateButton(_settingsPanel.transform, "AimAssist", "AIM ASSIST", new Vector2(0.57f, 0.42f), new Vector2(0.87f, 0.52f), ToggleAimAssist);
+            _leftHandedButton = CreateButton(_settingsPanel.transform, "LeftHanded", "LEFT-HANDED", new Vector2(0.13f, 0.54f), new Vector2(0.43f, 0.64f), ToggleLeftHanded);
+            _reducedFlashesButton = CreateButton(_settingsPanel.transform, "Flashes", "REDUCED FLASHES", new Vector2(0.57f, 0.54f), new Vector2(0.87f, 0.64f), ToggleReducedFlashes);
+            _highContrastButton = CreateButton(_settingsPanel.transform, "Contrast", "HIGH CONTRAST", new Vector2(0.13f, 0.42f), new Vector2(0.43f, 0.52f), ToggleHighContrast);
+            _aimAssistButton = CreateButton(_settingsPanel.transform, "AimAssist", "AIM ASSIST", new Vector2(0.57f, 0.42f), new Vector2(0.87f, 0.52f), ToggleAimAssist);
             CreateButton(_settingsPanel.transform, "MusicDown", "MUSIC -", new Vector2(0.13f, 0.30f), new Vector2(0.43f, 0.40f), DecreaseMusicVolume);
             CreateButton(_settingsPanel.transform, "MusicUp", "MUSIC +", new Vector2(0.57f, 0.30f), new Vector2(0.87f, 0.40f), IncreaseMusicVolume);
             CreateButton(_settingsPanel.transform, "EffectsDown", "EFFECTS -", new Vector2(0.13f, 0.18f), new Vector2(0.43f, 0.28f), DecreaseEffectsVolume);
             CreateButton(_settingsPanel.transform, "EffectsUp", "EFFECTS +", new Vector2(0.57f, 0.18f), new Vector2(0.87f, 0.28f), IncreaseEffectsVolume);
             CreateButton(_settingsPanel.transform, "TextDown", "TEXT -", new Vector2(0.08f, 0.06f), new Vector2(0.30f, 0.16f), DecreaseTextScale);
-            CreateButton(_settingsPanel.transform, "Haptics", "HAPTICS", new Vector2(0.35f, 0.06f), new Vector2(0.65f, 0.16f), ToggleHaptics);
+            _hapticsButton = CreateButton(_settingsPanel.transform, "Haptics", "HAPTICS", new Vector2(0.35f, 0.06f), new Vector2(0.65f, 0.16f), ToggleHaptics);
             CreateButton(_settingsPanel.transform, "TextUp", "TEXT +", new Vector2(0.70f, 0.06f), new Vector2(0.92f, 0.16f), IncreaseTextScale);
             CreateButton(_settingsPanel.transform, "Close", "CLOSE", new Vector2(0.32f, 0.005f), new Vector2(0.68f, 0.055f), CloseSettings);
 
@@ -739,11 +744,23 @@ namespace BattleRaja.Presentation.Flow
         private void RefreshSettingsSummary()
         {
             if (_settingsSummaryText == null) return;
+            SetToggleLabel(_leftHandedButton, "LEFT-HANDED", _leftHanded);
+            SetToggleLabel(_reducedFlashesButton, "REDUCED FLASHES", _reducedFlashes);
+            SetToggleLabel(_highContrastButton, "HIGH CONTRAST", _highContrast);
+            SetToggleLabel(_aimAssistButton, "AIM ASSIST", _aimAssist);
+            SetToggleLabel(_hapticsButton, "HAPTICS", _haptics);
             _settingsSummaryText.text =
                 $"LEFT-HANDED: {(_leftHanded ? "ON" : "OFF")}    REDUCED FLASHES: {(_reducedFlashes ? "ON" : "OFF")}\n" +
                 $"HIGH CONTRAST: {(_highContrast ? "ON" : "OFF")}    AIM ASSIST: {(_aimAssist ? "ON" : "OFF")}\n" +
                 $"MUSIC: {Mathf.RoundToInt(_musicVolume * 100f)}%    EFFECTS: {Mathf.RoundToInt(_effectsVolume * 100f)}%\n" +
                 $"TEXT SIZE: {Mathf.RoundToInt(_textScale * 100f)}%    HAPTICS: {(_haptics ? "ON" : "OFF")}";
+        }
+
+        private static void SetToggleLabel(Button button, string label, bool enabled)
+        {
+            if (button == null) return;
+            var text = button.GetComponentInChildren<Text>(true);
+            if (text != null) text.text = label + (enabled ? "  ON" : "  OFF");
         }
 
         private void ApplyTextScale()
