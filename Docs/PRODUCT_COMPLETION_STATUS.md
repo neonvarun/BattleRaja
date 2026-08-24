@@ -5,6 +5,16 @@ Classification: **prototype**
 
 Latest continuation: offline Android V1 release-shaped candidate — branch
 `codex/v1-playstore-release` at runtime/package source `b954a72`.
+
+Latest exact-current source is now `6920edd` (`android: brand V1 release splash`).
+Its release-shaped APK is **39,466,531 bytes** with SHA-256
+`8EE99741122A548F4B893F015F9656D30B343E5056BE7E409482A37D6D6D6383`, built in a
+disposable worktree and installed only on Lava. The cold-launch capture shows a
+BattleRaja-owned splash logo and no Unity logo, followed by the offline menu; this
+is a technical packaging pass, not human approval of final art or launch pacing.
+The AAB remains the earlier `6ac5c12` artifact and must be rebuilt from current
+source before any release-candidate claim.
+
 Exact-current validation is 0/0, EditMode **125/125**, and PlayMode **69/69**. The
 fresh release-shaped APK is **39,525,752 bytes**
 (`3ABCEF91BF14239AD8D6ED5511D7C74D2C0DA3DB3CC35DCE838573AEB39E1630`). The most

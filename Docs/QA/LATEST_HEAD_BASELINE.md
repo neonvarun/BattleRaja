@@ -12,6 +12,21 @@ Balance-fix runtime source: `17a8c75` (`fix(balance): land documented weapon ret
 Pre-fix baseline source: `35d723f` (`fix: bot perception no longer treats fighter hulls as line-of-sight blockers`; the tip of local `main` before this branch)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
 
+## Exact current V1 branded-splash baseline — 2026-08-24
+
+The current HEAD is `6920edd8ce84e0be47bc518846eaa70761fd22ac` (`android: brand V1
+release splash`). Repository validation remains **0 errors / 0 warnings**. The
+release-shaped APK was built from this exact source in
+`C:\Projects\BattleRaja-validate-6920edd` and is **39,466,531 bytes** with SHA-256
+`8EE99741122A548F4B893F015F9656D30B343E5056BE7E409482A37D6D6D6383`.
+
+The APK was installed only on Lava `ST5GDW23LB004392`. Cold-launch evidence is in
+`C:\Users\USER\AppData\Local\Temp\battleraja-splash-6920edd\`: the dark native
+surface transitions to the original BattleRaja icon and then the offline menu. No
+fatal/ANR/SIGSEGV marker was found. The release entrypoint and project settings now
+disable the Unity logo for V1 and use the BattleRaja icon as the two-second splash
+logo. A fresh AAB and full post-splash route review are still required.
+
 ## Exact current Android control-rotation baseline — 2026-08-24
 
 The latest runtime source is `b954a72`. Repository validation is **0/0**; EditMode is

@@ -3,6 +3,24 @@
 This is a bounded presentation slice for the offline Android V1 candidate. It is
 technical evidence, not Play Store approval or final human visual approval.
 
+## Latest exact-current branded-splash slice — `6920edd` — 2026-08-24
+
+The V1 release entrypoint now configures a BattleRaja-owned Android splash: the
+original BattleRaja icon is the only splash logo, the Unity logo is disabled, and
+the background is the product's dark ink colour. The exact release-shaped APK was
+built in the disposable worktree
+`C:\Projects\BattleRaja-validate-6920edd` and is **39,466,531 bytes** with SHA-256
+`8EE99741122A548F4B893F015F9656D30B343E5056BE7E409482A37D6D6D6383`.
+
+It was installed only on Lava `ST5GDW23LB004392`. Cold-launch captures are outside
+the repository at
+`C:\Users\USER\AppData\Local\Temp\battleraja-splash-6920edd\`: `t025.png` is the
+dark native background, `t1000.png` shows the BattleRaja icon, and `t2800.png`
+shows the branded offline menu. The inspected log has zero `FATAL EXCEPTION`, `ANR
+in`, or `SIGSEGV` markers. This confirms the release-shaped splash path, but human
+approval of launch pacing, final art and overall product polish remains open. The
+AAB has not yet been rebuilt from `6920edd`.
+
 ## Latest exact-current Android control-rotation slice — `b954a72` — 2026-08-24
 
 The latest runtime source is `b954a72` on `codex/v1-playstore-release`. Repository

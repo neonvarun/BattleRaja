@@ -341,3 +341,26 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   and final visual identity remains open.
 - **Recheck trigger/date:** Before changing the V1 orientation or replacing the current
   procedural UI with authored store-facing art.
+
+### V1.0 branded Android splash (2026-08-24)
+
+- **Question:** How should the V1 Android candidate present its launch surface without
+  shipping Unity branding as the product identity?
+- **Primary sources:** [Unity Player Settings splash screen manual](https://docs.unity3d.com/6000.0/Documentation/Manual/class-PlayerSettingsSplashScreen.html)
+  and [Unity SplashScreenLogo API](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/PlayerSettings.SplashScreenLogo.Create.html).
+- **Relevant claims:** Unity supports custom Sprite logos, a configurable splash
+  background, and disabling the Unity logo; the logo duration is bounded by the
+  editor's splash API rules.
+- **Decision impact:** Keep the V1 release entrypoint and project settings on an
+  original BattleRaja icon Sprite, dark ink background, two-second logo and
+  `showUnityLogo = false`. Development/M11 build paths remain unchanged. Do not
+  copy reference-game branding or assets.
+- **Local evidence:** Exact source `6920edd`, APK SHA-256
+  `8EE99741122A548F4B893F015F9656D30B343E5056BE7E409482A37D6D6D6383`, disposable
+  `ProjectSettings.asset` with the custom logo, and Lava captures under
+  `C:\Users\USER\AppData\Local\Temp\battleraja-splash-6920edd\`.
+- **Uncertainty:** Final splash art, launch pacing, accessibility and Play Store
+  branding still require human approval; the current AAB has not been rebuilt from
+  this source.
+- **Recheck trigger/date:** Before signing or uploading the V1 AAB, and after any
+  Unity/Android player-settings change.
