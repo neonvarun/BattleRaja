@@ -357,6 +357,9 @@ namespace BattleRaja.Core.Application
             {
                 var participant = header.Participants[i];
                 authority.ConfigureFaction(participant.ActorId, participant.Faction);
+                // Solo Raja replays use one combatant group per actor. The stored
+                // faction remains a presentation label and does not create teams.
+                authority.ConfigureCombatGroup(participant.ActorId, participant.ActorId.Value);
                 authority.ConfigureWeapon(participant.ActorId, participant.Weapon, participant.TickRate);
                 authority.ConfigureMovement(participant.ActorId, participant.Movement);
             }

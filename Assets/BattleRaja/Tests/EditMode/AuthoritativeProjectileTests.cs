@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using BattleRaja.Core.Application;
 using BattleRaja.Core.Domain;
 using NUnit.Framework;
@@ -84,6 +85,19 @@ namespace BattleRaja.Tests.EditMode
             // Health of p2 must be reduced inside authority simulation
             Assert.IsTrue(authority.Simulation.TryGetSnapshot(p2, out var snapshotAfter));
             Assert.Less(snapshotAfter.CurrentHealth, 100);
+
+            // The same canonical tick must publish the already-applied projectile
+            // damage so presentation mirrors health and elimination state at once.
+            Assert.AreEqual(1, tick.DamageEvents.Length);
+            var projectileEvent = tick.DamageEvents[0];
+            Assert.AreEqual(p1, projectileEvent.InstigatorId);
+            Assert.AreEqual(p2, projectileEvent.TargetId);
+            Assert.AreEqual(DamageType.Projectile, projectileEvent.DamageType);
+            Assert.AreEqual(snapshotBefore.CurrentHealth - snapshotAfter.CurrentHealth,
+                projectileEvent.AmountApplied);
+            Assert.AreEqual(snapshotAfter.CurrentHealth, projectileEvent.CurrentHealthAfter);
+            Assert.AreEqual(currentTick, projectileEvent.SimulationTick);
+            Assert.Greater(projectileEvent.EventId, 0);
         }
 
         [Test]
@@ -125,6 +139,93 @@ namespace BattleRaja.Tests.EditMode
             Assert.AreEqual(1, tick.ProjectileSnapshots.Length);
             var projSnap = tick.ProjectileSnapshots[0];
             Assert.AreEqual(ProjectileDespawnReason.HitWall, projSnap.DespawnReason);
+        }
+
+        [Test]
+        public void SoloRajaBotProjectileCanDamageAndEliminateAnotherBot()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            var shooter = new CombatEntityId(2);
+            var victim = new CombatEntityId(3);
+
+            // Both production bots use the Enemy view label. Their authority-owned
+            // combat groups default to their entity IDs, making this a true FFA.
+            var spawns = new List<MatchSpawn>
+            {
+                new MatchSpawn(shooter, new Float2(0f, 0f), 100),
+                new MatchSpawn(victim, new Float2(0f, 4f), ProjectileWeaponDefinition.TrainingBolt.Damage)
+            };
+
+            authority.Start(spawns);
+            authority.ConfigureWeapon(shooter, ProjectileWeaponDefinition.TrainingBolt, 30);
+            authority.ConfigureWeapon(victim, ProjectileWeaponDefinition.TrainingBolt, 30);
+            authority.ConfigureFaction(shooter, CombatFaction.Enemy);
+            authority.ConfigureFaction(victim, CombatFaction.Enemy);
+
+            for (var tick = 0; tick < 300; tick++) authority.Advance(tick, 1f / 30f);
+
+            var commandTick = authority.CurrentSimulationTick + 1;
+            var attack = new AttackCommand(
+                shooter,
+                commandTick,
+                new Float2(0f, 0.7f),
+                new Float2(0f, 1f),
+                true,
+                1);
+            var accepted = authority.TryAcceptAttack(attack);
+            Assert.IsTrue(accepted.Accepted);
+
+            var result = authority.Advance(commandTick, 0.5f);
+            Assert.AreEqual(ProjectileDespawnReason.HitActor, result.ProjectileSnapshots[0].DespawnReason);
+            Assert.AreEqual(1, result.DamageEvents.Length);
+            Assert.AreEqual(shooter, result.DamageEvents[0].InstigatorId);
+            Assert.AreEqual(victim, result.DamageEvents[0].TargetId);
+
+            var snapshots = authority.Simulation.GetSnapshots();
+            var victimAfter = snapshots.Single(s => s.Id == victim);
+            var shooterAfter = snapshots.Single(s => s.Id == shooter);
+            Assert.IsFalse(victimAfter.Alive);
+            Assert.AreEqual(2, victimAfter.Placement);
+            Assert.IsTrue(shooterAfter.Alive);
+            Assert.AreEqual(1, shooterAfter.Placement);
+            Assert.AreEqual(1, shooterAfter.Eliminations);
+            Assert.AreEqual(ProjectileWeaponDefinition.TrainingBolt.Damage, shooterAfter.DamageDealt);
+        }
+
+        [Test]
+        public void SameAuthorityCombatGroupBlocksSameViewFactionProjectile()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            var shooter = new CombatEntityId(2);
+            var teammate = new CombatEntityId(3);
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(shooter, new Float2(0f, 0f), 100),
+                new MatchSpawn(teammate, new Float2(0f, 4f), 100)
+            });
+            authority.ConfigureWeapon(shooter, ProjectileWeaponDefinition.TrainingBolt, 30);
+            authority.ConfigureWeapon(teammate, ProjectileWeaponDefinition.TrainingBolt, 30);
+            authority.ConfigureFaction(shooter, CombatFaction.Enemy);
+            authority.ConfigureFaction(teammate, CombatFaction.Enemy);
+            authority.ConfigureCombatGroup(shooter, 20);
+            authority.ConfigureCombatGroup(teammate, 20);
+
+            for (var tick = 0; tick < 300; tick++) authority.Advance(tick, 1f / 30f);
+
+            var commandTick = authority.CurrentSimulationTick + 1;
+            var accepted = authority.TryAcceptAttack(new AttackCommand(
+                shooter,
+                commandTick,
+                new Float2(0f, 0.7f),
+                new Float2(0f, 1f),
+                true,
+                1));
+            Assert.IsTrue(accepted.Accepted);
+
+            var result = authority.Advance(commandTick, 0.5f);
+            Assert.AreEqual(0, result.DamageEvents.Length);
+            var snapshot = authority.Simulation.GetSnapshots().Single(s => s.Id == teammate);
+            Assert.AreEqual(100, snapshot.CurrentHealth);
         }
     }
 }

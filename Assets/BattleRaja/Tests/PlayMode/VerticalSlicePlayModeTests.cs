@@ -488,6 +488,76 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator ProductionBotProjectileUpdatesHealthEliminationPerceptionAndSpectator()
+        {
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            var agents = Object.FindObjectsByType<MovementPlayerAgent>()
+                .Where(agent => agent.AuthorityDrivenMovement && agent.ActorId >= 10)
+                .OrderBy(agent => agent.ActorId)
+                .ToArray();
+            Assert.That(agents.Length, Is.GreaterThanOrEqualTo(2));
+
+            var shooterAgent = agents[0];
+            var targetAgent = agents[1];
+            var shooter = shooterAgent.GetComponent<CombatTarget>();
+            var target = targetAgent.GetComponent<CombatTarget>();
+            var presentation = target.GetComponent<FighterPresentation>();
+            var perception = shooterAgent.GetComponent<BotPerceptionSensor>();
+            Assert.That(perception, Is.Not.Null);
+            var perceptionBefore = perception.Capture().Targets
+                .Take(Mathf.Max(0, 16))
+                .Count(item => item.Id == target.Id);
+            Assert.That(perceptionBefore, Is.GreaterThanOrEqualTo(1),
+                "The shooter must fairly perceive the selected bot target.");
+
+            var weapon = shooterAgent.GetComponent<CombatAttackController>().AuthorityWeaponDefinition;
+            var direction = new Float2(0f, -1f);
+
+            // Place the two production actors on an unobstructed north-south line
+            // and use the explicit test reconciliation seam to make this a one-hit
+            // terminal check without giving either bot hidden combat power.
+            var shooterPosition = new Float2(9f, 9f);
+            var targetPosition = new Float2(9f, 7.5f);
+            match.Simulation.SetPosition(shooter.Id, shooterPosition);
+            match.Simulation.SetPosition(target.Id, targetPosition);
+            shooterAgent.ApplyAuthoritativePosition(shooterPosition);
+            targetAgent.ApplyAuthoritativePosition(targetPosition);
+            shooterAgent.ResetMovement(direction);
+            targetAgent.ResetMovement(Float2.Up);
+            Physics.SyncTransforms();
+
+            // Advance the pure match to Opening without waiting through protection.
+            for (var i = 0; i < 8; i++) match.Simulation.Advance(1f);
+            match.Simulation.SyncHealth(target.Id, weapon.Damage);
+
+            var attackTick = match.SimulationTick + 1;
+            var origin = new Float2(
+                shooter.transform.position.x,
+                shooter.transform.position.z);
+            var accepted = match.TryAcceptAttack(new AttackCommand(
+                shooter.Id,
+                attackTick,
+                origin,
+                direction,
+                true,
+                1));
+            Assert.That(accepted.Accepted, Is.True);
+
+            yield return new WaitForSecondsRealtime(0.35f);
+
+            var canonical = match.Simulation.GetSnapshots().First(item => item.Id == target.Id);
+            Assert.That(canonical.Alive, Is.False);
+            Assert.That(target.Health.Snapshot.IsDefeated, Is.True,
+                "Canonical projectile damage must mirror to visible health immediately.");
+            Assert.That(presentation != null && presentation.IsEliminated, Is.True);
+            Assert.That(presentation != null &&
+                presentation.CurrentAnimation == FighterPresentation.AnimationState.Eliminated, Is.True);
+
+            var observation = perception.Capture().Targets.FirstOrDefault(item => item.Id == target.Id);
+            Assert.That(observation.Id.Value, Is.EqualTo(0));
+        }
+
+        [UnityTest]
         public IEnumerator ProductionMayaDecoyRoutesLifetimeAndDamageThroughAuthority()
         {
             var match = Object.FindAnyObjectByType<OfflineMatchController>();

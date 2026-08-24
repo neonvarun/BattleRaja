@@ -2,6 +2,7 @@ using BattleRaja.Core.Domain;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using BattleRaja.Presentation.Combat;
+using BattleRaja.Presentation.Gadgets;
 
 namespace BattleRaja.Presentation.Movement
 {
@@ -25,6 +26,7 @@ namespace BattleRaja.Presentation.Movement
         private InputAction _abilityAction;
         private Collider[] _aimAssistColliders;
         private AimAssistCandidate[] _aimAssistCandidates;
+        private CombatTarget _selfTarget;
         private bool _aimAssistEnabled;
         private bool _hasFocus = true;
 
@@ -36,6 +38,7 @@ namespace BattleRaja.Presentation.Movement
         private void Awake()
         {
             aimOrigin = aimOrigin != null ? aimOrigin : transform;
+            _selfTarget = aimOrigin.GetComponentInParent<CombatTarget>();
             _aimAssistColliders = new Collider[32];
             _aimAssistCandidates = new AimAssistCandidate[32];
             _aimAssistEnabled = PlayerPrefs.GetInt("battleraja.settings.aim_assist", 0) != 0;
@@ -176,8 +179,11 @@ namespace BattleRaja.Presentation.Movement
                 var collider = _aimAssistColliders[i];
                 if (collider == null) continue;
                 var target = collider.GetComponentInParent<CombatTarget>();
-                if (target == null || target.Faction != CombatFaction.Enemy ||
+                if (target == null || target.Faction == CombatFaction.Neutral ||
+                    target == _selfTarget ||
+                    target.GetComponent<GadgetStation>() != null ||
                     target.Health == null || target.Health.Snapshot.IsDefeated) continue;
+                if (_selfTarget != null && target.Id.Value == 100000 + _selfTarget.Id.Value) continue;
 
                 _aimAssistCandidates[candidateCount++] = new AimAssistCandidate(
                     target.Id,

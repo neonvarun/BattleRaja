@@ -303,7 +303,7 @@ namespace BattleRaja.Tests.EditMode
                 new MatchSpawn(targetId, new Float2(6f, 0f), 100)
             });
             authority.ConfigureFaction(pehelId, CombatFaction.Enemy);
-            authority.ConfigureFaction(targetId, CombatFaction.Player);
+            authority.ConfigureFaction(targetId, CombatFaction.Enemy);
             authority.SetPosition(targetId, new Float2(-4.4f, 0f));
 
             var command = new AbilityCommand(

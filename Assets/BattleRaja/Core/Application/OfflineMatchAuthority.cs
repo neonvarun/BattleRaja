@@ -406,6 +406,7 @@ namespace BattleRaja.Core.Application
         private readonly Dictionary<CombatEntityId, int> _lastAttackSequences = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<CombatEntityId, ProjectileWeaponDefinition> _participantWeapons = new Dictionary<CombatEntityId, ProjectileWeaponDefinition>();
         private readonly Dictionary<CombatEntityId, int> _participantTickRates = new Dictionary<CombatEntityId, int>();
+        private readonly Dictionary<CombatEntityId, int> _participantCombatGroups = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<CombatEntityId, ChargeThrowRuntime> _pehelChargeRuntimes = new Dictionary<CombatEntityId, ChargeThrowRuntime>();
         private readonly Dictionary<CombatEntityId, int> _lastPehelCommandTicks = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<CombatEntityId, int> _lastPehelStepTicks = new Dictionary<CombatEntityId, int>();
@@ -508,6 +509,7 @@ namespace BattleRaja.Core.Application
             _lastAttackSequences.Clear();
             _participantWeapons.Clear();
             _participantTickRates.Clear();
+            _participantCombatGroups.Clear();
             _pehelChargeRuntimes.Clear();
             _lastPehelCommandTicks.Clear();
             _lastPehelStepTicks.Clear();
@@ -534,6 +536,7 @@ namespace BattleRaja.Core.Application
                 _lastAttackSequences[spawns[i].Id] = -1;
                 _participantWeapons[spawns[i].Id] = ProjectileWeaponDefinition.TrainingBolt;
                 _participantTickRates[spawns[i].Id] = 30;
+                _participantCombatGroups[spawns[i].Id] = spawns[i].Id.Value;
                 _lastDecoySpawnTicks[spawns[i].Id] = -1;
             }
 
@@ -555,6 +558,34 @@ namespace BattleRaja.Core.Application
             }
 
             _participantFactions[actorId] = faction;
+        }
+
+        /// <summary>
+        /// Registers the authority-owned combatant group used for eligibility.
+        /// Solo Raja defaults every participant to its own group; a future team
+        /// mode can explicitly place multiple participants in one group while
+        /// CombatFaction remains a presentation compatibility label.
+        /// </summary>
+        public void ConfigureCombatGroup(CombatEntityId actorId, int combatGroup)
+        {
+            if (!HasParticipant(actorId))
+            {
+                throw new ArgumentException("Combat group can only be configured for a registered match participant.", nameof(actorId));
+            }
+
+            if (combatGroup <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(combatGroup), "Combat groups must be positive.");
+            }
+
+            _participantCombatGroups[actorId] = combatGroup;
+        }
+
+        private bool AreDifferentCombatGroups(CombatEntityId first, CombatEntityId second)
+        {
+            return _participantCombatGroups.TryGetValue(first, out var firstGroup) &&
+                _participantCombatGroups.TryGetValue(second, out var secondGroup) &&
+                firstGroup != secondGroup;
         }
 
         /// <summary>
@@ -1005,7 +1036,6 @@ namespace BattleRaja.Core.Application
             CombatEntityId actorId,
             ChargeThrowRuntime runtime)
         {
-            if (!_participantFactions.TryGetValue(actorId, out var sourceFaction)) return false;
             var simulation = RequireSimulation();
             if (!simulation.TryGetSnapshot(actorId, out var source) || !source.Alive) return false;
 
@@ -1017,8 +1047,7 @@ namespace BattleRaja.Core.Application
             {
                 var candidate = snapshots[i];
                 if (!candidate.Alive || candidate.Id == actorId ||
-                    !_participantFactions.TryGetValue(candidate.Id, out var targetFaction) ||
-                    targetFaction == sourceFaction)
+                    !AreDifferentCombatGroups(actorId, candidate.Id))
                 {
                     continue;
                 }
@@ -1036,8 +1065,8 @@ namespace BattleRaja.Core.Application
                 found = true;
             }
 
-            if (!found || !_participantFactions.TryGetValue(best.Id, out var bestFaction)) return false;
-            return runtime.TryCaptureTarget(best.Id, sourceFaction, bestFaction, bestDistance);
+            if (!found) return false;
+            return runtime.TryCaptureTarget(best.Id, true, bestDistance);
         }
 
         private bool TryResolvePehelThrow(
@@ -1072,7 +1101,11 @@ namespace BattleRaja.Core.Application
                 DamageType.Ability,
                 direction,
                 simulationTick);
-            var authorityDamage = ResolveDamage(request, targetFaction, false, false);
+            var authorityDamage = ResolveDamage(
+                request,
+                targetFaction,
+                false,
+                AreDifferentCombatGroups(actorId, targetId));
             _lastPehelThrowTicks[actorId] = simulationTick;
             var after = simulation.TryGetSnapshot(targetId, out var afterSnapshot)
                 ? afterSnapshot
@@ -1163,13 +1196,18 @@ namespace BattleRaja.Core.Application
             bool allowSelfHit,
             bool allowFriendlyFire)
         {
-            if (!TryFindMayaDecoy(request.TargetId, out _, out var decoy))
+            if (!TryFindMayaDecoy(request.TargetId, out var ownerId, out var decoy))
             {
                 return new MatchAuthorityDamage(
                     request,
                     new DamageResult(false, 0, false, DamageRejectionReason.WrongTarget),
                     0);
             }
+
+            _participantFactions.TryGetValue(ownerId, out var ownedTargetFaction);
+            var hostileToOwner = AreDifferentCombatGroups(request.InstigatorId, ownerId);
+            targetFaction = ownedTargetFaction;
+            allowFriendlyFire = hostileToOwner;
 
             if (request.RawAmount <= 0)
             {
@@ -1179,7 +1217,7 @@ namespace BattleRaja.Core.Application
                     decoy.CurrentHealth);
             }
 
-            if (!allowSelfHit && request.InstigatorId == request.TargetId)
+            if (!allowSelfHit && (request.InstigatorId == request.TargetId || request.InstigatorId == ownerId))
             {
                 return new MatchAuthorityDamage(
                     request,
@@ -1290,13 +1328,20 @@ namespace BattleRaja.Core.Application
             foreach (var runtime in _gadgetRuntimes.Values) runtime.Advance(fixedDeltaSeconds);
             foreach (var guard in _umbrellaGuards.Values) guard.Advance(fixedDeltaSeconds);
             AdvanceMayaDecoys(fixedDeltaSeconds, simulation);
-            var projectileSnapshots = AdvanceProjectiles(simulationTick, fixedDeltaSeconds, simulation);
+            var projectileDamageEvents = new List<CombatDamageEvent>();
+            var projectileSnapshots = AdvanceProjectiles(
+                simulationTick,
+                fixedDeltaSeconds,
+                simulation,
+                projectileDamageEvents);
             var result = simulation.Advance(fixedDeltaSeconds);
             var tickSnapshots = simulation.GetSnapshots();
             var healingIntents = new List<GadgetHealingIntent>();
             var expiredStationIds = new List<int>();
             AdvanceStations(fixedDeltaSeconds, tickSnapshots, healingIntents, expiredStationIds);
-            var damageEvents = ApplyOutsideZoneDamage(simulationTick, fixedDeltaSeconds, result, tickSnapshots);
+            var damageEvents = new List<CombatDamageEvent>(
+                ApplyOutsideZoneDamage(simulationTick, fixedDeltaSeconds, result, tickSnapshots));
+            if (projectileDamageEvents.Count > 0) damageEvents.AddRange(projectileDamageEvents);
             var pickupCollections = new List<MatchPickupCollectionIntent>(_pickups.Length);
             var gadgetCollections = new List<GadgetPickupCollectionIntent>(_gadgetPickups.Length);
             ResolveItemCollections(tickSnapshots, pickupCollections, gadgetCollections);
@@ -1304,7 +1349,7 @@ namespace BattleRaja.Core.Application
             return new MatchAuthorityTick(
                 simulationTick,
                 result,
-                damageEvents,
+                damageEvents.ToArray(),
                 healingIntents.ToArray(),
                 expiredStationIds.ToArray(),
                 projectileSnapshots,
@@ -1380,6 +1425,8 @@ namespace BattleRaja.Core.Application
                 hash.CombineInt(tickRate);
                 _participantFactions.TryGetValue(s.Id, out var faction);
                 hash.CombineInt((int)faction);
+                _participantCombatGroups.TryGetValue(s.Id, out var combatGroup);
+                hash.CombineInt(combatGroup);
                 _movementTunings.TryGetValue(s.Id, out var tuning);
                 hash.CombineFloat(tuning.MaxSpeed);
                 hash.CombineFloat(tuning.Acceleration);
@@ -1618,7 +1665,8 @@ namespace BattleRaja.Core.Application
         private DomainProjectileSnapshot[] AdvanceProjectiles(
             int simulationTick,
             float fixedDeltaSeconds,
-            OfflineMatchSimulation simulation)
+            OfflineMatchSimulation simulation,
+            List<CombatDamageEvent> damageEvents)
         {
             if (_activeProjectiles.Count == 0) return Array.Empty<DomainProjectileSnapshot>();
 
@@ -1666,7 +1714,7 @@ namespace BattleRaja.Core.Application
                 {
                     var target = participantSnapshots[p];
                     if (!target.Alive || target.Id == proj.InstigatorId) continue;
-                    if (_participantFactions.TryGetValue(target.Id, out var targetFaction) && targetFaction == proj.Faction) continue;
+                    if (!AreDifferentCombatGroups(proj.InstigatorId, target.Id)) continue;
 
                     var targetRadius = _collisionDefinition.ActorRadius + proj.Radius;
                     if (IntersectRayCircle(proj.Position, proj.Direction, maxDistance, target.Position, targetRadius, out var tHit))
@@ -1687,7 +1735,7 @@ namespace BattleRaja.Core.Application
                     var ownerId = pair.Key;
                     var decoy = pair.Value;
                     if (!decoy.IsActive || !decoy.IsTargetable || ownerId == proj.InstigatorId) continue;
-                    if (_participantFactions.TryGetValue(ownerId, out var ownerFaction) && ownerFaction == proj.Faction) continue;
+                    if (!AreDifferentCombatGroups(proj.InstigatorId, ownerId)) continue;
 
                     var decoyId = GetDecoyId(ownerId);
                     var decoyRadius = _collisionDefinition.ActorRadius + proj.Radius;
@@ -1741,20 +1789,42 @@ namespace BattleRaja.Core.Application
                                 DamageType.Projectile,
                                 proj.Direction,
                                 simulationTick);
-                            ResolveDamage(damageReq, targetFaction, false, false);
+                            var resolved = ResolveDamage(
+                                damageReq,
+                                targetFaction,
+                                false,
+                                AreDifferentCombatGroups(proj.InstigatorId, hitTargetId));
+                            if (resolved.Result.Applied)
+                            {
+                                damageEvents.Add(new CombatDamageEvent(
+                                    resolved.Request,
+                                    resolved.Result.AmountApplied,
+                                    resolved.Result.TargetDefeated,
+                                    resolved.CurrentHealthAfter,
+                                    simulationTick,
+                                    RequireSimulation().LastDamageEventId));
+                            }
                         }
                         else if (hitType == ProjectileDespawnReason.HitDecoy && hitTargetId.Value > 0)
                         {
                             _participantFactions.TryGetValue(proj.InstigatorId, out var instigatorFaction);
-                            var damageReq = new DamageRequest(
-                                proj.InstigatorId,
-                                hitTargetId,
-                                instigatorFaction,
-                                weapon.Damage,
-                                DamageType.Projectile,
-                                proj.Direction,
-                                simulationTick);
-                            ResolveMayaDecoyDamage(damageReq, CombatFaction.Enemy, false, false);
+                            if (TryFindMayaDecoy(hitTargetId, out var decoyOwnerId, out _))
+                            {
+                                _participantFactions.TryGetValue(decoyOwnerId, out var decoyTargetFaction);
+                                var damageReq = new DamageRequest(
+                                    proj.InstigatorId,
+                                    hitTargetId,
+                                    instigatorFaction,
+                                    weapon.Damage,
+                                    DamageType.Projectile,
+                                    proj.Direction,
+                                    simulationTick);
+                                ResolveMayaDecoyDamage(
+                                    damageReq,
+                                    decoyTargetFaction,
+                                    false,
+                                    AreDifferentCombatGroups(proj.InstigatorId, decoyOwnerId));
+                            }
                         }
                         else if (hitType == ProjectileDespawnReason.HitStation && hitStationId > 0)
                         {

@@ -124,8 +124,13 @@ namespace BattleRaja.Core.Domain
 
         public bool TryCaptureTarget(CombatEntityId targetId, CombatFaction sourceFaction, CombatFaction targetFaction, float distance)
         {
+            return TryCaptureTarget(targetId, sourceFaction != targetFaction, distance);
+        }
+
+        public bool TryCaptureTarget(CombatEntityId targetId, bool areHostile, float distance)
+        {
             if (_state != ChargeThrowState.Active || _hasCapturedTarget || targetId.Value <= 0 ||
-                sourceFaction == targetFaction || distance < 0f || distance > _definition.Radius)
+                !areHostile || distance < 0f || distance > _definition.Radius)
             {
                 return false;
             }

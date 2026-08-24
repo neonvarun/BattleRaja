@@ -1168,3 +1168,34 @@ Record every material choice here. Do not silently overwrite old decisions.
   `AuthorityFoundationTests.MatchAuthorityRejectsStaleAttackCommandsAndAnchorsCooldownToAuthorityClock`
   (EditMode 115/115), PlayMode 57/57 at commit `ee573ad`, validate.ps1 0 errors/0 warnings.
 - **Owner:** Human project owner
+
+### ADR-055 - Own combat groups and publish projectile damage per tick
+
+- **Date:** 2026-08-25
+- **Status:** Accepted for the offline Solo Raja V1 authority.
+- **Context:** Solo Raja must be a true eight-participant free-for-all, but the
+  seven production bots shared `CombatFaction.Enemy`. The same view faction also made
+  projectile selection and Pehel capture reject valid bot-to-bot relationships. Separately,
+  authority projectiles applied canonical damage during projectile advancement but did not
+  place the resulting event in the canonical tick, so visible health and elimination
+  feedback could lag until another damage source mirrored state.
+- **Options considered:** Give every bot a unique `CombatFaction` value; allow friendly fire
+  globally; or add an authority-owned combat-group relationship while retaining
+  `CombatFaction` as a presentation compatibility label. For health parity, options were
+  polling views or publishing already-applied authoritative events in the same tick.
+- **Decision:** Add authority-owned positive combat groups, defaulting each Solo Raja
+  participant to its own group and allowing explicit groups in a future team mode. Projectile,
+  Pehel capture/throw and Maya decoy eligibility use different combat groups rather than view
+  factions. Authority projectile hits now return their stable `CombatDamageEvent` in
+  `MatchAuthorityTick.DamageEvents`; presentation continues to mirror immutable results only.
+  Aim assist considers living non-neutral targets other than the player's own fighter/decoy,
+  while stations remain excluded.
+- **Consequences:** Bot-to-bot attacks, damage, eliminations and credit are valid in true
+  Solo Raja. Canonical health, visible health, elimination presentation, perception removal and
+  spectator transition use the same projectile outcome without presentation mutation. Combat
+  groups are included in replay hashing. This does not implement full team modes, complete
+  action-eligibility unification or transport-level duplicate suppression.
+- **Evidence/sources:** `OfflineMatchAuthority`, `DeterministicReplayRunner`,
+  `ChargeThrowRuntime`, `PlayerInputAdapter`, focused authority tests, and
+  `VerticalSlicePlayModeTests.ProductionBotProjectileUpdatesHealthEliminationPerceptionAndSpectator`.
+- **Owner:** Human project owner
