@@ -725,6 +725,10 @@ namespace BattleRaja.Editor
             ValidateProject();
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
+            EditorUserBuildSettings.development = false;
+            EditorUserBuildSettings.allowDebugging = false;
+            EditorUserBuildSettings.connectProfiler = false;
+            EditorUserBuildSettings.buildWithDeepProfilingSupport = false;
             var applicationId = ResolveAndroidApplicationId();
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, applicationId);
             Debug.Log($"BattleRaja Android application identifier: {applicationId}");
