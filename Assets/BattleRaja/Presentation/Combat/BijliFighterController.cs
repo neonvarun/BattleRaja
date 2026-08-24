@@ -35,10 +35,19 @@ namespace BattleRaja.Presentation.Combat
 
         public FighterDefinition Definition => _definition;
         public ContentId AbilityId => _definition.Ability.AbilityId;
-        public FighterActionState ActionState => _runtime != null ? _runtime.ActionState : FighterActionState.Ready;
-        public float DashCooldownRemaining => _runtime != null ? _runtime.CooldownRemaining : 0f;
-        public bool IsMovementLocked => _runtime != null && ActionState != FighterActionState.Ready && ActionState != FighterActionState.Cooldown;
+        public FighterActionState ActionState => UsesAuthorityDash
+            ? _match.GetBijliDashState(OwnerId).State
+            : _runtime != null ? _runtime.ActionState : FighterActionState.Ready;
+        public float DashCooldownRemaining => UsesAuthorityDash
+            ? _match.GetBijliDashState(OwnerId).CooldownRemaining
+            : _runtime != null ? _runtime.CooldownRemaining : 0f;
+        public bool IsMovementLocked => ActionState != FighterActionState.Ready &&
+            ActionState != FighterActionState.Cooldown;
         public bool IsInitialized => _runtime != null;
+
+        private CombatEntityId OwnerId => new CombatEntityId(movementAgent != null ? movementAgent.ActorId : 1);
+        private bool UsesAuthorityDash => movementAgent != null && movementAgent.AuthorityDrivenMovement &&
+            _match != null && _match.Simulation != null;
 
         private void Awake()
         {
@@ -116,16 +125,12 @@ namespace BattleRaja.Presentation.Combat
                     _abilityQueued = false;
                 }
 
+                if (UsesAuthorityDash) continue;
                 var availableDistance = ComputeAvailableDistance(_runtime.DashDirection);
                 var step = _runtime.Step((float)_clock.StepSeconds, availableDistance);
                 if (step.Displacement.SqrMagnitude > 0.000001f && characterController != null)
                 {
-                    var appliedByAuthority = movementAgent != null && movementAgent.AuthorityDrivenMovement &&
-                        _match != null && ApplyAuthorityDisplacement(step.Displacement, _simulationTick);
-                    if (!appliedByAuthority)
-                    {
-                        characterController.Move(new Vector3(step.Displacement.X, 0f, step.Displacement.Y));
-                    }
+                    characterController.Move(new Vector3(step.Displacement.X, 0f, step.Displacement.Y));
                 }
 
                 if (dashTrail != null)
@@ -142,7 +147,7 @@ namespace BattleRaja.Presentation.Combat
             if (_abilityQueued)
             {
                 Submit(AbilityCommandFactory.Create(
-                    new CombatEntityId(movementAgent != null ? movementAgent.ActorId : 1),
+                    OwnerId,
                     simulationTick,
                     _definition.Ability.AbilityId,
                     _queuedDirection,
@@ -150,20 +155,10 @@ namespace BattleRaja.Presentation.Combat
                 _abilityQueued = false;
             }
 
-            var availableDistance = ComputeAvailableDistance(_runtime.DashDirection);
-            var step = _runtime.Step(fixedDeltaSeconds, availableDistance);
-            if (step.Displacement.SqrMagnitude > 0.000001f && characterController != null)
-            {
-                var appliedByAuthority = ApplyAuthorityDisplacement(step.Displacement, simulationTick);
-                if (!appliedByAuthority)
-                {
-                    characterController.Move(new Vector3(step.Displacement.X, 0f, step.Displacement.Y));
-                }
-            }
-
+            if (!UsesAuthorityDash) return;
             if (dashTrail != null)
             {
-                dashTrail.emitting = ActionState == FighterActionState.Active;
+                dashTrail.emitting = _match.GetBijliDashState(OwnerId).State == FighterActionState.Active;
             }
         }
 
@@ -176,6 +171,16 @@ namespace BattleRaja.Presentation.Combat
 
             var movement = inputAdapter != null ? inputAdapter.ReadInput().Movement : Float2.Zero;
             var facing = movementAgent != null ? movementAgent.AimDirection : Float2.Up;
+            if (UsesAuthorityDash)
+            {
+                if (_match.TryStartBijliDash(command, movement, facing).Accepted)
+                {
+                    GetComponent<FighterPresentation>()?.NotifyAbility();
+                }
+
+                return;
+            }
+
             if (_runtime.TryStartDash(command, movement, facing))
             {
                 GetComponent<FighterPresentation>()?.NotifyAbility();
@@ -191,15 +196,6 @@ namespace BattleRaja.Presentation.Combat
             {
                 dashTrail.emitting = false;
             }
-        }
-
-        private bool ApplyAuthorityDisplacement(Float2 displacement, int simulationTick)
-        {
-            var actorId = new CombatEntityId(movementAgent.ActorId);
-            var result = _match.ResolveAbilityDisplacement(actorId, simulationTick, displacement);
-            if (!result.Applied) return false;
-            movementAgent.ApplyAuthoritativePosition(result.Position);
-            return true;
         }
 
         private float ComputeAvailableDistance(Float2 direction)

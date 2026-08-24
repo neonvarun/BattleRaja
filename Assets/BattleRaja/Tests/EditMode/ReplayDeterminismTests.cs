@@ -226,6 +226,12 @@ namespace BattleRaja.Tests.EditMode
                     ? new[]
                     {
                         new MatchReplayAbilityCommand(
+                            AbilityCommandFactory.Create(bijliId, tick, FighterDefinition.Bijli.Ability.AbilityId, right, true),
+                            right,
+                            right,
+                            false,
+                            Float2.Zero),
+                        new MatchReplayAbilityCommand(
                             AbilityCommandFactory.Create(pehelId, tick, FighterSpecialDefinition.PehelChargeThrow.AbilityId, left, true),
                             left,
                             left,

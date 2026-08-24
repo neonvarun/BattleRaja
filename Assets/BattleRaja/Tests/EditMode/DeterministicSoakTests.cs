@@ -176,6 +176,7 @@ namespace BattleRaja.Tests.EditMode
                     {
                         var isPehel = participants[i].FighterId.Equals(FighterDefinition.Pehel.FighterId);
                         var isMaya = participants[i].FighterId.Equals(FighterDefinition.Maya.FighterId);
+                        var isBijli = participants[i].FighterId.Equals(FighterDefinition.Bijli.FighterId);
                         if (isPehel && rng.Next(100) < 4)
                         {
                             abilities.Add(new MatchReplayAbilityCommand(
@@ -204,6 +205,21 @@ namespace BattleRaja.Tests.EditMode
                                 directions[i],
                                 true,
                                 spawns[i].Position));
+                        }
+
+                        if (isBijli && rng.Next(100) < 4)
+                        {
+                            abilities.Add(new MatchReplayAbilityCommand(
+                                AbilityCommandFactory.Create(
+                                    spawns[i].Id,
+                                    tick,
+                                    FighterDefinition.Bijli.Ability.AbilityId,
+                                    directions[i],
+                                    true),
+                                directions[i],
+                                directions[i],
+                                false,
+                                Float2.Zero));
                         }
                     }
 

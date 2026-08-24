@@ -182,7 +182,8 @@ namespace BattleRaja.Presentation.Movement
 
         public void QueueAuthorityCommand(MovementCommand command)
         {
-            if (!_initialized || command.ActorId != ActorId)
+            if (!_initialized || command.ActorId != ActorId ||
+                (_fighterMovementLock != null && _fighterMovementLock.IsMovementLocked))
             {
                 return;
             }

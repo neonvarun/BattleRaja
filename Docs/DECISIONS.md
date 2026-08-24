@@ -1224,3 +1224,34 @@ Record every material choice here. Do not silently overwrite old decisions.
   `OfflineMatchSimulation.GetDamageContributions`, `ArenaCollisionDefinition.CalculateStableHash`,
   `DeterministicReplayRunner.MatchStateHashBuilder`, focused replay/authority regressions and deep soak.
 - **Owner:** Human project owner
+
+### ADR-057 - Own Bijli dash state in the match authority
+
+- **Date:** 2026-08-25
+- **Status:** Accepted for the offline V1 gameplay-truth foundation.
+- **Context:** Production Bijli advanced `FighterRuntimeState` in its Unity controller,
+  then asked authority to approve displacement. That left dash phase, cooldown, distance
+  and direction outside canonical replay hashing, so recorded streams could not reproduce
+  complete future-affecting dash state. Ability starts also lacked the same warmup/spawn-protection
+  gate already applied to attacks.
+- **Options considered:** Record per-tick displacement arrays in replays; keep presentation
+  runtime and serialize every intermediate step; or move one immutable fighter runtime per
+  actor into the authority, advance it during the canonical tick, hash it, and let replay record
+  only the original command.
+- **Decision:** Add authority-owned `FighterRuntimeState` runtimes for accepted Bijli commands.
+  The authority validates ability identity, pressed state, stale/duplicate ticks, action phase and
+  alive eligibility; advances each active/cooldown runtime once per fixed tick with deterministic
+  arena collision; publishes immutable displacement results in `MatchAuthorityTick.BijliDashSteps`;
+  includes dash state and ordering ticks in the canonical hash. Replay records only the common
+  ability command. Production movement is suppressed from the same lock source while a dash/charge
+  is active, and Unity receives collision-resolved positions as view instructions.
+- **Consequences:** Bijli cooldown, phase progression, travelled distance, direction and collision
+  outcome are now deterministic and replayable without per-tick displacement capture. The change also
+  applies action-phase gating to Pehel charge starts. It does not yet unify gadget/healing/Aandhi
+  eligibility, add durable replay-file serialization, or replace MovementLab fallbacks.
+- **Evidence/sources:** `OfflineMatchAuthority.TryStartBijliDash`, `AdvanceBijliDash`,
+  `GetBijliDashState`, `IsAuthorityMovementLocked`, `DeterministicReplayExecutor.ApplyFrame`,
+  `AuthorityFoundationTests.AuthorityOwnsBijliDashEligibilityCollisionAndReplayState`,
+  `ReplayDeterminismTests.ReplayExecutor_ReproducesCompleteAuthorityHashStream`, full EditMode/
+  PlayMode baselines and the 2,000-match zero-divergence soak.
+- **Owner:** Human project owner

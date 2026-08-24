@@ -285,11 +285,17 @@ namespace BattleRaja.Core.Application
 
             var authority = CreateAuthority(header);
             var pehelActorIds = new List<CombatEntityId>();
+            var bijliActorIds = new List<CombatEntityId>();
             for (var i = 0; i < header.Participants.Length; i++)
             {
                 if (header.Participants[i].FighterId.Equals(FighterDefinition.Pehel.FighterId))
                 {
                     pehelActorIds.Add(header.Participants[i].ActorId);
+                }
+
+                if (header.Participants[i].FighterId.Equals(FighterDefinition.Bijli.FighterId))
+                {
+                    bijliActorIds.Add(header.Participants[i].ActorId);
                 }
             }
 
@@ -302,7 +308,7 @@ namespace BattleRaja.Core.Application
                     throw new InvalidOperationException($"Replay tick {frame.SimulationTick} is not contiguous at frame {frameIndex}.");
                 }
 
-                ApplyFrame(authority, frame, header.FixedDeltaSeconds, pehelActorIds);
+                ApplyFrame(authority, frame, header.FixedDeltaSeconds, pehelActorIds, bijliActorIds);
                 var tick = authority.Advance(frame.SimulationTick, header.FixedDeltaSeconds);
                 var snapshots = authority.Simulation.GetSnapshots();
                 var hash = DeterministicReplayHasher.CalculateTickHash(authority, tick, snapshots);
@@ -371,7 +377,8 @@ namespace BattleRaja.Core.Application
             OfflineMatchAuthority authority,
             MatchReplayFrame frame,
             float fixedDeltaSeconds,
-            List<CombatEntityId> pehelActorIds)
+            List<CombatEntityId> pehelActorIds,
+            List<CombatEntityId> bijliActorIds)
         {
             for (var i = 0; i < frame.MovementCommands.Length; i++)
             {
@@ -413,6 +420,12 @@ namespace BattleRaja.Core.Application
                 if (command.AbilityId.Equals(FighterSpecialDefinition.PehelChargeThrow.AbilityId))
                 {
                     authority.TryStartPehelCharge(command, recorded.Movement, recorded.Facing);
+                    continue;
+                }
+
+                if (command.AbilityId.Equals(FighterDefinition.Bijli.Ability.AbilityId))
+                {
+                    authority.TryStartBijliDash(command, recorded.Movement, recorded.Facing);
                     continue;
                 }
 

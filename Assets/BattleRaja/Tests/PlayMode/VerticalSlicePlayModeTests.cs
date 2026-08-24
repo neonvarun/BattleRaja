@@ -418,11 +418,20 @@ namespace BattleRaja.Tests.PlayMode
             var bijli = player.GetComponent<BijliFighterController>();
             Assert.That(bijli, Is.Not.Null);
             Assert.That(player.AuthorityDrivenMovement, Is.True);
+
+            // Combat abilities are canonical action-phase actions. Accelerate the
+            // shared simulation past load warmup and spawn protection before submitting.
+            var previousTimeScale = Time.timeScale;
+            Time.timeScale = 50f;
+            yield return new WaitForSecondsRealtime(0.18f);
+            Time.timeScale = previousTimeScale;
+            Assert.That(match.CurrentPhase, Is.EqualTo(MatchPhase.Opening));
+
             Assert.That(match.Simulation.TryGetSnapshot(new CombatEntityId(1), out var before), Is.True);
 
             bijli.Submit(AbilityCommandFactory.Create(
                 new CombatEntityId(1),
-                1,
+                match.SimulationTick + 1,
                 bijli.AbilityId,
                 new Float2(1f, 0f),
                 true));
@@ -453,6 +462,13 @@ namespace BattleRaja.Tests.PlayMode
 
             var pehelPosition = new Float2(-4f, 0f);
             var playerPosition = new Float2(-2.6f, 0f);
+
+            var previousTimeScale = Time.timeScale;
+            Time.timeScale = 50f;
+            yield return new WaitForSecondsRealtime(0.18f);
+            Time.timeScale = previousTimeScale;
+            Assert.That(match.CurrentPhase, Is.EqualTo(MatchPhase.Opening));
+
             match.Simulation.SetPosition(pehelAgent.ActorId > 0 ? new CombatEntityId(pehelAgent.ActorId) : default, pehelPosition);
             match.Simulation.SetPosition(player.Id, playerPosition);
             pehelAgent.ApplyAuthoritativePosition(pehelPosition);
@@ -464,7 +480,7 @@ namespace BattleRaja.Tests.PlayMode
             var beforeHealth = player.Health.Snapshot.CurrentHealth;
             pehel.Submit(AbilityCommandFactory.Create(
                 new CombatEntityId(pehelAgent.ActorId),
-                1,
+                match.SimulationTick + 1,
                 pehel.AbilityId,
                 new Float2(1f, 0f),
                 true));

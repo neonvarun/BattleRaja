@@ -337,25 +337,30 @@ namespace BattleRaja.Tests.EditMode
                 new MatchSpawn(pehelId, new Float2(-6f, 0f), 125),
                 new MatchSpawn(targetId, new Float2(6f, 0f), 100)
             });
+            // Advance through the full spawn-protection window before combat actions.
+            for (var warmupTick = 1; warmupTick <= 250; warmupTick++) authority.Advance(warmupTick, 1f / 30f);
             authority.ConfigureFaction(pehelId, CombatFaction.Enemy);
             authority.ConfigureFaction(targetId, CombatFaction.Enemy);
             authority.SetPosition(targetId, new Float2(-4.4f, 0f));
 
             var command = new AbilityCommand(
                 pehelId,
-                1,
+                251,
                 FighterSpecialDefinition.PehelChargeThrow.AbilityId,
                 new Float2(1f, 0f),
                 true);
             var firstStart = authority.TryStartPehelCharge(command, new Float2(1f, 0f), new Float2(1f, 0f));
             var duplicateStart = authority.TryStartPehelCharge(command, new Float2(1f, 0f), new Float2(1f, 0f));
-            Assert.That(firstStart.Accepted, Is.True);
+            Assert.That(
+                firstStart.Accepted,
+                Is.True,
+                $"phase={authority.CurrentPhase} tick={authority.CurrentSimulationTick}");
             Assert.That(firstStart.AbilityExecutionId, Is.GreaterThan(0));
             Assert.That(duplicateStart.Accepted, Is.False);
             Assert.That(duplicateStart.AbilityExecutionId, Is.EqualTo(0));
 
             MatchAuthorityChargeThrow thrown = default(MatchAuthorityChargeThrow);
-            for (var tick = 1; tick <= 30; tick++)
+            for (var tick = 251; tick <= 280; tick++)
             {
                 thrown = authority.AdvancePehelCharge(pehelId, tick, 1f / 30f, 3.2f);
                 if (thrown.HasDamage) break;
@@ -370,6 +375,65 @@ namespace BattleRaja.Tests.EditMode
             Assert.That(authority.Simulation.TryGetSnapshot(targetId, out var target), Is.True);
             Assert.That(target.CurrentHealth, Is.EqualTo(97));
             Assert.That(authority.GetPehelChargeState(pehelId).CapturedTargetId, Is.EqualTo(targetId));
+        }
+
+        [Test]
+        public void AuthorityOwnsBijliDashEligibilityCollisionAndReplayState()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            var bijliId = new CombatEntityId(1);
+            authority.ConfigureArenaCollision(new ArenaCollisionDefinition(
+                new Float2(-13f, -9f),
+                new Float2(13f, 9f),
+                0.45f,
+                new ArenaObstacle[0],
+                "authority-dash-open"));
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(bijliId, new Float2(-6f, 0f), FighterDefinition.Bijli.MaxHealth),
+                new MatchSpawn(new CombatEntityId(2), new Float2(6f, 0f), 100)
+            });
+
+            var warmupCommand = new AbilityCommand(
+                bijliId,
+                1,
+                FighterDefinition.Bijli.Ability.AbilityId,
+                new Float2(1f, 0f),
+                true);
+            Assert.That(
+                authority.TryStartBijliDash(warmupCommand, Float2.Zero, Float2.Up).Accepted,
+                Is.False,
+                "stale command");
+
+            for (var warmupTick = 1; warmupTick <= 250; warmupTick++) authority.Advance(warmupTick, 1f / 30f);
+            Assert.That(authority.TryStartBijliDash(warmupCommand, Float2.Zero, Float2.Up).Accepted, Is.False);
+
+            var command = new AbilityCommand(
+                bijliId,
+                251,
+                FighterDefinition.Bijli.Ability.AbilityId,
+                new Float2(1f, 0f),
+                true);
+            var firstStart = authority.TryStartBijliDash(command, new Float2(1f, 0f), new Float2(1f, 0f));
+            var duplicateStart = authority.TryStartBijliDash(command, new Float2(1f, 0f), new Float2(1f, 0f));
+            Assert.That(
+                firstStart.Accepted,
+                Is.True,
+                $"phase={authority.CurrentPhase} tick={authority.CurrentSimulationTick}");
+            Assert.That(firstStart.AbilityExecutionId, Is.GreaterThan(0));
+            Assert.That(duplicateStart.Accepted, Is.False);
+
+            var displacementTotal = Float2.Zero;
+            MatchAuthorityDashStep step;
+            for (var tick = 252; tick <= 280; tick++)
+            {
+                step = authority.AdvanceBijliDash(bijliId, tick, 1f / 30f);
+                if (step.Displacement.Applied) displacementTotal += step.Displacement.Displacement;
+            }
+
+            Assert.That(displacementTotal.X, Is.EqualTo(FighterDefinition.Bijli.Ability.Distance).Within(0.001f));
+            Assert.That(displacementTotal.Y, Is.EqualTo(0f).Within(0.001f));
+            Assert.That(authority.GetBijliDashState(bijliId).State, Is.EqualTo(FighterActionState.Cooldown));
         }
 
         [Test]

@@ -129,6 +129,28 @@ namespace BattleRaja.Presentation.Match
                     command.SimulationTick);
         }
 
+        public MatchAuthorityAbilityStart TryStartBijliDash(AbilityCommand command, Float2 movement, Float2 facing)
+        {
+            return _authority != null
+                ? _authority.TryStartBijliDash(command, movement, facing)
+                : MatchAuthorityAbilityStart.Rejected(
+                    command.InstigatorId,
+                    FighterDefinition.Bijli.Ability.AbilityId,
+                    command.SimulationTick);
+        }
+
+        public MatchAuthorityDashState GetBijliDashState(CombatEntityId actorId)
+        {
+            return _authority != null
+                ? _authority.GetBijliDashState(actorId)
+                : new MatchAuthorityDashState(actorId, FighterActionState.Ready, 0f, Float2.Up);
+        }
+
+        public bool IsAuthorityMovementLocked(CombatEntityId actorId)
+        {
+            return _authority != null && _authority.IsAuthorityMovementLocked(actorId);
+        }
+
         public MatchAuthorityChargeThrowState GetPehelChargeState(CombatEntityId actorId)
         {
             return _authority != null
@@ -282,8 +304,11 @@ namespace BattleRaja.Presentation.Match
                     if (authorityDrivenMovement)
                     {
                         var command = actor.Agent.GetAuthorityCommand(simulationTick);
-                        var movement = _authority.ResolveMovement(command, (float)_simulationClock.StepSeconds);
-                        actor.Agent.ApplyAuthoritativeMovement(movement, (float)_simulationClock.StepSeconds);
+                        if (!_authority.IsAuthorityMovementLocked(actor.Target.Id))
+                        {
+                            var movement = _authority.ResolveMovement(command, (float)_simulationClock.StepSeconds);
+                            actor.Agent.ApplyAuthoritativeMovement(movement, (float)_simulationClock.StepSeconds);
+                        }
                     }
                     else
                     {
@@ -304,6 +329,7 @@ namespace BattleRaja.Presentation.Match
                 AandhiState = tick.AandhiState;
                 AandhiWarningRemainingSeconds = tick.WarningRemainingSeconds;
                 ApplyAuthoritativeDamageEvents(authorityTick);
+                ApplyAuthoritativeDashSteps(authorityTick);
                 ApplyGadgetAuthorityIntents(authorityTick);
                 ApplyAuthoritativeCollections(authorityTick);
                 MirrorItemAvailability();
@@ -480,6 +506,17 @@ namespace BattleRaja.Presentation.Match
                         break;
                     }
                 }
+            }
+        }
+
+        private void ApplyAuthoritativeDashSteps(MatchAuthorityTick authorityTick)
+        {
+            for (var i = 0; i < authorityTick.BijliDashSteps.Length; i++)
+            {
+                if (!authorityTick.BijliDashSteps[i].Displacement.Applied) continue;
+                var displacement = authorityTick.BijliDashSteps[i].Displacement;
+                var actor = _actors.FirstOrDefault(binding => binding.Target.Id == displacement.ActorId);
+                actor?.Agent.ApplyAuthoritativePosition(displacement.Position);
             }
         }
 

@@ -216,6 +216,56 @@ namespace BattleRaja.Core.Application
     }
 
     /// <summary>
+    /// Immutable authority view for one fighter's dash runtime.
+    /// </summary>
+    public readonly struct MatchAuthorityDashState
+    {
+        public MatchAuthorityDashState(
+            CombatEntityId actorId,
+            FighterActionState state,
+            float cooldownRemaining,
+            Float2 direction)
+        {
+            ActorId = actorId;
+            State = state;
+            CooldownRemaining = cooldownRemaining;
+            Direction = direction;
+        }
+
+        public CombatEntityId ActorId { get; }
+        public FighterActionState State { get; }
+        public float CooldownRemaining { get; }
+        public Float2 Direction { get; }
+    }
+
+    /// <summary>
+    /// Immutable result of one canonical dash step. Presentation consumes the
+    /// collision-resolved position only; it never advances the dash itself.
+    /// </summary>
+    public readonly struct MatchAuthorityDashStep
+    {
+        public MatchAuthorityDashStep(
+            CombatEntityId actorId,
+            int simulationTick,
+            bool accepted,
+            DashStep step,
+            MatchAuthorityDisplacement displacement)
+        {
+            ActorId = actorId;
+            SimulationTick = simulationTick;
+            Accepted = accepted;
+            Step = step;
+            Displacement = displacement;
+        }
+
+        public CombatEntityId ActorId { get; }
+        public int SimulationTick { get; }
+        public bool Accepted { get; }
+        public DashStep Step { get; }
+        public MatchAuthorityDisplacement Displacement { get; }
+    }
+
+    /// <summary>
     /// Immutable result of one authority-owned Pehel charge step. The Unity
     /// controller consumes these view instructions; it does not decide the
     /// captured target, damage, or throw position.
@@ -286,7 +336,8 @@ namespace BattleRaja.Core.Application
                 Array.Empty<int>(),
                 Array.Empty<DomainProjectileSnapshot>(),
                 Array.Empty<MatchPickupCollectionIntent>(),
-                Array.Empty<GadgetPickupCollectionIntent>())
+                Array.Empty<GadgetPickupCollectionIntent>(),
+                Array.Empty<MatchAuthorityDashStep>())
         {
         }
 
@@ -299,7 +350,8 @@ namespace BattleRaja.Core.Application
                 Array.Empty<int>(),
                 Array.Empty<DomainProjectileSnapshot>(),
                 Array.Empty<MatchPickupCollectionIntent>(),
-                Array.Empty<GadgetPickupCollectionIntent>())
+                Array.Empty<GadgetPickupCollectionIntent>(),
+                Array.Empty<MatchAuthorityDashStep>())
         {
         }
 
@@ -317,7 +369,8 @@ namespace BattleRaja.Core.Application
                 expiredStationIds,
                 Array.Empty<DomainProjectileSnapshot>(),
                 Array.Empty<MatchPickupCollectionIntent>(),
-                Array.Empty<GadgetPickupCollectionIntent>())
+                Array.Empty<GadgetPickupCollectionIntent>(),
+                Array.Empty<MatchAuthorityDashStep>())
         {
         }
 
@@ -345,7 +398,8 @@ namespace BattleRaja.Core.Application
             int[] expiredStationIds,
             DomainProjectileSnapshot[] projectileSnapshots,
             MatchPickupCollectionIntent[] pickupCollections,
-            GadgetPickupCollectionIntent[] gadgetCollections)
+            GadgetPickupCollectionIntent[] gadgetCollections,
+            MatchAuthorityDashStep[] bijliDashSteps)
         {
             SimulationTick = simulationTick;
             Result = result;
@@ -355,6 +409,7 @@ namespace BattleRaja.Core.Application
             ProjectileSnapshots = projectileSnapshots ?? Array.Empty<DomainProjectileSnapshot>();
             PickupCollections = pickupCollections ?? Array.Empty<MatchPickupCollectionIntent>();
             GadgetCollections = gadgetCollections ?? Array.Empty<GadgetPickupCollectionIntent>();
+            BijliDashSteps = bijliDashSteps ?? Array.Empty<MatchAuthorityDashStep>();
         }
 
         public int SimulationTick { get; }
@@ -380,6 +435,9 @@ namespace BattleRaja.Core.Application
 
         /// <summary>Gadget pickups collected atomically within this tick.</summary>
         public GadgetPickupCollectionIntent[] GadgetCollections { get; }
+
+        /// <summary>Canonical dash positions already applied inside this tick.</summary>
+        public MatchAuthorityDashStep[] BijliDashSteps { get; }
     }
 
     /// <summary>
@@ -408,8 +466,11 @@ namespace BattleRaja.Core.Application
         private readonly Dictionary<CombatEntityId, int> _participantTickRates = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<CombatEntityId, int> _participantCombatGroups = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<CombatEntityId, ChargeThrowRuntime> _pehelChargeRuntimes = new Dictionary<CombatEntityId, ChargeThrowRuntime>();
+        private readonly Dictionary<CombatEntityId, FighterRuntimeState> _bijliDashRuntimes = new Dictionary<CombatEntityId, FighterRuntimeState>();
         private readonly Dictionary<CombatEntityId, int> _lastPehelCommandTicks = new Dictionary<CombatEntityId, int>();
+        private readonly Dictionary<CombatEntityId, int> _lastBijliCommandTicks = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<CombatEntityId, int> _lastPehelStepTicks = new Dictionary<CombatEntityId, int>();
+        private readonly Dictionary<CombatEntityId, int> _lastBijliStepTicks = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<CombatEntityId, int> _lastPehelThrowTicks = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<CombatEntityId, CombatFaction> _participantFactions = new Dictionary<CombatEntityId, CombatFaction>();
         private readonly Dictionary<CombatEntityId, DecoyRuntime> _mayaDecoys = new Dictionary<CombatEntityId, DecoyRuntime>();
@@ -513,8 +574,11 @@ namespace BattleRaja.Core.Application
             _participantTickRates.Clear();
             _participantCombatGroups.Clear();
             _pehelChargeRuntimes.Clear();
+            _bijliDashRuntimes.Clear();
             _lastPehelCommandTicks.Clear();
+            _lastBijliCommandTicks.Clear();
             _lastPehelStepTicks.Clear();
+            _lastBijliStepTicks.Clear();
             _lastPehelThrowTicks.Clear();
             _participantFactions.Clear();
             _mayaDecoys.Clear();
@@ -898,6 +962,10 @@ namespace BattleRaja.Core.Application
             if (!command.Pressed || !command.AbilityId.Equals(FighterSpecialDefinition.PehelChargeThrow.AbilityId) ||
                 command.SimulationTick < 0 ||
                 (_lastPehelCommandTicks.TryGetValue(command.InstigatorId, out var lastTick) && command.SimulationTick <= lastTick) ||
+                command.SimulationTick <= CurrentSimulationTick ||
+                CurrentPhase == MatchPhase.LoadWarmup ||
+                CurrentPhase == MatchPhase.SpawnProtection ||
+                CurrentPhase == MatchPhase.Resolution ||
                 !RequireSimulation().TryGetSnapshot(command.InstigatorId, out var snapshot) ||
                 !snapshot.Alive)
             {
@@ -1047,6 +1115,131 @@ namespace BattleRaja.Core.Application
                 false);
         }
 
+        /// <summary>
+        /// Starts Bijli's dash in an authority-owned runtime. Presentation submits
+        /// only the common ability command; eligibility, cooldown and direction
+        /// selection remain canonical.
+        /// </summary>
+        public MatchAuthorityAbilityStart TryStartBijliDash(AbilityCommand command, Float2 movement, Float2 facing)
+        {
+            var rejected = MatchAuthorityAbilityStart.Rejected(
+                command.InstigatorId,
+                FighterDefinition.Bijli.Ability.AbilityId,
+                command.SimulationTick);
+            if (!command.Pressed ||
+                !command.AbilityId.Equals(FighterDefinition.Bijli.Ability.AbilityId) ||
+                command.SimulationTick < 0 ||
+                (_lastBijliCommandTicks.TryGetValue(command.InstigatorId, out var lastTick) &&
+                    command.SimulationTick <= lastTick) ||
+                command.SimulationTick <= CurrentSimulationTick ||
+                CurrentPhase == MatchPhase.LoadWarmup ||
+                CurrentPhase == MatchPhase.SpawnProtection ||
+                CurrentPhase == MatchPhase.Resolution ||
+                !RequireSimulation().TryGetSnapshot(command.InstigatorId, out var snapshot) ||
+                !snapshot.Alive)
+            {
+                return rejected;
+            }
+
+            if (!_bijliDashRuntimes.TryGetValue(command.InstigatorId, out var runtime))
+            {
+                runtime = new FighterRuntimeState(FighterDefinition.Bijli);
+                _bijliDashRuntimes[command.InstigatorId] = runtime;
+            }
+
+            if (!runtime.TryStartDash(command, movement, facing)) return rejected;
+            _lastBijliCommandTicks[command.InstigatorId] = command.SimulationTick;
+            return new MatchAuthorityAbilityStart(
+                command.InstigatorId,
+                command.AbilityId,
+                command.SimulationTick,
+                true,
+                _identityTracker.NextAbilityExecutionId());
+        }
+
+        public MatchAuthorityDashState GetBijliDashState(CombatEntityId actorId)
+        {
+            return !_bijliDashRuntimes.TryGetValue(actorId, out var runtime)
+                ? new MatchAuthorityDashState(actorId, FighterActionState.Ready, 0f, Float2.Up)
+                : new MatchAuthorityDashState(
+                    actorId,
+                    runtime.ActionState,
+                    runtime.CooldownRemaining,
+                    runtime.DashDirection);
+        }
+
+        public bool IsAuthorityMovementLocked(CombatEntityId actorId)
+        {
+            if (_pehelChargeRuntimes.TryGetValue(actorId, out var charge))
+            {
+                return charge.State != ChargeThrowState.Ready && charge.State != ChargeThrowState.Cooldown;
+            }
+
+            if (!_bijliDashRuntimes.TryGetValue(actorId, out var dash)) return false;
+            return dash.ActionState != FighterActionState.Ready &&
+                dash.ActionState != FighterActionState.Cooldown;
+        }
+
+        /// <summary>
+        /// Advances one fixed dash step against canonical position and arena
+        /// collision. The authority solver is the sole collision decision maker.
+        /// </summary>
+        public MatchAuthorityDashStep AdvanceBijliDash(CombatEntityId actorId, int simulationTick, float fixedDeltaSeconds)
+        {
+            var runtime = _bijliDashRuntimes.TryGetValue(actorId, out var found) ? found : null;
+            var emptyStep = default(DashStep);
+            if (runtime != null)
+            {
+                emptyStep = new DashStep(runtime.ActionState, Float2.Zero, false, false);
+            }
+
+            var displacement = new MatchAuthorityDisplacement(
+                actorId,
+                simulationTick,
+                false,
+                Float2.Zero,
+                RequireSimulation().TryGetSnapshot(actorId, out var snapshot)
+                    ? snapshot.Position
+                    : Float2.Zero);
+            if (runtime == null || simulationTick < 0 ||
+                !_lastBijliCommandTicks.TryGetValue(actorId, out var lastCommandTick) ||
+                simulationTick <= lastCommandTick ||
+                (_lastBijliStepTicks.TryGetValue(actorId, out var lastStepTick) && simulationTick <= lastStepTick) ||
+                !RequireSimulation().TryGetSnapshot(actorId, out snapshot) ||
+                !snapshot.Alive)
+            {
+                return new MatchAuthorityDashStep(
+                    actorId,
+                    simulationTick,
+                    false,
+                    emptyStep,
+                    displacement);
+            }
+
+            var step = runtime.Step(fixedDeltaSeconds, FighterDefinition.Bijli.Ability.Distance);
+            _lastBijliStepTicks[actorId] = simulationTick;
+            if (step.Displacement.SqrMagnitude > 0.000001f)
+            {
+                var collision = _collisionSolver.Move(snapshot.Position, step.Displacement);
+                if (RequireSimulation().SetPosition(actorId, collision.Position))
+                {
+                    displacement = new MatchAuthorityDisplacement(
+                        actorId,
+                        simulationTick,
+                        true,
+                        collision.AppliedDisplacement,
+                        collision.Position);
+                }
+            }
+
+            return new MatchAuthorityDashStep(
+                actorId,
+                simulationTick,
+                true,
+                step,
+                displacement);
+        }
+
         private bool TryCaptureNearestPehelTarget(
             CombatEntityId actorId,
             ChargeThrowRuntime runtime)
@@ -1082,6 +1275,23 @@ namespace BattleRaja.Core.Application
 
             if (!found) return false;
             return runtime.TryCaptureTarget(best.Id, true, bestDistance);
+        }
+
+        private MatchAuthorityDashStep[] AdvanceBijliDashes(int simulationTick, float fixedDeltaSeconds)
+        {
+            if (_bijliDashRuntimes.Count == 0) return Array.Empty<MatchAuthorityDashStep>();
+
+            var snapshots = RequireSimulation().GetSnapshots();
+            var steps = default(List<MatchAuthorityDashStep>);
+            for (var i = 0; i < snapshots.Length; i++)
+            {
+                if (!_bijliDashRuntimes.ContainsKey(snapshots[i].Id)) continue;
+                var step = AdvanceBijliDash(snapshots[i].Id, simulationTick, fixedDeltaSeconds);
+                if (steps == null) steps = new List<MatchAuthorityDashStep>(snapshots.Length);
+                steps.Add(step);
+            }
+
+            return steps != null ? steps.ToArray() : Array.Empty<MatchAuthorityDashStep>();
         }
 
         private bool TryResolvePehelThrow(
@@ -1349,6 +1559,7 @@ namespace BattleRaja.Core.Application
                 fixedDeltaSeconds,
                 simulation,
                 projectileDamageEvents);
+            var dashSteps = AdvanceBijliDashes(simulationTick, fixedDeltaSeconds);
             var result = simulation.Advance(fixedDeltaSeconds);
             var tickSnapshots = simulation.GetSnapshots();
             var healingIntents = new List<GadgetHealingIntent>();
@@ -1369,7 +1580,8 @@ namespace BattleRaja.Core.Application
                 expiredStationIds.ToArray(),
                 projectileSnapshots,
                 pickupCollections.ToArray(),
-                gadgetCollections.ToArray());
+                gadgetCollections.ToArray(),
+                dashSteps);
         }
 
         /// <summary>
@@ -1522,6 +1734,20 @@ namespace BattleRaja.Core.Application
                 hash.CombineInt(lastPehelStep);
                 _lastPehelThrowTicks.TryGetValue(s.Id, out var lastPehelThrow);
                 hash.CombineInt(lastPehelThrow);
+                _bijliDashRuntimes.TryGetValue(s.Id, out var dash);
+                hash.CombineInt(dash == null ? 0 : (int)dash.ActionState);
+                if (dash != null)
+                {
+                    hash.CombineFloat(dash.DashDirection.X);
+                    hash.CombineFloat(dash.DashDirection.Y);
+                    hash.CombineFloat(dash.CooldownRemaining);
+                    hash.CombineFloat(dash.DistanceTravelled);
+                }
+
+                _lastBijliCommandTicks.TryGetValue(s.Id, out var lastBijliCommand);
+                hash.CombineInt(lastBijliCommand);
+                _lastBijliStepTicks.TryGetValue(s.Id, out var lastBijliStep);
+                hash.CombineInt(lastBijliStep);
                 _lastDecoySpawnTicks.TryGetValue(s.Id, out var lastDecoySpawn);
                 hash.CombineInt(lastDecoySpawn);
                 _lastDecoyDamageTicks.TryGetValue(GetDecoyId(s.Id), out var lastDecoyDamage);

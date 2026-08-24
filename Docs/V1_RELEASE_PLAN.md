@@ -133,8 +133,11 @@ The read-only audit over exact commit `33035e8` confirmed two P0 blockers:
   - Assist contributions, damage identity counters, next station ID, arena collision
     content, decoy-damage identity keys and sorted station/decoy tie traversal are now
     hashed: **fixed with regressions**.
-  - Bijli dash replay support, production command capture, durable serialization and
-    complete future-state coverage: **still open**.
+  - Bijli dash replay support and production command routing: **fixed with authority-owned
+    dash runtimes, canonical tick advancement/hashing, replay command coverage, production
+    view mirroring and movement-lock parity**.
+  - Production durable replay-file serialization and complete future-state capture for all
+    presentation-only state: **still open**.
 - Unified action eligibility across movement, attacks, abilities, gadgets, healing,
   knockback and Aandhi: **still open**.
 
@@ -201,7 +204,35 @@ sustained performance review, accessibility review or release signing/store gate
 - Deep recorded replay soak after replay/authority hardening:
   `BATTLERAJA_SOAK_MATCHES=1000`, **1,000 seeds x 2 executions = 2,000 matches**,
   zero divergence, NUnit duration **399.2625235 s**
-  (`Builds\Local\V1GameplayTruth\TestResults\deep-soak-replay.xml`).
+(`Builds\Local\V1GameplayTruth\TestResults\deep-soak-replay.xml`).
+
+### P2 - Authority-owned Bijli dash replay support - complete 2026-08-25
+
+- Added `OfflineMatchAuthority.TryStartBijliDash`, fixed-tick `AdvanceBijliDash`, canonical
+  dash-state lookup and shared authority movement-lock reporting.
+- Advanced active/cooldown dash runtimes inside the canonical tick using the deterministic
+  arena solver; published collision-resolved positions in `MatchAuthorityTick.BijliDashSteps`
+  and mirrored them to Unity views after the tick.
+- Included dash action state, direction, cooldown, travelled distance and command/step ordering
+  ticks in the canonical hash. Replay now accepts the common Bijli ability command instead of an
+  unsupported command.
+- Routed production `BijliFighterController` through the authority while retaining its lab/local
+  fallback. Suppressed queued authority movement from the same lock source so dash ticks cannot
+  double-move.
+- Applied the attack-style warmup/spawn-protection/resolution gate to both Bijli and Pehel starts;
+  recorded ADR-057.
+
+#### Post-P2 automated evidence
+
+- Static validation: **0 errors / 0 warnings**.
+- Full EditMode: **131 / 131 passed**
+  (`Builds\Local\TestResults\editmode.xml`).
+- Full PlayMode: **75 / 75 passed**
+  (`Builds\Local\TestResults\playmode.xml`).
+- Deep recorded replay soak with Bijli commands enabled:
+  `BATTLERAJA_SOAK_MATCHES=1000`, **1,000 seeds x 2 executions = 2,000 matches**, zero
+  divergence, NUnit duration **468.619297 seconds**
+  (`Builds\Local\V1GameplayTruth\TestResults\bijli-deep-soak.xml`).
 
 ## Later checkpoints
 
