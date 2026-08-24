@@ -1,18 +1,18 @@
 # Latest HEAD baseline
 
-## Exact current source — `1c65415` — 2026-08-24
+## Exact current source — `ddff490` — 2026-08-24
 
 The checked-out source contains the presentation-only Pehel hot-path cleanup,
-the repeatable offline APK manifest gate and the current release documentation.
-The runtime-bearing code is unchanged from `e808830`; repository validation is
+the owner-configurable Android package identity, the repeatable offline APK
+manifest gate and the current release documentation. Repository validation is
 **0 errors / 0 warnings**, with fresh exact-source EditMode **125/125** and
 PlayMode **71/71**. A fresh release-shaped Android package was built from exact
-source in disposable worktree `C:\BRV1FinalManifest`:
+source in disposable worktree `C:\BRV1PackageOverride`:
 
 | Artifact | Size | SHA-256 |
 | --- | ---: | --- |
-| APK | 39,485,163 bytes | `536B8BCF6B27B985B3934DB4CBA01F7CB42BD5C99946696620424534CA17AB04` |
-| AAB | 35,312,622 bytes | `F1957AC515EA3A0F48570DCB76D6EE74ABEA13CFBC9C27E21B561934F2BB8BD1` |
+| APK | 39,485,163 bytes | `BDF6473920ABB05F7FE35BDF9960CD1C025756AE576B1934F2982D3FBCA282D6` |
+| AAB | 35,312,608 bytes | `9A7EB0397524E00B7928EC0BE13F692F92AEE2C9B8804BC23712AF21F19899F6` |
 
 The AAB contains seven ARM64 native libraries, no other ABIs, and passed the
 static 16 KB ELF LOAD alignment check. The APK installed only on Lava

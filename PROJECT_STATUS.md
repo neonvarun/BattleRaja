@@ -6,15 +6,15 @@
 
 ## Current state
 
-- Checked-out source is `1c65415` (`validation: automate offline Android manifest
-  checks`); the latest runtime-bearing source is `e808830` (`perf: reuse cached
+- Checked-out source is `ddff490` (`release: make Android package identity
+  owner-configurable`); the latest runtime-bearing source is `e808830` (`perf: reuse cached
   actor views for Pehel authority results`). Repository validation is **0/0**,
   fresh EditMode is **125/125**, and fresh PlayMode is **71/71**. Fresh
-  release-shaped packages from disposable `C:\BRV1FinalManifest` are APK
+  release-shaped packages from disposable `C:\BRV1PackageOverride` are APK
   `39,485,163` bytes (SHA-256
-  `536B8BCF6B27B985B3934DB4CBA01F7CB42BD5C99946696620424534CA17AB04`) and AAB
-  `35,312,622` bytes (SHA-256
-  `F1957AC515EA3A0F48570DCB76D6EE74ABEA13CFBC9C27E21B561934F2BB8BD1`). The
+  `BDF6473920ABB05F7FE35BDF9960CD1C025756AE576B1934F2982D3FBCA282D6`) and AAB
+  `35,312,608` bytes (SHA-256
+  `9A7EB0397524E00B7928EC0BE13F692F92AEE2C9B8804BC23712AF21F19899F6`). The
   AAB is ARM64-only and passed static 16 KB alignment. Lava install and launch
   succeeded, but the lock screen blocked interaction; no route or performance
   pass is claimed.
