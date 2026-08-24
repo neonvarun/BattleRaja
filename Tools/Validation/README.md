@@ -1,5 +1,27 @@
 # Validation Tools
 
+## Lava performance capture
+
+`capture_android_performance.ps1` provides repeatable, Lava-only Android evidence.
+It refuses the Oppo serial, resolves the installed Unity activity, captures memory,
+CPU, graphics, battery, thermal, activity and logcat samples, and writes a manifest
+with the exact device/package/sample window. It does not uninstall the app, clear
+application data or alter the device beyond launching the requested package.
+
+```powershell
+pwsh -File Tools/Validation/capture_android_performance.ps1 `
+  -AdbPath "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" `
+  -DeviceSerial ST5GDW23LB004392 `
+  -PackageId com.example.battleraja.m11 `
+  -DurationSeconds 120 `
+  -IntervalSeconds 5
+```
+
+Keep generated captures outside tracked source or under the ignored
+`Builds/Local/Device/Performance/<timestamp>` path. Treat shell samples as raw
+evidence; they are not a performance pass without a sustained match scenario,
+frame-time interpretation and human review.
+
 `validate.ps1` performs repository and Milestone 0 preflight checks without requiring Unity. It verifies required documentation, Unity project markers, LFS attributes, prohibited package references, tracked generated paths, and obvious secret assignments.
 
 Usage from the repository root:
