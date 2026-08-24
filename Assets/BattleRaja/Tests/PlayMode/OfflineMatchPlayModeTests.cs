@@ -159,6 +159,30 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator BackgroundLifecyclePausesAndResumesMatchSafely()
+        {
+            var hud = Object.FindAnyObjectByType<OfflineMatchHud>();
+            var settings = Object.FindObjectsByType<Transform>(FindObjectsInactive.Include)
+                .FirstOrDefault(item => item.name == "SettingsPanel")?.gameObject;
+            Assert.That(hud, Is.Not.Null);
+            Assert.That(settings, Is.Not.Null);
+            Assert.That(settings.activeSelf, Is.False);
+            Assert.That(Time.timeScale, Is.EqualTo(1f));
+
+            hud.SendMessage("OnApplicationPause", true);
+            yield return null;
+
+            Assert.That(settings.activeSelf, Is.True);
+            Assert.That(Time.timeScale, Is.EqualTo(0f));
+
+            hud.SendMessage("OnApplicationPause", false);
+            yield return null;
+
+            Assert.That(settings.activeSelf, Is.False);
+            Assert.That(Time.timeScale, Is.EqualTo(1f));
+        }
+
+        [UnityTest]
         public IEnumerator AcceleratedSimulationCanReachResultsAndStableWinner()
         {
             var match = Object.FindAnyObjectByType<OfflineMatchController>();

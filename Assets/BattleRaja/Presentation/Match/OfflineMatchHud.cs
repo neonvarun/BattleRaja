@@ -40,6 +40,7 @@ namespace BattleRaja.Presentation.Match
         private float _textScale;
         private float _appliedTextScale = 1f;
         private bool _paused;
+        private bool _lifecyclePaused;
         private bool _compactLayout;
         private bool _controlsCompactLayout;
         private bool _controlsLayoutInitialized;
@@ -155,6 +156,16 @@ namespace BattleRaja.Presentation.Match
         private void OnDestroy()
         {
             if (_paused) Time.timeScale = 1f;
+        }
+
+        private void OnApplicationPause(bool paused)
+        {
+            SetLifecyclePause(paused);
+        }
+
+        private void OnApplicationFocus(bool hasFocus)
+        {
+            SetLifecyclePause(!hasFocus);
         }
 
         private void Update()
@@ -335,8 +346,32 @@ namespace BattleRaja.Presentation.Match
             if (_settingsPanel == null) return;
             _settingsPanel.SetActive(!_settingsPanel.activeSelf);
             _paused = _settingsPanel.activeSelf;
+            _lifecyclePaused = false;
             Time.timeScale = _paused ? 0f : 1f;
             _audio?.StartFromUserGesture();
+        }
+
+        private void SetLifecyclePause(bool paused)
+        {
+            if (_settingsPanel == null || match == null || match.ResultsShown) return;
+
+            if (paused)
+            {
+                // Do not alter a pause the player opened deliberately. Only remember
+                // and resume a pause that this lifecycle callback created.
+                if (_paused) return;
+                _settingsPanel.SetActive(true);
+                _paused = true;
+                _lifecyclePaused = true;
+                Time.timeScale = 0f;
+                return;
+            }
+
+            if (!_lifecyclePaused) return;
+            _settingsPanel.SetActive(false);
+            _paused = false;
+            _lifecyclePaused = false;
+            Time.timeScale = 1f;
         }
 
         private void CycleSpectator()
