@@ -52,6 +52,9 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(match.CurrentPhase, Is.EqualTo(BattleRaja.Core.Domain.MatchPhase.LoadWarmup));
             Assert.That(match.ZoneRadius, Is.GreaterThan(0f));
             Assert.That(Object.FindObjectsByType<MatchPickup>().Length, Is.EqualTo(3));
+            var zoneVisual = Object.FindAnyObjectByType<AandhiZoneVisual>();
+            Assert.That(zoneVisual, Is.Not.Null);
+            Assert.That(zoneVisual.GetComponentsInChildren<LineRenderer>(true), Has.Length.EqualTo(2));
         }
 
         [UnityTest]
