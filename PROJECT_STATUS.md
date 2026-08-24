@@ -21,14 +21,16 @@
   are recorded separately by runtime commit below. See
   `Docs/QA/M11_CLOSURE_REPORT_2026-08-23.md`.
 - Current exact offline Android V1 checkout: branch `codex/v1-playstore-release` at
-  runtime source `6ac5c12`. Repository validation is **0/0**;
-  exact-current EditMode is **125/125** and PlayMode is **67/67**. The fresh
-  release-shaped APK is **39,523,632 bytes** (SHA-256
-  `09F5375FA8D5DEC066A09D8CCDF0BAF01269F4B402252EF2908691C773402EF3`) and the AAB is
-  **35,351,357 bytes** (SHA-256
-  `70825F82A4D79E1E036F4DA8A286778244406D51B1D60A568BD066ED1B82DAA8`). The AAB is
-  ARM64-only with static 16 KB alignment. The focused source change removes internal
-  runtime touch-action ambiguity by binding point/click/navigation actions explicitly.
+  runtime source `7751f53`. Repository validation is **0/0**;
+  exact-current EditMode is **125/125** and PlayMode is **68/68**. The fresh
+  release-shaped APK is **39,526,908 bytes** (SHA-256
+  `620832E983A33505FEA97AF638E7D681A334E8E51474F7014B2F8D011C801F4A`). The most
+  recent AAB remains the prior `6ac5c12` artifact at **35,351,357 bytes** (SHA-256
+  `70825F82A4D79E1E036F4DA8A286778244406D51B1D60A568BD066ED1B82DAA8`) and has not
+  been rebuilt from `7751f53`. It is ARM64-only with static 16 KB alignment. The focused source change removes internal
+  runtime touch-action ambiguity by binding point/click/navigation actions explicitly;
+  the latest presentation slice makes the menu reflow between wide and portrait
+  orientations and was visually inspected on Lava in wide orientation.
 - The exact APK was installed only on Lava `ST5GDW23LB004392`; the branded offline menu
   was visible and the post-launch capture contains no fatal/ANR/SIGSEGV marker. The
   Unity surface exposes no actionable Android UI nodes, so physical touch navigation

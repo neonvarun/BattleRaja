@@ -3,6 +3,32 @@
 This is a bounded presentation slice for the offline Android V1 candidate. It is
 technical evidence, not Play Store approval or final human visual approval.
 
+## Latest exact-current responsive-menu slice — `7751f53` — 2026-08-24
+
+The responsive presentation source is `7751f53` on `codex/v1-playstore-release`.
+Repository validation is **0 errors / 0 warnings**, EditMode is **125/125**, and
+PlayMode is **68/68**. The exact-source release-shaped APK is **39,526,908 bytes**
+with SHA-256
+`620832E983A33505FEA97AF638E7D681A334E8E51474F7014B2F8D011C801F4A`. It was
+installed only on Lava `ST5GDW23LB004392`; `aapt` reports package
+`com.example.battleraja.m11`, version `1.0.0`, target/compile API 36, min API 28,
+and only `VIBRATE` plus Unity's dynamic receiver permission. No
+`FATAL EXCEPTION`, `ANR in`, or `SIGSEGV` marker was found in the launch log.
+
+The wide-orientation capture is
+`C:\Users\USER\AppData\Local\Temp\battleraja-responsive-7751f53\menu-landscape.png`.
+It shows the original enlarged hero and loop summary on the left with a clear
+right-side offline/tutorial/settings/help rail. The menu now recomputes its anchors
+when the device rotates; the portrait stack remains the alternate layout. This is a
+visual/layout check, not a physical-touch pass: the Unity UI surface still exposes no
+actionable Android UI nodes and no reliable human touch session has been approved.
+
+The same exact source produced a Web build containing 19 files totalling
+**132,073,844 bytes**; the WASM is **119,801,877 bytes** with SHA-256
+`E91A5242FB71733E41FA52182572DE784CE97413DB3B15C4D4302FAFEAD3CAE0`.
+Local HTTP returned 200; Chrome and Edge headless captures reached only the Unity
+loader. Full interactive Web QA remains outside this Android V1 gate.
+
 ## Latest exact-current release-shaped slice — `6ac5c12` — 2026-08-24
 
 The exact current source is `6ac5c12` on `codex/v1-playstore-release`. Validation is

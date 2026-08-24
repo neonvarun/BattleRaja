@@ -4,14 +4,17 @@ Updated: 2026-08-24
 Classification: **prototype**
 
 Latest continuation: offline Android V1 release-shaped candidate — branch
-`codex/v1-playstore-release` at runtime/package source `6ac5c12`.
-Exact-current validation is 0/0, EditMode **125/125**, and PlayMode **67/67**. The
-fresh release-shaped APK is **39,523,632 bytes**
-(`09F5375FA8D5DEC066A09D8CCDF0BAF01269F4B402252EF2908691C773402EF3`) and the AAB is
-**35,351,357 bytes**
-(`70825F82A4D79E1E036F4DA8A286778244406D51B1D60A568BD066ED1B82DAA8`); the AAB is
-ARM64-only and passed static 16 KB alignment. The APK was installed and exercised
+`codex/v1-playstore-release` at runtime/package source `7751f53`.
+Exact-current validation is 0/0, EditMode **125/125**, and PlayMode **68/68**. The
+fresh release-shaped APK is **39,526,908 bytes**
+(`620832E983A33505FEA97AF638E7D681A334E8E51474F7014B2F8D011C801F4A`). The most
+recent AAB remains the prior `6ac5c12` packaging artifact at **35,351,357 bytes**
+(`70825F82A4D79E1E036F4DA8A286778244406D51B1D60A568BD066ED1B82DAA8`); it is
+ARM64-only and passed static 16 KB alignment, but has not been rebuilt from
+`7751f53`. The APK was installed and exercised
 only on Lava, and the inspected package has no `INTERNET` or `ACCESS_NETWORK_STATE`.
+The latest responsive-menu capture verifies wide-layout visual hierarchy; physical
+touch navigation remains a human-review gate.
 Runtime EventSystem point/click actions are explicitly bound and covered by PlayMode,
 but the Unity surface exposes no actionable Android UI nodes, so physical touch
 navigation remains a human-review gate. The same exact source produced a successful

@@ -3,13 +3,31 @@
 Date: 2026-08-24
 Branch: `codex/v1-playstore-release` (ahead of local and remote `main`; exact count is recorded by Git)
 Local/remote `main`: `ca6ec3e17e695042664cf3bdbf9889b259b33144`
-Latest validated runtime source: `6ac5c12` (`ui: bind runtime input actions explicitly`)
-Latest checked-out runtime source: `6ac5c12`; documentation
+Latest validated runtime source: `7751f53` (`ui: make offline menu responsive to orientation`)
+Latest checked-out runtime source: `7751f53` (`ui: make offline menu responsive to orientation`);
+documentation
 updates are in the focused commits following those source changes;
 the checked-out Git HEAD is the authoritative current documentation state.
 Balance-fix runtime source: `17a8c75` (`fix(balance): land documented weapon retune in Core definitions`)
 Pre-fix baseline source: `35d723f` (`fix: bot perception no longer treats fighter hulls as line-of-sight blockers`; the tip of local `main` before this branch)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
+
+## Exact current responsive-menu baseline — 2026-08-24
+
+The latest runtime source is `7751f53`. Repository validation is **0/0**; EditMode is
+**125/125** and PlayMode is **68/68**. The exact-source release-shaped APK is
+**39,526,908 bytes** with SHA-256
+`620832E983A33505FEA97AF638E7D681A334E8E51474F7014B2F8D011C801F4A`; it was
+installed only on Lava `ST5GDW23LB004392`. The wide menu capture is outside the
+repository at
+`C:\Users\USER\AppData\Local\Temp\battleraja-responsive-7751f53\menu-landscape.png`.
+The capture verifies the responsive hero/CTA hierarchy; touch navigation and human
+accessibility approval remain open.
+
+The exact Web output contains 19 files totalling **132,073,844 bytes**; WASM is
+**119,801,877 bytes** (`E91A5242FB71733E41FA52182572DE784CE97413DB3B15C4D4302FAFEAD3CAE0`).
+Local HTTP returned 200 and Chrome/Edge loader captures succeeded, but neither reached
+the interactive menu in the bounded headless wait.
 
 ## Exact current offline packaging baseline — 2026-08-24
 
