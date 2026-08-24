@@ -27,6 +27,16 @@ Research current primary sources before selecting technical versions, APIs, SDKs
 - Photon Fusion future topology and pricing
 - PlayFab future services and pricing
 
+### Current Google Play policy recheck — 2026-08-24
+
+- **Date checked:** 2026-08-24
+- **Question:** What technical and listing gates apply at the planned V1 submission date?
+- **Primary source:** https://developer.android.com/google/play/requirements/target-sdk ; https://developer.android.com/guide/practices/page-sizes ; https://support.google.com/googleplay/android-developer/answer/10787469 ; https://support.google.com/googleplay/android-developer/answer/9859655
+- **Relevant claim:** Starting 2026-08-31, new apps and updates submitted to Google Play must target Android 16/API 36 or higher. Apps targeting API 35+ must support 16 KB memory pages on 64-bit devices; Google Play blocks updates that lack support from 2027-02-01. Published apps, including closed/open/production testing tracks, must complete the Data safety form and provide a privacy-policy link even when no data is collected; apps exclusively on internal testing are exempt. New apps must declare target audience/content and complete the content-rating questionnaire.
+- **Decision impact:** Keep target API 36, retain ARM64/16 KB checks, keep the offline build free of network permissions and data collection, and keep privacy/Data Safety, target-audience, content-rating and final signed-artifact inspection as owner-gated release tasks. Do not treat the current debug-signed bundle as publishable.
+- **Uncertainty:** Play policy, developer verification and submission dates are time-sensitive; recheck immediately before creating the listing, signing or uploading any artifact.
+- **Recheck trigger/date:** Before Play Console setup, final signing, or any target/API/package change.
+
 ### Current Google Play V1 release-policy recheck
 
 - **Date checked:** 2026-08-24

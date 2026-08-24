@@ -16,6 +16,26 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
   outside the Android runtime. Final signed-bundle inspection is still required before
   Play submission.
 
+## Current policy recheck — 2026-08-24
+
+- Google’s target-API guidance requires new apps and updates submitted from
+  2026-08-31 to target Android 16/API 36 or higher; this candidate is configured
+  for API 36.
+- Google’s 16 KB page-size guidance applies to 64-bit apps targeting API 35+;
+  the current AAB has passed static ARM64/16 KB checks, but the final signed
+  artifact still needs the same inspection and a compatible runtime check.
+- Google requires an accurate Data safety form and privacy-policy link for apps
+  published on closed, open or production tracks, including apps that collect no
+  data. An app kept exclusively on internal testing is exempt from the Data safety
+  form, but that exemption is not a release shortcut.
+- Google also requires target-audience declarations and a completed content-rating
+  questionnaire for a new Play app. These remain owner/legal gates.
+
+Primary sources: `https://developer.android.com/google/play/requirements/target-sdk`,
+`https://developer.android.com/guide/practices/page-sizes`,
+`https://support.google.com/googleplay/android-developer/answer/10787469`, and
+`https://support.google.com/googleplay/android-developer/answer/9859655`.
+
 ## Exact current source — `d87d9d2` — 2026-08-24
 
 The current source retains the cached actor views for Pehel authority-result
