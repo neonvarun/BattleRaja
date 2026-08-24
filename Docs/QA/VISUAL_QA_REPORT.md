@@ -1,5 +1,31 @@
 # BattleRaja visual and interaction QA report
 
+## Exact-current Android smoke evidence — source `35de9f3` — 2026-08-24
+
+The exact-current release-shaped APK was installed only on Lava
+`ST5GDW23LB004392` and reached the live offline flow through coordinate-driven
+diagnostic taps. Root-local captures are retained under
+`Builds/Local/V1Evidence/35de9f3/Android/`:
+
+- `lava-launch.png` — portrait offline menu.
+- `lava-after-play-offline.png` — solo mode / drop-in route.
+- `lava-after-drop-in.png` — fighter selection with Bijli, Pehel and Maya.
+- `lava-after-start-match.png` — eight-actor Bazaar Bastion opening and HUD.
+- `lava-after-combat-inputs.png`, `lava-mid-match.png`, `lava-late-match.png` —
+  automated ability/attack/gadget input, active combat and Aandhi pressure.
+- `lava-result-or-late.png` — resolution/results screen with winner and
+  placement statistics.
+- `lava-after-results-menu-2.png` — return to the offline menu.
+- `lava-settings.png`, `lava-settings-high-contrast.png` — settings and
+  accessibility surfaces.
+
+No sampled `FATAL EXCEPTION`, `ANR`, `SIGSEGV`, `NullReferenceException` or
+`UnityException` markers were found in the captured route logs. This is technical
+smoke evidence only: coordinate automation is not a substitute for the owner's
+physical touch, accessibility, combat-feel, visual, cultural or performance
+review. The exact tutorial action sequence, background/resume and sustained
+performance capture remain open.
+
 ## Exact Android candidate source — `34b5b7f` — 2026-08-24
 
 The current source contains the presentation-only Pehel actor-view cache lookup,
