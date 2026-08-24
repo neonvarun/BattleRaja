@@ -20,7 +20,7 @@ APK manifest inspection reports temporary package `com.example.battleraja.m11`,
 version `1.0.0` / code `100`, min SDK 28, target/compile SDK 36, and only
 `VIBRATE` plus Unity's dynamic receiver permission; network permissions are absent.
 
-## Exact current Android candidate — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
+## Prior exact Android candidate — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 
 Status: **In progress**. Documentation HEAD is `be0c510`; the packages and
 validation below use runtime/validation source `1d743b0`. The runtime now pauses the offline match on Android
