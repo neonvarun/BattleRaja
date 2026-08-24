@@ -181,45 +181,45 @@ namespace BattleRaja.Presentation.Combat
 
         private void ApplyAuthorityResult(MatchAuthorityChargeThrow authorityStep)
         {
-            if (authorityStep.HasDamage)
+            if (_match == null) return;
+
+            if (authorityStep.HasDamage && _match.TryGetActorView(
+                authorityStep.Damage.Request.TargetId,
+                out _,
+                out _,
+                out var targetHealth))
             {
-                var targets = FindObjectsByType<CombatTarget>();
-                for (var i = 0; i < targets.Length; i++)
-                {
-                    var target = targets[i];
-                    if (target == null || target.Id != authorityStep.Damage.Request.TargetId) continue;
-                    target.Health?.ApplyAuthoritativeDamage(
-                        authorityStep.Damage.Request,
-                        authorityStep.Damage.Result,
-                        authorityStep.Damage.CurrentHealthAfter,
-                        authorityStep.SimulationTick);
-                    break;
-                }
+                targetHealth?.ApplyAuthoritativeDamage(
+                    authorityStep.Damage.Request,
+                    authorityStep.Damage.Result,
+                    authorityStep.Damage.CurrentHealthAfter,
+                    authorityStep.SimulationTick);
             }
 
             if (!authorityStep.HasTargetDisplacement) return;
-            var targetObjects = FindObjectsByType<CombatTarget>();
-            for (var i = 0; i < targetObjects.Length; i++)
+            if (!_match.TryGetActorView(
+                authorityStep.TargetDisplacement.ActorId,
+                out _,
+                out var targetAgent,
+                out _))
             {
-                var target = targetObjects[i];
-                if (target == null || target.Id != authorityStep.TargetDisplacement.ActorId) continue;
-                var agent = target.GetComponent<MovementPlayerAgent>();
-                if (agent != null && agent.AuthorityDrivenMovement)
-                {
-                    agent.ApplyAuthoritativePosition(authorityStep.TargetDisplacement.Position);
-                }
-                else
-                {
-                    var position = target.transform.position;
-                    target.transform.position = new Vector3(
-                        authorityStep.TargetDisplacement.Position.X,
-                        position.y,
-                        authorityStep.TargetDisplacement.Position.Y);
-                    Physics.SyncTransforms();
-                }
-
-                break;
+                return;
             }
+
+            if (targetAgent != null && targetAgent.AuthorityDrivenMovement)
+            {
+                targetAgent.ApplyAuthoritativePosition(authorityStep.TargetDisplacement.Position);
+                return;
+            }
+
+            var targetTransform = targetAgent != null ? targetAgent.transform : null;
+            if (targetTransform == null) return;
+            var position = targetTransform.position;
+            targetTransform.position = new Vector3(
+                authorityStep.TargetDisplacement.Position.X,
+                position.y,
+                authorityStep.TargetDisplacement.Position.Y);
+            Physics.SyncTransforms();
         }
 
         private void TryCaptureTarget()

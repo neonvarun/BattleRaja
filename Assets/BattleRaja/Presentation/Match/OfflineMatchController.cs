@@ -152,6 +152,34 @@ namespace BattleRaja.Presentation.Match
             return _authority != null && _authority.HasParticipant(actorId);
         }
 
+        /// <summary>
+        /// Returns the already-cached Unity view for an authority participant.
+        /// Authority-driven ability adapters use this instead of scanning the
+        /// scene during a simulation tick. The lookup is presentation-only;
+        /// canonical state remains owned by <see cref="OfflineMatchSimulation"/>.
+        /// </summary>
+        public bool TryGetActorView(
+            CombatEntityId actorId,
+            out CombatTarget target,
+            out MovementPlayerAgent agent,
+            out CombatHealth health)
+        {
+            for (var i = 0; i < _actors.Count; i++)
+            {
+                var actor = _actors[i];
+                if (actor == null || actor.Target == null || actor.Target.Id != actorId) continue;
+                target = actor.Target;
+                agent = actor.Agent;
+                health = actor.Health;
+                return true;
+            }
+
+            target = null;
+            agent = null;
+            health = null;
+            return false;
+        }
+
         public MatchAuthorityDecoy TrySpawnMayaDecoy(
             CombatEntityId ownerId,
             int simulationTick,
