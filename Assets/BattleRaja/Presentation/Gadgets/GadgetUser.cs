@@ -38,6 +38,8 @@ namespace BattleRaja.Presentation.Gadgets
         public float ShieldRemaining => Mathf.Max(0f, _shieldRemaining);
         public string Feedback => _feedback;
         public GadgetInventory Inventory => _inventory;
+        public int SuccessfulPickupCount { get; private set; }
+        public int SuccessfulUseCount { get; private set; }
 
         private void Awake()
         {
@@ -135,7 +137,11 @@ namespace BattleRaja.Presentation.Gadgets
             }
 
             SetFeedback(accepted ? $"Picked {id.Value}" : "Gadget slot full");
-            if (accepted && combatTarget != null && combatTarget.Id.Value == 1) _audio?.PlayPickup();
+            if (accepted)
+            {
+                SuccessfulPickupCount++;
+                if (combatTarget != null && combatTarget.Id.Value == 1) _audio?.PlayPickup();
+            }
             return accepted;
         }
 
@@ -143,7 +149,11 @@ namespace BattleRaja.Presentation.Gadgets
         {
             var accepted = _inventory.TryPickup(id);
             SetFeedback(accepted ? $"Picked {id.Value}" : "Gadget slot full");
-            if (accepted && combatTarget != null && combatTarget.Id.Value == 1) _audio?.PlayPickup();
+            if (accepted)
+            {
+                SuccessfulPickupCount++;
+                if (combatTarget != null && combatTarget.Id.Value == 1) _audio?.PlayPickup();
+            }
             return accepted;
         }
 
@@ -181,6 +191,7 @@ namespace BattleRaja.Presentation.Gadgets
             }
 
             ApplyEffect(result.Effect);
+            SuccessfulUseCount++;
             if (combatTarget.Id.Value == 1) _audio?.PlayGadget();
             return true;
         }
@@ -219,6 +230,7 @@ namespace BattleRaja.Presentation.Gadgets
             }
 
             ApplyEffect(result.Effect);
+            SuccessfulUseCount++;
             if (combatTarget.Id.Value == 1) _audio?.PlayGadget();
             return true;
         }

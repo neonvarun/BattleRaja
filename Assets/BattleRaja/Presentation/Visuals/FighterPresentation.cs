@@ -66,6 +66,8 @@ namespace BattleRaja.Presentation.Visuals
         public bool IsEliminated => _eliminated;
         public bool IsVictory => _victory;
         public int AnimatedPartCount => _silhouetteParts.Count;
+        public int AttackActivationCount { get; private set; }
+        public int AbilityActivationCount { get; private set; }
         public bool ReducedFlashMode { get => reducedFlashMode; set => reducedFlashMode = value; }
 
         private void Awake()
@@ -169,6 +171,7 @@ namespace BattleRaja.Presentation.Visuals
 
         public void NotifyAttack()
         {
+            AttackActivationCount++;
             _attackPulse = 0.14f;
             _telegraphRemaining = 0.14f;
             _audio?.PlayAttack();
@@ -176,6 +179,7 @@ namespace BattleRaja.Presentation.Visuals
 
         public void NotifyAbility()
         {
+            AbilityActivationCount++;
             _abilityPulse = 0.32f;
             _telegraphRemaining = 0.32f;
             _audio?.PlayAbility();

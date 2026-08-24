@@ -6,19 +6,32 @@ namespace BattleRaja.Tests.EditMode
     public sealed class TutorialStepMachineTests
     {
         [Test]
-        public void StepsAreOrderedFromMovementToVictory()
+        public void StepsRequireTheMatchingActionBeforeAdvancing()
         {
             var machine = new TutorialStepMachine();
 
             Assert.That(machine.Current, Is.EqualTo(TutorialStep.Movement));
-            Assert.That(machine.Advance(), Is.EqualTo(TutorialStep.Aim));
-            Assert.That(machine.Advance(), Is.EqualTo(TutorialStep.BasicAttack));
-            Assert.That(machine.Advance(), Is.EqualTo(TutorialStep.Ability));
-            Assert.That(machine.Advance(), Is.EqualTo(TutorialStep.Gadget));
-            Assert.That(machine.Advance(), Is.EqualTo(TutorialStep.Aandhi));
-            Assert.That(machine.Advance(), Is.EqualTo(TutorialStep.Elimination));
-            Assert.That(machine.Advance(), Is.EqualTo(TutorialStep.Victory));
-            Assert.That(machine.Advance(), Is.EqualTo(TutorialStep.Complete));
+            Assert.That(machine.TryAdvance(), Is.False);
+            Assert.That(machine.ObserveAction(TutorialAction.Movement), Is.True);
+            Assert.That(machine.TryAdvance(), Is.True);
+            Assert.That(machine.Current, Is.EqualTo(TutorialStep.Aim));
+            Assert.That(machine.ObserveAction(TutorialAction.Aim), Is.True);
+            machine.TryAdvance();
+            machine.ObserveAction(TutorialAction.BasicAttack);
+            machine.TryAdvance();
+            machine.ObserveAction(TutorialAction.Ability);
+            machine.TryAdvance();
+            Assert.That(machine.ObserveAction(TutorialAction.GadgetUsed), Is.False);
+            Assert.That(machine.ObserveAction(TutorialAction.GadgetCollected), Is.True);
+            Assert.That(machine.CurrentStepSatisfied, Is.False);
+            Assert.That(machine.ObserveAction(TutorialAction.GadgetUsed), Is.True);
+            machine.TryAdvance();
+            machine.ObserveAction(TutorialAction.AandhiObserved);
+            machine.TryAdvance();
+            machine.ObserveAction(TutorialAction.Elimination);
+            machine.TryAdvance();
+            machine.ObserveAction(TutorialAction.Victory);
+            machine.TryAdvance();
             Assert.That(machine.IsComplete, Is.True);
         }
 
@@ -26,9 +39,9 @@ namespace BattleRaja.Tests.EditMode
         public void CompletionIsIdempotent()
         {
             var machine = new TutorialStepMachine();
-            for (var i = 0; i < 12; i++) machine.Advance();
+            machine.SkipToComplete();
 
-            Assert.That(machine.Advance(), Is.EqualTo(TutorialStep.Complete));
+            Assert.That(machine.TryAdvance(), Is.False);
             Assert.That(machine.Current, Is.EqualTo(TutorialStep.Complete));
         }
 
@@ -36,8 +49,10 @@ namespace BattleRaja.Tests.EditMode
         public void ReplayRestartsAtMovement()
         {
             var machine = new TutorialStepMachine();
-            machine.Advance();
-            machine.Advance();
+            machine.ObserveAction(TutorialAction.Movement);
+            machine.TryAdvance();
+            machine.ObserveAction(TutorialAction.Aim);
+            machine.TryAdvance();
 
             machine.Restart();
 

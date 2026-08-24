@@ -1,7 +1,10 @@
 using BattleRaja.Core.Application;
+using BattleRaja.Presentation.Combat;
+using BattleRaja.Presentation.Gadgets;
 using BattleRaja.Presentation.Match;
 using BattleRaja.Presentation.Movement;
 using BattleRaja.Presentation.UI;
+using BattleRaja.Presentation.Visuals;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -26,9 +29,20 @@ namespace BattleRaja.Presentation.Flow
         private Button _advanceButton;
         private GameObject _panel;
         private bool _showing;
+        private MovementPlayerAgent _playerAgent;
+        private PlayerInputAdapter _playerInput;
+        private FighterPresentation _playerPresentation;
+        private GadgetUser _playerGadget;
+        private Vector3 _startingPosition;
+        private int _startingAttackCount;
+        private int _startingAbilityCount;
+        private int _startingPickupCount;
+        private int _startingUseCount;
+        private bool _telemetryReady;
 
         public TutorialStep CurrentStep => _steps.Current;
         public bool IsShowing => _showing;
+        public bool CurrentStepSatisfied => _steps.CurrentStepSatisfied;
 
         private void Awake()
         {
@@ -37,30 +51,119 @@ namespace BattleRaja.Presentation.Flow
             Refresh();
         }
 
-        public void Advance()
+        private void Start()
         {
-            _steps.Advance();
-            if (_steps.IsComplete)
+            ResolvePlayerTelemetry();
+            CaptureTelemetryBaseline();
+            Refresh();
+        }
+
+        private void Update()
+        {
+            if (_steps.IsComplete) return;
+            ResolvePlayerTelemetry();
+
+            var changed = false;
+            if (_telemetryReady)
             {
-                PlayerPrefs.SetInt(CompletedKey, 1);
-                PlayerPrefs.Save();
+                if (Vector3.Distance(_playerAgent.transform.position, _startingPosition) >= 0.20f)
+                {
+                    changed |= _steps.ObserveAction(TutorialAction.Movement);
+                }
+
+                if (_playerInput != null && _playerInput.ReadInput().Aim.SqrMagnitude >= 0.06f)
+                {
+                    changed |= _steps.ObserveAction(TutorialAction.Aim);
+                }
+
+                if (_playerPresentation != null)
+                {
+                    if (_playerPresentation.AttackActivationCount > _startingAttackCount)
+                    {
+                        changed |= _steps.ObserveAction(TutorialAction.BasicAttack);
+                    }
+
+                    if (_playerPresentation.AbilityActivationCount > _startingAbilityCount)
+                    {
+                        changed |= _steps.ObserveAction(TutorialAction.Ability);
+                    }
+                }
+
+                if (_playerGadget != null)
+                {
+                    if (_playerGadget.SuccessfulPickupCount > _startingPickupCount)
+                    {
+                        changed |= _steps.ObserveAction(TutorialAction.GadgetCollected);
+                    }
+
+                    if (_playerGadget.SuccessfulUseCount > _startingUseCount)
+                    {
+                        changed |= _steps.ObserveAction(TutorialAction.GadgetUsed);
+                    }
+                }
             }
 
+            if (match != null && match.AandhiState != BattleRaja.Core.Domain.AandhiState.Stable)
+            {
+                changed |= _steps.ObserveAction(TutorialAction.AandhiObserved);
+            }
+
+            if (match != null && match.ResultsShown && match.Results != null)
+            {
+                for (var i = 0; i < match.Results.Length; i++)
+                {
+                    var result = match.Results[i];
+                    if (result.Id.Value != 1) continue;
+                    if (result.Eliminations > 0)
+                    {
+                        changed |= _steps.ObserveAction(TutorialAction.Elimination);
+                    }
+
+                    if (result.Placement == 1)
+                    {
+                        changed |= _steps.ObserveAction(TutorialAction.Victory);
+                    }
+
+                    break;
+                }
+            }
+
+            if (changed) Refresh();
+        }
+
+        public void Advance()
+        {
+            if (!_steps.TryAdvance())
+            {
+                Refresh();
+                return;
+            }
+
+            // A lesson performed before its turn must not satisfy a later lesson.
+            // Re-baseline the player telemetry whenever the explicit continue
+            // gate advances the walkthrough.
+            CaptureTelemetryBaseline();
+            if (_steps.IsComplete) SaveCompletion();
             Refresh();
+        }
+
+        public bool ObserveAction(TutorialAction action)
+        {
+            var observed = _steps.ObserveAction(action);
+            if (observed) Refresh();
+            return observed;
         }
 
         public void Replay()
         {
-            _steps.Restart();
-            Refresh();
+            Time.timeScale = 1f;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
         }
 
         public void Skip()
         {
-            _steps.Advance();
-            while (!_steps.IsComplete) _steps.Advance();
-            PlayerPrefs.SetInt(CompletedKey, 1);
-            PlayerPrefs.Save();
+            _steps.SkipToComplete();
+            SaveCompletion();
             Refresh();
         }
 
@@ -85,16 +188,60 @@ namespace BattleRaja.Presentation.Flow
                 SetButtonLabel("REPLAY TUTORIAL");
                 _advanceButton.onClick.RemoveAllListeners();
                 _advanceButton.onClick.AddListener(Replay);
+                _advanceButton.interactable = true;
                 return;
             }
 
             var step = _steps.Current;
             _title.text = "TUTORIAL  •  " + StepTitle(step);
-            _body.text = StepBody(step);
+            var body = StepBody(step);
+            if (!_steps.CurrentStepSatisfied)
+            {
+                body += "\n\nDO IT IN THE ARENA TO UNLOCK CONTINUE.";
+            }
+
+            _body.text = body;
             _progress.text = $"{(int)step + 1} / 8   {ControlHint(step)}";
-            SetButtonLabel(step == TutorialStep.Victory ? "FINISH TUTORIAL" : "I'M READY");
+            SetButtonLabel(_steps.CurrentStepSatisfied
+                ? (step == TutorialStep.Victory ? "FINISH TUTORIAL" : "CONTINUE")
+                : "WAITING FOR ACTION");
             _advanceButton.onClick.RemoveAllListeners();
             _advanceButton.onClick.AddListener(Advance);
+            _advanceButton.interactable = _steps.CurrentStepSatisfied;
+        }
+
+        private void ResolvePlayerTelemetry()
+        {
+            if (_telemetryReady && _playerAgent != null && _playerInput != null &&
+                _playerPresentation != null && _playerGadget != null) return;
+
+            var agents = FindObjectsByType<MovementPlayerAgent>();
+            for (var i = 0; i < agents.Length; i++)
+            {
+                if (agents[i] == null || agents[i].ActorId != 1) continue;
+                _playerAgent = agents[i];
+                _playerInput = agents[i].GetComponent<PlayerInputAdapter>();
+                _playerPresentation = agents[i].GetComponent<FighterPresentation>();
+                _playerGadget = agents[i].GetComponent<GadgetUser>();
+                _telemetryReady = _playerInput != null && _playerPresentation != null && _playerGadget != null;
+                return;
+            }
+        }
+
+        private void CaptureTelemetryBaseline()
+        {
+            if (!_telemetryReady) return;
+            _startingPosition = _playerAgent.transform.position;
+            _startingAttackCount = _playerPresentation.AttackActivationCount;
+            _startingAbilityCount = _playerPresentation.AbilityActivationCount;
+            _startingPickupCount = _playerGadget.SuccessfulPickupCount;
+            _startingUseCount = _playerGadget.SuccessfulUseCount;
+        }
+
+        private void SaveCompletion()
+        {
+            PlayerPrefs.SetInt(CompletedKey, 1);
+            PlayerPrefs.Save();
         }
 
         private void BuildCanvasUi()

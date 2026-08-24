@@ -34,6 +34,10 @@ namespace BattleRaja.Tests.PlayMode
                 Assert.That(brain.enabled, Is.False);
             }
 
+            Assert.That(overlay.CurrentStepSatisfied, Is.False);
+            Assert.DoesNotThrow(() => overlay.Advance());
+            Assert.That(overlay.CurrentStep, Is.EqualTo(TutorialStep.Movement));
+            overlay.ObserveAction(TutorialAction.Movement);
             overlay.Advance();
             Assert.That(overlay.CurrentStep, Is.EqualTo(TutorialStep.Aim));
             overlay.Skip();
@@ -71,10 +75,32 @@ namespace BattleRaja.Tests.PlayMode
                 "GADGET", "AANDHI", "ELIMINATION", "VICTORY"
             };
 
+            var actions = new[]
+            {
+                TutorialAction.Movement,
+                TutorialAction.Aim,
+                TutorialAction.BasicAttack,
+                TutorialAction.Ability,
+                TutorialAction.GadgetCollected,
+                TutorialAction.AandhiObserved,
+                TutorialAction.Elimination,
+                TutorialAction.Victory
+            };
+
             for (var i = 0; i < expectedTitles.Length; i++)
             {
                 Assert.That(title.text, Does.Contain(expectedTitles[i]), $"step {i} title");
                 Assert.That(progress.text, Does.StartWith($"{i + 1} / 8"), $"step {i} progress");
+                if (i == 4)
+                {
+                    Assert.That(overlay.ObserveAction(TutorialAction.GadgetCollected), Is.True);
+                    Assert.That(overlay.CurrentStepSatisfied, Is.False);
+                    Assert.That(overlay.ObserveAction(TutorialAction.GadgetUsed), Is.True);
+                }
+                else
+                {
+                    Assert.That(overlay.ObserveAction(actions[i]), Is.True);
+                }
                 overlay.Advance();
                 yield return null;
             }
@@ -86,6 +112,11 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(PlayerPrefs.GetInt(completedKey, 0), Is.EqualTo(1));
 
             overlay.Replay();
+            yield return null;
+            yield return null;
+            overlay = Object.FindAnyObjectByType<TutorialOverlay>();
+            panel = FindSceneObject("TutorialPanel");
+            title = panel.transform.Find("Title").GetComponent<Text>();
             Assert.That(overlay.CurrentStep, Is.EqualTo(TutorialStep.Movement));
             Assert.That(title.text, Does.Contain("MOVEMENT"));
             Assert.That(panel.activeSelf, Is.True);
