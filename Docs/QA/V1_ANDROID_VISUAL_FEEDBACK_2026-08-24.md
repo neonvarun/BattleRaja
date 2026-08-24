@@ -1,5 +1,18 @@
 # V1 Android visual-feedback evidence — 2026-08-24
 
+## Exact current tutorial replay confirmation — `3bbe7d1` — 2026-08-24
+
+The exact current APK was installed only on Lava `ST5GDW23LB004392`. From the
+branded menu, the real `TUTORIAL REPLAY` route opened the first movement step;
+eight correctly derived taps on the advance control reached the visible
+`TUTORIAL COMPLETE` card (`8 / 8 COMPLETE`). Pressing `REPLAY TUTORIAL` returned
+to `1 / 8 LEFT STICK / WASD`, confirming replayability. Captures are outside the
+repository at `C:\Users\USER\AppData\Local\Temp\battleraja-current-3bbe7d1-`:
+`tutorial.png`, `tutorial-complete.png`, and `tutorial-replay.png`. The route is
+technical evidence of the overlay/state loop, not human approval that each
+instruction is physically performed or that touch/accessibility ergonomics are
+complete.
+
 ## Exact current Lava route confirmation — runtime `f3dea5d` / docs HEAD `3600d8b` — 2026-08-24
 
 The exact release-shaped APK built from runtime source `f3dea5d` was installed only

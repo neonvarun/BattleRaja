@@ -31,6 +31,11 @@
   technical route/gadget reachability; pickup accessibility, touch ergonomics,
   sustained performance, human visual review, signing and store gates remain open.
 
+- The exact current APK also opened `TUTORIAL REPLAY`, advanced through all eight
+  tutorial cards to the visible `TUTORIAL COMPLETE` state, and returned to `1 / 8`
+  after `REPLAY TUTORIAL` on Lava. This confirms the tutorial state loop; it does
+  not substitute for human verification that each instruction is performed.
+
 - Exact current source is `f463b1b` (`vfx: add render-only Aandhi boundary cue`)
   on `codex/v1-playstore-release`. Repository validation is **0/0** and a fresh
   Android release-candidate APK was built locally (39,473,715 bytes; SHA-256

@@ -137,6 +137,11 @@ installed and cold-launched only on Lava; these artifacts are not publishable
 until the owner supplies final package identity and release signing. No exact
 HEAD Web artifact is available.
 
+The exact current APK also verified the tutorial overlay loop on Lava: entry from
+the menu, all eight visible steps, `TUTORIAL COMPLETE`, and replay back to step 1.
+This is a technical state-loop pass; human confirmation of the physical actions,
+touch ergonomics and accessibility remains required.
+
 ## Latest Lava route confirmation — runtime `f3dea5d` / docs HEAD `3600d8b` — 2026-08-24
 
 Status: **Passed with evidence** for technical Android route reachability. The
