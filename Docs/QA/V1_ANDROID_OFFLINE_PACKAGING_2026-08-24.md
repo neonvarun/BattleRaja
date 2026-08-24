@@ -4,6 +4,22 @@ This note records the exact current checkout after the offline packaging hardeni
 It is technical release-candidate evidence, not Play Store approval or final human
 visual/performance sign-off.
 
+## Latest Android runtime slice — `b954a72` — 2026-08-24
+
+The latest Android runtime source is `b954a72` (`ui: reflow match touch controls on
+rotation`) on `codex/v1-playstore-release`. Repository validation is **0/0**, EditMode
+is **125/125**, and PlayMode is **69/69**. Its exact release-shaped APK is
+**39,525,752 bytes** with SHA-256
+`3ABCEF91BF14239AD8D6ED5511D7C74D2C0DA3DB3CC35DCE838573AEB39E1630`, built in
+`C:\Projects\BattleRaja-validate-b954a72` and installed only on Lava
+`ST5GDW23LB004392`. This slice has no rebuilt AAB; the AAB table in the historical
+`6ac5c12` section remains the most recent bundle evidence. The latest menu/match
+captures and launch log are recorded in
+`C:\Users\USER\AppData\Local\Temp\battleraja-control-rotation-b954a72\`.
+
+The Web artifact below remains attributed to `6ac5c12`/`7751f53` historical source
+and was not rebuilt for this Android-only presentation change.
+
 ## Latest exact-current slice — `6ac5c12` — 2026-08-24
 
 The current source commit is `6ac5c12` (`ui: bind runtime input actions explicitly`)
@@ -33,7 +49,7 @@ served over local HTTP on `127.0.0.1:8082`; Chrome and Edge both returned `200` 
 the loader resources and produced screenshots, but stayed on the Unity loader during
 the bounded headless wait. This is not full interactive Web approval.
 
-## Exact source and automated gates
+## Historical exact source and packaging gates — `6ac5c12`
 
 - Repository: `neonvarun/BattleRaja`
 - Branch: `codex/v1-playstore-release`

@@ -3,6 +3,29 @@
 This is a bounded presentation slice for the offline Android V1 candidate. It is
 technical evidence, not Play Store approval or final human visual approval.
 
+## Latest exact-current Android control-rotation slice — `b954a72` — 2026-08-24
+
+The latest runtime source is `b954a72` on `codex/v1-playstore-release`. Repository
+validation remains **0 errors / 0 warnings**, EditMode is **125/125**, and PlayMode is
+**69/69**. The exact-source release-shaped APK is **39,525,752 bytes** with SHA-256
+`3ABCEF91BF14239AD8D6ED5511D7C74D2C0DA3DB3CC35DCE838573AEB39E1630`. It was
+installed only on Lava `ST5GDW23LB004392`; launch log inspection found zero
+`FATAL EXCEPTION`, `ANR in`, or `SIGSEGV` markers.
+
+The exact APK route captures are outside the repository at
+`C:\Users\USER\AppData\Local\Temp\battleraja-control-rotation-b954a72\`:
+`menu.png`, `mode.png`, `fighter.png`, and `match-opening.png`. The capture shows
+the responsive wide menu and a real opening match with the Aandhi status, Bazaar
+geometry, fighter identity, gadget state, circular sticks and action controls. The
+in-match HUD now reapplies handed/compact control sizing when orientation changes,
+and a PlayMode regression covers the current orientation branch. One bounded
+coordinate diagnostic route reached menu → mode → fighter → match; this is not a
+formal human touch/accessibility approval because the Unity surface still exposes no
+semantic Android UI nodes.
+
+The Web build was not rebuilt for this Android-only control change. The latest Web
+artifact and loader smoke remain attributed to `7751f53` below.
+
 ## Latest exact-current responsive-menu slice — `7751f53` — 2026-08-24
 
 The responsive presentation source is `7751f53` on `codex/v1-playstore-release`.

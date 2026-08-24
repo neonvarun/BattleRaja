@@ -4,22 +4,23 @@ Updated: 2026-08-24
 Classification: **prototype**
 
 Latest continuation: offline Android V1 release-shaped candidate — branch
-`codex/v1-playstore-release` at runtime/package source `7751f53`.
-Exact-current validation is 0/0, EditMode **125/125**, and PlayMode **68/68**. The
-fresh release-shaped APK is **39,526,908 bytes**
-(`620832E983A33505FEA97AF638E7D681A334E8E51474F7014B2F8D011C801F4A`). The most
+`codex/v1-playstore-release` at runtime/package source `b954a72`.
+Exact-current validation is 0/0, EditMode **125/125**, and PlayMode **69/69**. The
+fresh release-shaped APK is **39,525,752 bytes**
+(`3ABCEF91BF14239AD8D6ED5511D7C74D2C0DA3DB3CC35DCE838573AEB39E1630`). The most
 recent AAB remains the prior `6ac5c12` packaging artifact at **35,351,357 bytes**
 (`70825F82A4D79E1E036F4DA8A286778244406D51B1D60A568BD066ED1B82DAA8`); it is
 ARM64-only and passed static 16 KB alignment, but has not been rebuilt from
-`7751f53`. The APK was installed and exercised
+`b954a72`. The APK was installed and exercised
 only on Lava, and the inspected package has no `INTERNET` or `ACCESS_NETWORK_STATE`.
-The latest responsive-menu capture verifies wide-layout visual hierarchy; physical
-touch navigation remains a human-review gate.
+The latest menu-to-match captures verify wide-layout hierarchy and control presence;
+orientation-aware match controls are now regression-tested. Physical touch and
+accessibility approval remain human-review gates.
 Runtime EventSystem point/click actions are explicitly bound and covered by PlayMode,
 but the Unity surface exposes no actionable Android UI nodes, so physical touch
-navigation remains a human-review gate. The same exact source produced a successful
-Web build and local HTTP/Chrome/Edge loader smoke; the bounded headless captures did
-not reach an interactive menu.
+navigation remains a human-review gate. The prior `7751f53` source produced a
+successful Web build and local HTTP/Chrome/Edge loader smoke; the bounded headless
+captures did not reach an interactive menu. Web has not been rebuilt from `b954a72`.
 
 This is still a **prototype**: final signing and package identity, sustained
 performance, full interactive Web QA, touch/accessibility and human visual review,

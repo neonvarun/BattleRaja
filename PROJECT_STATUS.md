@@ -21,16 +21,17 @@
   are recorded separately by runtime commit below. See
   `Docs/QA/M11_CLOSURE_REPORT_2026-08-23.md`.
 - Current exact offline Android V1 checkout: branch `codex/v1-playstore-release` at
-  runtime source `7751f53`. Repository validation is **0/0**;
-  exact-current EditMode is **125/125** and PlayMode is **68/68**. The fresh
-  release-shaped APK is **39,526,908 bytes** (SHA-256
-  `620832E983A33505FEA97AF638E7D681A334E8E51474F7014B2F8D011C801F4A`). The most
+  runtime source `b954a72`. Repository validation is **0/0**;
+  exact-current EditMode is **125/125** and PlayMode is **69/69**. The fresh
+  release-shaped APK is **39,525,752 bytes** (SHA-256
+  `3ABCEF91BF14239AD8D6ED5511D7C74D2C0DA3DB3CC35DCE838573AEB39E1630`). The most
   recent AAB remains the prior `6ac5c12` artifact at **35,351,357 bytes** (SHA-256
   `70825F82A4D79E1E036F4DA8A286778244406D51B1D60A568BD066ED1B82DAA8`) and has not
-  been rebuilt from `7751f53`. It is ARM64-only with static 16 KB alignment. The focused source change removes internal
+  been rebuilt from `b954a72`. It is ARM64-only with static 16 KB alignment. The focused source change removes internal
   runtime touch-action ambiguity by binding point/click/navigation actions explicitly;
-  the latest presentation slice makes the menu reflow between wide and portrait
-  orientations and was visually inspected on Lava in wide orientation.
+  the latest presentation slices make both the menu and in-match controls reflow
+  between wide and portrait orientations and were visually inspected on Lava in wide
+  orientation.
 - The exact APK was installed only on Lava `ST5GDW23LB004392`; the branded offline menu
   was visible and the post-launch capture contains no fatal/ANR/SIGSEGV marker. The
   Unity surface exposes no actionable Android UI nodes, so physical touch navigation
@@ -40,10 +41,12 @@
   `INTERNET` or `ACCESS_NETWORK_STATE`. Fusion remains preserved for a future approved
   online milestone but is excluded from this Android runtime package. Full details are
   in `Docs/QA/V1_ANDROID_OFFLINE_PACKAGING_2026-08-24.md`.
-- The same checkout produced a Web build with a **119,799,965-byte** WASM
+- The prior `7751f53` checkout produced the latest Web build with a
+  **119,799,965-byte** WASM
   (`8CE68A5AA4C741DD27AD66B9BF61FBC0B17DE9F632F2C791181EC99F516DEA12`); local HTTP
   returned 200 and Chrome/Edge headless reached the Unity loader. This is build/loader
-  smoke, not full interactive browser approval. The project remains **prototype**: temporary
+  smoke, not full interactive browser approval; Web has not been rebuilt from `b954a72`.
+  The project remains **prototype**: temporary
   package identity, debug signing, adaptive-icon warning, sustained performance,
   interactive Web QA, accessibility, human/store/legal review and publication gates remain open.
 - Prior checkout continuation `649d0bb` removed the remaining authored Unity 6 lookup

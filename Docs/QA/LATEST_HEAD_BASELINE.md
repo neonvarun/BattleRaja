@@ -3,14 +3,25 @@
 Date: 2026-08-24
 Branch: `codex/v1-playstore-release` (ahead of local and remote `main`; exact count is recorded by Git)
 Local/remote `main`: `ca6ec3e17e695042664cf3bdbf9889b259b33144`
-Latest validated runtime source: `7751f53` (`ui: make offline menu responsive to orientation`)
-Latest checked-out runtime source: `7751f53` (`ui: make offline menu responsive to orientation`);
+Latest validated runtime source: `b954a72` (`ui: reflow match touch controls on rotation`)
+Latest checked-out runtime source: `b954a72` (`ui: reflow match touch controls on rotation`);
 documentation
 updates are in the focused commits following those source changes;
 the checked-out Git HEAD is the authoritative current documentation state.
 Balance-fix runtime source: `17a8c75` (`fix(balance): land documented weapon retune in Core definitions`)
 Pre-fix baseline source: `35d723f` (`fix: bot perception no longer treats fighter hulls as line-of-sight blockers`; the tip of local `main` before this branch)
 Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe`)
+
+## Exact current Android control-rotation baseline — 2026-08-24
+
+The latest runtime source is `b954a72`. Repository validation is **0/0**; EditMode is
+**125/125** and PlayMode is **69/69**. The exact-source APK is **39,525,752 bytes**
+with SHA-256
+`3ABCEF91BF14239AD8D6ED5511D7C74D2C0DA3DB3CC35DCE838573AEB39E1630`; it was
+installed only on Lava `ST5GDW23LB004392`, where the menu-to-match diagnostic route
+and opening frame were captured. The APK is the current Android evidence boundary;
+the Web artifact below remains from `7751f53` and is not exact-current after this
+Android-only control change.
 
 ## Exact current responsive-menu baseline — 2026-08-24
 

@@ -1,10 +1,25 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-24
-Runtime-bearing candidate: `c6badbf6cf5b1c7340fa907821aeb4cbf2194bc0` (offline Android tutorial/UI correction)
-Current validated runtime source HEAD: `c6badbf6cf5b1c7340fa907821aeb4cbf2194bc0`
+Runtime-bearing candidate: `b954a72` (offline Android menu and in-match control rotation)
+Current validated runtime source HEAD: `b954a72`
 Unity: `6000.5.6f1`
-Web candidate: `Builds/M11/Web-BazaarBastion` served over local HTTP at `http://127.0.0.1:8139/index.html`
+Web candidate: prior `7751f53` `Builds/M11/Web-BazaarBastion` served over local HTTP; it
+was not rebuilt for the Android-only control change.
+
+## Exact current Android control-rotation pass — 2026-08-24
+
+The exact `b954a72` APK was installed only on Lava `ST5GDW23LB004392`. Validation was
+0/0, EditMode 125/125 and PlayMode 69/69. The inspected menu and opening-match
+captures are outside source under
+`C:\Users\USER\AppData\Local\Temp\battleraja-control-rotation-b954a72\`.
+The menu uses the wide responsive hero/CTA rail; the match opening shows the Aandhi
+status, Bazaar geometry, fighter identity, gadget state, sticks and action controls.
+The exact APK diagnostic route reached menu → mode → fighter → match. This confirms
+the current route is live, but coordinate automation is only diagnostic because the
+Unity surface exposes no semantic Android UI nodes. Physical touch comfort, portrait
+rotation, accessibility, sustained performance, full tutorial/results/rematch and
+human visual/cultural approval remain open.
 
 ## Tutorial completion correction — 2026-08-24
 
