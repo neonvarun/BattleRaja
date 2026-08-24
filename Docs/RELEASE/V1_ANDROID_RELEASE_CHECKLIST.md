@@ -16,7 +16,7 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
   outside the Android runtime. Final signed-bundle inspection is still required before
   Play submission.
 
-## Exact current candidate — `1d743b0` / runtime `d96d3f2` — 2026-08-24
+## Exact current candidate — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 
 - Validation: **0 errors / 0 warnings**; EditMode **125/125**; PlayMode **71/71**.
 - Release-shaped APK: **39,486,559 bytes**, SHA-256

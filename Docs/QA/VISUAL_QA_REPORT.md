@@ -1,8 +1,8 @@
 # BattleRaja visual and interaction QA report
 
-## Exact current candidate — `1d743b0` / runtime `d96d3f2` — 2026-08-24
+## Exact current candidate — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 
-The current exact Android candidate is the lifecycle-guard build documented in
+The documentation HEAD is `be0c510`; the current exact Android candidate is the lifecycle-guard build documented in
 `Docs/QA/LATEST_HEAD_BASELINE.md`. EditMode is **125/125** and PlayMode is
 **71/71**. The APK installed only on Lava `ST5GDW23LB004392` and resolved to
 the Unity activity, but the active lock screen prevented inspection of the

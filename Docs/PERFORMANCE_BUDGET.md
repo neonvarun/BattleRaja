@@ -1,8 +1,9 @@
 # Android and Web Performance Budget
 
-## Exact current source and capture tooling — `1d743b0` / runtime `d96d3f2` — 2026-08-24
+## Exact current source and capture tooling — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 
-The current source has full EditMode **125/125** and PlayMode **71/71**. Fresh
+The documentation HEAD is `be0c510`; the measured runtime/validation source is
+`1d743b0`. It has full EditMode **125/125** and PlayMode **71/71**. Fresh
 exact-source Android packages built in disposable worktree `C:\BRLifecycle` are
 an APK of **39,486,559 bytes** (SHA-256
 `89156306717C5EB27EE193AD1D46809DFE19159112ADC3C77008D4C6A3C89DE0`) and an AAB

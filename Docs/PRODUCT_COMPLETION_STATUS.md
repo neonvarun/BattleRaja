@@ -3,9 +3,10 @@
 Updated: 2026-08-24
 Classification: **prototype**
 
-## Exact current Android candidate — `1d743b0` / runtime `d96d3f2` — 2026-08-24
+## Exact current Android candidate — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 
-Status: **In progress**. The runtime now pauses the offline match on Android
+Status: **In progress**. Documentation HEAD is `be0c510`; the packages and
+validation below use runtime/validation source `1d743b0`. The runtime now pauses the offline match on Android
 focus loss/background and safely resumes only when that lifecycle pause was
 created by the HUD; controls were already reset on focus loss. EditMode is
 **125/125** and PlayMode is **71/71**. Fresh exact-source packages from

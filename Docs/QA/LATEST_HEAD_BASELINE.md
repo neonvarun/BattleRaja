@@ -1,9 +1,10 @@
 # Latest HEAD baseline
 
-## Exact current Android candidate — `1d743b0` / runtime `d96d3f2` — 2026-08-24
+## Exact current Android candidate — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 
-The exact checked-out source is `1d743b0` (`tools: add repeatable Lava
-performance capture`); the latest runtime-bearing change is `d96d3f2`, which
+The documentation HEAD is `be0c510` (`docs: rebaseline exact Android lifecycle
+candidate`). The exact runtime/validation source used for the packages is
+`1d743b0` (`tools: add repeatable Lava performance capture`); the latest runtime-bearing change is `d96d3f2`, which
 pauses the offline match when Android loses focus or backgrounds the app and
 resumes only the lifecycle-created pause. Full EditMode is **125/125** and
 PlayMode is **71/71**.

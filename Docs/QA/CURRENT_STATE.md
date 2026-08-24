@@ -16,7 +16,8 @@ remain open.
 ## Exact current source
 
 - Branch: `codex/v1-playstore-release`
-- HEAD: `1d743b0` (`tools: add repeatable Lava performance capture`)
+- Documentation HEAD: `be0c510` (`docs: rebaseline exact Android lifecycle candidate`)
+- Runtime/validation source: `1d743b0` (`tools: add repeatable Lava performance capture`)
 - Latest runtime change: `d96d3f2` (Android lifecycle pause/resume guard)
 - Unity: `6000.5.6f1`
 - EditMode: **125/125**
