@@ -3,24 +3,23 @@
 Updated: 2026-08-24
 Classification: **prototype**
 
-## Exact current source — `e808830` — 2026-08-24
+## Exact current source — `1c65415` — 2026-08-24
 
 Status: **In progress**. The Pehel authority presentation adapter now uses the
 match controller's cached actor views instead of a scene-wide target scan during
-authority charge result application. Repository validation is **0/0**, fresh
+authority charge result application. The checked-out source also contains the
+repeatable offline APK manifest gate. Repository validation is **0/0**, fresh
 EditMode is **125/125**, and fresh PlayMode is **71/71**. Fresh release-shaped
-packages from disposable `C:\BRHotpathAndroid` are APK
-`2404F4BB2EB3AAA08ED8B92CA3F658F6127F70C1D197F46D8AF1511720803271` (39,485,171
-bytes) and AAB
-`8FEF3AF9BEC7DB0F5C809B52F49B953D600EE5CCE7D680B268575B5A60E29C70` (35,312,622
-bytes). The AAB is ARM64-only and passed static 16 KB alignment. Lava install
-and launch succeeded, but the active lock screen blocked interactive QA. Device
-interaction, sustained performance, accessibility, signing and Play gates remain open.
-APK manifest inspection reports temporary package `com.example.battleraja.m11`,
-version `1.0.0` / code `100`, min SDK 28, target/compile SDK 36, and only
-`VIBRATE` plus Unity's dynamic receiver permission; network permissions are absent.
-The repository manifest-check script reproduced this result from the installable APK;
-the package identity and signing remain owner gates.
+packages from disposable `C:\BRV1FinalManifest` are APK
+`536B8BCF6B27B985B3934DB4CBA01F7CB42BD5C99946696620424534CA17AB04`
+(39,485,163 bytes) and AAB
+`F1957AC515EA3A0F48570DCB76D6EE74ABEA13CFBC9C27E21B561934F2BB8BD1`
+(35,312,622 bytes). The AAB is ARM64-only and passed static 16 KB alignment.
+Lava install and launch succeeded, but the active lock screen blocked interactive
+QA. Device interaction, sustained performance, accessibility, signing and Play
+gates remain open. The manifest gate reports temporary package
+`com.example.battleraja.m11`, version `1.0.0` / code `100`, min SDK 28,
+target/compile SDK 36, and no network permissions.
 
 ## Prior exact Android candidate — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 

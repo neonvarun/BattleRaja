@@ -6,15 +6,15 @@
 
 ## Current state
 
-- Current runtime source is `e808830` (`perf: reuse cached actor views for Pehel
-  authority results`). Repository validation is **0/0**, fresh EditMode is
-  **125/125**, and fresh PlayMode is **71/71**. This behavior-preserving
-  presentation cleanup removes a scene-wide target scan from the authority-driven
-  Pehel result path. Fresh release-shaped packages from disposable
-  `C:\BRHotpathAndroid` are APK `39,485,171` bytes (SHA-256
-  `2404F4BB2EB3AAA08ED8B92CA3F658F6127F70C1D197F46D8AF1511720803271`) and AAB
+- Checked-out source is `1c65415` (`validation: automate offline Android manifest
+  checks`); the latest runtime-bearing source is `e808830` (`perf: reuse cached
+  actor views for Pehel authority results`). Repository validation is **0/0**,
+  fresh EditMode is **125/125**, and fresh PlayMode is **71/71**. Fresh
+  release-shaped packages from disposable `C:\BRV1FinalManifest` are APK
+  `39,485,163` bytes (SHA-256
+  `536B8BCF6B27B985B3934DB4CBA01F7CB42BD5C99946696620424534CA17AB04`) and AAB
   `35,312,622` bytes (SHA-256
-  `8FEF3AF9BEC7DB0F5C809B52F49B953D600EE5CCE7D680B268575B5A60E29C70`). The
+  `F1957AC515EA3A0F48570DCB76D6EE74ABEA13CFBC9C27E21B561934F2BB8BD1`). The
   AAB is ARM64-only and passed static 16 KB alignment. Lava install and launch
   succeeded, but the lock screen blocked interaction; no route or performance
   pass is claimed.

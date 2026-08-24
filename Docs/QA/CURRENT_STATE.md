@@ -16,7 +16,8 @@ remain open.
 ## Exact current source
 
 - Branch: `codex/v1-playstore-release`
-- Current runtime source: `e808830` (`perf: reuse cached actor views for Pehel authority results`)
+- Current checked-out source: `1c65415` (`validation: automate offline Android manifest checks`)
+- Current runtime-bearing source: `e808830` (`perf: reuse cached actor views for Pehel authority results`)
 - Documentation evidence anchor: `3acfd0e` (`docs: update current evidence head`)
 - Runtime/validation source: `1d743b0` (`tools: add repeatable Lava performance capture`)
 - Latest runtime change: `d96d3f2` (Android lifecycle pause/resume guard)
