@@ -27,6 +27,16 @@ Research current primary sources before selecting technical versions, APIs, SDKs
 - Photon Fusion future topology and pricing
 - PlayFab future services and pricing
 
+### Current Google Play V1 release-policy recheck
+
+- **Date checked:** 2026-08-24
+- **Question:** Which current Android/Play technical and store-listing requirements must the offline V1 candidate satisfy?
+- **Primary source:** https://developer.android.com/google/play/requirements/target-sdk ; https://developer.android.com/guide/practices/page-sizes ; https://support.google.com/googleplay/android-developer/answer/9866151 ; https://support.google.com/googleplay/android-developer/answer/13393723
+- **Relevant claim:** New apps and updates must target Android 16/API 36 or higher from 2026-08-31; 64-bit apps targeting Android 15+ must support 16 KB pages; Play listings require accurate preview assets, with feature graphics at 1024×500 JPEG/24-bit PNG and phone screenshots from the supported screenshot limits. Store copy must stay within the short/full description limits and must not imply unsupported features, rankings or misleading relationships.
+- **Decision impact:** Keep target API 36, retain the ARM64/16 KB bundle validation, and prepare a 1024×500 RGB feature-graphic candidate plus real Lava screenshots. Do not claim final Play readiness until package identity, signing, Data Safety/privacy, cultural review and exact-release screenshot review are approved.
+- **Uncertainty:** Play policy and developer-verification requirements are time-sensitive; recheck immediately before submission. The current candidate screenshots and package evidence are attributed to exact HEAD `062066b`; final release screenshots must still be rechecked against the signed production AAB.
+- **Recheck trigger/date:** Before creating the Play listing, signing the AAB or submitting any track.
+
 ## Milestone 0 research evidence
 
 ### Unity editor and Android dependency baseline

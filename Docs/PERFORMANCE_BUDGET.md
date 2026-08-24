@@ -1,5 +1,15 @@
 # Android and Web Performance Budget
 
+## Exact current release-shaped package — `062066b` — 2026-08-24
+
+The exact checked-out HEAD produced a local release-shaped APK of **39,482,035
+bytes** (SHA-256
+`C7B16D01DEA3ED3ADA1B5E5AA421B82ADBA46F5E1A0A2B0283F409BC59F3E245`) and AAB
+of **35,309,464 bytes** (SHA-256
+`4D3948F876580AC45A0655593DAA6FE4AF70BC9BACF78840F33EC63E8775E858`). The AAB
+is ARM64-only and passed the static 16 KB ELF LOAD alignment check. These are
+artifact-size observations only; no sustained performance pass is claimed.
+
 ## Exact current lifecycle follow-up — `53da0f3` — 2026-08-24
 
 HEAD is a cleanup-only follow-up to the visual slice at `a5597f5`: the generated

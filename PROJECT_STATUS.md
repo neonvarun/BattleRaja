@@ -6,6 +6,19 @@
 
 ## Current state
 
+- Latest runtime-bearing source is `062066b` (`docs: align exact head after
+  visual cleanup`). A fresh release-shaped APK (`39,482,035` bytes, SHA-256
+  `C7B16D01DEA3ED3ADA1B5E5AA421B82ADBA46F5E1A0A2B0283F409BC59F3E245`) and
+  AAB (`35,309,464` bytes, SHA-256
+  `4D3948F876580AC45A0655593DAA6FE4AF70BC9BACF78840F33EC63E8775E858`) were
+  built in disposable worktree `C:\BRS`. The APK was installed only on Lava
+  `ST5GDW23LB004392` and completed the real offline menu-to-results route. The
+  AAB is ARM64-only and passed static 16 KB alignment. These artifacts are
+  debug-signed with temporary package ID `com.example.battleraja.m11`; they
+  are not publishable. Exact Web build/browser evidence remains blocked by
+  Unity Bee/Burst. Later commits on this branch are documentation/store-evidence
+  follow-ups and do not change runtime code. Classification remains **prototype**.
+
 - Exact checked-out HEAD is now `53da0f3` (`visuals: release generated ground
   mesh on teardown`). This cleanup-only follow-up releases the runtime-created
   Bazaar mesh on scene teardown; it preserves the tested visual slice from

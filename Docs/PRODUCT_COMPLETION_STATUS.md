@@ -3,6 +3,22 @@
 Updated: 2026-08-24
 Classification: **prototype**
 
+## Exact runtime release-shaped Android package baseline — `062066b` — 2026-08-24
+
+Fresh exact-source Android packages were built from runtime source `062066b` in
+disposable worktree `C:\BRS`. The APK is `39,482,035` bytes with SHA-256
+`C7B16D01DEA3ED3ADA1B5E5AA421B82ADBA46F5E1A0A2B0283F409BC59F3E245`; the AAB
+is `35,309,464` bytes with SHA-256
+`4D3948F876580AC45A0655593DAA6FE4AF70BC9BACF78840F33EC63E8775E858`. The APK
+was installed only on Lava `ST5GDW23LB004392` and completed the real offline
+menu, fighter selection, eight-actor match, Aandhi/resolution and results
+route. The AAB is ARM64-only and passed static 16 KB alignment. The packages
+are debug-signed with temporary package ID `com.example.battleraja.m11`, so
+signing, identity, Play Console, privacy/legal and human-review gates remain
+open. No exact-current Web build/browser result is claimed because the known
+Unity Bee/Burst issue remains unresolved. Later commits on this branch are
+documentation/store-evidence follow-ups and do not change runtime code.
+
 ## Exact current lifecycle follow-up — `53da0f3`
 
 The current HEAD adds explicit teardown release for the runtime-created Bazaar

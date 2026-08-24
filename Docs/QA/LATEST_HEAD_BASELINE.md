@@ -1,5 +1,26 @@
 # Latest HEAD baseline
 
+## Exact runtime release-shaped Android package baseline — `062066b` — 2026-08-24
+
+The latest runtime-bearing source is `062066b` (`docs: align exact head after
+visual cleanup`). A fresh release-shaped Android APK and AAB were built from
+this exact source in disposable worktree `C:\BRS`; only the APK was installed
+on the approved Lava device `ST5GDW23LB004392`. Later commits on this branch
+are documentation/store-evidence follow-ups and do not change runtime code.
+
+| Artifact | Size | SHA-256 |
+| --- | ---: | --- |
+| APK (`BattleRaja-V1.0-release-candidate.apk`) | 39,482,035 bytes | `C7B16D01DEA3ED3ADA1B5E5AA421B82ADBA46F5E1A0A2B0283F409BC59F3E245` |
+| AAB (`BattleRaja-V1.0-release-candidate.aab`) | 35,309,464 bytes | `4D3948F876580AC45A0655593DAA6FE4AF70BC9BACF78840F33EC63E8775E858` |
+
+The APK completed the real menu → mode → fighter selection → live eight-actor
+offline match → Aandhi/resolution → results route on Lava. The matching AAB
+contains seven ARM64 native libraries, no other ABIs, and passed the static
+16 KB ELF LOAD alignment check. These local artifacts are debug-signed with
+the temporary package identity `com.example.battleraja.m11`; they are not
+publishable. Exact Web build/browser evidence remains blocked by the known
+Unity Bee/Burst issue.
+
 ## Exact current lifecycle follow-up — `53da0f3` — 2026-08-24
 
 The current HEAD is `53da0f3` (`visuals: release generated ground mesh on
