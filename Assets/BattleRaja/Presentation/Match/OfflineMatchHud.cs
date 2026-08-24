@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using BattleRaja.Core.Domain;
+using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Movement;
 using BattleRaja.Presentation.UI;
 using BattleRaja.Presentation.Visuals;
@@ -527,6 +528,18 @@ namespace BattleRaja.Presentation.Match
             {
                 presentation.ReducedFlashMode = _reducedFlashes;
             }
+
+            foreach (var impactPool in FindObjectsByType<CombatImpactFeedbackPool>())
+            {
+                impactPool.ReducedFlashMode = _reducedFlashes;
+            }
+
+            foreach (var hitFlash in FindObjectsByType<CombatHitFlash>())
+            {
+                hitFlash.ReducedFlashMode = _reducedFlashes;
+            }
+
+            if (_aandhiVisual != null) _aandhiVisual.ReducedFlashMode = _reducedFlashes;
         }
 
         private void ToggleHighContrast()

@@ -16,6 +16,7 @@ namespace BattleRaja.Presentation.Match
         [SerializeField] private OfflineMatchController match;
         [SerializeField, Min(24)] private int segments = DefaultSegments;
         [SerializeField] private float lineWidth = 0.10f;
+        [SerializeField] private bool reducedFlashMode;
 
         private LineRenderer _currentRing;
         private LineRenderer _nextRing;
@@ -25,6 +26,11 @@ namespace BattleRaja.Presentation.Match
         private static readonly Color WarningColor = new Color(1f, 0.72f, 0.20f, 0.82f);
         private static readonly Color ClosingColor = new Color(1f, 0.27f, 0.15f, 0.92f);
         private static readonly Color NextColor = new Color(0.74f, 0.90f, 1f, 0.45f);
+
+        private static readonly Color ReducedWarningColor = new Color(1f, 0.72f, 0.20f, 0.45f);
+        private static readonly Color ReducedClosingColor = new Color(1f, 0.27f, 0.15f, 0.50f);
+
+        public bool ReducedFlashMode { get => reducedFlashMode; set => reducedFlashMode = value; }
 
         private void Awake()
         {
@@ -45,8 +51,10 @@ namespace BattleRaja.Presentation.Match
                 return;
             }
 
-            var currentColor = match.AandhiState == AandhiState.Closing ? ClosingColor
-                : match.AandhiState == AandhiState.Warning ? WarningColor
+            var currentColor = match.AandhiState == AandhiState.Closing
+                ? (reducedFlashMode ? ReducedClosingColor : ClosingColor)
+                : match.AandhiState == AandhiState.Warning
+                ? (reducedFlashMode ? ReducedWarningColor : WarningColor)
                 : CurrentColor;
             UpdateRing(_currentRing, match.ZoneCenter, match.ZoneRadius, currentColor);
 

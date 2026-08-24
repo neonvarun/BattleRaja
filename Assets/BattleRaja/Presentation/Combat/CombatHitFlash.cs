@@ -8,6 +8,7 @@ namespace BattleRaja.Presentation.Combat
         [SerializeField] private Renderer targetRenderer;
         [SerializeField] private Color flashColor = new Color(1f, 0.92f, 0.28f, 1f);
         [SerializeField] private float flashDuration = 0.12f;
+        [SerializeField] private bool reducedFlashMode;
 
         private MaterialPropertyBlock _propertyBlock;
         private float _remaining;
@@ -18,9 +19,11 @@ namespace BattleRaja.Presentation.Combat
             _propertyBlock = new MaterialPropertyBlock();
         }
 
+        public bool ReducedFlashMode { get => reducedFlashMode; set => reducedFlashMode = value; }
+
         public void Flash(DamageResult result)
         {
-            if (!result.Applied || targetRenderer == null)
+            if (!result.Applied || targetRenderer == null || reducedFlashMode)
             {
                 return;
             }

@@ -59,24 +59,30 @@ namespace BattleRaja.Presentation.Combat
         public void Play(Vector3 position, bool successfulHit)
         {
             var instance = FindAvailable() ?? CreateInstance();
+            var lifetimeScale = reducedFlashMode ? 0.35f : 1f;
             instance.Object.transform.position = position;
             if (instance.Halo != null) instance.Halo.position = position + Vector3.up * 0.02f;
             instance.Object.transform.localScale = Vector3.one * 0.22f;
             instance.Object.SetActive(true);
-            instance.Lifetime = Mathf.Max(0.01f, reducedFlashMode ? lifetimeSeconds * 0.6f : lifetimeSeconds);
+            instance.Lifetime = Mathf.Max(0.01f, lifetimeSeconds * lifetimeScale);
             instance.Remaining = instance.Lifetime;
             instance.Renderer.GetPropertyBlock(instance.Properties);
-            var color = successfulHit ? new Color(1f, 0.82f, 0.18f) : new Color(0.75f, 0.75f, 0.78f);
+            var color = reducedFlashMode
+                ? new Color(0.62f, 0.68f, 0.74f)
+                : successfulHit ? new Color(1f, 0.82f, 0.18f) : new Color(0.75f, 0.75f, 0.78f);
             instance.Properties.SetColor("_BaseColor", color);
             instance.Renderer.SetPropertyBlock(instance.Properties);
             if (instance.Halo != null)
             {
                 instance.Halo.localScale = Vector3.one * 0.30f;
                 instance.Halo.localRotation = Quaternion.identity;
-                instance.Halo.gameObject.SetActive(true);
-                instance.HaloRenderer.GetPropertyBlock(instance.HaloProperties);
-                instance.HaloProperties.SetColor("_BaseColor", color);
-                instance.HaloRenderer.SetPropertyBlock(instance.HaloProperties);
+                instance.Halo.gameObject.SetActive(!reducedFlashMode);
+                if (!reducedFlashMode)
+                {
+                    instance.HaloRenderer.GetPropertyBlock(instance.HaloProperties);
+                    instance.HaloProperties.SetColor("_BaseColor", color);
+                    instance.HaloRenderer.SetPropertyBlock(instance.HaloProperties);
+                }
             }
             ActiveCount++;
         }
