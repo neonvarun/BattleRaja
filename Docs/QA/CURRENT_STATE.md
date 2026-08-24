@@ -32,7 +32,7 @@ APK installed and launched on Lava, but the lock screen prevented interaction.
 The package table below remains the prior lifecycle candidate for the separate
 performance-tool baseline.
 
-## Exact current Android artifacts
+## Prior Android artifacts used for the performance-tool baseline
 
 Built from `1d743b0` in disposable `C:\BRLifecycle`:
 
