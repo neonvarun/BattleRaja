@@ -96,6 +96,23 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator BootstrapMenuUsesResponsiveWideOrPortraitLayout()
+        {
+            yield return SceneManager.LoadSceneAsync("Bootstrap", LoadSceneMode.Single);
+            yield return null;
+            yield return null;
+
+            var panel = GameObject.Find("SafeArea/MainMenuPanel").transform;
+            var hero = panel.Find("HeroIllustration").GetComponent<RectTransform>();
+            var offline = panel.Find("Offline").GetComponent<RectTransform>();
+            var wide = Screen.width > Screen.height;
+
+            Assert.That(hero.anchorMin.x, Is.EqualTo(wide ? 0.08f : 0.10f).Within(0.001f));
+            Assert.That(offline.anchorMin.x, Is.EqualTo(wide ? 0.60f : 0.28f).Within(0.001f));
+            Assert.That(offline.anchorMax.x, Is.EqualTo(wide ? 0.92f : 0.72f).Within(0.001f));
+        }
+
+        [UnityTest]
         public IEnumerator BootstrapMenuAndFighterSelectionExposeOriginalReadabilityGraphics()
         {
             yield return SceneManager.LoadSceneAsync("Bootstrap", LoadSceneMode.Single);

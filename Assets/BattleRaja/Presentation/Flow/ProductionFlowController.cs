@@ -48,6 +48,8 @@ namespace BattleRaja.Presentation.Flow
         private bool _loading;
         private BattleRajaAudioDirector _audio;
         private bool _enhancedTouchEnabled;
+        private bool _menuLayoutWide;
+        private bool _menuLayoutInitialized;
 
         private GameObject _safeArea;
         private BattleRajaUiBackdrop _backdrop;
@@ -108,6 +110,15 @@ namespace BattleRaja.Presentation.Flow
             if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
             {
                 NavigateBack();
+            }
+
+            // Android can rotate between the menu and match surfaces. Keep the menu
+            // hierarchy legible in both orientations instead of leaving the portrait
+            // stack compressed into a wide, mostly empty panel.
+            var wide = Screen.width > Screen.height;
+            if (!_menuLayoutInitialized || wide != _menuLayoutWide)
+            {
+                ApplyMainMenuLayout(wide);
             }
         }
 
@@ -551,8 +562,46 @@ namespace BattleRaja.Presentation.Flow
             CreateButton(_errorPanel.transform, "Retry", "RETRY", new Vector2(0.18f, 0.28f), new Vector2(0.48f, 0.40f), Retry);
             CreateButton(_errorPanel.transform, "Menu", "RETURN TO MENU", new Vector2(0.52f, 0.28f), new Vector2(0.82f, 0.40f), ReturnToMenu);
 
+            ApplyMainMenuLayout(Screen.width > Screen.height);
             SetAllPanelsInactive();
             ApplyContrast();
+        }
+
+        private void ApplyMainMenuLayout(bool wide)
+        {
+            if (_mainMenuPanel == null) return;
+
+            SetAnchors(_mainMenuPanel.transform.Find("LoopSummary"),
+                wide ? new Vector2(0.08f, 0.73f) : new Vector2(0.12f, 0.70f),
+                wide ? new Vector2(0.54f, 0.90f) : new Vector2(0.88f, 0.88f));
+            SetAnchors(_mainMenuPanel.transform.Find("HeroIllustration"),
+                wide ? new Vector2(0.08f, 0.20f) : new Vector2(0.10f, 0.48f),
+                wide ? new Vector2(0.54f, 0.70f) : new Vector2(0.90f, 0.69f));
+
+            SetAnchors(_mainMenuPanel.transform.Find("Offline"),
+                wide ? new Vector2(0.60f, 0.52f) : new Vector2(0.28f, 0.42f),
+                wide ? new Vector2(0.92f, 0.64f) : new Vector2(0.72f, 0.52f));
+            SetAnchors(_mainMenuPanel.transform.Find("Tutorial"),
+                wide ? new Vector2(0.60f, 0.38f) : new Vector2(0.28f, 0.30f),
+                wide ? new Vector2(0.92f, 0.50f) : new Vector2(0.72f, 0.40f));
+            SetAnchors(_mainMenuPanel.transform.Find("Settings"),
+                wide ? new Vector2(0.60f, 0.24f) : new Vector2(0.28f, 0.18f),
+                wide ? new Vector2(0.92f, 0.36f) : new Vector2(0.72f, 0.28f));
+            SetAnchors(_mainMenuPanel.transform.Find("Help"),
+                wide ? new Vector2(0.60f, 0.10f) : new Vector2(0.28f, 0.06f),
+                wide ? new Vector2(0.92f, 0.22f) : new Vector2(0.72f, 0.16f));
+
+            _menuLayoutWide = wide;
+            _menuLayoutInitialized = true;
+        }
+
+        private static void SetAnchors(Transform child, Vector2 min, Vector2 max)
+        {
+            if (child == null) return;
+            var rect = child as RectTransform;
+            if (rect == null) return;
+            rect.anchorMin = min;
+            rect.anchorMax = max;
         }
 
         private void EnsureCanvas()
