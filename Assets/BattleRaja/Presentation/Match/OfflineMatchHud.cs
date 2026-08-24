@@ -344,7 +344,7 @@ namespace BattleRaja.Presentation.Match
         private void BuildCanvasUi()
         {
             var root = new GameObject("ProductionHudRoot", typeof(RectTransform));
-            root.transform.SetParent(canvas.transform, false);
+            root.transform.SetParent(EnsureSafeAreaParent(canvas), false);
             var rootRect = root.GetComponent<RectTransform>();
             rootRect.anchorMin = Vector2.zero;
             rootRect.anchorMax = Vector2.one;
@@ -377,6 +377,23 @@ namespace BattleRaja.Presentation.Match
             _settingsPanel.SetActive(false);
             RefreshAimAssistLabel();
             ApplyResponsiveLayout();
+        }
+
+        private static RectTransform EnsureSafeAreaParent(Canvas hudCanvas)
+        {
+            var safeArea = hudCanvas.transform.Find("SafeArea");
+            if (safeArea == null)
+            {
+                var safeAreaObject = new GameObject("SafeArea", typeof(RectTransform), typeof(SafeAreaPanel));
+                safeAreaObject.transform.SetParent(hudCanvas.transform, false);
+                safeArea = safeAreaObject.transform;
+            }
+            else if (safeArea.GetComponent<SafeAreaPanel>() == null)
+            {
+                safeArea.gameObject.AddComponent<SafeAreaPanel>();
+            }
+
+            return safeArea as RectTransform;
         }
 
         private void ApplyResponsiveLayout()
