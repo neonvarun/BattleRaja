@@ -322,3 +322,22 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   remain human/release gates.
 - **Recheck trigger/date:** Before the first signed AAB, after any Unity/Android package
   change, and before Play Console upload.
+
+### V1.0 reference UI audit (2026-08-24)
+
+- **Question:** Which high-level mobile game hierarchy patterns are useful references
+  without copying protected identity or out-of-scope service surfaces?
+- **Primary source:** Read-only launch inspection of the installed Brawl Stars package
+  `com.supercell.brawlstars` version `68.279` on approved Lava device
+  `ST5GDW23LB004392`; local screenshot and UI dump are recorded in
+  `Docs/QA/REFERENCE_UI_AUDIT_2026-08-24.md`.
+- **Relevant claim:** A dominant play action, central focal point, grouped secondary
+  navigation, and high-contrast status zones improve first-glance hierarchy. The device
+  did not have an installed Smash Karts package, so no Smash Karts claim is made.
+- **Decision impact:** Apply only the hierarchy principles to BattleRaja's original
+  portrait, offline, account-free product. Do not import or reproduce reference assets,
+  copy, characters, typography, audio, monetisation, social, or landscape composition.
+- **Uncertainty:** Human approval of touch ergonomics, orientation policy, cultural safety,
+  and final visual identity remains open.
+- **Recheck trigger/date:** Before changing the V1 orientation or replacing the current
+  procedural UI with authored store-facing art.
