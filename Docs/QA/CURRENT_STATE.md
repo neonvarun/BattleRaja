@@ -23,9 +23,9 @@ remain open.
 ## Exact current source
 
 - Branch: `codex/v1-playstore-release`
-- Current branch tip is `35de9f3` (`docs: distinguish post-artifact presentation fixes`);
-  latest runtime-bearing source is `73f20a2` (`accessibility: propagate reduced
-  flash mode`).
+- Current branch tip contains documentation follow-up `9acdf33` after the exact
+  artifact source `35de9f3`; latest runtime-bearing source is `73f20a2`
+  (`accessibility: propagate reduced flash mode`).
 - Exact Android candidate source: `35de9f3`
 - Current runtime-bearing source: `73f20a2` (`accessibility: propagate reduced flash mode`)
 - Documentation evidence anchor: the exact-source sections in this index and
