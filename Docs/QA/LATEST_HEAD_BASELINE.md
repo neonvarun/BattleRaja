@@ -6,11 +6,22 @@ The current runtime source adds a presentation-only hot-path cleanup: Pehel's
 authority result adapter now resolves actor views through the match controller's
 existing actor cache instead of scanning all `CombatTarget` objects during
 authority charge ticks. Repository validation is **0 errors / 0 warnings**;
-fresh exact-source EditMode is **125/125** and PlayMode is **71/71**. Unity
-batch compilation exited successfully. No Android package was rebuilt for this
-behavior-preserving cleanup, so the package hashes below remain attributed to
-the measured `1d743b0` source and are not reattributed here. Physical Lava,
-sustained performance, visual and accessibility review remain open.
+fresh exact-source EditMode is **125/125** and PlayMode is **71/71**. A fresh
+release-shaped Android package was built in disposable worktree
+`C:\BRHotpathAndroid`:
+
+| Artifact | Size | SHA-256 |
+| --- | ---: | --- |
+| APK | 39,485,171 bytes | `2404F4BB2EB3AAA08ED8B92CA3F658F6127F70C1D197F46D8AF1511720803271` |
+| AAB | 35,312,622 bytes | `8FEF3AF9BEC7DB0F5C809B52F49B953D600EE5CCE7D680B268575B5A60E29C70` |
+
+The AAB contains seven ARM64 native libraries, no other ABIs, and passed the
+static 16 KB ELF LOAD alignment check. The APK installed only on Lava
+`ST5GDW23LB004392` and launched the Unity activity; the lock screen remained
+active (`mDreamingLockscreen=true`), so no interactive route or visual claim is
+made. A one-sample capture-tool smoke recorded no fatal markers, but is not a
+product performance result. Physical Lava interaction, sustained performance,
+visual and accessibility review remain open.
 
 ## Exact current Android candidate — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 

@@ -26,9 +26,11 @@ remain open.
 - Repository validation: **0 errors / 0 warnings**
 - Git LFS: passed
 
-The current `e808830` change is behavior-preserving presentation cleanup and
-has no fresh Android artifact; the package table below remains attributed to
-`1d743b0`.
+The current `e808830` change is behavior-preserving presentation cleanup. Its
+fresh release-shaped APK/AAB are recorded in the exact-current baseline; the
+APK installed and launched on Lava, but the lock screen prevented interaction.
+The package table below remains the prior lifecycle candidate for the separate
+performance-tool baseline.
 
 ## Exact current Android artifacts
 

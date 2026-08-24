@@ -20,10 +20,13 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
 
 The current source uses cached actor views for Pehel authority-result presentation
 instead of a scene-wide target scan. Validation is **0/0**, EditMode **125/125**
-and PlayMode **71/71**. No new APK/AAB was built for this behavior-preserving
-cleanup; the release-shaped package hashes below remain attributed to their
-recorded source commits. This does not change signing, package identity, device,
-performance or Play approval gates.
+and PlayMode **71/71**. Fresh release-shaped packages from `C:\BRHotpathAndroid`
+are APK `2404F4BB2EB3AAA08ED8B92CA3F658F6127F70C1D197F46D8AF1511720803271`
+(39,485,171 bytes) and AAB
+`8FEF3AF9BEC7DB0F5C809B52F49B953D600EE5CCE7D680B268575B5A60E29C70`
+(35,312,622 bytes). The AAB is ARM64-only and passed static 16 KB alignment;
+installation/launch on Lava succeeded, but the lock screen blocked interaction.
+Signing, package identity, device, performance and Play approval gates remain open.
 
 ## Exact current candidate — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 

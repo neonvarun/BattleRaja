@@ -7,9 +7,11 @@ Static inspection of the authority-driven Pehel path found a scene-wide
 adapter now uses the eight-actor cache already owned by
 `OfflineMatchController`; no gameplay or authority rule changed. EditMode
 125/125, PlayMode 71/71 and repository validation 0/0 pass for this source.
-No before/after device frame or allocation measurement is claimed yet; the
-repeatable Lava capture remains blocked by the locked device and must be rerun
-before any performance budget conclusion.
+The exact source produced an APK of 39,485,171 bytes and AAB of 35,312,622
+bytes; the AAB passed the ARM64/16 KB checks. The APK installed and launched on
+Lava, but the lock screen prevented an in-match capture. The one-sample capture
+tool smoke had no fatal markers and is not a product performance measurement.
+No before/after frame, allocation or sustained thermal measurement is claimed.
 
 ## Exact current source and capture tooling — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 

@@ -10,8 +10,14 @@
   authority results`). Repository validation is **0/0**, fresh EditMode is
   **125/125**, and fresh PlayMode is **71/71**. This behavior-preserving
   presentation cleanup removes a scene-wide target scan from the authority-driven
-  Pehel result path. No new Android artifact was built, so the package hashes
-  below remain attributed to their recorded source commits.
+  Pehel result path. Fresh release-shaped packages from disposable
+  `C:\BRHotpathAndroid` are APK `39,485,171` bytes (SHA-256
+  `2404F4BB2EB3AAA08ED8B92CA3F658F6127F70C1D197F46D8AF1511720803271`) and AAB
+  `35,312,622` bytes (SHA-256
+  `8FEF3AF9BEC7DB0F5C809B52F49B953D600EE5CCE7D680B268575B5A60E29C70`). The
+  AAB is ARM64-only and passed static 16 KB alignment. Lava install and launch
+  succeeded, but the lock screen blocked interaction; no route or performance
+  pass is claimed.
 
 - Documentation HEAD is `36b1f47` (`docs: record cached actor-view validation`);
   the measured runtime/validation source for the current Android package is `1d743b0`

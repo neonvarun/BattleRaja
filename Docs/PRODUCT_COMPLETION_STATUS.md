@@ -8,10 +8,14 @@ Classification: **prototype**
 Status: **In progress**. The Pehel authority presentation adapter now uses the
 match controller's cached actor views instead of a scene-wide target scan during
 authority charge result application. Repository validation is **0/0**, fresh
-EditMode is **125/125**, and fresh PlayMode is **71/71**. This is a behavior-
-preserving presentation cleanup; no new Android package was built, and prior
-APK/AAB hashes are not attributed to this commit. Device interaction,
-sustained performance, accessibility, signing and Play gates remain open.
+EditMode is **125/125**, and fresh PlayMode is **71/71**. Fresh release-shaped
+packages from disposable `C:\BRHotpathAndroid` are APK
+`2404F4BB2EB3AAA08ED8B92CA3F658F6127F70C1D197F46D8AF1511720803271` (39,485,171
+bytes) and AAB
+`8FEF3AF9BEC7DB0F5C809B52F49B953D600EE5CCE7D680B268575B5A60E29C70` (35,312,622
+bytes). The AAB is ARM64-only and passed static 16 KB alignment. Lava install
+and launch succeeded, but the active lock screen blocked interactive QA. Device
+interaction, sustained performance, accessibility, signing and Play gates remain open.
 
 ## Exact current Android candidate — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 
