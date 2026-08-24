@@ -45,6 +45,11 @@ feedback. The exact-current APK installed and launched on Lava
 `Builds/Local/V1Evidence/35de9f3/Android/lava-launch.png`, with foreground window
 evidence in `lava-window-state.txt`. This proves install/launch/menu presentation
 only; tutorial, full-match, accessibility and performance review remain open.
+The automated route reached results and returned to the menu; a 120-second
+Lava diagnostic capture with 12 samples is stored under
+`Builds/Local/V1Evidence/35de9f3/Android/performance-120s/`. It has no configured
+fatal markers, but it does not replace human review or establish final frame,
+thermal, battery or memory budgets.
 
 ## Prior Android artifacts used for the performance-tool baseline
 

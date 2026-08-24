@@ -12,6 +12,33 @@ on Lava with no configured fatal markers; the portrait menu capture is stored at
 `Builds/Local/V1Evidence/35de9f3/Android/lava-launch.png`. No gameplay, frame-pacing,
 thermal, battery, memory-growth or human QA pass is claimed.
 
+## Lava diagnostic capture — exact Android candidate `35de9f3` — 2026-08-24
+
+The approved Lava device `ST5GDW23LB004392` ran the current offline candidate
+through a root-local 120-second capture with 12 samples at 10-second intervals.
+Raw evidence is under
+`Builds/Local/V1Evidence/35de9f3/Android/performance-120s/` and the session
+started from a live Bazaar Bastion match. The harness found no configured fatal
+markers.
+
+Observed device measurements (diagnostic, not budgets or approval):
+
+- Total PSS: **260,781–263,007 kB**; total RSS: **397,720–399,956 kB**.
+- Native heap: approximately **20,472–20,516 kB**; Java heap: approximately
+  **2,244–2,252 kB**.
+- `top` reported the app between **96.9% and 106% CPU** in the sampled rows;
+  this is not normalized into a frame-time budget.
+- Battery remained at **33%**; battery temperature remained **32°C** in the
+  before/after dumps.
+- Thermal status remained **0**; HAL CPU/GPU temperature was approximately
+  **40.05–40.27°C**, skin **36.21–36.38°C**.
+- Android `gfxinfo` exposed no frame histogram for Unity's SurfaceView, so no
+  FPS or jank pass is claimed from this capture.
+
+This evidence establishes a reproducible measurement method and shows bounded
+memory/thermal values over this short run, but sustained repeated-match growth,
+frame pacing, GPU timing, battery drain and human performance review remain open.
+
 ## Exact current release candidate — `d87d9d2` — 2026-08-24
 
 The current release-shaped Android candidate was built from exact source in
