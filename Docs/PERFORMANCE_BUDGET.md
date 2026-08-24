@@ -1,5 +1,17 @@
 # Android and Web Performance Budget
 
+## Exact current source update — `fe80582` — 2026-08-24
+
+The current exact source is `fe80582efc35368a03afea314d53e071ac1872bf`. Its
+release-shaped APK is **39,465,411 bytes** with SHA-256
+`BC74E8C09C853AB8EBE089B0B6F5C063D47A9963F2F940EF48D657FFADAB3E23`; it was
+installed only on Lava `ST5GDW23LB004392` and reached the portrait offline menu.
+This is a launch/artifact smoke observation, not a performance pass. No current
+source AAB, sustained frame-time/GC/GPU sample, repeated-match memory soak,
+thermal/battery run or low-end-device result exists for this commit. The prior
+device measurements below remain historical and must not be attributed to
+`fe80582`.
+
 **Status:** Android evidence is current for the exact V1 presentation candidate, but formal
 frame-time/profiler budgets and human performance approval remain open.
 

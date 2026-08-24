@@ -1,5 +1,26 @@
 # Latest HEAD baseline
 
+## Exact current source update — `fe80582` — 2026-08-24
+
+The checked-out branch is `codex/v1-playstore-release` at
+`fe80582efc35368a03afea314d53e071ac1872bf` (`android: bind production UI to
+touchscreen input`). Repository validation is **0 errors / 0 warnings** and the
+full PlayMode suite is **70/70** after adding explicit `<Touchscreen>` point and
+press bindings to the runtime UI module. The exact release-shaped APK was built
+from this source in `C:\Projects\BattleRaja-validate-fe80582`:
+
+| Artifact | Size | SHA-256 |
+| --- | ---: | --- |
+| APK | 39,465,411 bytes | `BC74E8C09C853AB8EBE089B0B6F5C063D47A9963F2F940EF48D657FFADAB3E23` |
+
+The APK was installed only on Lava `ST5GDW23LB004392`. The exact-current portrait
+menu and splash transition were captured under
+`C:\Users\USER\AppData\Local\Temp\battleraja-touch-fe80582\`; no fatal/ANR/SIGSEGV
+marker was found in the sampled log. ADB coordinate taps did not provide a
+formal route proof, so physical touch navigation, accessibility and the full
+menu-to-match path remain human-review gates. No AAB was rebuilt from this
+source; the prior AAB evidence must not be attributed to `fe80582`.
+
 Date: 2026-08-24
 Branch: `codex/v1-playstore-release` (ahead of local and remote `main`; exact count is recorded by Git)
 Local/remote `main`: `ca6ec3e17e695042664cf3bdbf9889b259b33144`

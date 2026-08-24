@@ -3,6 +3,18 @@
 Updated: 2026-08-24
 Classification: **prototype**
 
+## Exact current V1 source — `fe80582`
+
+The branch tip is `fe80582efc35368a03afea314d53e071ac1872bf`. Validation is
+**0/0** and PlayMode is **70/70**. The exact release-shaped APK is **39,465,411
+bytes** (`BC74E8C09C853AB8EBE089B0B6F5C063D47A9963F2F940EF48D657FFADAB3E23`),
+built in a disposable worktree and installed only on Lava. Runtime UI touch
+bindings are explicit and regression-tested. The current menu launch is verified;
+physical touch navigation, complete offline-route evidence, final signing/package
+identity, sustained performance, human visual/accessibility/cultural review and
+store/legal gates remain open. No AAB was rebuilt from this source. Classification
+remains **prototype**.
+
 Latest continuation: offline Android V1 release-shaped candidate — branch
 `codex/v1-playstore-release` at exact source `dff3a89`.
 

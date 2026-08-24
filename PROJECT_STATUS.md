@@ -6,6 +6,16 @@
 
 ## Current state
 
+- Exact current V1 source is `fe80582efc35368a03afea314d53e071ac1872bf` on
+  `codex/v1-playstore-release`. Validation is **0/0** and PlayMode is **70/70**;
+  runtime UI now binds touchscreen position/press actions explicitly. The exact
+  APK is **39,465,411 bytes**, SHA-256
+  `BC74E8C09C853AB8EBE089B0B6F5C063D47A9963F2F940EF48D657FFADAB3E23`, built in
+  `C:\Projects\BattleRaja-validate-fe80582` and installed only on Lava
+  `ST5GDW23LB004392`. The portrait menu launch is verified; no current-source
+  AAB exists, and physical touch/full-route, performance, signing, store/legal
+  and human review gates remain open. Classification stays **prototype**.
+
 - Latest V1 Android source is `dff3a89` (`docs: record branded Android splash
   evidence`) on `codex/v1-playstore-release`. The exact release-shaped APK is
   **39,466,543 bytes** (SHA-256

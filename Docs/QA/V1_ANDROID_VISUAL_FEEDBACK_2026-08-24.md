@@ -1,5 +1,22 @@
 # V1 Android visual-feedback evidence — 2026-08-24
 
+## Exact current touchscreen-binding slice — `fe80582` — 2026-08-24
+
+The runtime UI now adds explicit `<Touchscreen>/touch*/position` and
+`<Touchscreen>/touch*/press` bindings after `InputSystemUIInputModule.AssignDefaultActions()`;
+PlayMode asserts both bindings. Validation is 0/0 and PlayMode is 70/70. The
+exact APK is 39,465,411 bytes with SHA-256
+`BC74E8C09C853AB8EBE089B0B6F5C063D47A9963F2F940EF48D657FFADAB3E23`, built in
+`C:\Projects\BattleRaja-validate-fe80582` and installed only on Lava
+`ST5GDW23LB004392`. The portrait launch/menu capture is outside the repository at
+`C:\Users\USER\AppData\Local\Temp\battleraja-touch-fe80582\latest-menu.png`.
+
+The binding regression is source/test evidence, not physical usability approval:
+the Unity surface exposes no semantic Android UI nodes and the bounded ADB
+coordinate probe did not complete menu navigation. Human touch, safe-area,
+accessibility and full offline-route review remain open. No AAB was rebuilt from
+this source.
+
 This is a bounded presentation slice for the offline Android V1 candidate. It is
 technical evidence, not Play Store approval or final human visual approval.
 
