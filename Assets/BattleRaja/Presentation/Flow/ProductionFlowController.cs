@@ -64,6 +64,7 @@ namespace BattleRaja.Presentation.Flow
         private Text _messageText;
         private Text _fighterSummaryText;
         private Text _loadingText;
+        private BattleRajaLoadingGraphic _loadingGraphic;
         private Text _errorText;
         private Text _settingsSummaryText;
 
@@ -339,14 +340,15 @@ namespace BattleRaja.Presentation.Flow
             }
 
             operation.allowSceneActivation = false;
+            SetLoadingProgress(0f, "LOADING BAZAAR BASTION  0%");
             while (operation.progress < 0.9f)
             {
                 var percentage = Mathf.Clamp(Mathf.RoundToInt((operation.progress / 0.9f) * 100f), 0, 99);
-                if (_loadingText != null) _loadingText.text = $"LOADING BAZAAR BASTION  {percentage}%";
+                SetLoadingProgress(percentage / 100f, $"LOADING BAZAAR BASTION  {percentage}%");
                 yield return null;
             }
 
-            if (_loadingText != null) _loadingText.text = "LOADING BAZAAR BASTION  100%";
+            SetLoadingProgress(1f, "LOADING BAZAAR BASTION  100%");
             _flow.FinishMatchLoading();
             operation.allowSceneActivation = true;
             yield return operation;
@@ -385,14 +387,15 @@ namespace BattleRaja.Presentation.Flow
             }
 
             operation.allowSceneActivation = false;
+            SetLoadingProgress(0f, "LOADING TUTORIAL ARENA  0%");
             while (operation.progress < 0.9f)
             {
                 var percentage = Mathf.Clamp(Mathf.RoundToInt((operation.progress / 0.9f) * 100f), 0, 99);
-                if (_loadingText != null) _loadingText.text = $"LOADING TUTORIAL ARENA  {percentage}%";
+                SetLoadingProgress(percentage / 100f, $"LOADING TUTORIAL ARENA  {percentage}%");
                 yield return null;
             }
 
-            if (_loadingText != null) _loadingText.text = "LOADING TUTORIAL ARENA  100%";
+            SetLoadingProgress(1f, "LOADING TUTORIAL ARENA  100%");
             operation.allowSceneActivation = true;
             yield return operation;
             _loading = false;
@@ -421,12 +424,12 @@ namespace BattleRaja.Presentation.Flow
                 case ProductionFlowState.Tutorial:
                     _loadingPanel.SetActive(true);
                     SetHeader("TUTORIAL", "Loading the replayable offline controls and combat walkthrough.");
-                    if (_loadingText != null) _loadingText.text = "LOADING TUTORIAL ARENA  0%";
+                    SetLoadingProgress(0f, "LOADING TUTORIAL ARENA  0%");
                     break;
                 case ProductionFlowState.MatchLoading:
                     _loadingPanel.SetActive(true);
                     SetHeader("PREPARING MATCH", "Loading the Bazaar Bastion vertical slice.");
-                    if (_loadingText != null) _loadingText.text = "LOADING BAZAAR BASTION  0%";
+                    SetLoadingProgress(0f, "LOADING BAZAAR BASTION  0%");
                     break;
                 case ProductionFlowState.Settings:
                     _settingsPanel.SetActive(true);
@@ -541,6 +544,15 @@ namespace BattleRaja.Presentation.Flow
 
             _loadingPanel = CreatePanel(_safeArea.transform, "LoadingPanel");
             _loadingText = CreateText(_loadingPanel.transform, "LoadingText", new Vector2(0.14f, 0.44f), new Vector2(0.86f, 0.58f), 26, TextAnchor.MiddleCenter);
+            var loadingGraphicObject = new GameObject("LoadingGraphic", typeof(RectTransform), typeof(BattleRajaLoadingGraphic));
+            loadingGraphicObject.transform.SetParent(_loadingPanel.transform, false);
+            var loadingGraphicRect = loadingGraphicObject.GetComponent<RectTransform>();
+            loadingGraphicRect.anchorMin = new Vector2(0.12f, 0.32f);
+            loadingGraphicRect.anchorMax = new Vector2(0.88f, 0.40f);
+            loadingGraphicRect.offsetMin = Vector2.zero;
+            loadingGraphicRect.offsetMax = Vector2.zero;
+            _loadingGraphic = loadingGraphicObject.GetComponent<BattleRajaLoadingGraphic>();
+            _loadingGraphic.SetProgress(0f);
 
             _settingsPanel = CreatePanel(_safeArea.transform, "SettingsPanel");
             _settingsSummaryText = CreateText(_settingsPanel.transform, "SettingsSummary", new Vector2(0.12f, 0.66f), new Vector2(0.88f, 0.90f), 20, TextAnchor.MiddleCenter);
@@ -565,6 +577,12 @@ namespace BattleRaja.Presentation.Flow
             ApplyMainMenuLayout(Screen.width > Screen.height);
             SetAllPanelsInactive();
             ApplyContrast();
+        }
+
+        private void SetLoadingProgress(float progress, string label)
+        {
+            if (_loadingText != null) _loadingText.text = label;
+            _loadingGraphic?.SetProgress(progress);
         }
 
         private void ApplyMainMenuLayout(bool wide)

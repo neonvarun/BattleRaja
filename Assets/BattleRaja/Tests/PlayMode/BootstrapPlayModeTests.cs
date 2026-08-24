@@ -83,6 +83,18 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator BootstrapLoadingSurfaceUsesBattleRajaProgressGraphic()
+        {
+            yield return SceneManager.LoadSceneAsync("Bootstrap", LoadSceneMode.Single);
+            yield return null;
+            yield return null;
+
+            var loadingGraphic = Object.FindAnyObjectByType<BattleRajaLoadingGraphic>();
+            Assert.That(loadingGraphic, Is.Not.Null);
+            Assert.That(loadingGraphic.Progress, Is.EqualTo(0f).Within(0.001f));
+        }
+
+        [UnityTest]
         public IEnumerator BootstrapMenuUsesPlayerFacingOfflineStatusCopy()
         {
             yield return SceneManager.LoadSceneAsync("Bootstrap", LoadSceneMode.Single);
