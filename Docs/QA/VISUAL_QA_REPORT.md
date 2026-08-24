@@ -1,11 +1,31 @@
 # BattleRaja visual and interaction QA report
 
 Date: 2026-08-24
-Runtime-bearing candidate: `b954a72` (offline Android menu and in-match control rotation)
-Current validated runtime source HEAD: `b954a72`
+Runtime-bearing candidate: `dff3a89` (offline Android V1 release-shaped splash/menu/match)
+Current validated runtime source: `dff3a89` (runtime content from `6920edd`; docs/settings
+continuation)
 Unity: `6000.5.6f1`
 Web candidate: prior `7751f53` `Builds/M11/Web-BazaarBastion` served over local HTTP; it
 was not rebuilt for the Android-only control change.
+
+## Exact-current branded launch and match sample — 2026-08-24
+
+The exact `dff3a89` release-shaped APK was installed only on Lava
+`ST5GDW23LB004392`. Validation was 0/0, EditMode 125/125 and PlayMode 69/69. The
+APK and matching AAB were rebuilt from the same disposable checkout; the APK is
+`A6760651223052BEFB426DA08F5434ED71922A3FF9309336C1827945474F4A91` and the AAB is
+`567EF167654BC53A1836035297385278E2673411C7BD06A6257E550737E3CBF4`.
+
+Cold-launch captures under
+`C:\Users\USER\AppData\Local\Temp\battleraja-splash-dff3a89\` show the dark
+BattleRaja-owned splash, original icon and offline menu with no Unity logo. A
+bounded diagnostic route reached the opening match; the inspected capture and
+20-second device measurements are under
+`C:\Users\USER\AppData\Local\Temp\battleraja-profile-dff3a89\`. The opening frame
+shows the eight-actor Bazaar Bastion scene, player identity, Aandhi status, gadget
+slot, circular movement/aim controls and action buttons. This remains diagnostic
+evidence: coordinate taps do not replace human touch/accessibility review, and
+`gfxinfo` did not expose a frame histogram.
 
 ## Exact current Android control-rotation pass — 2026-08-24
 

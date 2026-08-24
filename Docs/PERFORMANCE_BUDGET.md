@@ -3,6 +3,31 @@
 **Status:** Android evidence is current for the exact V1 presentation candidate, but formal
 frame-time/profiler budgets and human performance approval remain open.
 
+## Exact-current V1 match sample — 2026-08-24
+
+The exact current release-shaped APK/AAB source is `dff3a89`. The APK is **39,466,543
+bytes** (SHA-256
+`A6760651223052BEFB426DA08F5434ED71922A3FF9309336C1827945474F4A91`) and the AAB is
+**35,293,988 bytes** (SHA-256
+`567EF167654BC53A1836035297385278E2673411C7BD06A6257E550737E3CBF4`). The AAB has
+7 ARM64 libraries, no other ABIs, and all checked ELF LOAD segments aligned to
+`0x4000`.
+
+The APK was installed and exercised only on Lava `ST5GDW23LB004392`. After a
+bounded diagnostic route to the opening offline match, a 20-second device sample
+recorded **257,811 KB PSS**, **393,914 KB RSS**, **78,562 KB Graphics**, and **88 KB
+swap**. `top` sampled the Unity process at **93.3% instantaneous CPU** (device-wide
+800% scale); this is not a sustained CPU budget. Current HAL temperatures were
+**44.47 C CPU/GPU**, **39.51 C skin**, and **35.0 C battery**, with thermal status 0.
+`dumpsys gfxinfo` exposed the Unity ViewRoot and render nodes but no frame histogram,
+so no stable-FPS or frame-pacing claim is made. Raw files and the inspected match
+capture are outside the repository at
+`C:\Users\USER\AppData\Local\Temp\battleraja-profile-dff3a89\`.
+
+Interpretation: the release-shaped offline match is alive on the approved device,
+but formal CPU/GPU/GC/draw-call profiling, repeated-match memory growth, thermal and
+battery soak, and human performance approval remain open.
+
 ## Exact offline packaging observation — 2026-08-24
 
 The runtime/package source `f4425d6` (final documentation checkout `HEAD`) produced a fresh
