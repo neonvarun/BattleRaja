@@ -25,6 +25,8 @@ visual and accessibility review remain open. APK manifest inspection reports
 temporary package `com.example.battleraja.m11`, version `1.0.0` / code `100`,
 min SDK 28, target/compile SDK 36, and only `VIBRATE` plus Unity's dynamic
 receiver permission; `INTERNET` and `ACCESS_NETWORK_STATE` are absent.
+The repository `check_android_manifest.ps1` gate reproduced the same package, version,
+SDK and permission result from the installable APK.
 
 ## Exact current Android candidate — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 

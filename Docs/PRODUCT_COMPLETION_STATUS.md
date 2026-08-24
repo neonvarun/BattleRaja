@@ -19,6 +19,8 @@ interaction, sustained performance, accessibility, signing and Play gates remain
 APK manifest inspection reports temporary package `com.example.battleraja.m11`,
 version `1.0.0` / code `100`, min SDK 28, target/compile SDK 36, and only
 `VIBRATE` plus Unity's dynamic receiver permission; network permissions are absent.
+The repository manifest-check script reproduced this result from the installable APK;
+the package identity and signing remain owner gates.
 
 ## Prior exact Android candidate — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 

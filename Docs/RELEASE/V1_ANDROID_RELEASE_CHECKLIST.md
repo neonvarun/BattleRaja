@@ -195,6 +195,19 @@ with Android Studio/bundletool and record:
 5. debug symbols/profiling flags and signing certificate state;
 6. dependency and licence inventory.
 
+For the installable APK companion, run the repository manifest checker before any device
+route evidence:
+
+```powershell
+pwsh -File Tools/Validation/check_android_manifest.ps1 `
+  -ApkPath Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk `
+  -AaptPath "$env:LOCALAPPDATA\Android\Sdk\build-tools\36.0.0\aapt.exe" `
+  -ExpectedVersionName 1.0.0 `
+  -ExpectedVersionCode 100 `
+  -ExpectedMinSdk 28 `
+  -ExpectedTargetSdk 36
+```
+
 Do not treat an APK install as proof that a Play bundle is acceptable. Google Play performs
 bundle processing and signing checks that must be repeated in the owner-controlled console.
 

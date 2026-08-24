@@ -60,6 +60,20 @@ pwsh -File Tools/Validation/check_android_bundle.ps1 `
   -ReadElfPath 'C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Data\PlaybackEngines\AndroidPlayer\NDK\toolchains\llvm\prebuilt\windows-x86_64\bin\llvm-readelf.exe'
 ```
 
+`check_android_manifest.ps1` makes the offline APK manifest gate repeatable. It records the
+package ID, version, SDK levels, permissions and SHA-256, and rejects `INTERNET` and
+`ACCESS_NETWORK_STATE` unless `-AllowNetworkPermissions` is explicitly supplied:
+
+```powershell
+pwsh -File Tools/Validation/check_android_manifest.ps1 `
+  -ApkPath Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk `
+  -AaptPath "$env:LOCALAPPDATA\Android\Sdk\build-tools\36.0.0\aapt.exe" `
+  -ExpectedVersionName 1.0.0 `
+  -ExpectedVersionCode 100 `
+  -ExpectedMinSdk 28 `
+  -ExpectedTargetSdk 36
+```
+
 `check_store_creative.ps1` performs a dependency-free PNG dimension check for the draft
 icon, feature graphic and optional screenshot directory. It is intentionally report-only
 until `-RequireFinal` is supplied; a passing dimension check is not legal, cultural, brand,
