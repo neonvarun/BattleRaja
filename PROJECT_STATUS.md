@@ -13,8 +13,8 @@
   Pehel result path. No new Android artifact was built, so the package hashes
   below remain attributed to their recorded source commits.
 
-- Documentation HEAD is `be0c510` (`docs: rebaseline exact Android lifecycle
-  candidate`); the measured runtime/validation source is `1d743b0`
+- Documentation HEAD is `36b1f47` (`docs: record cached actor-view validation`);
+  the measured runtime/validation source for the current Android package is `1d743b0`
   (`tools: add repeatable Lava performance capture`); the latest runtime-bearing change is `d96d3f2`
   (`android: pause offline match on app lifecycle loss`). Full EditMode is
   **125/125** and PlayMode is **71/71**, including the new background/resume
