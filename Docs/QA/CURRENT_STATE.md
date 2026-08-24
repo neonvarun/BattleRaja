@@ -23,29 +23,28 @@ remain open.
 ## Exact current source
 
 - Branch: `codex/v1-playstore-release`
-- Current branch tip contains documentation follow-ups after exact candidate
-  source `edbf4d0` (`docs: keep release evidence inside project root`).
+- Current branch tip is `73f20a2` (`accessibility: propagate reduced flash mode`),
+  after the exact Android artifact source `edbf4d0`.
 - Exact Android candidate source: `edbf4d0`
-- Current runtime-bearing source: `2231d35` (`performance: reduce offline HUD update churn`)
+- Current runtime-bearing source: `73f20a2` (`accessibility: propagate reduced flash mode`)
 - Documentation evidence anchor: the exact-source sections in this index and
   `Docs/QA/LATEST_HEAD_BASELINE.md`, updated with the release-flags candidate.
-- Runtime/validation source for the current candidate: `2231d35` (`performance:
-  reduce offline HUD update churn`). Earlier lifecycle/performance commits remain
-  historical evidence only.
+- The last artifact validation source is `edbf4d0`; current presentation fixes
+  are in `73f20a2` and need a fresh package rebuild before release attribution.
 - Unity: `6000.5.6f1`
 - EditMode: **125/125**
-- PlayMode: **71/71**
+- PlayMode: **73/73**
 - Repository validation: **0 errors / 0 warnings**
 - Git LFS: passed
 
-The current `2231d35` change is behavior-preserving presentation cleanup. Its
-fresh release-shaped APK/AAB are recorded in the exact-current baseline. The APK
+The post-candidate presentation fixes keep the runtime match HUD inside the
+gameplay safe area and propagate reduced-flash settings to combat impact, hit and
+Aandhi feedback. Current tests are green, but the fresh release-shaped APK/AAB
+below were built from `edbf4d0` before these two presentation commits. The APK
 installed and launched on Lava `ST5GDW23LB004392`; the portrait menu is captured
 at `Builds/Local/V1Evidence/edbf4d0/Android/lava-launch.png`, with foreground
-window evidence in `lava-window-state.txt`. This proves install/launch/menu
-presentation only; tutorial, full-match, accessibility and performance review
-remain unperformed. The package table below remains the prior lifecycle
-candidate for the separate performance-tool baseline.
+window evidence in `lava-window-state.txt`. A new exact-HEAD Android rebuild is
+required before attributing release evidence to `73f20a2`.
 
 ## Prior Android artifacts used for the performance-tool baseline
 
@@ -67,6 +66,8 @@ candidate.
 
 - Perform the real tutorial action sequence, full match, all
   fighters/gadgets, spectator, results, rematch, settings and background/resume.
+- Rebuild the Android APK/AAB from current HEAD `73f20a2` before release review;
+  the archived artifact pair is from pre-fix source `edbf4d0`.
 - Run a sustained match/performance capture with the new
   `Tools/Validation/capture_android_performance.ps1` harness and interpret frame,
   CPU, memory, thermal and battery evidence.

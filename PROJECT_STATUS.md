@@ -6,12 +6,13 @@
 
 ## Current state
 
-- The exact Android candidate source is `edbf4d0` (`docs: keep release evidence inside project root`); the latest runtime-bearing source is `2231d35` (`performance: reduce offline HUD update churn`). Repository validation is **0/0**, fresh EditMode is **125/125**, and fresh PlayMode is **71/71**. Fresh release-shaped packages archived inside `Builds/Local/V1Evidence/edbf4d0/Android` are APK **39,487,853** bytes (SHA-256 `2492E8FAA2C04C21D248B2D03F44BF9AEB28CBC511D65A134823A2A0F0A42811`) and AAB **35,314,150** bytes (SHA-256 `796310670ACA8912FBDBC8A3CD0ED0B7FDE3AF7023D3978296545867D304F0B7`). The
+- The current source is `73f20a2` (`accessibility: propagate reduced flash mode`); the last exact Android artifact source is `edbf4d0`. Repository validation is **0/0**, fresh EditMode is **125/125**, and fresh PlayMode is **73/73**. Fresh release-shaped packages archived inside `Builds/Local/V1Evidence/edbf4d0/Android` are APK **39,487,853** bytes (SHA-256 `2492E8FAA2C04C21D248B2D03F44BF9AEB28CBC511D65A134823A2A0F0A42811`) and AAB **35,314,150** bytes (SHA-256 `796310670ACA8912FBDBC8A3CD0ED0B7FDE3AF7023D3978296545867D304F0B7`). The
   AAB is ARM64-only and passed static 16 KB alignment. Lava install and launch
   succeeded; the portrait menu is captured in
   `Builds/Local/V1Evidence/edbf4d0/Android/lava-launch.png`. This is menu-only
   evidence; no tutorial, full-match, accessibility or performance pass is
-  claimed.
+  claimed. A fresh Android artifact rebuild is required to make evidence exact
+  for current HEAD `73f20a2`.
 
 - Documentation evidence is anchored by the exact-source sections in
   `Docs/QA/CURRENT_STATE.md` and `Docs/QA/LATEST_HEAD_BASELINE.md`, updated with

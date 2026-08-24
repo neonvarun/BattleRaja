@@ -58,8 +58,9 @@ the final identity, privacy/Data Safety, content rating, cultural review or Play
 The current source retains the cached actor views for Pehel authority-result
 presentation, adds the owner-configurable package identity seam, explicit
 non-development release flags, disabled offline Unity Analytics/services and retains
-the repeatable offline APK manifest gate. Validation is **0/0**, EditMode **125/125**
-and PlayMode **71/71**. Fresh release-shaped packages archived inside
+the repeatable offline APK manifest gate. Current source validation is **0/0**,
+EditMode **125/125** and PlayMode **73/73**; the archived package pair below
+was built before the latest presentation fixes. Fresh release-shaped packages archived inside
 `Builds/Local/V1Evidence/edbf4d0/Android` are APK
 `2492E8FAA2C04C21D248B2D03F44BF9AEB28CBC511D65A134823A2A0F0A42811`
 (39,487,853 bytes) and AAB

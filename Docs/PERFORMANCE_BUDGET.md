@@ -11,6 +11,8 @@ is ARM64-only and passed static 16 KB alignment. The exact APK installed and lau
 on Lava with no configured fatal markers; the portrait menu capture is stored at
 `Builds/Local/V1Evidence/edbf4d0/Android/lava-launch.png`. No gameplay, frame-pacing,
 thermal, battery, memory-growth or human QA pass is claimed.
+The package pair predates current-HEAD presentation fixes in `73f20a2`; rebuild
+before using it as exact-HEAD release evidence.
 
 ## Exact current release candidate — `d87d9d2` — 2026-08-24
 

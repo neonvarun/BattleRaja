@@ -3,7 +3,7 @@
 Updated: 2026-08-24
 Classification: **prototype**
 
-## Exact Android candidate source — `edbf4d0` — 2026-08-24
+## Current source / last Android artifact — `73f20a2` / `edbf4d0` — 2026-08-24
 
 Status: **In progress**. The Pehel authority presentation adapter now uses the
 match controller's cached actor views instead of a scene-wide target scan during
@@ -12,7 +12,7 @@ repeatable offline APK manifest gate and the owner-configurable Android package
 identity seam, explicit non-development release flags and disabled offline Unity
 Analytics/services. Repository validation is
 **0/0**, fresh EditMode is **125/125**,
-and fresh PlayMode is **71/71**. Fresh release-shaped packages archived inside
+and fresh PlayMode is **73/73**. Fresh release-shaped packages archived inside
 `Builds/Local/V1Evidence/edbf4d0/Android` are APK
 `2492E8FAA2C04C21D248B2D03F44BF9AEB28CBC511D65A134823A2A0F0A42811`
 (39,487,853 bytes) and AAB
@@ -21,7 +21,9 @@ and fresh PlayMode is **71/71**. Fresh release-shaped packages archived inside
 Lava install and launch succeeded, and the portrait menu is captured at
 `Builds/Local/V1Evidence/edbf4d0/Android/lava-launch.png`; this is menu-only
 evidence. Tutorial/full-match interaction, sustained performance, accessibility,
-signing and Play gates remain open. The manifest gate reports temporary package
+signing and Play gates remain open. These packages predate the safe-area and
+reduced-flash fixes in current HEAD `73f20a2`; rebuild before exact-HEAD release
+review. The manifest gate reports temporary package
 `com.example.battleraja.m11`, version `1.0.0` / code `100`, min SDK 28,
 target/compile SDK 36, and no network permissions.
 

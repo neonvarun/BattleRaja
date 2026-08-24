@@ -31,6 +31,12 @@ target/compile SDK 36, and only `VIBRATE` plus Unity's dynamic receiver
 permission; `INTERNET` and `ACCESS_NETWORK_STATE` are absent. Physical Lava
 interaction, sustained performance, visual and accessibility review remain open.
 
+After this artifact was built, the branch added the safe-area HUD fix and
+reduced-flash propagation in commits `894cc05`, `2e22f55` and `73f20a2`.
+Those presentation changes have green EditMode **125/125** and PlayMode
+**73/73**, but require a fresh Android rebuild before this artifact can be
+treated as exact-HEAD release evidence.
+
 ## Exact current Android candidate — docs `be0c510` / source `1d743b0` / runtime `d96d3f2` — 2026-08-24
 
 The documentation HEAD is `be0c510` (`docs: rebaseline exact Android lifecycle
