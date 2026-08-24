@@ -47,6 +47,18 @@ namespace BattleRaja.Presentation.Match
         private AandhiState _lastAandhiState = AandhiState.Stable;
         private bool _resultsCuePlayed;
         private AandhiZoneVisual _aandhiVisual;
+        private bool _hasStatusKey;
+        private MatchPhase _lastStatusPhase;
+        private int _lastStatusAliveCount;
+        private int _lastStatusZoneRadiusTenth;
+        private int _lastStatusNextZoneRadiusTenth;
+        private AandhiState _lastStatusAandhiState;
+        private int _lastStatusWarningTenth;
+        private bool _lastStatusCompact;
+        private bool _lastSpectating;
+        private bool _hasSpectatingState;
+        private MatchParticipantSnapshot[] _lastResultsReference;
+        private bool _lastResultsCompact;
 
         private void Awake()
         {
@@ -182,22 +194,68 @@ namespace BattleRaja.Presentation.Match
             if (_statusText != null)
             {
                 _statusText.gameObject.SetActive(showZoneOverlay);
-                _statusText.text = FormatMatchStatus(match.CurrentPhase, match.AliveCount, match.ZoneRadius, match.NextZoneRadius, match.AandhiState, match.AandhiWarningRemainingSeconds, compact);
+                var phase = match.CurrentPhase;
+                var aliveCount = match.AliveCount;
+                var zoneRadiusTenth = Mathf.RoundToInt(match.ZoneRadius * 10f);
+                var nextZoneRadiusTenth = Mathf.RoundToInt(match.NextZoneRadius * 10f);
+                var warningTenth = Mathf.RoundToInt(match.AandhiWarningRemainingSeconds * 10f);
+                var aandhiState = match.AandhiState;
+                if (!_hasStatusKey ||
+                    phase != _lastStatusPhase ||
+                    aliveCount != _lastStatusAliveCount ||
+                    zoneRadiusTenth != _lastStatusZoneRadiusTenth ||
+                    nextZoneRadiusTenth != _lastStatusNextZoneRadiusTenth ||
+                    aandhiState != _lastStatusAandhiState ||
+                    warningTenth != _lastStatusWarningTenth ||
+                    compact != _lastStatusCompact)
+                {
+                    _statusText.text = FormatMatchStatus(
+                        phase,
+                        aliveCount,
+                        match.ZoneRadius,
+                        match.NextZoneRadius,
+                        aandhiState,
+                        match.AandhiWarningRemainingSeconds,
+                        compact);
+                    _hasStatusKey = true;
+                    _lastStatusPhase = phase;
+                    _lastStatusAliveCount = aliveCount;
+                    _lastStatusZoneRadiusTenth = zoneRadiusTenth;
+                    _lastStatusNextZoneRadiusTenth = nextZoneRadiusTenth;
+                    _lastStatusAandhiState = aandhiState;
+                    _lastStatusWarningTenth = warningTenth;
+                    _lastStatusCompact = compact;
+                }
                 _statusText.color = _highContrast ? Color.white : new Color(0.9f, 0.96f, 1f, 1f);
             }
 
             if (_spectatorText != null)
             {
-                _spectatorText.gameObject.SetActive(match.PlayerSpectating);
-                _spectatorText.text = "SPECTATING  •  tap SPECTATE to cycle";
+                var spectating = match.PlayerSpectating;
+                _spectatorText.gameObject.SetActive(spectating);
+                if (!_hasSpectatingState || spectating != _lastSpectating)
+                {
+                    _spectatorText.text = "SPECTATING  •  tap SPECTATE to cycle";
+                    _lastSpectating = spectating;
+                    _hasSpectatingState = true;
+                }
             }
 
             if (_resultsPanel != null)
             {
-                _resultsPanel.SetActive(match.ResultsShown);
-                if (match.ResultsShown && match.Results != null)
+                var resultsShown = match.ResultsShown;
+                var results = match.Results;
+                _resultsPanel.SetActive(resultsShown);
+                if (resultsShown && results != null &&
+                    (results != _lastResultsReference || compact != _lastResultsCompact))
                 {
-                    _resultsText.text = FormatResults(match.Results, compact);
+                    _resultsText.text = FormatResults(results, compact);
+                    _lastResultsReference = results;
+                    _lastResultsCompact = compact;
+                }
+                else if (!resultsShown)
+                {
+                    _lastResultsReference = null;
                 }
             }
         }
