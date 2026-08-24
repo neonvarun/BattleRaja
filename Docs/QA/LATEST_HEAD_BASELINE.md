@@ -3,8 +3,8 @@
 Date: 2026-08-24
 Branch: `codex/v1-playstore-release` (ahead of local and remote `main`; exact count is recorded by Git)
 Local/remote `main`: `ca6ec3e17e695042664cf3bdbf9889b259b33144`
-Latest validated runtime source: `7b13f8f` (`ui: remove internal candidate status from offline menu`)
-Latest checked-out source: `7b13f8f`. Documentation
+Latest validated runtime source: `6ac5c12` (`ui: bind runtime input actions explicitly`)
+Latest checked-out source: `6ac5c12`. Documentation
 updates are in the focused commits following those source changes;
 the checked-out Git HEAD is the authoritative current documentation state.
 Balance-fix runtime source: `17a8c75` (`fix(balance): land documented weapon retune in Core definitions`)
@@ -13,18 +13,21 @@ Unity: `6000.5.6f1` (`C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.
 
 ## Exact current offline packaging baseline — 2026-08-24
 
-The latest exact-current source is `7b13f8f`. Repository validation is **0/0**;
+The latest exact-current source is `6ac5c12`. Repository validation is **0/0**;
 EditMode is **125/125** and PlayMode is **67/67**. The release-shaped APK is
-**39,524,160 bytes** (`B55EF5268E19D7B84FAB14E072769431CD7F20F6A1AFD99009A3C5E1DF1CB733`)
-and the AAB is **35,351,879 bytes**
-(`B84EA775120DA203C6F70D522D316F59224FB7FAF6F5A889EFE13E5C089FDC0F`). The AAB is
+**39,523,632 bytes** (`09F5375FA8D5DEC066A09D8CCDF0BAF01269F4B402252EF2908691C773402EF3`)
+and the AAB is **35,351,357 bytes**
+(`70825F82A4D79E1E036F4DA8A286778244406D51B1D60A568BD066ED1B82DAA8`). The AAB is
 ARM64-only and passed the static 16 KB alignment check. The APK was installed only on
 Lava `ST5GDW23LB004392`; the release-shaped menu is visible and no fatal marker was
-found. Raw capture is outside the repository at
-`C:\Users\USER\AppData\Local\Temp\battleraja-lava-7b13f8f\`.
+found. Runtime EventSystem point/click bindings are now explicit and covered by the
+PlayMode suite, but the Unity surface exposes no actionable Android UI nodes, so
+physical touch navigation remains a human-review gate. Raw capture is outside the
+repository at
+`C:\Users\USER\AppData\Local\Temp\battleraja-lava-6ac5c12\`.
 
-The exact Web build contains 19 files totalling **132,071,670 bytes**; WASM is
-**119,799,945 bytes** (`53354CCE0B394FD0CEC7F9C3553B6BF8CDBB0E18A1F96F03274BA38104B6EECF`).
+The exact Web build contains 19 files totalling **132,071,712 bytes**; WASM is
+**119,799,965 bytes** (`8CE68A5AA4C741DD27AD66B9BF61FBC0B17DE9F632F2C791181EC99F516DEA12`).
 Local HTTP, Chrome and Edge loader smoke succeeded, but bounded headless captures did
 not reach an interactive menu. This remains a prototype baseline, not a release gate.
 

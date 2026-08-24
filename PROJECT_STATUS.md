@@ -21,22 +21,25 @@
   are recorded separately by runtime commit below. See
   `Docs/QA/M11_CLOSURE_REPORT_2026-08-23.md`.
 - Current exact offline Android V1 checkout: branch `codex/v1-playstore-release` at
-  `HEAD`/runtime source `7b13f8f`. Repository validation is **0/0**;
+  runtime source `6ac5c12`. Repository validation is **0/0**;
   exact-current EditMode is **125/125** and PlayMode is **67/67**. The fresh
-  release-shaped APK is **39,524,160 bytes** (SHA-256
-  `B55EF5268E19D7B84FAB14E072769431CD7F20F6A1AFD99009A3C5E1DF1CB733`) and the AAB is
-  **35,351,879 bytes** (SHA-256
-  `B84EA775120DA203C6F70D522D316F59224FB7FAF6F5A889EFE13E5C089FDC0F`). The AAB is
+  release-shaped APK is **39,523,632 bytes** (SHA-256
+  `09F5375FA8D5DEC066A09D8CCDF0BAF01269F4B402252EF2908691C773402EF3`) and the AAB is
+  **35,351,357 bytes** (SHA-256
+  `70825F82A4D79E1E036F4DA8A286778244406D51B1D60A568BD066ED1B82DAA8`). The AAB is
   ARM64-only with static 16 KB alignment. The focused source change removes internal
-  “candidate” wording from the player-facing offline menu.
+  runtime touch-action ambiguity by binding point/click/navigation actions explicitly.
 - The exact APK was installed only on Lava `ST5GDW23LB004392`; the branded offline menu
   was visible and the post-launch capture contains no fatal/ANR/SIGSEGV marker. The
+  Unity surface exposes no actionable Android UI nodes, so physical touch navigation
+  remains a human-review gate despite the explicit runtime binding and regression.
+  The
   inspected APK has `VIBRATE` and Unity's dynamic-receiver permission only; it has no
   `INTERNET` or `ACCESS_NETWORK_STATE`. Fusion remains preserved for a future approved
   online milestone but is excluded from this Android runtime package. Full details are
   in `Docs/QA/V1_ANDROID_OFFLINE_PACKAGING_2026-08-24.md`.
-- The same checkout produced a Web build with a **119,799,945-byte** WASM
-  (`53354CCE0B394FD0CEC7F9C3553B6BF8CDBB0E18A1F96F03274BA38104B6EECF`); local HTTP
+- The same checkout produced a Web build with a **119,799,965-byte** WASM
+  (`8CE68A5AA4C741DD27AD66B9BF61FBC0B17DE9F632F2C791181EC99F516DEA12`); local HTTP
   returned 200 and Chrome/Edge headless reached the Unity loader. This is build/loader
   smoke, not full interactive browser approval. The project remains **prototype**: temporary
   package identity, debug signing, adaptive-icon warning, sustained performance,
