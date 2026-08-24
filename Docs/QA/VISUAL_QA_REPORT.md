@@ -1,5 +1,16 @@
 # BattleRaja visual and interaction QA report
 
+## Exact current presentation update — `f463b1b` — 2026-08-24
+
+The current branch tip is `f463b1b`. The presentation now renders a world-space
+current Aandhi boundary and a warning-state next-boundary preview from the match
+snapshot; the component is render-only and does not decide gameplay outcomes.
+The exact-source Android APK built successfully, but was not installed on Lava.
+The exact Web build was attempted locally and did not complete because Unity's Web
+Bee/Burst backend repeatedly returned exit code 4. Therefore this slice has no
+Android screenshot or browser-smoke evidence yet; human visual review remains
+open.
+
 Date: 2026-08-24
 Runtime-bearing candidate: `dff3a89` (offline Android V1 release-shaped splash/menu/match)
 Current validated runtime source: `dff3a89` (runtime content from `6920edd`; docs/settings
