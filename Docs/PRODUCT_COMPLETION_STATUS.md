@@ -5,14 +5,16 @@ Classification: **prototype**
 
 Latest continuation: offline Android V1 release-shaped candidate — branch
 `codex/v1-playstore-release` at final documentation checkout
-`HEAD` (runtime/package source `f4425d6`).
-Exact-current validation is 0/0, EditMode **125/125**, and PlayMode **66/66**. The
-fresh APK is **39,529,326 bytes** (`AE74717B597C4CBCFDECF7D8DB719C177100F495CC084ABFD0E1EA6AAD3E2C52`)
-and the AAB is **35,357,477 bytes**
-(`8EB49EFC8D58D144E5A792224FC9A3570FF4E37F121E06B6E55093C9D4D5F5E7`); the AAB is
+`HEAD` (runtime/package source `7b13f8f`).
+Exact-current validation is 0/0, EditMode **125/125**, and PlayMode **67/67**. The
+fresh release-shaped APK is **39,524,160 bytes**
+(`B55EF5268E19D7B84FAB14E072769431CD7F20F6A1AFD99009A3C5E1DF1CB733`) and the AAB is
+**35,351,879 bytes**
+(`B84EA775120DA203C6F70D522D316F59224FB7FAF6F5A889EFE13E5C089FDC0F`); the AAB is
 ARM64-only and passed static 16 KB alignment. The APK was installed and exercised
 only on Lava, and the inspected package has no `INTERNET` or `ACCESS_NETWORK_STATE`.
-The same checkout produced a successful Web build and local HTTP/Edge loader smoke.
+The same exact source produced a successful Web build and local HTTP/Chrome/Edge
+loader smoke; the bounded headless captures did not reach an interactive menu.
 
 This is still a **prototype**: final signing and package identity, sustained
 performance, full interactive Web QA, touch/accessibility and human visual review,
