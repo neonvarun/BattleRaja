@@ -1,5 +1,22 @@
 # Latest HEAD baseline
 
+## Exact current source update — `f463b1b` — 2026-08-24
+
+The checked-out branch is `codex/v1-playstore-release` at `f463b1b`
+(`vfx: add render-only Aandhi boundary cue`). Repository validation is **0 errors
+/ 0 warnings**. A fresh Android release-candidate APK built from this exact
+source in disposable worktree `C:\Projects\BattleRaja-validate-aandhi`:
+
+| Artifact | Size | SHA-256 |
+| --- | ---: | --- |
+| APK | 39,473,715 bytes | `ADFE38B3C11DE2119D7180967C48165682095C4818F9FD0140FB694F1198A666` |
+
+The cue is render-only: it draws the current boundary and warning-state next
+boundary from the existing match snapshot. The APK was not installed on Lava.
+The exact Web build was attempted locally but the Unity Web Bee/Burst backend
+repeatedly returned exit code 4 without producing a completed player; no Web
+artifact or browser smoke pass is claimed for this source.
+
 ## Exact current source update — `ecdb25b` — 2026-08-24
 
 The checked-out branch is `codex/v1-playstore-release` at `ecdb25b`

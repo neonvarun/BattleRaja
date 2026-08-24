@@ -1,5 +1,15 @@
 # Android and Web Performance Budget
 
+## Exact current source update — `f463b1b` — 2026-08-24
+
+The current source is `f463b1b`. A local Android release-shaped APK built from
+this exact source is **39,473,715 bytes** with SHA-256
+`ADFE38B3C11DE2119D7180967C48165682095C4818F9FD0140FB694F1198A666`.
+The attempted exact-source Web build did not complete: Unity's Web Bee/Burst
+backend repeatedly returned exit code 4 and no finished player was emitted. No
+new performance measurements are claimed; existing platform measurements below
+remain historical unless their source is explicitly named.
+
 ## Exact current source update — `ecdb25b` — 2026-08-24
 
 The current source is `ecdb25b`. A local Android release-shaped APK built from

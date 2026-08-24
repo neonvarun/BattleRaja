@@ -6,6 +6,15 @@
 
 ## Current state
 
+- Exact current source is `f463b1b` (`vfx: add render-only Aandhi boundary cue`)
+  on `codex/v1-playstore-release`. Repository validation is **0/0** and a fresh
+  Android release-candidate APK was built locally (39,473,715 bytes; SHA-256
+  `ADFE38B3C11DE2119D7180967C48165682095C4818F9FD0140FB694F1198A666`). The
+  Aandhi cue is render-only and consumes the match snapshot. The exact Web build
+  is blocked by Unity Web Bee/Burst exit code 4 with no completed artifact; no
+  browser smoke pass or Lava install is claimed. Classification remains
+  **prototype**.
+
 - Exact current source is `ecdb25b` (`ui: hide bot diagnostics in release builds`)
   on `codex/v1-playstore-release`. Repository validation is **0/0** and a fresh
   Android release-candidate APK was built locally from this source (39,465,083
