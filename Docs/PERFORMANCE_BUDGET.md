@@ -1,5 +1,20 @@
 # Android and Web Performance Budget
 
+## Exact current release candidate — `d87d9d2` — 2026-08-24
+
+The current release-shaped Android candidate was built from exact source in
+`C:\BRV1ReleaseFlags`: APK **39,485,159 bytes** (SHA-256
+`0BC68BB6AE87355CCB6443EDF9ECE10539FEB03DF48D03A893FCDD4063D03B74`) and AAB
+**35,312,590 bytes** (SHA-256
+`504001EAE4CAB9D6BB538B8876EFEC315107DD1D7EFE1E581BD5B2CF93440860`). The AAB
+is ARM64-only and passed the static 16 KB ELF alignment check. A short, non-match
+diagnostic capture was collected outside the repository at `C:\BRV1PerfLocked`
+using Lava `ST5GDW23LB004392`: two samples over 10 seconds, no configured fatal
+log markers. Both samples reported `NotificationShade` as the focused window and
+`mDreamingLockscreen=true`, so this is only process/lock-state evidence. It is
+not a gameplay, frame-pacing, thermal, battery, memory-growth or human QA pass.
+The sustained match measurement and interaction gate remain open.
+
 ## Hot-path lookup cleanup — `e808830` — 2026-08-24
 
 Static inspection of the authority-driven Pehel path found a scene-wide
