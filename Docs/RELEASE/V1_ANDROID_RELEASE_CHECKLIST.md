@@ -53,18 +53,18 @@ pwsh -File Tools/Validation/check_v1_release_candidate.ps1 `
 This gate is technical and local only. It does not sign, upload, publish, or approve
 the final identity, privacy/Data Safety, content rating, cultural review or Play track.
 
-## Exact Android candidate source — `d87d9d2` — 2026-08-24
+## Exact Android candidate source — `34b5b7f` — 2026-08-24
 
 The current source retains the cached actor views for Pehel authority-result
 presentation, adds the owner-configurable package identity seam, explicit
-non-development release flags and retains the repeatable offline APK manifest
-gate. Validation is **0/0**, EditMode **125/125**
+non-development release flags, disabled offline Unity Analytics/services and retains
+the repeatable offline APK manifest gate. Validation is **0/0**, EditMode **125/125**
 and PlayMode **71/71**. Fresh release-shaped packages from
-`C:\BRV1ReleaseFlags` are APK
-`0BC68BB6AE87355CCB6443EDF9ECE10539FEB03DF48D03A893FCDD4063D03B74`
-(39,485,159 bytes) and AAB
-`504001EAE4CAB9D6BB538B8876EFEC315107DD1D7EFE1E581BD5B2CF93440860`
-(35,312,590 bytes). The AAB is ARM64-only and passed static 16 KB alignment;
+`C:\BRV1NoAnalytics` are APK
+`FC285938DE68FFE9CB9B22B4BF5897B9CA89C04D2CCE7B0439E0DD6B4CC403CF`
+(39,485,163 bytes) and AAB
+`12EE3175AF66E50B47BBA082FB4027507A457A1E9CBA1AD654B2479245F4C154`
+(35,312,621 bytes). The AAB is ARM64-only and passed static 16 KB alignment;
 installation/launch on Lava succeeded, but the lock screen blocked interaction.
 Manifest inspection reports temporary package `com.example.battleraja.m11`,
 version `1.0.0` / code `100`, min SDK 28, target/compile SDK 36, and only

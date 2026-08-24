@@ -1,22 +1,23 @@
 # Latest HEAD baseline
 
-## Exact Android candidate source — `d87d9d2` — 2026-08-24
+## Exact Android candidate source — `34b5b7f` — 2026-08-24
 
 The checked-out source contains the presentation-only Pehel hot-path cleanup,
 the owner-configurable Android package identity, explicit non-development release
-flags, the repeatable offline APK manifest gate and the current release documentation.
+flags, offline Unity Analytics/service disablement, the repeatable offline APK
+manifest gate and the current release documentation.
 The branch tip also contains later documentation and the unified local V1
 release-gate script; the APK/AAB below remain attributed to this exact candidate
 source and are not silently reattributed to later commits.
 Repository validation is
 **0 errors / 0 warnings**, with fresh exact-source EditMode **125/125** and
 PlayMode **71/71**. A fresh release-shaped Android package was built from exact
-source in disposable worktree `C:\BRV1ReleaseFlags`:
+source in disposable worktree `C:\BRV1NoAnalytics`:
 
 | Artifact | Size | SHA-256 |
 | --- | ---: | --- |
-| APK | 39,485,159 bytes | `0BC68BB6AE87355CCB6443EDF9ECE10539FEB03DF48D03A893FCDD4063D03B74` |
-| AAB | 35,312,590 bytes | `504001EAE4CAB9D6BB538B8876EFEC315107DD1D7EFE1E581BD5B2CF93440860` |
+| APK | 39,485,163 bytes | `FC285938DE68FFE9CB9B22B4BF5897B9CA89C04D2CCE7B0439E0DD6B4CC403CF` |
+| AAB | 35,312,621 bytes | `12EE3175AF66E50B47BBA082FB4027507A457A1E9CBA1AD654B2479245F4C154` |
 
 The AAB contains seven ARM64 native libraries, no other ABIs, and passed the
 static 16 KB ELF LOAD alignment check. The APK installed only on Lava

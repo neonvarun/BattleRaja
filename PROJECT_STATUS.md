@@ -6,16 +6,16 @@
 
 ## Current state
 
-- The exact Android candidate source is `d87d9d2` (`release: disable development
-  flags for V1 candidate`); the current branch tip also contains later release
+- The exact Android candidate source is `34b5b7f` (`release: disable offline
+  analytics and document Play privacy gates`); the current branch tip also contains later release
   gate/documentation commits. The latest runtime-bearing source is `e808830` (`perf: reuse cached
   actor views for Pehel authority results`). Repository validation is **0/0**,
   fresh EditMode is **125/125**, and fresh PlayMode is **71/71**. Fresh
-  release-shaped packages from disposable `C:\BRV1ReleaseFlags` are APK
-  `39,485,159` bytes (SHA-256
-  `0BC68BB6AE87355CCB6443EDF9ECE10539FEB03DF48D03A893FCDD4063D03B74`) and AAB
-  `35,312,590` bytes (SHA-256
-  `504001EAE4CAB9D6BB538B8876EFEC315107DD1D7EFE1E581BD5B2CF93440860`). The
+  release-shaped packages from disposable `C:\BRV1NoAnalytics` are APK
+  `39,485,163` bytes (SHA-256
+  `FC285938DE68FFE9CB9B22B4BF5897B9CA89C04D2CCE7B0439E0DD6B4CC403CF`) and AAB
+  `35,312,621` bytes (SHA-256
+  `12EE3175AF66E50B47BBA082FB4027507A457A1E9CBA1AD654B2479245F4C154`). The
   AAB is ARM64-only and passed static 16 KB alignment. Lava install and launch
   succeeded, but the lock screen blocked interaction; no route or performance
   pass is claimed.

@@ -3,20 +3,21 @@
 Updated: 2026-08-24
 Classification: **prototype**
 
-## Exact Android candidate source — `d87d9d2` — 2026-08-24
+## Exact Android candidate source — `34b5b7f` — 2026-08-24
 
 Status: **In progress**. The Pehel authority presentation adapter now uses the
 match controller's cached actor views instead of a scene-wide target scan during
 authority charge result application. The checked-out source also contains the
 repeatable offline APK manifest gate and the owner-configurable Android package
-identity seam and explicit non-development release flags. Repository validation is
+identity seam, explicit non-development release flags and disabled offline Unity
+Analytics/services. Repository validation is
 **0/0**, fresh EditMode is **125/125**,
 and fresh PlayMode is **71/71**. Fresh release-shaped packages from disposable
-`C:\BRV1ReleaseFlags` are APK
-`0BC68BB6AE87355CCB6443EDF9ECE10539FEB03DF48D03A893FCDD4063D03B74`
-(39,485,159 bytes) and AAB
-`504001EAE4CAB9D6BB538B8876EFEC315107DD1D7EFE1E581BD5B2CF93440860`
-(35,312,590 bytes). The AAB is ARM64-only and passed static 16 KB alignment.
+`C:\BRV1NoAnalytics` are APK
+`FC285938DE68FFE9CB9B22B4BF5897B9CA89C04D2CCE7B0439E0DD6B4CC403CF`
+(39,485,163 bytes) and AAB
+`12EE3175AF66E50B47BBA082FB4027507A457A1E9CBA1AD654B2479245F4C154`
+(35,312,621 bytes). The AAB is ARM64-only and passed static 16 KB alignment.
 Lava install and launch succeeded, but the active lock screen blocked interactive
 QA. Device interaction, sustained performance, accessibility, signing and Play
 gates remain open. The manifest gate reports temporary package
