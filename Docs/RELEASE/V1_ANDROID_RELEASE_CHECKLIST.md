@@ -36,6 +36,23 @@ Primary sources: `https://developer.android.com/google/play/requirements/target-
 `https://support.google.com/googleplay/android-developer/answer/10787469`, and
 `https://support.google.com/googleplay/android-developer/answer/9859655`.
 
+The local technical gate for an exact artifact pair is:
+
+```powershell
+pwsh -File Tools/Validation/check_v1_release_candidate.ps1 `
+  -ProjectRoot . `
+  -ApkPath C:\path\to\BattleRaja-V1.0-release-candidate.apk `
+  -AabPath C:\path\to\BattleRaja-V1.0-release-candidate.aab `
+  -AaptPath "$env:LOCALAPPDATA\Android\Sdk\build-tools\36.0.0\aapt.exe" `
+  -ReadElfPath 'C:\path\to\llvm-readelf.exe' `
+  -UnityExe 'C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe' `
+  -ExpectedPackageId com.example.battleraja.m11 `
+  -RequireCleanWorktree
+```
+
+This gate is technical and local only. It does not sign, upload, publish, or approve
+the final identity, privacy/Data Safety, content rating, cultural review or Play track.
+
 ## Exact current source — `d87d9d2` — 2026-08-24
 
 The current source retains the cached actor views for Pehel authority-result

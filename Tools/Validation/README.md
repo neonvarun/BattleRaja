@@ -84,3 +84,20 @@ pwsh -File Tools/Validation/check_store_creative.ps1
 pwsh -File Tools/Validation/check_store_creative.ps1 -ScreenshotDirectory 'C:\path\to\reviewed-captures'
 pwsh -File Tools/Validation/check_store_creative.ps1 -RequireFinal
 ```
+
+`check_v1_release_candidate.ps1` composes the local V1 technical gates for an exact
+APK/AAB pair. It validates the repository, APK manifest, ARM64/16 KB AAB contents and
+technical store-asset dimensions. It does not sign, upload, publish, or replace owner
+approval for package identity, privacy, cultural review or Play Console submission:
+
+```powershell
+pwsh -File Tools/Validation/check_v1_release_candidate.ps1 `
+  -ProjectRoot . `
+  -ApkPath C:\path\to\BattleRaja-V1.0-release-candidate.apk `
+  -AabPath C:\path\to\BattleRaja-V1.0-release-candidate.aab `
+  -AaptPath "$env:LOCALAPPDATA\Android\Sdk\build-tools\36.0.0\aapt.exe" `
+  -ReadElfPath 'C:\path\to\llvm-readelf.exe' `
+  -UnityExe 'C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe' `
+  -ExpectedPackageId com.example.battleraja.m11 `
+  -RequireCleanWorktree
+```
