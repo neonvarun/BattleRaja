@@ -670,8 +670,28 @@ namespace BattleRaja.Presentation.Flow
             // navigation actions explicitly so Android taps do not depend on
             // editor-only component defaults.
             modern.AssignDefaultActions();
+            EnsureTouchBindings(modern);
             modern.enabled = true;
             eventSystem.sendNavigationEvents = true;
+        }
+
+        private static void EnsureTouchBindings(InputSystemUIInputModule module)
+        {
+            if (module == null) return;
+            AddBindingIfMissing(module.point, "<Touchscreen>/touch*/position");
+            AddBindingIfMissing(module.leftClick, "<Touchscreen>/touch*/press");
+        }
+
+        private static void AddBindingIfMissing(InputActionReference reference, string path)
+        {
+            var action = reference != null ? reference.action : null;
+            if (action == null || string.IsNullOrWhiteSpace(path)) return;
+            for (var i = 0; i < action.bindings.Count; i++)
+            {
+                if (string.Equals(action.bindings[i].path, path, StringComparison.Ordinal)) return;
+            }
+
+            action.AddBinding(path);
         }
 
         private void LoadPreferences()

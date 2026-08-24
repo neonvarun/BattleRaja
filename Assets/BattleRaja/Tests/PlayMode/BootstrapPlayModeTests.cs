@@ -5,6 +5,7 @@ using BattleRaja.Presentation.UI;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
@@ -64,7 +65,20 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(uiModule.actionsAsset, Is.Not.Null);
             Assert.That(uiModule.point, Is.Not.Null);
             Assert.That(uiModule.leftClick, Is.Not.Null);
+            Assert.That(HasBinding(uiModule.point, "<Touchscreen>/touch*/position"), Is.True);
+            Assert.That(HasBinding(uiModule.leftClick, "<Touchscreen>/touch*/press"), Is.True);
             Assert.That(eventSystem.GetComponent<StandaloneInputModule>(), Is.Null);
+        }
+
+        private static bool HasBinding(InputActionReference reference, string path)
+        {
+            if (reference == null || reference.action == null) return false;
+            for (var i = 0; i < reference.action.bindings.Count; i++)
+            {
+                if (reference.action.bindings[i].path == path) return true;
+            }
+
+            return false;
         }
 
         [UnityTest]
