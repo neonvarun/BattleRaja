@@ -23,8 +23,10 @@
   `Docs/QA/CURRENT_STATE.md` and `Docs/QA/LATEST_HEAD_BASELINE.md`, updated with
   the release-flags candidate;
   the measured runtime/validation source for the current Android package is `1d743b0`
-  (`tools: add repeatable Lava performance capture`); the latest runtime-bearing change is `d96d3f2`
-  (`android: pause offline match on app lifecycle loss`). Full EditMode is
+  (`tools: add repeatable Lava performance capture`); the preceding lifecycle
+  change is `d96d3f2` (`android: pause offline match on app lifecycle loss`) and
+  the latest runtime-bearing change is `e808830` (Pehel cached actor views). Full
+  EditMode is
   **125/125** and PlayMode is **71/71**, including the new background/resume
   pause guard. Fresh release-shaped packages were built from exact source
   `1d743b0` in disposable worktree `C:\BRLifecycle`: APK `39,486,559` bytes,
