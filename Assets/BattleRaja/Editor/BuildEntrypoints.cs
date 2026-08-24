@@ -729,6 +729,7 @@ namespace BattleRaja.Editor
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
             PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
             ApplyCandidateAndroidIcon();
+            ApplyCandidateAndroidSplash();
             PlayerSettings.Android.useCustomKeystore = false;
         }
 
@@ -760,6 +761,30 @@ namespace BattleRaja.Editor
             }
 
             PlayerSettings.SetIcons(NamedBuildTarget.Android, new[] { icon }, IconKind.Any);
+        }
+
+        private static void ApplyCandidateAndroidSplash()
+        {
+            var splashLogo = AssetDatabase.LoadAssetAtPath<Sprite>(V1IconAssetPath);
+            if (splashLogo == null)
+            {
+                throw new InvalidOperationException(
+                    $"BattleRaja V1 splash logo could not be loaded as a Sprite at {V1IconAssetPath}. " +
+                    "The release candidate must not fall back to Unity branding.");
+            }
+
+            // Keep the native splash branded and quiet while the first scene loads. The
+            // icon is an original BattleRaja asset; no Unity logo is included in V1.
+            PlayerSettings.SplashScreen.show = true;
+            PlayerSettings.SplashScreen.showUnityLogo = false;
+            PlayerSettings.SplashScreen.backgroundColor = new Color32(7, 21, 30, 255);
+            PlayerSettings.SplashScreen.background = null;
+            PlayerSettings.SplashScreen.backgroundPortrait = null;
+            PlayerSettings.SplashScreen.overlayOpacity = 0f;
+            PlayerSettings.SplashScreen.logos = new[]
+            {
+                PlayerSettings.SplashScreenLogo.Create(2f, splashLogo)
+            };
         }
 
         private static void Build(string outputPath, BuildTarget target, BuildOptions buildOptions, params string[] scenePaths)
