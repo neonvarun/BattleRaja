@@ -19,7 +19,9 @@
   succeeded, but the lock screen blocked interaction; no route or performance
   pass is claimed.
 
-- Documentation evidence anchor is `3acfd0e` (`docs: update current evidence head`);
+- Documentation evidence is anchored by the exact-source sections in
+  `Docs/QA/CURRENT_STATE.md` and `Docs/QA/LATEST_HEAD_BASELINE.md`, updated with
+  the release-flags candidate;
   the measured runtime/validation source for the current Android package is `1d743b0`
   (`tools: add repeatable Lava performance capture`); the latest runtime-bearing change is `d96d3f2`
   (`android: pause offline match on app lifecycle loss`). Full EditMode is
