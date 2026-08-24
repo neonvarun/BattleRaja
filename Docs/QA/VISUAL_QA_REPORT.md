@@ -1,6 +1,6 @@
 # BattleRaja visual and interaction QA report
 
-## Exact current source — `d87d9d2` — 2026-08-24
+## Exact Android candidate source — `d87d9d2` — 2026-08-24
 
 The current source contains the presentation-only Pehel actor-view cache lookup,
 the owner-configurable Android package identity seam, explicit non-development

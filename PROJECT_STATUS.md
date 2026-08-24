@@ -6,8 +6,9 @@
 
 ## Current state
 
-- Checked-out source is `d87d9d2` (`release: disable development flags for V1
-  candidate`); the latest runtime-bearing source is `e808830` (`perf: reuse cached
+- The exact Android candidate source is `d87d9d2` (`release: disable development
+  flags for V1 candidate`); the current branch tip also contains later release
+  gate/documentation commits. The latest runtime-bearing source is `e808830` (`perf: reuse cached
   actor views for Pehel authority results`). Repository validation is **0/0**,
   fresh EditMode is **125/125**, and fresh PlayMode is **71/71**. Fresh
   release-shaped packages from disposable `C:\BRV1ReleaseFlags` are APK

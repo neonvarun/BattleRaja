@@ -3,7 +3,7 @@
 Updated: 2026-08-24
 Classification: **prototype**
 
-## Exact current source — `d87d9d2` — 2026-08-24
+## Exact Android candidate source — `d87d9d2` — 2026-08-24
 
 Status: **In progress**. The Pehel authority presentation adapter now uses the
 match controller's cached actor views instead of a scene-wide target scan during

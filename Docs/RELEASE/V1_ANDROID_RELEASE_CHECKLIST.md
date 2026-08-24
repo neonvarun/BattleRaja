@@ -53,7 +53,7 @@ pwsh -File Tools/Validation/check_v1_release_candidate.ps1 `
 This gate is technical and local only. It does not sign, upload, publish, or approve
 the final identity, privacy/Data Safety, content rating, cultural review or Play track.
 
-## Exact current source — `d87d9d2` — 2026-08-24
+## Exact Android candidate source — `d87d9d2` — 2026-08-24
 
 The current source retains the cached actor views for Pehel authority-result
 presentation, adds the owner-configurable package identity seam, explicit

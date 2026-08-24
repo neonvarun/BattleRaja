@@ -16,7 +16,10 @@ remain open.
 ## Exact current source
 
 - Branch: `codex/v1-playstore-release`
-- Current checked-out source: `d87d9d2` (`release: disable development flags for V1 candidate`)
+- Current branch tip contains the release-gate and documentation commits after
+  the exact Android candidate source `d87d9d2` (`release: disable development
+  flags for V1 candidate`).
+- Exact Android candidate source: `d87d9d2`
 - Current runtime-bearing source: `e808830` (`perf: reuse cached actor views for Pehel authority results`)
 - Documentation evidence anchor: the exact-source sections in this index and
   `Docs/QA/LATEST_HEAD_BASELINE.md`, updated with the release-flags candidate.

@@ -1,10 +1,13 @@
 # Latest HEAD baseline
 
-## Exact current source — `d87d9d2` — 2026-08-24
+## Exact Android candidate source — `d87d9d2` — 2026-08-24
 
 The checked-out source contains the presentation-only Pehel hot-path cleanup,
 the owner-configurable Android package identity, explicit non-development release
 flags, the repeatable offline APK manifest gate and the current release documentation.
+The branch tip also contains later documentation and the unified local V1
+release-gate script; the APK/AAB below remain attributed to this exact candidate
+source and are not silently reattributed to later commits.
 Repository validation is
 **0 errors / 0 warnings**, with fresh exact-source EditMode **125/125** and
 PlayMode **71/71**. A fresh release-shaped Android package was built from exact
