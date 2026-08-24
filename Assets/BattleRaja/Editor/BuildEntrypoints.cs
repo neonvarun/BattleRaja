@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.AI;
 using BattleRaja.Presentation.Combat;
@@ -46,6 +47,7 @@ namespace BattleRaja.Editor
         private const string PehelWeaponAssetPath = "Assets/BattleRaja/Content/Weapons/M7-PehelSweep.asset";
         private const string MayaWeaponAssetPath = "Assets/BattleRaja/Content/Weapons/M7-MayaShard.asset";
         private const string DevelopmentApplicationId = "com.example.battleraja.m11";
+        private const string AndroidApplicationIdEnvironmentVariable = "BATTLERAJA_ANDROID_APPLICATION_ID";
         private const string V1IconAssetPath = "Assets/BattleRaja/Art/V1/BattleRaja-AppIcon-PlayStore.png";
         private const string GadgetAssetFolder = "Assets/BattleRaja/Content/Gadgets";
 
@@ -600,7 +602,7 @@ namespace BattleRaja.Editor
             ValidateProject();
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
-            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, DevelopmentApplicationId);
+            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, ResolveAndroidApplicationId());
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel28;
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
@@ -619,7 +621,7 @@ namespace BattleRaja.Editor
             ValidateProject();
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
-            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, DevelopmentApplicationId);
+            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, ResolveAndroidApplicationId());
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel28;
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
@@ -663,7 +665,7 @@ namespace BattleRaja.Editor
             ValidateProject();
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
-            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, DevelopmentApplicationId);
+            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, ResolveAndroidApplicationId());
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel28;
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
@@ -723,7 +725,9 @@ namespace BattleRaja.Editor
             ValidateProject();
 
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
-            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, DevelopmentApplicationId);
+            var applicationId = ResolveAndroidApplicationId();
+            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, applicationId);
+            Debug.Log($"BattleRaja Android application identifier: {applicationId}");
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel28;
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
@@ -731,6 +735,21 @@ namespace BattleRaja.Editor
             ApplyCandidateAndroidIcon();
             ApplyCandidateAndroidSplash();
             PlayerSettings.Android.useCustomKeystore = false;
+        }
+
+        private static string ResolveAndroidApplicationId()
+        {
+            var configured = Environment.GetEnvironmentVariable(AndroidApplicationIdEnvironmentVariable);
+            if (string.IsNullOrWhiteSpace(configured)) return DevelopmentApplicationId;
+
+            configured = configured.Trim();
+            if (!Regex.IsMatch(configured, @"^[A-Za-z][A-Za-z0-9_]*(\.[A-Za-z][A-Za-z0-9_]*)+$"))
+            {
+                throw new BuildFailedException(
+                    $"{AndroidApplicationIdEnvironmentVariable} must be a valid Android application ID such as com.example.battleraja.");
+            }
+
+            return configured;
         }
 
         public static void BuildWebBazaarBastionDevelopment()
