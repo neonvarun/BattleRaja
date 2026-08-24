@@ -41,6 +41,8 @@ namespace BattleRaja.Presentation.Match
         private float _appliedTextScale = 1f;
         private bool _paused;
         private bool _compactLayout;
+        private bool _controlsCompactLayout;
+        private bool _controlsLayoutInitialized;
         private AandhiState _lastAandhiState = AandhiState.Stable;
         private bool _resultsCuePlayed;
 
@@ -157,6 +159,11 @@ namespace BattleRaja.Presentation.Match
             if (match == null) return;
             UpdateAudioCues();
             ApplyResponsiveLayout();
+            var compactControls = Screen.height > 0 && (float)Screen.width / Screen.height < 0.75f;
+            if (!_controlsLayoutInitialized || compactControls != _controlsCompactLayout)
+            {
+                ApplyHandedLayout();
+            }
             var compact = _compactLayout;
             if (_statusText != null)
             {
@@ -376,6 +383,8 @@ namespace BattleRaja.Presentation.Match
             SetActionSize(attack, compact ? 146f : 170f);
             SetActionSize(ability, compact ? 122f : 140f);
             SetActionSize(gadget, compact ? 106f : 120f);
+            _controlsCompactLayout = compact;
+            _controlsLayoutInitialized = true;
         }
 
         private static void SetActionAnchor(RectTransform rect, Vector2 anchor)

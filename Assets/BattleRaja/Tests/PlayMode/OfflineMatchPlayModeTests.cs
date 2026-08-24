@@ -109,6 +109,18 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator MatchTouchControlsUseOrientationAwareSizing()
+        {
+            var attack = GameObject.Find("AttackButton").GetComponent<RectTransform>();
+            var compact = Screen.height > 0 && (float)Screen.width / Screen.height < 0.75f;
+            var expected = compact ? 146f : 170f;
+
+            Assert.That(attack.sizeDelta.x, Is.EqualTo(expected).Within(0.1f));
+            Assert.That(attack.sizeDelta.y, Is.EqualTo(expected).Within(0.1f));
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator InMatchAimAssistSettingUpdatesPlayerInputAndPersists()
         {
             var key = "battleraja.settings.aim_assist";
