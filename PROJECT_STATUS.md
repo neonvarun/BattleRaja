@@ -13,8 +13,19 @@
   is **75/75**, and the `BATTLERAJA_SOAK_MATCHES=1000` recorded-replay soak passes
   **1,000 seeds x 2 executions = 2,000 matches** with zero divergence in
   **468.619297 seconds**; see
-  `Builds/Local/V1GameplayTruth/TestResults/bijli-deep-soak.xml`. This gameplay slice
-  has no fresh platform artifact or physical-device claim yet.
+  `Builds/Local/V1GameplayTruth/TestResults/bijli-deep-soak.xml`.
+
+  The same runtime source also has a fresh development-shaped Lava smoke: APK
+  **92,855,860** bytes, SHA-256
+  `115C428A69A6E27B7D0BE7A9A0B5C433CAE7CA165C0FCA8251DA34122E70CBC0`; cold launch
+  **384 ms** and hot resume **82 ms**. The route reached Bijli selection, live Solo
+  Raja, ability input, player-defeat spectator mode and the final results/rematch
+  UI. Crash-pattern scans across launch, background, resume, match, ability and
+  final-state logs found **0** matches. Peak recorded PSS during the route was
+  **421,362 KB**. Development-player socket warnings appeared in the Development
+  Console but were non-fatal. This is interaction/lifecycle evidence only: it does
+  not claim release signing, sustained performance, accessibility or store
+  readiness. See the exact evidence section in `Docs/V1_RELEASE_PLAN.md`.
 
 - The current branch tip contains documentation follow-ups after the exact artifact source `35de9f3`; the latest runtime-bearing source is `73f20a2` (`accessibility: propagate reduced flash mode`). Repository validation is **0/0**, fresh EditMode is **125/125**, and fresh PlayMode is **73/73**. Fresh release-shaped packages archived inside `Builds/Local/V1Evidence/35de9f3/Android` are APK **39,487,017** bytes (SHA-256 `41432964C104C7EA58A1DECC3423F611515D909E7EFA61F85E6AC46D7BFBE389`) and AAB **35,313,317** bytes (SHA-256 `34A0BAEFBF68A6A7679244EADB342556B5F3EBA87D3AB61CACDA48CAE04BE785`). The
   AAB is ARM64-only and passed static 16 KB alignment. Lava install and launch

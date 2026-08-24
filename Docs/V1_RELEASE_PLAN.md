@@ -234,6 +234,35 @@ sustained performance review, accessibility review or release signing/store gate
   divergence, NUnit duration **468.619297 seconds**
   (`Builds\Local\V1GameplayTruth\TestResults\bijli-deep-soak.xml`).
 
+### P2 - Bijli authority runtime device smoke - complete 2026-08-25
+
+- Exact runtime source: `3b09775` (`authority: own bijli dash replay state`), built
+  in disposable worktree `C:\Projects\BattleRaja-bijli-3b09775`.
+- Development-shaped APK: `Builds\M11\Android\BattleRaja-M11.apk`,
+  **92,855,860** bytes, SHA-256
+  `115C428A69A6E27B7D0BE7A9A0B5C433CAE7CA165C0FCA8251DA34122E70CBC0`.
+- Device: approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34).
+  Installed package `com.example.battleraja.m11`, versionCode **100**, versionName
+  **1.0.0**, minSdk **28**, targetSdk **36**.
+- Cold launch: `UnityPlayerGameActivity`, status OK, **384 ms** total time.
+- Lifecycle/background/relaunch: HOME paused the activity; the process stayed alive;
+  hot relaunch returned it to top-resumed in **82 ms**.
+- Interaction route: menu, Solo Raja mode, fighter selection, Bijli selection, live
+  match, ability input, player-defeat spectator transition, Resolution and final
+  results/rematch surface. The recorded winner was participant **15**.
+- Crash-pattern scan (`FATAL EXCEPTION`, `AndroidRuntime`, `SIGSEGV`, `SIGABRT`,
+  `ANR in`, `NullReferenceException`, `UnityException`) across app, background,
+  resume, match, ability and final-state logs: **0 matches**.
+- Memory samples: resume PSS **421,362 KB**, match PSS **420,920 KB**, post-ability
+  PSS **420,431 KB**; graphics approximately **12.25 MB**, swap PSS **51-53 KB**.
+- Development Console showed repeated non-fatal `Socket: Failed to set blocking
+  mode` / multicast player-connection warnings, expected in a development build but
+  retained as evidence.
+
+This is a development-shaped interaction/lifecycle smoke. It does not validate
+release signing, sustained frame pacing, thermal/GC behavior, accessibility, combat
+feel, balance, release package identity or store readiness.
+
 ## Later checkpoints
 
 - [ ] Fair fighter-specific bot AI and production match harness.
