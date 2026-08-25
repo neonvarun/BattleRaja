@@ -41,15 +41,15 @@ namespace BattleRaja.Tests.EditMode
                 new MatchSpawn(new CombatEntityId(2), new Float2(8f, 0f), 100)
             });
 
-            // Warm past LoadWarmup(3s)+SpawnProtection(5s) with canonical 1/30s
-            // steps. Both actors stay safely inside the zone during setup.
-            for (var warmupTick = 1; warmupTick <= 240; warmupTick++) authority.Advance(warmupTick, 1f / 30f);
+            // Warm through LoadWarmup(3s)+SpawnProtection(5s). The next fixed
+            // 1/30s step enters Opening. Both actors stay safely inside the zone.
+            for (var warmupTick = 1; warmupTick <= 241; warmupTick++) authority.Advance(warmupTick, 1f / 30f);
 
             // Now move actor 1 outside and advance until one damage window fires.
             authority.SetPosition(new CombatEntityId(1), new Float2(15f, 0f));
             MatchAuthorityTick tick = default;
             var totalEvents = 0;
-            for (var tickIndex = 241; tickIndex <= 300; tickIndex++)
+            for (var tickIndex = 242; tickIndex <= 300; tickIndex++)
             {
                 tick = authority.Advance(tickIndex, 1f / 30f);
                 totalEvents += tick.DamageEvents.Count(e => e.TargetId.Value == 1);
@@ -84,6 +84,7 @@ namespace BattleRaja.Tests.EditMode
                 aimDeadZone: 0f,
                 inputSensitivity: 1f));
 
+            authority.Advance(9f);
             var command = new MovementCommand(1, 1, new Float2(1f, 0f), new Float2(1f, 0f));
             var first = authority.ResolveMovement(command, 1f / 30f);
             var duplicate = authority.ResolveMovement(command, 1f / 30f);
@@ -118,6 +119,7 @@ namespace BattleRaja.Tests.EditMode
                 aimDeadZone: 0f,
                 inputSensitivity: 1f));
 
+            authority.Advance(9f);
             var nan = authority.ResolveMovement(
                 new MovementCommand(1, 1, new Float2(float.NaN, 0f), Float2.Up),
                 1f / 30f);
@@ -135,6 +137,85 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void UnifiedAuthorityEligibilityAllowsActionsOnlyInActiveCombatPhases()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            var actorId = new CombatEntityId(1);
+            var targetId = new CombatEntityId(2);
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(actorId, Float2.Zero, 100),
+                new MatchSpawn(targetId, new Float2(4f, 0f), 100)
+            });
+            authority.ConfigureMovement(actorId, new MovementTuning(
+                maxSpeed: 4f,
+                acceleration: 100f,
+                deceleration: 100f,
+                rotationSpeed: 720f,
+                movementDeadZone: 0f,
+                aimDeadZone: 0f,
+                inputSensitivity: 1f));
+
+            Assert.That(authority.ResolveMovement(new MovementCommand(1, 1, new Float2(1f, 0f), Float2.Up), 1f / 30f).Applied, Is.False);
+            Assert.That(authority.ResolveAbilityDisplacement(actorId, 1, new Float2(1f, 0f)).Applied, Is.False);
+
+            var warmupDamage = new DamageRequest(actorId, targetId, CombatFaction.Player, 10, DamageType.Projectile);
+            Assert.That(authority.ResolveDamage(warmupDamage, CombatFaction.Enemy, false, false).Result.Applied, Is.False);
+            authority.SyncHealth(actorId, 50);
+            Assert.That(authority.ApplyHealing(actorId, 25), Is.Zero);
+
+            var dholId = GadgetDefinition.DholBurst.GadgetId;
+            Assert.That(authority.TryAcquireGadget(actorId, dholId), Is.True);
+            var warmupGadget = authority.TryUseGadget(new GadgetUseCommand(
+                actorId,
+                dholId,
+                Float2.Zero,
+                Float2.Up,
+                1));
+            Assert.That(
+                warmupGadget.Used,
+                Is.False,
+                $"phase={authority.CurrentPhase} failure={warmupGadget.Failure}");
+            Assert.That(warmupGadget.Failure, Is.EqualTo(GadgetUseFailure.InvalidPlacement));
+
+            for (var warmupTick = 1; warmupTick <= 241; warmupTick++) authority.Advance(warmupTick, 1f / 30f);
+            Assert.That(authority.CurrentPhase, Is.EqualTo(MatchPhase.Opening));
+
+            Assert.That(authority.ResolveMovement(new MovementCommand(1, 242, new Float2(1f, 0f), Float2.Up), 1f / 30f).Applied, Is.True);
+            Assert.That(authority.ResolveAbilityDisplacement(actorId, 242, new Float2(1f, 0f)).Applied, Is.True);
+
+            var activeDamage = new DamageRequest(actorId, targetId, CombatFaction.Player, 10, DamageType.Projectile, Float2.Up, 242);
+            Assert.That(authority.ResolveDamage(activeDamage, CombatFaction.Enemy, false, false).Result.Applied, Is.True);
+            authority.SyncHealth(actorId, 50);
+            Assert.That(authority.ApplyHealing(actorId, 25), Is.EqualTo(25));
+
+            Assert.That(authority.TryUseGadget(new GadgetUseCommand(
+                actorId,
+                dholId,
+                Float2.Zero,
+                Float2.Up,
+                242)).Used,
+                Is.True);
+
+            Assert.That(authority.TryAcquireGadget(actorId, dholId), Is.True);
+            authority.Advance(252, 300f);
+            Assert.That(authority.CurrentPhase, Is.EqualTo(MatchPhase.Resolution));
+            Assert.That(authority.ResolveMovement(new MovementCommand(1, 253, new Float2(1f, 0f), Float2.Up), 1f / 30f).Applied, Is.False);
+            Assert.That(authority.ResolveAbilityDisplacement(actorId, 253, new Float2(1f, 0f)).Applied, Is.False);
+
+            var resolutionDamage = new DamageRequest(actorId, targetId, CombatFaction.Player, 10, DamageType.Projectile, Float2.Up, 253);
+            Assert.That(authority.ResolveDamage(resolutionDamage, CombatFaction.Enemy, false, false).Result.Applied, Is.False);
+            Assert.That(authority.ApplyHealing(actorId, 25), Is.Zero);
+            Assert.That(authority.TryUseGadget(new GadgetUseCommand(
+                actorId,
+                dholId,
+                Float2.Zero,
+                Float2.Up,
+                253)).Used,
+                Is.False);
+        }
+
+        [Test]
         public void MatchAuthorityResolvesAbilityDisplacementExactlyOncePerTick()
         {
             var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
@@ -144,6 +225,7 @@ namespace BattleRaja.Tests.EditMode
                 new MatchSpawn(new CombatEntityId(2), new Float2(8f, 0f), 100)
             });
 
+            authority.Advance(9f);
             var first = authority.ResolveAbilityDisplacement(new CombatEntityId(1), 1, new Float2(1f, 0f));
             var duplicate = authority.ResolveAbilityDisplacement(new CombatEntityId(1), 1, new Float2(1f, 0f));
             var invalid = authority.ResolveAbilityDisplacement(new CombatEntityId(1), 2, new Float2(float.NaN, 0f));
@@ -170,7 +252,7 @@ namespace BattleRaja.Tests.EditMode
 
             // Commands are rejected during load warmup/spawn protection. Advance the
             // authority clock to the opening phase before exercising attack ordering.
-            authority.Advance(8f);
+            authority.Advance(9f);
 
             var first = authority.TryAcceptAttack(
                 new AttackCommand(actorId, 1, Float2.Zero, Float2.Up, true),
@@ -236,7 +318,7 @@ namespace BattleRaja.Tests.EditMode
                 new MatchSpawn(new CombatEntityId(2), new Float2(8f, 0f), 100)
             });
 
-            authority.Advance(8f);
+            authority.Advance(9f);
             var first = authority.TryAcceptAttack(new AttackCommand(actorId, 1, Float2.Zero, Float2.Up, true));
             Assert.That(first.Accepted, Is.True);
 
@@ -267,7 +349,7 @@ namespace BattleRaja.Tests.EditMode
             });
             authority.ConfigureFaction(actorId, CombatFaction.Player);
             authority.ConfigureWeapon(actorId, ProjectileWeaponDefinition.BijliElectricBolt, 30);
-            authority.Advance(8f);
+            authority.Advance(9f);
 
             var result = authority.TryAcceptAttack(new AttackCommand(
                 actorId,
@@ -293,6 +375,7 @@ namespace BattleRaja.Tests.EditMode
                 new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
                 new MatchSpawn(new CombatEntityId(2), new Float2(8f, 0f), 100)
             });
+            authority.Advance(9f);
 
             var spawned = authority.TrySpawnMayaDecoy(new CombatEntityId(1), 1, Float2.Zero);
             var duplicate = authority.TrySpawnMayaDecoy(new CombatEntityId(1), 1, Float2.Zero);
@@ -338,14 +421,15 @@ namespace BattleRaja.Tests.EditMode
                 new MatchSpawn(targetId, new Float2(6f, 0f), 100)
             });
             // Advance through the full spawn-protection window before combat actions.
-            for (var warmupTick = 1; warmupTick <= 250; warmupTick++) authority.Advance(warmupTick, 1f / 30f);
+            // Advance through the full spawn-protection window before combat actions.
+            for (var warmupTick = 1; warmupTick <= 241; warmupTick++) authority.Advance(warmupTick, 1f / 30f);
             authority.ConfigureFaction(pehelId, CombatFaction.Enemy);
             authority.ConfigureFaction(targetId, CombatFaction.Enemy);
             authority.SetPosition(targetId, new Float2(-4.4f, 0f));
 
             var command = new AbilityCommand(
                 pehelId,
-                251,
+                242,
                 FighterSpecialDefinition.PehelChargeThrow.AbilityId,
                 new Float2(1f, 0f),
                 true);
@@ -360,7 +444,7 @@ namespace BattleRaja.Tests.EditMode
             Assert.That(duplicateStart.AbilityExecutionId, Is.EqualTo(0));
 
             MatchAuthorityChargeThrow thrown = default(MatchAuthorityChargeThrow);
-            for (var tick = 251; tick <= 280; tick++)
+            for (var tick = 242; tick <= 280; tick++)
             {
                 thrown = authority.AdvancePehelCharge(pehelId, tick, 1f / 30f, 3.2f);
                 if (thrown.HasDamage) break;
@@ -405,7 +489,7 @@ namespace BattleRaja.Tests.EditMode
                 Is.False,
                 "stale command");
 
-            for (var warmupTick = 1; warmupTick <= 250; warmupTick++) authority.Advance(warmupTick, 1f / 30f);
+            for (var warmupTick = 1; warmupTick <= 241; warmupTick++) authority.Advance(warmupTick, 1f / 30f);
             Assert.That(authority.TryStartBijliDash(warmupCommand, Float2.Zero, Float2.Up).Accepted, Is.False);
 
             var command = new AbilityCommand(
@@ -513,6 +597,7 @@ namespace BattleRaja.Tests.EditMode
                 new MatchSpawn(new CombatEntityId(2), new Float2(4f, 0f), 100),
                 new MatchSpawn(new CombatEntityId(3), new Float2(-4f, 0f), 100)
             });
+            authority.Advance(9f);
 
             var request = new DamageRequest(
                 new CombatEntityId(1),
@@ -553,6 +638,7 @@ namespace BattleRaja.Tests.EditMode
                 new MatchSpawn(new CombatEntityId(2), new Float2(4f, 0f), 100)
             });
             authority.SyncHealth(new CombatEntityId(1), 40);
+            authority.Advance(9f);
 
             Assert.That(authority.ApplyHealing(new CombatEntityId(1), 25), Is.EqualTo(25));
             Assert.That(authority.Simulation.GetSnapshots().Single(snapshot => snapshot.Id.Value == 1).CurrentHealth, Is.EqualTo(65));
@@ -573,13 +659,14 @@ namespace BattleRaja.Tests.EditMode
                 new MatchSpawn(new CombatEntityId(2), new Float2(3f, 0f), 100)
             });
 
-            // Gadget pickup now resolves atomically through authority ticks.
-            // Actor 1 already spawns at the pickup location; just advance.
+            // Gadget pickup resolves atomically through authority ticks. Capture
+            // the first tick, then warm into the active combat window for use.
             var collectTick = authority.Advance(1, 1f / 30f);
+            for (var warmupTick = 2; warmupTick <= 241; warmupTick++) authority.Advance(warmupTick, 1f / 30f);
             Assert.That(collectTick.GadgetCollections, Has.Length.EqualTo(1));
             Assert.That(collectTick.GadgetCollections[0].GadgetId, Is.EqualTo(GadgetDefinition.DholBurst.GadgetId));
 
-            var command = new GadgetUseCommand(new CombatEntityId(1), GadgetDefinition.DholBurst.GadgetId, Float2.Zero, new Float2(1f, 0f), 1);
+            var command = new GadgetUseCommand(new CombatEntityId(1), GadgetDefinition.DholBurst.GadgetId, Float2.Zero, new Float2(1f, 0f), 242);
             var used = authority.TryUseGadget(command);
             var duplicate = authority.TryUseGadget(command);
 
@@ -607,17 +694,26 @@ namespace BattleRaja.Tests.EditMode
             });
 
             var gadgetId = GadgetDefinition.DholBurst.GadgetId;
+            for (var warmupTick = 1; warmupTick <= 241; warmupTick++) authority.Advance(warmupTick, 1f / 30f);
+            Assert.That(
+                authority.CurrentPhase,
+                Is.EqualTo(MatchPhase.Opening),
+                $"tick={authority.CurrentSimulationTick}");
             Assert.That(authority.TryAcquireGadget(new CombatEntityId(1), gadgetId), Is.True);
-            var first = new GadgetUseCommand(new CombatEntityId(1), gadgetId, Float2.Zero, Float2.Up, 1);
-            Assert.That(authority.TryUseGadget(first).Used, Is.True);
+            var first = new GadgetUseCommand(new CombatEntityId(1), gadgetId, Float2.Zero, Float2.Up, 242);
+            var firstResult = authority.TryUseGadget(first);
+            Assert.That(
+                firstResult.Used,
+                Is.True,
+                $"phase={authority.CurrentPhase} failure={firstResult.Failure}");
 
             Assert.That(authority.TryAcquireGadget(new CombatEntityId(1), gadgetId), Is.True);
-            var blocked = authority.TryUseGadget(new GadgetUseCommand(new CombatEntityId(1), gadgetId, Float2.Zero, Float2.Up, 2));
+            var blocked = authority.TryUseGadget(new GadgetUseCommand(new CombatEntityId(1), gadgetId, Float2.Zero, Float2.Up, 243));
             Assert.That(blocked.Failure, Is.EqualTo(GadgetUseFailure.Cooldown));
 
-            for (var tick = 1; tick <= 300; tick++) authority.Advance(tick, 1f / 30f);
+            for (var tick = 242; tick <= 542; tick++) authority.Advance(tick, 1f / 30f);
 
-            var second = authority.TryUseGadget(new GadgetUseCommand(new CombatEntityId(1), gadgetId, Float2.Zero, Float2.Up, 301));
+            var second = authority.TryUseGadget(new GadgetUseCommand(new CombatEntityId(1), gadgetId, Float2.Zero, Float2.Up, 543));
             Assert.That(second.Used, Is.True);
         }
 
@@ -673,19 +769,20 @@ namespace BattleRaja.Tests.EditMode
             authority.SyncHealth(new CombatEntityId(1), 50);
             var gadgetId = GadgetDefinition.TiffinStation.GadgetId;
             Assert.That(authority.TryAcquireGadget(new CombatEntityId(1), gadgetId), Is.True);
+            for (var warmupTick = 1; warmupTick <= 241; warmupTick++) authority.Advance(warmupTick, 1f / 30f);
 
             var use = authority.TryUseGadget(new GadgetUseCommand(
                 new CombatEntityId(1),
                 gadgetId,
                 Float2.Zero,
                 Float2.Up,
-                1));
+                242));
             Assert.That(use.Used, Is.True);
             Assert.That(use.Effect.StationId, Is.GreaterThan(0));
 
             var healed = false;
             var expired = false;
-            for (var tick = 1; tick <= 300; tick++)
+            for (var tick = 243; tick <= 542; tick++)
             {
                 var result = authority.Advance(tick, 1f / 30f);
                 healed |= result.GadgetHealingIntents.Any(intent => intent.TargetId.Value == 1 && intent.Amount == GadgetDefinition.TiffinStation.Magnitude);
@@ -707,7 +804,7 @@ namespace BattleRaja.Tests.EditMode
                 new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
                 new MatchSpawn(new CombatEntityId(2), new Float2(4f, 0f), 100)
             });
-            for (var warmupTick = 1; warmupTick <= 240; warmupTick++) authority.Advance(warmupTick, 1f / 30f);
+            for (var warmupTick = 1; warmupTick <= 241; warmupTick++) authority.Advance(warmupTick, 1f / 30f);
             authority.SyncHealth(new CombatEntityId(1), 50);
             var gadgetId = GadgetDefinition.TiffinStation.GadgetId;
             Assert.That(authority.TryAcquireGadget(new CombatEntityId(1), gadgetId), Is.True);
@@ -716,11 +813,11 @@ namespace BattleRaja.Tests.EditMode
                 gadgetId,
                 Float2.Zero,
                 Float2.Up,
-                1));
+                242));
             Assert.That(use.Used, Is.True);
 
             var healingIds = new List<int>();
-            for (var tick = 241; tick <= 330; tick++)
+            for (var tick = 242; tick <= 331; tick++)
             {
                 var result = authority.Advance(tick, 1f / 30f);
                 foreach (var intent in result.GadgetHealingIntents)
@@ -752,12 +849,14 @@ namespace BattleRaja.Tests.EditMode
 
             // Warm past LoadWarmup(3s) + SpawnProtection(5s). Both actors stay
             // inside the zone so no damage identity is consumed during setup.
-            for (var warmup = 1; warmup <= 240; warmup++) authority.Advance(warmup, 1f / 30f);
+            // Warm through LoadWarmup(3s) + SpawnProtection(5s). Both actors stay
+            // inside the zone so no damage identity is consumed during setup.
+            for (var warmup = 1; warmup <= 241; warmup++) authority.Advance(warmup, 1f / 30f);
 
             // Move actor 1 outside and collect damage identities until one fires.
             authority.SetPosition(new CombatEntityId(1), new Float2(15f, 0f));
             var firstDamageId = -1;
-            for (var tick = 241; tick <= 300; tick++)
+            for (var tick = 242; tick <= 300; tick++)
             {
                 var t = authority.Advance(tick, 1f / 30f);
                 var ids = t.DamageEvents.Where(e => e.TargetId.Value == 1).Select(e => e.EventId).ToList();
@@ -822,6 +921,7 @@ namespace BattleRaja.Tests.EditMode
             });
             var gadgetId = GadgetDefinition.UmbrellaGuard.GadgetId;
             Assert.That(authority.TryAcquireGadget(new CombatEntityId(1), gadgetId), Is.True);
+            authority.Advance(9f);
             Assert.That(authority.TryUseGadget(new GadgetUseCommand(
                 new CombatEntityId(1), gadgetId, Float2.Zero, Float2.Up, 1)).Used, Is.True);
 
@@ -858,6 +958,7 @@ namespace BattleRaja.Tests.EditMode
             });
             var gadgetId = GadgetDefinition.TiffinStation.GadgetId;
             Assert.That(authority.TryAcquireGadget(new CombatEntityId(1), gadgetId), Is.True);
+            authority.Advance(9f);
             var use = authority.TryUseGadget(new GadgetUseCommand(
                 new CombatEntityId(1), gadgetId, Float2.Zero, Float2.Up, 1));
             Assert.That(use.Used, Is.True);

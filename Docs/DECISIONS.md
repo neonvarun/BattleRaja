@@ -15,6 +15,61 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Evidence/sources:**
 - **Owner:**
 
+### ADR-058 — Unify action eligibility behind the authority clock
+
+- **Date:** 2026-08-25
+- **Status:** Accepted for the V1 gameplay-truth slice.
+- **Context:** Attack, movement, displacement, damage, healing, gadget, decoy and
+  station effects previously checked phase rules in several places. That made it
+  possible for one action type to gain a warmup/protection exception while another
+  stayed correctly gated, and it scattered combat-phase policy through call sites.
+- **Options considered:** Duplicate phase checks at every new action; add a separate
+  eligibility service outside the authority; or centralize actor/action eligibility in
+  `OfflineMatchAuthority` while preserving action-specific typed rejection reasons.
+- **Decision:** Add one authority-owned active-combat eligibility check covering
+  Opening through Final Circle for live known actors. Route movement, ability
+  displacement, attacks, fighter abilities, decoy spawning/damage, direct/projectile
+  damage, healing, gadget use/station effects/healing and outside-zone damage through
+  it before state mutation. Keep existing action-specific failure enums at the public
+  boundary and reject without consuming command identities.
+- **Consequences:** Noncombat setup and resolution states cannot mutate canonical
+  combat state through an action side door. Tests now use the canonical 241-tick
+  30 Hz boundary instead of scattered 240/250 assumptions. Production PlayMode tests
+  explicitly advance the pure match to Opening rather than depending on earlier test
+  order. Future action types must call this eligibility path before mutation.
+- **Evidence/sources:** `OfflineMatchAuthority.GetActionEligibility`,
+  `IsCombatActionPhase`, focused/full EditMode results under
+  `Builds/Local/V1GameplayTruth/TestResults`, full PlayMode result, and the new
+  unified-eligibility regression.
+- **Owner:** Human project owner
+
+### ADR-059 — Keep offline Solo bots fair in free-for-all combat
+
+- **Date:** 2026-08-25
+- **Status:** Accepted for V1 offline gameplay truth.
+- **Context:** The presentation scene labeled every bot `CombatFaction.Enemy`, while
+  bot target selection treated that label as hostility. In a true eight-way Solo
+  free-for-all this could make bots avoid legitimate fights or reason about the wrong
+  relationships. Bot attack range also used tactical preference plus a constant rather
+  than the equipped weapon's maximum range.
+- **Options considered:** Introduce seven unique presentation factions; move all bot
+  decisions into match authority; or retain presentation-side perception and give the
+  pure decision model explicit self-faction plus weapon facts.
+- **Decision:** Extend bot perception with the actor's own faction and weapon
+  definition. Solo bots ignore same-faction and neutral actors, respect
+  `ProjectileWeaponDefinition.MaxRange` for attacks, and use gadgets only when a
+  visible hostile exists. Scene generation supplies fighter-specific weapon assets.
+  `CombatFaction` remains a presentation compatibility label; canonical damage still
+  uses authority-owned combat groups.
+- **Consequences:** Bots no longer rely on stale enemy/all-player assumptions. Weapon
+  range is data-driven and cannot exceed projectile reach. Future team mode must pass
+  explicit authority-backed groups into bot perception. This does not yet prove human
+  fairness/feel approval, balance quality or navigation quality.
+- **Evidence/sources:** `BotPerceptionSnapshot`, `BotDecisionEngine.SelectTarget`,
+  `GadgetUser.UseForContext`, production scene generation, new free-for-all bot
+  regression, full EditMode 133/133, PlayMode 75/75 and 2,000-match zero-divergence soak.
+- **Owner:** Human project owner
+
 ### ADR-000 — Milestone 0 toolchain and architecture baseline
 
 - **Date:** 2026-08-02

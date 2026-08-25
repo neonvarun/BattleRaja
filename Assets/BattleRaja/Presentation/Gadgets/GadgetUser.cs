@@ -198,7 +198,19 @@ namespace BattleRaja.Presentation.Gadgets
 
         public bool UseForContext(BotPerceptionSnapshot snapshot)
         {
-            if (!botControlled || !_inventory.HasGadget || snapshot.Targets == null || snapshot.Targets.Length == 0)
+            var visibleHostile = false;
+            for (var i = 0; i < snapshot.TargetCount; i++)
+            {
+                var candidate = snapshot.Targets[i];
+                if (candidate.HasLineOfSight && candidate.Faction != CombatFaction.Neutral &&
+                    candidate.Faction != snapshot.SelfFaction)
+                {
+                    visibleHostile = true;
+                    break;
+                }
+            }
+
+            if (!botControlled || !_inventory.HasGadget || !visibleHostile)
             {
                 return false;
             }

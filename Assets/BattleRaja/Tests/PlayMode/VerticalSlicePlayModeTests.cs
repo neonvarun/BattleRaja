@@ -257,6 +257,7 @@ namespace BattleRaja.Tests.PlayMode
             }
             dhol.transform.position = player.transform.position;
             match.StartMatch();
+            PlayModeTestHelpers.AdvanceToCombatPhase(match);
             yield return new WaitForSecondsRealtime(0.25f);
 
             Assert.That(user.HasGadget, Is.True,
@@ -318,7 +319,7 @@ namespace BattleRaja.Tests.PlayMode
             var attack = player.GetComponent<CombatAttackController>();
             Assert.That(match.AuthorityDrivenMovement, Is.True);
 
-            for (var i = 0; i < 8; i++) match.Simulation.Advance(1f);
+            PlayModeTestHelpers.AdvanceToCombatPhase(match);
 
             var origin = new Float2(player.transform.position.x, player.transform.position.z + 0.7f);
             attack.Submit(new AttackCommand(new CombatEntityId(1), match.SimulationTick, origin, Float2.Up, true));
@@ -390,6 +391,7 @@ namespace BattleRaja.Tests.PlayMode
                 .First(agent => agent.ActorId == 1);
             Assert.That(match.AuthorityDrivenMovement, Is.True);
             Assert.That(match.Simulation.TryGetSnapshot(new CombatEntityId(1), out var before), Is.True);
+            PlayModeTestHelpers.AdvanceToCombatPhase(match);
 
             var previousTimeScale = Time.timeScale;
             Time.timeScale = 1f;
@@ -543,7 +545,7 @@ namespace BattleRaja.Tests.PlayMode
             Physics.SyncTransforms();
 
             // Advance the pure match to Opening without waiting through protection.
-            for (var i = 0; i < 8; i++) match.Simulation.Advance(1f);
+            for (var i = 0; i < 9; i++) match.Simulation.Advance(1f);
             match.Simulation.SyncHealth(target.Id, weapon.Damage);
 
             var attackTick = match.SimulationTick + 1;
@@ -586,6 +588,7 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(match, Is.Not.Null);
             Assert.That(maya, Is.Not.Null);
             Assert.That(match.TryGetMayaDecoySnapshot(ownerId, out _), Is.False);
+            for (var i = 0; i < 9; i++) match.Simulation.Advance(1f);
 
             maya.Submit(AbilityCommandFactory.Create(ownerId, 1, maya.AbilityId, Float2.Up, true));
             yield return new WaitForSecondsRealtime(0.25f);

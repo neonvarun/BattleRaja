@@ -103,8 +103,10 @@ namespace BattleRaja.Editor
             var weaponAsset = EnsureWeaponAsset();
             var bijliWeaponAsset = EnsureBijliWeaponAsset();
             var fighterAsset = EnsureFighterAsset();
-            var pehelAsset = EnsureFighterVariantAsset(PehelFighterAssetPath, "fighter.pehel", "Pehel", FighterDefinition.Pehel, EnsureVariantWeaponAsset(PehelWeaponAssetPath, FighterDefinition.Pehel.BasicAttack));
-            var mayaAsset = EnsureFighterVariantAsset(MayaFighterAssetPath, "fighter.maya", "Maya", FighterDefinition.Maya, EnsureVariantWeaponAsset(MayaWeaponAssetPath, FighterDefinition.Maya.BasicAttack));
+            var pehelWeapon = EnsureVariantWeaponAsset(PehelWeaponAssetPath, FighterDefinition.Pehel.BasicAttack);
+            var mayaWeapon = EnsureVariantWeaponAsset(MayaWeaponAssetPath, FighterDefinition.Maya.BasicAttack);
+            var pehelAsset = EnsureFighterVariantAsset(PehelFighterAssetPath, "fighter.pehel", "Pehel", FighterDefinition.Pehel, pehelWeapon);
+            var mayaAsset = EnsureFighterVariantAsset(MayaFighterAssetPath, "fighter.maya", "Maya", FighterDefinition.Maya, mayaWeapon);
             EnsureGadgetAssets();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -241,7 +243,10 @@ namespace BattleRaja.Editor
                     tuningAsset,
                     botFighter,
                     projectilePool,
-                    damageResolver);
+                    damageResolver,
+                    weaponAsset,
+                    pehelWeapon,
+                    mayaWeapon);
             }
 
             CreatePickup("HealthPickup_A", new Vector3(-5f, 0.35f, 3f), arena.transform, impactMaterial);
@@ -410,11 +415,11 @@ namespace BattleRaja.Editor
             if (bots.Length < 4) throw new BuildFailedException("Bazaar Bastion requires at least four bot actors in the production scene.");
             if (bots[1].GetComponent<PehelFighterController>() == null)
             {
-                ConfigureProductionBot(bots[1], pehelAsset, pehelMaterial, null, damageResolver, projectilePool);
+                ConfigureProductionBot(bots[1], pehelAsset, pehelMaterial, null, damageResolver, projectilePool, pehelWeapon, mayaWeapon);
             }
             if (bots[2].GetComponent<MayaFighterController>() == null)
             {
-                ConfigureProductionBot(bots[2], mayaAsset, mayaMaterial, mayaMaterial, damageResolver, projectilePool);
+                ConfigureProductionBot(bots[2], mayaAsset, mayaMaterial, mayaMaterial, damageResolver, projectilePool, pehelWeapon, mayaWeapon);
             }
 
             ConfigurePlayerFighterSelection(arena.transform, tuningAsset, pehelAsset, mayaAsset, mayaMaterial, damageResolver);
@@ -878,7 +883,10 @@ namespace BattleRaja.Editor
             MovementTuningAsset tuningAsset,
             FighterDefinitionAsset fighterAsset,
             CombatProjectilePool projectilePool,
-            CombatDamageResolver damageResolver)
+            CombatDamageResolver damageResolver,
+            ProjectileWeaponAsset bijliWeaponAsset,
+            ProjectileWeaponAsset pehelWeapon,
+            ProjectileWeaponAsset mayaWeapon)
         {
             var bot = GameObject.CreatePrimitive(PrimitiveType.Capsule);
             var fighterId = fighterAsset.ToDomain().FighterId;
@@ -950,8 +958,15 @@ namespace BattleRaja.Editor
             SetInt(perception, "actorId", actorId);
             SetObjectReference(perception, "health", health);
             SetObjectReference(perception, "selfTarget", target);
+            SetObjectReference(perception, "weaponAsset", fighterAsset.ToDomain().FighterId.Equals(FighterDefinition.Pehel.FighterId)
+                ? pehelWeapon
+                : fighterAsset.ToDomain().FighterId.Equals(FighterDefinition.Maya.FighterId) ? mayaWeapon : bijliWeaponAsset);
             SetInt(brain, "seed", 100 + botIndex);
             SetObjectReference(brain, "fighterController", fighter);
+            SetObjectReference(
+                brain,
+                "weaponAsset",
+                isPehel ? pehelWeapon : isMaya ? mayaWeapon : bijliWeaponAsset);
             SetObjectReference(gadget, "movementAgent", agent);
             SetObjectReference(gadget, "combatTarget", target);
             SetObjectReference(gadget, "health", health);
@@ -965,7 +980,9 @@ namespace BattleRaja.Editor
             Material fighterMaterial,
             Material decoyMaterial,
             CombatDamageResolver damageResolver,
-            CombatProjectilePool projectilePool)
+            CombatProjectilePool projectilePool,
+            ProjectileWeaponAsset pehelWeapon,
+            ProjectileWeaponAsset mayaWeapon)
         {
             var bot = brain.gameObject;
             var oldFighters = bot.GetComponents<MonoBehaviour>()
@@ -986,6 +1003,7 @@ namespace BattleRaja.Editor
             var health = bot.GetComponent<CombatHealth>();
             var controller = bot.GetComponent<CharacterController>();
             var renderer = bot.GetComponent<Renderer>();
+            var perception = bot.GetComponent<BotPerceptionSensor>();
             if (renderer != null) renderer.sharedMaterial = fighterMaterial;
 
             SetObjectReference(agent, "fighterController", fighter);
@@ -994,6 +1012,18 @@ namespace BattleRaja.Editor
             SetObjectReference(fighter, "fighterDefinition", fighterAsset);
             SetObjectReference(fighter, "movementAgent", agent);
             SetObjectReference(brain, "fighterController", fighter);
+            SetObjectReference(
+                brain,
+                "weaponAsset",
+                domain.FighterId.Equals(FighterDefinition.Pehel.FighterId)
+                    ? pehelWeapon
+                    : mayaWeapon);
+            SetObjectReference(
+                perception,
+                "weaponAsset",
+                domain.FighterId.Equals(FighterDefinition.Pehel.FighterId)
+                    ? pehelWeapon
+                    : mayaWeapon);
             SetInt(health, "maxHealth", domain.MaxHealth);
 
             if (fighter is PehelFighterController)

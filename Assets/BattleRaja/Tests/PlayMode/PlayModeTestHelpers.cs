@@ -1,4 +1,6 @@
 using System.Linq;
+using BattleRaja.Core.Domain;
+using BattleRaja.Presentation.Match;
 using BattleRaja.Presentation.Movement;
 using BattleRaja.Presentation.AI;
 using UnityEngine;
@@ -30,6 +32,14 @@ namespace BattleRaja.Tests.PlayMode
             foreach (var bot in Object.FindObjectsByType<BotBrain>())
             {
                 bot.enabled = false;
+            }
+        }
+
+        public static void AdvanceToCombatPhase(OfflineMatchController match)
+        {
+            while (match.Simulation.Phase < MatchPhase.Opening)
+            {
+                match.Simulation.Advance(1f / 30f);
             }
         }
     }

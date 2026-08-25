@@ -6,6 +6,20 @@
 
 ## Current state
 
+- **Working-tree gameplay truth update (2026-08-25):** unified action eligibility
+  is now owned by `OfflineMatchAuthority`. Movement, ability displacement, attack,
+  fighter ability, decoy, direct/projectile damage, healing, gadget use, station
+  effects/healing and outside-zone damage all reject outside Opening-Final Circle
+  before mutating canonical state. Bots now ignore same-faction actors in Solo
+  free-for-all, respect their weapon's true maximum range and use gadgets only against
+  visible hostiles. Static validation is **0 errors / 0 warnings**, focused authority
+  validation is **25/25**, full EditMode is **133/133**, and full PlayMode is **75/75**.
+  The deep recorded-replay soak passes **1,000 seeds x 2 executions = 2,000 matches**
+  with zero divergence in **465.3278045 seconds**; see
+  `Builds/Local/V1GameplayTruth/TestResults/botfair-deep-soak.xml`.
+  Compiler scans of the final test logs found **0** C# errors and warnings. This is
+  local test evidence only; it does not claim a fresh Android/Web build or
+  device/browser validation.
 - Exact runtime HEAD `3b09775` (`authority: own bijli dash replay state`) adds
   authority-owned Bijli dash lifecycle, canonical collision advancement, replay
   hashing, production view mirroring and action-phase gating for Bijli/Pehel starts.

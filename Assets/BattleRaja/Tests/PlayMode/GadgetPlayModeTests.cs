@@ -38,6 +38,8 @@ namespace BattleRaja.Tests.PlayMode
         {
             foreach (var bot in Object.FindObjectsByType<BotBrain>()) bot.enabled = false;
             var user = PlayModeTestHelpers.FindPlayer<GadgetUser>();
+            var match = Object.FindAnyObjectByType<BattleRaja.Presentation.Match.OfflineMatchController>();
+            for (var i = 0; i < 9; i++) match.Simulation.Advance(1f);
             var pickup = System.Linq.Enumerable.First(
                 Object.FindObjectsByType<GadgetPickup>(),
                 candidate => candidate.GadgetId.Equals(GadgetDefinition.DholBurst.GadgetId));
@@ -67,6 +69,7 @@ namespace BattleRaja.Tests.PlayMode
                 $"feedback={user.Feedback} player={player.transform.position} pickup={pickup.transform.position} active={pickup.IsAvailable}");
             Assert.That(user.HeldGadget, Is.EqualTo(GadgetDefinition.DholBurst.GadgetId));
             Assert.That(pickup.IsAvailable, Is.False);
+            for (var i = 0; i < 9; i++) match.Simulation.Advance(1f);
             Assert.That(user.UseHeld(), Is.True);
             Assert.That(user.HasGadget, Is.False);
         }
@@ -76,6 +79,8 @@ namespace BattleRaja.Tests.PlayMode
         {
             foreach (var bot in Object.FindObjectsByType<BotBrain>()) bot.enabled = false;
             var user = PlayModeTestHelpers.FindPlayer<GadgetUser>();
+            var match = Object.FindAnyObjectByType<BattleRaja.Presentation.Match.OfflineMatchController>();
+            for (var i = 0; i < 9; i++) match.Simulation.Advance(1f);
             user.TryPickup(BattleRaja.Core.Domain.GadgetDefinition.TiffinStation.GadgetId);
             Assert.That(user.UseHeld(), Is.True);
             yield return new WaitForSeconds(0.1f);
@@ -87,6 +92,8 @@ namespace BattleRaja.Tests.PlayMode
         {
             foreach (var bot in Object.FindObjectsByType<BotBrain>()) bot.enabled = false;
             var user = PlayModeTestHelpers.FindPlayer<GadgetUser>();
+            var match = Object.FindAnyObjectByType<BattleRaja.Presentation.Match.OfflineMatchController>();
+            for (var i = 0; i < 9; i++) match.Simulation.Advance(1f);
             user.TryPickup(GadgetDefinition.TiffinStation.GadgetId);
             Assert.That(user.UseHeld(), Is.True);
             yield return null;

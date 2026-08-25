@@ -10,6 +10,7 @@ namespace BattleRaja.Presentation.AI
         [SerializeField] private int actorId = 10;
         [SerializeField] private CombatHealth health;
         [SerializeField] private CombatTarget selfTarget;
+        [SerializeField] private ProjectileWeaponAsset weaponAsset;
         [SerializeField] private Transform eye;
         [SerializeField] private OfflineMatchController match;
         [SerializeField] private LayerMask lineOfSightMask = 1;
@@ -104,6 +105,8 @@ namespace BattleRaja.Presentation.AI
             var zone = match != null
                 ? new BotZoneObservation(match.ZoneCenter, match.ZoneRadius, match.NextZoneCenter, match.NextZoneRadius)
                 : BotZoneObservation.Unbounded;
+            var selfFaction = selfTarget != null ? selfTarget.Faction : CombatFaction.Enemy;
+            var weapon = weaponAsset != null ? weaponAsset.ToDomain() : ProjectileWeaponDefinition.TrainingBolt;
             LastSnapshot = new BotPerceptionSnapshot(
                 selfTarget != null ? selfTarget.Id : new CombatEntityId(actorId),
                 new Float2(transform.position.x, transform.position.z),
@@ -111,7 +114,9 @@ namespace BattleRaja.Presentation.AI
                 current.MaxHealth,
                 _observations,
                 count,
-                zone);
+                zone,
+                selfFaction,
+                weapon);
             return LastSnapshot;
         }
     }

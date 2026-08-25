@@ -179,9 +179,40 @@ namespace BattleRaja.Core.Application
         public float RemainingSeconds { get; }
         public float CooldownRemaining { get; }
 
-        /// <summary>Stable authority-assigned ability identity for the spawn that
-        /// created this decoy (0 for rejected/local snapshots).</summary>
-        public int AbilityExecutionId { get; }
+    /// <summary>Stable authority-assigned ability identity for the spawn that
+    /// created this decoy (0 for rejected/local snapshots).</summary>
+    public int AbilityExecutionId { get; }
+    }
+
+    public enum MatchAuthorityActionPhaseFailure
+    {
+        None = 0,
+        UnknownActor = 1,
+        DefeatedActor = 2,
+        Warmup = 3,
+        SpawnProtection = 4,
+        Resolution = 5
+    }
+
+    public readonly struct MatchAuthorityActionEligibility
+    {
+        public MatchAuthorityActionEligibility(
+            MatchAuthorityActionPhaseFailure failure,
+            MatchParticipantSnapshot snapshot)
+        {
+            Failure = failure;
+            Snapshot = snapshot;
+        }
+
+        public MatchAuthorityActionPhaseFailure Failure { get; }
+        public MatchParticipantSnapshot Snapshot { get; }
+        public bool IsEligible => Failure == MatchAuthorityActionPhaseFailure.None;
+
+        public static MatchAuthorityActionEligibility Eligible(MatchParticipantSnapshot snapshot) =>
+            new MatchAuthorityActionEligibility(MatchAuthorityActionPhaseFailure.None, snapshot);
+
+        public static MatchAuthorityActionEligibility Rejected(MatchAuthorityActionPhaseFailure failure) =>
+            new MatchAuthorityActionEligibility(failure, default(MatchParticipantSnapshot));
     }
 
     /// <summary>Immutable authority verdict for one validated ability start.</summary>
@@ -726,6 +757,11 @@ namespace BattleRaja.Core.Application
             }
 
             var step = motor.Step(command, fixedDeltaSeconds, tuning);
+            if (!GetActionEligibility(actorId).IsEligible)
+            {
+                return new MatchAuthorityMovement(actorId, command.SimulationTick, false, default(MovementStep), current.Position);
+            }
+
             var collision = _collisionSolver.Move(current.Position, step.Displacement);
             var position = collision.Position;
             var appliedStep = new MovementStep(step.Velocity, collision.AppliedDisplacement, step.AimDirection);
@@ -751,6 +787,11 @@ namespace BattleRaja.Core.Application
                 !displacement.IsFinite ||
                 !hasCurrent ||
                 !current.Alive)
+            {
+                return new MatchAuthorityDisplacement(actorId, simulationTick, false, Float2.Zero, current.Position);
+            }
+
+            if (!GetActionEligibility(actorId).IsEligible)
             {
                 return new MatchAuthorityDisplacement(actorId, simulationTick, false, Float2.Zero, current.Position);
             }
@@ -810,19 +851,15 @@ namespace BattleRaja.Core.Application
                     0);
             }
 
-            if (CurrentPhase == MatchPhase.LoadWarmup)
+            var phaseEligibility = GetActionEligibility(actorId);
+            if (!phaseEligibility.IsEligible)
             {
-                return new MatchAuthorityAttack(actorId, command.SimulationTick, false, MatchAuthorityAttackFailure.Warmup, 0);
-            }
-
-            if (CurrentPhase == MatchPhase.SpawnProtection)
-            {
-                return new MatchAuthorityAttack(actorId, command.SimulationTick, false, MatchAuthorityAttackFailure.SpawnProtection, 0);
-            }
-
-            if (CurrentPhase == MatchPhase.Resolution)
-            {
-                return new MatchAuthorityAttack(actorId, command.SimulationTick, false, MatchAuthorityAttackFailure.Resolution, 0);
+                return new MatchAuthorityAttack(
+                    actorId,
+                    command.SimulationTick,
+                    false,
+                    ToAttackFailure(phaseEligibility.Failure),
+                    0);
             }
 
             var latestAllowedTick = checked(_lastSimulationTick + 1 + MaxAttackInputLeadTicks);
@@ -963,9 +1000,7 @@ namespace BattleRaja.Core.Application
                 command.SimulationTick < 0 ||
                 (_lastPehelCommandTicks.TryGetValue(command.InstigatorId, out var lastTick) && command.SimulationTick <= lastTick) ||
                 command.SimulationTick <= CurrentSimulationTick ||
-                CurrentPhase == MatchPhase.LoadWarmup ||
-                CurrentPhase == MatchPhase.SpawnProtection ||
-                CurrentPhase == MatchPhase.Resolution ||
+                !GetActionEligibility(command.InstigatorId).IsEligible ||
                 !RequireSimulation().TryGetSnapshot(command.InstigatorId, out var snapshot) ||
                 !snapshot.Alive)
             {
@@ -1132,9 +1167,7 @@ namespace BattleRaja.Core.Application
                 (_lastBijliCommandTicks.TryGetValue(command.InstigatorId, out var lastTick) &&
                     command.SimulationTick <= lastTick) ||
                 command.SimulationTick <= CurrentSimulationTick ||
-                CurrentPhase == MatchPhase.LoadWarmup ||
-                CurrentPhase == MatchPhase.SpawnProtection ||
-                CurrentPhase == MatchPhase.Resolution ||
+                !GetActionEligibility(command.InstigatorId).IsEligible ||
                 !RequireSimulation().TryGetSnapshot(command.InstigatorId, out var snapshot) ||
                 !snapshot.Alive)
             {
@@ -1363,6 +1396,7 @@ namespace BattleRaja.Core.Application
             if (simulationTick < 0 || !position.IsFinite ||
                 !_lastDecoySpawnTicks.TryGetValue(ownerId, out var lastTick) ||
                 simulationTick <= lastTick ||
+                !GetActionEligibility(ownerId).IsEligible ||
                 !simulation.TryGetSnapshot(ownerId, out var owner) || !owner.Alive)
             {
                 return GetMayaDecoySnapshot(ownerId);
@@ -1430,6 +1464,14 @@ namespace BattleRaja.Core.Application
             }
 
             _participantFactions.TryGetValue(ownerId, out var ownedTargetFaction);
+            if (!IsCombatActionPhase(CurrentPhase))
+            {
+                return new MatchAuthorityDamage(
+                    request,
+                    new DamageResult(false, 0, true, DamageRejectionReason.AlreadyDefeated),
+                    decoy.CurrentHealth);
+            }
+
             var hostileToOwner = AreDifferentCombatGroups(request.InstigatorId, ownerId);
             targetFaction = ownedTargetFaction;
             allowFriendlyFire = hostileToOwner;
@@ -1495,7 +1537,8 @@ namespace BattleRaja.Core.Application
 
         public bool SyncHealth(CombatEntityId id, int currentHealth) => RequireSimulation().SyncHealth(id, currentHealth);
 
-        public int ApplyHealing(CombatEntityId id, int amount) => RequireSimulation().Heal(id, amount);
+        public int ApplyHealing(CombatEntityId id, int amount) =>
+            GetActionEligibility(id).IsEligible ? RequireSimulation().Heal(id, amount) : 0;
 
         /// <summary>
         /// Routes a resolved combat event through the authority-owned match simulation.
@@ -1514,6 +1557,21 @@ namespace BattleRaja.Core.Application
             bool allowSelfHit,
             bool allowFriendlyFire)
         {
+            var targetEligibility = GetActionEligibility(request.TargetId);
+            if (!targetEligibility.IsEligible)
+            {
+                return new MatchAuthorityDamage(
+                    request,
+                    new DamageResult(
+                        false,
+                        0,
+                        false,
+                        targetEligibility.Failure == MatchAuthorityActionPhaseFailure.UnknownActor
+                            ? DamageRejectionReason.WrongTarget
+                            : DamageRejectionReason.AlreadyDefeated),
+                    0);
+            }
+
             var mitigated = ApplyDamageMitigation(request);
             var result = RequireSimulation().ApplyDamage(mitigated, targetFaction, allowSelfHit, allowFriendlyFire);
             var currentHealthAfter = 0;
@@ -1564,7 +1622,12 @@ namespace BattleRaja.Core.Application
             var tickSnapshots = simulation.GetSnapshots();
             var healingIntents = new List<GadgetHealingIntent>();
             var expiredStationIds = new List<int>();
-            AdvanceStations(fixedDeltaSeconds, tickSnapshots, healingIntents, expiredStationIds);
+            AdvanceStations(
+                fixedDeltaSeconds,
+                result.Phase,
+                tickSnapshots,
+                healingIntents,
+                expiredStationIds);
             var damageEvents = new List<CombatDamageEvent>(
                 ApplyOutsideZoneDamage(simulationTick, fixedDeltaSeconds, result, tickSnapshots));
             if (projectileDamageEvents.Count > 0) damageEvents.AddRange(projectileDamageEvents);
@@ -1830,6 +1893,12 @@ namespace BattleRaja.Core.Application
             MatchParticipantSnapshot[] snapshots)
         {
             if (result.OutsideCount <= 0 || result.OutsideDamagePerSecond <= 0)
+            {
+                _outsideDamageAccumulator = 0d;
+                return Array.Empty<CombatDamageEvent>();
+            }
+
+            if (!IsCombatActionPhase(result.Phase))
             {
                 _outsideDamageAccumulator = 0d;
                 return Array.Empty<CombatDamageEvent>();
@@ -2170,6 +2239,11 @@ namespace BattleRaja.Core.Application
                 return new GadgetUseResult(false, GadgetUseFailure.InvalidPlacement, default(GadgetEffect));
             }
 
+            if (!GetActionEligibility(command.UserId).IsEligible)
+            {
+                return new GadgetUseResult(false, GadgetUseFailure.InvalidPlacement, default(GadgetEffect));
+            }
+
             var direction = command.Direction.Normalized;
             var canonicalOrigin = user.Position;
             if (definition.Kind == GadgetKind.TiffinStation)
@@ -2272,7 +2346,8 @@ namespace BattleRaja.Core.Application
                 _stations.TryGetValue(stationId, out station);
             }
 
-            if (stationId <= 0 || rawAmount <= 0 || station == null || !station.IsActive)
+            if (stationId <= 0 || rawAmount <= 0 || station == null || !station.IsActive ||
+                !IsCombatActionPhase(CurrentPhase))
             {
                 return new GadgetStationDamageResult(false, 0, false, station != null ? station.CurrentHealth : 0);
             }
@@ -2352,6 +2427,7 @@ namespace BattleRaja.Core.Application
 
         private void AdvanceStations(
             float fixedDeltaSeconds,
+            MatchPhase phase,
             MatchParticipantSnapshot[] snapshots,
             List<GadgetHealingIntent> healingIntents,
             List<int> expiredStationIds)
@@ -2360,19 +2436,23 @@ namespace BattleRaja.Core.Application
             var stationIds = new List<int>(_stations.Keys);
             stationIds.Sort();
             var expired = new List<int>();
+            var healingAllowed = IsCombatActionPhase(phase);
             foreach (var stationId in stationIds)
             {
                 var step = _stations[stationId].Advance(fixedDeltaSeconds, snapshots);
-                for (var i = 0; i < step.Healing.Length; i++)
+                if (healingAllowed)
                 {
-                    var requested = step.Healing[i];
-                    var applied = RequireSimulation().Heal(requested.TargetId, requested.Amount);
-                    if (applied <= 0) continue;
-                    healingIntents.Add(new GadgetHealingIntent(
-                        requested.StationId,
-                        requested.TargetId,
-                        applied,
-                        _identityTracker.NextHealingEventId()));
+                    for (var i = 0; i < step.Healing.Length; i++)
+                    {
+                        var requested = step.Healing[i];
+                        var applied = RequireSimulation().Heal(requested.TargetId, requested.Amount);
+                        if (applied <= 0) continue;
+                        healingIntents.Add(new GadgetHealingIntent(
+                            requested.StationId,
+                            requested.TargetId,
+                            applied,
+                            _identityTracker.NextHealingEventId()));
+                    }
                 }
 
                 if (step.Expired) expired.Add(stationId);
@@ -2441,6 +2521,58 @@ namespace BattleRaja.Core.Application
         {
             if (_simulation == null) throw new InvalidOperationException("Start the match authority before using it.");
             return _simulation;
+        }
+
+        private MatchAuthorityActionEligibility GetActionEligibility(CombatEntityId actorId)
+        {
+            if (_simulation == null ||
+                !_simulation.TryGetSnapshot(actorId, out var snapshot))
+            {
+                return MatchAuthorityActionEligibility.Rejected(MatchAuthorityActionPhaseFailure.UnknownActor);
+            }
+
+            if (!snapshot.Alive)
+            {
+                return MatchAuthorityActionEligibility.Rejected(MatchAuthorityActionPhaseFailure.DefeatedActor);
+            }
+
+            return IsCombatActionPhase(_simulation.Phase)
+                ? MatchAuthorityActionEligibility.Eligible(snapshot)
+                : MatchAuthorityActionEligibility.Rejected(ToActionFailure(_simulation.Phase));
+        }
+
+        private static bool IsCombatActionPhase(MatchPhase phase) =>
+            phase >= MatchPhase.Opening && phase <= MatchPhase.FinalCircle;
+
+        private static MatchAuthorityActionPhaseFailure ToActionFailure(MatchPhase phase)
+        {
+            switch (phase)
+            {
+                case MatchPhase.SpawnProtection:
+                    return MatchAuthorityActionPhaseFailure.SpawnProtection;
+                case MatchPhase.Resolution:
+                    return MatchAuthorityActionPhaseFailure.Resolution;
+                default:
+                    return MatchAuthorityActionPhaseFailure.Warmup;
+            }
+        }
+
+        private static MatchAuthorityAttackFailure ToAttackFailure(
+            MatchAuthorityActionPhaseFailure failure)
+        {
+            switch (failure)
+            {
+                case MatchAuthorityActionPhaseFailure.UnknownActor:
+                    return MatchAuthorityAttackFailure.UnknownActor;
+                case MatchAuthorityActionPhaseFailure.DefeatedActor:
+                    return MatchAuthorityAttackFailure.DefeatedActor;
+                case MatchAuthorityActionPhaseFailure.SpawnProtection:
+                    return MatchAuthorityAttackFailure.SpawnProtection;
+                case MatchAuthorityActionPhaseFailure.Resolution:
+                    return MatchAuthorityAttackFailure.Resolution;
+                default:
+                    return MatchAuthorityAttackFailure.Warmup;
+            }
         }
     }
 }

@@ -24,6 +24,7 @@ namespace BattleRaja.Presentation.AI
         [SerializeField] private BotPerceptionSensor perception;
         [SerializeField] private GadgetUser gadgetUser;
         [SerializeField] private OfflineMatchController matchController;
+        [SerializeField] private ProjectileWeaponAsset weaponAsset;
 
         private BotDifficultyProfile _profile;
         private BotDecisionEngine _engine;
@@ -71,7 +72,14 @@ namespace BattleRaja.Presentation.AI
             if (_abilityController == null) _abilityController = GetComponent<IFighterAbilityController>();
             perception = perception != null ? perception : GetComponent<BotPerceptionSensor>();
             gadgetUser = gadgetUser != null ? gadgetUser : GetComponent<GadgetUser>();
-            _profile = new BotDifficultyProfile(reactionDelayTicks, aimNoise, retreatHealthFraction, preferredRange, decisionIntervalSeconds, stuckTimeoutSeconds);
+            _profile = new BotDifficultyProfile(
+                reactionDelayTicks,
+                aimNoise,
+                retreatHealthFraction,
+                preferredRange,
+                decisionIntervalSeconds,
+                stuckTimeoutSeconds,
+                weaponAsset != null ? weaponAsset.ToDomain() : ProjectileWeaponDefinition.TrainingBolt);
             _clock = new FixedSimulationClock(30);
             _decisionIntervalTicks = Mathf.Max(1, Mathf.CeilToInt(_profile.DecisionIntervalSeconds * _clock.TickRate));
             _engine = new BotDecisionEngine();

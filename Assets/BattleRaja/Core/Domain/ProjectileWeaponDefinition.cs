@@ -79,5 +79,16 @@ namespace BattleRaja.Core.Domain
             collisionLayerMask: ~0,
             allowSelfHit: false,
             allowFriendlyFire: false);
+
+        public static ProjectileWeaponDefinition PehelHeavyBolt => new ProjectileWeaponDefinition(
+            damage: 20,
+            fireIntervalSeconds: 0.72f,
+            projectileSpeed: 10f,
+            maxRange: 5.5f,
+            lifetimeSeconds: 0.7f,
+            radius: 0.45f,
+            collisionLayerMask: ~0,
+            allowSelfHit: false,
+            allowFriendlyFire: false);
     }
 }

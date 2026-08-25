@@ -139,7 +139,7 @@ The read-only audit over exact commit `33035e8` confirmed two P0 blockers:
   - Production durable replay-file serialization and complete future-state capture for all
     presentation-only state: **still open**.
 - Unified action eligibility across movement, attacks, abilities, gadgets, healing,
-  knockback and Aandhi: **still open**.
+  knockback and Aandhi: **fixed with authority-owned eligibility and regressions**.
 
 No large-scale art production will begin until the remaining gameplay-truth gates pass.
 
@@ -262,6 +262,39 @@ sustained performance review, accessibility review or release signing/store gate
 This is a development-shaped interaction/lifecycle smoke. It does not validate
 release signing, sustained frame pacing, thermal/GC behavior, accessibility, combat
 feel, balance, release package identity or store readiness.
+
+### P3 - Unified eligibility and fair free-for-all AI - complete 2026-08-25
+
+- Added one authority-owned live-actor active-combat eligibility gate for Opening
+  through Final Circle. Routed movement, ability displacement, attacks, Bijli/Pehel
+  starts, Maya spawning/damage, direct/projectile damage, healing, gadget use,
+  station damage/healing and Aandhi damage through it before canonical mutation.
+- Preserved action-specific typed rejection reasons at the public boundary and made
+  rejected actions non-consuming. Canonicalized test setup to the exact 241-tick
+  30 Hz opening boundary and removed PlayMode dependence on prior-test clock state.
+- Recorded ADR-058.
+- Extended bot perception with the actor's own faction and equipped weapon. Bots now
+  ignore same-faction actors in Solo free-for-all, respect weapon maximum range when
+  attacking, and use gadgets only against visible hostiles. Production scene generation
+  supplies fighter-specific weapon assets to perception/decision state.
+
+#### Post-P3 automated evidence
+
+- Static validation: **0 errors / 0 warnings**.
+- Focused authority suite: **25 / 25 passed**
+  (`Builds\Local\V1GameplayTruth\TestResults\authority-focused-final.xml`).
+- Full EditMode: **132 / 132 passed**
+  (`Builds\Local\V1GameplayTruth\TestResults\editmode-unified-final.xml`).
+- Full PlayMode: **75 / 75 passed**
+  (`Builds\Local\V1GameplayTruth\TestResults\playmode-unified-final.xml`).
+- After the fair-AI extension, full EditMode is **133 / 133 passed**
+  (`Builds\Local\V1GameplayTruth\TestResults\editmode-botfair-final.xml`) and full
+  PlayMode is **75 / 75 passed**
+  (`Builds\Local\V1GameplayTruth\TestResults\playmode-botfair-final.xml`).
+- Deep recorded replay soak after unified eligibility and fair free-for-all AI:
+  `BATTLERAJA_SOAK_MATCHES=1000`, **1,000 seeds x 2 executions = 2,000 matches**, zero
+  divergence, NUnit duration **465.3278045 seconds**
+  (`Builds\Local\V1GameplayTruth\TestResults\botfair-deep-soak.xml`).
 
 ## Later checkpoints
 

@@ -76,6 +76,7 @@ namespace BattleRaja.Tests.EditMode
                 new MatchSpawn(new CombatEntityId(1), new Float2(2f, 3f), 100),
                 new MatchSpawn(new CombatEntityId(2), new Float2(-2f, -3f), 100)
             });
+            authority.Advance(9f);
 
             var snapshot = authority.TrySpawnMayaDecoy(new CombatEntityId(1), 1, new Float2(99f, 99f));
 
@@ -94,6 +95,7 @@ namespace BattleRaja.Tests.EditMode
             });
             var gadgetId = ContentId.Gadget("gadget.tiffin_station");
             Assert.That(authority.TryAcquireGadget(new CombatEntityId(1), gadgetId), Is.True);
+            authority.Advance(9f);
 
             var result = authority.TryUseGadget(new GadgetUseCommand(
                 new CombatEntityId(1),

@@ -19,7 +19,8 @@ namespace BattleRaja.Core.Domain
             float retreatHealthFraction,
             float preferredRange,
             float decisionIntervalSeconds,
-            float stuckTimeoutSeconds)
+            float stuckTimeoutSeconds,
+            ProjectileWeaponDefinition weapon)
         {
             ReactionDelayTicks = reactionDelayTicks;
             AimNoise = aimNoise;
@@ -27,6 +28,7 @@ namespace BattleRaja.Core.Domain
             PreferredRange = preferredRange;
             DecisionIntervalSeconds = decisionIntervalSeconds;
             StuckTimeoutSeconds = stuckTimeoutSeconds;
+            Weapon = weapon;
         }
 
         public int ReactionDelayTicks { get; }
@@ -35,6 +37,7 @@ namespace BattleRaja.Core.Domain
         public float PreferredRange { get; }
         public float DecisionIntervalSeconds { get; }
         public float StuckTimeoutSeconds { get; }
+        public ProjectileWeaponDefinition Weapon { get; }
 
         public static BotDifficultyProfile FairDefault => new BotDifficultyProfile(
             reactionDelayTicks: 8,
@@ -42,11 +45,13 @@ namespace BattleRaja.Core.Domain
             retreatHealthFraction: 0.22f,
             preferredRange: 5.5f,
             decisionIntervalSeconds: 0.16f,
-            stuckTimeoutSeconds: 0.7f);
+            stuckTimeoutSeconds: 0.7f,
+            weapon: ProjectileWeaponDefinition.TrainingBolt);
 
         public bool IsValid(out string reason)
         {
-            if (ReactionDelayTicks < 0 || AimNoise < 0f || AimNoise > 1f ||
+            if (ReactionDelayTicks < 0 || !Weapon.IsValid(out reason) ||
+                AimNoise < 0f || AimNoise > 1f ||
                 RetreatHealthFraction < 0f || RetreatHealthFraction > 1f ||
                 PreferredRange <= 0f || DecisionIntervalSeconds <= 0f || StuckTimeoutSeconds <= 0f)
             {
@@ -100,12 +105,50 @@ namespace BattleRaja.Core.Domain
 
     public readonly struct BotPerceptionSnapshot
     {
-        public BotPerceptionSnapshot(CombatEntityId selfId, Float2 position, int currentHealth, int maxHealth, BotObservedTarget[] targets, int targetCount = -1)
-            : this(selfId, position, currentHealth, maxHealth, targets, targetCount, BotZoneObservation.Unbounded)
+        public BotPerceptionSnapshot(
+            CombatEntityId selfId,
+            Float2 position,
+            int currentHealth,
+            int maxHealth,
+            BotObservedTarget[] targets,
+            int targetCount = -1)
+            : this(
+                selfId,
+                position,
+                currentHealth,
+                maxHealth,
+                targets,
+                targetCount,
+                BotZoneObservation.Unbounded,
+                selfId.Value == 1 ? CombatFaction.Player : CombatFaction.Enemy,
+                ProjectileWeaponDefinition.TrainingBolt)
         {
         }
 
-        public BotPerceptionSnapshot(CombatEntityId selfId, Float2 position, int currentHealth, int maxHealth, BotObservedTarget[] targets, int targetCount, BotZoneObservation zone)
+        public BotPerceptionSnapshot(
+            CombatEntityId selfId,
+            Float2 position,
+            int currentHealth,
+            int maxHealth,
+            BotObservedTarget[] targets,
+            int targetCount,
+            BotZoneObservation zone)
+            : this(selfId, position, currentHealth, maxHealth, targets, targetCount, zone,
+                selfId.Value == 1 ? CombatFaction.Player : CombatFaction.Enemy,
+                ProjectileWeaponDefinition.TrainingBolt)
+        {
+        }
+
+        public BotPerceptionSnapshot(
+            CombatEntityId selfId,
+            Float2 position,
+            int currentHealth,
+            int maxHealth,
+            BotObservedTarget[] targets,
+            int targetCount,
+            BotZoneObservation zone,
+            CombatFaction selfFaction,
+            ProjectileWeaponDefinition selfWeapon)
         {
             SelfId = selfId;
             Position = position;
@@ -114,6 +157,8 @@ namespace BattleRaja.Core.Domain
             Targets = targets ?? Array.Empty<BotObservedTarget>();
             TargetCount = targetCount < 0 ? Targets.Length : Math.Min(targetCount, Targets.Length);
             Zone = zone;
+            SelfFaction = selfFaction;
+            SelfWeapon = selfWeapon;
         }
 
         public CombatEntityId SelfId { get; }
@@ -123,6 +168,8 @@ namespace BattleRaja.Core.Domain
         public BotObservedTarget[] Targets { get; }
         public int TargetCount { get; }
         public BotZoneObservation Zone { get; }
+        public CombatFaction SelfFaction { get; }
+        public ProjectileWeaponDefinition SelfWeapon { get; }
     }
 
     public readonly struct BotDecision
@@ -136,7 +183,8 @@ namespace BattleRaja.Core.Domain
             bool ability,
             float utilityScore,
             int perceivedThreats,
-            bool stuckRecovery)
+            bool stuckRecovery,
+            bool useGadget = false)
         {
             State = state;
             TargetId = targetId;
@@ -147,6 +195,7 @@ namespace BattleRaja.Core.Domain
             UtilityScore = utilityScore;
             PerceivedThreats = perceivedThreats;
             StuckRecovery = stuckRecovery;
+            UseGadget = useGadget;
         }
 
         public BotDecisionState State { get; }
@@ -158,6 +207,7 @@ namespace BattleRaja.Core.Domain
         public float UtilityScore { get; }
         public int PerceivedThreats { get; }
         public bool StuckRecovery { get; }
+        public bool UseGadget { get; }
     }
 
     public sealed class SeededRandom : ISeededRandom
@@ -276,6 +326,9 @@ namespace BattleRaja.Core.Domain
             {
                 var toTarget = (target.Position - snapshot.Position).Normalized;
                 var distance = Float2.Distance(snapshot.Position, target.Position);
+                var effectiveRange = MathF.Min(
+                    profile.PreferredRange + 5f,
+                    snapshot.SelfWeapon.MaxRange);
                 var aim = ApplyAimNoise(toTarget, profile.AimNoise, random);
                 var movement = distance > profile.PreferredRange
                     ? toTarget
@@ -286,11 +339,12 @@ namespace BattleRaja.Core.Domain
                     target.Id,
                     movement,
                     aim,
-                    target.HasLineOfSight && distance <= profile.PreferredRange + 5f,
+                    target.HasLineOfSight && distance <= effectiveRange,
                     ability,
                     targetScore,
                     threatCount,
-                    false);
+                    false,
+                    target.HasLineOfSight);
             }
             else
             {
@@ -316,7 +370,9 @@ namespace BattleRaja.Core.Domain
             for (var i = 0; i < snapshot.TargetCount; i++)
             {
                 var candidate = snapshot.Targets[i];
-                if (candidate.Id == snapshot.SelfId || candidate.Faction == CombatFaction.Neutral || !candidate.HasLineOfSight)
+                if (candidate.Id == snapshot.SelfId || !candidate.HasLineOfSight ||
+                    candidate.Faction == CombatFaction.Neutral ||
+                    candidate.Faction == snapshot.SelfFaction)
                 {
                     continue;
                 }

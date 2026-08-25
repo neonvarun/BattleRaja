@@ -68,7 +68,8 @@ namespace BattleRaja.Tests.EditMode
                 new BotObservedTarget(new CombatEntityId(2), CombatFaction.Player, new Float2(5f, 0f), 100, true)
             };
             var snapshot = new BotPerceptionSnapshot(new CombatEntityId(10), Float2.Zero, 100, 100, target);
-            var profile = new BotDifficultyProfile(4, 0.2f, 0.2f, 5f, 0.1f, 0.7f);
+            var profile = new BotDifficultyProfile(
+                4, 0.2f, 0.2f, 5f, 0.1f, 0.7f, ProjectileWeaponDefinition.BijliElectricBolt);
             var engine = new BotDecisionEngine();
             var random = new SeededRandom(42);
             var first = engine.Decide(snapshot, 0, profile, random, false);
@@ -101,6 +102,35 @@ namespace BattleRaja.Tests.EditMode
 
             Assert.That(first.TryStartDash(command, Float2.Zero, Float2.Up), Is.True);
             Assert.That(second.ActionState, Is.EqualTo(FighterActionState.Ready));
+        }
+
+        [Test]
+        public void FreeForAllBotsIgnoreSameFactionAndRespectWeaponRange()
+        {
+            var sameFaction = new[]
+            {
+                new BotObservedTarget(new CombatEntityId(2), CombatFaction.Enemy, new Float2(1f, 0f), 100, true),
+                new BotObservedTarget(new CombatEntityId(3), CombatFaction.Player, new Float2(20f, 0f), 100, true)
+            };
+            var snapshot = new BotPerceptionSnapshot(
+                new CombatEntityId(10),
+                Float2.Zero,
+                100,
+                100,
+                sameFaction,
+                -1,
+                BotZoneObservation.Unbounded,
+                CombatFaction.Enemy,
+                ProjectileWeaponDefinition.PehelHeavyBolt);
+            var decision = new BotDecisionEngine().Decide(
+                snapshot,
+                0,
+                BotDifficultyProfile.FairDefault,
+                new SeededRandom(9),
+                false);
+
+            Assert.That(decision.TargetId.Value, Is.EqualTo(3));
+            Assert.That(decision.Attack, Is.False);
         }
     }
 }

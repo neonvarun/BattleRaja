@@ -49,7 +49,8 @@ namespace BattleRaja.Tests.EditMode
 
             var baseline = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
             baseline.Start(spawns);
-            var baselineTick = baseline.Advance(1, 1f / 30f);
+            MatchAuthorityTick baselineTick = default;
+            for (var warmupTick = 1; warmupTick <= 241; warmupTick++) baselineTick = baseline.Advance(warmupTick, 1f / 30f);
             var baselineHash = DeterministicReplayHasher.CalculateTickHash(
                 baseline,
                 baselineTick,
@@ -61,18 +62,30 @@ namespace BattleRaja.Tests.EditMode
                 null,
                 new[] { new GadgetPickupDefinition(0, gadgetId, Float2.Zero, 1.3f) });
             authority.Start(spawns);
-            var collectionTick = authority.Advance(1, 1f / 30f);
+            MatchAuthorityTick collectionTick = default;
+            MatchAuthorityTick collectTick = default;
+            for (var tick = 1; tick <= 241; tick++)
+            {
+                var advanced = authority.Advance(tick, 1f / 30f);
+                if (advanced.GadgetCollections.Length > 0) collectTick = advanced;
+                collectionTick = advanced;
+            }
 
-            Assert.That(collectionTick.GadgetCollections, Has.Length.EqualTo(1));
-            Assert.That(collectionTick.GadgetCollections[0].CollectionEventId, Is.EqualTo(1));
+            Assert.That(collectTick.GadgetCollections, Has.Length.EqualTo(1));
+            Assert.That(collectTick.GadgetCollections[0].CollectionEventId, Is.EqualTo(1));
 
             var used = authority.TryUseGadget(new GadgetUseCommand(
                 new CombatEntityId(1),
                 gadgetId,
                 Float2.Zero,
-                Float2.Up,
-                1));
-            Assert.That(used.Used, Is.True);
+                new Float2(0f, 1f),
+                242));
+            Assert.That(used.Used, Is.True, $"failure={used.Failure} phase={authority.CurrentPhase}");
+            Assert.That(
+                used.Failure,
+                Is.EqualTo(GadgetUseFailure.None),
+                $"failure={used.Failure} phase={authority.CurrentPhase}");
+            Assert.That(authority.TryAcquireGadget(new CombatEntityId(1), gadgetId), Is.True, "replacement pickup");
             Assert.That(used.EventId, Is.EqualTo(1));
 
             var authorityHash = DeterministicReplayHasher.CalculateTickHash(

@@ -69,6 +69,7 @@ namespace BattleRaja.Tests.PlayMode
                 .First(agent => agent.ActorId == 10).GetComponent<CombatTarget>();
             var beforeHealth = target.Health.Snapshot.CurrentHealth;
             var beforeDamage = match.Simulation.GetSnapshots().First(item => item.Id == source.Id).DamageDealt;
+            for (var i = 0; i < 9; i++) match.Simulation.Advance(1f);
 
             var result = resolver.Resolve(
                 target,
@@ -97,7 +98,7 @@ namespace BattleRaja.Tests.PlayMode
             // Production authority rejects attacks during load warmup and spawn
             // protection. Move the pure match state into the opening phase without
             // waiting eight wall-clock seconds in this regression.
-            for (var i = 0; i < 8; i++) match.Simulation.Advance(1f);
+            for (var i = 0; i < 9; i++) match.Simulation.Advance(1f);
             var origin = new Float2(player.transform.position.x, player.transform.position.z);
             var command = new AttackCommand(player.GetComponent<CombatTarget>().Id, 1, origin, Float2.Up, true);
 
@@ -227,6 +228,7 @@ namespace BattleRaja.Tests.PlayMode
                 .Select(agent => agent.GetComponent<CombatTarget>())
                 .Where(target => target != null)
                 .ToArray();
+            for (var i = 0; i < 9; i++) match.Simulation.Advance(1f);
 
             for (var i = 0; i < targets.Length; i++)
             {
@@ -280,6 +282,7 @@ namespace BattleRaja.Tests.PlayMode
                     .Select(agent => agent.GetComponent<CombatTarget>())
                     .Where(target => target != null)
                     .ToArray();
+                for (var i = 0; i < 9; i++) match.Simulation.Advance(1f);
 
                 foreach (var target in targets)
                 {
