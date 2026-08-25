@@ -296,6 +296,32 @@ feel, balance, release package identity or store readiness.
   divergence, NUnit duration **465.3278045 seconds**
   (`Builds\Local\V1GameplayTruth\TestResults\botfair-deep-soak.xml`).
 
+### P3 exact-commit Android smoke — `e65c0ea` — 2026-08-25
+
+- Exact runtime source: `e65c0ea`
+  (`authority: unify action eligibility and fair bots`), built in disposable worktree
+  `C:\Projects\BattleRaja-e65c0ea`.
+- Development-shaped APK: `Builds\M11\Android\BattleRaja-M11.apk`,
+  **92,852,632** bytes, SHA-256
+  `11A4DF4623980F53B4F34FCEB48B09858DD32A459082B7B00772F9543305D9FC`.
+- Manifest: package `com.example.battleraja.m11`, versionName `1.0.0`, versionCode
+  `100`, minSdk **28**, targetSdk **36**, launch activity
+  `com.unity3d.player.UnityPlayerGameActivity`.
+- Install: streamed-install success on Lava `ST5GDW23LB004392`.
+- Cold launch status **OK**, total time **450 ms**; activity became top-resumed and
+  focused. HOME made launcher top-resumed; hot relaunch returned the game task with
+  status **OK**, launch state **HOT**, total time **51 ms**, and the activity again
+  became top-resumed/focused.
+- Memory after launch: PSS **402,526 KB**, RSS **532,316 KB**, Graphics **76,632 KB**,
+  Swap PSS **80 KB**.
+- Crash-pattern scan (`FATAL EXCEPTION`, `AndroidRuntime`, `SIGSEGV`, `SIGABRT`,
+  `ANR in`, `NullReferenceException`, `UnityException`) across launch and lifecycle
+  logs found **0 matches**.
+
+This is a development-shaped launch/lifecycle smoke only. It does not prove interactive
+match QA, fighter-specific bot fairness in human play, sustained performance, thermal
+behavior, accessibility, signing or store readiness.
+
 ## Later checkpoints
 
 - [ ] Fair fighter-specific bot AI and production match harness.

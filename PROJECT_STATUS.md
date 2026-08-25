@@ -18,8 +18,12 @@
   with zero divergence in **465.3278045 seconds**; see
   `Builds/Local/V1GameplayTruth/TestResults/botfair-deep-soak.xml`.
   Compiler scans of the final test logs found **0** C# errors and warnings. This is
-  local test evidence only; it does not claim a fresh Android/Web build or
-  device/browser validation.
+  local test evidence plus an exact-commit development-shaped Android launch smoke.
+  Commit `e65c0ea` produced APK **92,852,632** bytes (SHA-256
+  `11A4DF4623980F53B4F34FCEB48B09858DD32A459082B7B00772F9543305D9FC`). It installed on
+  Lava `ST5GDW23LB004392`, cold-launched in **450 ms**, and hot-resumed in **51 ms**;
+  crash-pattern scans found **0** matches. This is launch/lifecycle evidence only: it
+  does not claim interactive match QA, sustained performance or release readiness.
 - Exact runtime HEAD `3b09775` (`authority: own bijli dash replay state`) adds
   authority-owned Bijli dash lifecycle, canonical collision advancement, replay
   hashing, production view mirroring and action-phase gating for Bijli/Pehel starts.
