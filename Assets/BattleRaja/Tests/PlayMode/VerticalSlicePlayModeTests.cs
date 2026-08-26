@@ -839,8 +839,23 @@ namespace BattleRaja.Tests.PlayMode
                 compact: true);
 
             Assert.That(status, Does.Contain("\n"));
+            Assert.That(status, Does.Contain("SPAWN SHIELD"));
+            Assert.That(status, Does.Not.Contain("SPAWNPROTECTION"));
             Assert.That(status, Does.Contain("Z 14.0 > 8.0"));
             Assert.That(status, Does.Contain("WARN 2.5s"));
+        }
+
+        [Test]
+        public void GadgetHudUsesPlayerFacingLabels()
+        {
+            var held = GadgetHud.FormatStatus("gadget.tiffin_station", 0f, "Picked gadget.tiffin_station", string.Empty);
+            var nearby = GadgetHud.FormatStatus(string.Empty, 0f, string.Empty, "gadget.umbrella_guard");
+
+            Assert.That(held, Does.Contain("GADGET TIFFIN"));
+            Assert.That(held, Does.Contain("TIFFIN READY"));
+            Assert.That(held, Does.Not.Contain("tiffin_station"));
+            Assert.That(held, Does.Not.Contain("[G]"));
+            Assert.That(nearby, Does.Contain("NEAR UMBRELLA"));
         }
 
         [Test]
@@ -854,9 +869,10 @@ namespace BattleRaja.Tests.PlayMode
 
             var text = OfflineMatchHud.FormatResults(results, compact: false);
 
-            Assert.That(text, Does.Contain("WINNER 1"));
-            Assert.That(text, Does.Contain("#1 PLAYER 1  KOs 3  AST 1  DMG 120  SURV 25.0s"));
-            Assert.That(text, Does.Contain("#2 PLAYER 2  KOs 1  AST 2  DMG 40  SURV 12.0s"));
+            Assert.That(text, Does.Contain("WINNER YOU"));
+            Assert.That(text, Does.Contain("#1 YOU  KOs 3  AST 1  DMG 120  SURV 25.0s"));
+            Assert.That(text, Does.Contain("#2 RIVAL A  KOs 1  AST 2  DMG 40  SURV 12.0s"));
+            Assert.That(text, Does.Not.Contain("PLAYER 1"));
         }
 
         [Test]

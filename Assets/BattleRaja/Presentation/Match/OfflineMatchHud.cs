@@ -297,9 +297,23 @@ namespace BattleRaja.Presentation.Match
         {
             var warning = aandhiState == AandhiState.Warning
                 ? $"  WARN {warningRemainingSeconds:0.0}s"
-                : aandhiState == AandhiState.Closing ? "  CLOSE" : string.Empty;
+                : aandhiState == AandhiState.Closing ? "  CLOSING" : string.Empty;
             var format = compact ? CompactMatchFormat : MatchFormat;
-            return string.Format(format, phase.ToString().ToUpperInvariant(), aliveCount, zoneRadius, nextZoneRadius, warning);
+            return string.Format(format, FriendlyPhaseLabel(phase), aliveCount, zoneRadius, nextZoneRadius, warning);
+        }
+
+        public static string FriendlyPhaseLabel(MatchPhase phase)
+        {
+            switch (phase)
+            {
+                case MatchPhase.LoadWarmup: return "GET READY";
+                case MatchPhase.SpawnProtection: return "SPAWN SHIELD";
+                case MatchPhase.Opening: return "OPENING FIGHT";
+                case MatchPhase.Pressure: return "AANDHI PRESSURE";
+                case MatchPhase.FinalCircle: return "FINAL CIRCLE";
+                case MatchPhase.Resolution: return "RESULTS";
+                default: return "MATCH";
+            }
         }
 
         public static string FormatResults(MatchParticipantSnapshot[] results, bool compact)
@@ -314,14 +328,15 @@ namespace BattleRaja.Presentation.Match
             });
 
             var builder = new StringBuilder(256);
-            builder.Append("RESULTS\nWINNER ").Append(ordered[0].Id.Value).Append('\n');
+            builder.Append("RESULTS\nWINNER ").Append(FriendlyParticipantLabel(ordered[0].Id.Value, 0)).Append('\n');
             for (var i = 0; i < ordered.Count; i++)
             {
                 var participant = ordered[i];
+                var participantLabel = FriendlyParticipantLabel(participant.Id.Value, i);
                 if (compact)
                 {
                     builder.Append('#').Append(participant.Placement)
-                        .Append(" P").Append(participant.Id.Value)
+                        .Append(' ').Append(participantLabel)
                         .Append(" K").Append(participant.Eliminations)
                         .Append(" A").Append(participant.Assists)
                         .Append(" D").Append(participant.DamageDealt)
@@ -330,7 +345,7 @@ namespace BattleRaja.Presentation.Match
                 else
                 {
                     builder.Append('#').Append(participant.Placement)
-                        .Append(" PLAYER ").Append(participant.Id.Value)
+                        .Append(' ').Append(participantLabel)
                         .Append("  KOs ").Append(participant.Eliminations)
                         .Append("  AST ").Append(participant.Assists)
                         .Append("  DMG ").Append(participant.DamageDealt)
@@ -340,6 +355,13 @@ namespace BattleRaja.Presentation.Match
             }
 
             return builder.ToString().TrimEnd();
+        }
+
+        private static string FriendlyParticipantLabel(int actorId, int resultIndex)
+        {
+            if (actorId == 1) return "YOU";
+            var rivalIndex = Mathf.Max(0, resultIndex - 1);
+            return $"RIVAL {(char)('A' + (rivalIndex % 26))}";
         }
 
         private void BuildCanvasUi()

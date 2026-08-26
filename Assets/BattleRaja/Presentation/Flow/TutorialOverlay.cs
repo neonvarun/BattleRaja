@@ -318,13 +318,13 @@ namespace BattleRaja.Presentation.Flow
         {
             switch (step)
             {
-                case TutorialStep.Movement: return "Move with the left stick on Lava, or WASD/arrow keys on Web. Keep your fighter inside the arena routes.";
-                case TutorialStep.Aim: return "Aim with the right stick, mouse direction or controller right stick. Direction is shared by human and bot commands.";
-                case TutorialStep.BasicAttack: return "Hold ATTACK (or left mouse button) to fire. Watch the telegraph, projectile path and hit feedback.";
-                case TutorialStep.Ability: return "Use the ability button (Space/right trigger) to trigger your fighter's ability. Each fighter has a different counterplay window.";
-                case TutorialStep.Gadget: return "Walk over a coloured gadget pickup, then press the gadget button. One held gadget is validated by match authority.";
+                case TutorialStep.Movement: return "Use the left stick to move. Keep your fighter inside the arena routes.";
+                case TutorialStep.Aim: return "Use the right stick to aim. Keep the direction pointed toward the action.";
+                case TutorialStep.BasicAttack: return "Hold ATTACK to fire. Watch the telegraph, projectile path and hit feedback.";
+                case TutorialStep.Ability: return "Tap ABILITY to trigger your fighter's special move. Each fighter has a different counterplay window.";
+                case TutorialStep.Gadget: return "Walk over a coloured gadget pickup, then tap the gadget button. Carry one gadget at a time.";
                 case TutorialStep.Aandhi: return "Watch the zone warning and NEXT preview in the HUD. Move toward safety before the Aandhi closes and applies damage.";
-                case TutorialStep.Elimination: return "Defeat a target to create an instigator-aware elimination. KOs, damage and survival time appear in results.";
+                case TutorialStep.Elimination: return "Defeat a target to earn a KO. KOs, damage and survival time appear in results.";
                 case TutorialStep.Victory: return "Survive the final circle. Spectate after elimination, then inspect placements and choose REMATCH or MENU.";
                 default: return "Replay this tutorial whenever you need a refresher.";
             }
@@ -334,10 +334,10 @@ namespace BattleRaja.Presentation.Flow
         {
             switch (step)
             {
-                case TutorialStep.Movement: return "LEFT STICK / WASD";
-                case TutorialStep.Aim: return "RIGHT STICK / MOUSE";
-                case TutorialStep.BasicAttack: return "ATTACK / LEFT CLICK";
-                case TutorialStep.Ability: return "ABILITY / SPACE";
+                case TutorialStep.Movement: return "MOVE";
+                case TutorialStep.Aim: return "AIM";
+                case TutorialStep.BasicAttack: return "ATTACK";
+                case TutorialStep.Ability: return "ABILITY";
                 case TutorialStep.Gadget: return "PICKUP + GADGET";
                 case TutorialStep.Aandhi: return "READ THE ZONE HUD";
                 case TutorialStep.Elimination: return "DAMAGE + KO";

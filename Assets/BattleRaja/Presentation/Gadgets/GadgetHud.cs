@@ -25,10 +25,30 @@ namespace BattleRaja.Presentation.Gadgets
         private void Update()
         {
             if (statusText == null || user == null) return;
-            var held = user.HasGadget ? user.HeldGadget.Value.Replace("gadget.", string.Empty) : "empty";
+            var held = user.HasGadget ? user.HeldGadget.Value : string.Empty;
             var nearby = ResolveNearbyPickup();
-            var proximity = !user.HasGadget && !string.IsNullOrEmpty(nearby) ? $"\nNEAR {nearby}" : string.Empty;
-            statusText.text = $"GADGET [G] {held}\nCD {user.CooldownRemaining:0.0}s {user.Feedback}{proximity}";
+            statusText.text = FormatStatus(held, user.CooldownRemaining, user.Feedback, nearby);
+        }
+
+        /// <summary>
+        /// Formats the player-facing gadget HUD without exposing keyboard shortcuts,
+        /// authority terminology or serialized content IDs.
+        /// </summary>
+        public static string FormatStatus(string heldGadgetId, float cooldownRemaining, string feedback, string nearbyGadget)
+        {
+            var held = string.IsNullOrEmpty(heldGadgetId) ? "EMPTY" : FriendlyName(heldGadgetId);
+            var cooldown = cooldownRemaining > 0.01f
+                ? $"READY IN {cooldownRemaining:0.0}s"
+                : "READY";
+            var message = FriendlyFeedback(feedback);
+            var status = $"GADGET {held}\n{cooldown}";
+            if (!string.IsNullOrEmpty(message)) status += $"\n{message}";
+            if (string.IsNullOrEmpty(heldGadgetId) && !string.IsNullOrEmpty(nearbyGadget))
+            {
+                status += $"\nNEAR {FriendlyName(nearbyGadget)}";
+            }
+
+            return status;
         }
 
         private string ResolveNearbyPickup()
@@ -57,6 +77,28 @@ namespace BattleRaja.Presentation.Gadgets
             if (id.IndexOf("dhol", System.StringComparison.OrdinalIgnoreCase) >= 0) return "DHOL";
             if (id.IndexOf("tiffin", System.StringComparison.OrdinalIgnoreCase) >= 0) return "TIFFIN";
             return "GADGET";
+        }
+
+        private static string FriendlyFeedback(string feedback)
+        {
+            if (string.IsNullOrWhiteSpace(feedback)) return string.Empty;
+            if (feedback.StartsWith("Picked ", System.StringComparison.OrdinalIgnoreCase))
+            {
+                return $"{FriendlyName(feedback.Substring(7))} READY";
+            }
+
+            switch (feedback)
+            {
+                case "Gadget slot full": return "SLOT FULL";
+                case "No gadget held":
+                case "NotHeld": return "NO GADGET";
+                case "Cooldown": return "ON COOLDOWN";
+                case "InvalidDirection": return "AIM TO USE";
+                case "InvalidPlacement": return "FIND A CLEAR SPOT";
+                case "InvalidDefinition": return "GADGET UNAVAILABLE";
+                case "Authority inventory mismatch": return "TRY AGAIN";
+                default: return feedback.ToUpperInvariant();
+            }
         }
     }
 }
