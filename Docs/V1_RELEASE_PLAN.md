@@ -894,9 +894,11 @@ ranged **57,379–238,075 KB**. The phone reports 4 KB pages, so this is launch/
 not genuine 16 KB runtime proof or a sustained full-match performance pass.
 
 This closes the exact clean-source technical rebuild, but not the release claim. The strict
-100-match production-bot gate still passes all safety/invariant checks while failing its
-timing distribution (70/100 and 76/100 in the 240–360 second window in the two final-source
-runs). Human touch/tutorial/full-route, sustained match performance/thermal/battery,
+100-match production-bot batches recorded in P15 were run immediately before this final
+editor-only Tutorial scene-ID guard; `2f9a6a0` does not touch the Bazaar harness or gameplay
+runtime, so the evidence remains applicable, but no post-guard bot rerun was performed. Those
+runs pass all safety/invariant checks while failing their timing distribution (70/100 and
+76/100 in the 240–360 second window). Human touch/tutorial/full-route, sustained match performance/thermal/battery,
 authored-art/audio/cultural review, final package identity/signing, privacy/Data Safety,
 content rating, store assets and Play Console approval remain open.
 
