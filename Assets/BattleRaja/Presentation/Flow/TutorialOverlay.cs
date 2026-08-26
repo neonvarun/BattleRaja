@@ -18,6 +18,7 @@ namespace BattleRaja.Presentation.Flow
     public sealed class TutorialOverlay : MonoBehaviour
     {
         private const string CompletedKey = "battleraja.tutorial.completed";
+        private const string LeftHandedKey = "battleraja.settings.left_handed";
 
         [SerializeField] private Canvas canvas;
         [SerializeField] private OfflineMatchController match;
@@ -193,8 +194,9 @@ namespace BattleRaja.Presentation.Flow
             }
 
             var step = _steps.Current;
+            var leftHanded = PlayerPrefs.GetInt(LeftHandedKey, 0) != 0;
             _title.text = "TUTORIAL  •  " + StepTitle(step);
-            var body = StepBody(step);
+            var body = StepBody(step, leftHanded);
             if (!_steps.CurrentStepSatisfied)
             {
                 body += "\n\nDO IT IN THE ARENA TO UNLOCK CONTINUE.";
@@ -305,12 +307,14 @@ namespace BattleRaja.Presentation.Flow
             }
         }
 
-        private static string StepBody(TutorialStep step)
+        private static string StepBody(TutorialStep step, bool leftHanded)
         {
             switch (step)
             {
-                case TutorialStep.Movement: return "Use the left stick to move. Keep your fighter inside the arena routes.";
-                case TutorialStep.Aim: return "Use the right stick to aim. Keep the direction pointed toward the action.";
+                case TutorialStep.Movement:
+                    return $"Use the {(leftHanded ? "right" : "left")} stick to move. Keep your fighter inside the arena routes.";
+                case TutorialStep.Aim:
+                    return $"Use the {(leftHanded ? "left" : "right")} stick to aim. Keep the direction pointed toward the action.";
                 case TutorialStep.BasicAttack: return "Hold ATTACK to fire. Watch the telegraph, projectile path and hit feedback.";
                 case TutorialStep.Ability: return "Tap ABILITY to trigger your fighter's special move. Each fighter has a different counterplay window.";
                 case TutorialStep.Gadget: return "Walk over a coloured gadget pickup, then tap the gadget button. Carry one gadget at a time.";

@@ -130,5 +130,32 @@ namespace BattleRaja.Tests.PlayMode
             else PlayerPrefs.DeleteKey(completedKey);
             PlayerPrefs.Save();
         }
+
+        [UnityTest]
+        public IEnumerator TutorialPromptNamesTheActiveStickWhenLeftHanded()
+        {
+            const string leftHandedKey = "battleraja.settings.left_handed";
+            var hadPrevious = PlayerPrefs.HasKey(leftHandedKey);
+            var previous = PlayerPrefs.GetInt(leftHandedKey, 0);
+            PlayerPrefs.SetInt(leftHandedKey, 1);
+            PlayerPrefs.Save();
+
+            try
+            {
+                yield return SceneManager.LoadSceneAsync("TutorialArena", LoadSceneMode.Single);
+                yield return null;
+                yield return null;
+
+                var panel = FindSceneObject("TutorialPanel");
+                var body = panel.transform.Find("Body").GetComponent<Text>();
+                Assert.That(body.text, Does.Contain("right stick"));
+            }
+            finally
+            {
+                if (hadPrevious) PlayerPrefs.SetInt(leftHandedKey, previous);
+                else PlayerPrefs.DeleteKey(leftHandedKey);
+                PlayerPrefs.Save();
+            }
+        }
     }
 }
