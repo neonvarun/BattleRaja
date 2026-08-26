@@ -175,9 +175,9 @@ namespace BattleRaja.Presentation.Flow
 
         private void Refresh()
         {
-            // Keep the completion card visible. The tutorial backdrop deliberately covers
-            // the arena, so hiding the panel on completion would leave a blank dark screen
-            // with no way to replay or leave the tutorial.
+            // Keep the completion card visible. The tutorial prompt is intentionally the
+            // only full-width surface: the live arena, player and touch controls remain
+            // visible behind it so every lesson can be performed in context.
             _showing = true;
             _panel.SetActive(true);
             if (_steps.IsComplete)
@@ -262,15 +262,6 @@ namespace BattleRaja.Presentation.Flow
             safeRect.anchorMax = Vector2.one;
             safeRect.offsetMin = Vector2.zero;
             safeRect.offsetMax = Vector2.zero;
-
-            var backdropObject = new GameObject("TutorialBackdrop", typeof(RectTransform), typeof(BattleRajaUiBackdrop));
-            backdropObject.transform.SetParent(safe.transform, false);
-            var backdropRect = backdropObject.GetComponent<RectTransform>();
-            backdropRect.anchorMin = Vector2.zero;
-            backdropRect.anchorMax = Vector2.one;
-            backdropRect.offsetMin = Vector2.zero;
-            backdropRect.offsetMax = Vector2.zero;
-            backdropObject.transform.SetAsFirstSibling();
 
             var logoObject = new GameObject("TutorialMark", typeof(RectTransform), typeof(BattleRajaLogoGraphic));
             logoObject.transform.SetParent(safe.transform, false);

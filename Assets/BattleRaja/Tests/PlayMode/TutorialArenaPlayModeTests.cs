@@ -25,6 +25,8 @@ namespace BattleRaja.Tests.PlayMode
             var match = Object.FindAnyObjectByType<OfflineMatchController>();
             Assert.That(overlay, Is.Not.Null);
             Assert.That(match, Is.Not.Null);
+            Assert.That(GameObject.Find("TutorialCanvas/SafeArea/TutorialBackdrop"), Is.Null,
+                "The tutorial must keep the live arena visible behind its prompt.");
             Assert.That(overlay.CurrentStep, Is.EqualTo(TutorialStep.Movement));
             Assert.That(match.Simulation, Is.Not.Null);
             Assert.That(match.Simulation.AliveCount, Is.EqualTo(8));
