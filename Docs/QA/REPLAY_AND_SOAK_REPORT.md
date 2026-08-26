@@ -1,5 +1,19 @@
 # BattleRaja Replay and Soak Report
 
+## Latest exact-source result — `aeda6de` — 2026-08-27
+
+The presentation-only HUD/tutorial/results cleanup was verified without changing the
+authority or replay code. At exact source `aeda6debab89404991f55a0f663a88798dd9c944`,
+`BATTLERAJA_SOAK_MATCHES=1000` passed **1/1**: 1,000 seeded matches executed twice
+(2,000 executions), zero divergence, NUnit duration **553.5464039 seconds**. XML
+`Builds/Local/V1GameplayTruth/TestResults/deep-soak-ui-aeda6de.xml` SHA-256
+`65BD32A7B978CB5679546EA3A7ACDFFC91261DC5D1A4CE86C3E280BB1B79C69F`; log SHA-256
+`46CC6D65C14B28A4315D576032E1BA8093E65B843011EE3660FE897401EB30A5`.
+
+Full EditMode and PlayMode at the same source also passed **140/140** and **81/81**.
+This remains deterministic offline evidence; it does not establish cross-machine
+floating-point parity, production-bot pacing, or physical full-route QA.
+
 ## Current method — 2026-08-23
 
 Validated at local and remote `main` commit `1412802`
