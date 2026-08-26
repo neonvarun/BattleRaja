@@ -1436,7 +1436,7 @@ Raw evidence is under
 | Production-bot 100-match release distribution | **Passed (carried forward)** | Exact gameplay source `6d287a6`; 100/100 in-window |
 | APK/AAB manifest, ARM64, static 16 KB, bundletool and zipalign | **Passed** | Exact 2080383 checker and artifact evidence above |
 | Lava install, launch, route and bounded crash smoke | **Passed** | Fresh install, menu/mode/fighter/live-match route, no crash marker observed |
-| Full touch tutorial -> match -> spectator/results/rematch/settings/lifecycle route | **Blocked** | Owner-operated action-by-action review remains required; ADB movement swipe did not unlock step |
+| Full touch tutorial -> match -> spectator/results/rematch/settings/lifecycle route | **Blocked / partially evidenced** | Exact match reached spectator/results and REMATCH returned to a fresh opening; owner-operated action-by-action tutorial, settings and lifecycle review remains required; ADB movement swipe did not unlock step |
 | Sustained full-match CPU/GPU/GC/thermal/battery budget | **Measured diagnostic / still open** | SurfaceFlinger ring-buffer sample above; normalized CPU/GPU/GC, endurance and thermal/battery gates remain open |
 | Genuine 16 KB runtime device validation | **Blocked** | Approved Lava reports 4 KB pages; requires a genuine 16 KB environment |
 | Final authored art/audio, accessibility, balance and cultural review | **Blocked** | Human review and authored polish remain |
@@ -1471,6 +1471,13 @@ it does not alter gameplay or release classification.
   FPS, jank or GPU-timing approval is claimed. The configured fatal-marker scan found
   **0** hits. A complete raw-file hash listing is retained as `hashes.txt`, SHA-256
   `630CF3279FE11202D0E054B3927D2D024806D7136B2B187BE183A1BDD9C27EB9`.
+- During the same run, the player was eliminated and the live result reached the
+  spectator/results surface with placements and REMATCH/MENU actions visible. The
+  results screenshot is `Builds/Local/Device/Screenshots/20260827-2080383/live-match-after-120s.png`,
+  SHA-256 `9B3E32E471F6C4C4C401AED9517B1DE991443D62BDC06D29D4443CC0AA6D0548`.
+  Tapping REMATCH returned to a fresh eight-alive Solo Raja opening on the same exact
+  APK; `rematch-after-120s.png` SHA-256
+  `8C9FC5989509174C0862A67E6CCE75021B50D2B9A8675180A6A1625D42D52737`.
 
 #### P23 gate delta
 
