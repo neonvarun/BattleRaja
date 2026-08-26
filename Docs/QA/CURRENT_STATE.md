@@ -144,3 +144,17 @@ existing 50x diagnostic playback. Both completed 100/100 and passed all safety/i
 but only 70/100 and 76/100 respectively met the 240–360 second pacing window. This is the
 known timing-sensitive shortcut; the earlier passing run is retained as historical evidence,
 and the release threshold remains unchanged/open.
+
+## Exact clean-source refresh — 2026-08-27
+
+The reviewed runtime/presentation source is clean at `2f9a6a0151e3b0c2359d9b0f8892c28e6404ec4b`;
+the detailed evidence is `Docs/V1_RELEASE_PLAN.md` P16. Full EditMode passed **140/140** and
+PlayMode **80/80**. The exact-source deterministic soak passed **1/1** with
+`BATTLERAJA_SOAK_MATCHES=1000`, 1,000 seeded matches executed twice and zero divergence.
+Matching APK/AAB builds, bundletool universal extraction and both 16 KB zipalign checks passed.
+
+The exact APK was reinstalled on Lava `ST5GDW23LB004392`; a fresh six-sample, 30-second
+launch/menu capture had no configured fatal markers and thermal status 0 before/after. The
+device reports 4 KB pages, and no sustained full-match, touch/tutorial, accessibility or
+runtime 16 KB proof is claimed. The strict production-bot pacing threshold and all human,
+signing, legal, store and final-authored-content gates remain open.

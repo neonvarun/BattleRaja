@@ -596,3 +596,19 @@ shortcut is timing-sensitive: the two final-source attempts reached 70/100 and 7
 sustained performance/thermal/battery, runtime 16 KB, authored art/audio/cultural review,
 signing/package identity, privacy/Data Safety, content rating and Play Console actions remain
 open; this is not a Play-ready completion claim.
+
+## Milestone 11 exact clean-source refresh — 2026-08-27
+
+The reviewed runtime/presentation source is clean at commit
+`2f9a6a0151e3b0c2359d9b0f8892c28e6404ec4b`; the full evidence index is `Docs/V1_RELEASE_PLAN.md`
+P16. Full EditMode is **140/140**, full PlayMode **80/80**, and the exact-source deterministic
+soak is **1/1** with 1,000 seeded matches executed twice and zero divergence. Matching APK/AAB
+artifacts, bundletool universal extraction and direct/extracted 16 KB zipalign evidence are
+recorded with hashes in P16. The exact APK was reinstalled on approved Lava
+`ST5GDW23LB004392`; the fresh six-sample launch/menu capture found no configured fatal markers
+and thermal status 0 before/after.
+
+This is a clean technical Android candidate, not a Play-ready claim. The production-bot pacing
+threshold remains open, and human full-route/touch/accessibility, sustained match performance,
+runtime 16 KB, final authored/cultural review, package identity/signing, privacy/Data Safety,
+content rating, store assets and Play Console actions remain owner-controlled or unverified.

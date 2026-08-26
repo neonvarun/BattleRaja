@@ -554,3 +554,16 @@ cannot establish 16 KB runtime compatibility.
 - App PSS ranged **55,262–236,543 KB**; thermal status was 0 before and after, and the
   configured fatal-marker scan was empty. Device pages are 4 KB; this remains launch/menu
   evidence, not runtime 16 KB proof or a sustained full-match CPU/GPU/GC/battery pass.
+
+## V1 exact clean-source 30-second device capture — 2026-08-27
+
+- The exact clean-source APK from commit `2f9a6a0151e3b0c2359d9b0f8892c28e6404ec4b` was
+  reinstalled and relaunched on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android
+  14/API 34).
+- Six samples over 30 seconds are under
+  `Builds/Local/Device/Performance/20260827-011441-v1-final-2f9a6a0-30s`; manifest SHA-256
+  `4995634C13C3C1138FC2C132654A5A7CE62692579696C20C6A120D78BDD15060`, logcat SHA-256
+  `98BA9C3C05DDCD3149DD7402BF5970EBC7045E11366EAEA5D41AA785B8B15C28`.
+- App PSS ranged **57,379–238,075 KB**; thermal status was 0 before and after; the configured
+  fatal-marker scan was empty. The device reports 4 KB pages. This is launch/menu evidence,
+  not a sustained full-match CPU/GPU/GC/thermal/battery measurement or runtime 16 KB proof.

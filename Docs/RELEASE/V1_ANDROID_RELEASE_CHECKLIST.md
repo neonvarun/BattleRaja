@@ -475,3 +475,25 @@ existing 50x diagnostic playback. Both runs completed 100/100 and passed the com
 warmup, position and tick-budget invariants, but only 70/100 and 76/100 respectively met the
 240–360 second pacing window. This confirms the known timing-sensitive shortcut; the earlier
 passing run remains historical evidence and no threshold was loosened.
+
+## Exact clean-source package refresh — 2026-08-27
+
+The reviewed candidate source is clean at `2f9a6a0151e3b0c2359d9b0f8892c28e6404ec4b`; see
+`Docs/V1_RELEASE_PLAN.md` P16 for the evidence index. Full EditMode **140/140**, PlayMode
+**80/80**, and the exact-source 1,000-seed replay soak (twice, zero divergence) passed.
+
+- APK: **40,521,770 bytes**, SHA-256
+  `0F635D962A179B28FD07189E348D837A7BF7B647638DDAF7FBF9A7EAB14B3458`.
+- AAB: **36,346,956 bytes**, SHA-256
+  `4397F62FE5A83CEF2EB5240212988787735289DE8AA24F26D78B9E95C83D168D`.
+- Composed checker: **0 errors / 0 warnings**; package `com.example.battleraja.m11`,
+  version `1.0.0`/code `100`, API 28/36 and seven ARM64 libraries.
+- Bundletool 1.18.3 universal extraction passed; direct and extracted APK
+  `zipalign -c -P 16 -v 4` passed.
+- Lava reinstall/relaunch passed. Fresh six-sample, 30-second launch/menu capture found no
+  configured fatal markers and thermal status 0 before/after; the phone reports 4 KB pages.
+
+This remains a debug-signed temporary-ID technical candidate. Full touch/tutorial route,
+sustained match performance, runtime 16 KB validation, production-bot pacing, final authored
+content/cultural review, package identity/signing, privacy/Data Safety, content rating and Play
+Console approval remain open.
