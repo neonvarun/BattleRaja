@@ -123,9 +123,11 @@ candidate.
 
 - Perform the real tutorial action sequence, full match, all
   fighters/gadgets, spectator, results, rematch, settings and background/resume.
-- Run a sustained match/performance capture with the new
-  `Tools/Validation/capture_android_performance.ps1` harness and interpret frame,
-  CPU, memory, thermal and battery evidence.
+  The exact 2080383 candidate now has partial machine/device evidence through
+  spectator/results and REMATCH, but the complete owner-operated route remains open.
+- Interpret the exact 2080383 120-second match capture from
+  `Tools/Validation/capture_android_performance.ps1` against explicit budgets and add
+  normalized frame/GC/GPU/repeated-rematch evidence where tooling permits.
 - Refresh store screenshots from the final human-reviewed signed candidate.
 - Supply final package identity and release signing; recheck manifest, permissions,
   target API, 64-bit and 16 KB compatibility in the owner-controlled Play flow.
