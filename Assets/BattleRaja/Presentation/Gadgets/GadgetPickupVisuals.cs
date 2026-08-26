@@ -31,14 +31,34 @@ namespace BattleRaja.Presentation.Gadgets
         public void RebuildFromSavedPrefab()
         {
             // This component owns the pickup's complete render-only child hierarchy.
-            // Clear every child rather than relying on the private runtime root field,
-            // which Unity does not serialize and which cannot identify older generated
-            // prefab children after a scene reload.
+            // Reuse the serialized anchor when present so Unity does not churn scene
+            // file IDs on every controlled generation pass. Remove older generated
+            // model children (including legacy direct children) before saving.
+            Transform savedIdentityRoot = null;
             for (var i = transform.childCount - 1; i >= 0; i--)
             {
-                DestroyImmediate(transform.GetChild(i).gameObject);
+                var child = transform.GetChild(i);
+                if (child.name == "GadgetIdentityVisual" && savedIdentityRoot == null)
+                {
+                    savedIdentityRoot = child;
+                }
+                else
+                {
+                    DestroyImmediate(child.gameObject);
+                }
             }
             _identityRoot = null;
+
+            if (savedIdentityRoot != null)
+            {
+                for (var i = savedIdentityRoot.childCount - 1; i >= 0; i--)
+                {
+                    DestroyImmediate(savedIdentityRoot.GetChild(i).gameObject);
+                }
+
+                _identityRoot = savedIdentityRoot;
+                _identityBasePosition = savedIdentityRoot.localPosition;
+            }
 
             for (var i = 0; i < _objects.Count; i++)
             {
@@ -52,7 +72,18 @@ namespace BattleRaja.Presentation.Gadgets
 
             _objects.Clear();
             _materials.Clear();
-            Build();
+
+            // Keep the scene serialization lightweight and deterministic. The saved
+            // prefab references above are the source of truth; the render-only model is
+            // instantiated into this anchor during PlayMode, just like fighter art.
+            if (_identityRoot == null)
+            {
+                var identityRoot = new GameObject("GadgetIdentityVisual").transform;
+                identityRoot.SetParent(transform, false);
+                identityRoot.localPosition = Vector3.up * 0.28f;
+                _identityRoot = identityRoot;
+                _identityBasePosition = identityRoot.localPosition;
+            }
         }
 
         /// <summary>Assigns generated prefab references directly during controlled scene generation.</summary>
@@ -66,7 +97,18 @@ namespace BattleRaja.Presentation.Gadgets
 
         private void Awake()
         {
-            if (transform.Find("GadgetIdentityVisual") != null) return;
+            // Editor generation persists only the anchor and prefab references. Avoid
+            // rebuilding there; PlayMode owns the transient render hierarchy.
+            if (!Application.isPlaying) return;
+
+            var existingIdentity = transform.Find("GadgetIdentityVisual");
+            if (existingIdentity != null)
+            {
+                _identityRoot = existingIdentity;
+                _identityBasePosition = existingIdentity.localPosition;
+                if (existingIdentity.childCount > 0) return;
+            }
+
             Build();
         }
 
@@ -96,11 +138,15 @@ namespace BattleRaja.Presentation.Gadgets
         {
             var pickup = GetComponent<GadgetPickup>();
             var id = pickup != null ? pickup.GadgetId.Value : GadgetDefinition.UmbrellaGuard.GadgetId.Value;
-            var root = new GameObject("GadgetIdentityVisual").transform;
-            root.SetParent(transform, false);
-            root.localPosition = Vector3.up * 0.28f;
-            _identityRoot = root;
-            _identityBasePosition = root.localPosition;
+            var root = _identityRoot;
+            if (root == null)
+            {
+                root = new GameObject("GadgetIdentityVisual").transform;
+                root.SetParent(transform, false);
+                root.localPosition = Vector3.up * 0.28f;
+                _identityRoot = root;
+                _identityBasePosition = root.localPosition;
+            }
 
             var savedPrefab = SelectSavedPrefab(id);
             if (savedPrefab != null)
