@@ -72,6 +72,9 @@ namespace BattleRaja.Presentation.Flow
         private Button _highContrastButton;
         private Button _aimAssistButton;
         private Button _hapticsButton;
+        private Button _bijliButton;
+        private Button _pehelButton;
+        private Button _mayaButton;
 
         public ProductionFlowState State => _flow.State;
         public ProductionGameMode Mode => _flow.Mode;
@@ -311,6 +314,15 @@ namespace BattleRaja.Presentation.Flow
             _selectedFighter = fighter;
             SavePreferences();
             Apply(_flow.SelectFighter(fighter));
+            // Touch clicks update the flow summary but may leave the EventSystem's
+            // navigation selection on the first card. Keep the visual focus ring and
+            // keyboard/switch navigation aligned with the fighter the player chose.
+            var button = fighter == ProductionFighter.Pehel ? _pehelButton :
+                fighter == ProductionFighter.Maya ? _mayaButton : _bijliButton;
+            if (button != null && EventSystem.current != null)
+            {
+                EventSystem.current.SetSelectedGameObject(button.gameObject);
+            }
         }
 
         private IEnumerator LoadGameplayScene()
@@ -532,15 +544,15 @@ namespace BattleRaja.Presentation.Flow
 
             _fighterPanel = CreatePanel(_safeArea.transform, "FighterPanel");
             _fighterSummaryText = CreateText(_fighterPanel.transform, "FighterSummary", new Vector2(0.12f, 0.72f), new Vector2(0.88f, 0.84f), 22, TextAnchor.MiddleCenter);
-            var bijliButton = CreateButton(_fighterPanel.transform, "Bijli", "BIJLI\nELECTRIC DASH", new Vector2(0.08f, 0.49f), new Vector2(0.31f, 0.65f), SelectBijli);
-            var pehelButton = CreateButton(_fighterPanel.transform, "Pehel", "PEHEL\nCHARGE THROW", new Vector2(0.385f, 0.49f), new Vector2(0.615f, 0.65f), SelectPehel);
-            var mayaButton = CreateButton(_fighterPanel.transform, "Maya", "MAYA\nDECOY", new Vector2(0.69f, 0.49f), new Vector2(0.92f, 0.65f), SelectMaya);
-            AddFighterCardArt(bijliButton, BattleRajaFighterCardKind.Bijli);
-            AddFighterCardArt(pehelButton, BattleRajaFighterCardKind.Pehel);
-            AddFighterCardArt(mayaButton, BattleRajaFighterCardKind.Maya);
-            BattleRajaUiTheme.StyleButton(bijliButton, BattleRajaUiTheme.Cyan);
-            BattleRajaUiTheme.StyleButton(pehelButton, BattleRajaUiTheme.Saffron);
-            BattleRajaUiTheme.StyleButton(mayaButton, BattleRajaUiTheme.Magenta);
+            _bijliButton = CreateButton(_fighterPanel.transform, "Bijli", "BIJLI\nELECTRIC DASH", new Vector2(0.08f, 0.49f), new Vector2(0.31f, 0.65f), SelectBijli);
+            _pehelButton = CreateButton(_fighterPanel.transform, "Pehel", "PEHEL\nCHARGE THROW", new Vector2(0.385f, 0.49f), new Vector2(0.615f, 0.65f), SelectPehel);
+            _mayaButton = CreateButton(_fighterPanel.transform, "Maya", "MAYA\nDECOY", new Vector2(0.69f, 0.49f), new Vector2(0.92f, 0.65f), SelectMaya);
+            AddFighterCardArt(_bijliButton, BattleRajaFighterCardKind.Bijli);
+            AddFighterCardArt(_pehelButton, BattleRajaFighterCardKind.Pehel);
+            AddFighterCardArt(_mayaButton, BattleRajaFighterCardKind.Maya);
+            BattleRajaUiTheme.StyleButton(_bijliButton, BattleRajaUiTheme.Cyan);
+            BattleRajaUiTheme.StyleButton(_pehelButton, BattleRajaUiTheme.Saffron);
+            BattleRajaUiTheme.StyleButton(_mayaButton, BattleRajaUiTheme.Magenta);
             CreateText(_fighterPanel.transform, "BijliHint", new Vector2(0.08f, 0.42f), new Vector2(0.31f, 0.49f), 13, TextAnchor.MiddleCenter, BattleRajaUiTheme.MutedText).text = "BURST • MID-RANGE";
             CreateText(_fighterPanel.transform, "PehelHint", new Vector2(0.385f, 0.42f), new Vector2(0.615f, 0.49f), 13, TextAnchor.MiddleCenter, BattleRajaUiTheme.MutedText).text = "CAPTURE • THROW";
             CreateText(_fighterPanel.transform, "MayaHint", new Vector2(0.69f, 0.42f), new Vector2(0.92f, 0.49f), 13, TextAnchor.MiddleCenter, BattleRajaUiTheme.MutedText).text = "DECOY • MISDIRECT";

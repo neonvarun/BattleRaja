@@ -158,6 +158,25 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator FighterSelectionKeepsVisualFocusOnTheChosenCard()
+        {
+            yield return SceneManager.LoadSceneAsync("Bootstrap", LoadSceneMode.Single);
+            yield return null;
+            yield return null;
+
+            var flow = Object.FindAnyObjectByType<ProductionFlowController>();
+            flow.OpenModeSelection();
+            flow.SelectOfflineMode();
+            flow.SelectMaya();
+            yield return null;
+
+            Assert.That(flow.SelectedFighter, Is.EqualTo(ProductionFighter.Maya));
+            Assert.That(EventSystem.current, Is.Not.Null);
+            Assert.That(EventSystem.current.currentSelectedGameObject, Is.Not.Null);
+            Assert.That(EventSystem.current.currentSelectedGameObject.name, Is.EqualTo("Maya"));
+        }
+
+        [UnityTest]
         public IEnumerator SettingsExposeAndPersistEffectsVolume()
         {
             const string key = "battleraja.settings.effects_volume";
