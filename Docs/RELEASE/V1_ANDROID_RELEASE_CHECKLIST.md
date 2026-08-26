@@ -53,6 +53,26 @@ pwsh -File Tools/Validation/check_v1_release_candidate.ps1 `
 This gate is technical and local only. It does not sign, upload, publish, or approve
 the final identity, privacy/Data Safety, content rating, cultural review or Play track.
 
+## Latest exact-source tutorial-visibility candidate — `e6c321b` — 2026-08-27
+
+The exact clean source is commit `e6c321b60c8398755942ab0260d13dddac3df551`.
+The tutorial no longer creates an opaque full-screen backdrop, so the live arena and
+touch controls remain visible behind the action-gated prompt. Full EditMode is
+**140/140** and PlayMode is **82/82**. The matching APK is **40,524,858 bytes**
+(`E1408B65F89317885FF64F1C94D80417385E86600420F77BCA3428E378260403`) and the AAB is
+**36,350,021 bytes** (`E94945CA57AA71B510524C73AB9470F839045584784238E1093D3A4834116E11`).
+The local release checker reports **0 errors / 0 warnings**, package
+`com.example.battleraja.m11`, API 28/36, seven ARM64 libraries, no network permissions,
+static 16 KB alignment and creative dimensions passed. Bundletool/zipalign/apksigner
+evidence and the exact hashes are indexed in `Docs/V1_RELEASE_PLAN.md` P19.
+
+On approved Lava `ST5GDW23LB004392`, the exact APK installed and launched. The tutorial
+opening screenshot visibly shows the Bazaar arena, fighters, zone ring, HUD and both
+touch sticks behind the prompt; the tutorial logcat has zero configured fatal markers.
+Action-by-action tutorial completion, full match/spectator/results/rematch/settings route,
+sustained performance, genuine 16 KB runtime, final authored review, signing and Play
+actions remain owner-controlled gates.
+
 ## Latest exact-source fair-bot candidate — `6d287a6` — 2026-08-27
 
 The exact clean source is commit `6d287a657dd946c806ac54580b4d5a5ea1e53ee4`.

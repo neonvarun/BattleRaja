@@ -3,17 +3,16 @@
 Updated: 2026-08-27
 Classification: **prototype**
 
-## Latest exact-source release-gate checkpoint — `6d287a6` / docs `b734c1b`
+## Latest exact-source release-gate checkpoint — `e6c321b` — 2026-08-27
 
-The clean runtime source is `6d287a657dd946c806ac54580b4d5a5ea1e53ee4` on
-`codex/v1-playstore-release`; documentation evidence is committed at `b734c1b`.
-Full EditMode and PlayMode pass **140/140** and **81/81**. The exact-source replay soak
-passes **1/1** with 1,000 seeded matches executed twice (2,000 executions) and zero
-divergence. The fixed-tick production-bot batch completes **100/100** matches in the
-240-360 second window, with **95/100** reaching at least three combat eliminations,
-100/100 bot-to-bot damage and zero invalid/protected samples. Matching debug-signed
-APK/AAB, bundletool and static 16 KB evidence, exact-seed comparison, and approved Lava
-opening-screen/performance evidence are indexed in `Docs/V1_RELEASE_PLAN.md` P18.
+The clean runtime source is `e6c321b60c8398755942ab0260d13dddac3df551` on
+`codex/v1-playstore-release`; the tutorial visibility fix removes the opaque full-screen
+veil and adds a regression assertion. Full EditMode and PlayMode pass **140/140** and
+**82/82**. The exact-source replay soak and fixed-tick production-bot batch remain
+applicable from the preceding gameplay-only source: 1,000 seeded matches x2 with zero
+divergence, and 100/100 bot matches in-window with 95/100 reaching at least three combat
+eliminations. Matching debug-signed APK/AAB, bundletool/static 16 KB evidence and fresh
+approved-Lava tutorial screenshots are indexed in `Docs/V1_RELEASE_PLAN.md` P19.
 
 Status remains **prototype**, not Play-ready: the package uses temporary identity and
 Android Debug signing; Lava reports 4 KB pages; the full physical tutorial/match/

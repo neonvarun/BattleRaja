@@ -1108,6 +1108,97 @@ performance, genuine 16 KB runtime validation, final authored/accessibility/cult
 approval, release signing, privacy/Data Safety, content rating, store assets and Play
 Console approval remain open.
 
+### P19 - Tutorial visibility fix and exact candidate refresh - 2026-08-27
+
+The current source is clean and committed at exact SHA
+`e6c321b60c8398755942ab0260d13dddac3df551` (`fix: keep tutorial arena visible behind
+prompts`). This presentation-only patch removes the opaque full-screen tutorial backdrop
+that obscured the live arena and adds a PlayMode regression asserting that the tutorial
+prompt does not recreate it. The preceding fighter-selection focus correction remains in
+the exact source history at `62b728c`.
+
+#### Exact-source automated evidence
+
+- Focused tutorial PlayMode: **2/2 passed**. XML SHA-256
+  `FB0A1EA192A17F3E671928C22FD4D1D74A75CDD4086CEB38EA829F4F9805A9AA`; log SHA-256
+  `F789237773099802EE42EEF07C17226C56BEE15EC5E8533B0A7D9DBBFD8B3104`.
+- Full EditMode: **140/140 passed**. XML SHA-256
+  `6D8FB225A249C80753406D3ED0BA640D53F64632A5E1B59E1EE3A2AED3B5224C`; log SHA-256
+  `5F39044A0DF0079022725A04CAC641DAC843A5C6CE0C23EC671CE998ACBF958B`.
+- Full PlayMode: **82/82 passed**. XML SHA-256
+  `219B1727A9186D940562C4F56F54262FC946E4AECD9B81961BA3878002A3FFD7`; log SHA-256
+  `6A7EBAA52185C4F484533CA2194830B2BE77825E9F4073A83F382959CF9E5CB4`.
+- The deterministic replay soak and fixed-tick 100-match production-bot batch are
+  unchanged by this presentation-only patch; the exact `6d287a6` evidence remains
+  applicable to gameplay truth and is retained above (1,000 seeds x2 with zero
+  divergence; 100/100 in-window bot matches, 95/100 with at least three combat KOs).
+
+#### Matching Android artifacts from `e6c321b`
+
+- APK `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`: **40,524,858 bytes**,
+  SHA-256 `E1408B65F89317885FF64F1C94D80417385E86600420F77BCA3428E378260403`.
+- AAB `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`: **36,350,021 bytes**,
+  SHA-256 `E94945CA57AA71B510524C73AB9470F839045584784238E1093D3A4834116E11`.
+- Composed checker: **0 errors / 0 warnings**, package `com.example.battleraja.m11`,
+  version `1.0.0`/code `100`, API 28/36, VIBRATE plus Unity dynamic receiver only,
+  seven ARM64 libraries, no other ABIs, static 16 KB ELF alignment passed, and store
+  creative dimensions passed.
+- Bundletool `1.18.3` generated APKS
+  `Builds/Local/V1GameplayTruth/Android/battleraja-v1-e6c321b.apks`, **36,479,209
+  bytes**, SHA-256 `03EAB13BCECF468F9176E7E0033A2E8AAF759563A77576F28B3327FC2B661425`.
+  The universal APK was extracted from that APKS archive at
+  `universal-e6c321b-zip/universal.apk`, **36,478,894 bytes**, SHA-256
+  `10EED00C704E0A87A6C16059E972284B04903108911F79BE15AB24825C1560EE`.
+- Direct and extracted APK `zipalign -c -P 16 -v 4` both passed. Log SHA-256 values:
+  bundletool `DF3173BCAED672FE955EC394A49B6A91A47557D4DCBB68C4AED8612E71506EEC`,
+  direct zipalign `6C2C708BC4198FB865E40200ED5B2D73171465DAA9405E640F4C0CA16F65A2D5`,
+  universal zipalign `0D1A466857B240ACA5EE8BCF0CA0E95A0C77EC67E4C94BF1241CEE4C4B65AF4A`,
+  direct apksigner `BCABF5EE2B220F3F612B5C16A74690E469631C321076863D84320010CA0BFF0A`,
+  universal apksigner `BCABF5EE2B220F3F612B5C16A74690E469631C321076863D84320010CA0BFF0A`.
+  Both signatures verify with the Android Debug certificate SHA-256
+  `b0a94c79c2d3fa527d4160b46a3067fbe25bd4db0e1a2dafe1a62b1bce41b28c`; this is not a
+  publishable release signature.
+
+#### Approved Lava evidence
+
+The exact e6c321b APK installed successfully on approved Lava `ST5GDW23LB004392`
+(`LAVA LXX508`, API 34). The fresh screenshots are under
+`Builds/Local/Device/Screenshots/20260827-e6c321b`:
+
+- `launch-menu.png`, SHA-256
+  `002F36939339627A53068CDE48AEDEC64C628711C2F8C799772FBC8034AA3609`.
+- `tutorial-opening.png`, SHA-256
+  `1ECB0C39A45B617674557D1ACA920410C4EDED38ED7BD2380114E5976FFEDCAD`.
+- `tutorial-movement-performed-2.png`, SHA-256
+  `5F0748B938DAFC552A28FBCF2F4BB5B04DD5684D253AE54163F833013CD22D86`.
+
+The tutorial opening visibly contains the live Bazaar arena, eight fighters, zone ring,
+HUD and both touch sticks behind the movement prompt; the previous blank-dark-screen
+failure is therefore fixed on the exact candidate. A shell swipe was attempted on the
+left-handed MOVE stick, but the prompt remained waiting, so no action-by-action physical
+tutorial completion claim is made. The captured tutorial logcat has SHA-256
+`969BAE3F05D9A720F06D8B49530589EC5C60D528382637EC9981A2F39D5051B` (2 lines, zero
+configured fatal markers). The exact candidate's full tutorial/match/spectator/results/
+rematch/settings/lifecycle route remains an owner-operated review gate.
+
+#### P19 gate classification
+
+| Gate | Status | Evidence / owner action |
+| --- | --- | --- |
+| Clean committed source, compile, full EditMode/PlayMode | **Passed** | `e6c321b`; 140/140 and 82/82 |
+| Tutorial prompt keeps live gameplay visible | **Passed (automated + Lava visual)** | Regression test and exact `tutorial-opening.png` |
+| Deterministic replay/deep soak | **Passed (carried forward)** | Presentation-only patch; exact `6d287a6` 1,000-seed x2 evidence remains applicable |
+| APK/AAB manifest, ARM64, static 16 KB, bundletool and zipalign | **Passed** | Exact e6c321b checker and artifact evidence above |
+| Production-bot 100-match release distribution | **Passed (carried forward)** | Presentation-only patch; exact `6d287a6` batch remains applicable |
+| Exact-source same-seed production command stream | **Passed (carried forward)** | Presentation-only patch; exact `6d287a6` digest remains applicable |
+| Lava install, launch and bounded crash-marker smoke | **Passed** | Exact e6c321b APK installed; tutorial logcat has zero configured fatal markers |
+| Full touch tutorial -> match -> spectator/results/rematch/settings/lifecycle route | **Blocked** | Owner-operated action-by-action review remains required |
+| Sustained full-match CPU/GPU/GC/thermal/battery budget | **Not run** | Current exact e6 evidence is launch/tutorial visual only |
+| Genuine 16 KB runtime device validation | **Blocked** | Approved Lava reports 4 KB pages; requires a genuine 16 KB environment |
+| Final authored art/audio, accessibility, balance and cultural review | **Blocked** | Human review and authored polish remain |
+| Final identity/signing, privacy/Data Safety, content rating and Play Console | **Blocked** | Owner/legal/store actions are not authorized |
+| Photon, PlayFab, accounts, online and Web release | **Not applicable** | Explicit V1 offline scope lock |
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (automated foundation;

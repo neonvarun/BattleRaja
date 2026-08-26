@@ -7,15 +7,17 @@
 ## Current state
 
 - **Latest exact-source release-gate checkpoint (2026-08-27):** clean commit
+  `e6c321b60c8398755942ab0260d13dddac3df551` removes the opaque tutorial backdrop so
+  the live arena remains visible behind the action-gated prompt. The preceding commit
   `6d287a657dd946c806ac54580b4d5a5ea1e53ee4` carries the fair production-bot policy
   (0.9x bounded damage, 25x cadence, fixed canonical harness ticks) plus robust
-  regression diagnostics. Full EditMode is **140/140**, PlayMode is **81/81**, and the
+  regression diagnostics. Full EditMode is **140/140**, PlayMode is **82/82**, and the
   1,000-seed replay soak passes **1/1** with zero divergence across 2,000 executions.
   The exact-source 100-match bot batch completes **100/100** in the 240-360 s window,
   with **95/100** matches reaching at least three combat eliminations and all invariant
   checks passing. Matching APK/AAB, static checker, bundletool/zipalign, same-seed
   command digest and approved Lava opening-screen evidence are recorded in
-  `Docs/V1_RELEASE_PLAN.md` P18. The APK remains Android Debug-signed and the product
+  `Docs/V1_RELEASE_PLAN.md` P19. The APK remains Android Debug-signed and the product
   remains a prototype: full touch-route, accessibility, sustained performance, genuine
   16 KB runtime, final authored identity/cultural review, signing, privacy/Data Safety
   and Play Console actions remain open.

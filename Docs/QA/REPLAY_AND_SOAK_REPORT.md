@@ -1,8 +1,10 @@
 # BattleRaja Replay and Soak Report
 
-## Latest exact-source result — `6d287a6` — 2026-08-27
+## Latest exact-source result — `e6c321b` — 2026-08-27
 
-At exact source `6d287a657dd946c806ac54580b4d5a5ea1e53ee4`,
+At exact source `e6c321b60c8398755942ab0260d13dddac3df551`, the tutorial-only presentation
+patch leaves gameplay code unchanged, so the preceding exact gameplay source remains the
+applicable soak source. At exact source `6d287a657dd946c806ac54580b4d5a5ea1e53ee4`,
 `BATTLERAJA_SOAK_MATCHES=1000` passed **1/1**: 1,000 seeded matches executed twice
 (2,000 executions), zero divergence, NUnit duration **538.822974 seconds**. XML
 `Builds/Local/V1GameplayTruth/TestResults/deep-soak-final-6d287a6.xml` SHA-256
