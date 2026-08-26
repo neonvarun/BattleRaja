@@ -567,3 +567,19 @@ cannot establish 16 KB runtime compatibility.
 - App PSS ranged **57,379–238,075 KB**; thermal status was 0 before and after; the configured
   fatal-marker scan was empty. The device reports 4 KB pages. This is launch/menu evidence,
   not a sustained full-match CPU/GPU/GC/thermal/battery measurement or runtime 16 KB proof.
+
+## V1 UI-patch 30-second device capture — exact source `aeda6de` — 2026-08-27
+
+- The matching APK from clean source `aeda6debab89404991f55a0f663a88798dd9c944` was
+  installed and exercised on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android
+  14/API 34). The actual menu-to-Solo-Raja opening route was reached; player-facing HUD
+  labels were visually captured separately under
+  `Builds/Local/Device/Screenshots/20260827-aeda6de/`.
+- Six samples over 30 seconds are under
+  `Builds/Local/Device/Performance/20260827-014609-v1-ui-aeda6de-30s`. Manifest
+  SHA-256 `A9C19ECC98A8E5C282720AFB8CA6145F328A46AA49763DD9AA66016A6CFB2A5B`; logcat
+  SHA-256 `625FC8638DEBC96BA2817DBEB6B6D98186EE01A8AB730276D912AEDF00F392F7`.
+- App PSS ranged **41,979–236,451 KB**; thermal status was 0 before and after; no
+  configured fatal markers were found. Lava reports 4 KB pages. This remains opening-
+  screen evidence, not a sustained full-match CPU/GPU/GC/thermal/battery measurement or
+  genuine 16 KB runtime proof.

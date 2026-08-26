@@ -6,6 +6,18 @@
 
 ## Current state
 
+- **Latest exact-source UI/QA checkpoint (2026-08-27):** clean commit
+  `aeda6debab89404991f55a0f663a88798dd9c944` removes internal gadget/actor IDs,
+  keyboard/mouse instructions and authority/developer terminology from the HUD,
+  tutorial and results copy. Full EditMode is **140/140**, PlayMode is **81/81**, and
+  the 1,000-seed replay soak passes **1/1** with zero divergence across 2,000
+  executions. Matching release-shaped APK/AAB, static checker, bundletool/zipalign and
+  approved Lava opening-screen evidence are recorded in `Docs/V1_RELEASE_PLAN.md` P17.
+  The APK remains Android Debug-signed and the product remains a prototype: the strict
+  bot pacing gate is still failed (70/100 and 76/100 in-window), while full touch-route,
+  accessibility, sustained performance, final authored identity/cultural review,
+  signing, privacy/Data Safety and Play Console actions remain open.
+
 - **Working-tree gameplay truth update (2026-08-25):** unified action eligibility
   is now owned by `OfflineMatchAuthority`. Movement, ability displacement, attack,
   fighter ability, decoy, direct/projectile damage, healing, gadget use, station

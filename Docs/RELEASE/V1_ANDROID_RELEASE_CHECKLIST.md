@@ -53,6 +53,40 @@ pwsh -File Tools/Validation/check_v1_release_candidate.ps1 `
 This gate is technical and local only. It does not sign, upload, publish, or approve
 the final identity, privacy/Data Safety, content rating, cultural review or Play track.
 
+## Latest clean-source UI candidate — `aeda6de` — 2026-08-27
+
+The exact clean source is commit `aeda6debab89404991f55a0f663a88798dd9c944`
+(`ui: remove internal HUD labels and keyboard hints`). The patch is presentation-only;
+it does not change authority, replay, bot, collision or match rules.
+
+- Full EditMode: **140/140 passed**; full PlayMode: **81/81 passed**.
+- Deterministic soak: **1/1 passed**, 1,000 seeds x2 (2,000 executions), zero divergence;
+  XML SHA-256 `65BD32A7B978CB5679546EA3A7ACDFFC91261DC5D1A4CE86C3E280BB1B79C69F`.
+- APK: **40,523,450 bytes**, SHA-256
+  `62764237F44B1DD0D9F5B6E2E37C582FBA9B57B088B46C30805C883C123CAE65`.
+- AAB: **36,348,625 bytes**, SHA-256
+  `34F2E2D1318A8DF24EF9E3968511BE8686DDAE207D4ACBCA16801F247E11A6D6`.
+- Checker: **0 errors / 0 warnings**, package `com.example.battleraja.m11`, version
+  `1.0.0`/code `100`, API 28/36, VIBRATE plus dynamic receiver only, seven ARM64
+  libraries, static 16 KB and creative dimensions passed. The artifact remains Debug-
+  signed with certificate SHA-256
+  `b0a94c79c2d3fa527d4160b46a3067fbe25bd4db0e1a2dafe1a62b1bce41b28c`.
+- Bundletool `1.18.3` APKS SHA-256
+  `7C03F94C5E1DE08A3F417C49001702499B0D7B7EE6B49FD41B09D5143215D43B`; universal APK
+  SHA-256 `378B667014E87EC93B501056E709769A5515E94C3F92D4911A472B004647F976`.
+  Direct and extracted APK `zipalign -c -P 16 -v 4` both passed.
+- Approved Lava `ST5GDW23LB004392` installed and launched the exact APK. Actual touch
+  navigation reached the live opening screen, where the player-facing labels read
+  `GADGET TIFFIN`, `READY` and `SPAWN SHIELD`; screenshots and hashes are indexed in
+  P17. The fresh six-sample, 30-second capture found no configured fatal markers,
+  thermal status 0 before/after and PSS **41,979–236,451 KB**. Lava reports 4 KB pages.
+
+This is a technically clean local candidate, not a Play-ready release. Production-bot
+pacing remains **Failed** (P15: 70/100 and 76/100 in the 240–360 second window), and
+full touch tutorial/match/spectator/results/rematch/settings/accessibility/audio/lifecycle
+review, sustained performance, authored final assets, cultural review, release signing,
+privacy/Data Safety, content rating and Play Console actions remain open.
+
 ## Superseded current dirty-tree candidate — `fac1c714b9ba2df72b3acf54b40638d0ae122a93` plus working-tree edits — 2026-08-26
 
 The candidate pair below was rebuilt from the current intentionally dirty working tree with

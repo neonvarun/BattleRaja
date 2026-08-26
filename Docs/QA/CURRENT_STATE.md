@@ -1,6 +1,6 @@
 # BattleRaja V1 current-state index
 
-Updated: 2026-08-26
+Updated: 2026-08-27
 
 ## Evidence location policy
 
@@ -19,6 +19,29 @@ tooling exist. A Play Store Release Candidate claim is not yet justified because
 physical Lava interaction/tutorial review, sustained performance, final identity/
 signing, accessibility, legal/privacy/cultural approval and Play Console review
 remain open.
+
+## Latest current-source evidence — 2026-08-27
+
+The runtime/presentation source is clean and committed on branch
+`codex/v1-playstore-release` at exact source `aeda6debab89404991f55a0f663a88798dd9c944`
+(`ui: remove internal HUD labels and keyboard hints`). Full EditMode is **140/140**, full PlayMode is **81/81**, and the 1,000-seed
+deterministic replay soak is **1/1 passed** with 2,000 executions and zero divergence.
+Matching APK/AAB hashes, bundletool/zipalign evidence and gate classifications are in
+`Docs/V1_RELEASE_PLAN.md` P17.
+
+The exact APK is debug-signed and remains a local candidate, not a publishable Play
+artifact. The release checker reports **0 errors / 0 warnings**, seven ARM64 libraries,
+no network permissions, and static 16 KB alignment. The APK installed on approved Lava
+`ST5GDW23LB004392`; actual menu-to-opening touch navigation reached a live match screen.
+The new player-facing labels are visible as `GADGET TIFFIN`, `READY` and `SPAWN SHIELD`.
+Fresh 30-second device evidence found no configured fatal markers, but the device reports
+4 KB pages and the capture is not a sustained full-match performance pass.
+
+The production-bot release distribution remains **Failed** on pacing (historical P15
+runs: 70/100 and 76/100 in the 240–360 second window); all recorded safety/invariant
+checks passed. Physical tutorial/full-route, accessibility, sustained performance,
+authored final art/audio, cultural review, release signing and Play/legal gates remain
+open.
 
 ## Latest current-source evidence — 2026-08-26
 

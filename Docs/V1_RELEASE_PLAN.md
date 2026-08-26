@@ -918,6 +918,96 @@ content rating, store assets and Play Console approval remain open.
 | Final identity/signing, privacy/Data Safety, content rating and Play Console | **Blocked** | Owner/legal/store actions are not authorized |
 | Photon, PlayFab, accounts, online and Web release | **Not applicable** | Explicit V1 offline scope lock |
 
+### P17 - Player-facing HUD cleanup, exact UI-source verification and Lava refresh - 2026-08-27
+
+The current runtime/presentation source is clean and committed at
+`aeda6debab89404991f55a0f663a88798dd9c944` (`ui: remove internal HUD labels and keyboard hints`).
+This patch is presentation-only: it does not change the core authority, replay, bot,
+collision or match-rule code. It removes serialized gadget IDs, actor labels, keyboard/
+mouse instructions and developer/authority terminology from the player-facing HUD,
+tutorial and results copy. The Lava opening screenshot visibly shows `GADGET TIFFIN`,
+`READY` and `SPAWN SHIELD` with no `[G]`, `tiffin_station`, `SPAWNPROTECTION` or
+`PLAYER 1` leakage.
+
+#### Exact-source automated evidence
+
+- Full EditMode: **140/140 passed**. XML:
+  `Builds\\Local\\V1GameplayTruth\\TestResults\\editmode-ui-aeda6de.xml`.
+- Full PlayMode: **81/81 passed**. XML:
+  `Builds\\Local\\V1GameplayTruth\\TestResults\\playmode-ui-aeda6de.xml`.
+- Deterministic replay soak: **1/1 passed**, `BATTLERAJA_SOAK_MATCHES=1000`,
+  1,000 seeded matches executed twice (2,000 executions), zero divergence, NUnit
+  duration **553.5464039 s**. XML SHA-256
+  `65BD32A7B978CB5679546EA3A7ACDFFC91261DC5D1A4CE86C3E280BB1B79C69F`; log SHA-256
+  `46CC6D65C14B28A4315D576032E1BA8093E65B843011EE3660FE897401EB30A5`.
+
+#### Matching Android artifacts from `aeda6de`
+
+- APK `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`: **40,523,450 bytes**,
+  SHA-256 `62764237F44B1DD0D9F5B6E2E37C582FBA9B57B088B46C30805C883C123CAE65`.
+- AAB `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`: **36,348,625 bytes**,
+  SHA-256 `34F2E2D1318A8DF24EF9E3968511BE8686DDAE207D4ACBCA16801F247E11A6D6`.
+- `apksigner verify --print-certs` remains the Android Debug certificate
+  `b0a94c79c2d3fa527d4160b46a3067fbe25bd4db0e1a2dafe1a62b1bce41b28c`; this is not a
+  publishable release signature.
+- Composed release checker: **0 errors / 0 warnings**, package
+  `com.example.battleraja.m11`, version `1.0.0`/code `100`, API 28/36, VIBRATE plus
+  Unity's dynamic receiver permission only, seven ARM64 libraries, no other ABIs,
+  static 16 KB ELF alignment passed, and store-creative dimensions passed. Checker log
+  `Builds\\Local\\V1GameplayTruth\\Logs\\check-v1-release-candidate-ui-aeda6de.log`
+  SHA-256 `2A7E82EC78CD3EC6E42DD37B369D728A019B86C31906B017932027AB2586CD2C`.
+- Bundletool `1.18.3` universal set APKS SHA-256
+  `7C03F94C5E1DE08A3F417C49001702499B0D7B7EE6B49FD41B09D5143215D43B`; extracted
+  universal APK SHA-256
+  `378B667014E87EC93B501056E709769A5515E94C3F92D4911A472B004647F976`.
+  Direct and extracted APK `zipalign -c -P 16 -v 4` both passed. The final bundletool,
+  extracted-APK and direct-APK log hashes are respectively
+  `DF3173BCAED672FE955EC394A49B6A91A47557D4DCBB68C4AED8612E71506EEC`,
+  `EE24BB8D705F8F7D70118E4FECB3F5BA1D58D2A91689861D17E741655189371C` and
+  `A3B0B60EDDC5DB30D431B1E04D8BF9EF29F0EB7ED60F0F2A151AAD3132492B89`.
+
+#### Approved Lava evidence
+
+The exact APK was installed with `adb -s ST5GDW23LB004392 install -r` and the actual
+menu → Solo Raja → drop-in → live opening route was reached by touch automation. The
+review captures are:
+
+- `Builds\\Local\\Device\\Screenshots\\20260827-aeda6de\\launch-menu.png`, SHA-256
+  `9508D68E065586AC71722D073A25D53A34B58D502254283044DADFE62F18F9D8`.
+- `Builds\\Local\\Device\\Screenshots\\20260827-aeda6de\\solo-opening.png`, SHA-256
+  `E6F7C9B7E0FAF0182246FD99FAA2D03C6A1C180058DFF09DC96B418267CFE7CC`.
+
+The fresh six-sample, 30-second capture at
+`Builds\\Local\\Device\\Performance\\20260827-014609-v1-ui-aeda6de-30s` found no
+configured fatal markers and thermal status 0 before/after. Manifest SHA-256 is
+`A9C19ECC98A8E5C282720AFB8CA6145F328A46AA49763DD9AA66016A6CFB2A5B`; logcat SHA-256 is
+`625FC8638DEBC96BA2817DBEB6B6D98186EE01A8AB730276D912AEDF00F392F7`. The device is
+`LAVA LXX508`, API 34, reports 4 KB pages, and app PSS ranged **41,979–236,451 KB**.
+This is launch/menu plus opening-screen evidence, not sustained full-match performance
+or genuine 16 KB runtime validation. Human visual/touch review remains open.
+
+The strict production-bot evidence remains the two P15 runs (70/100 and 76/100 in the
+240–360 second window). No post-`aeda6de` bot rerun was performed because this patch is
+player-facing presentation only and does not touch the harness or gameplay. The batch
+therefore remains **Failed** on pacing, with its safety/invariant passes preserved.
+
+#### P17 gate classification
+
+| Gate | Status | Evidence / owner action |
+| --- | --- | --- |
+| Clean committed source, compile, full EditMode/PlayMode | **Passed** | `aeda6de`; 140/140 and 81/81 |
+| Deterministic replay/deep soak | **Passed** | 1,000 seeds x2; zero divergence; hashes above |
+| APK/AAB manifest, ARM64, static 16 KB, bundletool and zipalign | **Passed** | Technical checker and bundletool evidence above |
+| Player-facing HUD/tutorial/results label cleanup | **Passed** | UI regressions plus actual Lava opening screenshot |
+| Production-bot 100-match release distribution | **Failed** | Existing P15 runs pass invariants but only 70/100 and 76/100 in-window |
+| Lava install, launch and bounded crash-marker smoke | **Passed** | Fresh install and six-sample capture; no configured fatal markers |
+| Full touch tutorial → match → spectator/results/rematch/settings/lifecycle route | **Blocked** | Requires owner-operated touch review |
+| Sustained full-match CPU/GPU/GC/thermal/battery budget | **Not run** | Current capture is menu/opening only |
+| Genuine 16 KB runtime device validation | **Blocked** | Approved Lava reports 4 KB pages; requires a genuine 16 KB environment |
+| Final authored art/audio, accessibility, balance and cultural review | **Blocked** | Human review and authored polish remain |
+| Final identity/signing, privacy/Data Safety, content rating and Play Console | **Blocked** | Owner/legal/store actions are not authorized |
+| Photon, PlayFab, accounts, online and Web release | **Not applicable** | Explicit V1 offline scope lock |
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (automated foundation;
