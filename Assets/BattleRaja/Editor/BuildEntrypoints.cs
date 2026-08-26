@@ -539,6 +539,29 @@ namespace BattleRaja.Editor
             EnsureUrpAsset();
             Directory.CreateDirectory("Assets/BattleRaja/Scenes/Tutorial");
 
+            // TutorialArena is a committed release input. Recopying MovementLab on
+            // every Android build recreates TutorialOverlay with fresh Unity file IDs
+            // even when nothing changed, dirtying an otherwise clean source tree. Keep
+            // a valid authored scene stable; delete it (or its overlay) to request a
+            // deliberate regeneration.
+            if (File.Exists(TutorialArenaScenePath))
+            {
+                var existingTutorial = EditorSceneManager.OpenScene(TutorialArenaScenePath, OpenSceneMode.Single);
+                var existingArena = GameObject.Find("TutorialArena");
+                if (existingArena != null && existingArena.GetComponentInChildren<TutorialOverlay>(true) != null)
+                {
+                    EditorBuildSettings.scenes = new[]
+                    {
+                        new EditorBuildSettingsScene(BootstrapScenePath, true),
+                        new EditorBuildSettingsScene(TutorialArenaScenePath, true),
+                        new EditorBuildSettingsScene(BazaarBastionScenePath, true),
+                        new EditorBuildSettingsScene(MovementLabScenePath, true)
+                    };
+                    Debug.Log("BattleRaja Tutorial Arena already exists; keeping committed scene file IDs.");
+                    return;
+                }
+            }
+
             var sourceScene = EditorSceneManager.OpenScene(MovementLabScenePath, OpenSceneMode.Single);
             EditorSceneManager.SaveScene(sourceScene, TutorialArenaScenePath);
             var arena = GameObject.Find("MovementLab");
