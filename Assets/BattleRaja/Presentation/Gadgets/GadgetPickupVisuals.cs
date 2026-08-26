@@ -30,11 +30,15 @@ namespace BattleRaja.Presentation.Gadgets
         /// </summary>
         public void RebuildFromSavedPrefab()
         {
-            if (_identityRoot != null)
+            // This component owns the pickup's complete render-only child hierarchy.
+            // Clear every child rather than relying on the private runtime root field,
+            // which Unity does not serialize and which cannot identify older generated
+            // prefab children after a scene reload.
+            for (var i = transform.childCount - 1; i >= 0; i--)
             {
-                DestroyImmediate(_identityRoot.gameObject);
-                _identityRoot = null;
+                DestroyImmediate(transform.GetChild(i).gameObject);
             }
+            _identityRoot = null;
 
             for (var i = 0; i < _objects.Count; i++)
             {

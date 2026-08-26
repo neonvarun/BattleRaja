@@ -30,6 +30,14 @@ namespace BattleRaja.Editor
             "Idle", "Locomotion", "Attack", "Ability", "Hit", "Knockback", "Eliminated", "Victory", "Defeat"
         };
 
+        private static readonly string[] VfxNames =
+        {
+            "BijliAttackVfx", "BijliAbilityVfx", "PehelAttackVfx", "PehelAbilityVfx",
+            "MayaAttackVfx", "MayaAbilityVfx", "FighterHitVfx", "FighterEliminationVfx",
+            "GadgetUseVfx", "HealingVfx", "ShieldVfx", "ZoneWarningVfx", "ZoneClosingVfx",
+            "ZoneFinalCircleVfx"
+        };
+
         private static readonly string[] FighterPrefabPaths =
         {
             ProductionArtBuilder.BijliPrefabPath,
@@ -40,6 +48,16 @@ namespace BattleRaja.Editor
         [MenuItem("BattleRaja/Build V1 Production Animation and VFX")]
         public static void BuildAll()
         {
+            // Generated presentation assets are committed release inputs. Do not delete
+            // and recreate them during every scene/build pass: that churns GUIDs and
+            // causes otherwise clean scenes to drift. A deliberate asset deletion (or a
+            // fresh checkout) still enters the full generation path below.
+            if (HasGeneratedAssets())
+            {
+                Debug.Log("BattleRaja production presentation already exists; keeping committed asset identities.");
+                return;
+            }
+
             EnsureFolders();
             var controller = BuildController();
             var vfx = BuildVfxLibrary();
@@ -51,6 +69,24 @@ namespace BattleRaja.Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Debug.Log("BattleRaja production presentation generated: transform rig, Animator clips/controller and saved VFX cues.");
+        }
+
+        public static bool HasGeneratedAssets()
+        {
+            if (AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath) == null) return false;
+            for (var i = 0; i < StateNames.Length; i++)
+            {
+                var clipPath = ClipRoot + "/Fighter" + StateNames[i] + ".anim";
+                if (AssetDatabase.LoadAssetAtPath<AnimationClip>(clipPath) == null) return false;
+            }
+
+            for (var i = 0; i < VfxNames.Length; i++)
+            {
+                var vfxPath = VfxRoot + "/" + VfxNames[i] + ".prefab";
+                if (AssetDatabase.LoadAssetAtPath<GameObject>(vfxPath) == null) return false;
+            }
+
+            return true;
         }
 
         /// <summary>

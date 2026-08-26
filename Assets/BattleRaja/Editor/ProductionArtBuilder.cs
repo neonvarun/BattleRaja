@@ -27,6 +27,16 @@ namespace BattleRaja.Editor
         [MenuItem("BattleRaja/Build V1 Production Fighter Art")]
         public static void BuildAll()
         {
+            // Generated production prefabs are committed release inputs. Keep their
+            // local file IDs stable during ordinary scene/build generation; a deliberate
+            // deletion or fresh checkout still enters the generation path below.
+            if (HasGeneratedAssets())
+            {
+                ProductionPresentationBuilder.BuildAll();
+                Debug.Log("BattleRaja production art already exists; keeping committed asset identities.");
+                return;
+            }
+
             EnsureFolders();
             var materials = BuildMaterials();
             var meshes = BuildMeshes();
@@ -40,6 +50,16 @@ namespace BattleRaja.Editor
             AssetDatabase.Refresh();
             ProductionPresentationBuilder.BuildAll();
             Debug.Log("BattleRaja production art generated: six render-only V1 prefabs.");
+        }
+
+        public static bool HasGeneratedAssets()
+        {
+            return AssetDatabase.LoadAssetAtPath<GameObject>(BijliPrefabPath) != null
+                && AssetDatabase.LoadAssetAtPath<GameObject>(PehelPrefabPath) != null
+                && AssetDatabase.LoadAssetAtPath<GameObject>(MayaPrefabPath) != null
+                && AssetDatabase.LoadAssetAtPath<GameObject>(UmbrellaPrefabPath) != null
+                && AssetDatabase.LoadAssetAtPath<GameObject>(DholPrefabPath) != null
+                && AssetDatabase.LoadAssetAtPath<GameObject>(TiffinPrefabPath) != null;
         }
 
         private static void EnsureFolders()
@@ -131,7 +151,19 @@ namespace BattleRaja.Editor
         private static void SaveMesh(string name, Mesh mesh)
         {
             var path = MeshRoot + "/" + name + ".asset";
-            if (AssetDatabase.LoadAssetAtPath<Mesh>(path) != null) AssetDatabase.DeleteAsset(path);
+            var existing = AssetDatabase.LoadAssetAtPath<Mesh>(path);
+            if (existing != null)
+            {
+                // Keep the imported asset GUID stable across controlled rebuilds. The
+                // previous delete-and-recreate flow forced every prefab/scene reference
+                // to churn whenever an Android build regenerated production art.
+                EditorUtility.CopySerialized(mesh, existing);
+                existing.name = name;
+                EditorUtility.SetDirty(existing);
+                UnityEngine.Object.DestroyImmediate(mesh);
+                return;
+            }
+
             mesh.name = name;
             AssetDatabase.CreateAsset(mesh, path);
         }
@@ -369,7 +401,6 @@ namespace BattleRaja.Editor
 
         private static void SavePrefab(GameObject root, string path)
         {
-            if (AssetDatabase.LoadAssetAtPath<GameObject>(path) != null) AssetDatabase.DeleteAsset(path);
             PrefabUtility.SaveAsPrefabAsset(root, path);
             UnityEngine.Object.DestroyImmediate(root);
         }
