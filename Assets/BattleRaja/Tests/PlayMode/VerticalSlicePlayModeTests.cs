@@ -547,7 +547,10 @@ namespace BattleRaja.Tests.PlayMode
 
             // Advance the pure match to Opening without waiting through protection.
             for (var i = 0; i < 9; i++) match.Simulation.Advance(1f);
-            var targetHealthAmount = Mathf.Max(1, weapon.Damage);
+            // Keep this authority/reconciliation regression independent of the
+            // production bot's bounded PvE weapon scale: one point guarantees a
+            // single accepted projectile is terminal for the selected target.
+            var targetHealthAmount = 1;
             match.Simulation.SyncHealth(target.Id, targetHealthAmount);
             target.Health.SetAuthoritativeHealth(targetHealthAmount);
 

@@ -305,12 +305,15 @@ namespace BattleRaja.Presentation.AI
         {
             var completed = results.Count(item => item.CompletedWithinTickBudget);
             var duration = results.Count > 0 ? results.Average(item => item.DurationSeconds) : 0f;
-            var firstDamage = results.Where(item => item.FirstDamageSeconds >= 0f)
-                .DefaultIfEmpty().Average(item => item.FirstDamageSeconds);
-            var firstElimination = results.Where(item => item.FirstEliminationSeconds >= 0f)
-                .DefaultIfEmpty().Average(item => item.FirstEliminationSeconds);
-            var finalThree = results.Where(item => item.FinalThreeSeconds >= 0f)
-                .DefaultIfEmpty().Average(item => item.FinalThreeSeconds);
+            var firstDamageSamples = results.Where(item => item.FirstDamageSeconds >= 0f)
+                .Select(item => item.FirstDamageSeconds).ToArray();
+            var firstEliminationSamples = results.Where(item => item.FirstEliminationSeconds >= 0f)
+                .Select(item => item.FirstEliminationSeconds).ToArray();
+            var finalThreeSamples = results.Where(item => item.FinalThreeSeconds >= 0f)
+                .Select(item => item.FinalThreeSeconds).ToArray();
+            var firstDamage = firstDamageSamples.Length > 0 ? firstDamageSamples.Average() : -1f;
+            var firstElimination = firstEliminationSamples.Length > 0 ? firstEliminationSamples.Average() : -1f;
+            var finalThree = finalThreeSamples.Length > 0 ? finalThreeSamples.Average() : -1f;
             return $"matches={results.Count} completed={completed} durationAvg={duration:0.0}s " +
                 $"firstDamage={firstDamage:0.0}s firstElimination={firstElimination:0.0}s " +
                 $"finalThree={finalThree:0.0}s combatKOs={results.Sum(item => item.CombatEliminations)} " +
