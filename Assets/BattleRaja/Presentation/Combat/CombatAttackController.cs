@@ -30,6 +30,8 @@ namespace BattleRaja.Presentation.Combat
         public CombatFaction AuthorityFaction => faction;
 
         public int ActiveProjectileCount => projectilePool != null ? projectilePool.ActiveCount : 0;
+        public int AcceptedAttackCount { get; private set; }
+        public int RejectedAttackCount { get; private set; }
         public float CooldownRemaining
         {
             get
@@ -149,7 +151,13 @@ namespace BattleRaja.Presentation.Combat
             if (UsesAuthority)
             {
                 var authority = match.TryAcceptAttack(command);
-                if (!authority.Accepted) return;
+                if (!authority.Accepted)
+                {
+                    RejectedAttackCount++;
+                    return;
+                }
+
+                AcceptedAttackCount++;
                 spawnDefinition = authority.Weapon;
                 spawnFaction = authority.Faction;
                 projectileId = authority.ProjectileId;
@@ -177,6 +185,8 @@ namespace BattleRaja.Presentation.Combat
         {
             _cooldown?.Reset();
             _inputSequence = 0;
+            AcceptedAttackCount = 0;
+            RejectedAttackCount = 0;
         }
 
         private ProjectileWeaponDefinition ResolveDefinition()

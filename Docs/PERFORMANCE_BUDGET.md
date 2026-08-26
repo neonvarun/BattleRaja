@@ -516,3 +516,41 @@ Required next measurement: capture a short Editor, Lava and Oppo session with Un
 - No optimization or release readiness claim follows from this snapshot. Formal Unity
   Profiler/Android GPU/CPU/GC capture, repeated-match growth, thermal/battery, Web frame
   pacing and multi-browser measurements remain required.
+
+## V1 current-source Android smoke snapshot — 2026-08-26
+
+- Exact current APK `5438F521CEEC9A0B4202433542B5A5BB4533462688E25D969BDBF05A45A2014D`
+  was installed and relaunched on approved Lava `ST5GDW23LB004392`.
+- The scripted 10-second capture (`Builds/Local/Device/Performance/20260826-210000-v1-determinism`)
+  completed two samples with no configured fatal markers. Total PSS was **50,108 → 232,032
+  KB**, graphics PSS **5,228 → 70,288 KB**, swap PSS **108 → 65 KB**; the process remained
+  the resumed Unity activity after launch.
+- `dumpsys gfxinfo` still does not provide a usable Unity SurfaceView frame histogram in
+  this capture, and the short run is not a sustained CPU/GPU/GC, thermal, battery, or
+  repeated-rematch measurement. These values are evidence for the current artifact only,
+  not a release budget or mid-range Android approval.
+
+## V1 current-source 30-second device capture — 2026-08-26
+
+- The matching current APK was installed and relaunched on approved Lava
+  `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34). The six-sample, 30-second
+  scripted capture is `Builds/Local/Device/Performance/20260826-220000-v1-current-30s`;
+  manifest SHA-256 is `FE86E2ED8684B227117305CF5FAAA5CA378A512AD41E1C431907C047235E6565`
+  and logcat SHA-256 is
+  `AC64C6A6F77AF03756E89057E88EF504A4288D469D0E518166F095D8BB15B23B`.
+- App PSS ranged from **58,119 KB to 256,530 KB**; thermal status was 0 before and after,
+  and the configured fatal-marker scan was empty. The run was launch/menu evidence, not a
+  sustained full-match or device-tier performance pass. Lava reports 4 KB pages, so it
+cannot establish 16 KB runtime compatibility.
+
+## V1 final current-source 30-second device capture — 2026-08-26
+
+- The rebuilt matching APK (`F50F7C3B2FDDD0847662437938C662C263F33599FE3529A3E79003CD71D7E2B3`)
+  was installed and relaunched on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`).
+- Six samples over 30 seconds are under
+  `Builds/Local/Device/Performance/20260826-233000-v1-final-current-30s`; manifest SHA-256
+  `E9BD4D1B922A4AB0FB8EE90DC66AF84FA0876BDD24D89F4E7A253411243268E9`, logcat SHA-256
+  `33FE2B05DA727432C76C4B57428178018CBF62AB35490739AE66C5AA467F68C0`.
+- App PSS ranged **55,262–236,543 KB**; thermal status was 0 before and after, and the
+  configured fatal-marker scan was empty. Device pages are 4 KB; this remains launch/menu
+  evidence, not runtime 16 KB proof or a sustained full-match CPU/GPU/GC/battery pass.

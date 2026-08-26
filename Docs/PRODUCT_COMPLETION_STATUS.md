@@ -1,7 +1,20 @@
 # Product completion status
 
-Updated: 2026-08-24
+Updated: 2026-08-26
 Classification: **prototype**
+
+## Latest current-source continuation — 2026-08-26
+
+Current branch `codex/v1-playstore-release` is at HEAD
+`fac1c714b9ba2df72b3acf54b40638d0ae122a93` plus intentional dirty working-tree edits.
+The current-source suites pass EditMode **140/140** and PlayMode **79/79**; the strict
+100-match production-bot gate passed **79/79** on the recorded third attempt, and the
+1,000-seed replay soak passed with zero divergence. The matching APK/AAB, static Android
+checker and approved-Lava evidence are recorded in `Docs/V1_RELEASE_PLAN.md` P11-P13.
+The candidate remains a prototype: the APK is debug-signed with a temporary package ID,
+Lava is a 4 KB-page device, and genuine 16 KB runtime proof, sustained full-match
+performance, physical touch/accessibility, final visual/cultural review, signing,
+privacy/Data Safety, content rating and Play Console actions remain open.
 
 ## Current runtime / last Android artifact — `73f20a2` / `35de9f3` — 2026-08-24
 
@@ -362,3 +375,30 @@ runtime commit) now has fresh Android/Web smoke evidence. Goal B is therefore st
 ## Documentation discrepancy
 
 The requested `Docs/AI/RepositoryAuditAndCompletionGoal.md` path does not exist. The available matching file `Docs/AI/BattleRaja_Repository_Audit_and_Completion_Goal.md` was read completely and used as the continuation brief. A human should decide whether the filename should be normalized later.
+
+## Continuation update — 2026-08-26
+
+The older table row describing final rigs/animation/VFX as entirely open is superseded by a
+machine-verified generated baseline: current dirty source `HEAD
+fac1c714b9ba2df72b3acf54b40638d0ae122a93` now contains saved transform rigs, a nine-state
+Animator controller and clips, and 14 saved particle VFX prefabs. Full EditMode **140/140**
+and PlayMode **80/80** pass, including a focused rig/Animator/VFX test. This changes the
+machine status to **Passed — generated baseline**; final authored sculpt/skinning, art
+direction, VFX readability, cultural review and Lava visual/performance approval remain
+**Human review required**. The product classification remains **Prototype — Android offline
+release candidate in progress**, not Play-ready.
+
+## Final current-source technical refresh — 2026-08-26
+
+The current dirty tree now has a matching rebuilt APK/AAB pair after the audio warning fix.
+Focused audio is **1/1**, full EditMode **140/140**, and full PlayMode **80/80**. The composed
+Android checker is **0 errors / 0 warnings**; bundletool universal extraction and direct /
+extracted APK 16 KB static alignment checks pass. Exact hashes are indexed in P15 of
+`Docs/V1_RELEASE_PLAN.md`.
+
+The exact APK installed on approved Lava `ST5GDW23LB004392` and completed a six-sample,
+30-second launch/menu capture with no configured fatal markers and thermal status 0 before /
+after. PSS ranged **55,262–236,543 KB**. This remains a technical candidate: the 4 KB device
+does not prove 16 KB runtime behavior, and human route/accessibility, sustained performance,
+final authored art/audio/cultural approval, signing, privacy/Data Safety, content rating and
+Play Console work remain open.

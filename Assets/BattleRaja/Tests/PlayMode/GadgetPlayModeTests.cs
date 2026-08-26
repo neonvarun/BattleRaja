@@ -60,6 +60,13 @@ namespace BattleRaja.Tests.PlayMode
                 Object.FindObjectsByType<GadgetPickup>(),
                 candidate => candidate.GadgetId.Equals(GadgetDefinition.DholBurst.GadgetId));
 
+            // This authority-routing test is about selecting Dhol, so keep the
+            // tutorial Tiffin from being auto-collected at the player spawn first.
+            foreach (var other in Object.FindObjectsByType<GadgetPickup>())
+            {
+                if (other != pickup) other.transform.position = new Vector3(0f, 0.35f, 3f);
+            }
+
             player.ExternalCommandMode = true;
             pickup.transform.position = player.transform.position;
             match.StartMatch();

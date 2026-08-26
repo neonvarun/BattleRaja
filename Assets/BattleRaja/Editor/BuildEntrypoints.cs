@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -96,6 +97,7 @@ namespace BattleRaja.Editor
         public static void CreateMovementLabScene()
         {
             EnsureUrpAsset();
+            ProductionArtBuilder.BuildAll();
             Directory.CreateDirectory(MovementAssetFolder);
             Directory.CreateDirectory("Assets/BattleRaja/Scenes/MovementLab");
             var tuningAsset = EnsureTuningAsset();
@@ -175,7 +177,8 @@ namespace BattleRaja.Editor
             var fighterController = player.AddComponent<BijliFighterController>();
             var playerHealth = player.AddComponent<CombatHealth>();
             var playerGadget = player.AddComponent<GadgetUser>();
-            player.AddComponent<FighterPresentation>();
+            var playerPresentation = player.AddComponent<FighterPresentation>();
+            ConfigureProductionArt(playerPresentation);
             var dashTrail = player.AddComponent<TrailRenderer>();
             dashTrail.time = 0.24f;
             dashTrail.startWidth = 0.28f;
@@ -336,8 +339,10 @@ namespace BattleRaja.Editor
             Directory.CreateDirectory(MovementAssetFolder);
 
             var tuningAsset = EnsureTuningAsset();
+            var bijliWeapon = EnsureBijliWeaponAsset();
             var pehelWeapon = EnsureVariantWeaponAsset(PehelWeaponAssetPath, FighterDefinition.Pehel.BasicAttack);
             var mayaWeapon = EnsureVariantWeaponAsset(MayaWeaponAssetPath, FighterDefinition.Maya.BasicAttack);
+            var bijliAsset = EnsureFighterAsset();
             var pehelAsset = EnsureFighterVariantAsset(PehelFighterAssetPath, "fighter.pehel", "Pehel", FighterDefinition.Pehel, pehelWeapon);
             var mayaAsset = EnsureFighterVariantAsset(MayaFighterAssetPath, "fighter.maya", "Maya", FighterDefinition.Maya, mayaWeapon);
             EnsureGadgetAssets();
@@ -350,13 +355,22 @@ namespace BattleRaja.Editor
 
             // Keep the tutorial-relevant healing gadget on the player's protected
             // south lane in the authored production scene as well as in fresh
-            // development-scene generation. The former north placement overlaps
-            // the (0, 7) bot spawn and lets a bot consume the route before a human.
+            // development-scene generation. Keep it beyond the player's automatic
+            // collection radius so the player can choose between nearby pickups.
             var tiffinPickup = arena.GetComponentsInChildren<GadgetPickup>(true)
                 .FirstOrDefault(pickup => pickup.GadgetId.Equals(GadgetDefinition.TiffinStation.GadgetId));
             if (tiffinPickup != null)
             {
                 tiffinPickup.transform.localPosition = new Vector3(0f, 0.35f, -4.8f);
+            }
+
+            // Existing production scenes were copied before the saved gadget
+            // prefab references existed. Reconcile every pickup on each pass so
+            // the scene cannot retain the old primitive fallback hierarchy.
+            foreach (var pickup in arena.GetComponentsInChildren<GadgetPickup>(true))
+            {
+                var visuals = pickup.GetComponent<GadgetPickupVisuals>() ?? pickup.gameObject.AddComponent<GadgetPickupVisuals>();
+                ConfigureProductionGadgetArt(visuals);
             }
 
             var labMarker = arena.GetComponent<MovementLabScene>();
@@ -366,6 +380,7 @@ namespace BattleRaja.Editor
             var floor = EnsureMaterial("BazaarBastionFloor", new Color(0.32f, 0.24f, 0.19f, 1f));
             var wall = EnsureMaterial("BazaarBastionTeal", new Color(0.12f, 0.34f, 0.36f, 1f));
             var stall = EnsureMaterial("BazaarBastionTerracotta", new Color(0.62f, 0.24f, 0.14f, 1f));
+            var bijliMaterial = EnsureMaterial("BazaarBastionBijli", new Color(0.16f, 0.68f, 0.92f, 1f));
             var pehelMaterial = EnsureMaterial("BazaarBastionPehel", new Color(0.92f, 0.39f, 0.16f, 1f));
             var mayaMaterial = EnsureMaterial("BazaarBastionMaya", new Color(0.72f, 0.32f, 0.86f, 1f));
             ApplyBazaarPalette(arena.transform, floor, wall, stall);
@@ -409,17 +424,24 @@ namespace BattleRaja.Editor
             SetObjectReference(productionMarker, "projectilePool", projectilePool);
             SetObjectReference(productionMarker, "damageResolver", damageResolver);
             SetBool(matchController, "authorityDrivenMovement", true);
+            SetFloat(matchController, "botWeaponDamageMultiplier", 1.35f);
             var bots = UnityEngine.Object.FindObjectsByType<BotBrain>()
                 .OrderBy(bot => bot.GetComponent<MovementPlayerAgent>() != null ? bot.GetComponent<MovementPlayerAgent>().ActorId : int.MaxValue)
                 .ToArray();
-            if (bots.Length < 4) throw new BuildFailedException("Bazaar Bastion requires at least four bot actors in the production scene.");
-            if (bots[1].GetComponent<PehelFighterController>() == null)
+            if (bots.Length < 7) throw new BuildFailedException("Bazaar Bastion requires seven autonomous bot actors in the production scene.");
+
+            ConfigureProductionBotSpawns(bots);
+
+            // Reconcile every existing bot slot on each controlled generation pass.
+            // Older scene copies can contain a controller whose definition asset belongs
+            // to a different fighter; leaving that mismatch in place produces fair-looking
+            // but mechanically invalid ability commands at runtime.
+            ConfigureProductionBot(bots[0], bijliAsset, bijliMaterial, null, damageResolver, projectilePool, bijliWeapon, pehelWeapon, mayaWeapon);
+            ConfigureProductionBot(bots[1], pehelAsset, pehelMaterial, null, damageResolver, projectilePool, bijliWeapon, pehelWeapon, mayaWeapon);
+            ConfigureProductionBot(bots[2], mayaAsset, mayaMaterial, mayaMaterial, damageResolver, projectilePool, bijliWeapon, pehelWeapon, mayaWeapon);
+            for (var i = 3; i < bots.Length; i++)
             {
-                ConfigureProductionBot(bots[1], pehelAsset, pehelMaterial, null, damageResolver, projectilePool, pehelWeapon, mayaWeapon);
-            }
-            if (bots[2].GetComponent<MayaFighterController>() == null)
-            {
-                ConfigureProductionBot(bots[2], mayaAsset, mayaMaterial, mayaMaterial, damageResolver, projectilePool, pehelWeapon, mayaWeapon);
+                ConfigureProductionBot(bots[i], bijliAsset, bijliMaterial, null, damageResolver, projectilePool, bijliWeapon, pehelWeapon, mayaWeapon);
             }
 
             ConfigurePlayerFighterSelection(arena.transform, tuningAsset, pehelAsset, mayaAsset, mayaMaterial, damageResolver);
@@ -435,6 +457,76 @@ namespace BattleRaja.Editor
             };
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+        }
+
+        private static void ConfigureProductionArt(FighterPresentation presentation)
+        {
+            if (presentation == null) return;
+            SetObjectReference(
+                presentation,
+                "bijliModelPrefab",
+                AssetDatabase.LoadAssetAtPath<GameObject>(ProductionArtBuilder.BijliPrefabPath));
+            SetObjectReference(
+                presentation,
+                "pehelModelPrefab",
+                AssetDatabase.LoadAssetAtPath<GameObject>(ProductionArtBuilder.PehelPrefabPath));
+            SetObjectReference(
+                presentation,
+                "mayaModelPrefab",
+                AssetDatabase.LoadAssetAtPath<GameObject>(ProductionArtBuilder.MayaPrefabPath));
+        }
+
+        private static void ConfigureProductionGadgetArt(GadgetPickupVisuals visuals)
+        {
+            if (visuals == null) return;
+            var umbrella = AssetDatabase.LoadAssetAtPath<GameObject>(ProductionArtBuilder.UmbrellaPrefabPath);
+            var dhol = AssetDatabase.LoadAssetAtPath<GameObject>(ProductionArtBuilder.DholPrefabPath);
+            var tiffin = AssetDatabase.LoadAssetAtPath<GameObject>(ProductionArtBuilder.TiffinPrefabPath);
+            SetObjectReference(
+                visuals,
+                "umbrellaModelPrefab",
+                umbrella);
+            SetObjectReference(
+                visuals,
+                "dholModelPrefab",
+                dhol);
+            SetObjectReference(
+                visuals,
+                "tiffinModelPrefab",
+                tiffin);
+            visuals.ConfigureSavedPrefabs(umbrella, dhol, tiffin);
+        }
+
+        private static void ConfigureProductionBotSpawns(IReadOnlyList<BotBrain> bots)
+        {
+            var positions = new[]
+            {
+                new Vector3(-9.8f, 1f, -7.4f),
+                new Vector3(-5.0f, 1f, -0.8f),
+                new Vector3(5.0f, 1f, -0.8f),
+                new Vector3(9.8f, 1f, -7.4f),
+                new Vector3(-9.8f, 1f, 7.0f),
+                new Vector3(0f, 1f, 7.2f),
+                new Vector3(8.0f, 1f, 7.0f)
+            };
+            var collision = ArenaCollisionDefinition.BazaarBastion;
+            if (bots.Count != positions.Length)
+            {
+                throw new BuildFailedException($"Expected {positions.Length} production bot slots, found {bots.Count}.");
+            }
+
+            for (var i = 0; i < bots.Count; i++)
+            {
+                var agent = bots[i] != null ? bots[i].GetComponent<MovementPlayerAgent>() : null;
+                if (agent == null) throw new BuildFailedException($"Production bot slot {i} has no movement agent.");
+                var position = positions[i];
+                if (collision.IsPointBlocked(new Float2(position.x, position.z)))
+                {
+                    throw new BuildFailedException($"Production bot spawn {agent.ActorId} is inside authored collision.");
+                }
+
+                agent.transform.position = position;
+            }
         }
 
         /// <summary>
@@ -501,6 +593,7 @@ namespace BattleRaja.Editor
             var pehel = player.GetComponent<PehelFighterController>() ?? player.AddComponent<PehelFighterController>();
             var maya = player.GetComponent<MayaFighterController>() ?? player.AddComponent<MayaFighterController>();
             var selection = player.GetComponent<PlayerFighterSelection>() ?? player.AddComponent<PlayerFighterSelection>();
+            ConfigureProductionArt(player.GetComponent<FighterPresentation>());
 
             SetObjectReference(playerAgent, "tuningAsset", tuningAsset);
             SetObjectReference(playerAgent, "fighterController", bijli);
@@ -871,6 +964,8 @@ namespace BattleRaja.Editor
             pickupObject.GetComponent<Renderer>().sharedMaterial = material;
             var pickup = pickupObject.AddComponent<GadgetPickup>();
             SetString(pickup, "gadgetId", gadgetId);
+            var visuals = pickupObject.AddComponent<GadgetPickupVisuals>();
+            ConfigureProductionGadgetArt(visuals);
             return pickup;
         }
 
@@ -915,7 +1010,8 @@ namespace BattleRaja.Editor
             var perception = bot.AddComponent<BotPerceptionSensor>();
             var brain = bot.AddComponent<BotBrain>();
             var gadget = bot.AddComponent<GadgetUser>();
-            bot.AddComponent<FighterPresentation>();
+            var presentation = bot.AddComponent<FighterPresentation>();
+            ConfigureProductionArt(presentation);
             bot.AddComponent<BotDebugOverlay>();
             var trail = bot.AddComponent<TrailRenderer>();
             trail.time = 0.24f;
@@ -963,6 +1059,8 @@ namespace BattleRaja.Editor
                 : fighterAsset.ToDomain().FighterId.Equals(FighterDefinition.Maya.FighterId) ? mayaWeapon : bijliWeaponAsset);
             SetInt(brain, "seed", 100 + botIndex);
             SetObjectReference(brain, "fighterController", fighter);
+            SetFloat(brain, "aimNoise", 0.05f);
+            SetFloat(brain, "stuckTimeoutSeconds", 0.7f);
             SetObjectReference(
                 brain,
                 "weaponAsset",
@@ -981,6 +1079,7 @@ namespace BattleRaja.Editor
             Material decoyMaterial,
             CombatDamageResolver damageResolver,
             CombatProjectilePool projectilePool,
+            ProjectileWeaponAsset bijliWeapon,
             ProjectileWeaponAsset pehelWeapon,
             ProjectileWeaponAsset mayaWeapon)
         {
@@ -996,7 +1095,9 @@ namespace BattleRaja.Editor
             var domain = fighterAsset.ToDomain();
             var fighter = domain.FighterId.Equals(FighterDefinition.Pehel.FighterId)
                 ? (MonoBehaviour)bot.AddComponent<PehelFighterController>()
-                : bot.AddComponent<MayaFighterController>();
+                : domain.FighterId.Equals(FighterDefinition.Maya.FighterId)
+                    ? bot.AddComponent<MayaFighterController>()
+                    : bot.AddComponent<BijliFighterController>();
             var agent = bot.GetComponent<MovementPlayerAgent>();
             var attack = bot.GetComponent<CombatAttackController>();
             var target = bot.GetComponent<CombatTarget>();
@@ -1004,7 +1105,10 @@ namespace BattleRaja.Editor
             var controller = bot.GetComponent<CharacterController>();
             var renderer = bot.GetComponent<Renderer>();
             var perception = bot.GetComponent<BotPerceptionSensor>();
+            var gadget = bot.GetComponent<GadgetUser>();
+            var presentation = bot.GetComponent<FighterPresentation>();
             if (renderer != null) renderer.sharedMaterial = fighterMaterial;
+            ConfigureProductionArt(presentation);
 
             SetObjectReference(agent, "fighterController", fighter);
             SetObjectReference(attack, "fighterDefinition", fighterAsset);
@@ -1012,18 +1116,20 @@ namespace BattleRaja.Editor
             SetObjectReference(fighter, "fighterDefinition", fighterAsset);
             SetObjectReference(fighter, "movementAgent", agent);
             SetObjectReference(brain, "fighterController", fighter);
+            SetFloat(brain, "aimNoise", 0.05f);
+            SetFloat(brain, "stuckTimeoutSeconds", 0.7f);
             SetObjectReference(
                 brain,
                 "weaponAsset",
                 domain.FighterId.Equals(FighterDefinition.Pehel.FighterId)
                     ? pehelWeapon
-                    : mayaWeapon);
+                    : domain.FighterId.Equals(FighterDefinition.Maya.FighterId) ? mayaWeapon : bijliWeapon);
             SetObjectReference(
                 perception,
                 "weaponAsset",
                 domain.FighterId.Equals(FighterDefinition.Pehel.FighterId)
                     ? pehelWeapon
-                    : mayaWeapon);
+                    : domain.FighterId.Equals(FighterDefinition.Maya.FighterId) ? mayaWeapon : bijliWeapon);
             SetInt(health, "maxHealth", domain.MaxHealth);
 
             if (fighter is PehelFighterController)
@@ -1033,13 +1139,25 @@ namespace BattleRaja.Editor
                 SetObjectReference(fighter, "damageResolver", damageResolver);
                 SetInt(fighter, "chargeCollisionMask", 1);
             }
-            else
+            else if (fighter is MayaFighterController)
             {
                 SetObjectReference(fighter, "inputAdapter", null);
                 SetObjectReference(fighter, "decoyMaterial", decoyMaterial);
             }
+            else if (fighter is BijliFighterController)
+            {
+                SetObjectReference(fighter, "inputAdapter", null);
+                SetObjectReference(fighter, "characterController", controller);
+                SetObjectReference(fighter, "dashTrail", bot.GetComponent<TrailRenderer>());
+                SetInt(fighter, "dashCollisionMask", 1);
+            }
 
             SetObjectReference(target, "health", health);
+            SetObjectReference(gadget, "movementAgent", agent);
+            SetObjectReference(gadget, "combatTarget", target);
+            SetObjectReference(gadget, "health", health);
+            SetObjectReference(gadget, "damageResolver", damageResolver);
+            SetBool(gadget, "botControlled", true);
         }
 
         private static void ApplyBazaarPalette(Transform arena, Material floor, Material wall, Material stall)

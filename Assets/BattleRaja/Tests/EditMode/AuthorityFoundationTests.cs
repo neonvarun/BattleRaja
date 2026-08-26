@@ -43,13 +43,15 @@ namespace BattleRaja.Tests.EditMode
 
             // Warm through LoadWarmup(3s)+SpawnProtection(5s). The next fixed
             // 1/30s step enters Opening. Both actors stay safely inside the zone.
-            for (var warmupTick = 1; warmupTick <= 241; warmupTick++) authority.Advance(warmupTick, 1f / 30f);
+            // Advance through LoadWarmup(3s) + SpawnProtection(5s) + Opening(105s) to enter Pressure (where Aandhi damage is active).
+            var pressureStartTick = (int)System.Math.Ceiling((3f + 5f + 105f) * 30f) + 1;
+            for (var warmupTick = 1; warmupTick < pressureStartTick; warmupTick++) authority.Advance(warmupTick, 1f / 30f);
 
             // Now move actor 1 outside and advance until one damage window fires.
             authority.SetPosition(new CombatEntityId(1), new Float2(15f, 0f));
             MatchAuthorityTick tick = default;
             var totalEvents = 0;
-            for (var tickIndex = 242; tickIndex <= 300; tickIndex++)
+            for (var tickIndex = pressureStartTick; tickIndex <= pressureStartTick + 60; tickIndex++)
             {
                 tick = authority.Advance(tickIndex, 1f / 30f);
                 totalEvents += tick.DamageEvents.Count(e => e.TargetId.Value == 1);
@@ -57,7 +59,7 @@ namespace BattleRaja.Tests.EditMode
             }
 
             Assert.That(totalEvents, Is.GreaterThanOrEqualTo(1));
-            Assert.That(tick.Result.OutsideDamagePerSecond, Is.EqualTo(5));
+            Assert.That(tick.Result.OutsideDamagePerSecond, Is.EqualTo(1));
             Assert.That(tick.DamageEvents[0].TargetId.Value, Is.EqualTo(1));
             Assert.That(tick.DamageEvents[0].DamageType, Is.EqualTo(DamageType.Aandhi));
             Assert.That(tick.DamageEvents[0].EventId, Is.GreaterThan(0));
@@ -849,14 +851,14 @@ namespace BattleRaja.Tests.EditMode
 
             // Warm past LoadWarmup(3s) + SpawnProtection(5s). Both actors stay
             // inside the zone so no damage identity is consumed during setup.
-            // Warm through LoadWarmup(3s) + SpawnProtection(5s). Both actors stay
-            // inside the zone so no damage identity is consumed during setup.
-            for (var warmup = 1; warmup <= 241; warmup++) authority.Advance(warmup, 1f / 30f);
+            // Advance through LoadWarmup(3s) + SpawnProtection(5s) + Opening(105s) to enter Pressure.
+            var pressureTick = (int)System.Math.Ceiling((3f + 5f + 105f) * 30f) + 1;
+            for (var warmup = 1; warmup < pressureTick; warmup++) authority.Advance(warmup, 1f / 30f);
 
             // Move actor 1 outside and collect damage identities until one fires.
             authority.SetPosition(new CombatEntityId(1), new Float2(15f, 0f));
             var firstDamageId = -1;
-            for (var tick = 242; tick <= 300; tick++)
+            for (var tick = pressureTick; tick <= pressureTick + 60; tick++)
             {
                 var t = authority.Advance(tick, 1f / 30f);
                 var ids = t.DamageEvents.Where(e => e.TargetId.Value == 1).Select(e => e.EventId).ToList();
@@ -871,7 +873,7 @@ namespace BattleRaja.Tests.EditMode
 
             authority.SetPosition(new CombatEntityId(1), new Float2(8f, -8f));
             var gadgetCollected = false;
-            for (var tick = 301; tick <= 360; tick++)
+            for (var tick = pressureTick + 61; tick <= pressureTick + 120; tick++)
             {
                 var t = authority.Advance(tick, 1f / 30f);
                 if (t.GadgetCollections.Any())
@@ -900,7 +902,7 @@ namespace BattleRaja.Tests.EditMode
 
             // Every identity stream restarts from a clean deterministic base.
             var restartDamageIds = new List<int>();
-            for (var tick = 1; tick <= 300; tick++)
+            for (var tick = 1; tick <= pressureTick + 60; tick++)
             {
                 restartDamageIds.AddRange(authority.Advance(tick, 1f / 30f).DamageEvents
                     .Select(e => e.EventId)

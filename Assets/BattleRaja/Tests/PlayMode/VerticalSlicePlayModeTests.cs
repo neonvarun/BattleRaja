@@ -13,6 +13,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
+using UnityEngine.Audio;
 
 namespace BattleRaja.Tests.PlayMode
 {
@@ -546,7 +547,9 @@ namespace BattleRaja.Tests.PlayMode
 
             // Advance the pure match to Opening without waiting through protection.
             for (var i = 0; i < 9; i++) match.Simulation.Advance(1f);
-            match.Simulation.SyncHealth(target.Id, weapon.Damage);
+            var targetHealthAmount = Mathf.Max(1, weapon.Damage);
+            match.Simulation.SyncHealth(target.Id, targetHealthAmount);
+            target.Health.SetAuthoritativeHealth(targetHealthAmount);
 
             var attackTick = match.SimulationTick + 1;
             var origin = new Float2(
@@ -654,10 +657,129 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(pickups, Has.Length.EqualTo(3));
             foreach (var pickup in pickups)
             {
-                Assert.That(pickup.transform.Find("GadgetIdentityVisual"), Is.Not.Null,
+                var identity = pickup.transform.Find("GadgetIdentityVisual");
+                Assert.That(identity, Is.Not.Null,
                     pickup.name + " is missing its gadget identity visual");
-                Assert.That(pickup.transform.Find("GadgetIdentityVisual/PickupBeacon"), Is.Not.Null,
+                Assert.That(identity.GetComponentsInChildren<Transform>(true).Any(child => child.name == "PickupBeacon"), Is.True,
                     pickup.name + " is missing its pickup beacon");
+            }
+
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ProductionFighterArtUsesSavedRenderOnlyPrefabs()
+        {
+            var fighters = Object.FindObjectsByType<FighterPresentation>();
+            Assert.That(fighters, Has.Length.EqualTo(8));
+            foreach (var fighter in fighters)
+            {
+                var modelRoot = fighter.transform.Find("FighterIdentitySilhouette")?.GetChild(0);
+                Assert.That(modelRoot, Is.Not.Null, fighter.name + " is missing its saved production model instance");
+                Assert.That(modelRoot.name, Does.Match("(Bijli|Pehel|Maya)Production"));
+                var filters = modelRoot.GetComponentsInChildren<MeshFilter>(true);
+                var renderers = modelRoot.GetComponentsInChildren<MeshRenderer>(true);
+                Assert.That(filters, Is.Not.Empty, fighter.name + " production model has no reusable mesh assets");
+                Assert.That(renderers, Is.Not.Empty, fighter.name + " production model has no renderers");
+                foreach (var filter in filters)
+                {
+                    Assert.That(filter.sharedMesh, Is.Not.Null, fighter.name + " has a missing saved mesh reference");
+                }
+
+                Assert.That(modelRoot.GetComponentsInChildren<Collider>(true), Is.Empty,
+                    fighter.name + " production art must not own gameplay collision");
+            }
+
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ProductionGadgetArtUsesSavedRenderOnlyPrefabs()
+        {
+            var pickups = Object.FindObjectsByType<GadgetPickup>();
+            Assert.That(pickups, Has.Length.EqualTo(3));
+            foreach (var pickup in pickups)
+            {
+                var identity = pickup.transform.Find("GadgetIdentityVisual");
+                Assert.That(identity, Is.Not.Null, pickup.name + " is missing its gadget identity root");
+                var modelRoot = identity.GetChild(0);
+                Assert.That(modelRoot, Is.Not.Null, pickup.name + " is missing its saved production model instance");
+                Assert.That(modelRoot.name, Does.Match("(Umbrella|Dhol|Tiffin)Production"));
+                var filters = modelRoot.GetComponentsInChildren<MeshFilter>(true);
+                var renderers = modelRoot.GetComponentsInChildren<MeshRenderer>(true);
+                Assert.That(filters, Is.Not.Empty, pickup.name + " production model has no reusable mesh assets");
+                Assert.That(renderers, Is.Not.Empty, pickup.name + " production model has no renderers");
+                foreach (var filter in filters)
+                {
+                    Assert.That(filter.sharedMesh, Is.Not.Null, pickup.name + " has a missing saved mesh reference");
+                }
+
+                Assert.That(modelRoot.GetComponentsInChildren<Collider>(true), Is.Empty,
+                    pickup.name + " production art must not own gameplay collision");
+            }
+
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ProductionFighterArtUsesSavedRigAnimatorAndVfxCues()
+        {
+            var fighters = Object.FindObjectsByType<FighterPresentation>();
+            Assert.That(fighters, Has.Length.EqualTo(8));
+            foreach (var fighter in fighters)
+            {
+                var modelRoot = fighter.transform.Find("FighterIdentitySilhouette")?.GetChild(0);
+                Assert.That(modelRoot, Is.Not.Null, fighter.name + " is missing its saved production model instance");
+
+                var rig = modelRoot.Find("ProductionRig");
+                Assert.That(rig, Is.Not.Null, fighter.name + " is missing the saved transform rig");
+                Assert.That(rig.Find("Root/Hips/Chest/Head"), Is.Not.Null, fighter.name + " rig is missing the head chain");
+                Assert.That(rig.Find("Root/Hips/Chest/LeftHand"), Is.Not.Null, fighter.name + " rig is missing the left hand chain");
+                Assert.That(rig.Find("Root/Hips/LeftFoot"), Is.Not.Null, fighter.name + " rig is missing the left foot chain");
+
+                var animator = modelRoot.GetComponent<Animator>();
+                Assert.That(animator, Is.Not.Null, fighter.name + " is missing its production Animator");
+                Assert.That(animator.runtimeAnimatorController, Is.Not.Null, fighter.name + " Animator has no saved controller");
+                Assert.That(animator.parameters.Any(parameter => parameter.name == "State" && parameter.type == AnimatorControllerParameterType.Int), Is.True,
+                    fighter.name + " Animator has no presentation state parameter");
+
+                var cue = modelRoot.GetComponent<ProductionVfxCue>();
+                Assert.That(cue, Is.Not.Null, fighter.name + " is missing its production VFX cue component");
+                Assert.That(cue.HasAttackCue && cue.HasAbilityCue && cue.HasHitCue && cue.HasEliminationCue, Is.True,
+                    fighter.name + " is missing one or more saved VFX cues");
+                Assert.That(modelRoot.GetComponentsInChildren<ParticleSystem>(true), Has.Length.GreaterThanOrEqualTo(4));
+            }
+
+            var first = fighters[0];
+            var cueOnFirst = first.transform.Find("FighterIdentitySilhouette")?.GetChild(0)?.GetComponent<ProductionVfxCue>();
+            first.NotifyAttack();
+            first.NotifyAbility();
+            yield return null;
+            Assert.That(cueOnFirst.AttackPlayCount, Is.EqualTo(1));
+            Assert.That(cueOnFirst.AbilityPlayCount, Is.EqualTo(1));
+        }
+
+        [UnityTest]
+        public IEnumerator ProductionAudioUsesOwnedSourcesAndMixerGroups()
+        {
+            Assert.That(Object.FindAnyObjectByType<BattleRajaAudioDirector>(), Is.Not.Null);
+            var mixer = Resources.Load<AudioMixer>("Audio/V1/BattleRajaV1");
+            Assert.That(mixer, Is.Not.Null, "V1 audio mixer asset is missing");
+            foreach (var group in new[] { "Music", "Ambience", "UI", "Combat", "Abilities", "Gadgets", "Zone" })
+            {
+                Assert.That(mixer.FindMatchingGroups(group), Is.Not.Empty, group + " mixer group is missing");
+            }
+
+            foreach (var clip in new[]
+                     {
+                         "UiConfirm", "UiBack", "AttackBijli", "AttackPehel", "AttackMaya",
+                         "AbilityBijli", "AbilityPehel", "AbilityMaya", "GadgetUmbrella", "GadgetDhol",
+                         "GadgetTiffin", "Hit", "Elimination", "ZoneWarning", "ZoneClosing", "Victory",
+                         "Defeat", "BazaarAmbience", "MatchMusic"
+                     })
+            {
+                Assert.That(Resources.Load<AudioClip>("Audio/V1/" + clip), Is.Not.Null,
+                    "Owned WAV source is missing: " + clip);
             }
 
             yield return null;

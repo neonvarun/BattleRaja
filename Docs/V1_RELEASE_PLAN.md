@@ -322,12 +322,534 @@ This is a development-shaped launch/lifecycle smoke only. It does not prove inte
 match QA, fighter-specific bot fairness in human play, sustained performance, thermal
 behavior, accessibility, signing or store readiness.
 
+### P4 - Production-bot harness and 100-match release gate - 2026-08-26
+
+The production harness now runs the actual `BazaarBastion` scene with eight autonomous
+participants, fighter-specific perception/ability controllers, authority-owned damage and
+movement, per-seed reports, command digests, gadget/fighter telemetry, collision sampling,
+and scene/PlayerPrefs/time-scale cleanup. The focused post-edit PlayMode test passed **1/1**
+(`Builds\\Local\\V1GameplayTruth\\TestResults\\playmode-production-bot-focused-final.xml`,
+SHA-256 `051CB39DB679BF5B8E414EAEFFB1A6ABD0CF5D21F163052A05AD966FDDD51BAD`).
+
+After the release run, an isolated regression exposed stale entries in the fixed-size bot
+perception buffer after a target was defeated. The buffer tail is now cleared without
+allocating, and the regression passed 1/1 (`Builds\\Local\\V1GameplayTruth\\TestResults\\playmode-verticalslice-projectile-fixed.xml`,
+SHA-256 `47EF7DBBA3B004F1966F1E08CDC43935F1592E2764785F9BDBDD1EBF6DDC97C0`). The
+post-fix full suites also passed: EditMode **139/139** (`editmode-v1-final.xml`, SHA-256
+`ADD70D0AFBD307F3D4DBF49D8447EF177BABA3A4502A1BC09BA89FF3A44FF7D4`) and PlayMode
+**76/76** (`playmode-production-bot-final-fixed.xml`, SHA-256
+`3CADA89AC18335B37F88890AEE8B9ABE45AA6E43ABF47DE760C16F5588F91D53`).
+
+The 100-match release run used Unity `6000.5.6f1` on the dirty working tree at HEAD
+`fac1c714b9ba2df72b3acf54b40638d0ae122a93` and produced:
+
+- Test report: **76/76 passed**, XML
+  `Builds\\Local\\V1GameplayTruth\\TestResults\\playmode-100-matches-release-gates.xml`,
+  SHA-256 `D0737AADBF177115FF8DE99C7FB5EF38D9B898AA6370D817E27D50AFA8BE6845`.
+- Batch report: `Builds\\Local\\V1GameplayTruth\\ProductionBotReports\\batch-20260825-225804385-9101.json`,
+  SHA-256 `EDDF7A8E710095DDF86AB67C4E318AD2D1796450838058FF51FBA34EFC128BA6`.
+- 100/100 terminal results within 360 seconds; average duration **291.84 s**;
+  87/100 in the 240-360 second window.
+- 100/100 bot-to-bot damage; 95/100 combat eliminations; 5/100 Aandhi-only
+  resolutions; 0 protected-warmup damage; 0 invalid-position samples; maximum
+  continuous stuck duration 18 ticks (0.60 s).
+- 63,865 attack attempts with 317 out-of-range attempts (0.50%); 11,356 ability
+  attempts with 3,768 rejected (33.18%); 100 Umbrella, 77 Dhol and 95 Tiffin
+  successful uses.
+
+Gate classification is deliberately split: the 100-match harness contract **Passed**
+under the documented calibrated pacing threshold of 80% in-window; the original goal's
+90% in-window pacing target **Failed** at 87% and remains open for balance/human review.
+The independent repeated same-seed production command-stream comparison **Failed** on
+the accelerated (`playbackScale=50`) path. Two fresh Unity processes ran seed `9101`
+against the same dirty source state:
+
+- Run A batch `Builds\Local\V1GameplayTruth\ProductionBotReports\batch-20260826-062135473-9101.json`,
+  SHA-256 `41F43CCF00E92183ACF9AF508E50D1A7D64AD2A8B7BB1B4234FD25A847E90045`,
+  command digest `BD88C5714AA26C91`, 33,201 commands, duration 306.01 s.
+- Run B batch `Builds\Local\V1GameplayTruth\ProductionBotReports\batch-20260826-062253919-9101.json`,
+  SHA-256 `F69A5BC1E1882F6C2BE7E7121BA310609BA3991E6055EF73E30D6B0CA63E3F7E`,
+  command digest `5F71F87F37E23B56`, 45,951 commands, duration 306.01 s.
+
+The authority deterministic-replay soak still passes, but it does not cover the
+presentation bot loop. A diagnostic explicit-tick driver was also tried and reverted:
+it was reproducible but changed the pacing profile to about 103 seconds, so it is not
+valid release evidence for the current 240-360 second gate. The remaining blocker is
+to remove frame-pacing dependence from the production bot path without changing the
+gameplay distribution, then repeat the two-process same-seed comparison.
+
+As a low-risk diagnostic, perception target and pickup discovery now use stable ordering.
+The full PlayMode suite remains green at **76/76** (`playmode-after-sort.xml`, SHA-256
+`309CB76591B883BB52838B467BDE073655946FC891AB95AC478D8F22A2A8B390`; log SHA-256
+`BCF490BDBFA1011FEAD6D6F6B2B28D0A5410C201FAD4B8304254998D9781EFAF`). Two fresh
+single-match runs still produced different command streams, so stable discovery order is
+not sufficient. A fixed `Time.captureDeltaTime` diagnostic was also reverted after its
+isolated run failed 20/76 unrelated PlayMode tests (XML SHA-256
+`8264D82C6FC0B7F649A224F76CCA6E28CB05771B38CDEAE2EA820F93DEF9E205`; log SHA-256
+`B12D0F15400CC18605ED549C330A14F8615E41DA8516C9C4A8DBF72A9670A53B`). It is not
+release evidence.
+
+#### Current-source follow-up evidence — 2026-08-26
+
+After reverting the pacing diagnostics while retaining startup cleanup, stable actor/pickup
+ordering and stale-observation clearing, the full suites remained green: EditMode **139/139**
+(`Builds\\Local\\V1GameplayTruth\\TestResults\\editmode-postcleanup.xml`, SHA-256
+`FA77CB061AA675819ADA465CAB3CBB97EC2E84B9DA27F94D0A6D2A3104BCB38E`) and PlayMode
+**76/76** (`playmode-postcleanup-full.xml`, SHA-256
+`11C24A3B6BBD8DE92240E7C60FA286929429CECDED075DA14F3B430D43FE2782`).
+
+The current-source 100-match run used Unity `6000.5.6f1` and the dirty working tree at
+HEAD `fac1c714b9ba2df72b3acf54b40638d0ae122a93` (the source edits are not committed):
+
+- Harness test: **1/1 passed**, XML
+  `Builds\\Local\\V1GameplayTruth\\TestResults\\playmode-postcleanup-100.xml`,
+  SHA-256 `5EB228702F580E6520D312374010A41BFD36625C6C71DF44B6386B2D84234775`;
+  log SHA-256 `4E7A117882060274BFCB680C2E741537133002EB4928EE5871CA8FA1B5342FE3`.
+- Batch report:
+  `Builds\\Local\\V1GameplayTruth\\ProductionBotReports\\batch-20260826-084752675-9101.json`,
+  SHA-256 `06DA14A75FBDA49ACC689A94C230461C5D429482D24306414CAE59D9476929EC`.
+- 100/100 matches completed within the tick budget; average duration **288.06 s**
+  (min **203.01 s**, max **306.01 s**); 84/100 were in the 240-360 second window.
+- 100/100 had bot-to-bot damaging pairs; 96/100 had combat eliminations; 4/100 were
+  Aandhi-only resolutions; protected-warmup damage and invalid-position samples were both
+  **0**; maximum continuous stuck duration was **18 ticks (0.60 s)**.
+- 63,772 attack attempts (333 out-of-range, **0.52%**); 11,330 ability attempts with
+  3,588 rejected (**31.67%**); successful gadget uses were Umbrella **100**, Dhol **82**,
+  and Tiffin **92**.
+
+This follow-up confirms the calibrated 80% pacing gate and gameplay-integrity contract, but
+the original 90% timing goal remains open (84%), as does the repeated same-seed production
+command-stream comparison. Two fresh Unity processes were rerun against this same current
+dirty source state with seed `9101`; both harness tests passed 1/1, but the command streams
+diverged:
+
+- Run A batch `Builds\\Local\\V1GameplayTruth\\ProductionBotReports\\batch-20260826-092031939-9101.json`,
+  SHA-256 `86F76EC0B7A8F42F09143898380F96D20622601A4CF92B2813AFE1223D2BA2B0`,
+  command digest `B0AD486CE9F71337`, 33,037 commands, duration **210.02 s**;
+  test XML SHA-256 `8F753970D4AB7636D993FA33CDE79032D1813092E915677594694C03AFED1288`.
+- Run B batch `Builds\\Local\\V1GameplayTruth\\ProductionBotReports\\batch-20260826-092149552-9101.json`,
+  SHA-256 `12318B0FCFA8DE432956A6821483B48F088F08CD70C7FB8ECE2D6B81948A7DA2`,
+  command digest `70868EB27A9B7AB6`, 30,886 commands, duration **210.02 s**;
+  test XML SHA-256 `DA10C1EC566DB9B4B45FA0E4686E6FBE44E8ED4AAB337E9D827B0203D385D851`.
+
+The current-source same-seed gate therefore remains **failed**; passing the functional
+harness contract does not establish presentation-loop determinism.
+
+### P5 Android release-shaped artifact technical gate — 2026-08-26
+
+The Android candidate pair was rebuilt from Unity `6000.5.6f1` at HEAD
+`fac1c714b9ba2df72b3acf54b40638d0ae122a93` plus the intentionally dirty working-tree
+changes described above. This is exact current-source evidence, but not a clean-source or
+publishable release claim.
+
+- APK `Builds\\V1\\Android\\BattleRaja-V1.0-release-candidate.apk`, 39,537,929 bytes,
+  SHA-256 `623616312BBD43668D95EC650F26517C3DC6AF57A7A8585DEEB4484C2EDB6450`.
+- AAB `Builds\\V1\\Android\\BattleRaja-V1.0-release-candidate.aab`, 35,364,227 bytes,
+  SHA-256 `C0C8A0A2AB3117A03D98A771F8305455B8A49E97D9ADD59B6D73D8884FEF85D5`.
+- Final Unity Android build log SHA-256 `90223D68CB7AF94754C34F127E30B2A472B8FFD476923A84054808B85491632B`.
+- `check_v1_release_candidate.ps1` passed with **0 validation errors / 0 warnings**:
+  package `com.example.battleraja.m11`, version `1.0.0` / code `100`, min API 28,
+  target API 36, `VIBRATE` plus the dynamic receiver permission only, seven ARM64
+  libraries, no other ABIs, 16 KB alignment passed, and the 512x512 icon / 1024x500
+  feature graphic dimensions passed.
+- Lava `ST5GDW23LB004392` only: streamed APK install succeeded; cold launch and relaunch
+  resolved to `UnityPlayerGameActivity` as top-resumed. HOME backgrounding resolved to
+  the launcher, and relaunch returned to the Unity activity. Captured memory was
+  **229,500 KB total PSS / 70,160 KB graphics PSS / 94 KB swap PSS**; bounded logcat
+  scans found no crash, ANR, SIGSEGV, SIGABRT or Unity exception signature.
+
+This evidence does not claim touch-route completion, accessibility, sustained frame-time,
+battery/thermal, 16 KB runtime, signing, package identity, privacy/Data Safety, content
+rating, cultural/legal review or Play Console readiness. The current dirty-tree source,
+the failed same-seed accelerated production command-stream comparison above, and the
+remaining owner-controlled gates keep the overall V1.0 Play release claim **open**.
+
+### P6 - Saved fighter art baseline and scene regression hardening - 2026-08-26
+
+The first production-facing visual baseline is now saved as editable Unity assets rather
+than being constructed only from runtime primitives. `ProductionArtBuilder` creates the
+render-only fighter prefabs `BijliProduction`, `PehelProduction` and `MayaProduction`,
+with generated mesh/material assets under `Assets/BattleRaja/Content/Art/V1/` and
+prefabs under `Assets/BattleRaja/Content/Prefabs/Production/`. `FighterPresentation`
+selects the active fighter's saved prefab; colliders, health, movement and authority
+remain on the existing actor objects. Controlled scene generation wires the references in
+MovementLab, TutorialArena and BazaarBastion.
+
+- Production art focused tests: **3 / 3 passed**, XML
+  `Builds\Local\V1GameplayTruth\TestResults\playmode-production-art-focused.xml`,
+  SHA-256 `B639DCD1F0337409129CCF27318054364B42CBFBAC6CD7DFDBE7E22DDFEE6F6A`.
+- Saved-prefab structural test: **1 / 1 passed**, XML
+  `Builds\Local\V1GameplayTruth\TestResults\playmode-production-prefab-art.xml`,
+  SHA-256 `43FC12FF455BD15CA8A3C9BF94EAF6A7D8645C43338050A03A3EDD3F7EA03A4B`.
+- Regression fixes were verified in isolation: bot perception/decision **1 / 1**
+  (`playmode-botlab-fixed.xml`, SHA-256
+  `E92BE1E58861EEABA2F654209AE9D2C7E62FCF7971853648D8DECBF4D99D7EC7`) and Dhol
+  authority collection **1 / 1** (`playmode-gadget-fixed.xml`, SHA-256
+  `BFDC18A694A25A1FBB23FF5B741EE4AC4794FA4A5C9E16102C0B66F0B80CDEEC`).
+- The domain bot rule now prioritizes a visible hostile over nearby loot; a matching
+  EditMode regression was added. The Dhol test now isolates competing pickups while
+  preserving the authored south-lane Tiffin placement.
+- Current dirty-source suites after scene regeneration: EditMode **140 / 140 passed**,
+  XML `editmode-post-art-fix.xml`, SHA-256
+  `74FB52246480D695588B49F003F28B616F84AC42B0EA07765A303A87CC1B4957`; PlayMode
+  **77 / 77 passed**, XML `playmode-post-art-release-full.xml`, SHA-256
+  `AC1688076192733B4295F95F9E7A515460F3E118F2EC3A367D529605B87B1882`, log SHA-256
+  `4A5281A8989E46FB4A13CB4608A8038116B4DD66B03FCEF1F51595A5BF0C8FA6`.
+
+This is a saved render-only fighter baseline, not a claim of final production art: rigs,
+authored animation, authored audio, final gadget/arena assets, UI/accessibility, measured
+performance and human originality/cultural review remain open. The current Android
+artifact is stale relative to this source state and must be rebuilt after the next stable
+source checkpoint.
+
+### P7 - Saved gadget art and serialized-scene reconciliation - 2026-08-26
+
+The three V1 gadget identities are now generated as saved render-only Unity prefabs by
+`Assets/BattleRaja/Editor/ProductionArtBuilder.cs`, alongside the fighter baseline. The
+prefabs are `UmbrellaProduction`, `DholProduction` and `TiffinProduction`; generated mesh
+and material assets remain under `Assets/BattleRaja/Content/Art/V1/`. `GadgetPickupVisuals`
+selects the prefab by gadget ID and keeps the fallback only for scenes that have not yet
+been regenerated. The controlled Bazaar scene generator now adds and serializes the
+visual component and all three prefab references, avoiding an editor `Awake` ordering
+problem that previously left a primitive fallback in the authored scene.
+
+- Saved gadget prefab SHA-256: Umbrella
+  `32C427DA5B720C32A7395638DFB5CA3AEC96DE8CD49AA5620F1EC6481A80B1A3`, Dhol
+  `7FE24CD374AF16E6B3BF07771B9F15838E49E546336DE12FF284B4873722E6EE`, Tiffin
+  `22741A9020F9CDD279BCD57952A7D83D38B010FF2FCD936E2CEB4156543CE3C6`.
+- Structural saved-art test: **1 / 1 passed** as part of the full PlayMode run;
+  XML `Builds\Local\V1GameplayTruth\TestResults\playmode-post-gadget-art-green.xml`,
+  SHA-256 `52F3FF4FCCEB8C9A9057C4EDDA260D52FA1B464349578E8F1B939BDFBF1A810F`.
+- Current dirty-source suites after gadget scene reconciliation: EditMode **140 / 140**,
+  XML `editmode-post-gadget-art-green.xml`, SHA-256
+  `0C098A00759453C6A2B28B7A4916B93E1FB1FF0724788BF9E97BFF3A12403776`; PlayMode
+  **78 / 78**, log SHA-256
+  `DAD8FC24025977816550D0462AF8210505B5A0D3F9C2CDCFC7F8DA91A38B3DCD`.
+
+This checkpoint improves inspectability and removes the stale-scene fallback for the
+authored Bazaar scene; it is not a claim of final commissioned gadget art, authored audio,
+rigs/animation, complete arena art, accessibility, measured performance, clean-source
+release reproducibility or owner cultural/legal approval.
+
+### P8 - Owned source audio and mixer-backed identity cues - 2026-08-26
+
+The audio baseline now has inspectable, repository-owned source files instead of relying
+only on runtime tones. `ProductionAudioBuilder` emits 23 deterministic PCM WAV files under
+`Assets/BattleRaja/Resources/Audio/V1/` (2,490,904 bytes total) and creates the
+`BattleRajaV1.mixer` asset with Music, Ambience, UI, Combat, Abilities, Gadgets and Zone
+buses. `BattleRajaAudioDirector` loads the sources first, routes music/effects through the
+mixer when available, and keeps temporary tones only as a missing-asset fallback. Fighter
+and gadget events now select identity-specific sources; menu/HUD button actions start the
+audio director from the user gesture and play the UI confirm cue.
+
+- Builder log: `Builds\Local\V1GameplayTruth\Logs\build-production-audio-clean.log`,
+  source builder SHA-256 `A75A2D77D8A158742411903F3A460EA37A04A7C701BB88BF953346794F7981B7`.
+- Mixer SHA-256 `BEE02148FD9980958971B4FA56F7F08397E79864D6614F980AB8A65540236F4C`.
+- Full audio asset/runtime structural test: **1 / 1 passed** inside the current
+  **79 / 79 PlayMode** run, XML SHA-256
+  `D327A56CC6B79848636EE5FBE8D7B3E26B69D8212813B471A6ABDF02A270B77D`;
+  log SHA-256 `4C89C116A1EAC63D6BF47B40F10616B9509D8EE9668BBA09CA1F117F659C80A4`.
+- EditMode remained **140 / 140 passed** in the final current-source rerun,
+  XML `Builds\\Local\\V1GameplayTruth\\TestResults\\editmode-post-audio-final.xml`,
+  SHA-256 `4F3E112B5CDA10A2168948544346EEF07AE2EE4B4DFC481DA8A50A9551AFEA7E`;
+  log SHA-256 `1DBA2EDD7BE8991C868EE12F931DB887CE3B3BA51936B9FE4ECFC7BF4E6A2CD5`.
+
+This is an owned reproducible source-audio baseline, not a claim that the final mix is
+approved: loudness/clipping, voice limits, ambience balance, device playback, authored
+music polish and human cultural review remain open.
+
+### P9 - Current-source Android candidate and approved-device smoke gate - 2026-08-26
+
+The release-shaped APK/AAB pair was rebuilt from commit `fac1c714b9ba2df72b3acf54b40638d0ae122a93`
+plus the intentionally dirty working-tree edits, using Unity `6000.5.6f1`. The composed
+technical checker passed with **0 errors / 0 warnings**: offline manifest permissions
+contain only `VIBRATE` and the dynamic receiver permission; package
+`com.example.battleraja.m11`, version `1.0.0` / code `100`, min API 28 and target API 36;
+seven ARM64 libraries and no other ABIs; static 16 KB alignment; and 512x512 / 1024x500
+store-asset dimensions.
+
+- APK: **39,916,770 bytes**, SHA-256
+  `4C04DF8D4B2D7E8728E37C6AAFBEAB6E7E0F917E1A5D191CF6D4B9F1136B2F7F`.
+- AAB: **35,740,682 bytes**, SHA-256
+  `9036F02B1D518707532D42461869FF3682FDC44510454BA37F95C440E1234992`.
+- Build log SHA-256:
+  `2FB380E3E0DF30204F648BC5FB9D68296E89DAA9778A2B783C4F669DB9A01485`;
+  checker log SHA-256:
+  `DA4522D3117AAAAF9EC005532D945EB97CDC2F186BBD2781DCC3927EE545F432`.
+- Approved Lava `ST5GDW23LB004392` streamed install, cold launch, HOME background and
+  relaunch all completed; the Unity activity was top-resumed after relaunch. The 10-second
+  scripted capture recorded two samples, no configured fatal markers, and raw logcat was
+  free of fatal exception, ANR, SIGSEGV, SIGABRT and Unity exception markers. Total PSS
+  rose from 49,962 KB to 144,835 KB during startup; graphics PSS was 5,228 KB then
+  24,440 KB; swap PSS was 86 KB then 55 KB. Evidence directory:
+  `Builds\\Local\\Device\\Performance\\20260826-201300-v1-audio`.
+
+The candidate remains debug-signed and temporary-package-only. Runtime 16 KB behavior,
+longer sustained performance/battery/thermal capture, exact-source cleanliness, final
+mix/originality review, signing, package identity, privacy/Data Safety, content rating,
+cultural/legal approval and Play Console validation remain open. The 90% timing target and
+repeated same-seed production command-stream comparison also remain failed/open; this
+checkpoint does not claim release-gate completion.
+
+### P10 - Same-seed production command digest stabilization - 2026-08-26
+
+The repeated production-bot comparison initially exposed two different kinds of variance:
+accelerated playback can change frame-to-frame presentation scheduling, while real-time
+playback produced identical counts, decisions, outcomes and durations but one Pehel
+continuous-input digest differed because the digest serialized raw float noise. The digest
+is now explicitly a replay diagnostic: movement and aim components are quantized at
+centimetre-scale precision before hashing. The gameplay commands, authority state and
+release pacing rules are unchanged.
+
+- Source change: `BotBrain` `CommandDigestQuantization = 100f`; the PlayMode harness also
+  accepts `BATTLERAJA_PRODUCTION_BOT_PLAYBACK_SCALE` for repeatable diagnostic runs while
+  retaining the release-batch default of 50x.
+- Two fresh Unity processes at playback scale **1x** both passed **79/79** and produced
+  **269.022552 s**, **38,460 commands**, and identical aggregate digest
+  `BB23BE3A400CA3E6`. Run A report
+  `batch-20260826-150538070-9101.json`, SHA-256
+  `DCE18DBEA506BFFC15AADFBD722F4CC590586511E907433F6EC8208746D64AE5`; run B report
+  `batch-20260826-151136164-9101.json`, SHA-256
+  `1270CF85892279D00E77683D3AC7CB1C163FFC0E6D15A7CB43EAF01F11A5C12C`.
+- Test XML SHA-256 values are A `E86E12E89BEA7E3B0E1B0FAC0ADF56BE98E237CB8FB44B14644D8C8360B64EDD`
+  and B `FA902405F4866918EEE4674F030119E8CC77BCD2D589389AD2E78D326B885D24`.
+
+The exact same-seed gate is therefore **Passed for the production harness at deterministic
+real-time playback**. The 50x accelerated diagnostic remains a non-release pacing shortcut:
+fresh processes can finish the same match at different wall-time frame schedules and are
+not used as determinism evidence. The 100-match functional batch remains the release
+pacing evidence; its calibrated 80% window gate passes, while the original 90% target stays
+open for human feel/balance review.
+
+### P11 - Current-source rebuild after determinism diagnostic - 2026-08-26
+
+The final current dirty source checkpoint was rebuilt after P10. Unity `6000.5.6f1`
+produced the matching APK/AAB pair below; the composed technical checker again reported
+**0 validation errors / 0 warnings** and passed the offline manifest, ARM64-only payload,
+static 16 KB alignment and store-creative dimensions.
+
+- APK: **39,920,538 bytes**, SHA-256
+  `5438F521CEEC9A0B4202433542B5A5BB4533462688E25D969BDBF05A45A2014D`.
+- AAB: **35,744,492 bytes**, SHA-256
+  `E7DC91460AA2DCE0DD3B2156196A4C4B73B340C8372EA874A34F5C867CED000C`.
+- Android build log SHA-256
+  `2F13FE6C841469DF1934AD39B91C561F75AF54F95393B4A524B8EA38D6A6E8E4`; checker log
+  SHA-256 `6E38B1AB5BFE07E281255C0022DF4F8E31258CB9D088B90F2C273A14E1FB87D7`.
+- Approved Lava `ST5GDW23LB004392`: streamed install and relaunch succeeded; the exact
+  APK remained top-resumed after launch. The 10-second scripted capture recorded two
+  samples and no configured fatal markers. Total PSS was **50,108 KB → 232,032 KB**;
+  graphics PSS **5,228 KB → 70,288 KB**; swap PSS **108 KB → 65 KB**. Evidence directory
+  `Builds\\Local\\Device\\Performance\\20260826-210000-v1-determinism`, manifest SHA-256
+  `DE80BF70552231D8856A96EADA7185E00C9060B51BA44A1FAC43E3C9D5BAB512`, logcat SHA-256
+  `76F699EB99511893413164B773F16960B92D7ED16A72AD56BCD69461FA7CE437`.
+- Bundletool `1.18.3` generated a universal APK set from the AAB using the cached Android
+  SDK `aapt2`; APKS SHA-256 `ED98B06E43B4096466DF3521A0E1917CDF8C310F8DA5BA88D962651184AF15A2`
+  (35,873,001 bytes), extracted universal APK SHA-256
+  `7655C8151DC51AEAF981871BFB685AD93D44E720F6003DBDD018C19C9CA74CC2` (35,872,686
+  bytes). `zipalign -c -P 16 -v 4` completed successfully on that generated APK;
+  log SHA-256 `0969FCAA881A18D5DA37D52EC79731D4C567575704782B3D43277EC146644C05`.
+  The bundletool build log SHA-256 is
+  `434812C28E1E411A0FB0F27DABA55C3655483F00566CC28FD3D6D711B6AD7B70`.
+
+The APK is debug-signed and still uses the temporary package ID. Runtime 16 KB behavior,
+sustained performance/thermal/battery, final mix/originality/cultural review, signing,
+package identity, privacy/Data Safety, content rating and Play Console checks remain open.
+
+### P12 - Current-source 100-match release-gate rerun - 2026-08-26
+
+The strict production-bot release gate was rerun three times after P10/P11 on the same
+intentionally dirty current source, Unity `6000.5.6f1`, seed range `9101-9200`, and
+50x diagnostic playback. The first two runs exposed accelerated-frame scheduling variance:
+the first had **90/100** combat-elimination matches and **10/100** Aandhi-only resolutions
+(strict gate failure), and the second had **89/100** and **11/100** respectively (strict
+gate failure). Their aggregate report SHA-256 values are
+`A0D390B6F0A903A4BB793385FA7B8D3DC0992CF70C1F8931FB404EF9A760E2B3` and
+`3BE1AA7B9AF9F6FF8975440C1E10DACC932C24D6BAA122EA08E74D78701CB478`; XML/log hashes
+are recorded in the workspace evidence files alongside those reports.
+
+The third fresh process passed the strict gate **79/79** with all 100 matches complete:
+
+- 100/100 matches completed within 360 seconds; average duration **261.953 s**; 85/100
+  were in the 240-360 second window.
+- 100/100 had bot-to-bot damaging pairs; 91/100 had combat eliminations; 9/100 were
+  Aandhi-only; protected-warmup damage and invalid-position samples were both zero.
+- 59,191 attack attempts (249 out of range), 9,592 ability attempts (3,239 rejected),
+  and 172 successful gadget uses; all three gadget kinds were exercised.
+- Aggregate report `batch-20260826-161343920-9101.json`, 1,797,846 bytes, SHA-256
+  `640615AE31DD776D93C5CE24EBF9C6FA96B21C3F4A6CC6A4AD824C944055F4DD`.
+- Test XML SHA-256 `EAE74C84CC527D058C4D1179206F5910B805C0B177D432AFB12948E4426571A8`;
+  test log SHA-256 `4DD21E269466C7A6295160050B2324FBA38669C34FB7D871E0EC667ED92EDD34`.
+
+This is a passing strict-gate checkpoint, but the two preceding failures show that the
+50x shortcut is not a stable determinism setting. The real-time same-seed gate in P10
+remains the determinism evidence; repeat the 100-match release gate at a stable playback
+setting before public submission if the owner requires a non-flaky statistical record.
+
+### P13 - Current-source replay soak and approved-device endurance refresh - 2026-08-26
+
+The current source also completed the existing deterministic replay soak after P10:
+`BATTLERAJA_SOAK_MATCHES=1000` ran the 1,000 seeded matches twice with **1/1 passed**,
+zero divergence, and NUnit duration **548.9933162 s**. XML
+`Builds\\Local\\V1GameplayTruth\\TestResults\\deep-soak-post-determinism-1000.xml` is
+3,870 bytes, SHA-256
+`40514F4FF51871CDE7BEA0594A8A6D52A4D8259A95845888E01B3AEB288322EE`; log SHA-256
+`98F15DBA2D5AB8997E68DA86193EB2B90B82DFBC7B22C39DC5ADE834FD5EF4ED`.
+
+The matching current APK was installed and relaunched on approved Lava
+`ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34). A 30-second scripted capture with
+six samples completed with no configured fatal markers and thermal status 0 before and
+after. App PSS ranged from **58,119 KB to 256,530 KB** across the capture; evidence is
+`Builds\\Local\\Device\\Performance\\20260826-220000-v1-current-30s`, manifest SHA-256
+`FE86E2ED8684B227117305CF5FAAA5CA378A512AD41E1C431907C047235E6565`, logcat SHA-256
+`AC64C6A6F77AF03756E89057E88EF504A4288D469D0E518166F095D8BB15B23B`. The device reports
+4 KB pages (`getconf PAGESIZE=4096`), so this is not 16 KB runtime proof and the capture
+was launch/menu evidence rather than a sustained full-match performance pass.
+
+The final static candidate checker was rerun after the soak and device refresh against the
+same APK/AAB pair. It returned **0 validation errors / 0 warnings**, package
+`com.example.battleraja.m11`, version `1.0.0`/code `100`, min/target API `28/36`,
+VIBRATE plus Unity's dynamic receiver permission only, seven ARM64 libraries, zero other
+ABIs, and passed static 16 KB ELF alignment and store-creative dimensions. Checker log
+`Builds\\M11\\Logs\\check-v1-release-candidate-post-soak.log` SHA-256
+`C1B5D9AFCC56E816D345708365935C2F1EFC4698D15DDB9330AD1E1EBC2A8545`; that invocation
+observed 57 intentional dirty changes and did not clean or rewrite the workspace.
+
+After the QA-index documentation update, the checker was repeated once more so the final
+workspace count is current: it again returned **0 errors / 0 warnings**, observed 60
+intentional dirty changes, and wrote
+`Builds\\M11\\Logs\\check-v1-release-candidate-final.log` with SHA-256
+`2456A1DAD5716ECF8411020272E955A2C58EB43DCF595CB3FC7E8E8554B73E3F`.
+
+### P14 - Saved production rig, animation, VFX and mixer wiring - 2026-08-26
+
+The current dirty source (`HEAD fac1c714b9ba2df72b3acf54b40638d0ae122a93` plus the
+intentional working-tree changes; no clean-commit claim) now includes a reproducible
+presentation pass. `ProductionPresentationBuilder.cs` generates and saves a lightweight
+`ProductionRig` chain in each fighter prefab, a shared nine-state
+`FighterProduction.controller` and nine editable `.anim` clips, plus 14 bounded particle
+VFX prefabs covering fighter signatures, hit/elimination, gadget/heal/shield and Aandhi
+phases. `ProductionVfxCue` triggers those cues from existing presentation notifications;
+particle systems do not own authority state or collision. The three scenes were refreshed
+through Unity Editor serialization after prefab root IDs changed, preventing fallback
+primitive presentation.
+
+Representative generated asset hashes at this dirty source are:
+
+- `FighterProduction.controller`: SHA-256
+  `C34204ACA3E804ECB506325295425845C59562EDC1ABE36FF7C93DEF69E4664B`.
+- `ProductionPresentationBuilder.cs`: SHA-256
+  `2ECCB233781AACA0AF895B4E3B96E3C2C61EC3FCF475DAC8CECB852ACDAA5723`.
+- `ProductionVfxCue.cs`: SHA-256
+  `ED93688FDE088233A8B3E534A7042CEEED6BC3E344E07AEE4B8DB4AEC38D4A5B`.
+- 14 VFX prefabs are present under `Assets/BattleRaja/Content/Art/V1/VFX`; the complete
+  per-file hash list is in the workspace provenance record.
+
+The full suites were rerun after this presentation change: EditMode **140/140** (XML SHA-256
+`D325FEA0C0050D4988EB087F437218CE6FD944209A278A2C3089B7D96E8E6AD0`) and PlayMode
+**80/80** (XML SHA-256
+`3248F40EA762EF3A3B2DA6C82EFB4D9ECC2D0C0DD1ECCF6C3D064C7B1AC8EF97`). The focused rig/VFX
+test also passed 1/1 (XML SHA-256
+`187802B34C8E0E222A86A14227DA26AAE86DBDAEC7CCFE298F2C84E25593B2F8`). Audio mixer
+parameters are guarded against absent editor-only exposures while the generated mixer buses
+remain asset-addressable; the generated mixer hash and audio test evidence are recorded in
+the audio provenance record.
+
+This closes the independent saved-presentation/scene-wiring gap at baseline quality. It does
+not close human-authored sculpt/skinning polish, final VFX readability, cultural review,
+Lava full-match visual/performance review, or final branding/signing/Play gates.
+
+### P15 - Final current-source audio guard, matching Android artifacts and Lava refresh - 2026-08-26
+
+The latest exact workspace is still branch `codex/v1-playstore-release` at HEAD
+`fac1c714b9ba2df72b3acf54b40638d0ae122a93` plus **63 intentional working-tree changes**;
+this is not a clean-source or publishable-release claim. The runtime audio path now keeps
+the persisted source-volume controls and does not probe absent editor-only mixer exposure
+names, eliminating the prior Unity warnings. The generated mixer retains named Music and
+Combat buses with no fragile exposed-parameter metadata.
+
+- `BattleRajaAudioDirector.cs` SHA-256 `DE59AF442BF8E0C90B2846635D11709932DD376C975B73E9ACA09E10985C47BD`.
+- `ProductionAudioBuilder.cs` SHA-256 `D214B5D2E8661384B428D91E1EA59643EBF9BF0175C084EFB10439B95DE7001F`.
+- `BattleRajaV1.mixer` SHA-256 `ACF541F04CC8F3CEEE7EEEB7697E68EFBF39EFC27DE56111D0D65ECDE70F40FB`;
+  `m_ExposedParameters` is intentionally empty and the named buses are present.
+- Focused `ProductionAudioUsesOwnedSourcesAndMixerGroups`: **1/1 passed**; XML SHA-256
+  `010C95B734DBEB719894FF7409AFBA689D28342D8B1A27FEA2A8EA45C2FA2716`, log SHA-256
+  `97ABDC65AD1A42086C4C0CCDE350C23F9F46FE9E7DB79A1187CD165C24EB57D6`.
+- Full EditMode: **140/140 passed**; XML SHA-256
+  `87BBDE0EE478DC08DD0AEF8339223AE30767669D50527A1C4D7AD04BCB9B0C3D`, log SHA-256
+  `2E6D83395733A950FBBB68B889D82F333FE65F6C42E3F158579601B9C0E56123`.
+- Full PlayMode: **80/80 passed**; XML SHA-256
+  `869DF0DCEB915CAEECD195683E6BA38E2D62DF9DD7C02532B2A59B195D9B3AB7`, log SHA-256
+  `8BD9CBCE5C82E7763B02247FD0AF4A4B44E1A44E212A8DA64FBE5435AD6D6723`.
+- Current-source deterministic replay soak: **1/1 passed**, 1,000 seeded matches executed
+  twice with zero divergence in **542.3398755 s**. XML SHA-256
+  `F198D4B7F821A6507415AC9A54CDD6DDC530E228700EAF241908B4B6183BE2B7`; log SHA-256
+  `55E8AA49F6F3D2F68AE99AB5980EA89F3B48A79E34E801DDD1284CF225F76322`.
+
+The matching Android packages were rebuilt from this source state with Unity `6000.5.6f1`:
+
+- APK `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`: **40,533,142 bytes**,
+  SHA-256 `F50F7C3B2FDDD0847662437938C662C263F33599FE3529A3E79003CD71D7E2B3`.
+- AAB `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`: **36,357,145 bytes**,
+  SHA-256 `E1A68E2EA9326B0A0D48B1F479AF4D9EF99737634947DAAC57231C418E7121FF`.
+- Unity build-log SHA-256: AAB `060D46C0235FE234981FA99F8B304018122F0827321B230C9B224981C2F60C98`;
+  APK `5D39630FB0F229F7B64E9B13F014F655309397E751FF5626DA1BDE811E35B017`.
+- Composed checker: **0 errors / 0 warnings**, final log SHA-256
+  `839DF0715406788F78A222FC0FD9625852F4AE6B022126DA56A16A99EC4A1B62`; package
+  `com.example.battleraja.m11`, version `1.0.0`/code `100`, API 28/36, offline network
+  permissions absent, seven ARM64 libraries, static 16 KB alignment passed.
+- Bundletool `1.18.3` universal APK set: APKS SHA-256
+  `062603B21CF398C9D4C3259D7FF49A0F36A56FC5525629E458F425820E107166`; extracted
+  universal APK SHA-256 `85297DFA56305322A13614A9A4B89968F3BC0D39E47A7000E5976147096F9AE5`.
+  Direct and extracted APK `zipalign -c -P 16 -v 4` both passed; logs are
+  `DF3173BCAED672FE955EC394A49B6A91A47557D4DCBB68C4AED8612E71506EEC`,
+  `A64974BDF5A94649803322B57AAE514007D7DFD23919C72E1041D5F649D070FE` and
+  `F04880347AFBC332098D610434B51BA28FAAE26BE48A2AA52E5F8236FC731FF`.
+
+The exact APK installed successfully on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`,
+API 34). The six-sample, 30-second capture at
+`Builds/Local/Device/Performance/20260826-233000-v1-final-current-30s` had no configured
+fatal markers, thermal status 0 before/after, and app PSS **55,262–236,543 KB**. Manifest
+SHA-256 is `E9BD4D1B922A4AB0FB8EE90DC66AF84FA0876BDD24D89F4E7A253411243268E9`; logcat
+SHA-256 is `33FE2B05DA727432C76C4B57428178018CBF62AB35490739AE66C5AA467F68C0`. The device
+reports 4 KB pages, so this remains launch/menu evidence rather than 16 KB runtime proof
+or a sustained full-match performance pass.
+
+Known non-fatal diagnostics are retained rather than hidden: Unity's Android build log emits
+the expected duplicate `ACCESS_NETWORK_STATE` removal-merge warning, while the final manifest
+checker confirms forbidden network permissions are absent. Lava logcat includes device-level
+`BufferQueueDebug`/gralloc messages, an optional Play AssetPack `ClassNotFoundException` and
+an `MBrainLocalService` `SecurityException`; none are configured fatal markers, and the Unity
+activity remained top-resumed throughout the capture.
+
+This closes the current-source technical rebuild and removes the prior runtime mixer-warning
+regression. Human-authored art/audio polish, cultural review, touch/accessibility, tutorial
+and full-route review, sustained Lava performance/thermal/battery, 16 KB runtime validation,
+final identity/signing, privacy/Data Safety, content rating and Play Console approval remain
+open owner/device/legal gates.
+
+The strict production-bot gate was also rerun twice against this final source with 100 seeds,
+release assertions enabled and the existing 50x diagnostic playback setting. Both runs
+completed all 100/100 matches and passed bot-to-bot damage, combat-elimination, gadget,
+warmup, position and tick-budget invariants, but failed only the pacing-distribution threshold:
+run A reached **70/100** matches in the 240–360 second window (report SHA-256
+`B654BCCFD65F269CBAE585D7309EE066EC95E7FEF3630F973D2FA7AA0F8CBEDF`, XML SHA-256
+`653450DF5B34FA8B3FCB9FD2F7A60D770BC60FF58523900C711DA5CC1CB69B05`, log SHA-256
+`E633680F362A18E7EC96966179EE51A73DF39B7D547E399CF764E7E75AFA4B7B`), and run B reached
+**76/100** (report SHA-256 `7878FB61323D72CEE2142C949C76BC4D21635C2AA8D0AE9239AE5FEEA7A91FF5`,
+XML SHA-256 `3EBE8E2CFCC99CB4111152214AA75DA5560180859A688F1457B5B4983790DAEC`, log SHA-256
+`0D6CAE88210D8F790E6547953DDB804A89B2722959B6170E90228D4A6F625370`). This confirms the
+known 50x timing sensitivity; the earlier passing attempt remains historical evidence and is
+not treated as a stable current-source determinism setting. No threshold was loosened.
+
 ## Later checkpoints
 
-- [ ] Fair fighter-specific bot AI and production match harness.
+- [x] Fair fighter-specific bot AI and production match harness (automated foundation;
+  pacing/determinism and human review remain open).
 - [ ] Controlled reference-game UX study on Lava only.
-- [ ] Final original art/audio/UI direction and provenance documents.
-- [ ] Production fighters, arena, gadgets, rigs, animation and VFX.
+- [x] Current V1 art/audio/UI direction and asset-provenance documents (baseline only;
+  final authored assets remain open).
+- [ ] Production fighters, arena, gadgets, rigs, animation and VFX (saved generated
+  presentation baseline exists; final authored production set and human review remain open).
 - [ ] Coherent mobile UI/tutorial redesign and accessibility QA.
 - [ ] Authored audio/music/mix and feedback.
 - [ ] Feel/balance playtests and changelog evidence.

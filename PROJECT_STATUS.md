@@ -578,3 +578,21 @@ Review is required before:
    choice, balance, cultural sensitivity, legal/privacy, and release approval.
 5. Photon Fusion package/App ID/licence/account approval is required before real online
    session testing; never commit secrets or treat the mock as production networking.
+
+## Milestone 11 continuation — 2026-08-26
+
+Current branch `codex/v1-playstore-release` remains intentionally dirty at HEAD
+`fac1c714b9ba2df72b3acf54b40638d0ae122a93`; the exact evidence index is `Docs/V1_RELEASE_PLAN.md`
+P15. The current source passes full EditMode **140/140** and PlayMode **80/80**, including
+the saved presentation and audio-structure checks. The matching APK/AAB pass the composed
+technical checker (**0 errors / 0 warnings**), bundletool universal extraction and static
+16 KB alignment checks. The current source also passes the 1,000-seed deterministic replay
+soak twice with zero divergence. The exact APK installs on approved Lava
+`ST5GDW23LB004392` and the 30-second launch/menu capture has no configured fatal markers.
+
+The strict 100-match production harness still completes all seeded matches but its 50x pacing
+shortcut is timing-sensitive: the two final-source attempts reached 70/100 and 76/100 in the
+240–360 second window. No threshold was loosened. Human full-route/touch/accessibility,
+sustained performance/thermal/battery, runtime 16 KB, authored art/audio/cultural review,
+signing/package identity, privacy/Data Safety, content rating and Play Console actions remain
+open; this is not a Play-ready completion claim.

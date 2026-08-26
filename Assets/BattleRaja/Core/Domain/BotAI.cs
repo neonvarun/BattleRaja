@@ -8,7 +8,8 @@ namespace BattleRaja.Core.Domain
         Engage = 1,
         Reposition = 2,
         Retreat = 3,
-        Recover = 4
+        Recover = 4,
+        Loot = 5
     }
 
     public readonly struct BotDifficultyProfile
@@ -66,13 +67,20 @@ namespace BattleRaja.Core.Domain
 
     public readonly struct BotObservedTarget
     {
-        public BotObservedTarget(CombatEntityId id, CombatFaction faction, Float2 position, int currentHealth, bool hasLineOfSight)
+        public BotObservedTarget(
+            CombatEntityId id,
+            CombatFaction faction,
+            Float2 position,
+            int currentHealth,
+            bool hasLineOfSight,
+            bool isHostile = false)
         {
             Id = id;
             Faction = faction;
             Position = position;
             CurrentHealth = currentHealth;
             HasLineOfSight = hasLineOfSight;
+            IsHostile = isHostile || faction == CombatFaction.Player;
         }
 
         public CombatEntityId Id { get; }
@@ -80,6 +88,7 @@ namespace BattleRaja.Core.Domain
         public Float2 Position { get; }
         public int CurrentHealth { get; }
         public bool HasLineOfSight { get; }
+        public bool IsHostile { get; }
     }
 
     public readonly struct BotZoneObservation
@@ -121,7 +130,11 @@ namespace BattleRaja.Core.Domain
                 targetCount,
                 BotZoneObservation.Unbounded,
                 selfId.Value == 1 ? CombatFaction.Player : CombatFaction.Enemy,
-                ProjectileWeaponDefinition.TrainingBolt)
+                ProjectileWeaponDefinition.TrainingBolt,
+                default(CombatEntityId),
+                Float2.Zero,
+                false,
+                false)
         {
         }
 
@@ -135,7 +148,11 @@ namespace BattleRaja.Core.Domain
             BotZoneObservation zone)
             : this(selfId, position, currentHealth, maxHealth, targets, targetCount, zone,
                 selfId.Value == 1 ? CombatFaction.Player : CombatFaction.Enemy,
-                ProjectileWeaponDefinition.TrainingBolt)
+                ProjectileWeaponDefinition.TrainingBolt,
+                default(CombatEntityId),
+                Float2.Zero,
+                false,
+                false)
         {
         }
 
@@ -148,7 +165,11 @@ namespace BattleRaja.Core.Domain
             int targetCount,
             BotZoneObservation zone,
             CombatFaction selfFaction,
-            ProjectileWeaponDefinition selfWeapon)
+            ProjectileWeaponDefinition selfWeapon,
+            CombatEntityId recentAttackerId = default,
+            Float2 nearestGadgetPosition = default,
+            bool hasNearbyGadget = false,
+            bool hasGadget = false)
         {
             SelfId = selfId;
             Position = position;
@@ -159,6 +180,10 @@ namespace BattleRaja.Core.Domain
             Zone = zone;
             SelfFaction = selfFaction;
             SelfWeapon = selfWeapon;
+            RecentAttackerId = recentAttackerId;
+            NearestGadgetPosition = nearestGadgetPosition;
+            HasNearbyGadget = hasNearbyGadget;
+            HasGadget = hasGadget;
         }
 
         public CombatEntityId SelfId { get; }
@@ -170,6 +195,10 @@ namespace BattleRaja.Core.Domain
         public BotZoneObservation Zone { get; }
         public CombatFaction SelfFaction { get; }
         public ProjectileWeaponDefinition SelfWeapon { get; }
+        public CombatEntityId RecentAttackerId { get; }
+        public Float2 NearestGadgetPosition { get; }
+        public bool HasNearbyGadget { get; }
+        public bool HasGadget { get; }
     }
 
     public readonly struct BotDecision
@@ -276,6 +305,7 @@ namespace BattleRaja.Core.Domain
     {
         private BotDecision _lastDecision;
         private int _nextDecisionTick;
+        private CombatEntityId _lockedTargetId;
 
         public BotDecision CurrentDecision => _lastDecision;
 
@@ -312,10 +342,25 @@ namespace BattleRaja.Core.Domain
                     toZone,
                     toZone,
                     false,
-                    false,
+                    toZone.SqrMagnitude > 0.000001f,
                     1.1f,
                     threatCount,
                     false);
+            }
+            else if (!snapshot.HasGadget && snapshot.HasNearbyGadget && target.Id.Value == 0)
+            {
+                var toGadget = (snapshot.NearestGadgetPosition - snapshot.Position).Normalized;
+                decision = new BotDecision(
+                    BotDecisionState.Loot,
+                    default,
+                    toGadget,
+                    toGadget,
+                    false,
+                    false,
+                    0.8f,
+                    threatCount,
+                    false,
+                    true);
             }
             else if (healthFraction <= profile.RetreatHealthFraction && target.Id.Value != 0)
             {
@@ -326,20 +371,26 @@ namespace BattleRaja.Core.Domain
             {
                 var toTarget = (target.Position - snapshot.Position).Normalized;
                 var distance = Float2.Distance(snapshot.Position, target.Position);
-                var effectiveRange = MathF.Min(
-                    profile.PreferredRange + 5f,
-                    snapshot.SelfWeapon.MaxRange);
+                var preferredRange = MathF.Min(
+                    profile.PreferredRange,
+                    MathF.Max(2f, snapshot.SelfWeapon.MaxRange * 0.60f));
+                var attackRange = MathF.Max(1f, snapshot.SelfWeapon.MaxRange * 0.92f);
                 var aim = ApplyAimNoise(toTarget, profile.AimNoise, random);
-                var movement = distance > profile.PreferredRange
+                var strafe = new Float2(-toTarget.Y, toTarget.X) * (NextFloat(random) > 0.5f ? 1f : -1f);
+                var movement = distance > preferredRange + 0.25f
                     ? toTarget
-                    : new Float2(-toTarget.Y, toTarget.X) * (NextFloat(random) > 0.5f ? 1f : -1f);
-                var ability = distance > profile.PreferredRange * 1.35f;
+                    : distance < MathF.Max(1.0f, preferredRange - 0.5f)
+                        ? (toTarget * -0.6f + strafe * 0.4f).Normalized
+                        : strafe;
+                var ability = distance > preferredRange * 1.25f;
                 decision = new BotDecision(
-                    distance > profile.PreferredRange ? BotDecisionState.Reposition : BotDecisionState.Engage,
+                    distance > preferredRange + 0.25f || distance < MathF.Max(1.25f, preferredRange - 0.75f)
+                        ? BotDecisionState.Reposition
+                        : BotDecisionState.Engage,
                     target.Id,
                     movement,
                     aim,
-                    target.HasLineOfSight && distance <= effectiveRange,
+                    target.HasLineOfSight && distance <= attackRange,
                     ability,
                     targetScore,
                     threatCount,
@@ -360,19 +411,21 @@ namespace BattleRaja.Core.Domain
         {
             _lastDecision = default;
             _nextDecisionTick = 0;
+            _lockedTargetId = default;
         }
 
-        private static BotObservedTarget SelectTarget(BotPerceptionSnapshot snapshot, BotDifficultyProfile profile, out float score, out int threatCount)
+        private BotObservedTarget SelectTarget(BotPerceptionSnapshot snapshot, BotDifficultyProfile profile, out float score, out int threatCount)
         {
             var best = default(BotObservedTarget);
             score = 0f;
             threatCount = 0;
+            var locked = default(BotObservedTarget);
+            var lockedScore = 0f;
             for (var i = 0; i < snapshot.TargetCount; i++)
             {
                 var candidate = snapshot.Targets[i];
                 if (candidate.Id == snapshot.SelfId || !candidate.HasLineOfSight ||
-                    candidate.Faction == CombatFaction.Neutral ||
-                    candidate.Faction == snapshot.SelfFaction)
+                    candidate.Faction == CombatFaction.Neutral || !candidate.IsHostile)
                 {
                     continue;
                 }
@@ -380,13 +433,33 @@ namespace BattleRaja.Core.Domain
                 threatCount++;
                 var distance = Float2.Distance(snapshot.Position, candidate.Position);
                 var candidateScore = 100f / (1f + distance) + (candidate.CurrentHealth <= 25 ? 10f : 0f);
-                if (candidateScore > score)
+                if (candidate.Id == snapshot.RecentAttackerId)
+                {
+                    candidateScore += 18f;
+                }
+
+                if (candidate.Id == _lockedTargetId)
+                {
+                    locked = candidate;
+                    lockedScore = candidateScore;
+                }
+
+                if (candidateScore > score ||
+                    (MathF.Abs(candidateScore - score) < 0.0001f &&
+                     (best.Id.Value == 0 || candidate.Id.Value < best.Id.Value)))
                 {
                     score = candidateScore;
                     best = candidate;
                 }
             }
 
+            if (locked.Id.Value != 0 && lockedScore >= score * 0.78f)
+            {
+                best = locked;
+                score = lockedScore;
+            }
+
+            _lockedTargetId = best.Id;
             return best;
         }
 

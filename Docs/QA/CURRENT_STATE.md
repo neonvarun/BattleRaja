@@ -1,6 +1,6 @@
 # BattleRaja V1 current-state index
 
-Updated: 2026-08-24
+Updated: 2026-08-26
 
 ## Evidence location policy
 
@@ -19,6 +19,23 @@ tooling exist. A Play Store Release Candidate claim is not yet justified because
 physical Lava interaction/tutorial review, sustained performance, final identity/
 signing, accessibility, legal/privacy/cultural approval and Play Console review
 remain open.
+
+## Latest current-source evidence — 2026-08-26
+
+The exact current workspace is branch `codex/v1-playstore-release` at HEAD
+`fac1c714b9ba2df72b3acf54b40638d0ae122a93` plus intentional working-tree edits (57
+changes; no clean-source claim). Current EditMode is **140/140**, PlayMode is **79/79**,
+the strict 100-match production-bot gate passed **79/79** on the recorded third attempt
+(91/100 combat-elimination matches, 9/100 Aandhi-only), and the 1,000-seed replay soak
+passed **1/1** with zero divergence. The matching APK/AAB and exact hashes are indexed in
+`Docs/V1_RELEASE_PLAN.md` P11-P13. Static Android validation remains **0 errors / 0
+warnings**, with ARM64-only payload and static 16 KB alignment passed.
+
+Approved Lava `ST5GDW23LB004392` completed a 30-second, six-sample launch/menu capture
+with no configured fatal markers and thermal status 0 before/after. The device reports
+4 KB pages; genuine 16 KB runtime validation, sustained full-match performance, physical
+touch/accessibility, final visual/cultural review, signing/package identity, privacy/Data
+Safety, content rating and Play Console actions remain open.
 
 ## Exact current source
 
@@ -84,3 +101,46 @@ candidate.
 
 Photon gameplay, PlayFab, accounts, matchmaking, online progression, Web release,
 ads, IAP and public deployment remain outside V1.0.
+
+## Current presentation refresh — 2026-08-26
+
+The current dirty source (`HEAD fac1c714b9ba2df72b3acf54b40638d0ae122a93` plus intentional
+working-tree edits) now has saved production presentation assets rather than only runtime
+silhouettes. Unity-generated fighter prefabs contain a named transform rig, a shared
+nine-state Animator controller with nine editable clips, and four particle cues per fighter.
+The saved VFX library contains 14 bounded particle prefabs for fighter signatures, hit/
+elimination, gadget/heal/shield and Aandhi phases. `ProductionVfxCue` is presentation-only;
+it cannot mutate authority state. Scene references were refreshed through Unity serialization
+after prefab regeneration changed root IDs.
+
+Post-refresh evidence: EditMode **140/140** and PlayMode **80/80**. The focused rig/VFX test
+passed **1/1**. The V1 mixer contains named Music and Combat buses with guarded source-volume
+fallback. This remains a generated presentation baseline;
+human-authored sculpt/skinning polish, final VFX readability, cultural review, sustained
+Lava performance and final signed-package QA remain open.
+
+## Final current-source rebuild — 2026-08-26
+
+After the presentation refresh, the audio director was hardened to apply persisted source
+volumes without probing absent editor-only mixer exposure names. The focused audio test passed
+**1/1** with no targeted Unity warning/error markers; full EditMode passed **140/140** and full
+PlayMode passed **80/80**. Exact XML/log hashes and the generated mixer hash are recorded in
+`Docs/V1_RELEASE_PLAN.md` P15.
+
+The same final source also passed the deep deterministic replay soak: **1,000 seeds executed
+twice**, zero divergence, **542.3398755 s**; the exact XML and log hashes are recorded in P15.
+
+The matching current APK/AAB were rebuilt and the composed release checker passed **0 errors /
+0 warnings**. The bundletool 1.18.3 universal set and both direct/extracted APK zipalign
+checks passed. The exact APK installed on approved Lava `ST5GDW23LB004392`; a six-sample,
+30-second launch/menu capture had no configured fatal markers, thermal status 0 before/after,
+and app PSS **55,262–236,543 KB**. The device reports 4 KB pages, so runtime 16 KB proof,
+sustained full-match performance, physical touch/accessibility, final visual/audio/cultural
+review, signing/package identity, privacy/Data Safety, content rating and Play Console actions
+remain open.
+
+The final-source strict production-bot gate was rerun twice with 100 seeded matches and the
+existing 50x diagnostic playback. Both completed 100/100 and passed all safety/invariant checks,
+but only 70/100 and 76/100 respectively met the 240–360 second pacing window. This is the
+known timing-sensitive shortcut; the earlier passing run is retained as historical evidence,
+and the release threshold remains unchanged/open.

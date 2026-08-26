@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.InputSystem;
@@ -22,16 +23,28 @@ namespace BattleRaja.Presentation.Visuals
         private AudioSource _effectsSource;
         private AudioSource _musicSource;
         private AudioClip _musicClip;
+        private AudioClip _uiConfirmClip;
+        private AudioClip _uiBackClip;
         private AudioClip _attackClip;
+        private AudioClip _bijliAttackClip;
+        private AudioClip _pehelAttackClip;
+        private AudioClip _mayaAttackClip;
         private AudioClip _abilityClip;
+        private AudioClip _bijliAbilityClip;
+        private AudioClip _pehelAbilityClip;
+        private AudioClip _mayaAbilityClip;
         private AudioClip _hitClip;
         private AudioClip _eliminationClip;
         private AudioClip _pickupClip;
         private AudioClip _gadgetClip;
+        private AudioClip _umbrellaClip;
+        private AudioClip _dholClip;
+        private AudioClip _tiffinClip;
         private AudioClip _zoneWarningClip;
         private AudioClip _zoneClosingClip;
         private AudioClip _victoryClip;
         private AudioClip _defeatClip;
+        private readonly List<AudioClip> _generatedClips = new List<AudioClip>(16);
         private bool _started;
 
         public bool IsStarted => _started;
@@ -54,40 +67,50 @@ namespace BattleRaja.Presentation.Visuals
             _effectsSource.playOnAwake = false;
             _effectsSource.loop = false;
             _effectsSource.spatialBlend = 0f;
+            mixer = mixer != null ? mixer : Resources.Load<AudioMixer>("Audio/V1/BattleRajaV1");
+            if (mixer != null)
+            {
+                if (musicGroup == null) musicGroup = FindMixerGroup("Music");
+                if (effectsGroup == null) effectsGroup = FindMixerGroup("Combat");
+            }
             _effectsSource.outputAudioMixerGroup = effectsGroup;
             _musicSource = gameObject.AddComponent<AudioSource>();
             _musicSource.playOnAwake = false;
             _musicSource.loop = true;
             _musicSource.spatialBlend = 0f;
             _musicSource.outputAudioMixerGroup = musicGroup;
-            _attackClip = CreateTone("AttackCue", 680f, 0.06f);
-            _abilityClip = CreateTone("AbilityCue", 420f, 0.16f);
-            _hitClip = CreateTone("HitCue", 120f, 0.08f);
-            _eliminationClip = CreateTone("EliminationCue", 90f, 0.22f);
-            _pickupClip = CreateTone("PickupCue", 860f, 0.10f);
-            _gadgetClip = CreateTone("GadgetCue", 520f, 0.18f);
-            _zoneWarningClip = CreateTone("ZoneWarningCue", 260f, 0.24f);
-            _zoneClosingClip = CreateTone("ZoneClosingCue", 180f, 0.30f);
-            _victoryClip = CreateTone("VictoryCue", 760f, 0.40f);
-            _defeatClip = CreateTone("DefeatCue", 150f, 0.34f);
-            _musicClip = CreateMusicLoop();
+            _uiConfirmClip = LoadOrFallback("UiConfirm", 660f, 0.11f);
+            _uiBackClip = LoadOrFallback("UiBack", 520f, 0.13f);
+            _attackClip = LoadOrFallback("AttackGeneric", 680f, 0.06f);
+            _bijliAttackClip = LoadOrFallback("AttackBijli", 740f, 0.08f);
+            _pehelAttackClip = LoadOrFallback("AttackPehel", 150f, 0.12f);
+            _mayaAttackClip = LoadOrFallback("AttackMaya", 880f, 0.10f);
+            _abilityClip = LoadOrFallback("AbilityGeneric", 420f, 0.16f);
+            _bijliAbilityClip = LoadOrFallback("AbilityBijli", 420f, 0.20f);
+            _pehelAbilityClip = LoadOrFallback("AbilityPehel", 180f, 0.22f);
+            _mayaAbilityClip = LoadOrFallback("AbilityMaya", 520f, 0.22f);
+            _hitClip = LoadOrFallback("Hit", 120f, 0.08f);
+            _eliminationClip = LoadOrFallback("Elimination", 90f, 0.22f);
+            _pickupClip = LoadOrFallback("Pickup", 860f, 0.10f);
+            _gadgetClip = LoadOrFallback("GadgetGeneric", 520f, 0.18f);
+            _umbrellaClip = LoadOrFallback("GadgetUmbrella", 560f, 0.20f);
+            _dholClip = LoadOrFallback("GadgetDhol", 140f, 0.24f);
+            _tiffinClip = LoadOrFallback("GadgetTiffin", 320f, 0.20f);
+            _zoneWarningClip = LoadOrFallback("ZoneWarning", 260f, 0.24f);
+            _zoneClosingClip = LoadOrFallback("ZoneClosing", 180f, 0.30f);
+            _victoryClip = LoadOrFallback("Victory", 760f, 0.40f);
+            _defeatClip = LoadOrFallback("Defeat", 150f, 0.34f);
+            _musicClip = Resources.Load<AudioClip>("Audio/V1/MatchMusic") ?? CreateMusicLoop();
             _musicSource.clip = _musicClip;
             ApplyVolumes();
         }
 
         private void OnDestroy()
         {
-            if (_attackClip != null) Destroy(_attackClip);
-            if (_abilityClip != null) Destroy(_abilityClip);
-            if (_hitClip != null) Destroy(_hitClip);
-            if (_eliminationClip != null) Destroy(_eliminationClip);
-            if (_pickupClip != null) Destroy(_pickupClip);
-            if (_gadgetClip != null) Destroy(_gadgetClip);
-            if (_zoneWarningClip != null) Destroy(_zoneWarningClip);
-            if (_zoneClosingClip != null) Destroy(_zoneClosingClip);
-            if (_victoryClip != null) Destroy(_victoryClip);
-            if (_defeatClip != null) Destroy(_defeatClip);
-            if (_musicClip != null) Destroy(_musicClip);
+            for (var i = 0; i < _generatedClips.Count; i++)
+            {
+                if (_generatedClips[i] != null) Destroy(_generatedClips[i]);
+            }
         }
 
         private void Update()
@@ -124,11 +147,23 @@ namespace BattleRaja.Presentation.Visuals
         }
 
         public void PlayAttack() => Play(_attackClip);
+        public void PlayAttack(string fighterId) => Play(SelectFighterClip(fighterId, _attackClip, _bijliAttackClip, _pehelAttackClip, _mayaAttackClip));
         public void PlayAbility() => Play(_abilityClip);
+        public void PlayAbility(string fighterId) => Play(SelectFighterClip(fighterId, _abilityClip, _bijliAbilityClip, _pehelAbilityClip, _mayaAbilityClip));
         public void PlayHit() => Play(_hitClip);
         public void PlayElimination() => Play(_eliminationClip);
         public void PlayPickup() => Play(_pickupClip);
         public void PlayGadget() => Play(_gadgetClip);
+        public void PlayGadget(string gadgetId)
+        {
+            if (string.IsNullOrEmpty(gadgetId)) { Play(_gadgetClip); return; }
+            if (gadgetId.IndexOf("dhol", System.StringComparison.OrdinalIgnoreCase) >= 0) Play(_dholClip);
+            else if (gadgetId.IndexOf("tiffin", System.StringComparison.OrdinalIgnoreCase) >= 0) Play(_tiffinClip);
+            else if (gadgetId.IndexOf("umbrella", System.StringComparison.OrdinalIgnoreCase) >= 0) Play(_umbrellaClip);
+            else Play(_gadgetClip);
+        }
+        public void PlayUiConfirm() => Play(_uiConfirmClip);
+        public void PlayUiBack() => Play(_uiBackClip);
         public void PlayZoneWarning() => Play(_zoneWarningClip);
         public void PlayZoneClosing() => Play(_zoneClosingClip);
         public void PlayVictory() => Play(_victoryClip);
@@ -145,10 +180,12 @@ namespace BattleRaja.Presentation.Visuals
 
         private void ApplyVolumes()
         {
+            // Keep the persisted controls on the owned sources. The generated mixer uses
+            // named routing buses but intentionally has no fragile editor-only exposed
+            // parameter metadata; probing absent names logs a Unity warning. A human-authored
+            // mixer can still provide its own source/mixer automation without changing this
+            // offline-safe fallback path.
             ApplySourceVolumes();
-            if (mixer == null) return;
-            mixer.SetFloat("MusicVolume", ToDecibels(musicVolume));
-            mixer.SetFloat("EffectsVolume", ToDecibels(effectsVolume));
         }
 
         private void ApplySourceVolumes()
@@ -157,9 +194,28 @@ namespace BattleRaja.Presentation.Visuals
             if (_effectsSource != null) _effectsSource.volume = effectsVolume;
         }
 
-        private static float ToDecibels(float value) => value <= 0.0001f ? -80f : Mathf.Log10(value) * 20f;
+        private AudioClip LoadOrFallback(string resourceName, float frequency, float duration)
+        {
+            return Resources.Load<AudioClip>("Audio/V1/" + resourceName) ?? CreateTone(resourceName + "Fallback", frequency, duration);
+        }
 
-        private static AudioClip CreateTone(string name, float frequency, float duration)
+        private AudioMixerGroup FindMixerGroup(string groupName)
+        {
+            if (mixer == null) return null;
+            var groups = mixer.FindMatchingGroups(groupName);
+            return groups != null && groups.Length > 0 ? groups[0] : null;
+        }
+
+        private static AudioClip SelectFighterClip(string fighterId, AudioClip fallback, AudioClip bijli, AudioClip pehel, AudioClip maya)
+        {
+            if (string.IsNullOrEmpty(fighterId)) return fallback;
+            if (fighterId.IndexOf("pehel", System.StringComparison.OrdinalIgnoreCase) >= 0) return pehel;
+            if (fighterId.IndexOf("maya", System.StringComparison.OrdinalIgnoreCase) >= 0) return maya;
+            if (fighterId.IndexOf("bijli", System.StringComparison.OrdinalIgnoreCase) >= 0) return bijli;
+            return fallback;
+        }
+
+        private AudioClip CreateTone(string name, float frequency, float duration)
         {
             const int sampleRate = 44100;
             var samples = Mathf.Max(1, Mathf.CeilToInt(sampleRate * duration));
@@ -172,10 +228,11 @@ namespace BattleRaja.Presentation.Visuals
             }
 
             clip.SetData(data, 0);
+            _generatedClips.Add(clip);
             return clip;
         }
 
-        private static AudioClip CreateMusicLoop()
+        private AudioClip CreateMusicLoop()
         {
             const int sampleRate = 22050;
             const float duration = 8f;
@@ -194,6 +251,7 @@ namespace BattleRaja.Presentation.Visuals
             }
 
             clip.SetData(data, 0);
+            _generatedClips.Add(clip);
             return clip;
         }
     }

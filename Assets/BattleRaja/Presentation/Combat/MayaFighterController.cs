@@ -30,6 +30,9 @@ namespace BattleRaja.Presentation.Combat
         private bool _subscribedToCanonicalTick;
 
         public ContentId AbilityId => _special.AbilityId;
+        public int AbilityAttemptCount { get; private set; }
+        public int AbilityAcceptedCount { get; private set; }
+        public int AbilityRejectedCount { get; private set; }
         public FighterDefinition Definition => _definition;
         public bool IsMovementLocked => false;
         public bool IsDecoyActive
@@ -158,15 +161,27 @@ namespace BattleRaja.Presentation.Combat
                 return;
             }
 
+            AbilityAttemptCount++;
             var position = new Float2(transform.position.x, transform.position.z);
             if (UsesAuthorityDecoy)
             {
                 var authority = _match.TrySpawnMayaDecoy(OwnerId, command.SimulationTick, position);
-                if (authority.OwnerId != OwnerId || !authority.Active) return;
+                if (authority.OwnerId != OwnerId || !authority.Active)
+                {
+                    AbilityRejectedCount++;
+                    return;
+                }
+
+                AbilityAcceptedCount++;
             }
             else if (!_runtime.TrySpawn(OwnerId, position, _special))
             {
+                AbilityRejectedCount++;
                 return;
+            }
+            else
+            {
+                AbilityAcceptedCount++;
             }
 
             GetComponent<FighterPresentation>()?.NotifyAbility();
@@ -178,6 +193,9 @@ namespace BattleRaja.Presentation.Combat
             _runtime?.Destroy();
             _abilityHeld = false;
             _abilityQueued = false;
+            AbilityAttemptCount = 0;
+            AbilityAcceptedCount = 0;
+            AbilityRejectedCount = 0;
             DestroyDecoy();
         }
 

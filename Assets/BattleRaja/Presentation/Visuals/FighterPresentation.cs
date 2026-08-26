@@ -30,6 +30,10 @@ namespace BattleRaja.Presentation.Visuals
         [SerializeField] private Renderer bodyRenderer;
         [SerializeField] private CombatHealth health;
         [SerializeField] private MovementPlayerAgent movementAgent;
+        [Header("Production render-only art")]
+        [SerializeField] private GameObject bijliModelPrefab;
+        [SerializeField] private GameObject pehelModelPrefab;
+        [SerializeField] private GameObject mayaModelPrefab;
         [SerializeField] private float bobAmplitude = 0.035f;
         [SerializeField] private float bobFrequency = 2.5f;
         [SerializeField] private bool reducedFlashMode;
@@ -48,6 +52,8 @@ namespace BattleRaja.Presentation.Visuals
         private Transform _healthFill;
         private Transform _telegraph;
         private Transform _silhouetteRoot;
+        private Animator _productionAnimator;
+        private ProductionVfxCue _productionVfx;
         private BattleRajaAudioDirector _audio;
         private CombatTarget _target;
         private float _attackPulse;
@@ -124,6 +130,7 @@ namespace BattleRaja.Presentation.Visuals
             if (_eliminated)
             {
                 CurrentAnimation = _victory ? AnimationState.Victory : AnimationState.Eliminated;
+                ApplyProductionAnimationState();
                 ApplySilhouetteAnimation();
                 if (_ring != null) _ring.localScale = Vector3.one * (1.0f + Mathf.Sin(Time.time * 4f) * 0.06f);
                 return;
@@ -134,6 +141,8 @@ namespace BattleRaja.Presentation.Visuals
             else if (_attackPulse > 0f) CurrentAnimation = AnimationState.Attack;
             else if (movementAgent != null && movementAgent.Velocity.SqrMagnitude > 0.01f) CurrentAnimation = AnimationState.Locomotion;
             else CurrentAnimation = AnimationState.Idle;
+
+            ApplyProductionAnimationState();
 
             if (bodyRenderer != null)
             {
@@ -174,7 +183,8 @@ namespace BattleRaja.Presentation.Visuals
             AttackActivationCount++;
             _attackPulse = 0.14f;
             _telegraphRemaining = 0.14f;
-            _audio?.PlayAttack();
+            _productionVfx?.PlayAttack();
+            _audio?.PlayAttack(FighterAudioKey());
         }
 
         public void NotifyAbility()
@@ -182,7 +192,16 @@ namespace BattleRaja.Presentation.Visuals
             AbilityActivationCount++;
             _abilityPulse = 0.32f;
             _telegraphRemaining = 0.32f;
-            _audio?.PlayAbility();
+            _productionVfx?.PlayAbility();
+            _audio?.PlayAbility(FighterAudioKey());
+        }
+
+        private string FighterAudioKey()
+        {
+            if (GetComponent<PehelFighterController>() != null) return "Pehel";
+            if (GetComponent<MayaFighterController>() != null) return "Maya";
+            if (GetComponent<BijliFighterController>() != null) return "Bijli";
+            return string.Empty;
         }
 
         public void SetVictory(bool victory)
@@ -190,6 +209,7 @@ namespace BattleRaja.Presentation.Visuals
             _victory = victory;
             if (victory) _eliminated = true;
             CurrentAnimation = victory ? AnimationState.Victory : AnimationState.Defeat;
+            ApplyProductionAnimationState();
         }
 
         private void OnDamageResolved(DamageResult result)
@@ -206,6 +226,7 @@ namespace BattleRaja.Presentation.Visuals
             }
 
             _audio?.PlayHit();
+            _productionVfx?.PlayHit();
             if (_target != null && _target.Id.Value == 1) BattleRajaHaptics.Pulse();
             if (result.TargetDefeated) SetEliminated();
         }
@@ -225,6 +246,13 @@ namespace BattleRaja.Presentation.Visuals
 
             if (_ringMaterial != null) _ringMaterial.color = new Color(0.86f, 0.12f, 0.12f, 1f);
             _audio?.PlayElimination();
+            _productionVfx?.PlayElimination();
+        }
+
+        private void ApplyProductionAnimationState()
+        {
+            if (_productionAnimator == null || !_productionAnimator.isActiveAndEnabled) return;
+            _productionAnimator.SetInteger("State", (int)CurrentAnimation);
         }
 
         private void ApplySilhouetteAnimation()
@@ -345,6 +373,34 @@ namespace BattleRaja.Presentation.Visuals
             var bijli = GetComponent<BijliFighterController>();
             var pehel = GetComponent<PehelFighterController>();
             var maya = GetComponent<MayaFighterController>();
+            var productionPrefab = bijli != null && bijli.enabled
+                ? bijliModelPrefab
+                : pehel != null && pehel.enabled
+                    ? pehelModelPrefab
+                    : maya != null && maya.enabled ? mayaModelPrefab : null;
+            if (productionPrefab != null)
+            {
+                var productionModel = Instantiate(productionPrefab, _silhouetteRoot, false);
+                productionModel.name = productionPrefab.name;
+                _ownedObjects.Add(productionModel);
+                _productionAnimator = productionModel.GetComponentInChildren<Animator>(true);
+                _productionVfx = productionModel.GetComponentInChildren<ProductionVfxCue>(true);
+                var renderers = productionModel.GetComponentsInChildren<Renderer>(true);
+                for (var i = 0; i < renderers.Length; i++)
+                {
+                    var part = renderers[i] != null ? renderers[i].transform : null;
+                    if (part == null) continue;
+                    _silhouetteParts.Add(part);
+                    _silhouetteBasePositions.Add(part.localPosition);
+                    _silhouetteBaseRotations.Add(part.localRotation);
+                    _silhouetteBaseScales.Add(part.localScale);
+                }
+
+                if (_silhouetteParts.Count > 0) return;
+                Destroy(productionModel);
+                _ownedObjects.Remove(productionModel);
+            }
+
             if (bijli != null && bijli.enabled)
             {
                 var cyan = CreateMaterial(new Color(0.08f, 0.82f, 0.98f, 1f));

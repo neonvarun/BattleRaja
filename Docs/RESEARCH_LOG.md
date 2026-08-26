@@ -394,3 +394,32 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   branding still require human approval.
 - **Recheck trigger/date:** Before signing or uploading the V1 AAB, and after any
   Unity/Android player-settings change.
+
+### V1.0 Android/Play policy recheck (2026-08-26)
+
+- **Question:** Did the current Play target/API, 16 KB, Data safety, target-audience and
+  content-rating requirements change before the current release-shaped rebuild?
+- **Primary sources:** [Google Play target API requirements](https://developer.android.com/google/play/requirements/target-sdk),
+  [Android 16 KB page-size guidance](https://developer.android.com/guide/practices/page-sizes),
+  [Play Data safety](https://support.google.com/googleplay/android-developer/answer/10787469?hl=en-EN),
+  [Play content ratings](https://support.google.com/googleplay/android-developer/answer/9898843?hl=en),
+  and [target audience/content settings](https://support.google.com/googleplay/android-developer/answer/9867159?hl=en-GB).
+- **Relevant claims:** From 31 August 2026, new apps and updates must target Android 16/API
+  36 or higher; apps targeting Android 15/API 35+ must support 16 KB page-size devices;
+  published apps on closed/open/production tracks need a Data safety form and privacy-policy
+  link even when no user data is collected (internal-only testing is the stated exemption);
+  and new Play submissions must complete the content-rating questionnaire and target-audience
+  declarations.
+- **Decision impact:** Keep target API 36, ARM64 and the static 16 KB gate in the release
+  checker. Keep the offline manifest free of network permissions. Retain Data safety,
+  privacy-policy, target-audience and IARC questionnaire work as owner-controlled release
+  gates; do not claim the debug-signed temporary-ID artifact is Play-submittable.
+- **Local evidence:** Current APK/AAB checker passed target/min API 36/28, seven ARM64
+  libraries, static 16 KB alignment, no network permissions and creative dimensions. No
+  Play Console account, final package identity, signed release key or policy submission was
+  accessed.
+- **Uncertainty:** Google may update policy text or enforcement timing; final signed bundle,
+  developer verification, package identity, privacy policy and console declarations must be
+  rechecked by the owner immediately before submission.
+- **Recheck trigger/date:** Before the first signed AAB and again immediately before any
+  Play Console upload.

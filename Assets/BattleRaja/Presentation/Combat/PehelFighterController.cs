@@ -36,6 +36,10 @@ namespace BattleRaja.Presentation.Combat
         private bool _subscribedToCanonicalTick;
 
         public ContentId AbilityId => _special.AbilityId;
+        public int AbilityAttemptCount { get; private set; }
+        public int AbilityAcceptedCount { get; private set; }
+        public int AbilityRejectedCount { get; private set; }
+        public int AbilityEffectiveOutcomeCount { get; private set; }
         public FighterDefinition Definition => _definition;
         public ChargeThrowState ActionState => UsesAuthorityCharge
             ? _match.GetPehelChargeState(OwnerId).State
@@ -154,13 +158,20 @@ namespace BattleRaja.Presentation.Combat
         public void Submit(AbilityCommand command)
         {
             if (_runtime == null) return;
+            AbilityAttemptCount++;
             var movement = inputAdapter != null ? inputAdapter.ReadInput().Movement : Float2.Zero;
             var facing = movementAgent != null ? movementAgent.AimDirection : Float2.Up;
             if (UsesAuthorityCharge)
             {
-                if (_match.TryStartPehelCharge(command, movement, facing).Accepted)
+                var authority = _match.TryStartPehelCharge(command, movement, facing);
+                if (authority.Accepted)
                 {
+                    AbilityAcceptedCount++;
                     GetComponent<FighterPresentation>()?.NotifyAbility();
+                }
+                else
+                {
+                    AbilityRejectedCount++;
                 }
 
                 return;
@@ -177,11 +188,17 @@ namespace BattleRaja.Presentation.Combat
             _runtime?.Reset();
             _abilityHeld = false;
             _abilityQueued = false;
+            AbilityAttemptCount = 0;
+            AbilityAcceptedCount = 0;
+            AbilityRejectedCount = 0;
+            AbilityEffectiveOutcomeCount = 0;
         }
 
         private void ApplyAuthorityResult(MatchAuthorityChargeThrow authorityStep)
         {
             if (_match == null) return;
+
+            if (authorityStep.HasDamage || authorityStep.HasTargetDisplacement) AbilityEffectiveOutcomeCount++;
 
             if (authorityStep.HasDamage && _match.TryGetActorView(
                 authorityStep.Damage.Request.TargetId,

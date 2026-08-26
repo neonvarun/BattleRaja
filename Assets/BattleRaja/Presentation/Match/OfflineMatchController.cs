@@ -20,6 +20,7 @@ namespace BattleRaja.Presentation.Match
         [SerializeField] private MatchPickup[] pickups;
         [SerializeField] private GadgetPickup[] gadgetPickups;
         [SerializeField] private float outsideDamageTickSeconds = 1f;
+        [Min(1f)] [SerializeField] private float botWeaponDamageMultiplier = 2.40f;
         [SerializeField] private int simulationTickRate = 30;
         [SerializeField] private bool authorityDrivenMovement;
         [SerializeField] private bool autoStart = true;
@@ -36,7 +37,17 @@ namespace BattleRaja.Presentation.Match
         /// </summary>
         public event Action<int, float> SimulationTickAdvanced;
 
+        /// <summary>Immutable post-advance view for diagnostics and test harnesses.</summary>
+        public event Action<MatchAuthorityTick> AuthorityTickResolved;
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        public static string SuppressAutomaticStartForHarnessSceneName { get; set; }
+#endif
+
         public OfflineMatchSimulation Simulation => _authority != null ? _authority.Simulation : null;
+        public ArenaCollisionDefinition CollisionDefinition => _authority != null
+            ? _authority.CollisionDefinition
+            : ArenaCollisionDefinition.BazaarBastion;
         public MatchPhase CurrentPhase => Simulation != null ? Simulation.Phase : MatchPhase.LoadWarmup;
         public float ZoneRadius { get; private set; }
         public Float2 ZoneCenter { get; private set; }
@@ -54,6 +65,13 @@ namespace BattleRaja.Presentation.Match
         public double SimulationInterpolationAlpha => _simulationClock != null ? _simulationClock.InterpolationAlpha : 0d;
         public bool AuthorityDrivenMovement => authorityDrivenMovement;
 
+        public ulong CalculateDeterministicTickHash(MatchAuthorityTick tick)
+        {
+            return _authority != null
+                ? _authority.CalculateDeterministicTickHash(tick, Simulation != null ? Simulation.GetSnapshots() : null)
+                : 0UL;
+        }
+
         public GadgetUseResult TryUseGadget(GadgetUseCommand command)
         {
             return _authority != null
@@ -64,6 +82,11 @@ namespace BattleRaja.Presentation.Match
         public bool TryAcquireGadget(CombatEntityId collectorId, ContentId gadgetId)
         {
             return _authority != null && _authority.TryAcquireGadget(collectorId, gadgetId);
+        }
+
+        public bool AreActorsHostile(CombatEntityId first, CombatEntityId second)
+        {
+            return _authority != null && _authority.AreActorsHostile(first, second);
         }
 
         public bool ApplyAuthoritativeDisplacement(GadgetDisplacementIntent displacement)
@@ -271,8 +294,21 @@ namespace BattleRaja.Presentation.Match
             projectilePool = projectilePool != null ? projectilePool : FindAnyObjectByType<CombatProjectilePool>();
             pickups = pickups != null && pickups.Length > 0 ? pickups : FindObjectsByType<MatchPickup>();
             gadgetPickups = gadgetPickups != null && gadgetPickups.Length > 0 ? gadgetPickups : FindObjectsByType<GadgetPickup>();
+            System.Array.Sort(pickups, CompareMatchPickups);
+            System.Array.Sort(gadgetPickups, CompareGadgetPickups);
             CacheActors();
-            if (autoStart)
+            var suppressAutomaticStart = false;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            suppressAutomaticStart = string.Equals(
+                SuppressAutomaticStartForHarnessSceneName,
+                gameObject.scene.name,
+                StringComparison.Ordinal);
+            if (suppressAutomaticStart)
+            {
+                SuppressAutomaticStartForHarnessSceneName = null;
+            }
+#endif
+            if (autoStart && !suppressAutomaticStart && !IsMatchStarted)
             {
                 StartMatch();
             }
@@ -317,6 +353,7 @@ namespace BattleRaja.Presentation.Match
                 }
 
                 var authorityTick = _authority.Advance(simulationTick, (float)_simulationClock.StepSeconds);
+                AuthorityTickResolved?.Invoke(authorityTick);
                 var tick = authorityTick.Result;
                 if (projectilePool != null)
                 {
@@ -387,12 +424,21 @@ namespace BattleRaja.Presentation.Match
             {
                 var actor = _actors[i];
                 _authority.ConfigureFaction(actor.Target.Id, actor.Target.Faction);
+                // Solo Raja is a true free-for-all even though the presentation
+                // compatibility label remains Enemy for every autonomous bot.
+                _authority.ConfigureCombatGroup(actor.Target.Id, actor.Target.Id.Value);
                 var attack = actor.Transform.GetComponent<CombatAttackController>();
                 if (attack != null)
                 {
+                    var weapon = attack.AuthorityWeaponDefinition;
+                    if (actor.Target.Id.Value > 1)
+                    {
+                        weapon = ScaleAutonomousBotWeapon(weapon);
+                    }
+
                     _authority.ConfigureWeapon(
                         actor.Target.Id,
-                        attack.AuthorityWeaponDefinition,
+                        weapon,
                         attack.AuthorityTickRate);
                 }
                 actor.Agent.AuthorityDrivenMovement = authorityDrivenMovement;
@@ -412,6 +458,22 @@ namespace BattleRaja.Presentation.Match
             _playerSpectating = false;
             _resultsShown = false;
             Results = null;
+        }
+
+        private ProjectileWeaponDefinition ScaleAutonomousBotWeapon(ProjectileWeaponDefinition weapon)
+        {
+            var multiplier = Mathf.Max(1f, botWeaponDamageMultiplier);
+            if (multiplier <= 1f) return weapon;
+            return new ProjectileWeaponDefinition(
+                Mathf.Max(1, Mathf.RoundToInt(weapon.Damage * multiplier)),
+                weapon.FireIntervalSeconds,
+                weapon.ProjectileSpeed,
+                weapon.MaxRange,
+                weapon.LifetimeSeconds,
+                weapon.Radius,
+                weapon.CollisionLayerMask,
+                weapon.AllowSelfHit,
+                weapon.AllowFriendlyFire);
         }
 
         public void RestartMatch()
@@ -447,6 +509,36 @@ namespace BattleRaja.Presentation.Match
                     _actors.Add(new MatchActorBinding(agent, agent.transform, target, health, agent.GetComponent<PlayerInputAdapter>()));
                 }
             }
+        }
+
+        private static int CompareMatchPickups(MatchPickup left, MatchPickup right)
+        {
+            if (ReferenceEquals(left, right)) return 0;
+            if (left == null) return 1;
+            if (right == null) return -1;
+
+            var xComparison = left.transform.position.x.CompareTo(right.transform.position.x);
+            if (xComparison != 0) return xComparison;
+            var zComparison = left.transform.position.z.CompareTo(right.transform.position.z);
+            if (zComparison != 0) return zComparison;
+            var typeComparison = left.PickupType.CompareTo(right.PickupType);
+            if (typeComparison != 0) return typeComparison;
+            var valueComparison = left.Value.CompareTo(right.Value);
+            if (valueComparison != 0) return valueComparison;
+            return left.RespawnSeconds.CompareTo(right.RespawnSeconds);
+        }
+
+        private static int CompareGadgetPickups(GadgetPickup left, GadgetPickup right)
+        {
+            if (ReferenceEquals(left, right)) return 0;
+            if (left == null) return 1;
+            if (right == null) return -1;
+
+            var xComparison = left.transform.position.x.CompareTo(right.transform.position.x);
+            if (xComparison != 0) return xComparison;
+            var zComparison = left.transform.position.z.CompareTo(right.transform.position.z);
+            if (zComparison != 0) return zComparison;
+            return string.CompareOrdinal(left.GadgetId.Value, right.GadgetId.Value);
         }
 
         private void PublishResults()

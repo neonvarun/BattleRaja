@@ -11,12 +11,54 @@ namespace BattleRaja.Presentation.Gadgets
     /// </summary>
     public sealed class GadgetPickupVisuals : MonoBehaviour
     {
+        [SerializeField] private GameObject umbrellaModelPrefab;
+        [SerializeField] private GameObject dholModelPrefab;
+        [SerializeField] private GameObject tiffinModelPrefab;
+
         private readonly List<GameObject> _objects = new List<GameObject>(12);
         private readonly List<Material> _materials = new List<Material>(4);
         private Transform _identityRoot;
         private Vector3 _identityBasePosition;
 
         public Transform IdentityRoot => _identityRoot;
+
+        /// <summary>
+        /// Rebuilds the render-only hierarchy after an editor scene generator has
+        /// assigned serialized prefab references. AddComponent invokes Awake before
+        /// those references can be assigned, so the editor path uses this explicit
+        /// refresh to remove the temporary primitive fallback before saving.
+        /// </summary>
+        public void RebuildFromSavedPrefab()
+        {
+            if (_identityRoot != null)
+            {
+                DestroyImmediate(_identityRoot.gameObject);
+                _identityRoot = null;
+            }
+
+            for (var i = 0; i < _objects.Count; i++)
+            {
+                if (_objects[i] != null) DestroyImmediate(_objects[i]);
+            }
+
+            for (var i = 0; i < _materials.Count; i++)
+            {
+                if (_materials[i] != null) DestroyImmediate(_materials[i]);
+            }
+
+            _objects.Clear();
+            _materials.Clear();
+            Build();
+        }
+
+        /// <summary>Assigns generated prefab references directly during controlled scene generation.</summary>
+        public void ConfigureSavedPrefabs(GameObject umbrella, GameObject dhol, GameObject tiffin)
+        {
+            umbrellaModelPrefab = umbrella;
+            dholModelPrefab = dhol;
+            tiffinModelPrefab = tiffin;
+            RebuildFromSavedPrefab();
+        }
 
         private void Awake()
         {
@@ -56,6 +98,14 @@ namespace BattleRaja.Presentation.Gadgets
             _identityRoot = root;
             _identityBasePosition = root.localPosition;
 
+            var savedPrefab = SelectSavedPrefab(id);
+            if (savedPrefab != null)
+            {
+                var model = Instantiate(savedPrefab, root, false);
+                model.name = savedPrefab.name;
+                return;
+            }
+
             var pedestal = CreateMaterial(new Color(0.03f, 0.09f, 0.13f, 1f));
             var accent = id.IndexOf("dhol", System.StringComparison.OrdinalIgnoreCase) >= 0
                 ? CreateMaterial(new Color(0.96f, 0.25f, 0.20f, 1f))
@@ -91,6 +141,13 @@ namespace BattleRaja.Presentation.Gadgets
             // overhead camera without changing its collider or authority position.
             CreatePrimitive("PickupBeacon", PrimitiveType.Cube, root, new Vector3(0f, 1.08f, 0f), new Vector3(0.055f, 0.72f, 0.055f), highlight);
             CreatePrimitive("PickupBeaconTop", PrimitiveType.Cube, root, new Vector3(0f, 1.48f, 0f), new Vector3(0.24f, 0.055f, 0.24f), accent, Quaternion.Euler(0f, 45f, 0f));
+        }
+
+        private GameObject SelectSavedPrefab(string id)
+        {
+            if (id.IndexOf("dhol", System.StringComparison.OrdinalIgnoreCase) >= 0) return dholModelPrefab;
+            if (id.IndexOf("tiffin", System.StringComparison.OrdinalIgnoreCase) >= 0) return tiffinModelPrefab;
+            return umbrellaModelPrefab;
         }
 
         private GameObject CreatePrimitive(string name, PrimitiveType type, Transform parent, Vector3 position, Vector3 scale, Material material, Quaternion rotation = default(Quaternion))

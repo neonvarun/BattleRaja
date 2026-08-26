@@ -37,6 +37,9 @@ namespace BattleRaja.Presentation.Movement
         public bool IsInitialized => _initialized;
         public Vector3 LastAuthoritativePosition => _lastAuthoritativePosition;
         public bool ExternalCommandMode { get => externalCommandMode; set => externalCommandMode = value; }
+        public int AuthorityCommandQueuedCount { get; private set; }
+        public int AuthorityCommandRejectedCount { get; private set; }
+        public int AuthorityCommandFallbackCount { get; private set; }
         public bool AuthorityDrivenMovement
         {
             get => authorityDrivenMovement;
@@ -73,6 +76,9 @@ namespace BattleRaja.Presentation.Movement
             _bufferedInput = new MovementInputFrame(Float2.Zero, Float2.Zero);
             _authorityInput = new MovementInputFrame(Float2.Zero, Float2.Zero);
             _authorityCommandQueued = false;
+            AuthorityCommandQueuedCount = 0;
+            AuthorityCommandRejectedCount = 0;
+            AuthorityCommandFallbackCount = 0;
             _lastAuthoritativePosition = transform.position;
             _hasAuthoritativePosition = false;
             _simulationTick = 0;
@@ -172,6 +178,13 @@ namespace BattleRaja.Presentation.Movement
             _authorityCommandQueued = false;
         }
 
+        public void ResetAuthorityCommandTelemetry()
+        {
+            AuthorityCommandQueuedCount = 0;
+            AuthorityCommandRejectedCount = 0;
+            AuthorityCommandFallbackCount = 0;
+        }
+
         public MovementCommand CaptureAuthorityCommand(int simulationTick)
         {
             var input = inputAdapter != null && inputAdapter.isActiveAndEnabled
@@ -183,13 +196,15 @@ namespace BattleRaja.Presentation.Movement
         public void QueueAuthorityCommand(MovementCommand command)
         {
             if (!_initialized || command.ActorId != ActorId ||
-                (_fighterMovementLock != null && _fighterMovementLock.IsMovementLocked))
+                (!authorityDrivenMovement && _fighterMovementLock != null && _fighterMovementLock.IsMovementLocked))
             {
+                AuthorityCommandRejectedCount++;
                 return;
             }
 
             _authorityInput = new MovementInputFrame(command.Movement, command.Aim);
             _authorityCommandQueued = true;
+            AuthorityCommandQueuedCount++;
         }
 
         public MovementCommand GetAuthorityCommand(int simulationTick)
@@ -200,6 +215,7 @@ namespace BattleRaja.Presentation.Movement
                 return new MovementCommand(ActorId, simulationTick, _authorityInput.Movement, _authorityInput.Aim);
             }
 
+            AuthorityCommandFallbackCount++;
             return CaptureAuthorityCommand(simulationTick);
         }
 

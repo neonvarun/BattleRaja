@@ -44,9 +44,9 @@ namespace BattleRaja.Tests.EditMode
             Assert.That(pressure.Phase, Is.EqualTo(MatchPhase.Pressure));
             Assert.That(pressure.ZoneRadius, Is.InRange(10.9f, 11f));
             Assert.That(pressure.OutsideCount, Is.GreaterThanOrEqualTo(1));
-            Assert.That(pressure.OutsideDamagePerSecond, Is.EqualTo(10));
+            Assert.That(pressure.OutsideDamagePerSecond, Is.EqualTo(1));
             var pressureMidpoint = simulation.Advance(60f);
-            Assert.That(pressureMidpoint.ZoneRadius, Is.InRange(8.1f, 8.5f));
+            Assert.That(pressureMidpoint.ZoneRadius, Is.InRange(8.1f, 8.8f));
         }
 
         [Test]

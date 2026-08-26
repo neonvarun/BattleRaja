@@ -34,6 +34,9 @@ namespace BattleRaja.Presentation.Combat
         private bool _subscribedToCanonicalTick;
 
         public FighterDefinition Definition => _definition;
+        public int AbilityAttemptCount { get; private set; }
+        public int AbilityAcceptedCount { get; private set; }
+        public int AbilityRejectedCount { get; private set; }
         public ContentId AbilityId => _definition.Ability.AbilityId;
         public FighterActionState ActionState => UsesAuthorityDash
             ? _match.GetBijliDashState(OwnerId).State
@@ -41,6 +44,7 @@ namespace BattleRaja.Presentation.Combat
         public float DashCooldownRemaining => UsesAuthorityDash
             ? _match.GetBijliDashState(OwnerId).CooldownRemaining
             : _runtime != null ? _runtime.CooldownRemaining : 0f;
+        public float AbilityCooldownRemaining => DashCooldownRemaining;
         public bool IsMovementLocked => ActionState != FighterActionState.Ready &&
             ActionState != FighterActionState.Cooldown;
         public bool IsInitialized => _runtime != null;
@@ -169,13 +173,20 @@ namespace BattleRaja.Presentation.Combat
                 return;
             }
 
+            AbilityAttemptCount++;
             var movement = inputAdapter != null ? inputAdapter.ReadInput().Movement : Float2.Zero;
             var facing = movementAgent != null ? movementAgent.AimDirection : Float2.Up;
             if (UsesAuthorityDash)
             {
-                if (_match.TryStartBijliDash(command, movement, facing).Accepted)
+                var authority = _match.TryStartBijliDash(command, movement, facing);
+                if (authority.Accepted)
                 {
+                    AbilityAcceptedCount++;
                     GetComponent<FighterPresentation>()?.NotifyAbility();
+                }
+                else
+                {
+                    AbilityRejectedCount++;
                 }
 
                 return;
@@ -192,6 +203,9 @@ namespace BattleRaja.Presentation.Combat
             _runtime?.Reset();
             _abilityHeld = false;
             _abilityQueued = false;
+            AbilityAttemptCount = 0;
+            AbilityAcceptedCount = 0;
+            AbilityRejectedCount = 0;
             if (dashTrail != null)
             {
                 dashTrail.emitting = false;

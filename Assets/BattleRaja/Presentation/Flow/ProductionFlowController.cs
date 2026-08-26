@@ -889,6 +889,9 @@ namespace BattleRaja.Presentation.Flow
             var button = buttonObject.GetComponent<Button>();
             button.onClick.AddListener(() =>
             {
+                var audio = FindAnyObjectByType<BattleRajaAudioDirector>();
+                audio?.StartFromUserGesture();
+                audio?.PlayUiConfirm();
                 BattleRajaHaptics.Pulse();
                 action?.Invoke();
             });

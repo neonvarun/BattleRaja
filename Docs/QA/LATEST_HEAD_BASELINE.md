@@ -1,5 +1,17 @@
 # Latest HEAD baseline
 
+## Superseded current-source continuation — 2026-08-26
+
+The working tree is branch `codex/v1-playstore-release` at HEAD
+`fac1c714b9ba2df72b3acf54b40638d0ae122a93` plus 57 intentional edits. Current EditMode
+and PlayMode pass **140/140** and **79/79**; the strict 100-match production-bot gate
+passed **79/79** on the recorded third attempt, and the refreshed 1,000-seed replay soak
+passed with zero divergence. Current APK/AAB, checker, bot-report, replay-soak and
+approved-Lava hashes are indexed in `Docs/V1_RELEASE_PLAN.md` P11-P13. Static Android
+checks pass, while genuine 16 KB runtime proof, sustained full-match performance,
+physical touch/accessibility, final visual/cultural review, signing/package identity,
+privacy/Data Safety, content rating and Play Console actions remain open.
+
 ## Exact Android candidate source — `35de9f3` — 2026-08-24
 
 The checked-out source contains the presentation-only Pehel hot-path cleanup,
@@ -1560,3 +1572,40 @@ Google Play Asset Pack classes and Lava gralloc format warnings. These are separ
 from the fixed-tick exception and did not stop the current Unity process. This phase
 does not establish final visual quality, performance, real Photon multiplayer or
 PlayFab integration.
+
+## Saved presentation refresh — 2026-08-26
+
+Current dirty source is `HEAD fac1c714b9ba2df72b3acf54b40638d0ae122a93` plus intentional
+working-tree edits. `ProductionPresentationBuilder.cs` now generates saved
+`ProductionRig` hierarchies, `FighterProduction.controller` and nine editable clips for
+Bijli, Pehel and Maya. Four particle cues are embedded in each fighter prefab; the complete
+14-prefab VFX library is under `Assets/BattleRaja/Content/Art/V1/VFX`. The scenes were
+serialized through the controlled reference-refresh pass so generated prefab root IDs do
+not cause fallback primitives.
+
+Fresh post-refresh tests are EditMode **140/140** and PlayMode **80/80**. The focused
+rig/Animator/VFX assertion is **1/1**. The mixer contains named Music and Combat buses with
+guarded source-volume controls. These are machine-verified generated assets, not final
+human-authored/culturally approved art or VFX; Lava sustained match profiling, touch review,
+signing and Play actions remain open.
+
+## Final current-source rebuild — 2026-08-26
+
+The final dirty-tree continuation removes runtime probing of absent editor-only mixer exposure
+names while retaining persisted source-volume controls and named Music/Combat routing buses.
+Focused audio is **1/1**, full EditMode is **140/140**, and full PlayMode is **80/80**; exact
+hashes are indexed in P15 of `Docs/V1_RELEASE_PLAN.md`.
+
+The matching APK (`F50F7C3B2FDDD0847662437938C662C263F33599FE3529A3E79003CD71D7E2B3`) and AAB
+(`E1A68E2EA9326B0A0D48B1F479AF4D9EF99737634947DAAC57231C418E7121FF`) pass the composed
+technical checker with 0 errors/0 warnings. Bundletool 1.18.3 generated a universal APK set;
+direct and extracted APK `zipalign -P 16` checks passed. Approved Lava installation and the
+30-second six-sample capture completed with no configured fatal markers and thermal status 0
+before/after; PSS was **55,262–236,543 KB**. This is launch/menu evidence only: 4 KB device
+pages, sustained full-match performance, runtime 16 KB, touch/accessibility, final authored
+art/audio/cultural review, signing and Play actions remain open.
+
+The same exact source passes the 1,000-seed deterministic replay soak twice with zero
+divergence. Two strict 100-match production-bot retries completed all matches and all safety
+invariants but reached only 70/100 and 76/100 in the 240–360 second pacing window; this is
+the documented timing-sensitive 50x shortcut, with no threshold loosening.

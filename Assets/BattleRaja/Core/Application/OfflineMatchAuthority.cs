@@ -685,6 +685,15 @@ namespace BattleRaja.Core.Application
                 firstGroup != secondGroup;
         }
 
+        /// <summary>
+        /// Exposes the already-authoritative relationship for presentation-side
+        /// perception. This is a read-only query; it cannot alter combat state.
+        /// </summary>
+        public bool AreActorsHostile(CombatEntityId first, CombatEntityId second)
+        {
+            return first != second && AreDifferentCombatGroups(first, second);
+        }
+
         private void RefreshSortedAuthorityTargets()
         {
             _sortedStationIds.Clear();

@@ -1310,3 +1310,141 @@ Record every material choice here. Do not silently overwrite old decisions.
   `ReplayDeterminismTests.ReplayExecutor_ReproducesCompleteAuthorityHashStream`, full EditMode/
   PlayMode baselines and the 2,000-match zero-divergence soak.
 - **Owner:** Human project owner
+
+### ADR-058 - Keep production fighter art in saved render-only prefab assets
+
+- **Date:** 2026-08-26
+- **Status:** Accepted for the V1 offline presentation baseline.
+- **Context:** Fighter identity was previously assembled entirely from runtime primitive
+  construction, which made the production scene difficult to inspect, version and review
+  as an authored visual asset. Gameplay state must remain independent of visual identity.
+- **Options considered:** Keep all silhouettes runtime-generated; place gameplay components
+  on visual prefabs; or generate saved mesh/material/prefab assets and inject them only into
+  the render layer.
+- **Decision:** Use a controlled editor builder to create three saved fighter prefabs and
+  their mesh/material assets. `FighterPresentation` selects the active fighter prefab and
+  treats it as render-only; colliders, health, movement, input, ability controllers and
+  authority remain on the actor root. A runtime silhouette fallback remains only for
+  scenes/assets that have not yet been regenerated.
+- **Consequences:** Production visuals are inspectable and asset-addressable, while the
+  pure gameplay/domain layer remains unaware of Unity art assets. The baseline still lacks
+  final rigs, authored animation, final gadget/arena assets, authored audio and human art
+  review; generated meshes are not a claim of final commissioned art.
+- **Evidence/sources:** `ProductionArtBuilder`, the three production prefabs, controlled
+  scene-generation logs and `ProductionFighterArtUsesSavedRenderOnlyPrefabs`.
+- **Owner:** Human project owner
+
+### ADR-059 - Keep production gadget art in saved render-only prefab assets
+
+- **Date:** 2026-08-26
+- **Status:** Accepted for the V1 offline presentation baseline.
+- **Context:** Gadget pickups still used runtime primitives for their identity, while the
+  scene contract needed inspectable Umbrella, Dhol and Tiffin visuals without moving
+  collision or collection authority into art assets.
+- **Options considered:** Keep all gadget visuals runtime-generated; add colliders and
+  gameplay state to gadget prefabs; or generate saved render-only prefabs and inject them
+  under the existing `GadgetIdentityVisual` root.
+- **Decision:** Generate three saved gadget prefabs and reusable mesh/material assets with
+  the controlled editor builder. `GadgetPickupVisuals` selects the correct prefab from the
+  authoritative gadget ID; the prefab hierarchy owns only MeshFilter/MeshRenderer parts.
+  Controlled scene generation explicitly reconciles serialized prefab references after
+  component creation so editor `Awake` ordering cannot save the primitive fallback.
+- **Consequences:** Gadget identity is inspectable and asset-addressable while pickup
+  availability, collection, collider and authority remain on the existing pickup actor.
+  A runtime primitive fallback remains for unreconciled legacy scenes. The generated
+  assets are a V1 baseline, not final commissioned art or cultural approval.
+- **Evidence/sources:** `ProductionArtBuilder`, `GadgetPickupVisuals`, `BuildEntrypoints`,
+  the three production gadget prefabs, Bazaar scene serialized references and
+  `ProductionGadgetArtUsesSavedRenderOnlyPrefabs`.
+- **Owner:** Human project owner
+
+### ADR-060 - Prefer owned reproducible WAV sources with a mixer-backed runtime fallback
+
+- **Date:** 2026-08-26
+- **Status:** Accepted for the V1 audio baseline; final mix review remains open.
+- **Context:** The vertical slice used runtime sine tones and an in-memory loop. That was
+  useful for smoke tests but did not provide inspectable source audio, fighter/gadget
+  identity or a mixer-backed release asset boundary.
+- **Options considered:** Keep runtime tones as the shipped audio; add third-party packs;
+  or generate owned WAV sources with reproducible synthesis settings and retain a small
+  runtime fallback for missing imports.
+- **Decision:** `ProductionAudioBuilder` emits original PCM WAV sources and a
+  `BattleRajaV1.mixer` with Music, Ambience, UI, Combat, Abilities, Gadgets and Zone buses.
+  `BattleRajaAudioDirector` loads those Resources assets first, routes music/effects when
+  the mixer exists, and only creates temporary fallback clips when a source is missing.
+  Fighter and gadget presentation events choose their identity-specific clips.
+- **Consequences:** Audio is now asset-addressable, inspectable and provenance-traceable
+  without external licences or network dependencies. Human loudness, clipping, voice-limit,
+  thermal and cultural review are still required; generated synthesis is not claimed to be
+  final commissioned music.
+- **Evidence/sources:** `ProductionAudioBuilder`, `BattleRajaAudioDirector`,
+  `Resources/Audio/V1`, `AUDIO_BIBLE.md` and `ProductionAudioUsesOwnedSourcesAndMixerGroups`.
+- **Owner:** Human project owner
+
+### ADR-061 - Quantize continuous bot inputs in the production determinism diagnostic
+
+- **Date:** 2026-08-26
+- **Status:** Accepted for V1 harness evidence.
+- **Context:** The production harness command digest included raw movement/aim floats.
+  Two real-time runs had identical command counts, decisions, outcomes and duration, but
+  one Pehel digest differed due to harmless presentation transform precision. Accelerated
+  playback also changes frame scheduling and is not suitable as a replay-equivalence clock.
+- **Options considered:** Treat every float-bit difference as gameplay divergence; remove
+  the command digest; or retain a stable semantic diagnostic by quantizing continuous inputs
+  while preserving discrete tick/attack/ability fields exactly.
+- **Decision:** `BotBrain` hashes movement and aim components after `Mathf.RoundToInt(value
+  * 100f)` (centimetre-scale diagnostic precision), while simulation tick, attack and ability
+  bits remain exact. The harness exposes a test-only playback-scale environment override;
+  release-batch default remains 50x, and same-seed evidence uses the deterministic 1x path.
+- **Consequences:** Fresh Unity processes now reproduce the same aggregate digest at 1x
+  (two 79/79 runs, 269.02 s, 38,460 commands, digest `BB23BE3A400CA3E6`). This is a
+  diagnostic tolerance, not a change to authority commands or gameplay rules. The 50x
+  shortcut remains unsuitable for determinism claims because it intentionally stresses
+  variable frame scheduling.
+- **Evidence/sources:** `BotBrain`, `ProductionBotHarnessPlayModeTests`, P10 in
+  `V1_RELEASE_PLAN.md`, and the paired 2026-08-26 scale-1 reports.
+- **Owner:** Human project owner
+
+### ADR-062 - Generate a presentation-only transform rig, Animator and particle cue layer
+
+- **Date:** 2026-08-26
+- **Status:** Accepted for the V1 offline presentation baseline; final authored art review
+  remains open.
+- **Context:** Saved fighter prefabs had reusable meshes and materials but no inspectable rig,
+  animation controller or authored VFX assets. Runtime primitive fallback made it possible for
+  regenerated prefab root IDs to leave scenes displaying prototype geometry.
+- **Options considered:** Keep code-driven presentation only; add gameplay components to
+  visual prefabs; or generate a lightweight render-only rig/controller/VFX layer and refresh
+  scene references through Unity serialization.
+- **Decision:** `ProductionPresentationBuilder` generates named transform joints, nine
+  editable Animator clips, one shared controller and bounded particle prefabs. `ProductionVfxCue`
+  is triggered only by existing presentation notifications. `FighterPresentation` continues
+  to own visual state while authority, collision and timing stay in the gameplay layer. A
+  controlled scene-reference pass rewrites serialized prefab fields after regeneration.
+- **Consequences:** The production baseline is asset-addressable and testable without moving
+  gameplay authority into art. The generated transform rig is not a claim of commissioned
+  skinned art, final VFX direction or cultural approval; mobile readability and human review
+  remain open.
+- **Evidence/sources:** `ProductionPresentationBuilder`, `ProductionVfxCue`, generated
+  `FighterProduction.controller`, nine clips, 14 VFX prefabs, three refreshed scenes and
+  `ProductionFighterArtUsesSavedRigAnimatorAndVfxCues`.
+- **Owner:** Human project owner
+
+### ADR-063 - Guard optional mixer exposure metadata for offline volume settings
+
+- **Date:** 2026-08-26
+- **Status:** Accepted for the V1 audio baseline; final loudness review remains open.
+- **Context:** The generated mixer contains named buses, but Unity's editor-only exposed
+  parameter metadata is not stable across generated assets and can make direct runtime
+  `SetFloat` calls emit warnings.
+- **Decision:** `BattleRajaAudioDirector` always applies the persisted source-volume controls;
+  it does not probe absent editor-only mixer parameter names at runtime. `ProductionAudioBuilder`
+  clears invalid generated exposure metadata, while the named Music and Combat buses remain
+  asset-addressable. The PlayMode audio test verifies those buses and owned clips without relying
+  on fragile editor-only exposure state.
+- **Consequences:** Offline settings remain warning-free and robust across Unity-authored mixer
+  variants, with source-volume fallback available even when no compatible exposed parameters
+  exist. Final device loudness, clipping and voice-limit review remains human work.
+- **Evidence/sources:** `ProductionAudioBuilder`, `BattleRajaV1.mixer`,
+  `BattleRajaAudioDirector` and `ProductionAudioUsesOwnedSourcesAndMixerGroups`.
+- **Owner:** Human project owner

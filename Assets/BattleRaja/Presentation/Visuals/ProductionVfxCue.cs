@@ -1,0 +1,69 @@
+using UnityEngine;
+
+namespace BattleRaja.Presentation.Visuals
+{
+    /// <summary>
+    /// Presentation-only particle cues owned by a saved production fighter prefab.
+    /// Gameplay authority never depends on particle lifetime or particle callbacks.
+    /// </summary>
+    public sealed class ProductionVfxCue : MonoBehaviour
+    {
+        [SerializeField] private ParticleSystem attackBurst;
+        [SerializeField] private ParticleSystem abilityBurst;
+        [SerializeField] private ParticleSystem hitBurst;
+        [SerializeField] private ParticleSystem eliminationBurst;
+
+        public int AttackPlayCount { get; private set; }
+        public int AbilityPlayCount { get; private set; }
+        public int HitPlayCount { get; private set; }
+        public int EliminationPlayCount { get; private set; }
+
+        public bool HasAttackCue => attackBurst != null;
+        public bool HasAbilityCue => abilityBurst != null;
+        public bool HasHitCue => hitBurst != null;
+        public bool HasEliminationCue => eliminationBurst != null;
+
+        public void Configure(
+            ParticleSystem attack,
+            ParticleSystem ability,
+            ParticleSystem hit,
+            ParticleSystem elimination)
+        {
+            attackBurst = attack;
+            abilityBurst = ability;
+            hitBurst = hit;
+            eliminationBurst = elimination;
+        }
+
+        public void PlayAttack()
+        {
+            AttackPlayCount++;
+            Play(attackBurst);
+        }
+
+        public void PlayAbility()
+        {
+            AbilityPlayCount++;
+            Play(abilityBurst);
+        }
+
+        public void PlayHit()
+        {
+            HitPlayCount++;
+            Play(hitBurst);
+        }
+
+        public void PlayElimination()
+        {
+            EliminationPlayCount++;
+            Play(eliminationBurst);
+        }
+
+        private static void Play(ParticleSystem cue)
+        {
+            if (cue == null) return;
+            cue.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            cue.Play(true);
+        }
+    }
+}

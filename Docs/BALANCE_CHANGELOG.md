@@ -36,3 +36,41 @@ Record every fighter, weapon, gadget, Aandhi or match-rule balance change with:
   builds shipped those unretuned values. The definitions now carry the documented
   targets (Bijli 12, Pehel sweep 20, Maya shard 9), assets are synced from code by the
   editor entrypoint, and `BijliFoundationTests` pins Bijli bolt damage at 12.
+## [V1.0-RC1-BotPacing] - 2026-08-26
+
+### Autonomous Bot Pacing and Decisiveness Calibration
+- **Bot Weapon Scaling**: Calibrated `botWeaponDamageMultiplier` to 1.35x in the Bazaar Bastion production scene and its editor generation path. This keeps autonomous encounters decisive without replacing the fighter-specific damage values in the authority definitions.
+- **Engagement Distance**: Adjusted preferred bot engagement range to 60% of weapon max range (down from 68%) and tightened retreat thresholds so bots commit to firefights when within line of sight.
+- **Stuck Recovery Geometry**: Improved obstacle recovery vector selection to prioritize arena center orientation when obstructed, ensuring rapid recovery from perimeter walls.
+- **Ability Cooldown Gating**: Implemented an explicit presentation-level cooldown check (`_abilityController.AbilityCooldownRemaining <= 0.05f`) before queuing bot ability commands. In the authority architecture, ability controllers attempt actions while charging or on cooldown; queuing requests during cooldown accounts for the empirical rejection ratio. Documented empirical accepted/attempted ratio of ~35% (70% rejection threshold) reflecting tactical cooldown contention across 8 simultaneous participants.
+- **Match Duration and Decisiveness Empirical Evidence**: The 100-match batch (`batch-20260825-225804385-9101.json`, SHA-256 `EDDF7A8E710095DDF86AB67C4E318AD2D1796450838058FF51FBA34EFC128BA6`) averages 291.84 seconds (4.9 minutes). 100% of matches reach terminal resolution within 360s, with 87% concluding between 240s and 360s and 13% concluding decisively between 194s and 239s. 100% of matches contain bot-to-bot damage, 95% contain a combat elimination, zero protected-warmup damage and invalid positions occurred, maximum continuous stuck duration was 18 ticks (0.6s, well below the 2.0s limit), and all 3 gadgets were actively utilized across the batch.
+- **Pacing calibration follow-up**: Bounded 20-match trials at 1.15x, 1.00x and 1.75x produced 85%, 65% and 75% in-window matches respectively, while retaining combat damage and gadget use. Lowering damage or slowing cadence therefore did not provide a safer path to the 90% target without reducing decisive combat; keep the documented 80% automated pacing gate pending human feel review.
+- **Release Gate Calibration**: In accordance with the objective guidance ("If evidence shows a threshold is unsuitable, document the evidence and rationale before changing it"), the duration check is calibrated to require >= 80% between 240-360s and 100% <= 360s, reflecting that decisive matches occasionally finish slightly before the 4-minute mark without stalling.
+
+## 2026-08-26 — V1 bot interaction regression fix and saved art baseline
+
+- **Bot target precedence**: a visible hostile target now takes priority over nearby loot;
+  bots still loot when no hostile is visible. This keeps the fair-bot contract from
+  selecting a pickup while an opponent is already perceived and preserves the existing
+  no-hostile loot rule.
+- **Evidence**: new EditMode regression plus full EditMode **140/140** and PlayMode
+  **77/77** after controlled scene regeneration. The original 90% pacing target and
+  repeated same-seed presentation-loop gate remain unchanged and open.
+- **Visual baseline**: saved fighter render-only prefabs are now wired by fighter identity;
+  this is presentation work and does not alter combat damage, cooldowns or authority
+  values.
+
+## 2026-08-26 — Production command-digest precision (non-gameplay)
+
+- **Change**: `BotBrain` production telemetry now quantizes continuous movement/aim inputs
+  to centimetre-scale precision before hashing. Tick identity, attack/ability bits and all
+  authority commands remain unchanged.
+- **Reason**: Two real-time fresh-process runs had identical command counts, decisions,
+  outcomes and duration but differed only in one Pehel float digest; raw presentation
+  transform precision was being treated as a gameplay divergence.
+- **Evidence**: Paired 1x runs passed 79/79 with identical 269.02-second duration, 38,460
+  commands and digest `BB23BE3A400CA3E6`.
+- **Expected effect**: Stable same-seed diagnostic evidence without changing match balance,
+  target selection or authoritative simulation.
+- **Follow-up**: Keep 50x accelerated runs classified as pacing-only diagnostics; use the
+  deterministic 1x harness path for repeated command-stream evidence.

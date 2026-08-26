@@ -40,6 +40,26 @@ namespace BattleRaja.Presentation.Gadgets
         public GadgetInventory Inventory => _inventory;
         public int SuccessfulPickupCount { get; private set; }
         public int SuccessfulUseCount { get; private set; }
+        public int SuccessfulUmbrellaGuardUses { get; private set; }
+        public int SuccessfulDholBurstUses { get; private set; }
+        public int SuccessfulTiffinStationUses { get; private set; }
+        public int ContextualUseAttemptCount { get; private set; }
+        public int FailedUseCount { get; private set; }
+        public bool AutonomousBotControlled
+        {
+            set => botControlled = value;
+        }
+
+        public void ResetTelemetry()
+        {
+            SuccessfulPickupCount = 0;
+            SuccessfulUseCount = 0;
+            SuccessfulUmbrellaGuardUses = 0;
+            SuccessfulDholBurstUses = 0;
+            SuccessfulTiffinStationUses = 0;
+            ContextualUseAttemptCount = 0;
+            FailedUseCount = 0;
+        }
 
         private void Awake()
         {
@@ -161,6 +181,7 @@ namespace BattleRaja.Presentation.Gadgets
         {
             if (!_inventory.HasGadget || movementAgent == null || combatTarget == null)
             {
+                FailedUseCount++;
                 SetFeedback("No gadget held");
                 return false;
             }
@@ -175,6 +196,7 @@ namespace BattleRaja.Presentation.Gadgets
             var result = TryUse(command, out var authoritative);
             if (!result.Used)
             {
+                FailedUseCount++;
                 SetFeedback(result.Failure.ToString());
                 return false;
             }
@@ -192,21 +214,29 @@ namespace BattleRaja.Presentation.Gadgets
 
             ApplyEffect(result.Effect);
             SuccessfulUseCount++;
-            if (combatTarget.Id.Value == 1) _audio?.PlayGadget();
+            RecordSuccessfulUse(command.GadgetId);
+            if (combatTarget.Id.Value == 1) _audio?.PlayGadget(command.GadgetId.Value);
             return true;
         }
 
-        public bool UseForContext(BotPerceptionSnapshot snapshot)
+        public bool UseForContext(BotPerceptionSnapshot snapshot, int simulationTick = -1)
         {
             var visibleHostile = false;
+            var nearestThreatDistance = float.MaxValue;
+            var threatDirection = Float2.Zero;
             for (var i = 0; i < snapshot.TargetCount; i++)
             {
                 var candidate = snapshot.Targets[i];
-                if (candidate.HasLineOfSight && candidate.Faction != CombatFaction.Neutral &&
-                    candidate.Faction != snapshot.SelfFaction)
+                if (candidate.HasLineOfSight && candidate.IsHostile)
                 {
                     visibleHostile = true;
-                    break;
+                    var delta = candidate.Position - snapshot.Position;
+                    var distance = delta.Magnitude;
+                    if (distance < nearestThreatDistance)
+                    {
+                        nearestThreatDistance = distance;
+                        threatDirection = delta.Normalized;
+                    }
                 }
             }
 
@@ -221,30 +251,72 @@ namespace BattleRaja.Presentation.Gadgets
                 return false;
             }
 
-            var direction = movementAgent != null ? movementAgent.AimDirection : Float2.Up;
-            return UseHeldWithDirection(direction);
+            if (definition.Kind == GadgetKind.TiffinStation && health != null &&
+                health.Snapshot.CurrentHealth >= health.MaxHealth * 0.85f)
+            {
+                return false;
+            }
+
+            if (definition.Kind == GadgetKind.DholBurst && nearestThreatDistance > definition.Radius * 1.4f)
+            {
+                return false;
+            }
+
+            var direction = threatDirection.SqrMagnitude > 0.000001f
+                ? threatDirection
+                : movementAgent != null ? movementAgent.AimDirection : Float2.Up;
+            ContextualUseAttemptCount++;
+            return UseHeldWithDirection(direction, simulationTick);
         }
 
-        private bool UseHeldWithDirection(Float2 direction)
+        private bool UseHeldWithDirection(Float2 direction, int simulationTick = -1)
         {
             var command = new GadgetUseCommand(
                 combatTarget.Id,
                 _inventory.HeldGadget,
                 new Float2(transform.position.x, transform.position.z),
                 direction,
-                NextTick());
+                NextTick(simulationTick));
             var result = TryUse(command, out var authoritative);
-            if (!result.Used) return false;
+            if (!result.Used)
+            {
+                FailedUseCount++;
+                return false;
+            }
+
             if (authoritative)
             {
-                if (!_inventory.TryConsume(command.GadgetId)) return false;
+                if (!_inventory.TryConsume(command.GadgetId))
+                {
+                    FailedUseCount++;
+                    return false;
+                }
+
                 _runtime.ApplyAuthoritativeUse(result.Effect.Definition);
             }
 
             ApplyEffect(result.Effect);
             SuccessfulUseCount++;
-            if (combatTarget.Id.Value == 1) _audio?.PlayGadget();
+            RecordSuccessfulUse(command.GadgetId);
+            if (combatTarget.Id.Value == 1) _audio?.PlayGadget(command.GadgetId.Value);
             return true;
+        }
+
+        private void RecordSuccessfulUse(ContentId gadgetId)
+        {
+            if (!GadgetCatalog.TryGet(gadgetId, out var definition)) return;
+            switch (definition.Kind)
+            {
+                case GadgetKind.UmbrellaGuard:
+                    SuccessfulUmbrellaGuardUses++;
+                    break;
+                case GadgetKind.DholBurst:
+                    SuccessfulDholBurstUses++;
+                    break;
+                case GadgetKind.TiffinStation:
+                    SuccessfulTiffinStationUses++;
+                    break;
+            }
         }
 
         private GadgetUseResult TryUse(GadgetUseCommand command, out bool authoritative)
@@ -302,12 +374,25 @@ namespace BattleRaja.Presentation.Gadgets
                     {
                         var target = targets[targetIndex];
                         if (target == null || target.Id != displacement.TargetId) continue;
-                        if (match == null || !match.ApplyAuthoritativeDisplacement(displacement))
+                        if (match != null && match.Simulation != null)
                         {
-                            target.GetComponent<CharacterController>()?.Move(new Vector3(
-                                displacement.Displacement.X,
-                                0f,
-                                displacement.Displacement.Y));
+                            // Authority-driven views may have an intentionally disabled
+                            // CharacterController. A failed authority lookup means the
+                            // target left the match; never fall back to Unity physics in
+                            // that path or a teardown/defeated view can emit a runtime
+                            // CharacterController.Move error.
+                            match.ApplyAuthoritativeDisplacement(displacement);
+                        }
+                        else
+                        {
+                            var controller = target.GetComponent<CharacterController>();
+                            if (controller != null && controller.enabled)
+                            {
+                                controller.Move(new Vector3(
+                                    displacement.Displacement.X,
+                                    0f,
+                                    displacement.Displacement.Y));
+                            }
                         }
                         break;
                     }
@@ -324,7 +409,11 @@ namespace BattleRaja.Presentation.Gadgets
                 if (other == movementAgent || Vector3.Distance(transform.position, other.transform.position) > effect.Definition.Radius) continue;
                 var delta = new Float2(other.transform.position.x - transform.position.x, other.transform.position.z - transform.position.z).Normalized;
                 var move = delta * effect.Definition.Magnitude * 0.08f;
-                other.GetComponent<CharacterController>()?.Move(new Vector3(move.X, 0f, move.Y));
+                var controller = other.GetComponent<CharacterController>();
+                if (controller != null && controller.enabled)
+                {
+                    controller.Move(new Vector3(move.X, 0f, move.Y));
+                }
             }
         }
 
@@ -347,8 +436,9 @@ namespace BattleRaja.Presentation.Gadgets
             _feedbackRemaining = 2f;
         }
 
-        private int NextTick()
+        private int NextTick(int simulationTick = -1)
         {
+            if (simulationTick >= 0) return simulationTick;
             if (UsesAuthority && match.IsMatchStarted)
             {
                 return match.SimulationTick;

@@ -646,7 +646,13 @@ namespace BattleRaja.Presentation.Match
             var text = CreateText(buttonObject.transform, name + "Label", Vector2.zero, Vector2.one, 18, TextAnchor.MiddleCenter);
             text.text = label;
             var button = buttonObject.GetComponent<Button>();
-            button.onClick.AddListener(action);
+            button.onClick.AddListener(() =>
+            {
+                var audio = FindAnyObjectByType<BattleRajaAudioDirector>();
+                audio?.StartFromUserGesture();
+                audio?.PlayUiConfirm();
+                action?.Invoke();
+            });
             BattleRajaUiTheme.StyleButton(button, name == "Rematch" || name == "Pause");
             return button;
         }
