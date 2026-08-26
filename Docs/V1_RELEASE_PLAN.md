@@ -1339,6 +1339,114 @@ P21 therefore improves measurement coverage without changing the release
 classification: this remains a technically validated offline prototype candidate,
 not a Play-publishable release claim.
 
+### P22 - Handedness-aware tutorial prompt and exact-candidate refresh - 2026-08-27
+
+The current runtime/presentation source is clean and committed at exact SHA
+`208038362e16f8c33856e0a7cf5c4de776005ded` (`fix: localize tutorial stick instructions`).
+The tutorial now names the active movement/aim stick from the persisted handedness
+setting. A focused PlayMode regression covers the left-handed prompt; the existing
+tutorial visibility and persisted fighter-focus fixes remain in the exact source history.
+
+#### Exact-source automated evidence
+
+- Focused left-handed tutorial PlayMode: **1/1 passed**. XML SHA-256
+  `A3FDBCBB287EDC57FF451DD4C398C87923B3D41E48FB111469150D2FB28C5CEC`; log SHA-256
+  `154DF5B59875639C5EC55A5BB637B503DBF951849FE85FF8F840EF41735C4E0C`.
+- Full EditMode: **140/140 passed**. XML SHA-256
+  `67B018C240BA3591FDE82166C61CC3558902609C7481246692A762FCFC8094D4`; log SHA-256
+  `FC32157E622ABE075DEBCC9326F54FE3E030CBDE8E5B5E671E692F79A7DA2E8E`.
+- Full PlayMode: **83/83 passed**. XML SHA-256
+  `12FF7F6E22CFF3E9D23C04F32F781CE157B3C47EFB2BF056BD03376DD028EBC5`; log SHA-256
+  `E068351B02A1F4727A240159B1009AA0EA72570AE49784BA88F6E15E66A79C25`.
+- Static validation: **0 errors / 0 warnings** from `Tools/Validation/validate.ps1`.
+- Deterministic replay soak and fixed-tick 100-match production-bot evidence remain
+  applicable from exact gameplay source `6d287a6`; neither this presentation-only
+  handedness fix nor its tutorial regression changes authority, replay or bot simulation.
+
+#### Matching Android artifacts from `2080383`
+
+- APK `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`: **40,523,706 bytes**,
+  SHA-256 `365ABF4A1D37BB6DC2CE7E08F5E2741AAB7662EFB9749F0B4987EBFCBDB68BDB`.
+- AAB `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`: **36,348,870 bytes**,
+  SHA-256 `F1CB13C80A6408B344B5C71BE11D0AD804E58CA1D01102FE0B79D5B0712BDBA1`.
+- Composed checker: **0 errors / 0 warnings**, package `com.example.battleraja.m11`,
+  version `1.0.0`/code `100`, API 28/36, only VIBRATE plus Unity's dynamic receiver,
+  seven ARM64 libraries, no other ABIs, static 16 KB ELF alignment and store creative
+  dimensions passed. Checker log SHA-256
+  `62D0E7DF8541FD01ACAB9BC17BACE65B6A04814832ABD4CADE52469317D4DB89`.
+- Bundletool `1.18.3` APKS `Builds/Local/V1GameplayTruth/Android/battleraja-v1-2080383.apks`
+  SHA-256 `5F4720D79A0BF26387A0C9C4BD197BAFA60FDD946BB17C898557D9974D21DE0A`;
+  extracted universal APK SHA-256
+  `C17320E5444629A6BB18B03FA2186A7B5F46F4DF5F463F7FFFA51D709196EFD5`.
+  Direct and extracted APK `zipalign -c -P 16 -v 4` both passed; the direct and
+  universal apksigner verification logs both have SHA-256
+  `BCABF5EE2B220F3F612B5C16A74690E469631C321076863D84320010CA0BFF0A` and verify with
+  Android Debug certificate SHA-256
+  `b0a94c79c2d3fa527d4160b46a3067fbe25bd4db0e1a2dafe1a62b1bce41b28c`.
+
+#### Approved Lava evidence
+
+The exact 2080383 APK was freshly uninstalled/installed on approved Lava
+`ST5GDW23LB004392` (`LAVA LXX508`, API 34), launched, and navigated through menu,
+Solo Raja mode, fighter selection and a live match. Fresh screenshots are under
+`Builds/Local/Device/Screenshots/20260827-2080383/`:
+
+- `launch.png`, SHA-256 `39C912E3EA9B4E8D15F30F92317DF35C0E23F750EA68892AE58AB566F75731F9`.
+- `tutorial-default.png`, SHA-256
+  `1652FC25F64710AD5D945C2F4A9C43802782E850BE65E0CAA15DD19074CD99C8` — default layout
+  visibly says **“Use the left stick to move”** with MOVE left and AIM right.
+- `settings.png`, SHA-256
+  `D3144806370F530C662E730BDF17C61D4638FF8846012BDCCA2E9BA9B9F9316F` — handedness,
+  reduced flashes, contrast, aim assist, text size, audio and haptics controls are visible.
+- `tutorial-left-handed.png`, SHA-256
+  `F0E95D13438696AE2E7BEB069E07BD1A657EEC8F833C98F5B200DA1CD64280D7` — after enabling
+  LEFT-HANDED, the exact prompt says **“Use the right stick to move”** and the controls
+  swap to AIM left / MOVE right.
+- `live-match.png`, SHA-256
+  `7576F26CDC1AFA95409234A8F47C45A612369648606DABA06EE3064323AC47D8` — live Solo Raja
+  opening with eight actors, zone, HUD, touch controls and SPAWN SHIELD state.
+- `tutorial-skip-result.png`, SHA-256
+  `EC27C78B207F1528B8B4780DC3205B8FA8B124CA26F8B118424B46791B181B19` — the skip path
+  reaches the Tutorial Complete 8/8 surface, but ADB stick swipes did not unlock the
+  first movement step, so no action-by-action physical tutorial completion is claimed.
+
+#### Exact-candidate frame-latency diagnostic
+
+While the exact 2080383 APK was in the live Solo Raja match, SurfaceFlinger latency was
+cleared and collected for approximately 15 seconds from layer
+`SurfaceView[com.example.battleraja.m11/com.unity3d.player.UnityPlayerGameActivity](BLAST)#6701`.
+Raw evidence is under
+`Builds/Local/Device/Performance/20260827-2080383-frame-latency/`:
+
+- Raw latency SHA-256 `279CA8F22324CF66E4D42AD99E2350500FF1562BF72ED82FB1EC01772DC89E06`.
+- Summary JSON SHA-256 `97EBF9305DFA4A45962CB446DA04D7770E29C9AA71CB5C1ACBC765B1D75D46A7`.
+- Refresh period **16.666667 ms**; **126** valid middle-column timestamps and **125**
+  intervals after excluding one Long.MaxValue sentinel. Min/median/p95/p99/max intervals
+  were **16.485 / 16.535 / 16.567 / 16.580 / 33.382 ms**; one interval exceeded the
+  refresh period and one exceeded 2x. This is a ring-buffer diagnostic, not Unity
+  Profiler, GPU/GC, repeated-match endurance or full performance-budget approval.
+
+#### P22 gate classification
+
+| Gate | Status | Evidence / owner action |
+| --- | --- | --- |
+| Clean committed source, compile, full EditMode/PlayMode | **Passed** | `2080383`; 140/140 and 83/83; static 0/0 |
+| Tutorial prompt names active movement stick | **Passed (automated + Lava visual)** | Focused 1/1 plus default and left-handed screenshots |
+| Deterministic replay/deep soak | **Passed (carried forward)** | Exact gameplay source `6d287a6`; 1,000 seeds x2, zero divergence |
+| Production-bot 100-match release distribution | **Passed (carried forward)** | Exact gameplay source `6d287a6`; 100/100 in-window |
+| APK/AAB manifest, ARM64, static 16 KB, bundletool and zipalign | **Passed** | Exact 2080383 checker and artifact evidence above |
+| Lava install, launch, route and bounded crash smoke | **Passed** | Fresh install, menu/mode/fighter/live-match route, no crash marker observed |
+| Full touch tutorial -> match -> spectator/results/rematch/settings/lifecycle route | **Blocked** | Owner-operated action-by-action review remains required; ADB movement swipe did not unlock step |
+| Sustained full-match CPU/GPU/GC/thermal/battery budget | **Measured diagnostic / still open** | SurfaceFlinger ring-buffer sample above; normalized CPU/GPU/GC, endurance and thermal/battery gates remain open |
+| Genuine 16 KB runtime device validation | **Blocked** | Approved Lava reports 4 KB pages; requires a genuine 16 KB environment |
+| Final authored art/audio, accessibility, balance and cultural review | **Blocked** | Human review and authored polish remain |
+| Final identity/signing, privacy/Data Safety, content rating and Play Console | **Blocked** | Owner/legal/store actions are not authorized |
+| Photon, PlayFab, accounts, online and Web release | **Not applicable** | Explicit V1 offline scope lock |
+
+P22 records the strongest exact-source offline Android candidate to date, including the
+handedness correction and fresh device measurements. It remains a technically validated
+offline prototype candidate, not a Play-publishable release claim.
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (automated foundation;

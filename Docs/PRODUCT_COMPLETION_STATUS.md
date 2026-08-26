@@ -3,19 +3,20 @@
 Updated: 2026-08-27
 Classification: **prototype**
 
-## Latest exact-source release-gate checkpoint — `8edc086` — 2026-08-27
+## Latest exact-source release-gate checkpoint — `2080383` — 2026-08-27
 
-The clean runtime source is `8edc0867268800f0ad81067378ad590e1a166371` on
-`codex/v1-playstore-release`; it restores the persisted fighter's focus ring while
-retaining the tutorial visibility fix from `e6c321b`. Full EditMode and PlayMode pass
-**140/140** and **82/82**. The exact-source replay soak and fixed-tick production-bot
+The clean runtime source is `208038362e16f8c33856e0a7cf5c4de776005ded` on
+`codex/v1-playstore-release`; it localizes tutorial stick instructions to the persisted
+handedness setting while retaining the tutorial visibility and fighter-focus fixes.
+Full EditMode and PlayMode pass **140/140** and **83/83**, and static validation is
+**0 errors / 0 warnings**. The exact-source replay soak and fixed-tick production-bot
 batch remain applicable from the gameplay-only source: 1,000 seeded matches x2 with
 zero divergence, and 100/100 bot matches in-window with 95/100 reaching at least three
-combat eliminations. Matching debug-signed APK/AAB, bundletool/static 16 KB evidence and
-fresh approved-Lava fighter/tutorial/ability/gadget/lifecycle screenshots are indexed in
-`Docs/V1_RELEASE_PLAN.md` P20. A later 120-second exact-match Lava diagnostic held
-post-warm-up total PSS to 218,208-218,280 KB with thermal status 0, but no usable Unity
-SurfaceView frame histogram was exposed, so sustained performance approval remains open.
+combat eliminations. Matching debug-signed APK/AAB, bundletool/static 16 KB evidence,
+fresh approved-Lava settings/tutorial/live-match screenshots and a SurfaceFlinger
+diagnostic are indexed in `Docs/V1_RELEASE_PLAN.md` P22. The diagnostic recorded median
+16.535 ms and p95 16.567 ms in a live match, but sustained performance approval remains
+open because normalized CPU/GPU/GC/endurance evidence is absent.
 
 Status remains **prototype**, not Play-ready: the package uses temporary identity and
 Android Debug signing; Lava reports 4 KB pages; the full physical tutorial/match/

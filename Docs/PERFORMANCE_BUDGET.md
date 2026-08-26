@@ -1,15 +1,27 @@
 # Android and Web Performance Budget
 
-## Latest exact-source candidate — `8edc086` — 2026-08-27
+## Latest exact-source candidate — `2080383` — 2026-08-27
 
-The current clean Android candidate is commit `8edc0867268800f0ad81067378ad590e1a166371`.
-The approved Lava `ST5GDW23LB004392` installed the exact APK and captured fighter-focus,
-tutorial, live ability/gadget, pause and lifecycle-resume evidence under
-`Builds/Local/Device/Screenshots/20260827-e6c321b`; lifecycle logcat had zero configured
-fatal markers. A subsequent 120-second exact-match diagnostic capture is recorded below.
-The device reports 4 KB pages, so genuine 16 KB runtime validation remains unavailable.
-The capture is measurement evidence only; no sustained frame-pacing, CPU/GPU/GC,
-repeated-match memory-growth or endurance budget approval is claimed.
+The current clean Android candidate is commit `208038362e16f8c33856e0a7cf5c4de776005ded`.
+The approved Lava `ST5GDW23LB004392` installed the exact APK and captured settings,
+default/left-handed tutorial, live-match and route evidence under
+`Builds/Local/Device/Screenshots/20260827-2080383/`. The device reports 4 KB pages, so
+genuine 16 KB runtime validation remains unavailable. The capture is measurement
+evidence only; no sustained frame-pacing, CPU/GPU/GC, repeated-match memory-growth or
+endurance budget approval is claimed.
+
+## Latest Lava frame-latency diagnostic — exact runtime `2080383` — 2026-08-27
+
+SurfaceFlinger latency was cleared and collected for approximately 15 seconds while the
+exact 2080383 APK was in a live Solo Raja match. Raw evidence is under
+`Builds/Local/Device/Performance/20260827-2080383-frame-latency/`; raw SHA-256 is
+`279CA8F22324CF66E4D42AD99E2350500FF1562BF72ED82FB1EC01772DC89E06` and summary JSON
+SHA-256 is `97EBF9305DFA4A45962CB446DA04D7770E29C9AA71CB5C1ACBC765B1D75D46A7`.
+The 16.666667 ms refresh period produced 126 valid timestamps and 125 intervals after
+excluding one Long.MaxValue sentinel: min/median/p95/p99/max **16.485 / 16.535 /
+16.567 / 16.580 / 33.382 ms**, with one interval over refresh and one over 2x. This is
+a ring-buffer diagnostic, not Unity Profiler, GPU/GC, repeated-match endurance or full
+performance-budget approval.
 
 ## Latest Lava sustained-match diagnostic capture — exact runtime `8edc086` — 2026-08-27
 

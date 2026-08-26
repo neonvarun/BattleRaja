@@ -53,27 +53,28 @@ pwsh -File Tools/Validation/check_v1_release_candidate.ps1 `
 This gate is technical and local only. It does not sign, upload, publish, or approve
 the final identity, privacy/Data Safety, content rating, cultural review or Play track.
 
-## Latest exact-source persisted-focus candidate — `8edc086` — 2026-08-27
+## Latest exact-source handedness candidate — `2080383` — 2026-08-27
 
-The exact clean source is commit `8edc0867268800f0ad81067378ad590e1a166371`.
-The fighter-selection screen now restores the persisted fighter's visual focus on entry;
-the tutorial arena visibility fix from `e6c321b` remains included. Full EditMode is
-**140/140** and PlayMode is **82/82**. The matching APK is **40,521,770 bytes**
-(`1D470DAEEBEBE86D3764A594BCF4D6CF71869854E84B38E41D4FC6BCB8974E03`) and the AAB is
-**36,346,941 bytes** (`4FFC517CAE9CD112F6D5D34A1A039A30D090EC2042161F7C1EC8D516966B8697`).
+The exact clean source is commit `208038362e16f8c33856e0a7cf5c4de776005ded`.
+The tutorial now names the active movement/aim stick after the persisted handedness
+setting; the tutorial arena visibility and fighter-focus fixes remain included. Full
+EditMode is **140/140** and PlayMode is **83/83**. The matching APK is **40,523,706 bytes**
+(`365ABF4A1D37BB6DC2CE7E08F5E2741AAB7662EFB9749F0B4987EBFCBDB68BDB`) and the AAB is
+**36,348,870 bytes** (`F1CB13C80A6408B344B5C71BE11D0AD804E58CA1D01102FE0B79D5B0712BDBA1`).
 The local release checker reports **0 errors / 0 warnings**, package
 `com.example.battleraja.m11`, API 28/36, seven ARM64 libraries, no network permissions,
 static 16 KB alignment and creative dimensions passed. Bundletool/zipalign/apksigner
-evidence and exact hashes are indexed in `Docs/V1_RELEASE_PLAN.md` P20.
+evidence and exact hashes are indexed in `Docs/V1_RELEASE_PLAN.md` P22. Fresh Lava
+captures show both default and left-handed tutorial prompt wording and a live-match
+SurfaceFlinger diagnostic; normalized performance approval remains open.
 
-On approved Lava `ST5GDW23LB004392`, the exact APK installed and launched. The fresh
-fighter-selection screenshot shows `SELECTED: MAYA` with Maya's card highlighted, and
-fresh probes show Maya ability/gadget feedback, pause/settings and HOME/resume without
-configured fatal log markers. Full action-by-action tutorial and end-to-end route,
-sustained performance approval, genuine 16 KB runtime, authored review, signing and Play
-actions remain owner-controlled gates. A subsequent 120-second exact-match diagnostic
-held post-warm-up total PSS to 218,208-218,280 KB and thermal status 0, but gfxinfo
-exposed no usable Unity SurfaceView frame histogram; see `Docs/V1_RELEASE_PLAN.md` P21.
+On approved Lava `ST5GDW23LB004392`, the exact APK installed and launched. Fresh probes
+show the settings surface, default and left-handed tutorial prompt wording, and a live
+Solo Raja opening. The exact-candidate SurfaceFlinger diagnostic recorded median
+16.535 ms and p95 16.567 ms, but normalized frame pacing and budget approval remain
+open. Full action-by-action tutorial and end-to-end route, sustained performance,
+genuine 16 KB runtime, authored review, signing and Play actions remain owner-controlled
+gates; see `Docs/V1_RELEASE_PLAN.md` P22.
 
 ## Latest exact-source tutorial-visibility candidate — `e6c321b` — 2026-08-27
 

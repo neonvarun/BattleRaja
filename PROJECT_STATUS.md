@@ -7,18 +7,15 @@
 ## Current state
 
 - **Latest exact-source release-gate checkpoint (2026-08-27):** clean commit
-  `8edc0867268800f0ad81067378ad590e1a166371` restores the persisted fighter's focus ring
-  when the selection screen opens; the preceding `e6c321b` commit keeps the live arena
-  visible behind tutorial prompts. Full EditMode is **140/140** and PlayMode is
-  **82/82**. The 1,000-seed replay soak and fixed-tick 100-match bot evidence remain
-  applicable from the preceding gameplay-only source. Matching APK/AAB, static checker,
-  bundletool/zipalign and exact Lava fighter/tutorial/ability/gadget/pause/resume
-  evidence are recorded in `Docs/V1_RELEASE_PLAN.md` P20-P21. The APK remains Android
-  Debug-signed and the product remains a prototype: full touch-route, accessibility,
-  sustained performance approval (a bounded 120-second Lava diagnostic now exists, but
-  gfxinfo exposed no usable frame histogram), genuine 16 KB runtime, final authored
-  identity/cultural review,
-  signing, privacy/Data Safety and Play Console actions remain open.
+  `208038362e16f8c33856e0a7cf5c4de776005ded` localizes tutorial movement/aim instructions
+  to the persisted handedness setting. Full EditMode is **140/140** and PlayMode is
+  **83/83**; static validation is **0 errors / 0 warnings**. Matching APK/AAB, checker,
+  bundletool/zipalign and fresh Lava settings/tutorial/live-match evidence are recorded
+  in `Docs/V1_RELEASE_PLAN.md` P22. The APK remains Android Debug-signed and the product
+  remains a prototype: full touch-route, accessibility, sustained performance approval
+  (a bounded SurfaceFlinger live-match diagnostic now exists), genuine 16 KB runtime,
+  final authored identity/cultural review, signing, privacy/Data Safety and Play Console
+  actions remain open.
 
 - **Working-tree gameplay truth update (2026-08-25):** unified action eligibility
   is now owned by `OfflineMatchAuthority`. Movement, ability displacement, attack,
