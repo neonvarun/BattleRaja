@@ -23,6 +23,22 @@ excluding one Long.MaxValue sentinel: min/median/p95/p99/max **16.485 / 16.535 /
 a ring-buffer diagnostic, not Unity Profiler, GPU/GC, repeated-match endurance or full
 performance-budget approval.
 
+## Latest exact-candidate 120-second match capture — runtime `2080383` — 2026-08-27
+
+The exact APK was kept in a live Solo Raja match on Lava for 120 seconds and sampled at
+10-second intervals. Raw evidence is under
+`Builds/Local/Device/Performance/20260827-2080383-match-120s/`; manifest SHA-256 is
+`C7397463F75F7631DA01C10EAE0A2F9D139ECF015B78F4E3463528620EE1F8F1` and logcat SHA-256
+is `91C5011BB8F1A94DE593D4969566C035DFF696E988DA427303BF8415DEE91F29`.
+
+All 12 samples kept the Unity activity focused. Total PSS was **267,935-272,772 KB**,
+RSS **404,440-408,812 KB**, graphics PSS **75,132-79,228 KB**, and swap PSS
+**64-77 KB**. Raw process CPU was **106-115% instantaneous**. Thermal status stayed
+at **0**, CPU/GPU HAL readings were **38.676-38.982 C**, and battery remained
+**19% / 31 C** before and after (USB powered). Android `gfxinfo` exposed no usable
+Unity frame histogram, so this is a bounded diagnostic, not FPS/jank/GPU/GC or full
+performance-budget approval. No configured fatal markers were found.
+
 ## Latest Lava sustained-match diagnostic capture — exact runtime `8edc086` — 2026-08-27
 
 The exact `8edc086` APK remained in a live Solo Raja match on approved Lava

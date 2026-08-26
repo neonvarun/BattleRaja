@@ -71,10 +71,12 @@ SurfaceFlinger diagnostic; normalized performance approval remains open.
 On approved Lava `ST5GDW23LB004392`, the exact APK installed and launched. Fresh probes
 show the settings surface, default and left-handed tutorial prompt wording, and a live
 Solo Raja opening. The exact-candidate SurfaceFlinger diagnostic recorded median
-16.535 ms and p95 16.567 ms, but normalized frame pacing and budget approval remain
-open. Full action-by-action tutorial and end-to-end route, sustained performance,
-genuine 16 KB runtime, authored review, signing and Play actions remain owner-controlled
-gates; see `Docs/V1_RELEASE_PLAN.md` P22.
+16.535 ms and p95 16.567 ms, and a separate 120-second live-match capture held PSS to
+267,935-272,772 KB with thermal status 0. These are bounded diagnostics; normalized
+frame pacing and budget approval remain open. Full action-by-action tutorial and
+end-to-end route, sustained performance, genuine 16 KB runtime, authored review,
+signing and Play actions remain owner-controlled gates; see
+`Docs/V1_RELEASE_PLAN.md` P22-P23.
 
 ## Latest exact-source tutorial-visibility candidate — `e6c321b` — 2026-08-27
 

@@ -11,11 +11,11 @@
   to the persisted handedness setting. Full EditMode is **140/140** and PlayMode is
   **83/83**; static validation is **0 errors / 0 warnings**. Matching APK/AAB, checker,
   bundletool/zipalign and fresh Lava settings/tutorial/live-match evidence are recorded
-  in `Docs/V1_RELEASE_PLAN.md` P22. The APK remains Android Debug-signed and the product
-  remains a prototype: full touch-route, accessibility, sustained performance approval
-  (a bounded SurfaceFlinger live-match diagnostic now exists), genuine 16 KB runtime,
-  final authored identity/cultural review, signing, privacy/Data Safety and Play Console
-  actions remain open.
+  in `Docs/V1_RELEASE_PLAN.md` P22-P23. The APK remains Android Debug-signed and the
+  product remains a prototype: full touch-route, accessibility, sustained performance
+  approval (a bounded SurfaceFlinger and 120-second live-match diagnostic now exist),
+  genuine 16 KB runtime, final authored identity/cultural review, signing, privacy/
+  Data Safety and Play Console actions remain open.
 
 - **Working-tree gameplay truth update (2026-08-25):** unified action eligibility
   is now owned by `OfflineMatchAuthority`. Movement, ability displacement, attack,

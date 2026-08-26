@@ -1447,6 +1447,43 @@ P22 records the strongest exact-source offline Android candidate to date, includ
 handedness correction and fresh device measurements. It remains a technically validated
 offline prototype candidate, not a Play-publishable release claim.
 
+### P23 - Exact-candidate 120-second Lava match measurement - 2026-08-27
+
+The exact 2080383 APK was left in a live Solo Raja match on approved Lava
+`ST5GDW23LB004392` (`LAVA LXX508`, API 34) for **120 seconds**, with **12 samples at
+10-second intervals**. This is a measurement refresh for the exact current artifact;
+it does not alter gameplay or release classification.
+
+#### Captured evidence
+
+- Raw evidence: `Builds/Local/Device/Performance/20260827-2080383-match-120s/`.
+- Manifest SHA-256 `C7397463F75F7631DA01C10EAE0A2F9D139ECF015B78F4E3463528620EE1F8F1`;
+  captured logcat SHA-256
+  `91C5011BB8F1A94DE593D4969566C035DFF696E988DA427303BF8415DEE91F29`.
+- Unity's game activity was the focused window for **12/12** samples. Total PSS ranged
+  **267,935-272,772 KB**, RSS **404,440-408,812 KB**, graphics PSS
+  **75,132-79,228 KB**, and swap PSS **64-77 KB**. The process PSS did not show monotonic
+  growth after warm-up, but this is a short single-match sample.
+- Raw `top` process samples were **106-115% instantaneous CPU**. Thermal HAL CPU/GPU
+  readings were **38.676-38.982 C** with thermal status **0**; battery remained at
+  **19% / 31 C** before and after, USB powered. No throttling was observed.
+- Android `gfxinfo` exposed only the Unity ViewRoot (no usable frame histogram), so no
+  FPS, jank or GPU-timing approval is claimed. The configured fatal-marker scan found
+  **0** hits. A complete raw-file hash listing is retained as `hashes.txt`, SHA-256
+  `630CF3279FE11202D0E054B3927D2D024806D7136B2B187BE183A1BDD9C27EB9`.
+
+#### P23 gate delta
+
+| Gate | Status | Evidence / owner action |
+| --- | --- | --- |
+| Exact 2080383 sustained live-match measurement | **Measured diagnostic / still open** | 12/12 focused samples; bounded memory and thermal values; raw CPU is unnormalized and gfxinfo has no Unity frame histogram |
+| Lava install, launch and bounded crash smoke | **Passed (carried forward)** | Exact APK remained live for all 12 samples; zero configured fatal markers |
+| Full-match performance against explicit budgets | **Not approved** | Unity Profiler/FrameTiming, GPU/GC, draw-call, repeated-rematch growth, unplugged battery and longer endurance remain open |
+| All other P22 gates | **Unchanged** | See P22 classification above; full physical route, genuine 16 KB runtime, authored/accessibility/cultural review, signing and Play/legal gates remain owner-controlled |
+
+P23 strengthens exact-candidate performance evidence without converting a bounded Lava
+diagnostic into a general mid-range-device or Play-release performance claim.
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (automated foundation;

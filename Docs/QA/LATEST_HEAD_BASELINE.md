@@ -22,12 +22,13 @@ status 0 before/after; the exact tutorial opening visibly retains the live arena
 touch sticks behind the prompt, and the persisted Maya focus ring now matches the summary.
 Fresh default and left-handed tutorial captures prove that the prompt names the active
 movement stick. A live-match SurfaceFlinger diagnostic recorded 126 valid timestamps with
-median 16.535 ms and p95 16.567 ms, but normalized frame pacing and budget approval remain
-open. Lava reports 4 KB pages and this remains opening/tutorial/lifecycle visual evidence
-plus a bounded performance diagnostic, not a 16 KB runtime pass. The APK is Android
-Debug-signed with temporary package identity `com.example.battleraja.m11` and is not
-publishable. Full physical route, accessibility, authored polish, signing, privacy/Data
-Safety and Play/legal gates remain open.
+median 16.535 ms and p95 16.567 ms; a separate 120-second exact-match capture held PSS
+to 267,935-272,772 KB and thermal status 0 across 12 focused samples. These remain
+bounded diagnostics, not normalized performance approval. Lava reports 4 KB pages and
+this remains opening/tutorial/lifecycle visual evidence plus measurement diagnostics,
+not a 16 KB runtime pass. The APK is Android Debug-signed with temporary package identity
+`com.example.battleraja.m11` and is not publishable. Full physical route, accessibility,
+authored polish, signing, privacy/Data Safety and Play/legal gates remain open.
 
 ## Superseded current-source continuation — 2026-08-26
 

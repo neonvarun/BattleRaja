@@ -13,10 +13,11 @@ Full EditMode and PlayMode pass **140/140** and **83/83**, and static validation
 batch remain applicable from the gameplay-only source: 1,000 seeded matches x2 with
 zero divergence, and 100/100 bot matches in-window with 95/100 reaching at least three
 combat eliminations. Matching debug-signed APK/AAB, bundletool/static 16 KB evidence,
-fresh approved-Lava settings/tutorial/live-match screenshots and a SurfaceFlinger
-diagnostic are indexed in `Docs/V1_RELEASE_PLAN.md` P22. The diagnostic recorded median
-16.535 ms and p95 16.567 ms in a live match, but sustained performance approval remains
-open because normalized CPU/GPU/GC/endurance evidence is absent.
+fresh approved-Lava settings/tutorial/live-match screenshots and SurfaceFlinger plus
+120-second match diagnostics are indexed in `Docs/V1_RELEASE_PLAN.md` P22-P23. The
+diagnostics recorded median 16.535 ms and p95 16.567 ms frame intervals and bounded
+memory/thermal values, but sustained performance approval remains open because normalized
+CPU/GPU/GC/endurance evidence is absent.
 
 Status remains **prototype**, not Play-ready: the package uses temporary identity and
 Android Debug signing; Lava reports 4 KB pages; the full physical tutorial/match/

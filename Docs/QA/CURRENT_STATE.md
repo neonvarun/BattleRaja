@@ -46,11 +46,13 @@ The exact Lava candidate now also shows persisted Maya focus alignment, live abi
 feedback, pause overlay and lifecycle resume; the tutorial opening visibly keeps the arena,
 zone ring, HUD and touch sticks behind the prompt. On the fresh 2080383 APK, default and
 left-handed tutorial captures show the prompt switching from left-stick to right-stick
-movement, and a live-match SurfaceFlinger diagnostic recorded 126 valid timestamps with
-median 16.535 ms and p95 16.567 ms. This is measurement evidence only, not performance
-approval. Action-by-action tutorial progression/full-route, accessibility, normalized
-CPU/GPU/GC/repeated-match endurance, genuine 16 KB runtime, authored final art/audio,
-cultural review, release signing and Play/legal gates remain open.
+movement. A live-match SurfaceFlinger diagnostic recorded 126 valid timestamps with
+median 16.535 ms and p95 16.567 ms; a separate 120-second exact-match capture held
+PSS to 267,935-272,772 KB, thermal status 0 and zero configured fatal markers across
+12 focused samples. These are measurement evidence only, not performance approval.
+Action-by-action tutorial progression/full-route, accessibility, normalized CPU/GPU/GC/
+repeated-match endurance, genuine 16 KB runtime, authored final art/audio, cultural
+review, release signing and Play/legal gates remain open.
 
 ## Latest current-source evidence — 2026-08-26
 
