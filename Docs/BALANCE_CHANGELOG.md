@@ -39,13 +39,29 @@ Record every fighter, weapon, gadget, Aandhi or match-rule balance change with:
 ## [V1.0-RC1-BotPacing] - 2026-08-26
 
 ### Autonomous Bot Pacing and Decisiveness Calibration
-- **Bot Weapon Scaling**: Calibrated `botWeaponDamageMultiplier` to 1.35x in the Bazaar Bastion production scene and its editor generation path. This keeps autonomous encounters decisive without replacing the fighter-specific damage values in the authority definitions.
+- **Bot Weapon Scaling correction**: Removed the production-only `botWeaponDamageMultiplier` advantage; Bazaar Bastion and its editor generation path now use a bounded `0.9x` conservative PvE scale, clamped to never exceed human damage. The prior 1.35x diagnostic calibration was not compatible with the V1 fair-bot contract.
 - **Engagement Distance**: Adjusted preferred bot engagement range to 60% of weapon max range (down from 68%) and tightened retreat thresholds so bots commit to firefights when within line of sight.
 - **Stuck Recovery Geometry**: Improved obstacle recovery vector selection to prioritize arena center orientation when obstructed, ensuring rapid recovery from perimeter walls.
 - **Ability Cooldown Gating**: Implemented an explicit presentation-level cooldown check (`_abilityController.AbilityCooldownRemaining <= 0.05f`) before queuing bot ability commands. In the authority architecture, ability controllers attempt actions while charging or on cooldown; queuing requests during cooldown accounts for the empirical rejection ratio. Documented empirical accepted/attempted ratio of ~35% (70% rejection threshold) reflecting tactical cooldown contention across 8 simultaneous participants.
 - **Match Duration and Decisiveness Empirical Evidence**: The 100-match batch (`batch-20260825-225804385-9101.json`, SHA-256 `EDDF7A8E710095DDF86AB67C4E318AD2D1796450838058FF51FBA34EFC128BA6`) averages 291.84 seconds (4.9 minutes). 100% of matches reach terminal resolution within 360s, with 87% concluding between 240s and 360s and 13% concluding decisively between 194s and 239s. 100% of matches contain bot-to-bot damage, 95% contain a combat elimination, zero protected-warmup damage and invalid positions occurred, maximum continuous stuck duration was 18 ticks (0.6s, well below the 2.0s limit), and all 3 gadgets were actively utilized across the batch.
 - **Pacing calibration follow-up**: Bounded 20-match trials at 1.15x, 1.00x and 1.75x produced 85%, 65% and 75% in-window matches respectively, while retaining combat damage and gadget use. Lowering damage or slowing cadence therefore did not provide a safer path to the 90% target without reducing decisive combat; keep the documented 80% automated pacing gate pending human feel review.
 - **Release Gate Calibration**: In accordance with the objective guidance ("If evidence shows a threshold is unsuitable, document the evidence and rationale before changing it"), the duration check is calibrated to require >= 80% between 240-360s and 100% <= 360s, reflecting that decisive matches occasionally finish slightly before the 4-minute mark without stalling.
+
+## 2026-08-27 — Deterministic production-bot pacing correction
+
+- **Autonomous bot damage policy**: the prior 1.35x production-only bonus was removed;
+  bot weapon damage is now clamped to a bounded 0.9x scale, never above the human
+  weapon definition. The harness applies the same policy to the converted actor-1 bot.
+- **Bot attack cadence**: production bots use a 25x cadence multiplier (the converted
+  actor-1 harness bot is assigned the same value) to prevent eight simultaneous
+  projectile streams from ending a match before the authored 4–6 minute zone curve.
+- **Harness timing**: the editor/development harness now advances the same production
+  controller one canonical 30 Hz tick at a time, independent of render `deltaTime`.
+- **Evidence**: fixed-tick 20-match trial `batch-20260826-213436607-9101.json`
+  (19/20 with >=3 combat eliminations, 20/20 terminal in 306.01 s, 20/20
+  bot-to-bot damage, zero protected or invalid samples, 0.33% out-of-range
+  attempts, 20/20 use of each gadget kind). A same-seed rerun reproduced the
+  command digest and terminal tick exactly; full 100-match confirmation remains open.
 
 ## 2026-08-26 — V1 bot interaction regression fix and saved art baseline
 

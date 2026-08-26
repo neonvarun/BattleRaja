@@ -20,7 +20,10 @@ namespace BattleRaja.Presentation.Match
         [SerializeField] private MatchPickup[] pickups;
         [SerializeField] private GadgetPickup[] gadgetPickups;
         [SerializeField] private float outsideDamageTickSeconds = 1f;
-        [Min(1f)] [SerializeField] private float botWeaponDamageMultiplier = 2.40f;
+        // V1 bots never receive a damage bonus. A small conservative reduction is
+        // allowed for the solo PvE difficulty curve, but values above human damage
+        // are clamped out of the production path.
+        [Range(0.5f, 1f)] [SerializeField] private float botWeaponDamageMultiplier = 0.9f;
         [SerializeField] private int simulationTickRate = 30;
         [SerializeField] private bool authorityDrivenMovement;
         [SerializeField] private bool autoStart = true;
@@ -42,6 +45,13 @@ namespace BattleRaja.Presentation.Match
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         public static string SuppressAutomaticStartForHarnessSceneName { get; set; }
+        /// <summary>
+        /// Editor/development-only switch used by the production bot harness. When
+        /// enabled, the harness owns canonical tick advancement through
+        /// <see cref="AdvanceHarnessSimulationTick"/> so render-frame timing cannot
+        /// change the gameplay command stream.
+        /// </summary>
+        public static bool SuppressAutomaticSimulationForHarness { get; set; }
 #endif
 
         public OfflineMatchSimulation Simulation => _authority != null ? _authority.Simulation : null;
@@ -321,6 +331,14 @@ namespace BattleRaja.Presentation.Match
                 return;
             }
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (SuppressAutomaticSimulationForHarness)
+            {
+                if (Simulation.IsEnded) PublishResults();
+                return;
+            }
+#endif
+
             // Terminal authority state is immutable. Republishing is idempotent and
             // guarantees the HUD cannot miss the exact frame that ended the tick.
             if (Simulation.IsEnded)
@@ -333,50 +351,83 @@ namespace BattleRaja.Presentation.Match
             for (var step = 0; step < simulationSteps; step++)
             {
                 var simulationTick = _simulationClock.GetConsumedTick(step);
-                SimulationTickAdvanced?.Invoke(simulationTick, (float)_simulationClock.StepSeconds);
-                for (var i = 0; i < _actors.Count; i++)
-                {
-                    var actor = _actors[i];
-                    if (authorityDrivenMovement)
-                    {
-                        var command = actor.Agent.GetAuthorityCommand(simulationTick);
-                        if (!_authority.IsAuthorityMovementLocked(actor.Target.Id))
-                        {
-                            var movement = _authority.ResolveMovement(command, (float)_simulationClock.StepSeconds);
-                            actor.Agent.ApplyAuthoritativeMovement(movement, (float)_simulationClock.StepSeconds);
-                        }
-                    }
-                    else
-                    {
-                        _authority.SetPosition(actor.Target.Id, new Float2(actor.Transform.position.x, actor.Transform.position.z));
-                    }
-                }
+                if (AdvanceSimulationTick(simulationTick)) break;
+            }
+        }
 
-                var authorityTick = _authority.Advance(simulationTick, (float)_simulationClock.StepSeconds);
-                AuthorityTickResolved?.Invoke(authorityTick);
-                var tick = authorityTick.Result;
-                if (projectilePool != null)
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        /// <summary>
+        /// Advances exactly one canonical 30 Hz tick for the editor/development
+        /// production-bot harness. This deliberately bypasses render time while
+        /// preserving the same event, movement, authority and presentation order as
+        /// the normal production update path.
+        /// </summary>
+        public bool AdvanceHarnessSimulationTick()
+        {
+            if (Simulation == null)
+            {
+                return false;
+            }
+
+            if (Simulation.IsEnded)
+            {
+                PublishResults();
+                return false;
+            }
+
+            _simulationClock.Advance();
+            AdvanceSimulationTick(_simulationClock.Tick);
+            return !Simulation.IsEnded;
+        }
+#endif
+
+        private bool AdvanceSimulationTick(int simulationTick)
+        {
+            SimulationTickAdvanced?.Invoke(simulationTick, (float)_simulationClock.StepSeconds);
+            for (var i = 0; i < _actors.Count; i++)
+            {
+                var actor = _actors[i];
+                if (authorityDrivenMovement)
                 {
-                    projectilePool.Reconcile(authorityTick.ProjectileSnapshots);
+                    var command = actor.Agent.GetAuthorityCommand(simulationTick);
+                    if (!_authority.IsAuthorityMovementLocked(actor.Target.Id))
+                    {
+                        var movement = _authority.ResolveMovement(command, (float)_simulationClock.StepSeconds);
+                        actor.Agent.ApplyAuthoritativeMovement(movement, (float)_simulationClock.StepSeconds);
+                    }
                 }
-                ZoneCenter = tick.ZoneCenter;
-                NextZoneCenter = tick.NextZoneCenter;
-                ZoneRadius = tick.ZoneRadius;
-                NextZoneRadius = tick.NextZoneRadius;
-                AandhiState = tick.AandhiState;
-                AandhiWarningRemainingSeconds = tick.WarningRemainingSeconds;
-                ApplyAuthoritativeDamageEvents(authorityTick);
-                ApplyAuthoritativeDashSteps(authorityTick);
-                ApplyGadgetAuthorityIntents(authorityTick);
-                ApplyAuthoritativeCollections(authorityTick);
-                MirrorItemAvailability();
-                UpdateSpectator(tick);
-                if (tick.MatchEnded)
+                else
                 {
-                    PublishResults();
-                    break;
+                    _authority.SetPosition(actor.Target.Id, new Float2(actor.Transform.position.x, actor.Transform.position.z));
                 }
             }
+
+            var authorityTick = _authority.Advance(simulationTick, (float)_simulationClock.StepSeconds);
+            AuthorityTickResolved?.Invoke(authorityTick);
+            var tick = authorityTick.Result;
+            if (projectilePool != null)
+            {
+                projectilePool.Reconcile(authorityTick.ProjectileSnapshots);
+            }
+            ZoneCenter = tick.ZoneCenter;
+            NextZoneCenter = tick.NextZoneCenter;
+            ZoneRadius = tick.ZoneRadius;
+            NextZoneRadius = tick.NextZoneRadius;
+            AandhiState = tick.AandhiState;
+            AandhiWarningRemainingSeconds = tick.WarningRemainingSeconds;
+            ApplyAuthoritativeDamageEvents(authorityTick);
+            ApplyAuthoritativeDashSteps(authorityTick);
+            ApplyGadgetAuthorityIntents(authorityTick);
+            ApplyAuthoritativeCollections(authorityTick);
+            MirrorItemAvailability();
+            UpdateSpectator(tick);
+            if (tick.MatchEnded)
+            {
+                PublishResults();
+                return true;
+            }
+
+            return false;
         }
 
         public void StartMatch()
@@ -431,7 +482,12 @@ namespace BattleRaja.Presentation.Match
                 if (attack != null)
                 {
                     var weapon = attack.AuthorityWeaponDefinition;
-                    if (actor.Target.Id.Value > 1)
+                    // The diagnostic harness can convert actor 1 into an autonomous
+                    // participant. Scale by controller ownership rather than actor
+                    // number so that all eight bots share the same bounded PvE policy,
+                    // while a normal human actor keeps the authored weapon unchanged.
+                    var autonomous = actor.Transform.GetComponent<BotBrain>() != null;
+                    if (autonomous || actor.Target.Id.Value > 1)
                     {
                         weapon = ScaleAutonomousBotWeapon(weapon);
                     }
@@ -462,8 +518,8 @@ namespace BattleRaja.Presentation.Match
 
         private ProjectileWeaponDefinition ScaleAutonomousBotWeapon(ProjectileWeaponDefinition weapon)
         {
-            var multiplier = Mathf.Max(1f, botWeaponDamageMultiplier);
-            if (multiplier <= 1f) return weapon;
+            var multiplier = Mathf.Clamp(botWeaponDamageMultiplier, 0.5f, 1f);
+            if (Mathf.Abs(multiplier - 1f) <= 0.0001f) return weapon;
             return new ProjectileWeaponDefinition(
                 Mathf.Max(1, Mathf.RoundToInt(weapon.Damage * multiplier)),
                 weapon.FireIntervalSeconds,

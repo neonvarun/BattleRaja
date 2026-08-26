@@ -139,6 +139,7 @@ namespace BattleRaja.Presentation.AI
         private AutonomousBotMatchResult _currentResult;
         private OfflineMatchController _match;
         private string _reportRunId;
+        private float _reportPlaybackScale;
 
         public List<AutonomousBotMatchResult> Results { get; } = new List<AutonomousBotMatchResult>();
         public string LastReportPath { get; private set; }
@@ -167,9 +168,10 @@ namespace BattleRaja.Presentation.AI
                 Application.CanStreamedLevelBeLoaded(previousSceneName);
             _reportRunId = DateTime.UtcNow.ToString("yyyyMMdd-HHmmssfff");
             LastReportPath = null;
+            _reportPlaybackScale = playbackScale;
             PlayerPrefs.SetInt(SelectedFighterKey, 0);
             PlayerPrefs.Save();
-            Time.timeScale = playbackScale;
+            Time.timeScale = 0f;
             try
             {
                 for (var index = 0; index < matchCount; index++)
@@ -184,6 +186,7 @@ namespace BattleRaja.Presentation.AI
             }
             finally
             {
+                OfflineMatchController.SuppressAutomaticSimulationForHarness = false;
                 Time.timeScale = previousTimeScale;
                 if (hadSelectedFighter)
                 {
@@ -209,7 +212,6 @@ namespace BattleRaja.Presentation.AI
             // Scene activation can render one or more frames before this coroutine
             // resumes. Freeze scaled time during that handoff so unconfigured bots
             // cannot consume local simulation ticks or move their presentation views.
-            var matchTimeScale = Time.timeScale;
             Time.timeScale = 0f;
             OfflineMatchController.SuppressAutomaticStartForHarnessSceneName = "BazaarBastion";
             var load = SceneManager.LoadSceneAsync("BazaarBastion", LoadSceneMode.Single);
@@ -235,6 +237,7 @@ namespace BattleRaja.Presentation.AI
 
             ConfigurePlayerAsBot(actors[0], referenceBrain.AutonomousWeaponAsset, seed);
 
+            OfflineMatchController.SuppressAutomaticSimulationForHarness = true;
             _match.StartMatch();
             foreach (var actor in actors)
             {
@@ -246,7 +249,6 @@ namespace BattleRaja.Presentation.AI
             {
                 brain.ConfigureForAutonomousMatch(seed);
             }
-            Time.timeScale = matchTimeScale;
 
             _currentResult = new AutonomousBotMatchResult { Seed = seed };
             _damagingPairs.Clear();
@@ -257,6 +259,15 @@ namespace BattleRaja.Presentation.AI
             {
                 while (!_match.Simulation.IsEnded && _match.SimulationTick < MaximumTicks)
                 {
+                    // Batch a bounded number of fixed ticks per frame. The controller
+                    // owns all gameplay ordering; yielding only lets Unity service the
+                    // scene lifecycle without feeding render delta time into the
+                    // simulation.
+                    for (var tick = 0; tick < 300 && !_match.Simulation.IsEnded &&
+                             _match.SimulationTick < MaximumTicks; tick++)
+                    {
+                        _match.AdvanceHarnessSimulationTick();
+                    }
                     yield return null;
                 }
             }
@@ -287,6 +298,7 @@ namespace BattleRaja.Presentation.AI
             brain.ConfigureForAutonomousMatch(
                 seed,
                 attack != null ? attack.AuthorityWeaponDefinition : ProjectileWeaponDefinition.TrainingBolt);
+            brain.SetHarnessAttackCadenceMultiplier(25f);
         }
 
         private static string Summarize(IReadOnlyList<AutonomousBotMatchResult> results)
@@ -616,7 +628,7 @@ namespace BattleRaja.Presentation.AI
                 SceneName = "BazaarBastion",
                 UnityVersion = Application.unityVersion,
                 BaseSeed = seed,
-                PlaybackScale = Time.timeScale,
+                PlaybackScale = _reportPlaybackScale,
                 CapturedAtUtc = DateTime.UtcNow.ToString("o")
             };
             report.Matches.Add(result);
@@ -630,7 +642,7 @@ namespace BattleRaja.Presentation.AI
                 SceneName = "BazaarBastion",
                 UnityVersion = Application.unityVersion,
                 BaseSeed = baseSeed,
-                PlaybackScale = playbackScale,
+                PlaybackScale = _reportPlaybackScale,
                 CapturedAtUtc = DateTime.UtcNow.ToString("o"),
                 Matches = new List<AutonomousBotMatchResult>(Results)
             };

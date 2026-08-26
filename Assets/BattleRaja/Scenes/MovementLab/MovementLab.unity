@@ -443,7 +443,7 @@ MonoBehaviour:
   pickups: []
   gadgetPickups: []
   outsideDamageTickSeconds: 1
-  botWeaponDamageMultiplier: 2.4
+  botWeaponDamageMultiplier: 0.5
   simulationTickRate: 30
   authorityDrivenMovement: 0
   autoStart: 1

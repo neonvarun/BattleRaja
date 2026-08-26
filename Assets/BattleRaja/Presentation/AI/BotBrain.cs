@@ -85,6 +85,18 @@ namespace BattleRaja.Presentation.AI
         public ProjectileWeaponAsset AutonomousWeaponAsset => weaponAsset;
         public string DebugSummary => $"{_decision.State} target={_decision.TargetId.Value} utility={_decision.UtilityScore:0.0} threats={_decision.PerceivedThreats} stuck={_decision.StuckRecovery}";
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        /// <summary>
+        /// Applies the reviewed production cadence to an actor that the diagnostic
+        /// harness converts from the human slot into a bot. The normal player build
+        /// never calls this editor/development-only hook.
+        /// </summary>
+        public void SetHarnessAttackCadenceMultiplier(float multiplier)
+        {
+            attackCadenceMultiplier = Mathf.Max(1f, multiplier);
+        }
+#endif
+
         /// <summary>
         /// Rebuilds deterministic bot state for a batch match. This is used only by the
         /// autonomous production-pipeline harness after a fresh scene has activated.
