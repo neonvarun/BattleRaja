@@ -54,12 +54,31 @@ namespace BattleRaja.Editor
 
         public static bool HasGeneratedAssets()
         {
-            return AssetDatabase.LoadAssetAtPath<GameObject>(BijliPrefabPath) != null
-                && AssetDatabase.LoadAssetAtPath<GameObject>(PehelPrefabPath) != null
-                && AssetDatabase.LoadAssetAtPath<GameObject>(MayaPrefabPath) != null
-                && AssetDatabase.LoadAssetAtPath<GameObject>(UmbrellaPrefabPath) != null
-                && AssetDatabase.LoadAssetAtPath<GameObject>(DholPrefabPath) != null
-                && AssetDatabase.LoadAssetAtPath<GameObject>(TiffinPrefabPath) != null;
+            var paths = new[]
+            {
+                BijliPrefabPath, PehelPrefabPath, MayaPrefabPath,
+                UmbrellaPrefabPath, DholPrefabPath, TiffinPrefabPath
+            };
+            for (var i = 0; i < paths.Length; i++)
+            {
+                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(paths[i]);
+                if (prefab == null) return false;
+
+                var filters = prefab.GetComponentsInChildren<MeshFilter>(true);
+                var hasMesh = false;
+                for (var j = 0; j < filters.Length; j++)
+                {
+                    if (filters[j] != null && filters[j].sharedMesh != null)
+                    {
+                        hasMesh = true;
+                        break;
+                    }
+                }
+
+                if (!hasMesh) return false;
+            }
+
+            return true;
         }
 
         private static void EnsureFolders()
@@ -144,11 +163,16 @@ namespace BattleRaja.Editor
                 ["PickupBeacon"] = CreateBox("PickupBeacon", new Vector3(0.055f, 0.72f, 0.055f)),
                 ["PickupBeaconTop"] = CreateDiamond("PickupBeaconTop", new Vector3(0.24f, 0.11f, 0.24f))
             };
-            foreach (var pair in meshes) SaveMesh(pair.Key, pair.Value);
+            var meshNames = new List<string>(meshes.Keys);
+            for (var i = 0; i < meshNames.Count; i++)
+            {
+                var name = meshNames[i];
+                meshes[name] = SaveMesh(name, meshes[name]);
+            }
             return meshes;
         }
 
-        private static void SaveMesh(string name, Mesh mesh)
+        private static Mesh SaveMesh(string name, Mesh mesh)
         {
             var path = MeshRoot + "/" + name + ".asset";
             var existing = AssetDatabase.LoadAssetAtPath<Mesh>(path);
@@ -161,11 +185,12 @@ namespace BattleRaja.Editor
                 existing.name = name;
                 EditorUtility.SetDirty(existing);
                 UnityEngine.Object.DestroyImmediate(mesh);
-                return;
+                return existing;
             }
 
             mesh.name = name;
             AssetDatabase.CreateAsset(mesh, path);
+            return AssetDatabase.LoadAssetAtPath<Mesh>(path);
         }
 
         private static Mesh CreateBox(string name, Vector3 size)
