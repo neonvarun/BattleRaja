@@ -160,6 +160,12 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator FighterSelectionKeepsVisualFocusOnTheChosenCard()
         {
+            const string key = "battleraja.selected_fighter";
+            var hadPrevious = PlayerPrefs.HasKey(key);
+            var previous = PlayerPrefs.GetInt(key, 0);
+            PlayerPrefs.SetInt(key, (int)ProductionFighter.Maya);
+            PlayerPrefs.Save();
+
             yield return SceneManager.LoadSceneAsync("Bootstrap", LoadSceneMode.Single);
             yield return null;
             yield return null;
@@ -167,6 +173,13 @@ namespace BattleRaja.Tests.PlayMode
             var flow = Object.FindAnyObjectByType<ProductionFlowController>();
             flow.OpenModeSelection();
             flow.SelectOfflineMode();
+            yield return null;
+
+            Assert.That(flow.SelectedFighter, Is.EqualTo(ProductionFighter.Maya));
+            Assert.That(EventSystem.current, Is.Not.Null);
+            Assert.That(EventSystem.current.currentSelectedGameObject, Is.Not.Null);
+            Assert.That(EventSystem.current.currentSelectedGameObject.name, Is.EqualTo("Maya"));
+
             flow.SelectMaya();
             yield return null;
 
@@ -174,6 +187,10 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(EventSystem.current, Is.Not.Null);
             Assert.That(EventSystem.current.currentSelectedGameObject, Is.Not.Null);
             Assert.That(EventSystem.current.currentSelectedGameObject.name, Is.EqualTo("Maya"));
+
+            if (hadPrevious) PlayerPrefs.SetInt(key, previous);
+            else PlayerPrefs.DeleteKey(key);
+            PlayerPrefs.Save();
         }
 
         [UnityTest]

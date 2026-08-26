@@ -317,6 +317,11 @@ namespace BattleRaja.Presentation.Flow
             // Touch clicks update the flow summary but may leave the EventSystem's
             // navigation selection on the first card. Keep the visual focus ring and
             // keyboard/switch navigation aligned with the fighter the player chose.
+            SelectFighterButton(fighter);
+        }
+
+        private void SelectFighterButton(ProductionFighter fighter)
+        {
             var button = fighter == ProductionFighter.Pehel ? _pehelButton :
                 fighter == ProductionFighter.Maya ? _mayaButton : _bijliButton;
             if (button != null && EventSystem.current != null)
@@ -461,9 +466,14 @@ namespace BattleRaja.Presentation.Flow
             }
 
             ApplyContrast();
+            if (transition.Current == ProductionFlowState.FighterSelection)
+            {
+                SelectFighterButton(_selectedFighter);
+                return;
+            }
+
             SelectFirstButton(transition.Current == ProductionFlowState.MainMenu ? _mainMenuPanel :
                 transition.Current == ProductionFlowState.ModeSelection ? _modePanel :
-                transition.Current == ProductionFlowState.FighterSelection ? _fighterPanel :
                 transition.Current == ProductionFlowState.Tutorial ? _loadingPanel :
                 transition.Current == ProductionFlowState.Settings ? _settingsPanel : _errorPanel);
         }
