@@ -865,6 +865,10 @@ Matching Android artifacts were built from this exact source with Unity `6000.5.
 
 - APK `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`: **40,521,770 bytes**,
   SHA-256 `0F635D962A179B28FD07189E348D837A7BF7B647638DDAF7FBF9A7EAB14B3458`.
+- `apksigner verify --print-certs` reports Android Debug signer
+  `C=US, O=Android, CN=Android Debug`, certificate SHA-256
+  `b0a94c79c2d3fa527d4160b46a3067fbe25bd4db0e1a2dafe1a62b1bce41b28c`; this is not a
+  publishable release signature.
 - AAB `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`: **36,346,956 bytes**,
   SHA-256 `4397F62FE5A83CEF2EB5240212988787735289DE8AA24F26D78B9E95C83D168D`.
 - Composed release checker: **0 errors / 0 warnings**, package
