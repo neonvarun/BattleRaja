@@ -442,9 +442,10 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   bundletool/zipalign evidence, and the temporary-ID/debug-signing block. Do not call the current
   candidate publishable until the owner supplies final identity/signing and repeats the checks on
   the signed AAB; the approved Lava device's 4 KB page size is insufficient runtime 16 KB proof.
-- **Local evidence:** Clean runtime/artifact source `2f9a6a0`; APK/AAB checker reports API 28/36,
+- **Local evidence:** Clean runtime/artifact source `2080383`; APK/AAB checker reports API 28/36,
   seven ARM64 libraries, no network permissions, static 16 KB alignment passed, and Android Debug
-  signer fingerprint recorded in `Docs/V1_RELEASE_PLAN.md` P16.
+  signer fingerprint recorded in `Docs/V1_RELEASE_PLAN.md` P22. The exact APK also has a fresh
+  120-second Lava match diagnostic and SurfaceFlinger frame-latency sample documented in P22-P23.
 - **Uncertainty:** Policy text and enforcement dates may change; final signed-bundle processing,
   developer verification, privacy/Data Safety, content rating and Play Console declarations remain
   owner-controlled.
