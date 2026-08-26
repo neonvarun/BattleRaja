@@ -423,3 +423,30 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   rechecked by the owner immediately before submission.
 - **Recheck trigger/date:** Before the first signed AAB and again immediately before any
   Play Console upload.
+
+### V1.0 Android/Play policy recheck (2026-08-27)
+
+- **Question:** Does the current official guidance change the API, 16 KB, bundle or signing
+  requirements for the final offline Android candidate?
+- **Primary sources:** [Google Play target API requirements](https://developer.android.com/google/play/requirements/target-sdk),
+  [Android 16 KB page-size guidance](https://developer.android.com/guide/practices/page-sizes),
+  and [Play Console app setup, versioning and signing](https://support.google.com/googleplay/android-developer/answer/9859152?hl=en).
+- **Access date:** 2026-08-27 (IST).
+- **Relevant claims:** The current Android Developers page says new apps and updates must target
+  Android 16/API 36 or higher from 31 August 2026. The 16 KB guidance says 64-bit apps targeting
+  Android 15/API 35 or higher must support 16 KB page-size devices, recommends ELF and bundle
+  alignment checks, and documents testing with `adb shell getconf PAGE_SIZE` in a genuine 16 KB
+  environment. Play setup guidance requires a digitally signed artifact, an Android App Bundle
+  for upload, and monotonically managed version codes.
+- **Decision impact:** Keep target API 36, ARM64/IL2CPP, static ELF and bundle alignment checks,
+  bundletool/zipalign evidence, and the temporary-ID/debug-signing block. Do not call the current
+  candidate publishable until the owner supplies final identity/signing and repeats the checks on
+  the signed AAB; the approved Lava device's 4 KB page size is insufficient runtime 16 KB proof.
+- **Local evidence:** Clean runtime/artifact source `2f9a6a0`; APK/AAB checker reports API 28/36,
+  seven ARM64 libraries, no network permissions, static 16 KB alignment passed, and Android Debug
+  signer fingerprint recorded in `Docs/V1_RELEASE_PLAN.md` P16.
+- **Uncertainty:** Policy text and enforcement dates may change; final signed-bundle processing,
+  developer verification, privacy/Data Safety, content rating and Play Console declarations remain
+  owner-controlled.
+- **Recheck trigger/date:** Immediately before the first signed AAB and again before Play Console
+  upload, especially after any Unity/NDK/Android Gradle or native-dependency change.
