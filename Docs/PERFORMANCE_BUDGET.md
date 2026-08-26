@@ -6,9 +6,43 @@ The current clean Android candidate is commit `8edc0867268800f0ad81067378ad590e1
 The approved Lava `ST5GDW23LB004392` installed the exact APK and captured fighter-focus,
 tutorial, live ability/gadget, pause and lifecycle-resume evidence under
 `Builds/Local/Device/Screenshots/20260827-e6c321b`; lifecycle logcat had zero configured
-fatal markers. The device reports 4 KB pages. This is short visual/lifecycle evidence
-only; no sustained full-match frame-pacing, CPU/GPU/GC, thermal, battery or memory-growth
-budget pass is claimed.
+fatal markers. A subsequent 120-second exact-match diagnostic capture is recorded below.
+The device reports 4 KB pages, so genuine 16 KB runtime validation remains unavailable.
+The capture is measurement evidence only; no sustained frame-pacing, CPU/GPU/GC,
+repeated-match memory-growth or endurance budget approval is claimed.
+
+## Latest Lava sustained-match diagnostic capture — exact runtime `8edc086` — 2026-08-27
+
+The exact `8edc086` APK remained in a live Solo Raja match on approved Lava
+`ST5GDW23LB004392` (`LAVA LXX508`, API 34) for **120 seconds**, sampled at **10-second
+intervals** for **12 samples**. Raw evidence is retained under
+`Builds/Local/Device/Performance/20260827-8edc086-match-120s/`. The manifest SHA-256 is
+`8179BC75000B504330E88E88494AA7DBA918322368DB5444E72E8881CC68B675`; the captured
+logcat SHA-256 is
+`197C33A22A28072F6A8599C2519F6915F019A9CF99FBB1CD04AFD3B83CBC3CEC`.
+
+Observed diagnostic values:
+
+- The Unity activity remained the focused window for all 12 samples.
+- Total PSS was **218,208–228,459 KB** and total RSS was **364,956–374,796 KB**;
+  graphics PSS was **17,484 KB** at every sample and swap PSS was **64–77 KB**.
+  After the first warm-up sample, total PSS stayed within **218,208–218,280 KB**.
+- `top` sampled the process at **103–128% instantaneous CPU**. This is a raw
+  device-wide process sample, not a normalized frame-time budget.
+- The thermal HAL reported CPU/GPU approximately **38.539–40.786°C** with thermal
+  status **0** throughout. Android battery dumps remained at **19%** and **31°C**
+  before and after (USB powered).
+- Android `gfxinfo` reported **0 total frames** and no usable Unity SurfaceView frame
+  histogram in every sample (the repeated `4950ms` percentiles are not actionable),
+  so no FPS, jank, GPU-timing or frame-pacing pass is claimed.
+- The configured fatal-marker scan found **0** hits for FATAL EXCEPTION, ANR, SIGSEGV,
+  SIGABRT, NullReferenceException, UnityException, Crash or Abort.
+
+This establishes a reproducible sustained-match measurement and shows no observed
+memory growth after warm-up or thermal throttling during the short run. It does not
+replace Unity Profiler/FrameTiming evidence, GC/draw-call measurements, repeated-match
+growth testing, longer battery/thermal endurance, or owner approval on a genuine
+16 KB runtime device.
 
 ## Exact current release candidate — `35de9f3` — 2026-08-24
 

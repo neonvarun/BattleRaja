@@ -70,8 +70,10 @@ On approved Lava `ST5GDW23LB004392`, the exact APK installed and launched. The f
 fighter-selection screenshot shows `SELECTED: MAYA` with Maya's card highlighted, and
 fresh probes show Maya ability/gadget feedback, pause/settings and HOME/resume without
 configured fatal log markers. Full action-by-action tutorial and end-to-end route,
-sustained performance, genuine 16 KB runtime, authored review, signing and Play actions
-remain owner-controlled gates.
+sustained performance approval, genuine 16 KB runtime, authored review, signing and Play
+actions remain owner-controlled gates. A subsequent 120-second exact-match diagnostic
+held post-warm-up total PSS to 218,208-218,280 KB and thermal status 0, but gfxinfo
+exposed no usable Unity SurfaceView frame histogram; see `Docs/V1_RELEASE_PLAN.md` P21.
 
 ## Latest exact-source tutorial-visibility candidate — `e6c321b` — 2026-08-27
 

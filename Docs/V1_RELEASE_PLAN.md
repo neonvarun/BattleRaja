@@ -1302,6 +1302,43 @@ spectator/results/rematch and settings completion.
 | Final identity/signing, privacy/Data Safety, content rating and Play Console | **Blocked** | Owner/legal/store actions are not authorized |
 | Photon, PlayFab, accounts, online and Web release | **Not applicable** | Explicit V1 offline scope lock |
 
+### P21 - Exact-candidate sustained Lava match diagnostic - 2026-08-27
+
+The exact P20 runtime candidate `8edc0867268800f0ad81067378ad590e1a166371` was
+left in a live Solo Raja match on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`,
+API 34) for **120 seconds**, with **12 samples at 10-second intervals**. This is a
+runtime diagnostic follow-up; no source or Android artifact changed after P20.
+
+#### Captured evidence
+
+- Raw evidence: `Builds/Local/Device/Performance/20260827-8edc086-match-120s/`.
+- Manifest SHA-256:
+  `8179BC75000B504330E88E88494AA7DBA918322368DB5444E72E8881CC68B675`.
+- Captured logcat SHA-256:
+  `197C33A22A28072F6A8599C2519F6915F019A9CF99FBB1CD04AFD3B83CBC3CEC`.
+- Unity's game activity stayed focused for all 12 samples. Total PSS was
+  **218,208-228,459 KB** and total RSS **364,956-374,796 KB**; graphics PSS was
+  **17,484 KB** at every sample and swap PSS **64-77 KB**. After the first warm-up
+  sample, total PSS stayed within **218,208-218,280 KB**.
+- Raw `top` samples were **103-128% instantaneous process CPU**. Thermal HAL
+  CPU/GPU readings were approximately **38.539-40.786 C** with status `0`; Android
+  battery dumps remained at **19%** and **31 C** before and after (USB powered).
+- Android `gfxinfo` reported **0 total frames** and no usable Unity SurfaceView frame
+  histogram in every sample, so no FPS, jank, GPU-timing or frame-pacing pass is
+  claimed. The configured fatal-marker scan found **0** hits.
+
+#### P21 gate delta
+
+| Gate | Status | Evidence / owner action |
+| --- | --- | --- |
+| Sustained full-match CPU/GPU/GC/thermal/battery budget | **Measured diagnostic / still open** | 120-second Lava match capture is bounded and thermally stable, but raw CPU is not normalized, gfxinfo has no usable frame histogram, GC/draw-call/repeated-match-growth and endurance evidence are absent |
+| Lava install, launch, live match and bounded crash smoke | **Passed (carried forward)** | P20 exact APK remained live for all 12 samples; zero configured fatal markers |
+| All other P20 gates | **Unchanged** | See P20 classification above; full physical route, genuine 16 KB runtime, authored/accessibility/cultural review, signing and Play/legal gates remain owner-controlled |
+
+P21 therefore improves measurement coverage without changing the release
+classification: this remains a technically validated offline prototype candidate,
+not a Play-publishable release claim.
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (automated foundation;

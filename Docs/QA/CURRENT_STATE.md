@@ -28,7 +28,7 @@ The runtime/presentation source is clean and committed on branch
 PlayMode is **82/82**, and the 1,000-seed deterministic replay soak remains applicable
 from the preceding gameplay-only source with 2,000 executions and zero divergence.
 Matching APK/AAB hashes, bundletool/zipalign evidence and gate classifications are in
-`Docs/V1_RELEASE_PLAN.md` P20.
+`Docs/V1_RELEASE_PLAN.md` P20-P21.
 
 The exact-source fixed-tick production-bot batch completes **100/100** matches in the
 240-360 second window, with **95/100** reaching at least three combat eliminations;
@@ -45,9 +45,12 @@ Fresh 30-second device evidence found no configured fatal markers, but the devic
 The exact Lava candidate now also shows persisted Maya focus alignment, live ability/gadget
 feedback, pause overlay and lifecycle resume; the tutorial opening visibly keeps the arena,
 zone ring, HUD and touch sticks behind the prompt, with zero configured fatal log markers.
-Action-by-action tutorial progression/full-route, accessibility, sustained performance,
-genuine 16 KB runtime, authored final art/audio, cultural review, release signing and
-Play/legal gates remain open.
+A 120-second exact-match Lava diagnostic now records 12 samples with post-warm-up total
+PSS held to 218,208-218,280 KB, thermal status 0 and zero configured fatal markers;
+Android gfxinfo exposed no usable Unity SurfaceView frame histogram, so this is not a
+performance approval. Action-by-action tutorial progression/full-route, accessibility,
+normalized frame pacing/GC/GPU/repeated-match endurance, genuine 16 KB runtime, authored
+final art/audio, cultural review, release signing and Play/legal gates remain open.
 
 ## Latest current-source evidence — 2026-08-26
 

@@ -13,7 +13,9 @@ batch remain applicable from the gameplay-only source: 1,000 seeded matches x2 w
 zero divergence, and 100/100 bot matches in-window with 95/100 reaching at least three
 combat eliminations. Matching debug-signed APK/AAB, bundletool/static 16 KB evidence and
 fresh approved-Lava fighter/tutorial/ability/gadget/lifecycle screenshots are indexed in
-`Docs/V1_RELEASE_PLAN.md` P20.
+`Docs/V1_RELEASE_PLAN.md` P20. A later 120-second exact-match Lava diagnostic held
+post-warm-up total PSS to 218,208-218,280 KB with thermal status 0, but no usable Unity
+SurfaceView frame histogram was exposed, so sustained performance approval remains open.
 
 Status remains **prototype**, not Play-ready: the package uses temporary identity and
 Android Debug signing; Lava reports 4 KB pages; the full physical tutorial/match/

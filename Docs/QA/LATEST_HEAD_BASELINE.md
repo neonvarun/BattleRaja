@@ -19,8 +19,11 @@ approved Lava
 The fresh six-sample, 30-second capture found no configured fatal markers and thermal
 status 0 before/after; the exact tutorial opening visibly retains the live arena and
 touch sticks behind the prompt, and the persisted Maya focus ring now matches the summary.
-Lava reports 4 KB pages and this remains opening/tutorial/lifecycle visual evidence, not a
-sustained full-match performance or 16 KB runtime pass. The APK is Android Debug-signed
+A later 120-second exact-match diagnostic on the same APK held post-warm-up total PSS to
+218,208-218,280 KB and thermal status to 0, but Android gfxinfo exposed no usable Unity
+SurfaceView frame histogram, so normalized frame pacing and budget approval remain open.
+Lava reports 4 KB pages and this remains opening/tutorial/lifecycle visual evidence plus
+a bounded performance diagnostic, not a 16 KB runtime pass. The APK is Android Debug-signed
 with temporary package identity `com.example.battleraja.m11` and is not publishable. Full
 physical route, accessibility, authored polish, signing, privacy/Data Safety and Play/
 legal gates remain open.

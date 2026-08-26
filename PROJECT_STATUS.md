@@ -13,9 +13,11 @@
   **82/82**. The 1,000-seed replay soak and fixed-tick 100-match bot evidence remain
   applicable from the preceding gameplay-only source. Matching APK/AAB, static checker,
   bundletool/zipalign and exact Lava fighter/tutorial/ability/gadget/pause/resume
-  evidence are recorded in `Docs/V1_RELEASE_PLAN.md` P20. The APK remains Android
+  evidence are recorded in `Docs/V1_RELEASE_PLAN.md` P20-P21. The APK remains Android
   Debug-signed and the product remains a prototype: full touch-route, accessibility,
-  sustained performance, genuine 16 KB runtime, final authored identity/cultural review,
+  sustained performance approval (a bounded 120-second Lava diagnostic now exists, but
+  gfxinfo exposed no usable frame histogram), genuine 16 KB runtime, final authored
+  identity/cultural review,
   signing, privacy/Data Safety and Play Console actions remain open.
 
 - **Working-tree gameplay truth update (2026-08-25):** unified action eligibility
