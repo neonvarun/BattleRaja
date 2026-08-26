@@ -1142,7 +1142,8 @@ the exact source history at `62b728c`.
 - Composed checker: **0 errors / 0 warnings**, package `com.example.battleraja.m11`,
   version `1.0.0`/code `100`, API 28/36, VIBRATE plus Unity dynamic receiver only,
   seven ARM64 libraries, no other ABIs, static 16 KB ELF alignment passed, and store
-  creative dimensions passed.
+  creative dimensions passed. Final checker log SHA-256
+  `8CB20C2EE2E0C4C8FC282B83D1444B1B903D716A9F3AA0D051F6B65A6B23DC32`.
 - Bundletool `1.18.3` generated APKS
   `Builds/Local/V1GameplayTruth/Android/battleraja-v1-e6c321b.apks`, **36,479,209
   bytes**, SHA-256 `03EAB13BCECF468F9176E7E0033A2E8AAF759563A77576F28B3327FC2B661425`.
