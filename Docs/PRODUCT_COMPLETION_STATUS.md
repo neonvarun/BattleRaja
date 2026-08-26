@@ -3,16 +3,17 @@
 Updated: 2026-08-27
 Classification: **prototype**
 
-## Latest exact-source release-gate checkpoint — `e6c321b` — 2026-08-27
+## Latest exact-source release-gate checkpoint — `8edc086` — 2026-08-27
 
-The clean runtime source is `e6c321b60c8398755942ab0260d13dddac3df551` on
-`codex/v1-playstore-release`; the tutorial visibility fix removes the opaque full-screen
-veil and adds a regression assertion. Full EditMode and PlayMode pass **140/140** and
-**82/82**. The exact-source replay soak and fixed-tick production-bot batch remain
-applicable from the preceding gameplay-only source: 1,000 seeded matches x2 with zero
-divergence, and 100/100 bot matches in-window with 95/100 reaching at least three combat
-eliminations. Matching debug-signed APK/AAB, bundletool/static 16 KB evidence and fresh
-approved-Lava tutorial screenshots are indexed in `Docs/V1_RELEASE_PLAN.md` P19.
+The clean runtime source is `8edc0867268800f0ad81067378ad590e1a166371` on
+`codex/v1-playstore-release`; it restores the persisted fighter's focus ring while
+retaining the tutorial visibility fix from `e6c321b`. Full EditMode and PlayMode pass
+**140/140** and **82/82**. The exact-source replay soak and fixed-tick production-bot
+batch remain applicable from the gameplay-only source: 1,000 seeded matches x2 with
+zero divergence, and 100/100 bot matches in-window with 95/100 reaching at least three
+combat eliminations. Matching debug-signed APK/AAB, bundletool/static 16 KB evidence and
+fresh approved-Lava fighter/tutorial/ability/gadget/lifecycle screenshots are indexed in
+`Docs/V1_RELEASE_PLAN.md` P20.
 
 Status remains **prototype**, not Play-ready: the package uses temporary identity and
 Android Debug signing; Lava reports 4 KB pages; the full physical tutorial/match/

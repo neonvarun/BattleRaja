@@ -53,6 +53,26 @@ pwsh -File Tools/Validation/check_v1_release_candidate.ps1 `
 This gate is technical and local only. It does not sign, upload, publish, or approve
 the final identity, privacy/Data Safety, content rating, cultural review or Play track.
 
+## Latest exact-source persisted-focus candidate — `8edc086` — 2026-08-27
+
+The exact clean source is commit `8edc0867268800f0ad81067378ad590e1a166371`.
+The fighter-selection screen now restores the persisted fighter's visual focus on entry;
+the tutorial arena visibility fix from `e6c321b` remains included. Full EditMode is
+**140/140** and PlayMode is **82/82**. The matching APK is **40,521,770 bytes**
+(`1D470DAEEBEBE86D3764A594BCF4D6CF71869854E84B38E41D4FC6BCB8974E03`) and the AAB is
+**36,346,941 bytes** (`4FFC517CAE9CD112F6D5D34A1A039A30D090EC2042161F7C1EC8D516966B8697`).
+The local release checker reports **0 errors / 0 warnings**, package
+`com.example.battleraja.m11`, API 28/36, seven ARM64 libraries, no network permissions,
+static 16 KB alignment and creative dimensions passed. Bundletool/zipalign/apksigner
+evidence and exact hashes are indexed in `Docs/V1_RELEASE_PLAN.md` P20.
+
+On approved Lava `ST5GDW23LB004392`, the exact APK installed and launched. The fresh
+fighter-selection screenshot shows `SELECTED: MAYA` with Maya's card highlighted, and
+fresh probes show Maya ability/gadget feedback, pause/settings and HOME/resume without
+configured fatal log markers. Full action-by-action tutorial and end-to-end route,
+sustained performance, genuine 16 KB runtime, authored review, signing and Play actions
+remain owner-controlled gates.
+
 ## Latest exact-source tutorial-visibility candidate — `e6c321b` — 2026-08-27
 
 The exact clean source is commit `e6c321b60c8398755942ab0260d13dddac3df551`.

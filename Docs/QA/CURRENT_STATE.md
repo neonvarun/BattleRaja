@@ -23,12 +23,12 @@ remain open.
 ## Latest current-source evidence — 2026-08-27
 
 The runtime/presentation source is clean and committed on branch
-`codex/v1-playstore-release` at exact source `e6c321b60c8398755942ab0260d13dddac3df551`
-(`fix: keep tutorial arena visible behind prompts`). Full EditMode is **140/140**, full
+`codex/v1-playstore-release` at exact source `8edc0867268800f0ad81067378ad590e1a166371`
+(`fix: restore fighter focus on selection screen`). Full EditMode is **140/140**, full
 PlayMode is **82/82**, and the 1,000-seed deterministic replay soak remains applicable
 from the preceding gameplay-only source with 2,000 executions and zero divergence.
 Matching APK/AAB hashes, bundletool/zipalign evidence and gate classifications are in
-`Docs/V1_RELEASE_PLAN.md` P19.
+`Docs/V1_RELEASE_PLAN.md` P20.
 
 The exact-source fixed-tick production-bot batch completes **100/100** matches in the
 240-360 second window, with **95/100** reaching at least three combat eliminations;
@@ -42,11 +42,12 @@ screen with player-facing labels `GADGET TIFFIN`, `READY` and `SPAWN SHIELD`.
 Fresh 30-second device evidence found no configured fatal markers, but the device reports
 4 KB pages and the capture is not a sustained full-match performance pass.
 
-The exact Lava tutorial opening now visibly keeps the arena, zone ring, HUD and touch
-sticks behind the prompt, with zero configured fatal log markers; action-by-action
-tutorial progression/full-route, accessibility, sustained performance, genuine 16 KB
-runtime, authored final art/audio, cultural review, release signing and Play/legal gates
-remain open.
+The exact Lava candidate now also shows persisted Maya focus alignment, live ability/gadget
+feedback, pause overlay and lifecycle resume; the tutorial opening visibly keeps the arena,
+zone ring, HUD and touch sticks behind the prompt, with zero configured fatal log markers.
+Action-by-action tutorial progression/full-route, accessibility, sustained performance,
+genuine 16 KB runtime, authored final art/audio, cultural review, release signing and
+Play/legal gates remain open.
 
 ## Latest current-source evidence — 2026-08-26
 

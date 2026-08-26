@@ -1200,6 +1200,108 @@ rematch/settings/lifecycle route remains an owner-operated review gate.
 | Final identity/signing, privacy/Data Safety, content rating and Play Console | **Blocked** | Owner/legal/store actions are not authorized |
 | Photon, PlayFab, accounts, online and Web release | **Not applicable** | Explicit V1 offline scope lock |
 
+### P20 - Persisted fighter focus correction and exact candidate refresh - 2026-08-27
+
+The current source is clean and committed at exact SHA
+`8edc0867268800f0ad81067378ad590e1a166371` (`fix: restore fighter focus on selection
+screen`). This presentation-only patch applies the persisted fighter choice when the
+fighter-selection screen opens, so the summary, focus ring and keyboard/switch navigation
+all agree before the player taps a card. A PlayMode regression seeds a persisted Maya
+choice, opens the screen and asserts the Maya card is selected.
+
+#### Exact-source automated evidence
+
+- Focused persisted-focus PlayMode: **1/1 passed**. XML SHA-256
+  `3066ED9594E6815651C63E9F5FB41F15534D4E8E5ED2627ED3455A644B4E6615`; log SHA-256
+  `C9392F7A7CCD31B0828F1B53EFAD8D9E2AFED22A1343204031D18C79602AF370`.
+- Full EditMode: **140/140 passed**. XML SHA-256
+  `667719529903AA7E0E3BEC86B9A6B7F10A5E9EB0C861D445E8363B445C7BB150`; log SHA-256
+  `8662659959183F343C3D9CA624C4E12E144DEABCF87EFB85C93707D3423FDE48`.
+- Full PlayMode: **82/82 passed**. XML SHA-256
+  `C8F196AC9C59854147E3466BCEFACEAA5016F22C7B71B24246AFFE3B432B4798`; log SHA-256
+  `E4543BFF254A9EB2EB8D97A8D2B59DABA8ABC535A418A0063AFAC61EF5A682FD`.
+- The deterministic replay soak and fixed-tick 100-match production-bot batch remain
+  applicable from exact gameplay source `6d287a6`; neither focus patch changes authority,
+  replay or bot simulation.
+
+#### Matching Android artifacts from `8edc086`
+
+- APK `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`: **40,521,770 bytes**,
+  SHA-256 `1D470DAEEBEBE86D3764A594BCF4D6CF71869854E84B38E41D4FC6BCB8974E03`.
+- AAB `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`: **36,346,941 bytes**,
+  SHA-256 `4FFC517CAE9CD112F6D5D34A1A039A30D090EC2042161F7C1EC8D516966B8697`.
+- Composed checker: **0 errors / 0 warnings**, package `com.example.battleraja.m11`,
+  version `1.0.0`/code `100`, API 28/36, VIBRATE plus Unity dynamic receiver only,
+  seven ARM64 libraries, no other ABIs, static 16 KB ELF alignment passed, and store
+  creative dimensions passed. Final checker log SHA-256
+  `E97E3DAA4E7A3E641927635972FC0C3F0C29A6BCF7EC947277108BFD09BDE052`.
+- Bundletool `1.18.3` generated APKS
+  `Builds/Local/V1GameplayTruth/Android/battleraja-v1-8edc086.apks`, **36,475,113
+  bytes**, SHA-256 `5CC8D07F070A6244DF3DBBFDDCCB0EE6CBE3B7019F0543507DEBDACA44644EA8`.
+  The universal APK was extracted from that APKS archive at
+  `universal-8edc086-zip/universal.apk`, **36,474,798 bytes**, SHA-256
+  `5C48B45DCDCB35E7BF4010320CDD3226CBA094A5E3A8744D08BCB49B441519FE`.
+- Direct and extracted APK `zipalign -c -P 16 -v 4` both passed. Log SHA-256 values:
+  bundletool `DF3173BCAED672FE955EC394A49B6A91A47557D4DCBB68C4AED8612E71506EEC`,
+  direct zipalign `B53ACF9B7694D299958F58B78EDCEE0717FEE635B4E74110D574E76979B342E6`,
+  universal zipalign `EC8F7182D428E8ED85A0C12021DFEAC455B4852EE9BC9B1FDB70DB703B468D50`,
+  direct apksigner `BCABF5EE2B220F3F612B5C16A74690E469631C321076863D84320010CA0BFF0A`,
+  universal apksigner `BCABF5EE2B220F3F612B5C16A74690E469631C321076863D84320010CA0BFF0A`.
+  Both signatures verify with the Android Debug certificate SHA-256
+  `b0a94c79c2d3fa527d4160b46a3067fbe25bd4db0e1a2dafe1a62b1bce41b28c`; this is not a
+  publishable release signature.
+
+#### Approved Lava evidence
+
+The exact 8edc086 APK installed successfully on approved Lava `ST5GDW23LB004392`
+(`LAVA LXX508`, API 34). Fresh exact-candidate screenshots under
+`Builds/Local/Device/Screenshots/20260827-e6c321b` include:
+
+- `fighter-cards-persisted-fix.png`, SHA-256
+  `1AD9D3A12EDB0788BA85CF3010C198CD2654065C59BEF4D42994108EF92DC741` — summary
+  `SELECTED: MAYA` and Maya card focus/highlight agree on first entry.
+- `maya-opening-focus-persisted-fix.png`, SHA-256
+  `4347D7521DF07CF142B400836F0E9FBD14E79981EF12AFDD3DCACC5C876ED9FA` — live Solo
+  Raja opening with Maya HUD and left-handed controls.
+- `maya-ability-gadget.png`, SHA-256
+  `E63F35669D841BEA38361A62970AFFAB1DEABB50AAD76E95FA88898F1E033DB1` — Maya ability
+  and Tiffin use reflected in HUD (`DECOY`, `GADGET EMPTY`, `TIFFIN STATION DEPLOYED`).
+- `maya-pause.png`, SHA-256
+  `578CE715481F78C8147D621270917CD044D15428892C0E8C0C7109A727E30648` — pause/settings
+  surface keeps live gameplay visible behind the settings panel.
+- `maya-lifecycle-resume.png`, SHA-256
+  `96F49B2834DD305086DC5A7555FB87DF08A668B7138F832F35561890258E3D78` — match resumed
+  after HOME and relaunch; `maya-lifecycle-logcat.txt` SHA-256
+  `D2DD6B908F8B0EC3E19F8A82BF40935C3AD1030F83C2FD5EEE65A23FFC97C913` contains zero
+  configured fatal markers.
+- `tutorial-opening-8edc086.png`, SHA-256
+  `18236860F318754EC89F3CDFD75F62D1C6ADD9E8EF3E428EB7333EFC5A596CDC` — live arena and
+  controls remain visible behind the action-gated movement prompt on the latest APK.
+
+These probes strengthen exact-candidate evidence for fighter focus, live ability/gadget
+feedback, pause and lifecycle resume. They do not constitute owner approval of comfort,
+accessibility, authored art/audio, sustained performance or full action-by-action tutorial,
+spectator/results/rematch and settings completion.
+
+#### P20 gate classification
+
+| Gate | Status | Evidence / owner action |
+| --- | --- | --- |
+| Clean committed source, compile, full EditMode/PlayMode | **Passed** | `8edc086`; 140/140 and 82/82 |
+| Persisted fighter summary and focus ring agree | **Passed (automated + Lava visual)** | Regression test and exact `fighter-cards-persisted-fix.png` |
+| Tutorial prompt keeps live gameplay visible | **Passed (carried forward + Lava visual)** | Exact latest tutorial opening remains visible; P19 fix unchanged |
+| Deterministic replay/deep soak | **Passed (carried forward)** | Focus-only patch; exact `6d287a6` 1,000-seed x2 evidence remains applicable |
+| APK/AAB manifest, ARM64, static 16 KB, bundletool and zipalign | **Passed** | Exact 8edc086 checker and artifact evidence above |
+| Production-bot 100-match release distribution | **Passed (carried forward)** | Focus-only patch; exact `6d287a6` batch remains applicable |
+| Exact-source same-seed production command stream | **Passed (carried forward)** | Focus-only patch; exact `6d287a6` digest remains applicable |
+| Lava install, launch, ability/gadget, pause/resume and bounded crash smoke | **Passed** | Exact APK installed; probes and logcat recorded above |
+| Full touch tutorial -> match -> spectator/results/rematch/settings/lifecycle route | **Blocked** | Owner-operated action-by-action review remains required |
+| Sustained full-match CPU/GPU/GC/thermal/battery budget | **Not run** | Exact probes are short visual/lifecycle captures only |
+| Genuine 16 KB runtime device validation | **Blocked** | Approved Lava reports 4 KB pages; requires a genuine 16 KB environment |
+| Final authored art/audio, accessibility, balance and cultural review | **Blocked** | Human review and authored polish remain |
+| Final identity/signing, privacy/Data Safety, content rating and Play Console | **Blocked** | Owner/legal/store actions are not authorized |
+| Photon, PlayFab, accounts, online and Web release | **Not applicable** | Explicit V1 offline scope lock |
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (automated foundation;

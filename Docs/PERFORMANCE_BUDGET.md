@@ -1,13 +1,14 @@
 # Android and Web Performance Budget
 
-## Latest exact-source candidate — `e6c321b` — 2026-08-27
+## Latest exact-source candidate — `8edc086` — 2026-08-27
 
-The current clean Android candidate is commit `e6c321b60c8398755942ab0260d13dddac3df551`.
-The approved Lava `ST5GDW23LB004392` installed the exact APK and captured the menu and
-tutorial opening under `Builds/Local/Device/Screenshots/20260827-e6c321b`; tutorial
-logcat had zero configured fatal markers. The device reports 4 KB pages. This is
-launch/tutorial visual evidence only; no sustained full-match frame-pacing, CPU/GPU/GC,
-thermal, battery or memory-growth budget pass is claimed.
+The current clean Android candidate is commit `8edc0867268800f0ad81067378ad590e1a166371`.
+The approved Lava `ST5GDW23LB004392` installed the exact APK and captured fighter-focus,
+tutorial, live ability/gadget, pause and lifecycle-resume evidence under
+`Builds/Local/Device/Screenshots/20260827-e6c321b`; lifecycle logcat had zero configured
+fatal markers. The device reports 4 KB pages. This is short visual/lifecycle evidence
+only; no sustained full-match frame-pacing, CPU/GPU/GC, thermal, battery or memory-growth
+budget pass is claimed.
 
 ## Exact current release candidate — `35de9f3` — 2026-08-24
 
