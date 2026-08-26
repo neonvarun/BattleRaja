@@ -86,6 +86,18 @@ namespace BattleRaja.Editor
                 if (AssetDatabase.LoadAssetAtPath<GameObject>(vfxPath) == null) return false;
             }
 
+            for (var i = 0; i < FighterPrefabPaths.Length; i++)
+            {
+                var fighter = AssetDatabase.LoadAssetAtPath<GameObject>(FighterPrefabPaths[i]);
+                if (fighter == null
+                    || fighter.transform.Find("ProductionRig") == null
+                    || fighter.GetComponent<Animator>() == null
+                    || fighter.GetComponent<ProductionVfxCue>() == null)
+                {
+                    return false;
+                }
+            }
+
             return true;
         }
 
