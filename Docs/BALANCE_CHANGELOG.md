@@ -60,8 +60,12 @@ Record every fighter, weapon, gadget, Aandhi or match-rule balance change with:
 - **Evidence**: fixed-tick 20-match trial `batch-20260826-213436607-9101.json`
   (19/20 with >=3 combat eliminations, 20/20 terminal in 306.01 s, 20/20
   bot-to-bot damage, zero protected or invalid samples, 0.33% out-of-range
-  attempts, 20/20 use of each gadget kind). A same-seed rerun reproduced the
-  command digest and terminal tick exactly; full 100-match confirmation remains open.
+  attempts, 20/20 use of each gadget kind). The exact-source 100-match confirmation
+  at `6d287a6` is `batch-20260826-220514174-9101.json` (SHA-256
+  `74A705D19CFB271CAB2988003AAD4F270860E3D55952F1B5022D75E6565070E5`): 100/100
+  in the 240-360 s window, 95/100 with >=3 combat eliminations, 100/100 with
+  bot-to-bot damage, and zero invalid/protected samples. A same-seed rerun on the
+  same source reproduced duration, command count and command digest exactly.
 
 ## 2026-08-26 — V1 bot interaction regression fix and saved art baseline
 

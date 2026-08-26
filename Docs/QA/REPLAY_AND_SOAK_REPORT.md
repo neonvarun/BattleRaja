@@ -1,18 +1,20 @@
 # BattleRaja Replay and Soak Report
 
-## Latest exact-source result — `aeda6de` — 2026-08-27
+## Latest exact-source result — `6d287a6` — 2026-08-27
 
-The presentation-only HUD/tutorial/results cleanup was verified without changing the
-authority or replay code. At exact source `aeda6debab89404991f55a0f663a88798dd9c944`,
+At exact source `6d287a657dd946c806ac54580b4d5a5ea1e53ee4`,
 `BATTLERAJA_SOAK_MATCHES=1000` passed **1/1**: 1,000 seeded matches executed twice
-(2,000 executions), zero divergence, NUnit duration **553.5464039 seconds**. XML
-`Builds/Local/V1GameplayTruth/TestResults/deep-soak-ui-aeda6de.xml` SHA-256
-`65BD32A7B978CB5679546EA3A7ACDFFC91261DC5D1A4CE86C3E280BB1B79C69F`; log SHA-256
-`46CC6D65C14B28A4315D576032E1BA8093E65B843011EE3660FE897401EB30A5`.
+(2,000 executions), zero divergence, NUnit duration **538.822974 seconds**. XML
+`Builds/Local/V1GameplayTruth/TestResults/deep-soak-final-6d287a6.xml` SHA-256
+`DB133AE5BD7855175FECA4ED909F0C67FCE4F9607C98A4FE355683B029122186`; log SHA-256
+`C3BBAEB98E9C5EA3F3C88B97B0C75953FD1CADC7F817E9FE87A470D9017D4D97`.
 
 Full EditMode and PlayMode at the same source also passed **140/140** and **81/81**.
-This remains deterministic offline evidence; it does not establish cross-machine
-floating-point parity, production-bot pacing, or physical full-route QA.
+The exact-source fixed-tick production-bot batch separately completed 100/100 matches
+in-window with 95/100 reaching at least three combat eliminations; a same-seed rerun
+reproduced its command digest and command count. This remains deterministic offline
+evidence; it does not establish cross-machine floating-point parity, physical full-route
+QA or sustained full-match performance.
 
 ## Current method — 2026-08-23
 

@@ -6,17 +6,19 @@
 
 ## Current state
 
-- **Latest exact-source UI/QA checkpoint (2026-08-27):** clean commit
-  `aeda6debab89404991f55a0f663a88798dd9c944` removes internal gadget/actor IDs,
-  keyboard/mouse instructions and authority/developer terminology from the HUD,
-  tutorial and results copy. Full EditMode is **140/140**, PlayMode is **81/81**, and
-  the 1,000-seed replay soak passes **1/1** with zero divergence across 2,000
-  executions. Matching release-shaped APK/AAB, static checker, bundletool/zipalign and
-  approved Lava opening-screen evidence are recorded in `Docs/V1_RELEASE_PLAN.md` P17.
-  The APK remains Android Debug-signed and the product remains a prototype: the strict
-  bot pacing gate is still failed (70/100 and 76/100 in-window), while full touch-route,
-  accessibility, sustained performance, final authored identity/cultural review,
-  signing, privacy/Data Safety and Play Console actions remain open.
+- **Latest exact-source release-gate checkpoint (2026-08-27):** clean commit
+  `6d287a657dd946c806ac54580b4d5a5ea1e53ee4` carries the fair production-bot policy
+  (0.9x bounded damage, 25x cadence, fixed canonical harness ticks) plus robust
+  regression diagnostics. Full EditMode is **140/140**, PlayMode is **81/81**, and the
+  1,000-seed replay soak passes **1/1** with zero divergence across 2,000 executions.
+  The exact-source 100-match bot batch completes **100/100** in the 240-360 s window,
+  with **95/100** matches reaching at least three combat eliminations and all invariant
+  checks passing. Matching APK/AAB, static checker, bundletool/zipalign, same-seed
+  command digest and approved Lava opening-screen evidence are recorded in
+  `Docs/V1_RELEASE_PLAN.md` P18. The APK remains Android Debug-signed and the product
+  remains a prototype: full touch-route, accessibility, sustained performance, genuine
+  16 KB runtime, final authored identity/cultural review, signing, privacy/Data Safety
+  and Play Console actions remain open.
 
 - **Working-tree gameplay truth update (2026-08-25):** unified action eligibility
   is now owned by `OfflineMatchAuthority`. Movement, ability displacement, attack,

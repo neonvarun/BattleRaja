@@ -53,7 +53,42 @@ pwsh -File Tools/Validation/check_v1_release_candidate.ps1 `
 This gate is technical and local only. It does not sign, upload, publish, or approve
 the final identity, privacy/Data Safety, content rating, cultural review or Play track.
 
-## Latest clean-source UI candidate — `aeda6de` — 2026-08-27
+## Latest exact-source fair-bot candidate — `6d287a6` — 2026-08-27
+
+The exact clean source is commit `6d287a657dd946c806ac54580b4d5a5ea1e53ee4`.
+Production bots use bounded `0.9x` damage, a `25x` cadence and a fixed canonical-tick
+editor harness.
+
+- Full EditMode: **140/140 passed**; full PlayMode: **81/81 passed**.
+- Deterministic soak: **1/1 passed**, 1,000 seeds x2 (2,000 executions), zero divergence;
+  XML SHA-256 `DB133AE5BD7855175FECA4ED909F0C67FCE4F9607C98A4FE355683B029122186`.
+- Exact-source 100-match bot report: **100/100** in the 240-360 second window,
+  **95/100** with >=3 combat eliminations, 100/100 bot-to-bot damage, zero invalid or
+  protected samples. Report SHA-256
+  `74A705D19CFB271CAB2988003AAD4F270860E3D55952F1B5022D75E6565070E5`.
+- APK: **40,525,610 bytes**, SHA-256
+  `888F796151789CD21F50CB966B42908D75610E45724D6D3C2BD105836F83373A`.
+- AAB: **36,350,785 bytes**, SHA-256
+  `535015D9B35C49B3A71EDE0A4059A05280C135C1914FD218FE076F91ACED061A`.
+- Checker: **0 errors / 0 warnings**, package `com.example.battleraja.m11`, API 28/36,
+  seven ARM64 libraries, no network permissions, static 16 KB and creative dimensions
+  passed. The artifact remains Debug-signed with certificate SHA-256
+  `b0a94c79c2d3fa527d4160b46a3067fbe25bd4db0e1a2dafe1a62b1bce41b28c`.
+- Bundletool `1.18.3` APKS SHA-256
+  `DE0FC268BF4165BB9A8D7EE03AC40A95D74709470459324AF38CEB5E79509FCA`; universal APK
+  SHA-256 `F2BB7148D26AB1B02085BEF33EFF7F770CDD68E2D795D49F6E7BD651735BC5CC`.
+  Direct and extracted APK `zipalign -c -P 16 -v 4` both passed.
+- Approved Lava `ST5GDW23LB004392` installed and launched the exact APK and universal
+  APK. Fresh six-sample, 30-second evidence found no configured fatal markers and
+  thermal status 0 before/after; PSS **42,759-235,905 KB**. Lava reports 4 KB pages.
+
+This is a technically validated local candidate, not a Play-ready release. Full physical
+touch/tutorial/spectator/results/rematch/settings/lifecycle review, accessibility,
+sustained full-match performance, genuine 16 KB runtime, authored final assets, cultural
+review, release signing, privacy/Data Safety, content rating and Play Console actions
+remain open.
+
+## Superseded clean-source UI candidate — `aeda6de` — 2026-08-27
 
 The exact clean source is commit `aeda6debab89404991f55a0f663a88798dd9c944`
 (`ui: remove internal HUD labels and keyboard hints`). The patch is presentation-only;

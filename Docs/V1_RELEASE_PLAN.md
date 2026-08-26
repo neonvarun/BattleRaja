@@ -1008,6 +1008,106 @@ therefore remains **Failed** on pacing, with its safety/invariant passes preserv
 | Final identity/signing, privacy/Data Safety, content rating and Play Console | **Blocked** | Owner/legal/store actions are not authorized |
 | Photon, PlayFab, accounts, online and Web release | **Not applicable** | Explicit V1 offline scope lock |
 
+### P18 - Fair production bots, exact-source Android rebuild and release-gate refresh - 2026-08-27
+
+The current runtime/presentation source is clean and committed at exact SHA
+`6d287a657dd946c806ac54580b4d5a5ea1e53ee4` (`test: keep production bot diagnostics and
+projectile checks robust`). The gameplay change preceding this commit makes production
+bots fair and deterministic: bot weapon damage is bounded to `0.9x` (never above the
+human definition), all production bots use a `25x` attack cadence, and the editor harness
+advances one canonical 30 Hz tick at a time. The final commit contains only the related
+regression-test correction after the gameplay source was validated.
+
+#### Exact-source automated evidence
+
+- Full EditMode: **140/140 passed**. XML SHA-256
+  `7DEF8576AB1015182FAF97048BE4DA07BEE20AEF4FE74E7C10867211ED26C1F7`; log SHA-256
+  `780C559942F8FCD974EED32D7CF05F00151262CC048EA3FB4D358B97E1601C1A`.
+- Full PlayMode: **81/81 passed**. XML SHA-256
+  `79945934704190F4F00FDC3FC21156D0511E0624787ECDCCBC4E000AD22AD2DF`; log SHA-256
+  `8D2B31FAC924D6ED67C1D7F196A85D4F16A43BABBF331E0D2D7E8F03773EACD3`.
+- Exact-source deterministic replay soak: **1/1 passed**, `BATTLERAJA_SOAK_MATCHES=1000`,
+  1,000 seeded matches executed twice (2,000 executions), zero divergence, NUnit
+  duration **538.822974 s**. XML SHA-256
+  `DB133AE5BD7855175FECA4ED909F0C67FCE4F9607C98A4FE355683B029122186`; log SHA-256
+  `C3BBAEB98E9C5EA3F3C88B97B0C75953FD1CADC7F817E9FE87A470D9017D4D97`.
+- Exact-source fixed-tick production-bot batch:
+  `Builds\\Local\\V1GameplayTruth\\ProductionBotReports\\batch-20260826-220514174-9101.json`,
+  SHA-256 `74A705D19CFB271CAB2988003AAD4F270860E3D55952F1B5022D75E6565070E5`.
+  All **100/100** matches completed in **306.013519 s** (100/100 in the 240-360 s
+  window; 0 over 360 s), with **95/100** having at least three combat eliminations and
+  100/100 having at least one combat elimination. All 100 matches had bot-to-bot
+  damage; Aandhi-only matches were 0; invalid-position and protected-warmup samples
+  were 0; maximum continuous stuck ticks were 0; and maximum outside participants was
+  6. The batch recorded 15,149 attacks (58 out of range, 0.383%), 38,813 ability
+  attempts (8,204 rejected, 21.137%), 297 successful gadgets (Umbrella 97, Dhol 100,
+  Tiffin 100), and 5,680,291 commands.
+- Exact-source same-seed production comparison:
+  `batch-20260826-220854693-9101.json` SHA-256
+  `7FED42B7077B519D7EF145600F6F27689FEA20D87E5C83490301C43C7DFA6901`; seed 9101
+  reproduced duration `306.013519 s`, command count `56,374` and command digest
+  `72EAEEA69632FECC`, matching the first match in the 100-match batch.
+
+#### Matching Android artifacts from `6d287a6`
+
+- APK `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`: **40,525,610 bytes**,
+  SHA-256 `888F796151789CD21F50CB966B42908D75610E45724D6D3C2BD105836F83373A`.
+- AAB `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`: **36,350,785 bytes**,
+  SHA-256 `535015D9B35C49B3A71EDE0A4059A05280C135C1914FD218FE076F91ACED061A`.
+- Composed checker: **0 errors / 0 warnings**, package `com.example.battleraja.m11`,
+  version `1.0.0`/code `100`, API 28/36, VIBRATE plus Unity dynamic receiver only,
+  seven ARM64 libraries, no other ABIs, static 16 KB ELF alignment passed, and
+  creative dimensions passed. Checker log SHA-256
+  `86E056E92F246CD7B7A139EB75D561CBCF4D589773DB4A19AA92680C167D652C`.
+- Bundletool `1.18.3` APKS SHA-256
+  `DE0FC268BF4165BB9A8D7EE03AC40A95D74709470459324AF38CEB5E79509FCA`; extracted
+  universal APK SHA-256 `F2BB7148D26AB1B02085BEF33EFF7F770CDD68E2D795D49F6E7BD651735BC5CC`.
+  Direct and extracted APK `zipalign -c -P 16 -v 4` both passed; direct and universal
+  `apksigner verify --print-certs` both passed with the Android Debug certificate
+  SHA-256 `b0a94c79c2d3fa527d4160b46a3067fbe25bd4db0e1a2dafe1a62b1bce41b28c`.
+
+#### Approved Lava evidence
+
+The exact APK and the bundletool universal APK were installed on approved Lava
+`ST5GDW23LB004392` (`LAVA LXX508`, API 34). The fresh touch route reached the live Solo
+Raja opening screen. Screenshots:
+
+- `Builds\\Local\\Device\\Screenshots\\20260827-6d287a6\\launch-menu.png`, SHA-256
+  `51B0D656F0AE932B4297BD457335EE5B06561C62BAB99751F3A5D6A803F3820A`.
+- `Builds\\Local\\Device\\Screenshots\\20260827-6d287a6\\solo-opening.png`, SHA-256
+  `35AB8CA2ED3DBECF29C89C8669FB705B38ECC91705C267B2A221A472B88C6588`.
+
+The six-sample, 30-second capture under
+`Builds\\Local\\Device\\Performance\\20260827-6d287a6-v1-30s` found no configured
+fatal markers and thermal status 0 before/after. Manifest SHA-256 is
+`C56D749210EE0050D3BEAF85E9B81063ABE76238E62FAB985F0D457AB066BDC8`; logcat SHA-256 is
+`E8058599DE4EC406EDFB1AD7C45B92F1BFCC0ED9EECA54D9FC1911F4B12F1AF2`. App PSS ranged
+**42,759-235,905 KB**. The phone reports 4 KB pages, so this is launch/opening evidence,
+not genuine 16 KB runtime proof or a sustained full-match performance pass.
+
+#### P18 gate classification
+
+| Gate | Status | Evidence / owner action |
+| --- | --- | --- |
+| Clean committed source, compile, full EditMode/PlayMode | **Passed** | `6d287a6`; 140/140 and 81/81 |
+| Deterministic replay/deep soak | **Passed** | 1,000 seeds x2; zero divergence; hashes above |
+| APK/AAB manifest, ARM64, static 16 KB, bundletool and zipalign | **Passed** | Technical checker and bundletool evidence above |
+| Production-bot 100-match release distribution | **Passed (automated)** | 100/100 in-window; 95/100 with >=3 combat eliminations; invariant checks pass |
+| Exact-source same-seed production command stream | **Passed** | Seed 9101 digest and command count reproduced |
+| Lava install, launch and bounded crash-marker smoke | **Passed** | Fresh install and six-sample capture; no configured fatal markers |
+| Full touch tutorial -> match -> spectator/results/rematch/settings/lifecycle route | **Blocked** | Requires owner-operated touch review |
+| Sustained full-match CPU/GPU/GC/thermal/battery budget | **Not run** | Current capture is launch/opening only |
+| Genuine 16 KB runtime device validation | **Blocked** | Approved Lava reports 4 KB pages; requires a genuine 16 KB environment |
+| Final authored art/audio, accessibility, balance and cultural review | **Blocked** | Human review and authored polish remain |
+| Final identity/signing, privacy/Data Safety, content rating and Play Console | **Blocked** | Owner/legal/store actions are not authorized |
+| Photon, PlayFab, accounts, online and Web release | **Not applicable** | Explicit V1 offline scope lock |
+
+This is a clean, technically validated offline Android candidate, not a Play-publishable
+release claim. The APK is debug-signed; physical full-route review, sustained match
+performance, genuine 16 KB runtime validation, final authored/accessibility/cultural
+approval, release signing, privacy/Data Safety, content rating, store assets and Play
+Console approval remain open.
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (automated foundation;

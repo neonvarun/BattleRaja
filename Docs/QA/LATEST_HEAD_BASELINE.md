@@ -1,23 +1,27 @@
 # Latest HEAD baseline
 
-## Latest exact-source UI candidate — `aeda6de` — 2026-08-27
+## Latest exact-source release-gate candidate — `6d287a6` — 2026-08-27
 
-The current clean source is commit `aeda6debab89404991f55a0f663a88798dd9c944`
-(`ui: remove internal HUD labels and keyboard hints`). This is a presentation-only
-change: authority, replay, bot, collision and match rules are unchanged. Full EditMode
-is **140/140**, full PlayMode is **81/81**, and the deterministic replay soak is **1/1
-passed** with 1,000 seeds executed twice (2,000 executions) and zero divergence.
+The current clean source is commit `6d287a657dd946c806ac54580b4d5a5ea1e53ee4`
+(`test: keep production bot diagnostics and projectile checks robust`). The gameplay
+source uses bounded fair bot damage (`0.9x`), a `25x` production cadence and a fixed
+canonical-tick editor harness. Full EditMode is **140/140**, full PlayMode is **81/81**,
+and the deterministic replay soak is **1/1 passed** with 1,000 seeds executed twice
+(2,000 executions) and zero divergence.
 
 The matching APK/AAB, checker, bundletool and zipalign hashes are indexed in
-`Docs/V1_RELEASE_PLAN.md` P17. The exact APK installed on approved Lava
+`Docs/V1_RELEASE_PLAN.md` P18. The exact-source 100-match bot report completes **100/100**
+in the 240-360 second window, with **95/100** matches reaching at least three combat
+eliminations, 100/100 bot-to-bot damage and zero invalid/protected samples. A same-seed
+run reproduces duration, command count and command digest. The exact APK installed on
+approved Lava
 `ST5GDW23LB004392` and reached the actual live opening screen by touch navigation.
 The fresh six-sample, 30-second capture found no configured fatal markers and thermal
 status 0 before/after; Lava reports 4 KB pages and this remains opening-screen evidence,
 not a sustained full-match performance or 16 KB runtime pass. The APK is Android Debug-
 signed with temporary package identity `com.example.battleraja.m11` and is not
-publishable. Production-bot pacing remains failed (P15: 70/100 and 76/100 in the
-240–360 second window); full physical route, accessibility, authored polish, signing,
-privacy/Data Safety and Play/legal gates remain open.
+publishable. Full physical route, accessibility, authored polish, signing, privacy/Data
+Safety and Play/legal gates remain open.
 
 ## Superseded current-source continuation — 2026-08-26
 
