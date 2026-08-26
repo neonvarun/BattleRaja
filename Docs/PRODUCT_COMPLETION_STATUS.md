@@ -1,7 +1,25 @@
 # Product completion status
 
-Updated: 2026-08-26
+Updated: 2026-08-27
 Classification: **prototype**
+
+## Latest exact-source release-gate checkpoint — `6d287a6` / docs `b734c1b`
+
+The clean runtime source is `6d287a657dd946c806ac54580b4d5a5ea1e53ee4` on
+`codex/v1-playstore-release`; documentation evidence is committed at `b734c1b`.
+Full EditMode and PlayMode pass **140/140** and **81/81**. The exact-source replay soak
+passes **1/1** with 1,000 seeded matches executed twice (2,000 executions) and zero
+divergence. The fixed-tick production-bot batch completes **100/100** matches in the
+240-360 second window, with **95/100** reaching at least three combat eliminations,
+100/100 bot-to-bot damage and zero invalid/protected samples. Matching debug-signed
+APK/AAB, bundletool and static 16 KB evidence, exact-seed comparison, and approved Lava
+opening-screen/performance evidence are indexed in `Docs/V1_RELEASE_PLAN.md` P18.
+
+Status remains **prototype**, not Play-ready: the package uses temporary identity and
+Android Debug signing; Lava reports 4 KB pages; the full physical tutorial/match/
+spectator/results/rematch/settings/accessibility/lifecycle route and sustained full-match
+performance are not yet evidenced on the exact candidate; and final authored/cultural,
+privacy, content-rating, release-signing and Play Console approvals remain owner-controlled.
 
 ## Latest current-source continuation — 2026-08-26
 
