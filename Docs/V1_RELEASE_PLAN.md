@@ -1491,6 +1491,39 @@ it does not alter gameplay or release classification.
 P23 strengthens exact-candidate performance evidence without converting a bounded Lava
 diagnostic into a general mid-range-device or Play-release performance claim.
 
+### P24 - Sustained Lava touch movement probe - 2026-08-27
+
+The exact `2080383` APK remained installed on approved Lava `ST5GDW23LB004392` while the
+replayable tutorial was opened with the persisted LEFT-HANDED layout. A controlled
+`adb shell input motionevent` sequence held the right MOVE stick, sent repeated MOVE
+updates, and released it. The knob visibly tracked the drag and the tutorial changed
+from `WAITING FOR ACTION` to `CONTINUE`, proving that the physical touch path can
+produce the movement lesson's genuine input signal on this candidate. The capture
+ended after the match naturally reached results, so it is evidence for the movement
+lesson only, not a complete tutorial route or comfort approval.
+
+Evidence:
+
+- `Builds/Local/Device/Screenshots/continuation-touch-hold.png`, SHA-256
+  `94432FE6B7E261E219C809CB8F2474C2B50F31F7DFAB3F76170C7790C6B6461B` — exact
+  candidate shows the movement lesson unlocked (`CONTINUE`) while the live arena,
+  results surface and touch controls remain visible.
+- Gesture command sequence: `DOWN 900 2030`, `MOVE 1000 2030`, then repeated
+  `MOVE 1000 1950`, followed by `UP 1000 1950`; coordinates are the 1080x2460
+  approved Lava display and the stick was visibly at the right-hand MOVE position.
+
+#### P24 gate delta
+
+| Gate | Status | Evidence / owner action |
+| --- | --- | --- |
+| Physical tutorial movement input on exact candidate | **Partially passed** | Sustained right-stick touch unlocked `CONTINUE`; screenshot/hash above |
+| Full action-by-action tutorial and end-to-end touch route | **Blocked / partially evidenced** | Remaining aim, attack, ability, gadget, Aandhi, elimination, victory, replay, settings, lifecycle and comfort review still require owner-operated Lava validation |
+| All other P23 gates | **Unchanged** | Sustained performance normalization, genuine 16 KB runtime, authored/accessibility/cultural review, signing and Play/legal gates remain open |
+
+P24 removes the earlier uncertainty that a virtual stick could not be reached by a
+physical gesture, but it does not convert one successful movement lesson into a full
+release QA pass.
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (automated foundation;

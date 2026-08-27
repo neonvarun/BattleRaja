@@ -11,7 +11,7 @@ validation is **0 errors / 0 warnings**. The deterministic replay soak remains a
 with 1,000 seeds executed twice (2,000 executions) and zero divergence.
 
 The matching APK/AAB, checker, bundletool and zipalign hashes are indexed in
-`Docs/V1_RELEASE_PLAN.md` P22. The exact-source 100-match bot report completes **100/100**
+`Docs/V1_RELEASE_PLAN.md` P22-P24. The exact-source 100-match bot report completes **100/100**
 in the 240-360 second window, with **95/100** matches reaching at least three combat
 eliminations, 100/100 bot-to-bot damage and zero invalid/protected samples. A same-seed
 run reproduces duration, command count and command digest. The exact APK installed on

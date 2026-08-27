@@ -76,7 +76,7 @@ Solo Raja opening. The exact-candidate SurfaceFlinger diagnostic recorded median
 frame pacing and budget approval remain open. Full action-by-action tutorial and
 end-to-end route, sustained performance, genuine 16 KB runtime, authored review,
 signing and Play actions remain owner-controlled gates; see
-`Docs/V1_RELEASE_PLAN.md` P22-P23.
+`Docs/V1_RELEASE_PLAN.md` P22-P24.
 
 ## Latest exact-source tutorial-visibility candidate — `e6c321b` — 2026-08-27
 

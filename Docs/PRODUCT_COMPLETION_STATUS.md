@@ -14,7 +14,8 @@ batch remain applicable from the gameplay-only source: 1,000 seeded matches x2 w
 zero divergence, and 100/100 bot matches in-window with 95/100 reaching at least three
 combat eliminations. Matching debug-signed APK/AAB, bundletool/static 16 KB evidence,
 fresh approved-Lava settings/tutorial/live-match screenshots and SurfaceFlinger plus
-120-second match diagnostics are indexed in `Docs/V1_RELEASE_PLAN.md` P22-P23. The
+120-second match diagnostics and a sustained Lava touch movement probe are indexed in
+`Docs/V1_RELEASE_PLAN.md` P22-P24. The
 diagnostics recorded median 16.535 ms and p95 16.567 ms frame intervals and bounded
 memory/thermal values, but sustained performance approval remains open because normalized
 CPU/GPU/GC/endurance evidence is absent.

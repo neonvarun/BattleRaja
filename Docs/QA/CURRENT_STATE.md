@@ -40,7 +40,11 @@ and static 16 KB alignment. The APK and bundletool universal APK installed on ap
 Lava `ST5GDW23LB004392`; actual menu-to-opening touch navigation reached a live match
 screen with player-facing labels `GADGET TIFFIN`, `READY` and `SPAWN SHIELD`.
 Fresh 30-second device evidence found no configured fatal markers, but the device reports
-4 KB pages and the capture is not a sustained full-match performance pass.
+4 KB pages and the capture is not a sustained full-match performance pass. A later
+sustained right-stick touch probe on the exact candidate unlocked the tutorial movement
+lesson (`Builds/Local/Device/Screenshots/continuation-touch-hold.png`, SHA-256
+`94432FE6B7E261E219C809CB8F2474C2B50F31F7DFAB3F76170C7790C6B6461B`); the remaining
+action-by-action route is still open.
 
 The exact Lava candidate now also shows persisted Maya focus alignment, live ability/gadget
 feedback, pause overlay and lifecycle resume; the tutorial opening visibly keeps the arena,
@@ -50,7 +54,8 @@ movement. The same match reached spectator/results and REMATCH returned to a fre
 eight-alive opening. A live-match SurfaceFlinger diagnostic recorded 126 valid timestamps with
 median 16.535 ms and p95 16.567 ms; a separate 120-second exact-match capture held
 PSS to 267,935-272,772 KB, thermal status 0 and zero configured fatal markers across
-12 focused samples. These are measurement evidence only, not performance approval.
+12 focused samples. These are measurement evidence only, not performance approval. The
+latest touch probe and gate delta are recorded in `Docs/V1_RELEASE_PLAN.md` P24.
 Action-by-action tutorial progression/full-route, accessibility, normalized CPU/GPU/GC/
 repeated-match endurance, genuine 16 KB runtime, authored final art/audio, cultural
 review, release signing and Play/legal gates remain open.
