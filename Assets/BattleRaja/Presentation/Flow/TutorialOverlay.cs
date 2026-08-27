@@ -141,7 +141,11 @@ namespace BattleRaja.Presentation.Flow
 
             // A lesson performed before its turn must not satisfy a later lesson.
             // Re-baseline the player telemetry whenever the explicit continue
-            // gate advances the walkthrough.
+            // gate advances the walkthrough. Gadget pickup is the one exception:
+            // the real authority can collect the tutorial's nearby pickup while
+            // the earlier lessons are still on screen, so reconcile that already
+            // authoritative inventory state when the Gadget lesson begins.
+            ReconcileGadgetLessonState();
             CaptureTelemetryBaseline();
             if (_steps.IsComplete) SaveCompletion();
             Refresh();
@@ -241,6 +245,24 @@ namespace BattleRaja.Presentation.Flow
                 match.Simulation.TryGetSnapshot(new CombatEntityId(1), out var playerSnapshot)
                 ? playerSnapshot.Eliminations
                 : 0;
+        }
+
+        private void ReconcileGadgetLessonState()
+        {
+            if (_steps.Current != TutorialStep.Gadget || _playerGadget == null) return;
+
+            // A fresh tutorial scene has no prior user telemetry. If the authority
+            // collected or consumed the nearby pickup before the card became active,
+            // preserve those real events instead of trapping the player at WAITING.
+            if (_playerGadget.SuccessfulPickupCount > 0 || _playerGadget.HasGadget)
+            {
+                _steps.ObserveAction(TutorialAction.GadgetCollected);
+            }
+
+            if (_playerGadget.SuccessfulUseCount > 0)
+            {
+                _steps.ObserveAction(TutorialAction.GadgetUsed);
+            }
         }
 
         private void SaveCompletion()

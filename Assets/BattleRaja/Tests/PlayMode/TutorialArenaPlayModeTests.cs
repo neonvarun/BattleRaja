@@ -3,7 +3,9 @@ using System.Linq;
 using BattleRaja.Core.Application;
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.AI;
+using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Flow;
+using BattleRaja.Presentation.Gadgets;
 using BattleRaja.Presentation.Match;
 using NUnit.Framework;
 using UnityEngine;
@@ -157,6 +159,39 @@ namespace BattleRaja.Tests.PlayMode
                 else PlayerPrefs.DeleteKey(leftHandedKey);
                 PlayerPrefs.Save();
             }
+        }
+
+        [UnityTest]
+        public IEnumerator PreCollectedGadgetIsReconciledWhenGadgetLessonBegins()
+        {
+            PlayerPrefs.DeleteKey("battleraja.tutorial.completed");
+            PlayerPrefs.Save();
+
+            yield return SceneManager.LoadSceneAsync("TutorialArena", LoadSceneMode.Single);
+            yield return new WaitForSeconds(0.5f);
+
+            var overlay = Object.FindAnyObjectByType<TutorialOverlay>();
+            var gadget = Object.FindObjectsByType<GadgetUser>()
+                .First(user => user.GetComponent<CombatTarget>()?.Id.Value == 1);
+            Assert.That(gadget.HasGadget, Is.True,
+                "The tutorial authority should collect the nearby Tiffin before the later lesson.");
+
+            var actions = new[]
+            {
+                TutorialAction.Movement,
+                TutorialAction.Aim,
+                TutorialAction.BasicAttack,
+                TutorialAction.Ability
+            };
+            for (var i = 0; i < actions.Length; i++)
+            {
+                Assert.That(overlay.ObserveAction(actions[i]), Is.True, $"action {actions[i]}");
+                overlay.Advance();
+            }
+
+            Assert.That(overlay.CurrentStep, Is.EqualTo(TutorialStep.Gadget));
+            Assert.That(overlay.ObserveAction(TutorialAction.GadgetUsed), Is.True,
+                "The already-authoritative pickup must count before the use sub-step.");
         }
 
         [UnityTest]
