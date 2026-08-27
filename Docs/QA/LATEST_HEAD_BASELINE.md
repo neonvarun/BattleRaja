@@ -1,8 +1,8 @@
 # Latest HEAD baseline
 
-## Latest exact-source physical/tutorial and technical recheck — `97e7dd0` / runtime `126714a` — 2026-08-27
+## Latest exact-source physical/tutorial and technical recheck — `f8570af` / runtime `126714a` — 2026-08-27
 
-Documentation tip `97e7dd0` is clean; the runtime-bearing source and exact release APK/AAB
+Documentation tip `f8570af` is clean; the runtime-bearing source and exact release APK/AAB
 remain `126714a`. Full EditMode is **140/140**, full PlayMode is **84/84**, and static
 validation is **0 errors / 0 warnings**. The exact Lava `ST5GDW23LB004392` route unlocked
 Movement, Aim, Basic Attack, Ability, Gadget and Aandhi after genuine touch input; the

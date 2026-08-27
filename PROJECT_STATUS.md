@@ -7,7 +7,7 @@
 ## Current state
 
 - **Latest exact-source release-gate checkpoint (2026-08-27):** runtime-bearing source
-  `126714a` remains unchanged beneath documentation tip `97e7dd0`. Full EditMode is
+  `126714a` remains unchanged beneath documentation tip `f8570af`. Full EditMode is
   **140/140** and PlayMode is **84/84**; static validation is **0 errors / 0 warnings**.
   The exact-source production-bot release assertions complete **100/100** seeded
   matches, and the exact Lava touch route now proves Movement, Aim, Basic Attack,

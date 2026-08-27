@@ -53,9 +53,9 @@ pwsh -File Tools/Validation/check_v1_release_candidate.ps1 `
 This gate is technical and local only. It does not sign, upload, publish, or approve
 the final identity, privacy/Data Safety, content rating, cultural review or Play track.
 
-## Latest exact-source technical and touch follow-up — `97e7dd0` / runtime `126714a` — 2026-08-27
+## Latest exact-source technical and touch follow-up — `f8570af` / runtime `126714a` — 2026-08-27
 
-The runtime-bearing source remains `126714a`; documentation tip `97e7dd0` is clean. Full
+The runtime-bearing source remains `126714a`; documentation tip `f8570af` is clean. Full
 EditMode is **140/140**, full PlayMode is **84/84**, and static validation is **0 errors /
 0 warnings**. The exact APK is **40,526,074 bytes** (SHA-256
 `A29EF1F2F28A3EAB6820F905DC57196E5496DF76A3DCFE32B65DB41BDCF26923`) and the matching AAB
