@@ -1,6 +1,6 @@
 # BattleRaja Replay and Soak Report
 
-## Latest durable production replay result — current source — 2026-08-27
+## Latest durable production replay result — source `2a113e0` — 2026-08-27
 
 The development-only production bot harness now persists ordered authority inputs,
 per-tick participant snapshots and canonical hashes in a checksummed Unity-independent

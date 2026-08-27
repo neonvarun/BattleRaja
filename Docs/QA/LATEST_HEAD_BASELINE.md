@@ -1,6 +1,6 @@
 # Latest HEAD baseline
 
-## Latest durable production replay capture — current source — 2026-08-27
+## Latest durable production replay capture — source `2a113e0` — 2026-08-27
 
 The development-only production bot harness now persists the exact ordered authority
 command stream, per-tick participant snapshots and canonical hashes in a checksummed,

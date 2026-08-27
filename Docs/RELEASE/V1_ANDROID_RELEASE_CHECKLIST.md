@@ -53,6 +53,16 @@ pwsh -File Tools/Validation/check_v1_release_candidate.ps1 `
 This gate is technical and local only. It does not sign, upload, publish, or approve
 the final identity, privacy/Data Safety, content rating, cultural review or Play track.
 
+## Latest durable replay source — `2a113e0` — 2026-08-27
+
+The current release-shaped APK/AAB were rebuilt from source commit
+`2a113e0c4798e8e51a43379a0fa0facd7e8f0fe1`. The clean release checker passed **0 errors /
+0 warnings**; evidence is `Builds/Local/Device/release-checker-2a113e0.log` (SHA-256
+`6CE4C48CDC734A1038139EFF67CF8196E51ECB8FA1DA4840828C9CCE37F69A80`). APK SHA-256 is
+`52B04A015656BB5480FBBCF5879578313D1B527E32BA205BBB9F102449C0986E`; AAB SHA-256 is
+`9FA87846E85423499AC8A9305631091A4D38ADA8F0A49D03853F0B14B954499F`. P42 in
+`Docs/V1_RELEASE_PLAN.md` records the durable replay capture and exact-file verification.
+
 ## Latest exact-source gadget-reconciliation candidate — `754837e` — 2026-08-27
 
 Runtime-bearing candidate commit `754837e4311b609560c63fa90558a1d29acec9cd` is the

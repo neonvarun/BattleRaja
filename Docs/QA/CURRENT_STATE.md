@@ -24,7 +24,7 @@ remain open.
 
 The runtime/presentation source is clean and committed on branch
 `codex/v1-playstore-release` at exact candidate commit
-`754837e4311b609560c63fa90558a1d29acec9cd`. Full EditMode is **140/140**, full
+`2a113e0c4798e8e51a43379a0fa0facd7e8f0fe1`. Full EditMode is **141/141**, full
 PlayMode is **86/86**, and static validation is **0 errors / 0 warnings**. The new
 PlayMode regression proves that a pre-collected tutorial gadget is reconciled when its
 lesson begins; the earlier live-authority Elimination regression remains covered. The
@@ -57,9 +57,9 @@ The fresh exact-runtime fixed-tick production-bot batch completed **100/100** te
 matches in the 240-360 second window, **94/100** with at least three combat eliminations,
 **100/100** with bot-to-bot damage, and zero protected/invalid/stuck invariant samples.
 Its report and hashes are indexed in `Docs/V1_RELEASE_PLAN.md` P38.
-The exact APK/AAB are debug-signed local candidates. The release checker reports
-**0 errors / 0 warnings**, seven ARM64 libraries, no network permissions and static
-16 KB alignment. The APK installed and launched on approved Lava
+The exact APK/AAB are debug-signed local candidates. The final clean release checker
+reports **0 errors / 0 warnings**, seven ARM64 libraries, no network permissions and
+static 16 KB alignment; its evidence is indexed in P42. The APK installed and launched on approved Lava
 `ST5GDW23LB004392`, which reports 4 KB pages; this is not genuine runtime-16-KB proof or
 sustained performance approval.
 

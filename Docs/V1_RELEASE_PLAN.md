@@ -2291,6 +2291,9 @@ GPU, GC, battery-drain, thermal-throttling or mid-range-device approval.
 
 ### P42 - Durable production replay capture and exact-artifact re-execution - 2026-08-27
 
+The focused source/docs checkpoint for this continuation is commit
+`2a113e0c4798e8e51a43379a0fa0facd7e8f0fe1` (`replay: persist ordered production captures`).
+
 The offline replay foundation now has a versioned, Unity-independent `.brr` file format.
 `MatchReplayFileSerializer` writes an explicit magic/version envelope, payload length and
 SHA-256 checksum, and rejects truncation, trailing bytes or checksum corruption. Replay
@@ -2331,6 +2334,13 @@ bytes (SHA-256 `9FA87846E85423499AC8A9305631091A4D38ADA8F0A49D03853F0B14B954499F
 log SHA-256 is `2D7C3D105AEE2CF7EE95D6B1C8B822B14F673786C90AE6CBE8D68F114BD5A9CD`.
 These remain temporary-ID, debug-signed local artifacts; no publication or final signing
 claim is made.
+
+The clean final release checker was rerun from that commit and passed **0 errors / 0 warnings**.
+Its captured output is `Builds/Local/Device/release-checker-2a113e0.log` (3,214 bytes;
+SHA-256 `6CE4C48CDC734A1038139EFF67CF8196E51ECB8FA1DA4840828C9CCE37F69A80`). It confirms
+APK SHA-256 `52B04A015656BB5480FBBCF5879578313D1B527E32BA205BBB9F102449C0986E`, AAB
+SHA-256 `9FA87846E85423499AC8A9305631091A4D38ADA8F0A49D03853F0B14B954499F`, absent
+network permissions, ARM64/static 16 KB alignment and a clean worktree.
 
 #### P42 gate delta
 
