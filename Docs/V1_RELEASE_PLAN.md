@@ -1496,33 +1496,48 @@ diagnostic into a general mid-range-device or Play-release performance claim.
 The exact `2080383` APK remained installed on approved Lava `ST5GDW23LB004392` while the
 replayable tutorial was opened with the persisted LEFT-HANDED layout. A controlled
 `adb shell input motionevent` sequence held the right MOVE stick, sent repeated MOVE
-updates, and released it. The knob visibly tracked the drag and the tutorial changed
-from `WAITING FOR ACTION` to `CONTINUE`, proving that the physical touch path can
-produce the movement lesson's genuine input signal on this candidate. The capture
-ended after the match naturally reached results, so it is evidence for the movement
-lesson only, not a complete tutorial route or comfort approval.
+updates, and released it. The knob visibly tracked the drag. The retained screenshot
+shows `CONTINUE`, but it was captured after the run had already reached results, so the
+visual alone cannot attribute the unlock to that gesture rather than another state
+change. A temporary local Development APK, built from commit `920edc2` with logging
+only in `MovementPlayerAgent`, isolated the path: the same gesture produced nonzero
+`MovementInputFrame` values with `authority=False`, `external=False`, and
+`locked=False`, and `CharacterController.Move` produced displacement. The diagnostic
+build is not a release artifact and does not prove repeatable alive-state progression
+or the full tutorial route.
 
 Evidence:
 
 - `Builds/Local/Device/Screenshots/continuation-touch-hold.png`, SHA-256
   `94432FE6B7E261E219C809CB8F2474C2B50F31F7DFAB3F76170C7790C6B6461B` — exact
-  candidate shows the movement lesson unlocked (`CONTINUE`) while the live arena,
-  results surface and touch controls remain visible.
+  candidate shows the movement lesson card with `CONTINUE` while the live arena,
+  results surface and touch controls remain visible; because results were already
+  shown, this is not standalone attribution of the unlock.
 - Gesture command sequence: `DOWN 900 2030`, `MOVE 1000 2030`, then repeated
   `MOVE 1000 1950`, followed by `UP 1000 1950`; coordinates are the 1080x2460
   approved Lava display and the stick was visibly at the right-hand MOVE position.
+- Local diagnostic-only follow-up (not a release build): APK
+  `Builds/M11/Android/BattleRaja-M11.apk`, SHA-256
+  `E00EE17C87371565F4EC42B3008D47127A2A1D198F6D8D8C753DBE51365D2849`; fresh
+  movement screenshot `Builds/Local/Device/Screenshots/diagnostic-tutorial-touch-down-mid.png`,
+  SHA-256 `1D2EE2C26DBFAE1EAD0F6B70D728238866676635A4E290CACF1E57095FBFBA61`; the
+  paired log `diagnostic-touch-down-logcat.txt`, SHA-256
+  `4B9C5F4A7E7B2D8F646241766E85785B38CD8FC129FC1EE864B440E08E4DBC5B`, records
+  nonzero movement input and post-`Move` displacement. The screenshot reached
+  results during the longer probe, so it remains diagnostic rather than an approval.
 
 #### P24 gate delta
 
 | Gate | Status | Evidence / owner action |
 | --- | --- | --- |
-| Physical tutorial movement input on exact candidate | **Partially passed** | Sustained right-stick touch unlocked `CONTINUE`; screenshot/hash above |
+| Physical tutorial movement input on exact candidate | **Partially passed / attribution limited** | Touch knob and input delivery are evidenced; the exact-candidate `CONTINUE` screenshot was captured after results, and the diagnostic build is non-release, so repeatable alive-state lesson attribution remains open |
 | Full action-by-action tutorial and end-to-end touch route | **Blocked / partially evidenced** | Remaining aim, attack, ability, gadget, Aandhi, elimination, victory, replay, settings, lifecycle and comfort review still require owner-operated Lava validation |
 | All other P23 gates | **Unchanged** | Sustained performance normalization, genuine 16 KB runtime, authored/accessibility/cultural review, signing and Play/legal gates remain open |
 
 P24 removes the earlier uncertainty that a virtual stick could not be reached by a
-physical gesture, but it does not convert one successful movement lesson into a full
-release QA pass.
+physical gesture. It does not convert a results-state screenshot or a temporary
+diagnostic build into proof of repeatable alive-state progression, a complete
+action-gated lesson, or a full release QA pass.
 
 ## Later checkpoints
 

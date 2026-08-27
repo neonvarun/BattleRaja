@@ -41,10 +41,13 @@ Lava `ST5GDW23LB004392`; actual menu-to-opening touch navigation reached a live 
 screen with player-facing labels `GADGET TIFFIN`, `READY` and `SPAWN SHIELD`.
 Fresh 30-second device evidence found no configured fatal markers, but the device reports
 4 KB pages and the capture is not a sustained full-match performance pass. A later
-sustained right-stick touch probe on the exact candidate unlocked the tutorial movement
-lesson (`Builds/Local/Device/Screenshots/continuation-touch-hold.png`, SHA-256
-`94432FE6B7E261E219C809CB8F2474C2B50F31F7DFAB3F76170C7790C6B6461B`); the remaining
-action-by-action route is still open.
+exact-candidate touch probe showed the MOVE knob tracking and a `CONTINUE` card
+(`Builds/Local/Device/Screenshots/continuation-touch-hold.png`, SHA-256
+`94432FE6B7E261E219C809CB8F2474C2B50F31F7DFAB3F76170C7790C6B6461B`), but the
+screenshot was captured after results, so it does not independently attribute the
+unlock to that gesture. A temporary diagnostic-only build from `920edc2` logged
+nonzero movement input and CharacterController displacement; repeatable alive-state
+lesson attribution and the remaining action-by-action route are still open.
 
 The exact Lava candidate now also shows persisted Maya focus alignment, live ability/gadget
 feedback, pause overlay and lifecycle resume; the tutorial opening visibly keeps the arena,
