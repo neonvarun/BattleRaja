@@ -1,5 +1,20 @@
 # Latest HEAD baseline
 
+## Latest exact-candidate Lava three-cycle probe — runtime `754837e` / clean tip `3b8b6a1` — 2026-08-27
+
+The exact APK (`788181073E5EFCB2F5F0AECEF20E0372362BFCD2B83928CA010153009FDF99B3`)
+was exercised on approved Lava `ST5GDW23LB004392` with real touch input through Solo
+Raja, Bijli selection, player defeat, spectator mode, Aandhi Final Circle, Results and
+two subsequent Rematch transitions. Two complete Results screens and a fresh third-cycle
+opening are retained in `Builds/Local/Device/Screenshots/20260827-final-route/`; settings
+states for left-handed, reduced flashes, high contrast, aim assist and text scaling were
+also captured and restored. A 180-second, six-sample performance capture found no
+configured fatal markers, thermal status 0 throughout, unchanged 63% USB-powered battery,
+and post-startup PSS 239,626-243,910 KB / RSS 355,300-359,580 KB. Manifest/logcat hashes
+and exact gate classifications are indexed in `Docs/V1_RELEASE_PLAN.md` P41. This is
+bounded route evidence only; full tutorial, all-fighter human comfort/fun and normalized
+CPU/GPU/GC/frame/battery budgets remain open.
+
 ## Latest current-tip deterministic replay soak — runtime `754837e` / docs `98888d3` — 2026-08-27
 
 From clean documentation tip `98888d3`, Unity `6000.5.6f1` ran the filtered

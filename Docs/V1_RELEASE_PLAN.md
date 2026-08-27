@@ -2249,6 +2249,45 @@ is `Builds/Local/Device/release-checker-4dca4af.log` (SHA-256
 | Cross-machine floating-point parity | **Not run** | Same-machine deterministic evidence does not establish cross-device parity |
 | Durable production replay-file serialization | **Not run** | This remains outside the current offline QA harness |
 
+### P41 - Exact-candidate Lava full-loop and three-cycle bounded probe - 2026-08-27
+
+The exact candidate APK (`788181073E5EFCB2F5F0AECEF20E0372362BFCD2B83928CA010153009FDF99B3`)
+was exercised on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34),
+with no command sent to the prohibited Oppo device. Real touch input reached the menu,
+Solo Raja mode, fighter selection, live Bijli match, player defeat, spectator view,
+settings, Aandhi Final Circle, Results, and Rematch. Two Results screens show complete
+placement tables; a third Rematch cycle started and returned to the menu within the
+bounded capture. Settings toggles for left-handed controls, reduced flashes, high
+contrast, aim assist and text scaling were each exercised and then restored. Captures
+and hashes are retained under `Builds/Local/Device/Screenshots/20260827-final-route/`;
+representative files are `fighter-select.png` (`44C01B6F6B229A33B489E91AEFF3C905BCBC5D9252701ED2CB9E7433FF15D96D`),
+`rematch-results.png` (`F445C37E043EE89BEEFA63670385A402BAAE214ABB04FCBC7F882229122FF0F0`),
+`rematch-opening.png` (`80DF4D23E58B96B51CC0CB8633044150525C745AA6A24A5794DE49AF2EAC81E7`),
+`settings-text-plus.png` (`EFD96AFE3663F786F44FB4811139921C5EDB9C4758D5A37AD6BB11FA015D5381`),
+and `settings-restored.png` (`D6FA14580052BE7C29AD261E7169658CF32F2C57BCADBFA537D531A5CE429934`).
+
+The repository performance capture ran for 180 seconds at 30-second intervals while
+the third cycle was active. Manifest `Builds/Local/Device/Performance/20260827-final-route-180s/manifest.json`
+has SHA-256 `7E8CF3D731B95815F4C1AA9347731A34BE749834CF7EE9153BCA5081818C1301`; captured
+logcat has SHA-256 `7C4D26B55615D3AFC2BF3A891989F56D558A16F0FA59EAB84E2E50868793BBCB` and
+no configured fatal markers. Thermal status was 0 in all six samples; battery remained
+at 63% (USB-powered). PSS was 70,103 KB in the startup sample and 239,626-243,910 KB
+after startup; RSS was 154,810 KB initially and 355,300-359,580 KB thereafter. This
+is stronger physical route and bounded endurance evidence, not normalized frame-time,
+GPU, GC, battery-drain, thermal-throttling or mid-range-device approval.
+
+#### P41 gate delta
+
+| Gate | Classification | Evidence / limitation |
+| --- | --- | --- |
+| Exact Lava menu → Solo Raja → fighter selection → live match | **Passed** | Real touch route on exact candidate; screenshots retained |
+| Player defeat → spectator → Aandhi Final Circle → Results | **Passed** | Two complete Results captures with placement tables |
+| Rematch transition and three-cycle bounded observation | **Passed (bounded)** | Two Results screens and a fresh third-cycle opening; third capture returned to menu |
+| Settings/accessibility toggle response and restoration | **Passed (bounded)** | Left-handed, reduced flashes, high contrast, aim assist and text-scale states captured; defaults restored |
+| 180-second full-route diagnostic stability | **Passed (bounded)** | Six samples, thermal status 0, battery level unchanged, no configured fatal markers |
+| Full action-by-action tutorial, all-fighter human route and comfort/fun approval | **Blocked** | Owner-operated tutorial, fighter comparison and human judgment remain required |
+| Sustained performance against documented CPU/GPU/GC/frame/battery budgets | **Not run** | Capture lacks normalized frame histogram, GPU/GC and unplugged endurance evidence |
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (100-match terminal,

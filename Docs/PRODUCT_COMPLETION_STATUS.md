@@ -17,6 +17,12 @@ all three gadgets were used successfully; report hashes are indexed in
   1,000-seed deterministic replay deep soak (2,000 executions, zero divergence),
   indexed in P40.
 
+The exact candidate also completed a bounded approved-Lava route through player defeat,
+spectator, Aandhi Final Circle, Results and two Rematch transitions, with settings/
+accessibility toggles exercised and restored; a 180-second diagnostic remained fatal-free
+with thermal status 0. This strengthens device evidence but does not replace full tutorial,
+all-fighter human comfort/fun or normalized performance-budget review; see P41.
+
 The matching APK/AAB pass the local release checker with **0 errors / 0 warnings**,
 offline permissions, API 28/36, ARM64-only payload, static 16 KB ELF alignment and
 store-creative dimensions. They are temporary-ID Android Debug-signed artifacts. On

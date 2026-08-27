@@ -33,6 +33,15 @@ divergence, and the current-tip rerun also passes with the same result. Exact cu
 XML/log hashes are indexed in `Docs/V1_RELEASE_PLAN.md` P40; this is same-machine evidence
 and does not establish cross-machine parity or durable production replay serialization.
 
+The same exact candidate also completed a bounded Lava probe through Solo Raja, Bijli
+selection, player defeat, spectator mode, Aandhi Final Circle, Results and two Rematch
+transitions, with a third cycle returning to the menu. Settings/accessibility toggles
+were exercised and restored. The 180-second six-sample capture had no configured fatal
+markers, thermal status 0 and stable 63% USB-powered battery; PSS stabilized at
+239,626-243,910 KB and RSS at 355,300-359,580 KB. Evidence and hashes are indexed in
+`Docs/V1_RELEASE_PLAN.md` P41. This remains bounded device evidence, not full tutorial,
+all-fighter human approval or normalized performance-budget sign-off.
+
 The fresh exact-runtime fixed-tick production-bot batch completed **100/100** terminal
 matches in the 240-360 second window, **94/100** with at least three combat eliminations,
 **100/100** with bot-to-bot damage, and zero protected/invalid/stuck invariant samples.

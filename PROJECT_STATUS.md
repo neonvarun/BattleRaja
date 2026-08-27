@@ -25,6 +25,10 @@
   see `Docs/V1_RELEASE_PLAN.md` P35-P38. The current clean documentation tip also
   passes the 1,000-seed deterministic replay deep soak (2,000 executions, zero
   divergence); exact hashes are indexed in P40.
+  A subsequent exact-candidate Lava probe reached player defeat, spectator, Aandhi Final
+  Circle, Results and two Rematch transitions, exercised the settings/accessibility
+  toggles, and captured a third-cycle return to menu plus a 180-second six-sample
+  diagnostic; P41 records the bounded evidence and its remaining limitations.
 
 - **Working-tree gameplay truth update (2026-08-25):** unified action eligibility
   is now owned by `OfflineMatchAuthority`. Movement, ability displacement, attack,
