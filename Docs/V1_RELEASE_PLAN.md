@@ -2234,6 +2234,13 @@ log is `Builds/Local/Logs/deep-soak-current-98888d3.log` (SHA-256
 `A2CC52C19961FFAAC139D68A2FF591683A5AC495F26C914A1638D101AA6D5C97`). The clean
 worktree and `git diff --check` were confirmed after the run.
 
+The exact APK/AAB pair was also rechecked from clean commit `4dca4af` with
+`Tools/Validation/check_v1_release_candidate.ps1 -RequireCleanWorktree`: **0 errors / 0
+warnings**, offline manifest and permission gate passed, seven ARM64 libraries passed
+static 16 KB alignment, and store creative dimensions passed. The retained checker log
+is `Builds/Local/Device/release-checker-4dca4af.log` (SHA-256
+`E6EF2EB9DDEEDD63981B0C894A2778D163988239E2BF7176786E8DB63CA4F721`).
+
 #### P40 gate delta
 
 | Gate | Classification | Evidence / limitation |
