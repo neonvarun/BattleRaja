@@ -67,6 +67,14 @@ namespace BattleRaja.Presentation.Flow
             ResolvePlayerTelemetry();
 
             var changed = false;
+            if (_steps.Current == TutorialStep.Gadget)
+            {
+                // Player agents are created by the match controller, so on a cold
+                // scene load telemetry can become available one frame after the
+                // Continue tap. Reconcile again once that binding exists.
+                changed |= ReconcileGadgetLessonState();
+            }
+
             if (_telemetryReady)
             {
                 if (Vector3.Distance(_playerAgent.transform.position, _startingPosition) >= 0.20f)
@@ -247,22 +255,28 @@ namespace BattleRaja.Presentation.Flow
                 : 0;
         }
 
-        private void ReconcileGadgetLessonState()
+        private bool ReconcileGadgetLessonState()
         {
-            if (_steps.Current != TutorialStep.Gadget || _playerGadget == null) return;
+            if (_steps.Current != TutorialStep.Gadget || _playerGadget == null) return false;
+
+            var changed = false;
 
             // A fresh tutorial scene has no prior user telemetry. If the authority
             // collected or consumed the nearby pickup before the card became active,
             // preserve those real events instead of trapping the player at WAITING.
-            if (_playerGadget.SuccessfulPickupCount > 0 || _playerGadget.HasGadget)
+            if (_steps.RequiredAction == TutorialAction.GadgetCollected &&
+                (_playerGadget.SuccessfulPickupCount > 0 || _playerGadget.HasGadget))
             {
-                _steps.ObserveAction(TutorialAction.GadgetCollected);
+                changed |= _steps.ObserveAction(TutorialAction.GadgetCollected);
             }
 
-            if (_playerGadget.SuccessfulUseCount > 0)
+            if (_steps.RequiredAction == TutorialAction.GadgetUsed &&
+                _playerGadget.SuccessfulUseCount > 0)
             {
-                _steps.ObserveAction(TutorialAction.GadgetUsed);
+                changed |= _steps.ObserveAction(TutorialAction.GadgetUsed);
             }
+
+            return changed;
         }
 
         private void SaveCompletion()
