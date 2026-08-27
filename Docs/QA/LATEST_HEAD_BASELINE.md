@@ -19,6 +19,13 @@ performance, final signing/identity, privacy/Data Safety, cultural/legal review 
 Console actions remain open. Full hashes and screenshot evidence are indexed in
 `Docs/V1_RELEASE_PLAN.md` P34.
 
+The current-source production-bot refresh from clean tip
+`68b0551e44b6356ca3f8a8925ff4268a6bc7380d` completed **100/100** seeded matches in the
+240-360 second window; **94/100** reached at least three combat eliminations,
+**100/100** recorded bot-to-bot damage, and protected, invalid-position and stuck
+invariants were zero. Batch report and NUnit/log hashes are indexed in
+`Docs/V1_RELEASE_PLAN.md` P35.
+
 ## Latest exact-source production-bot refresh — `90670ff` / runtime `126714a` — 2026-08-27
 
 The clean documentation tip is `90670ff`; the runtime-bearing source remains

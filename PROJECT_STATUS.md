@@ -19,7 +19,10 @@
   Android Debug-signed with temporary identity and the product remains a prototype: full
   touch-route, accessibility, sustained performance approval, genuine 16 KB runtime,
   final authored identity/cultural review, signing, privacy/Data Safety and Play Console
-  actions remain open. See `Docs/V1_RELEASE_PLAN.md` P34.
+  actions remain open. The current-source 100-match refresh completed **100/100** matches
+  in the 240-360 second window, with **94/100** reaching at least three combat
+  eliminations, **100/100** bot-to-bot damage and zero protected/invalid/stuck invariant
+  samples; see `Docs/V1_RELEASE_PLAN.md` P34-P35.
 
 - **Working-tree gameplay truth update (2026-08-25):** unified action eligibility
   is now owned by `OfflineMatchAuthority`. Movement, ability displacement, attack,

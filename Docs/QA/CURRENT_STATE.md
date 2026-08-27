@@ -33,9 +33,13 @@ zero divergence. Matching APK/AAB hashes, checker evidence and gate classificati
 are in `Docs/V1_RELEASE_PLAN.md` P31-P34.
 
 The exact-source fixed-tick production-bot batch completes **100/100** matches in the
-240-360 second window, with **95/100** reaching at least three combat eliminations;
-100/100 have bot-to-bot damage and all recorded safety/invariant checks pass. An exact
-same-seed rerun reproduces the command digest and command count. The exact APK is
+240-360 second window, with **94/100** reaching at least three combat eliminations;
+100/100 have bot-to-bot damage and all recorded safety/invariant checks pass. The
+current-source batch report is `Builds/Local/V1GameplayTruth/ProductionBotReports/
+batch-20260827-052416875-9101.json` (SHA-256
+`78953105EED4CD3FEF3E4FAC771AC2B85563DBEB9AC052CE93470D04D81FB10A`). The separate
+1,000-seed deterministic replay soak remains the replay evidence; this batch did not
+run a duplicate same-seed replay. The exact APK is
 debug-signed and remains a local candidate, not a publishable Play artifact. The release
 checker reports **0 errors / 0 warnings**, seven ARM64 libraries, no network permissions,
 and static 16 KB alignment. The APK and bundletool universal APK installed on approved

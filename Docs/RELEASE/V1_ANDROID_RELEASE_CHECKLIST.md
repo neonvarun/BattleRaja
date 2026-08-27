@@ -74,6 +74,15 @@ cultural/legal review and Play Console actions remain open. The temporary-ID/deb
 artifact is not publishable. Complete artifact and screenshot evidence is in
 `Docs/V1_RELEASE_PLAN.md` P34.
 
+The current-source production-bot refresh from clean tip
+`68b0551e44b6356ca3f8a8925ff4268a6bc7380d` completed **100/100** seeded matches in
+the 240-360 second window; **94/100** reached at least three combat eliminations,
+**100/100** recorded bot-to-bot damage, and protected, invalid-position and stuck
+invariants were zero. The report and test-log hashes are recorded in
+`Docs/V1_RELEASE_PLAN.md` P35. This is a local gameplay-truth gate, not Play
+eligibility: physical full-route, runtime 16 KB, signing, identity, privacy/legal,
+cultural and Play Console gates remain open.
+
 ## Latest exact-source handedness candidate — `2080383` — 2026-08-27
 
 The exact clean source is commit `208038362e16f8c33856e0a7cf5c4de776005ded`.
