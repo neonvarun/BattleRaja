@@ -11,7 +11,7 @@
   to the persisted handedness setting. Full EditMode is **140/140** and PlayMode is
   **83/83**; static validation is **0 errors / 0 warnings**. Matching APK/AAB, checker,
   bundletool/zipalign and fresh Lava settings/tutorial/live-match evidence are recorded
-  in `Docs/V1_RELEASE_PLAN.md` P22-P28. A later test-only commit `7269b4c` adds a
+  in `Docs/V1_RELEASE_PLAN.md` P22-P29. A later test-only commit `7269b4c` adds a
   production virtual-stick pointer-delivery regression; its exact-source suites pass
   EditMode **140/140** and PlayMode **84/84**. The APK remains Android Debug-signed and the
   product remains a prototype: full touch-route, accessibility, sustained performance

@@ -16,7 +16,7 @@ combat eliminations. Matching debug-signed APK/AAB, bundletool/static 16 KB evid
 fresh approved-Lava settings/tutorial/live-match screenshots and SurfaceFlinger plus
 120-second match diagnostics, a Lava touch-routing probe with limited movement-lesson
 attribution, the clean technical rerun and the exact-source virtual-stick regression
-are indexed in `Docs/V1_RELEASE_PLAN.md` P22-P28. The
+are indexed in `Docs/V1_RELEASE_PLAN.md` P22-P29. The
 diagnostics recorded median 16.535 ms and p95 16.567 ms frame intervals and bounded
 memory/thermal values, but sustained performance approval remains open because normalized
 CPU/GPU/GC/endurance evidence is absent.

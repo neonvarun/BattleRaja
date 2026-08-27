@@ -64,7 +64,7 @@ EditMode is **140/140** and PlayMode is **83/83**. The matching APK is **40,523,
 The local release checker reports **0 errors / 0 warnings**, package
 `com.example.battleraja.m11`, API 28/36, seven ARM64 libraries, no network permissions,
 static 16 KB alignment and creative dimensions passed. Bundletool/zipalign/apksigner
-evidence and exact hashes are indexed in `Docs/V1_RELEASE_PLAN.md` P22-P28. Fresh Lava
+evidence and exact hashes are indexed in `Docs/V1_RELEASE_PLAN.md` P22-P29. Fresh Lava
 captures show both default and left-handed tutorial prompt wording and a live-match
 SurfaceFlinger diagnostic; normalized performance approval remains open.
 
@@ -76,7 +76,7 @@ Solo Raja opening. The exact-candidate SurfaceFlinger diagnostic recorded median
 frame pacing and budget approval remain open. Full action-by-action tutorial and
 end-to-end route, sustained performance, genuine 16 KB runtime, authored review,
 signing and Play actions remain owner-controlled gates; see
-`Docs/V1_RELEASE_PLAN.md` P22-P28.
+`Docs/V1_RELEASE_PLAN.md` P22-P29.
 
 ## Latest exact-source tutorial-visibility candidate — `e6c321b` — 2026-08-27
 

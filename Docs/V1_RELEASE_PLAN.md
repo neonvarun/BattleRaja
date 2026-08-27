@@ -1676,6 +1676,44 @@ Evidence:
 P28 confirms that the test-only touch coverage did not alter the offline package or
 static Android compliance result.
 
+### P29 - Controlled reference-game UX audit - 2026-08-27
+
+An observation-only UX study was performed on approved Lava `ST5GDW23LB004392` for
+the installed reference packages named in the milestone brief. No account, purchase,
+network setup, extraction, recording, or protected-asset reuse was performed. The
+result is principle-level research only and does not change BattleRaja's original
+offline scope.
+
+Evidence and redaction handling are documented in `Docs/Research/REFERENCE_UX_AUDIT.md`:
+
+- Brawl Stars `com.supercell.brawlstars` version `68.279`: landscape home capture
+  SHA-256 `AF5E761A163BEF0C11BBF8694B4FAD2D2DEDDCC87F19151A67D8E8DB2A581FE0` and UI
+  dump SHA-256 `C6E29F0563753FAF3A3F0A27FAB5C7C448ED245C8578D89D99AF0B2E1D2BA05042`.
+  The dominant play CTA, central focal preview, edge navigation and contextual
+  coaching callout were observed; a short non-destructive play tap did not advance.
+- Smash Karts `com.tallteam.citychase` version `2.15.1`: landscape home capture
+  SHA-256 `69A7F8654D28B726F2BF6473BBF6710FAF9EBF3F2B75CBB07EDCEE0CDFA7271A`,
+  post-tap capture SHA-256 `7421B3FCE40DFC75B4EFF9E8884E4A931D581EA7DB63AD5681DA335A0F48B921`,
+  and UI dump SHA-256 `699FD353B1BF4CD64022AC7AA745C59D480389B5523F1DC668C3784A6954C11B`.
+  A dominant play CTA, grouped secondary actions and visible locked/account state
+  were observed; the short tap did not advance without account/network changes.
+- Raw captures remain ignored under `Builds/Local/Device/ReferenceUx/20260827/` and
+  are not store assets because the installed apps showed existing account/profile
+  labels. The committed audit redacts those labels.
+
+#### P29 gate delta
+
+| Gate | Status | Evidence / owner action |
+| --- | --- | --- |
+| Controlled reference-game observation | **Passed (research capture)** | Both requested packages observed on Lava; abstract entry-flow principles recorded with hashes and redaction note |
+| BattleRaja adaptation/originality boundary | **Passed (documented)** | Adaptation is limited to hierarchy/readability; no reference expression or online surface is copied |
+| Full reference in-match comparison | **Not run** | Deeper route was not pursued through sign-in, purchases or network setup |
+| BattleRaja release gates | **Unchanged** | Physical tutorial route, sustained performance, genuine 16 KB runtime, authored/accessibility/cultural review, signing, privacy/Data Safety and Play actions remain open |
+
+P29 closes the previously missing controlled reference audit without authorizing any
+out-of-scope reference-app interaction or weakening BattleRaja's originality and
+offline requirements.
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (automated foundation;
