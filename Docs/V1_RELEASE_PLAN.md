@@ -1779,7 +1779,8 @@ lesson. It does not claim the complete tutorial route or Play submission readine
 
 - [x] Fair fighter-specific bot AI and production match harness (automated foundation;
   pacing/determinism and human review remain open).
-- [ ] Controlled reference-game UX study on Lava only.
+- [x] Controlled reference-game UX study on Lava only (research capture complete;
+  deeper in-match comparison and human adaptation approval remain open).
 - [x] Current V1 art/audio/UI direction and asset-provenance documents (baseline only;
   final authored assets remain open).
 - [ ] Production fighters, arena, gadgets, rigs, animation and VFX (saved generated
@@ -1788,7 +1789,8 @@ lesson. It does not claim the complete tutorial route or Play submission readine
 - [ ] Authored audio/music/mix and feedback.
 - [ ] Feel/balance playtests and changelog evidence.
 - [ ] Lava performance hardening against measured budgets.
-- [ ] Current Android/Play compliance recheck.
+- [x] Current Android/Play compliance recheck (technical checker and policy recheck
+  complete; final signed identity, runtime 16 KB and Play Console work remain open).
 - [ ] Store/privacy/content-rating preparation.
 - [ ] Final exact-source QA matrix and matching APK/AAB.
 
