@@ -1,8 +1,10 @@
 using System.Collections;
+using System.Linq;
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Movement;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 
@@ -138,6 +140,40 @@ namespace BattleRaja.Tests.PlayMode
                 Assert.That(stick.Value, Is.EqualTo(Vector2.zero));
             }
 
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator MovementStickPointerEventsReachPlayerInputAdapter()
+        {
+            var player = PlayModeTestHelpers.FindPlayer<MovementPlayerAgent>();
+            var adapter = player.GetComponent<PlayerInputAdapter>();
+            var movementStick = Object.FindObjectsByType<VirtualStick>()
+                .First(stick => stick != null && stick.name == "MovementStick");
+            var stickRect = movementStick.GetComponent<RectTransform>();
+            Assert.That(adapter, Is.Not.Null);
+            Assert.That(stickRect, Is.Not.Null);
+
+            var pointer = new PointerEventData(EventSystem.current)
+            {
+                pointerId = 42,
+                position = RectTransformUtility.WorldToScreenPoint(null, stickRect.position)
+            };
+            movementStick.OnPointerDown(pointer);
+
+            pointer.position += new Vector2(movementStick.Radius * 0.75f, movementStick.Radius * 0.25f);
+            movementStick.OnDrag(pointer);
+
+            var input = adapter.ReadInput();
+            Assert.That(movementStick.IsActive, Is.True);
+            Assert.That(movementStick.Value.magnitude, Is.GreaterThan(0.70f));
+            Assert.That(input.Movement.Magnitude, Is.GreaterThan(0.70f));
+            Assert.That(input.Movement.X, Is.GreaterThan(0.45f));
+            Assert.That(input.Movement.Y, Is.GreaterThan(0.10f));
+
+            movementStick.OnPointerUp(pointer);
+            Assert.That(movementStick.IsActive, Is.False);
+            Assert.That(adapter.ReadInput().Movement, Is.EqualTo(Float2.Zero));
             yield return null;
         }
     }
