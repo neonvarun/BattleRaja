@@ -2459,8 +2459,11 @@ and exactly three distinct mesh profiles.
 - The composed Android checker passed the offline manifest, API 28/36, no-network
   permission, seven-ARM64-library and static 16 KB ELF gates, plus 512x512 icon and
   1024x500 feature-graphic dimensions. The checker was run before the documentation
-  commit while the art change was the only source delta; a clean-worktree rerun is the
-  final documentation gate below.
+  commit while the art change was the only source delta. The clean-worktree rerun after
+  the documentation commit is captured in
+  `Builds/Local/Device/release-checker-00a3a21.log` (SHA-256
+  `DF1A1AC058DDB8C78AF17B77EA63EEFB1F301C04E4D99C3AB40D69A6C577417C`) and passed with
+  the worktree clean.
 - bundletool 1.18.3 generated
   `Builds/Local/V1GameplayTruth/Android/battleraja-v1-faceted-20260828.apks` (36,495,593
   bytes; SHA-256
