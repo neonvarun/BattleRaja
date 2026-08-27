@@ -9,8 +9,10 @@ per-tick participant snapshots and canonical hashes in a checksummed Unity-indep
 (5,802,977 bytes; SHA-256
 `48C0DC38A417934331245FBB28B8EE15589502C23E93619EC688310C1E487736`; 9,180 frames).
 The exact file was read and fully re-executed with per-tick snapshot/hash verification in
-**141/141 EditMode**. P42 in `Docs/V1_RELEASE_PLAN.md` records the matching report,
-test/log hashes, format decision and remaining cross-machine/cosmetic-review limits.
+**141/141 EditMode**. The current source also passed the 100-seed production-bot release
+batch and reproduced the same seed-9101 command/replay digest across two independent runs.
+P42 in `Docs/V1_RELEASE_PLAN.md` records the matching report, test/log hashes, format
+decision and remaining cross-machine/cosmetic-review limits.
 
 ## Latest current-tip result — runtime `754837e` / clean docs `98888d3` — 2026-08-27
 

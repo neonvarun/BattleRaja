@@ -42,7 +42,11 @@ The P42 production replay artifact is
 (5,802,977 bytes; SHA-256
 `48C0DC38A417934331245FBB28B8EE15589502C23E93619EC688310C1E487736`), with report metadata
 in `Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260827-160256013-9101.json`.
-The exact-file verification is recorded in P42 of `Docs/V1_RELEASE_PLAN.md`.
+The current source also passes the 100-seed production-bot release batch (100/100 in the
+240-360 second window, 94/100 with at least three combat eliminations, 100/100 with
+bot-to-bot damage, zero Aandhi-only resolutions); the aggregate report and exact same-seed
+reproducibility evidence are recorded in P42. The exact-file verification is recorded in
+P42 of `Docs/V1_RELEASE_PLAN.md`.
 
 The same exact candidate also completed a bounded Lava probe through Solo Raja, Bijli
 selection, player defeat, spectator mode, Aandhi Final Circle, Results and two Rematch

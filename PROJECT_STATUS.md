@@ -652,6 +652,10 @@ participant snapshots and canonical hashes into a checksummed Unity-independent 
 A one-match production smoke passed **86/86 PlayMode** and emitted a 9,180-frame artifact;
 the exact file was read and fully re-executed with snapshot/hash verification in **141/141
 EditMode**. Serializer round-trip and corruption rejection are covered by the same baseline.
+The current source also passed the full 100-seed production-bot release batch (100/100
+terminal and in-window, 94/100 with at least three combat eliminations, 100/100 with
+bot-to-bot damage) and two independent seed-9101 runs reproduced the same command/replay
+digest.
 See `Docs/V1_RELEASE_PLAN.md` P42 and `Docs/DECISIONS.md` ADR-065.
 
 The post-change release-shaped APK/AAB were rebuilt from the current source and remain

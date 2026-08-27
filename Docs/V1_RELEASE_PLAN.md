@@ -2314,6 +2314,32 @@ the replay path/hash/frame count. The production smoke was **86/86 PlayMode** wi
 seeded match, 306.0135 seconds, four combat eliminations, one Aandhi elimination and
 31 bot-to-bot damaging pairs.
 
+The same current source also passed the full 100-seed production-bot release batch with
+release assertions enabled. Aggregate report
+`Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260827-162349798-9101.json`
+is 1,824,152 bytes (SHA-256
+`553DE1DB288381038F972A98E78343D2435AC36029CD91D391B75917EA8345D8`); its test XML is
+`Builds/Local/TestResults/playmode-production-bot-2a113e0.xml` (SHA-256
+`AB8FBE0D19FB3D6025E9590AE3C73B66E4605BE9D2D98426E132473FEF3E9B42`) and its Unity log
+SHA-256 is `F5FE2B6FC34BF38317D47164D2EC1087620A0270E887193DB02F12E8CCED556C`. All
+100/100 matches completed in the 240-360 second window; 94/100 had at least three combat
+eliminations, 100/100 had bot-to-bot damage, Aandhi-only resolutions were 0/100,
+protected-warmup damage and invalid positions were both zero, maximum continuous stuck
+time was zero ticks, out-of-range attempts were 6/15,323 (0.04%), rejected abilities were
+6,816/35,492 (19.2%), and successful gadget uses were Umbrella 99, Dhol 100 and Tiffin
+100. The batch emitted 100 replay files / 918,000 authority frames.
+
+Two independent one-match runs from the same current source and seed `9101` reproduced
+the same command digest `5470526C5AEC0388`, command count 58,097, replay SHA-256
+`48C0DC38A417934331245FBB28B8EE15589502C23E93619EC688310C1E487736`, frame count 9,180
+and duration 306.0135 seconds. Reports are
+`batch-20260827-162909033-9101.json` (SHA-256
+`015111AB4F437C77A1DC868EC2002005AF9190843BB9A3A9DC28DA621B039CB8`) and
+`batch-20260827-163017185-9101.json` (SHA-256
+`1C582F06ACF54AB1BCDD5229AD63DC4A4031016E8FDDF4861C419EC819E4006E`); the paired
+PlayMode XML hashes are `EA48DD66B5D78BAC3ACA56C4E61DC86CFACB42A34C99409BF69EFBEFD89B6CB4`
+and `FB08FD73C7CEDE6B7CD34D6040E351A39625DE58F0D9D472E20C3DADB8A46E10`.
+
 The exact generated production replay was read and fully re-executed against the canonical
 authority with per-tick snapshot/hash verification: **141/141 EditMode** in
 `Builds/Local/TestResults/production-replay-verify-final.xml` (SHA-256
@@ -2347,8 +2373,9 @@ network permissions, ARM64/static 16 KB alignment and a clean worktree.
 | Gate | Classification | Evidence / limitation |
 | --- | --- | --- |
 | Versioned durable replay serialization with integrity rejection | **Passed** | Byte-for-byte round trip plus truncation/checksum regression in 141/141 EditMode |
-| Production-scene command capture and per-tick canonical state retention | **Passed (diagnostic)** | One complete production bot match emitted 9,180 ordered frames with snapshots/hashes |
+| Production-scene command capture and per-tick canonical state retention | **Passed** | Current source passed 100/100 release-gate matches and emitted 100 replay files / 918,000 ordered frames with snapshots/hashes |
 | Exact production replay read and full authority re-execution | **Passed** | Exact `.brr` read/replayed with all per-tick snapshot/hash checks passing |
+| Same-seed production command/replay reproducibility | **Passed** | Two independent seed-9101 runs matched command digest, count, duration, frame count and replay SHA |
 | Cross-machine floating-point parity | **Not run** | Same-machine replay evidence does not establish device/architecture parity |
 | Final human review of cosmetic presentation replay (audio/VFX/animation) | **Open** | Cosmetic presentation is intentionally not an authority replay input; human review remains required |
 

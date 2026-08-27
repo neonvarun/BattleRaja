@@ -10,8 +10,9 @@ the generated artifact is
 (5,802,977 bytes; SHA-256
 `48C0DC38A417934331245FBB28B8EE15589502C23E93619EC688310C1E487736`), with 9,180 frames.
 An exact-file read/re-execution with per-tick snapshot/hash checks passed **141/141
-EditMode**. P42 in `Docs/V1_RELEASE_PLAN.md` contains the test/log/report hashes and
-remaining cross-machine/cosmetic-review limitations.
+EditMode**. The same source also passed the 100-seed production-bot release batch and two
+independent same-seed reproducibility runs. P42 in `Docs/V1_RELEASE_PLAN.md` contains the
+test/log/report hashes and remaining cross-machine/cosmetic-review limitations.
 
 ## Latest exact-candidate Lava three-cycle probe — runtime `754837e` / clean tip `3b8b6a1` — 2026-08-27
 
