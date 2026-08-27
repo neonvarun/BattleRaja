@@ -6,23 +6,21 @@
 
 ## Current state
 
-- **Latest exact-source release-gate checkpoint (2026-08-27):** runtime-bearing source
-  `f82c18c1fd91e44c7f07fbd31d615cc7e9c9bea6` fixes tutorial Elimination progression by
-  observing the live authoritative player snapshot before terminal results. Full EditMode
-  is **140/140** and PlayMode is **85/85**; static validation is **0 errors / 0 warnings**.
-  The exact-source production-bot release assertions remain **100/100** seeded matches.
-  The refreshed exact APK/AAB technical recheck passes offline manifest, ARM64/static
-  16 KB and store-dimension checks. Approved-Lava touch captures on the new candidate
-  observe Movement, Aim, Basic Attack and Ability transitions; the route reached Gadget
-  pickup/use feedback but the card remained waiting before terminal results, so physical
-  Gadget/Aandhi/Elimination/Victory completion remains open. The APK remains
+- **Latest exact-source release-gate checkpoint (2026-08-27):** commit
+  `754837e4311b609560c63fa90558a1d29acec9cd` adds a presentation-only tutorial gadget
+  reconciliation while retaining the live-authority Elimination fix. Full EditMode is
+  **140/140** and PlayMode is **86/86**; static validation and the release checker are
+  **0 errors / 0 warnings**. The matching APK/AAB pass offline manifest, ARM64/static
+  16 KB and store-dimension checks. Approved-Lava touch captures on this exact candidate
+  observe Movement, Aim, Basic Attack, Ability, Gadget and Aandhi transitions; the next
+  Elimination card correctly remains waiting for a player-attributed KO. The APK remains
   Android Debug-signed with temporary identity and the product remains a prototype: full
   touch-route, accessibility, sustained performance approval, genuine 16 KB runtime,
   final authored identity/cultural review, signing, privacy/Data Safety and Play Console
-  actions remain open. The current-source 100-match refresh completed **100/100** matches
-  in the 240-360 second window, with **94/100** reaching at least three combat
+  actions remain open. The applicable current-source 100-match batch completed **100/100**
+  matches in the 240-360 second window, with **94/100** reaching at least three combat
   eliminations, **100/100** bot-to-bot damage and zero protected/invalid/stuck invariant
-  samples; see `Docs/V1_RELEASE_PLAN.md` P34-P35.
+  samples; see `Docs/V1_RELEASE_PLAN.md` P35-P36.
 
 - **Working-tree gameplay truth update (2026-08-25):** unified action eligibility
   is now owned by `OfflineMatchAuthority`. Movement, ability displacement, attack,

@@ -2016,6 +2016,81 @@ remains the applicable replay evidence.
 | Same-seed replay reproduction in this batch | **Not run** | Existing 1,000-seed deterministic replay soak remains applicable; no duplicate batch requested |
 | Physical full route and Play eligibility | **Blocked** | Exact Lava Gadget/Aandhi/Elimination/Victory and sustained-performance runs require the remaining approved-device review; 16 KB runtime, signing and Play/legal gates require unavailable owner-controlled environments/approval |
 
+### P36 - Gadget reconciliation, exact candidate refresh and bounded Lava route - 2026-08-27
+
+Commit `754837e4311b609560c63fa90558a1d29acec9cd` adds a presentation-only tutorial
+reconciliation for gadget state. If the tutorial's nearby Tiffin is collected or used
+before the Gadget card becomes active, the overlay now consumes the authoritative
+inventory/use counters when that lesson begins (and on the first bound frame), while
+the existing live-authority Elimination fix remains intact. This prevents a false
+`WAITING FOR ACTION` state without mutating gameplay authority.
+
+#### Automated evidence
+
+- Full EditMode: **140/140 passed**; XML
+  `Builds/Local/TestResults/editmode-gadget-reconcile-v2.xml`, SHA-256
+  `A5E9398085902C1C79AE73D84448A2819C18818FAB0E96A1FAFA8BD858186440`; Unity log
+  `Builds/Local/Logs/editmode-gadget-reconcile-v2.log`, SHA-256
+  `215D932D454E93F2DCBE709D81AC04E5895DF42D66ACE0CFABC6774D3F1A2F66`.
+- Full PlayMode: **86/86 passed**; XML
+  `Builds/Local/TestResults/playmode-gadget-reconcile-v2.xml`, SHA-256
+  `82E2A3291B82DAB50C289F899CC1637E4C3668FF45F69523C5A382F92D0B9177`; Unity log
+  `Builds/Local/Logs/playmode-gadget-reconcile-v2.log`, SHA-256
+  `10EE0EFAF334D5B7DF3058E1CB647B11340F927339233356B6B04C0659DAFEC6`.
+- Static validation and the exact release checker both report **0 errors / 0 warnings**.
+  Checker log `Builds/Local/Device/release-checker-754837e.log`, SHA-256
+  `E6EF2EB9DDEEDD63981B0C894A2778D163988239E2BF7176786E8DB63CA4F721`.
+
+#### Exact candidate artifacts
+
+- APK `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`: **40,527,614 bytes**,
+  SHA-256 `788181073E5EFCB2F5F0AECEF20E0372362BFCD2B83928CA010153009FDF99B3`.
+- AAB `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`: **36,352,792 bytes**,
+  SHA-256 `FCFF4A982BC5201D204114B819C0BDAE42CA35072425CE9506349769815D98C3`.
+- Unity Android build log `Builds/M11/Logs/android-build.log`, SHA-256
+  `D06AFFF88A0ECC29957E8B7FFAF1DD3B6A78F51F32248239C68A932D96805715`.
+- The checker confirms package `com.example.battleraja.m11`, version `1.0.0`/`100`,
+  min/target API `28/36`, no network permissions, ARM64-only native payload,
+  static 16 KB ELF alignment, and the expected 512x512 icon / 1024x500 feature graphic.
+  It is still a temporary-ID Android Debug-signed local artifact.
+
+#### Approved-Lava touch evidence
+
+The exact APK was installed after clearing package data and launched only on approved
+Lava `ST5GDW23LB004392`. The bounded tutorial route produced action-attributed
+Movement, Aim, Basic Attack and Ability transitions, then physically tapped the Gadget
+button and advanced the Gadget card to `CONTINUE`. After continuing, the Aandhi card
+also showed `CONTINUE`; the next Elimination card correctly remained `WAITING FOR ACTION`
+until a player-attributed KO, which was not achieved in this probe. Representative
+captures are retained under
+`Builds/Local/Device/Screenshots/20260827-754837e-release/tutorial-gadget-reconcile/minimal-route/`:
+
+- `gadget-tap.png` — SHA-256
+  `03CDE7D729040B4B39298BDA78001E86907B83B0FCA74F0495B2A580BA4EFCF8` (Gadget card
+  advanced to `CONTINUE`).
+- `aandhi-step.png` — SHA-256
+  `2D8A3C245AC5BDDFA0D6B2062125B71A9390EB64CE035679108FA306F02BA805` (Aandhi card
+  showed `CONTINUE`).
+- `after-aandhi-continue.png` — SHA-256
+  `6EE4FC5D3F4FEB559AF250A25454C0E6771EF74419E3ACACDD60ABB599674C83` (Elimination
+  card correctly waiting for an in-match KO).
+
+This is a bounded physical route observation, not approval of the complete match,
+accessibility, comfort, sustained performance or rematch matrix. The presentation-only
+source change did not alter the production-bot runtime; P35 remains the applicable
+100-match gameplay batch evidence.
+
+#### P36 gate delta
+
+| Gate | Classification | Evidence / limitation |
+| --- | --- | --- |
+| Gadget lesson reconciliation for pre-collected state | **Passed** | `PreCollectedGadgetIsReconciledWhenGadgetLessonBegins`; PlayMode 86/86 |
+| Exact APK/AAB technical checks from current source | **Passed** | APK/AAB hashes and checker log above; 0 errors / 0 warnings |
+| Physical Gadget lesson transition | **Passed (bounded physical check)** | `gadget-tap.png` shows the Gadget card at `CONTINUE` after a real tap |
+| Physical Aandhi lesson transition | **Passed (bounded physical check)** | `aandhi-step.png` shows the Aandhi card at `CONTINUE` |
+| Physical Elimination → Victory, full match and rematch | **Blocked** | No player-attributed KO/Victory in this probe; owner-operated full route remains required |
+| Final Play eligibility | **Blocked** | Genuine runtime 16 KB, signing/identity, accessibility, performance, privacy/legal/cultural review and Play Console actions remain owner-controlled or unavailable |
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (100-match terminal,

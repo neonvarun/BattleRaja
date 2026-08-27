@@ -1,5 +1,27 @@
 # Latest HEAD baseline
 
+## Latest exact-source gadget-reconciliation candidate — `754837e` — 2026-08-27
+
+The clean candidate source is `754837e4311b609560c63fa90558a1d29acec9cd`, adding
+presentation-only reconciliation for a gadget collected before the tutorial Gadget
+card binds. Full EditMode is **140/140**, full PlayMode is **86/86**, and static
+validation is **0 errors / 0 warnings**. The APK is **40,527,614 bytes** (SHA-256
+`788181073E5EFCB2F5F0AECEF20E0372362BFCD2B83928CA010153009FDF99B3`) and the matching
+AAB is **36,352,792 bytes** (SHA-256
+`FCFF4A982BC5201D204114B819C0BDAE42CA35072425CE9506349769815D98C3`). The exact
+checker log `Builds/Local/Device/release-checker-754837e.log` (SHA-256
+`E6EF2EB9DDEEDD63981B0C894A2778D163988239E2BF7176786E8DB63CA4F721`) reports 0 errors
+and 0 warnings, package `com.example.battleraja.m11`, API 28/36, no network
+permissions, ARM64-only payload and static 16 KB ELF alignment.
+
+On approved Lava `ST5GDW23LB004392`, the bounded exact-candidate route advanced the
+Gadget and Aandhi tutorial cards to `CONTINUE` after real touch input; the next
+Elimination card remained correctly gated on a player-attributed KO. The device reports
+4 KB pages, so genuine runtime-16-KB validation and sustained performance remain open.
+Physical full match/Victory/rematch, accessibility, final art/audio/cultural review,
+signing/identity, privacy/Data Safety and Play Console actions remain open. Evidence is
+indexed in `Docs/V1_RELEASE_PLAN.md` P36.
+
 ## Latest exact-source tutorial-fix and technical recheck — `f82c18c` — 2026-08-27
 
 The clean runtime source is `f82c18c1fd91e44c7f07fbd31d615cc7e9c9bea6`. Full EditMode is

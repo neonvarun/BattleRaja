@@ -53,6 +53,27 @@ pwsh -File Tools/Validation/check_v1_release_candidate.ps1 `
 This gate is technical and local only. It does not sign, upload, publish, or approve
 the final identity, privacy/Data Safety, content rating, cultural review or Play track.
 
+## Latest exact-source gadget-reconciliation candidate — `754837e` — 2026-08-27
+
+Commit `754837e4311b609560c63fa90558a1d29acec9cd` is the current clean candidate. It
+adds presentation-only reconciliation for a gadget collected before the tutorial card
+binds. Full EditMode is **140/140**, PlayMode is **86/86**, and static validation is
+**0 errors / 0 warnings**. The APK is **40,527,614 bytes** (SHA-256
+`788181073E5EFCB2F5F0AECEF20E0372362BFCD2B83928CA010153009FDF99B3`) and the AAB is
+**36,352,792 bytes** (SHA-256
+`FCFF4A982BC5201D204114B819C0BDAE42CA35072425CE9506349769815D98C3`). The checker
+`Builds/Local/Device/release-checker-754837e.log` (SHA-256
+`E6EF2EB9DDEEDD63981B0C894A2778D163988239E2BF7176786E8DB63CA4F721`) passes the
+offline manifest, API 28/36, ARM64/static 16 KB and creative-dimension checks.
+
+The exact APK installed and launched on approved Lava `ST5GDW23LB004392`. Bounded
+real-touch evidence now advances Movement, Aim, Basic Attack, Ability, Gadget and
+Aandhi; the Elimination card remains correctly waiting for a player-attributed KO.
+The APK is temporary-ID Android Debug-signed and the device reports 4 KB pages, so
+runtime 16 KB, sustained performance, full-route/accessibility, final signing/identity,
+privacy/Data Safety, cultural/legal review and Play Console actions remain open. See
+`Docs/V1_RELEASE_PLAN.md` P36 for the exact evidence index and gate classifications.
+
 ## Latest exact-source tutorial-fix candidate — `f82c18c` — 2026-08-27
 
 The exact runtime source is `f82c18c1fd91e44c7f07fbd31d615cc7e9c9bea6`. Full EditMode is
