@@ -49,8 +49,9 @@ at `CONTINUE`, `aandhi-step.png` shows the Aandhi card at `CONTINUE`, and
 player-attributed KO. Captures and hashes are recorded in P36 under
 `Builds/Local/Device/Screenshots/20260827-754837e-release/tutorial-gadget-reconcile/minimal-route/`.
 Full match/Victory/rematch, accessibility, normalized CPU/GPU/GC/repeated-match
-endurance, genuine 16 KB runtime, authored final art/audio, cultural review, release
-signing, privacy/Data Safety and Play/legal gates remain open.
+endurance, final physical 16 KB coverage, authored final art/audio, cultural review,
+release signing, privacy/Data Safety and Play/legal gates remain open. A genuine
+16 KB emulator runtime check now passes; the emulator evidence is recorded in P39.
 
 A fresh exact-candidate 30-second Lava diagnostic (six samples, 5-second interval) found
 no configured fatal markers and thermal status 0 throughout. After startup, PSS was

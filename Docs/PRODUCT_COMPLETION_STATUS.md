@@ -3,7 +3,7 @@
 Updated: 2026-08-27
 Classification: **prototype**
 
-## Latest exact-runtime release-candidate checkpoint — `754837e` / docs `d8cbbb2` — 2026-08-27
+## Latest exact-runtime release-candidate checkpoint — runtime `754837e` / evidence `d8cbbb2` — 2026-08-27
 
 The current runtime-bearing source is `754837e4311b609560c63fa90558a1d29acec9cd` on
 `codex/v1-playstore-release`; the current clean documentation tip is
@@ -22,9 +22,10 @@ approved Lava `ST5GDW23LB004392`, the bounded exact tutorial route now advances
 Movement, Aim, Basic Attack, Ability, Gadget and Aandhi; the Elimination card remains
 correctly gated on a player-attributed KO. A fresh 30-second diagnostic found no
 configured fatal markers and thermal status 0, but is not sustained gameplay
-performance evidence. Physical full match/Victory/rematch, accessibility, genuine
-runtime 16 KB, final authored/cultural review, signing, privacy/Data Safety and Play
-Console gates remain open.
+performance evidence. Physical full match/Victory/rematch, accessibility, final
+physical 16 KB coverage, final authored/cultural review, signing, privacy/Data Safety
+and Play Console gates remain open. The available genuine 16 KB emulator runtime check
+now passes and is indexed in P39.
 
 ## Latest exact-source release-gate checkpoint — `2080383` — 2026-08-27
 

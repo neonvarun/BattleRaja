@@ -83,6 +83,13 @@ invalid-position and stuck invariants were zero. The report and test-log hashes 
 recorded in `Docs/V1_RELEASE_PLAN.md` P38. This does not replace human playtesting or
 the remaining physical, performance, signing, privacy/legal and Play Console gates.
 
+The exact APK also passed a genuine runtime check on the installed Android 16
+`page_size_16kb` emulator: `PAGE_SIZE=16384`, successful install, top-resumed Unity
+activity, menu/tutorial render, and a real movement swipe unlocking `CONTINUE`.
+The six-sample capture reported no configured fatal markers. This closes the available
+emulator runtime check; physical ARM64 16 KB coverage, signed-artifact repeatability
+and dense-combat performance remain open. See `Docs/V1_RELEASE_PLAN.md` P39.
+
 ## Latest exact-source tutorial-fix candidate — `f82c18c` — 2026-08-27
 
 The exact runtime source is `f82c18c1fd91e44c7f07fbd31d615cc7e9c9bea6`. Full EditMode is

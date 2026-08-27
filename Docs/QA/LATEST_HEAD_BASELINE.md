@@ -1,5 +1,15 @@
 # Latest HEAD baseline
 
+## Latest genuine 16 KB runtime check — candidate `754837e` — 2026-08-27
+
+The exact APK installed and launched successfully on a disposable Android 16
+`page_size_16kb` emulator (`emulator-5558`) reporting `PAGE_SIZE=16384`. The Unity
+activity was top-resumed, the menu and tutorial rendered, and a real movement swipe
+unlocked the tutorial `CONTINUE` card. The standard six-sample, 30-second capture found
+no configured fatal markers and thermal status 0. Evidence and hashes are indexed in
+`Docs/V1_RELEASE_PLAN.md` P39. This closes the available genuine 16 KB emulator check;
+physical ARM64 16 KB coverage and final signed-artifact validation remain open.
+
 ## Latest exact-runtime production-bot batch — `754837e` — 2026-08-27
 
 The current runtime-bearing source `754837e4311b609560c63fa90558a1d29acec9cd` was

@@ -2170,6 +2170,51 @@ identity, privacy/legal, cultural review or Play eligibility.
 | Same-seed replay reproduction in this batch | **Not run** | Separate deterministic replay soak remains applicable; no duplicate bot batch requested |
 | Human fun/fairness and sustained performance | **Not run** | Requires structured owner-operated Lava playtests and budget analysis |
 
+### P39 - Genuine 16 KB Android emulator runtime check - 2026-08-27
+
+The installed Android SDK includes the Android 16 Google Play `page_size_16kb`
+system image. A disposable `BattleRaja_16K` AVD was created from the already-installed
+`system-images;android-36;google_apis_playstore_ps16k;x86_64` image and booted as
+`emulator-5558`. The exact candidate APK installed successfully and reported
+`getconf PAGE_SIZE = 16384`. The Unity activity
+`com.example.battleraja.m11/com.unity3d.player.UnityPlayerGameActivity` was top-resumed,
+the menu rendered, the tutorial opened, and a real movement swipe unlocked `CONTINUE`.
+No command was sent to the prohibited Oppo device.
+
+Runtime evidence is retained at
+`Builds/Local/Device/Performance/20260827-16k-emulator-30s/` and
+`Builds/Local/Device/Screenshots/20260827-16k-emulator/`:
+
+- `page-size.txt` is `16384` (SHA-256
+  `CA902D4A8ACBDEA132ADA81A004081F51C5C9279D409CEE414DE5A39A139FAB6`).
+- The 30-second capture manifest records six samples and no configured fatal markers;
+  SHA-256 `9E397EAF00A093FF6CA6605DA6167FCF04AB7C174EBF643AD4C97B9CF706760C`.
+- Activity evidence SHA-256 is
+  `655F2EC1679E2594A96A60D973F859C47D684A9DC3A9B0BFFD63326D6DE81A2C` and logcat
+  SHA-256 is `9D0094124EE1F93EA23F34F02372CF0D9189D8B09D7716E404ECF8BD20A52B56`.
+- `menu.png` SHA-256
+  `61CCE91FE52719788C9895C5161DB2C1BE70CCAAA4CE6A900C8608E98CE3642A` and
+  `tutorial-movement.png` SHA-256
+  `00B7902A211D455857D108FFA9BEACCADC5BB39A001C6D509AFC263CA80DA15A` show the
+  actual candidate in the 16 KB environment; the latter shows the Movement card at
+  `CONTINUE` after a real swipe.
+
+The emulator is x86_64 rather than a physical ARM64 handset, and the APK remains
+temporary-ID Debug-signed. This closes the available genuine 16 KB emulator runtime
+check, but final signed-artifact verification and physical 16 KB-device coverage remain
+required before any Play claim. The capture is also launch/tutorial evidence, not a
+dense-combat performance approval.
+
+#### P39 gate delta
+
+| Gate | Classification | Evidence / limitation |
+| --- | --- | --- |
+| Exact APK install on genuine 16 KB environment | **Passed** | `adb install` succeeded on `emulator-5558`; `PAGE_SIZE=16384` |
+| Exact APK Unity activity launch on 16 KB environment | **Passed** | Top-resumed Unity activity; no configured fatal markers |
+| Tutorial render and movement input on 16 KB environment | **Passed** | Actual menu/tutorial screenshots; movement swipe unlocked `CONTINUE` |
+| Final signed ARM64 artifact on physical 16 KB device | **Blocked** | Current candidate is Debug-signed and no physical 16 KB ARM64 device is available |
+| Dense-combat/repeated-rematch performance on 16 KB environment | **Not run** | 30-second emulator capture covered launch/tutorial only |
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (100-match terminal,

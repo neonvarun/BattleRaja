@@ -15,8 +15,8 @@
   observe Movement, Aim, Basic Attack, Ability, Gadget and Aandhi transitions; the next
   Elimination card correctly remains waiting for a player-attributed KO. The APK remains
   Android Debug-signed with temporary identity and the product remains a prototype: full
-  touch-route, accessibility, sustained performance approval, genuine 16 KB runtime,
-  final authored identity/cultural review, signing, privacy/Data Safety and Play Console
+  touch-route, accessibility, sustained performance approval, final physical 16 KB
+  coverage, final authored identity/cultural review, signing, privacy/Data Safety and Play Console
   actions remain open. A fresh exact-runtime 100-match batch completed **100/100**
   matches in the 240-360 second window, with **94/100** reaching at least three combat
   eliminations, **100/100** bot-to-bot damage and zero protected/invalid/stuck invariant
