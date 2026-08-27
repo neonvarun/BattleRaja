@@ -28,7 +28,7 @@ The runtime/presentation source is clean and committed on branch
 PlayMode is **86/86**, and static validation is **0 errors / 0 warnings**. The new
 PlayMode regression proves that a pre-collected tutorial gadget is reconciled when its
 lesson begins; the earlier live-authority Elimination regression remains covered. The
-The carried-forward 1,000-seed deterministic replay soak has 2,000 executions and zero
+carried-forward 1,000-seed deterministic replay soak has 2,000 executions and zero
 divergence, and the current-tip rerun also passes with the same result. Exact current-tip
 XML/log hashes are indexed in `Docs/V1_RELEASE_PLAN.md` P40; this is same-machine evidence
 and does not establish cross-machine parity. P42 now closes the available durable production
