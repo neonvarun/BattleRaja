@@ -2082,8 +2082,8 @@ captures are retained under
 
 This is a bounded physical route observation, not approval of the complete match,
 accessibility, comfort, sustained performance or rematch matrix. The presentation-only
-source change did not alter the production-bot runtime; P35 remains the applicable
-100-match gameplay batch evidence.
+source change did not alter gameplay authority; the exact-runtime P38 batch now
+supersedes P35 for 100-match gameplay evidence.
 
 #### P36 gate delta
 
