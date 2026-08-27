@@ -621,8 +621,9 @@ recorded with hashes in P16. The exact APK was reinstalled on approved Lava
 `ST5GDW23LB004392`; the fresh six-sample launch/menu capture found no configured fatal markers
 and thermal status 0 before/after.
 
-This is a clean technical Android candidate, not a Play-ready claim. The production-bot pacing
-threshold remains open, and human full-route/touch/accessibility, sustained match performance,
+This is a clean technical Android candidate, not a Play-ready claim. The pacing status in this
+historical refresh is superseded by the exact-source P31 batch below. Human full-route/touch/accessibility,
+sustained match performance,
 runtime 16 KB, final authored/cultural review, package identity/signing, privacy/Data Safety,
 content rating, store assets and Play Console actions remain owner-controlled or unverified.
 

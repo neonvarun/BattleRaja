@@ -201,8 +201,9 @@ Matching APK/AAB builds, bundletool universal extraction and both 16 KB zipalign
 The exact APK was reinstalled on Lava `ST5GDW23LB004392`; a fresh six-sample, 30-second
 launch/menu capture had no configured fatal markers and thermal status 0 before/after. The
 device reports 4 KB pages, and no sustained full-match, touch/tutorial, accessibility or
-runtime 16 KB proof is claimed. The strict production-bot pacing threshold and all human,
-signing, legal, store and final-authored-content gates remain open.
+runtime 16 KB proof is claimed. The strict production-bot pacing threshold was still open at
+this earlier capture and is superseded by the exact-source P31 batch below; human signing,
+legal, store and final-authored-content gates remain open.
 
 ## Exact-source production-bot gate refresh — 2026-08-27
 
