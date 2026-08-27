@@ -2384,6 +2384,19 @@ passed with one v3 signer. The command/result log is
 `Builds/M11/Logs/bundletool-1183-current-2a113e0.log` (1,349 bytes; SHA-256
 `36FFDC194F6686B4EF72FE7DD2C6B8E84623ACA0E9B3E542EB321A0F310E306D`).
 
+The exact current APK was also installed and launched on the locally available genuine
+16 KB Android emulator `BattleRaja_16K` (Android 36 `google_apis_playstore_ps16k`, serial
+`emulator-5554`). `getconf PAGESIZE` reported **16,384** bytes; the Unity activity was
+top-resumed after the menu -> Solo Raja -> fighter selection -> live opening-match route,
+and the captured logcat contained no configured fatal markers. Evidence is under
+`Builds/Local/Device/Performance/20260827-16k-current-2a113e0/`: `route-summary.txt`
+(1,105 bytes; SHA-256
+`B11910A202A8B5C9EEDB813CFAC2251ADCACE493FB34E8D985986C802BC93876`), logcat SHA-256
+`2534314E0D01925C53B240417079783334D0872FAF2260CE6EAC065732798322`, and live-match
+screenshot SHA-256 `F41317A5CD27B9FFAC3CC03DDC50A213E3B2BA34E9813A8550F0617F6CE7CD3A`.
+This closes emulator runtime evidence only; owner-operated Lava comfort/endurance and
+human review remain separate gates.
+
 #### P42 gate delta
 
 | Gate | Classification | Evidence / limitation |
@@ -2393,8 +2406,9 @@ passed with one v3 signer. The command/result log is
 | Exact production replay read and full authority re-execution | **Passed** | Exact `.brr` read/replayed with all per-tick snapshot/hash checks passing |
 | Same-seed production command/replay reproducibility | **Passed** | Two independent seed-9101 runs matched command digest, count, duration, frame count and replay SHA |
 | APK-set generation, universal extraction, signing verification and 16 KB zip alignment | **Passed** | bundletool 1.18.3 generated the current AAB's universal APK; extracted zipalign and v3 apksigner verification passed |
+| Genuine 16 KB runtime launch on available emulator | **Passed (diagnostic)** | Current APK launched on Android 36 `google_apis_playstore_ps16k`; `getconf PAGESIZE` = 16,384 and no fatal markers; physical-device endurance remains open |
 | Cross-machine floating-point parity | **Not run** | Same-machine replay evidence does not establish device/architecture parity |
-| Final human review of cosmetic presentation replay (audio/VFX/animation) | **Open** | Cosmetic presentation is intentionally not an authority replay input; human review remains required |
+| Final human review of cosmetic presentation replay (audio/VFX/animation) | **Blocked** | Cosmetic presentation is intentionally not an authority replay input; owner human review remains required |
 
 ## Later checkpoints
 
