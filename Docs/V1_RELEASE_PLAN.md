@@ -1853,8 +1853,11 @@ Evidence (SHA-256):
 The fresh screenshots show the prompt changing from `WAITING FOR ACTION` to `CONTINUE`
 after genuine movement, aim, attack, ability, gadget and Aandhi observations. The player
 was still alive at 85/85 HP in the Ability and Gadget states; later attack probing reduced
-HP without producing a player-attributed KO. No elimination, victory, full match, rematch,
-accessibility or comfort pass is claimed from this run.
+HP without producing a player-attributed KO. The follow-up result capture
+`step7-followup-ko.png` (`3ACFEF83A05BCAA373210BF6907FF4961227776C51798B0605183588BE6D9190`)
+shows the player at 0/85 with `YOU KO 0`, confirming the tutorial remained gated. No
+elimination, victory, full match, rematch, accessibility or comfort pass is claimed from
+this run.
 
 #### P32 gate delta
 
@@ -1865,6 +1868,23 @@ accessibility or comfort pass is claimed from this run.
 | Exact physical Aandhi observation transition | **Passed (bounded physical check)** | Aandhi HUD/ring state was observed and `CONTINUE` enabled |
 | Exact physical Elimination → Victory transitions | **Still open** | Player-attributed KO and final victory were not achieved in this bounded probe |
 | Full route, accessibility, comfort and repeated-match review | **Still open** | Requires owner-operated Lava QA across fighters, settings, lifecycle and rematches |
+
+### P33 - Exact-candidate technical release recheck - 2026-08-27
+
+With the documentation commit `604887b` clean and the runtime-bearing source unchanged at
+`126714a`, the release checker was rerun against the exact APK/AAB pair. The captured log is
+`Builds/Local/Device/release-checker-604887b.log` (SHA-256
+`DDD201C1E5BBE713405F9F41AADBEA8A5E5DFE7A875B2F94C4E486706C153F22`). Repository validation,
+offline manifest permissions, API 28/36, ARM64-only bundle contents, seven native-library
+static 16 KB ELF alignments, and store-creative dimensions all passed. This is a technical
+recheck only; the APK remains temporary-ID/debug-signed, Lava reports 4 KB pages, and final
+identity, signing, privacy/Data Safety, cultural/legal review and Play Console actions remain
+open.
+
+| Gate | Status | Evidence / owner action |
+| --- | --- | --- |
+| Exact APK/AAB technical release checks | **Passed** | `release-checker-604887b.log`; APK `A29EF1F2F28A3EAB6820F905DC57196E5496DF76A3DCFE32B65DB41BDCF26923`; AAB `F3F901E7DBE382723B878E5B37EFBF58C9AB3D04FD7C744646C52FEF06B1A748` |
+| Runtime 16 KB and final Play eligibility | **Still open** | Approved Lava is 4 KB-page; final package identity/signing/privacy/legal and Play steps require owner-controlled work |
 
 ## Later checkpoints
 
