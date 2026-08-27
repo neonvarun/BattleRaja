@@ -2192,6 +2192,10 @@ Runtime evidence is retained at
 - Activity evidence SHA-256 is
   `655F2EC1679E2594A96A60D973F859C47D684A9DC3A9B0BFFD63326D6DE81A2C` and logcat
   SHA-256 is `9D0094124EE1F93EA23F34F02372CF0D9189D8B09D7716E404ECF8BD20A52B56`.
+  A post-tutorial logcat scan also found no configured fatal markers; its retained
+  capture is `Builds/Local/Device/Performance/20260827-16k-emulator-30s/post-tutorial-logcat.txt`
+  (SHA-256
+  `EAEA58B80F49E562D272627085B1E7FB6314B4A6F4153C70F50A86D456857988`).
 - `menu.png` SHA-256
   `61CCE91FE52719788C9895C5161DB2C1BE70CCAAA4CE6A900C8608E98CE3642A` and
   `tutorial-movement.png` SHA-256
