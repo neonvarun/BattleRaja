@@ -653,3 +653,20 @@ This closes the automated production-bot pacing and safety gate. It does not clo
 touch/tutorial/accessibility, sustained performance/thermal/battery, runtime 16 KB, final
 authored/cultural review, package identity/signing, privacy/Data Safety, content rating, store
 asset or Play Console gates. No Play-ready or publication claim is made.
+
+## Milestone 11 replay persistence continuation — 2026-08-27
+
+The remaining offline replay gap is now closed at the machine-verifiable boundary. The
+development-only production bot harness captures ordered movement, attack, ability, gadget
+and Pehel charge-step submissions, complete replay header/content configuration, per-tick
+participant snapshots and canonical hashes into a checksummed Unity-independent `.brr` file.
+A one-match production smoke passed **86/86 PlayMode** and emitted a 9,180-frame artifact;
+the exact file was read and fully re-executed with snapshot/hash verification in **141/141
+EditMode**. Serializer round-trip and corruption rejection are covered by the same baseline.
+See `Docs/V1_RELEASE_PLAN.md` P42 and `Docs/DECISIONS.md` ADR-065.
+
+The post-change release-shaped APK/AAB were rebuilt from the current source and remain
+temporary-ID, debug-signed local artifacts. Cross-machine floating-point parity, physical
+16 KB ARM64 runtime coverage, normalized performance/GC/GPU/battery approval, authored
+presentation/cultural review, final signing/identity, privacy/Data Safety, content rating
+and Play Console work remain open and owner-controlled.

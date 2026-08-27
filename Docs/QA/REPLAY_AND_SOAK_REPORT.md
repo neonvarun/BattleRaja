@@ -1,5 +1,17 @@
 # BattleRaja Replay and Soak Report
 
+## Latest durable production replay result — current source — 2026-08-27
+
+The development-only production bot harness now persists ordered authority inputs,
+per-tick participant snapshots and canonical hashes in a checksummed Unity-independent
+`.brr` file. One complete production-scene match passed **86/86 PlayMode** and emitted
+`Builds/Local/V1GameplayTruth/ProductionBotReports/Replays/match-9101-20260827-160257598.brr`
+(5,802,977 bytes; SHA-256
+`48C0DC38A417934331245FBB28B8EE15589502C23E93619EC688310C1E487736`; 9,180 frames).
+The exact file was read and fully re-executed with per-tick snapshot/hash verification in
+**141/141 EditMode**. P42 in `Docs/V1_RELEASE_PLAN.md` records the matching report,
+test/log hashes, format decision and remaining cross-machine/cosmetic-review limits.
+
 ## Latest current-tip result — runtime `754837e` / clean docs `98888d3` — 2026-08-27
 
 The current runtime-bearing candidate is presentation-only relative to the deterministic
@@ -13,8 +25,9 @@ executions), zero divergence, NUnit duration **536.0635271 seconds**. XML
 `Builds/Local/Logs/deep-soak-current-98888d3.log` has SHA-256
 `A2CC52C19961FFAAC139D68A2FF591683A5AC495F26C914A1638D101AA6D5C97`. The worktree
 was clean after the run. This is same-machine deterministic evidence only; it does
-not establish cross-machine floating-point parity or durable production replay-file
-serialization. The exact-runtime production bot batch remains recorded in P38.
+not establish cross-machine floating-point parity. Durable production replay-file
+serialization is now covered by the bounded P42 production capture/re-execution evidence.
+The exact-runtime production bot batch remains recorded in P38.
 
 ## Latest exact-source result — `8edc086` — 2026-08-27
 

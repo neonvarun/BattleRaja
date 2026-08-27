@@ -458,3 +458,12 @@ after. PSS ranged **55,262–236,543 KB**. This remains a technical candidate: t
 does not prove 16 KB runtime behavior, and human route/accessibility, sustained performance,
 final authored art/audio/cultural approval, signing, privacy/Data Safety, content rating and
 Play Console work remain open.
+
+## Continuation update — durable production replay — 2026-08-27
+
+The offline replay persistence gate is now machine-verified. A development-only production
+bot run writes ordered authority inputs, per-tick participant snapshots and canonical hashes
+to a checksummed `.brr` file; the exact generated file re-reads and re-executes cleanly in
+EditMode. This is diagnostic evidence for the offline authority, not a network protocol or
+human approval of cosmetic animation/audio/VFX. Cross-machine parity and all external release
+gates remain open.

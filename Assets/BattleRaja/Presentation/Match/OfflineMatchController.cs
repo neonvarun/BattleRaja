@@ -33,6 +33,9 @@ namespace BattleRaja.Presentation.Match
         private FixedSimulationClock _simulationClock;
         private bool _playerSpectating;
         private bool _resultsShown;
+        private MatchSpawn[] _replaySpawns = Array.Empty<MatchSpawn>();
+        private MatchPickupDefinition[] _replayPickupDefinitions = Array.Empty<MatchPickupDefinition>();
+        private GadgetPickupDefinition[] _replayGadgetPickupDefinitions = Array.Empty<GadgetPickupDefinition>();
 
         /// <summary>
         /// The single match tick source. Authority-relevant presentation adapters
@@ -52,6 +55,13 @@ namespace BattleRaja.Presentation.Match
         /// change the gameplay command stream.
         /// </summary>
         public static bool SuppressAutomaticSimulationForHarness { get; set; }
+
+        /// <summary>Diagnostic-only command taps used to persist production replay files.</summary>
+        public event Action<MovementCommand> AuthorityMovementCommandCaptured;
+        public event Action<AttackCommand> AuthorityAttackCommandCaptured;
+        public event Action<MatchReplayAbilityCommand> AuthorityAbilityCommandCaptured;
+        public event Action<GadgetUseCommand> AuthorityGadgetCommandCaptured;
+        public event Action<CombatEntityId, int> AuthorityPehelChargeStepCaptured;
 #endif
 
         public OfflineMatchSimulation Simulation => _authority != null ? _authority.Simulation : null;
@@ -75,6 +85,49 @@ namespace BattleRaja.Presentation.Match
         public double SimulationInterpolationAlpha => _simulationClock != null ? _simulationClock.InterpolationAlpha : 0d;
         public bool AuthorityDrivenMovement => authorityDrivenMovement;
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        /// <summary>
+        /// Captures the immutable inputs and content configuration currently owned by
+        /// this offline authority. The returned header is for diagnostics/replay files;
+        /// it does not expose mutable authority state.
+        /// </summary>
+        public MatchReplayHeader CreateReplayHeader(uint matchSeed)
+        {
+            if (_authority == null || _simulationClock == null)
+            {
+                throw new InvalidOperationException("Start the match before creating a replay header.");
+            }
+
+            var participants = new MatchReplayParticipant[_actors.Count];
+            for (var i = 0; i < _actors.Count; i++)
+            {
+                var actor = _actors[i];
+                var attack = actor.Transform.GetComponent<CombatAttackController>();
+                var weapon = attack != null ? attack.AuthorityWeaponDefinition : ProjectileWeaponDefinition.TrainingBolt;
+                var autonomous = actor.Transform.GetComponent<BotBrain>() != null;
+                if (autonomous || actor.Target.Id.Value > 1) weapon = ScaleAutonomousBotWeapon(weapon);
+
+                participants[i] = new MatchReplayParticipant(
+                    actor.Target.Id,
+                    actor.Target.Faction,
+                    weapon,
+                    actor.Agent.Tuning,
+                    ResolveFighterId(actor.Transform),
+                    attack != null ? attack.AuthorityTickRate : simulationTickRate);
+            }
+
+            return new MatchReplayHeader(
+                CollisionDefinition.CollisionVersion,
+                matchSeed,
+                (MatchSpawn[])_replaySpawns.Clone(),
+                (float)_simulationClock.StepSeconds,
+                MatchReplayScenario.SoloRaja,
+                participants,
+                (MatchPickupDefinition[])_replayPickupDefinitions.Clone(),
+                (GadgetPickupDefinition[])_replayGadgetPickupDefinitions.Clone());
+        }
+#endif
+
         public ulong CalculateDeterministicTickHash(MatchAuthorityTick tick)
         {
             return _authority != null
@@ -84,9 +137,11 @@ namespace BattleRaja.Presentation.Match
 
         public GadgetUseResult TryUseGadget(GadgetUseCommand command)
         {
-            return _authority != null
-                ? _authority.TryUseGadget(command)
-                : new GadgetUseResult(false, GadgetUseFailure.NotHeld, default(GadgetEffect));
+            if (_authority == null) return new GadgetUseResult(false, GadgetUseFailure.NotHeld, default(GadgetEffect));
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            AuthorityGadgetCommandCaptured?.Invoke(command);
+#endif
+            return _authority.TryUseGadget(command);
         }
 
         public bool TryAcquireGadget(CombatEntityId collectorId, ContentId gadgetId)
@@ -123,26 +178,24 @@ namespace BattleRaja.Presentation.Match
             ProjectileWeaponDefinition definition,
             int tickRate)
         {
-            return _authority != null
-                ? _authority.TryAcceptAttack(command)
-                : new MatchAuthorityAttack(
-                    command.InstigatorId,
-                    command.SimulationTick,
-                    false,
-                    MatchAuthorityAttackFailure.UnknownActor,
-                    0);
+            return TryAcceptAttack(command);
         }
 
         public MatchAuthorityAttack TryAcceptAttack(AttackCommand command)
         {
-            return _authority != null
-                ? _authority.TryAcceptAttack(command)
-                : new MatchAuthorityAttack(
+            if (_authority == null)
+            {
+                return new MatchAuthorityAttack(
                     command.InstigatorId,
                     command.SimulationTick,
                     false,
                     MatchAuthorityAttackFailure.UnknownActor,
                     0);
+            }
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            AuthorityAttackCommandCaptured?.Invoke(command);
+#endif
+            return _authority.TryAcceptAttack(command);
         }
 
         public float GetAttackCooldownRemaining(CombatEntityId actorId, int tickRate, int currentTick)
@@ -154,22 +207,34 @@ namespace BattleRaja.Presentation.Match
 
         public MatchAuthorityAbilityStart TryStartPehelCharge(AbilityCommand command, Float2 movement, Float2 facing)
         {
-            return _authority != null
-                ? _authority.TryStartPehelCharge(command, movement, facing)
-                : MatchAuthorityAbilityStart.Rejected(
+            if (_authority == null)
+            {
+                return MatchAuthorityAbilityStart.Rejected(
                     command.InstigatorId,
                     command.AbilityId,
                     command.SimulationTick);
+            }
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            AuthorityAbilityCommandCaptured?.Invoke(new MatchReplayAbilityCommand(
+                command, movement, facing, false, Float2.Zero));
+#endif
+            return _authority.TryStartPehelCharge(command, movement, facing);
         }
 
         public MatchAuthorityAbilityStart TryStartBijliDash(AbilityCommand command, Float2 movement, Float2 facing)
         {
-            return _authority != null
-                ? _authority.TryStartBijliDash(command, movement, facing)
-                : MatchAuthorityAbilityStart.Rejected(
+            if (_authority == null)
+            {
+                return MatchAuthorityAbilityStart.Rejected(
                     command.InstigatorId,
                     FighterDefinition.Bijli.Ability.AbilityId,
                     command.SimulationTick);
+            }
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            AuthorityAbilityCommandCaptured?.Invoke(new MatchReplayAbilityCommand(
+                command, movement, facing, false, Float2.Zero));
+#endif
+            return _authority.TryStartBijliDash(command, movement, facing);
         }
 
         public MatchAuthorityDashState GetBijliDashState(CombatEntityId actorId)
@@ -197,9 +262,11 @@ namespace BattleRaja.Presentation.Match
             float fixedDeltaSeconds,
             float availableDistance)
         {
-            return _authority != null
-                ? _authority.AdvancePehelCharge(actorId, simulationTick, fixedDeltaSeconds, availableDistance)
-                : default(MatchAuthorityChargeThrow);
+            if (_authority == null) return default(MatchAuthorityChargeThrow);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            AuthorityPehelChargeStepCaptured?.Invoke(actorId, simulationTick);
+#endif
+            return _authority.AdvancePehelCharge(actorId, simulationTick, fixedDeltaSeconds, availableDistance);
         }
 
         public bool IsAuthorityActor(CombatEntityId actorId)
@@ -240,9 +307,21 @@ namespace BattleRaja.Presentation.Match
             int simulationTick,
             Float2 position)
         {
-            return _authority != null
-                ? _authority.TrySpawnMayaDecoy(ownerId, simulationTick, position)
-                : default(MatchAuthorityDecoy);
+            if (_authority == null) return default(MatchAuthorityDecoy);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            AuthorityAbilityCommandCaptured?.Invoke(new MatchReplayAbilityCommand(
+                new AbilityCommand(
+                    ownerId,
+                    simulationTick,
+                    FighterSpecialDefinition.MayaDecoy.AbilityId,
+                    Float2.Up,
+                    true),
+                Float2.Zero,
+                Float2.Up,
+                true,
+                position));
+#endif
+            return _authority.TrySpawnMayaDecoy(ownerId, simulationTick, position);
         }
 
         public bool TryGetMayaDecoySnapshot(CombatEntityId ownerId, out MatchAuthorityDecoy snapshot)
@@ -390,6 +469,9 @@ namespace BattleRaja.Presentation.Match
                 if (authorityDrivenMovement)
                 {
                     var command = actor.Agent.GetAuthorityCommand(simulationTick);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                    AuthorityMovementCommandCaptured?.Invoke(command);
+#endif
                     if (!_authority.IsAuthorityMovementLocked(actor.Target.Id))
                     {
                         var movement = _authority.ResolveMovement(command, (float)_simulationClock.StepSeconds);
@@ -434,6 +516,7 @@ namespace BattleRaja.Presentation.Match
         {
             CacheActors();
             var spawns = _actors.Select(actor => new MatchSpawn(actor.Target.Id, new Float2(actor.Transform.position.x, actor.Transform.position.z), actor.Health.MaxHealth)).ToList();
+            _replaySpawns = spawns.ToArray();
             _authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja, outsideDamageTickSeconds);
             var pickupDefinitions = new List<MatchPickupDefinition>(pickups != null ? pickups.Length : 0);
             if (pickups != null)
@@ -469,7 +552,9 @@ namespace BattleRaja.Presentation.Match
                 }
             }
 
-            _authority.ConfigureItems(pickupDefinitions, gadgetDefinitions);
+            _replayPickupDefinitions = pickupDefinitions.ToArray();
+            _replayGadgetPickupDefinitions = gadgetDefinitions.ToArray();
+            _authority.ConfigureItems(_replayPickupDefinitions, _replayGadgetPickupDefinitions);
             _authority.Start(spawns);
             for (var i = 0; i < _actors.Count; i++)
             {
@@ -531,6 +616,19 @@ namespace BattleRaja.Presentation.Match
                 weapon.AllowSelfHit,
                 weapon.AllowFriendlyFire);
         }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        private static ContentId ResolveFighterId(Transform actor)
+        {
+            var bijli = actor.GetComponent<BijliFighterController>();
+            if (bijli != null && bijli.enabled) return FighterDefinition.Bijli.FighterId;
+            var pehel = actor.GetComponent<PehelFighterController>();
+            if (pehel != null && pehel.enabled) return FighterDefinition.Pehel.FighterId;
+            var maya = actor.GetComponent<MayaFighterController>();
+            if (maya != null && maya.enabled) return FighterDefinition.Maya.FighterId;
+            throw new InvalidOperationException($"Actor {actor.name} has no active fighter definition.");
+        }
+#endif
 
         public void RestartMatch()
         {

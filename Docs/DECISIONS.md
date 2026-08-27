@@ -1471,3 +1471,30 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Evidence/sources:** `FighterPresentation`, the Bijli open-lane regression fixture,
   full EditMode/PlayMode results and exact-source Lava evidence in `V1_RELEASE_PLAN.md` P30.
 - **Owner:** Human project owner
+
+### ADR-065 - Persist ordered production replay captures as checksummed core files
+
+- **Date:** 2026-08-27
+- **Status:** Accepted for the V1 offline diagnostic/replay foundation.
+- **Context:** Deterministic replay execution and hash soaks existed only as in-memory
+  EditMode coverage. Production bot runs could not retain the exact authority inputs or
+  inspect canonical state after a match, leaving a durable replay-file gate open.
+- **Options considered:** Serialize Unity presentation objects; record only a summary digest;
+  or persist the transport-independent command stream and canonical snapshots at match end.
+- **Decision:** Add a Unity-independent version-1 binary replay envelope with explicit magic,
+  payload length and SHA-256 checksum. Production/development harness capture records ordered
+  movement, attack, ability, gadget and Pehel charge-step submissions, the complete replay
+  header/content configuration, per-tick participant snapshots and canonical hashes. The
+  serializer supports deterministic byte-for-byte round trips and rejects truncation,
+  trailing data and checksum corruption. Capture remains diagnostic-only; cosmetic Unity
+  animation, audio and VFX are not gameplay authority state and are not treated as replay
+  inputs.
+- **Consequences:** A production match can now emit a durable `.brr` artifact that can be
+  re-read and fully re-executed against the offline authority, including same-tick action-lock
+  ordering. The format is not a network protocol, player save format or cross-machine
+  floating-point proof; signed release and human presentation review remain separate gates.
+- **Evidence/sources:** `MatchReplayFileSerializer`, `MatchReplayFrame.CommandOrder`,
+  `ProductionBotMatchHarness`, `OfflineMatchController` diagnostic capture taps,
+  `ReplayDeterminismTests.MatchReplayFileSerializer_RoundTripsDeterministicallyAndRejectsCorruption`,
+  and P42 in `Docs/V1_RELEASE_PLAN.md`.
+- **Owner:** Human project owner

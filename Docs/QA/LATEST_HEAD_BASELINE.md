@@ -1,5 +1,18 @@
 # Latest HEAD baseline
 
+## Latest durable production replay capture — current source — 2026-08-27
+
+The development-only production bot harness now persists the exact ordered authority
+command stream, per-tick participant snapshots and canonical hashes in a checksummed,
+Unity-independent `.brr` file. The one-match production smoke passed **86/86 PlayMode**;
+the generated artifact is
+`Builds/Local/V1GameplayTruth/ProductionBotReports/Replays/match-9101-20260827-160257598.brr`
+(5,802,977 bytes; SHA-256
+`48C0DC38A417934331245FBB28B8EE15589502C23E93619EC688310C1E487736`), with 9,180 frames.
+An exact-file read/re-execution with per-tick snapshot/hash checks passed **141/141
+EditMode**. P42 in `Docs/V1_RELEASE_PLAN.md` contains the test/log/report hashes and
+remaining cross-machine/cosmetic-review limitations.
+
 ## Latest exact-candidate Lava three-cycle probe — runtime `754837e` / clean tip `3b8b6a1` — 2026-08-27
 
 The exact APK (`788181073E5EFCB2F5F0AECEF20E0372362BFCD2B83928CA010153009FDF99B3`)
@@ -25,8 +38,8 @@ XML `Builds/Local/TestResults/deep-soak-current-98888d3.xml` SHA-256
 `07DADE0702BD7B5DEC9A11E60042D66778A42344CBB33526D72073D6D8DFF4C6`; log
 `Builds/Local/Logs/deep-soak-current-98888d3.log` SHA-256
 `A2CC52C19961FFAAC139D68A2FF591683A5AC495F26C914A1638D101AA6D5C97`. Same-machine
-parity passed; cross-machine parity and durable production replay serialization remain
-open.
+parity passed; cross-machine parity remains open. Durable production replay serialization
+is closed by the bounded P42 production capture/re-execution evidence above.
 
 ## Latest genuine 16 KB runtime check — candidate `754837e` — 2026-08-27
 

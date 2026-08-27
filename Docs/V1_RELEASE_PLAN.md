@@ -136,8 +136,9 @@ The read-only audit over exact commit `33035e8` confirmed two P0 blockers:
   - Bijli dash replay support and production command routing: **fixed with authority-owned
     dash runtimes, canonical tick advancement/hashing, replay command coverage, production
     view mirroring and movement-lock parity**.
-  - Production durable replay-file serialization and complete future-state capture for all
-    presentation-only state: **still open**.
+  - Production durable replay-file serialization and canonical future-state capture:
+    **fixed with bounded P42 machine evidence**. Cosmetic presentation-state review remains
+    human work.
 - Unified action eligibility across movement, attacks, abilities, gadgets, healing,
   knockback and Aandhi: **fixed with authority-owned eligibility and regressions**.
 
@@ -2287,6 +2288,59 @@ GPU, GC, battery-drain, thermal-throttling or mid-range-device approval.
 | 180-second full-route diagnostic stability | **Passed (bounded)** | Six samples, thermal status 0, battery level unchanged, no configured fatal markers |
 | Full action-by-action tutorial, all-fighter human route and comfort/fun approval | **Blocked** | Owner-operated tutorial, fighter comparison and human judgment remain required |
 | Sustained performance against documented CPU/GPU/GC/frame/battery budgets | **Not run** | Capture lacks normalized frame histogram, GPU/GC and unplugged endurance evidence |
+
+### P42 - Durable production replay capture and exact-artifact re-execution - 2026-08-27
+
+The offline replay foundation now has a versioned, Unity-independent `.brr` file format.
+`MatchReplayFileSerializer` writes an explicit magic/version envelope, payload length and
+SHA-256 checksum, and rejects truncation, trailing bytes or checksum corruption. Replay
+frames can retain the exact same-tick authority submission order (including Pehel charge
+steps), the complete header/content configuration, per-tick participant snapshots and
+canonical hashes. Cosmetic Unity animation, audio and VFX remain presentation state rather
+than replay inputs.
+
+The development-only production bot harness captured one complete Bazaar Bastion match
+through the production scene and wrote
+`Builds/Local/V1GameplayTruth/ProductionBotReports/Replays/match-9101-20260827-160257598.brr`:
+5,802,977 bytes, SHA-256
+`48C0DC38A417934331245FBB28B8EE15589502C23E93619EC688310C1E487736`, 9,180 authority
+frames, and 58,097 command-digest inputs. The matching report is
+`Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260827-160256013-9101.json`
+(SHA-256 `CAEDD80A751A1AE6C5B17583F2C7D480DB609F30F569FA51358B52A3AE12F550`) and records
+the replay path/hash/frame count. The production smoke was **86/86 PlayMode** with one
+seeded match, 306.0135 seconds, four combat eliminations, one Aandhi elimination and
+31 bot-to-bot damaging pairs.
+
+The exact generated production replay was read and fully re-executed against the canonical
+authority with per-tick snapshot/hash verification: **141/141 EditMode** in
+`Builds/Local/TestResults/production-replay-verify-final.xml` (SHA-256
+`5AD83DC7DDC6B0800E2BF33611863FF41A5935FC5F9397406E1359AF77B141FA`); Unity log SHA-256
+`1B4500F2985F0106DFDE4A6DFC2CEFEEAF03B591B116708D7884176722144751`. The final no-path
+EditMode regression is also **141/141** (`editmode-replay-final.xml`, SHA-256
+`30722E1E65435E6FCF8DE9ACA1427512F35D74D98B6DC943AEFF91E2EBA44CB5`; log
+`C6A636EBA3E17402BAF993CBDB1E8BDCA5FC1BA0748EB192767F89CC618C3338`). The final
+one-match PlayMode smoke is **86/86** (`playmode-replay-final.xml`, SHA-256
+`2DECE92391AF3E7FF6B156B9D5D24D009E6BBC5635AB0CAFF554FA867872E1C2`; log
+`96E820F4C227F52C2B0F37EBA764F4A820CD39E123F9B8928E59C439A5527A28`). Static validation
+remains **0 errors / 0 warnings**.
+
+The post-serialization release-shaped pair was rebuilt from the current source. APK
+`Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk` is 40,533,686 bytes (SHA-256
+`52B04A015656BB5480FBBCF5879578313D1B527E32BA205BBB9F102449C0986E`); AAB is 36,358,860
+bytes (SHA-256 `9FA87846E85423499AC8A9305631091A4D38ADA8F0A49D03853F0B14B954499F`); build
+log SHA-256 is `2D7C3D105AEE2CF7EE95D6B1C8B822B14F673786C90AE6CBE8D68F114BD5A9CD`.
+These remain temporary-ID, debug-signed local artifacts; no publication or final signing
+claim is made.
+
+#### P42 gate delta
+
+| Gate | Classification | Evidence / limitation |
+| --- | --- | --- |
+| Versioned durable replay serialization with integrity rejection | **Passed** | Byte-for-byte round trip plus truncation/checksum regression in 141/141 EditMode |
+| Production-scene command capture and per-tick canonical state retention | **Passed (diagnostic)** | One complete production bot match emitted 9,180 ordered frames with snapshots/hashes |
+| Exact production replay read and full authority re-execution | **Passed** | Exact `.brr` read/replayed with all per-tick snapshot/hash checks passing |
+| Cross-machine floating-point parity | **Not run** | Same-machine replay evidence does not establish device/architecture parity |
+| Final human review of cosmetic presentation replay (audio/VFX/animation) | **Open** | Cosmetic presentation is intentionally not an authority replay input; human review remains required |
 
 ## Later checkpoints
 

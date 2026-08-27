@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using BattleRaja.Core.Application;
 using BattleRaja.Core.Domain;
 using NUnit.Framework;
@@ -182,6 +184,57 @@ namespace BattleRaja.Tests.EditMode
             var corrupted = new DeterministicReplayExecutor().Execute(recorded);
             Assert.That(corrupted.Succeeded, Is.False);
             Assert.That(corrupted.DivergenceTick, Is.EqualTo(8));
+        }
+
+        [Test]
+        public void MatchReplayFileSerializer_RoundTripsDeterministicallyAndRejectsCorruption()
+        {
+            var seedReplay = new MatchReplayFile(CreateReplayHeader());
+            var frames = CreateReplayFrames();
+            foreach (var frame in frames) seedReplay.AddFrame(frame, 0UL);
+
+            var executed = new DeterministicReplayExecutor().Execute(seedReplay, false);
+            Assert.That(executed.Succeeded, Is.True);
+            var recorded = new MatchReplayFile(seedReplay.Header);
+            for (var i = 0; i < frames.Count; i++) recorded.AddFrame(frames[i], executed.ActualHashes[i]);
+
+            var bytes = MatchReplayFileSerializer.Serialize(recorded);
+            var roundTripped = MatchReplayFileSerializer.Deserialize(bytes);
+            var roundTripBytes = MatchReplayFileSerializer.Serialize(roundTripped);
+
+            CollectionAssert.AreEqual(bytes, roundTripBytes);
+            Assert.That(roundTripped.Header.ArenaVersion, Is.EqualTo(recorded.Header.ArenaVersion));
+            Assert.That(roundTripped.Header.MatchSeed, Is.EqualTo(recorded.Header.MatchSeed));
+            Assert.That(roundTripped.Header.Participants.Length, Is.EqualTo(recorded.Header.Participants.Length));
+            Assert.That(roundTripped.Frames.Count, Is.EqualTo(recorded.Frames.Count));
+            Assert.That(new DeterministicReplayExecutor().Execute(roundTripped).Succeeded, Is.True);
+
+            var path = Path.Combine(Path.GetTempPath(), "battleraja-replay-" + Guid.NewGuid().ToString("N") + ".brr");
+            try
+            {
+                MatchReplayFileSerializer.Write(recorded, path);
+                var fromDisk = MatchReplayFileSerializer.Read(path);
+                CollectionAssert.AreEqual(bytes, MatchReplayFileSerializer.Serialize(fromDisk));
+            }
+            finally
+            {
+                if (File.Exists(path)) File.Delete(path);
+            }
+
+            var productionPath = Environment.GetEnvironmentVariable("BATTLERAJA_REPLAY_PATH");
+            if (!string.IsNullOrWhiteSpace(productionPath))
+            {
+                Assert.That(File.Exists(productionPath), Is.True, "Configured production replay path does not exist.");
+                var productionReplay = MatchReplayFileSerializer.Read(productionPath);
+                var productionExecution = new DeterministicReplayExecutor().Execute(productionReplay);
+                Assert.That(productionExecution.Succeeded, Is.True,
+                    $"Production replay diverged at tick {productionExecution.DivergenceTick}: {productionExecution.Description}");
+                Assert.That(productionReplay.Frames.Count, Is.GreaterThan(0));
+            }
+
+            var corrupted = (byte[])bytes.Clone();
+            corrupted[corrupted.Length - 1] ^= 0xFF;
+            Assert.Throws<InvalidDataException>(() => MatchReplayFileSerializer.Deserialize(corrupted));
         }
 
         private static MatchReplayHeader CreateReplayHeader()

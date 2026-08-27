@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using BattleRaja.Core.Application;
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Combat;
@@ -105,6 +106,9 @@ namespace BattleRaja.Presentation.AI
         public double MaxDecisionMilliseconds;
         public string CommandDigest;
         public int CommandCount;
+        public string ReplayFilePath;
+        public string ReplayFileSha256;
+        public int ReplayFrameCount;
         public List<AutonomousBotParticipantResult> Participants =
             new List<AutonomousBotParticipantResult>();
     }
@@ -138,6 +142,13 @@ namespace BattleRaja.Presentation.AI
         private readonly Dictionary<int, int> _projectileHitsByActor = new Dictionary<int, int>();
         private AutonomousBotMatchResult _currentResult;
         private OfflineMatchController _match;
+        private MatchReplayFile _currentReplay;
+        private int _captureTick = -1;
+        private readonly List<MovementCommand> _capturedMovements = new List<MovementCommand>(8);
+        private readonly List<AttackCommand> _capturedAttacks = new List<AttackCommand>(8);
+        private readonly List<MatchReplayAbilityCommand> _capturedAbilities = new List<MatchReplayAbilityCommand>(4);
+        private readonly List<GadgetUseCommand> _capturedGadgets = new List<GadgetUseCommand>(4);
+        private readonly List<MatchReplayCommandOrder> _capturedCommandOrder = new List<MatchReplayCommandOrder>(24);
         private string _reportRunId;
         private float _reportPlaybackScale;
 
@@ -251,10 +262,18 @@ namespace BattleRaja.Presentation.AI
             }
 
             _currentResult = new AutonomousBotMatchResult { Seed = seed };
+            _currentReplay = new MatchReplayFile(_match.CreateReplayHeader(seed));
+            _captureTick = -1;
+            ClearCapturedCommands();
             _damagingPairs.Clear();
             _botToBotDamagingPairs.Clear();
             _projectileHitsByActor.Clear();
             _match.AuthorityTickResolved += OnAuthorityTickResolved;
+            _match.AuthorityMovementCommandCaptured += CaptureMovementCommand;
+            _match.AuthorityAttackCommandCaptured += CaptureAttackCommand;
+            _match.AuthorityAbilityCommandCaptured += CaptureAbilityCommand;
+            _match.AuthorityGadgetCommandCaptured += CaptureGadgetCommand;
+            _match.AuthorityPehelChargeStepCaptured += CapturePehelChargeStep;
             try
             {
                 while (!_match.Simulation.IsEnded && _match.SimulationTick < MaximumTicks)
@@ -274,12 +293,21 @@ namespace BattleRaja.Presentation.AI
             finally
             {
                 _match.AuthorityTickResolved -= OnAuthorityTickResolved;
+                _match.AuthorityMovementCommandCaptured -= CaptureMovementCommand;
+                _match.AuthorityAttackCommandCaptured -= CaptureAttackCommand;
+                _match.AuthorityAbilityCommandCaptured -= CaptureAbilityCommand;
+                _match.AuthorityGadgetCommandCaptured -= CaptureGadgetCommand;
+                _match.AuthorityPehelChargeStepCaptured -= CapturePehelChargeStep;
             }
 
             _currentResult.CompletedWithinTickBudget = _match.Simulation.IsEnded;
             _currentResult.DurationSeconds = _match.Simulation.ElapsedSeconds;
             CollectFinalState(_currentResult, actors);
             CollectComponentTelemetry(_currentResult, brains.ToArray());
+            var replayPath = WriteReplay(_currentReplay, seed);
+            _currentResult.ReplayFilePath = replayPath;
+            _currentResult.ReplayFileSha256 = ComputeSha256(replayPath);
+            _currentResult.ReplayFrameCount = _currentReplay.Frames.Count;
             WriteMatchReport(_currentResult, seed);
             Results.Add(_currentResult);
             _currentResult = null;
@@ -359,6 +387,7 @@ namespace BattleRaja.Presentation.AI
         private void OnAuthorityTickResolved(MatchAuthorityTick tick)
         {
             if (_currentResult == null) return;
+            CaptureReplayFrame(tick);
             var elapsed = tick.SimulationTick * FixedStepSeconds;
             var snapshots = _match.Simulation.GetSnapshots();
             var collisionDefinition = _match.CollisionDefinition;
@@ -440,6 +469,89 @@ namespace BattleRaja.Presentation.AI
 
             _currentResult.UniqueDamagingPairs = _damagingPairs.Count;
             _currentResult.BotToBotDamagingPairs = _botToBotDamagingPairs.Count;
+        }
+
+        private void CaptureMovementCommand(MovementCommand command)
+        {
+            EnsureCaptureTick(command.SimulationTick);
+            _capturedCommandOrder.Add(new MatchReplayCommandOrder(
+                MatchReplayCommandKind.Movement,
+                _capturedMovements.Count));
+            _capturedMovements.Add(command);
+        }
+
+        private void CaptureAttackCommand(AttackCommand command)
+        {
+            EnsureCaptureTick(command.SimulationTick);
+            _capturedCommandOrder.Add(new MatchReplayCommandOrder(
+                MatchReplayCommandKind.Attack,
+                _capturedAttacks.Count));
+            _capturedAttacks.Add(command);
+        }
+
+        private void CaptureAbilityCommand(MatchReplayAbilityCommand command)
+        {
+            EnsureCaptureTick(command.Command.SimulationTick);
+            _capturedCommandOrder.Add(new MatchReplayCommandOrder(
+                MatchReplayCommandKind.Ability,
+                _capturedAbilities.Count));
+            _capturedAbilities.Add(command);
+        }
+
+        private void CaptureGadgetCommand(GadgetUseCommand command)
+        {
+            EnsureCaptureTick(command.Tick);
+            _capturedCommandOrder.Add(new MatchReplayCommandOrder(
+                MatchReplayCommandKind.Gadget,
+                _capturedGadgets.Count));
+            _capturedGadgets.Add(command);
+        }
+
+        private void CapturePehelChargeStep(CombatEntityId actorId, int simulationTick)
+        {
+            EnsureCaptureTick(simulationTick);
+            _capturedCommandOrder.Add(new MatchReplayCommandOrder(
+                MatchReplayCommandKind.PehelChargeStep,
+                actorId.Value));
+        }
+
+        private void CaptureReplayFrame(MatchAuthorityTick tick)
+        {
+            EnsureCaptureTick(tick.SimulationTick);
+            var frame = new MatchReplayFrame(
+                tick.SimulationTick,
+                _capturedMovements.ToArray(),
+                _capturedAttacks.ToArray(),
+                _capturedAbilities.ToArray(),
+                _capturedGadgets.ToArray(),
+                _capturedCommandOrder.ToArray());
+            _currentReplay.AddFrame(
+                frame,
+                _match.CalculateDeterministicTickHash(tick),
+                _match.Simulation.GetSnapshots());
+            ClearCapturedCommands();
+            _captureTick = -1;
+        }
+
+        private void EnsureCaptureTick(int simulationTick)
+        {
+            if (_captureTick == simulationTick) return;
+            if (_captureTick != -1)
+            {
+                throw new InvalidOperationException(
+                    $"Production replay command tick changed from {_captureTick} to {simulationTick} before the authority frame resolved.");
+            }
+
+            _captureTick = simulationTick;
+        }
+
+        private void ClearCapturedCommands()
+        {
+            _capturedMovements.Clear();
+            _capturedAttacks.Clear();
+            _capturedAbilities.Clear();
+            _capturedGadgets.Clear();
+            _capturedCommandOrder.Clear();
         }
 
         private void CollectFinalState(
@@ -650,6 +762,32 @@ namespace BattleRaja.Presentation.AI
                 Matches = new List<AutonomousBotMatchResult>(Results)
             };
             LastReportPath = WriteJson(report, $"batch-{_reportRunId}-{baseSeed}.json");
+        }
+
+        private static string WriteReplay(MatchReplayFile replay, uint seed)
+        {
+            var directory = Path.GetFullPath(Path.Combine(
+                Application.dataPath,
+                "..",
+                "Builds",
+                "Local",
+                "V1GameplayTruth",
+                "ProductionBotReports",
+                "Replays"));
+            Directory.CreateDirectory(directory);
+            var path = Path.Combine(directory, $"match-{seed}-{DateTime.UtcNow:yyyyMMdd-HHmmssfff}.brr");
+            MatchReplayFileSerializer.Write(replay, path);
+            return path;
+        }
+
+        private static string ComputeSha256(string path)
+        {
+            using (var sha = SHA256.Create())
+            using (var stream = File.OpenRead(path))
+            {
+                var digest = sha.ComputeHash(stream);
+                return BitConverter.ToString(digest).Replace("-", string.Empty);
+            }
         }
 
         private static string WriteJson(AutonomousBotBatchReport report, string fileName)

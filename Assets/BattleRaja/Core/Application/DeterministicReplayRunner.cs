@@ -66,6 +66,32 @@ namespace BattleRaja.Core.Application
         public Float2 DecoyPosition { get; }
     }
 
+    public enum MatchReplayCommandKind
+    {
+        Movement = 1,
+        Attack = 2,
+        Ability = 3,
+        Gadget = 4,
+        PehelChargeStep = 5
+    }
+
+    /// <summary>
+    /// Records authoritative submission order for one replay frame. Legacy
+    /// frames leave this empty and retain their historical deterministic order;
+    /// production capture fills it to preserve same-tick interactions.
+    /// </summary>
+    public readonly struct MatchReplayCommandOrder
+    {
+        public MatchReplayCommandOrder(MatchReplayCommandKind kind, int index)
+        {
+            Kind = kind;
+            Index = index;
+        }
+
+        public MatchReplayCommandKind Kind { get; }
+        public int Index { get; }
+    }
+
     public readonly struct MatchReplayHeader
     {
         public MatchReplayHeader(string arenaVersion, uint matchSeed, MatchSpawn[] spawns)
@@ -133,12 +159,24 @@ namespace BattleRaja.Core.Application
             AttackCommand[] attackCommands,
             MatchReplayAbilityCommand[] abilityCommands,
             GadgetUseCommand[] gadgetCommands)
+            : this(simulationTick, movementCommands, attackCommands, abilityCommands, gadgetCommands, null)
+        {
+        }
+
+        public MatchReplayFrame(
+            int simulationTick,
+            MovementCommand[] movementCommands,
+            AttackCommand[] attackCommands,
+            MatchReplayAbilityCommand[] abilityCommands,
+            GadgetUseCommand[] gadgetCommands,
+            MatchReplayCommandOrder[] commandOrder)
         {
             SimulationTick = simulationTick;
             MovementCommands = movementCommands ?? Array.Empty<MovementCommand>();
             AttackCommands = attackCommands ?? Array.Empty<AttackCommand>();
             AbilityCommands = abilityCommands ?? Array.Empty<MatchReplayAbilityCommand>();
             GadgetCommands = gadgetCommands ?? Array.Empty<GadgetUseCommand>();
+            CommandOrder = commandOrder ?? Array.Empty<MatchReplayCommandOrder>();
         }
 
         public int SimulationTick { get; }
@@ -146,6 +184,7 @@ namespace BattleRaja.Core.Application
         public AttackCommand[] AttackCommands { get; }
         public MatchReplayAbilityCommand[] AbilityCommands { get; }
         public GadgetUseCommand[] GadgetCommands { get; }
+        public MatchReplayCommandOrder[] CommandOrder { get; }
 
         private static MatchReplayAbilityCommand[] ConvertLegacyAbilities(AbilityCommand[] commands)
         {
@@ -167,16 +206,27 @@ namespace BattleRaja.Core.Application
             Header = header;
             Frames = new List<MatchReplayFrame>();
             TickStateHashes = new List<ulong>();
+            TickStateSnapshots = new List<MatchParticipantSnapshot[]>();
         }
 
         public MatchReplayHeader Header { get; }
         public List<MatchReplayFrame> Frames { get; }
         public List<ulong> TickStateHashes { get; }
+        public List<MatchParticipantSnapshot[]> TickStateSnapshots { get; }
 
         public void AddFrame(MatchReplayFrame frame, ulong stateHash)
         {
+            AddFrame(frame, stateHash, null);
+        }
+
+        public void AddFrame(
+            MatchReplayFrame frame,
+            ulong stateHash,
+            MatchParticipantSnapshot[] stateSnapshots)
+        {
             Frames.Add(frame);
             TickStateHashes.Add(stateHash);
+            TickStateSnapshots.Add(stateSnapshots ?? Array.Empty<MatchParticipantSnapshot>());
         }
     }
 
@@ -314,6 +364,21 @@ namespace BattleRaja.Core.Application
                 var hash = DeterministicReplayHasher.CalculateTickHash(authority, tick, snapshots);
                 actualHashes.Add(hash);
 
+                if (frameIndex < replay.TickStateSnapshots.Count &&
+                    replay.TickStateSnapshots[frameIndex] != null &&
+                    replay.TickStateSnapshots[frameIndex].Length > 0 &&
+                    !SnapshotsEqual(replay.TickStateSnapshots[frameIndex], snapshots, out var snapshotDifference))
+                {
+                    return new ReplayExecutionResult(
+                        false,
+                        frame.SimulationTick,
+                        replay.TickStateHashes[frameIndex],
+                        hash,
+                        $"Canonical authority snapshot diverged: {snapshotDifference}",
+                        actualHashes,
+                        authority);
+                }
+
                 if (verifyRecordedHashes &&
                     frameIndex < replay.TickStateHashes.Count &&
                     replay.TickStateHashes[frameIndex] != hash)
@@ -342,6 +407,38 @@ namespace BattleRaja.Core.Application
             }
 
             return new ReplayExecutionResult(true, 0, 0, 0, string.Empty, actualHashes, authority);
+        }
+
+        private static bool SnapshotsEqual(
+            MatchParticipantSnapshot[] expected,
+            MatchParticipantSnapshot[] actual,
+            out string difference)
+        {
+            if (expected == null || actual == null || expected.Length != actual.Length)
+            {
+                difference = $"participant count expected={expected?.Length ?? 0} actual={actual?.Length ?? 0}";
+                return false;
+            }
+
+            for (var i = 0; i < expected.Length; i++)
+            {
+                var left = expected[i];
+                var right = actual[i];
+                if (left.Id != right.Id || !left.Position.Equals(right.Position) ||
+                    left.CurrentHealth != right.CurrentHealth || left.MaxHealth != right.MaxHealth ||
+                    left.Alive != right.Alive || left.Placement != right.Placement ||
+                    left.Eliminations != right.Eliminations || left.DamageDealt != right.DamageDealt ||
+                    left.Assists != right.Assists || !left.SurvivalTimeSeconds.Equals(right.SurvivalTimeSeconds))
+                {
+                    difference = $"actor {left.Id.Value} expected pos={left.Position} hp={left.CurrentHealth}/{left.MaxHealth} " +
+                        $"alive={left.Alive} placement={left.Placement} damage={left.DamageDealt} actual pos={right.Position} " +
+                        $"hp={right.CurrentHealth}/{right.MaxHealth} alive={right.Alive} placement={right.Placement} damage={right.DamageDealt}";
+                    return false;
+                }
+            }
+
+            difference = string.Empty;
+            return true;
         }
 
         private static OfflineMatchAuthority CreateAuthority(MatchReplayHeader header)
@@ -380,17 +477,27 @@ namespace BattleRaja.Core.Application
             List<CombatEntityId> pehelActorIds,
             List<CombatEntityId> bijliActorIds)
         {
-            for (var i = 0; i < frame.MovementCommands.Length; i++)
+            if (frame.CommandOrder.Length > 0)
             {
-                var command = frame.MovementCommands[i];
-                if (command.SimulationTick != frame.SimulationTick)
-                {
-                    throw new InvalidOperationException("Movement command ticks must match their replay frame.");
-                }
-
-                authority.ResolveMovement(command, fixedDeltaSeconds);
+                ApplyOrderedFrame(authority, frame, fixedDeltaSeconds);
+                return;
             }
 
+            for (var i = 0; i < frame.GadgetCommands.Length; i++)
+            {
+                var command = frame.GadgetCommands[i];
+                if (command.Tick != frame.SimulationTick)
+                {
+                    throw new InvalidOperationException("Gadget command ticks must match their replay frame.");
+                }
+
+                authority.TryUseGadget(command);
+            }
+
+            // Production adapters submit gadgets, attacks and abilities while the
+            // canonical tick event is being raised, then the controller resolves
+            // queued movement commands. Keeping that order here is important when
+            // a gadget displacement or fighter action lock affects same-tick movement.
             for (var i = 0; i < frame.AttackCommands.Length; i++)
             {
                 var command = frame.AttackCommands[i];
@@ -432,15 +539,15 @@ namespace BattleRaja.Core.Application
                 throw new InvalidOperationException("Replay contains an unsupported ability command.");
             }
 
-            for (var i = 0; i < frame.GadgetCommands.Length; i++)
+            for (var i = 0; i < frame.MovementCommands.Length; i++)
             {
-                var command = frame.GadgetCommands[i];
-                if (command.Tick != frame.SimulationTick)
+                var command = frame.MovementCommands[i];
+                if (command.SimulationTick != frame.SimulationTick)
                 {
-                    throw new InvalidOperationException("Gadget command ticks must match their replay frame.");
+                    throw new InvalidOperationException("Movement command ticks must match their replay frame.");
                 }
 
-                authority.TryUseGadget(command);
+                authority.ResolveMovement(command, fixedDeltaSeconds);
             }
 
             for (var i = 0; i < pehelActorIds.Count; i++)
@@ -451,6 +558,119 @@ namespace BattleRaja.Core.Application
                     fixedDeltaSeconds,
                     FighterSpecialDefinition.PehelChargeThrow.Magnitude);
             }
+        }
+
+        private static void ApplyOrderedFrame(
+            OfflineMatchAuthority authority,
+            MatchReplayFrame frame,
+            float fixedDeltaSeconds)
+        {
+            for (var i = 0; i < frame.CommandOrder.Length; i++)
+            {
+                var order = frame.CommandOrder[i];
+                switch (order.Kind)
+                {
+                    case MatchReplayCommandKind.Movement:
+                        if (order.Index < 0 || order.Index >= frame.MovementCommands.Length)
+                        {
+                            throw new InvalidOperationException("Replay movement order index is invalid.");
+                        }
+
+                        var movement = frame.MovementCommands[order.Index];
+                        if (movement.SimulationTick != frame.SimulationTick)
+                        {
+                            throw new InvalidOperationException("Movement command ticks must match their replay frame.");
+                        }
+
+                        if (!authority.IsAuthorityMovementLocked(new CombatEntityId(movement.ActorId)))
+                        {
+                            authority.ResolveMovement(movement, fixedDeltaSeconds);
+                        }
+                        break;
+                    case MatchReplayCommandKind.Attack:
+                        if (order.Index < 0 || order.Index >= frame.AttackCommands.Length)
+                        {
+                            throw new InvalidOperationException("Replay attack order index is invalid.");
+                        }
+
+                        var attack = frame.AttackCommands[order.Index];
+                        if (attack.SimulationTick != frame.SimulationTick)
+                        {
+                            throw new InvalidOperationException("Attack command ticks must match their replay frame.");
+                        }
+
+                        authority.TryAcceptAttack(attack);
+                        break;
+                    case MatchReplayCommandKind.Ability:
+                        if (order.Index < 0 || order.Index >= frame.AbilityCommands.Length)
+                        {
+                            throw new InvalidOperationException("Replay ability order index is invalid.");
+                        }
+
+                        ApplyAbility(authority, frame, frame.AbilityCommands[order.Index]);
+                        break;
+                    case MatchReplayCommandKind.Gadget:
+                        if (order.Index < 0 || order.Index >= frame.GadgetCommands.Length)
+                        {
+                            throw new InvalidOperationException("Replay gadget order index is invalid.");
+                        }
+
+                        var gadget = frame.GadgetCommands[order.Index];
+                        if (gadget.Tick != frame.SimulationTick)
+                        {
+                            throw new InvalidOperationException("Gadget command ticks must match their replay frame.");
+                        }
+
+                        authority.TryUseGadget(gadget);
+                        break;
+                    case MatchReplayCommandKind.PehelChargeStep:
+                        if (order.Index <= 0)
+                        {
+                            throw new InvalidOperationException("Replay Pehel charge actor ID is invalid.");
+                        }
+
+                        authority.AdvancePehelCharge(
+                            new CombatEntityId(order.Index),
+                            frame.SimulationTick,
+                            fixedDeltaSeconds,
+                            FighterSpecialDefinition.PehelChargeThrow.Magnitude);
+                        break;
+                    default:
+                        throw new InvalidOperationException("Replay contains an unsupported command-order kind.");
+                }
+            }
+        }
+
+        private static void ApplyAbility(
+            OfflineMatchAuthority authority,
+            MatchReplayFrame frame,
+            MatchReplayAbilityCommand recorded)
+        {
+            var command = recorded.Command;
+            if (command.SimulationTick != frame.SimulationTick)
+            {
+                throw new InvalidOperationException("Ability command ticks must match their replay frame.");
+            }
+
+            if (recorded.SpawnDecoy)
+            {
+                authority.TrySpawnMayaDecoy(command.InstigatorId, command.SimulationTick, recorded.DecoyPosition);
+                return;
+            }
+
+            if (command.AbilityId.Equals(FighterSpecialDefinition.PehelChargeThrow.AbilityId))
+            {
+                authority.TryStartPehelCharge(command, recorded.Movement, recorded.Facing);
+                return;
+            }
+
+            if (command.AbilityId.Equals(FighterDefinition.Bijli.Ability.AbilityId))
+            {
+                authority.TryStartBijliDash(command, recorded.Movement, recorded.Facing);
+                return;
+            }
+
+            throw new InvalidOperationException("Replay contains an unsupported ability command.");
         }
     }
 

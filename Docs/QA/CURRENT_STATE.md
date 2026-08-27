@@ -31,7 +31,18 @@ lesson begins; the earlier live-authority Elimination regression remains covered
 The carried-forward 1,000-seed deterministic replay soak has 2,000 executions and zero
 divergence, and the current-tip rerun also passes with the same result. Exact current-tip
 XML/log hashes are indexed in `Docs/V1_RELEASE_PLAN.md` P40; this is same-machine evidence
-and does not establish cross-machine parity or durable production replay serialization.
+and does not establish cross-machine parity. P42 now closes the available durable production
+replay gate: the development-only production harness emits ordered `.brr` captures with
+per-tick canonical snapshots/hashes, and an exact generated file re-executes cleanly against
+the authority. Cross-machine parity and human review of cosmetic animation/audio/VFX remain
+open.
+
+The P42 production replay artifact is
+`Builds/Local/V1GameplayTruth/ProductionBotReports/Replays/match-9101-20260827-160257598.brr`
+(5,802,977 bytes; SHA-256
+`48C0DC38A417934331245FBB28B8EE15589502C23E93619EC688310C1E487736`), with report metadata
+in `Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260827-160256013-9101.json`.
+The exact-file verification is recorded in P42 of `Docs/V1_RELEASE_PLAN.md`.
 
 The same exact candidate also completed a bounded Lava probe through Solo Raja, Bijli
 selection, player defeat, spectator mode, Aandhi Final Circle, Results and two Rematch

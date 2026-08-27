@@ -94,7 +94,10 @@ The current clean documentation tip `98888d3` also passes the deterministic repl
 deep soak: `BATTLERAJA_SOAK_MATCHES=1000`, 1,000 seeds executed twice (2,000
 executions), zero divergence, 1/1 test passed. XML/log hashes are indexed in
 `Docs/V1_RELEASE_PLAN.md` P40. This same-machine result does not establish
-cross-machine parity or durable production replay serialization.
+cross-machine parity. P42 now records the bounded durable production replay capture and
+exact-file re-execution gate: one production-scene match emitted 9,180 ordered frames with
+per-tick canonical snapshots/hashes, and the exact `.brr` file replayed cleanly in EditMode.
+Cosmetic presentation-state review and cross-machine parity remain open.
 
 ## Latest exact-source tutorial-fix candidate — `f82c18c` — 2026-08-27
 
