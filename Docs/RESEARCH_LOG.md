@@ -362,8 +362,10 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   `ST5GDW23LB004392`; local screenshot and UI dump are recorded in
   `Docs/QA/REFERENCE_UI_AUDIT_2026-08-24.md`.
 - **Relevant claim:** A dominant play action, central focal point, grouped secondary
-  navigation, and high-contrast status zones improve first-glance hierarchy. The device
-  did not have an installed Smash Karts package, so no Smash Karts claim is made.
+  navigation, and high-contrast status zones improve first-glance hierarchy. At the
+  2026-08-24 check the device did not have an installed Smash Karts package, so no
+  Smash Karts claim was made in that entry; a later 2026-08-27 observation is recorded
+  separately below after the package became available.
 - **Decision impact:** Apply only the hierarchy principles to BattleRaja's original
   portrait, offline, account-free product. Do not import or reproduce reference assets,
   copy, characters, typography, audio, monetisation, social, or landscape composition.
@@ -451,3 +453,29 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   owner-controlled.
 - **Recheck trigger/date:** Immediately before the first signed AAB and again before Play Console
   upload, especially after any Unity/NDK/Android Gradle or native-dependency change.
+
+### V1.0 controlled reference-game UX observation (2026-08-27)
+
+- **Question:** Which high-level entry-flow and readability principles are worth adapting
+  without copying protected reference-game expression?
+- **Primary sources:** Observation-only sessions of the installed packages on approved Lava
+  `ST5GDW23LB004392`: Brawl Stars `com.supercell.brawlstars` version `68.279` and Smash
+  Karts `com.tallteam.citychase` version `2.15.1`. No web or extracted app content was used.
+- **Relevant claims:** Both landscape home surfaces make one primary play action visually
+  dominant, group secondary navigation at the edges, and expose availability/lock state
+  before a deeper flow. Brawl Stars uses a contextual coaching callout over the home scene;
+  Smash Karts presents account-shaped entry and a locked play state in the observed install.
+- **Decision impact:** Keep BattleRaja's offline Play action, fighter/mode readiness, settings,
+  accessibility and rematch paths explicit and local. Preserve visible Bazaar context behind
+  tutorial prompts. Do not add accounts, social controls, progression economy, copied wording,
+  icons, panel geometry, characters, audio, or effects.
+- **Local evidence:** Redacted observation notes and hashes are in
+  `Docs/Research/REFERENCE_UX_AUDIT.md`; raw screenshots/UI dumps remain ignored under
+  `Builds/Local/Device/ReferenceUx/20260827/` because the installed apps visibly contained
+  existing account/profile labels and are not BattleRaja store assets.
+- **Uncertainty:** Existing account/network state prevented a complete reference selection or
+  in-match route without unauthorized sign-in or online actions. The audit therefore informs
+  entry hierarchy only; it does not approve BattleRaja orientation, touch comfort, wording,
+  accessibility, cultural fit, or final store presentation.
+- **Recheck trigger/date:** Revisit only if BattleRaja's entry/navigation hierarchy changes or
+  before owner approval of final store-facing UX; continue to use observation-only controls.
