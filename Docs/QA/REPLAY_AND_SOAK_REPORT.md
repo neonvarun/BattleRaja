@@ -1,5 +1,14 @@
 # BattleRaja Replay and Soak Report
 
+## Current candidate note — runtime `754837e` / docs `d8cbbb2` — 2026-08-27
+
+The current runtime-bearing candidate is presentation-only relative to the deterministic
+gameplay core. The exact-runtime production bot batch is recorded in
+`Docs/V1_RELEASE_PLAN.md` P38. A new `BATTLERAJA_SOAK_MATCHES=1000` invocation was
+started during this audit but was interrupted before Unity emitted a test result; it is
+not counted as evidence. The prior successful 1,000-seed replay soak below remains the
+applicable deterministic gameplay evidence, and no cross-machine parity claim is made.
+
 ## Latest exact-source result — `8edc086` — 2026-08-27
 
 At exact source `8edc0867268800f0ad81067378ad590e1a166371`, the fighter-focus presentation

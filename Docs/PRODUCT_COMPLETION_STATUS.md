@@ -3,6 +3,29 @@
 Updated: 2026-08-27
 Classification: **prototype**
 
+## Latest exact-runtime release-candidate checkpoint — `754837e` / docs `d8cbbb2` — 2026-08-27
+
+The current runtime-bearing source is `754837e4311b609560c63fa90558a1d29acec9cd` on
+`codex/v1-playstore-release`; the current clean documentation tip is
+`d8cbbb219e55dc20a1fd57702f2a22e528a3a7a7`. Full EditMode is **140/140** and
+PlayMode is **86/86**. The exact-runtime production-bot batch completed **100/100**
+terminal matches in the 240-360 second window, with **94/100** reaching at least
+three combat eliminations, **100/100** containing bot-to-bot damage, and zero
+protected-warmup, invalid-position or stuck invariant samples. All three fighters and
+all three gadgets were used successfully; report hashes are indexed in
+`Docs/V1_RELEASE_PLAN.md` P38.
+
+The matching APK/AAB pass the local release checker with **0 errors / 0 warnings**,
+offline permissions, API 28/36, ARM64-only payload, static 16 KB ELF alignment and
+store-creative dimensions. They are temporary-ID Android Debug-signed artifacts. On
+approved Lava `ST5GDW23LB004392`, the bounded exact tutorial route now advances
+Movement, Aim, Basic Attack, Ability, Gadget and Aandhi; the Elimination card remains
+correctly gated on a player-attributed KO. A fresh 30-second diagnostic found no
+configured fatal markers and thermal status 0, but is not sustained gameplay
+performance evidence. Physical full match/Victory/rematch, accessibility, genuine
+runtime 16 KB, final authored/cultural review, signing, privacy/Data Safety and Play
+Console gates remain open.
+
 ## Latest exact-source release-gate checkpoint — `2080383` — 2026-08-27
 
 The clean runtime source is `208038362e16f8c33856e0a7cf5c4de776005ded` on
