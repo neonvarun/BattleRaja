@@ -1642,6 +1642,40 @@ truthful limitation on physical end-to-end tutorial attribution. The current run
 candidate remains the exact `2080383` APK/AAB pair documented in P22/P25; a new release
 build is not warranted for this test-only assembly change.
 
+### P28 - Clean Android compliance rerun after touch-regression checkpoint - 2026-08-27
+
+The composed technical release checker was rerun from clean commit `3f3a7ca` against
+the unchanged exact-source APK/AAB pair. It again passed repository, manifest,
+ARM64/16 KB static bundle and technical store-creative checks with **0 errors / 0
+warnings**. This is a local technical recheck only; it does not close runtime 16 KB,
+release signing, package identity, privacy/Data Safety, cultural review or Play Console
+actions.
+
+Evidence:
+
+- Checker log: `Builds/Local/Device/release-checker-3f3a7ca.log`, SHA-256
+  `62D0E7DF8541FD01ACAB9BC17BACE65B6A04814832ABD4CADE52469317D4DB89`.
+- APK: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`, 40,523,706 bytes,
+  SHA-256 `365ABF4A1D37BB6DC2CE7E08F5E2741AAB7662EFB9749F0B4987EBFCBDB68BDB`.
+- AAB: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`, 36,348,870 bytes,
+  SHA-256 `F1CB13C80A6408B344B5C71BE11D0AD804E58CA1D01102FE0B79D5B0712BDBA1`.
+- Manifest remains package `com.example.battleraja.m11`, version `1.0.0` / code `100`,
+  min/target SDK `28/36`, VIBRATE plus Unity dynamic receiver only, with network
+  permissions absent. The AAB contains seven ARM64 native libraries and no other
+  ABIs; all checked ELF loads are `0x4000` aligned. Store icon and feature graphic
+  remain `512x512` and `1024x500`.
+
+#### P28 gate delta
+
+| Gate | Status | Evidence / owner action |
+| --- | --- | --- |
+| Repository, manifest, static bundle and technical creative checks | **Passed** | Clean checker at `3f3a7ca`; 0 errors / 0 warnings |
+| Runtime 16 KB behavior and Play eligibility | **Still open** | Approved Lava reports 4 KB pages; genuine 16 KB runtime and owner signing/Play steps remain unavailable |
+| All other P27 gates | **Unchanged** | Physical route, sustained performance, authored/accessibility/cultural review, privacy/Data Safety and Play actions remain open |
+
+P28 confirms that the test-only touch coverage did not alter the offline package or
+static Android compliance result.
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (automated foundation;
