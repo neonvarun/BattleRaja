@@ -2367,6 +2367,11 @@ SHA-256 `6CE4C48CDC734A1038139EFF67CF8196E51ECB8FA1DA4840828C9CCE37F69A80`). It 
 APK SHA-256 `52B04A015656BB5480FBBCF5879578313D1B527E32BA205BBB9F102449C0986E`, AAB
 SHA-256 `9FA87846E85423499AC8A9305631091A4D38ADA8F0A49D03853F0B14B954499F`, absent
 network permissions, ARM64/static 16 KB alignment and a clean worktree.
+The direct SDK check `zipalign -c -P 16 -v 4` also passed for the APK, and `apkanalyzer`
+reported package `com.example.battleraja.m11`, version `1.0.0` / code `100`, with only
+`VIBRATE` and the non-exported receiver permission. No network permission was present.
+The local SDK does not contain bundletool, so generated APK-set installation and
+bundletool-level zip alignment are **Not run**; the AAB/ELF static gate remains passed.
 
 #### P42 gate delta
 
