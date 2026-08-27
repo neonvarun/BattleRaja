@@ -1498,3 +1498,35 @@ Record every material choice here. Do not silently overwrite old decisions.
   `ReplayDeterminismTests.MatchReplayFileSerializer_RoundTripsDeterministicallyAndRejectsCorruption`,
   and P42 in `Docs/V1_RELEASE_PLAN.md`.
 - **Owner:** Human project owner
+
+### ADR-066 - Replace primitive fighter pieces with authored faceted silhouette profiles
+
+- **Date:** 2026-08-28
+- **Status:** Accepted for the V1 offline presentation baseline; final authored art,
+  cultural review and human feel approval remain open.
+- **Context:** The saved fighter prefabs were already render-only and asset-addressable,
+  but their body, head, shoulder and accessory recipes still read as simple box/lathe
+  construction at phone scale. That weakened the distinct Bijli, Pehel and Maya
+  silhouettes even though the gameplay identity boundary was correct.
+- **Options considered:** Keep the existing primitive-like baseline; move visual detail
+  into runtime shaders or procedural scene code; or add saved low-poly loft/extrusion
+  profiles with an explicit visual rebuild path while retaining the production prefab and
+  rig boundaries.
+- **Decision:** Add reproducible faceted loft and extruded-polygon mesh recipes to
+  `ProductionArtBuilder`. Bijli, Pehel and Maya now use distinct torso/cloak, visor,
+  shoulder, arm, boot, sash, mask, scarf and badge profiles saved under
+  `Content/Art/V1/Meshes`. `Rebuild V1 Production Fighter Art` is an explicit editor
+  action; ordinary scene/build generation keeps committed asset identities stable.
+  `ProductionPresentationBuilder` reparents the new parts into the existing
+  presentation-only rig and preserves the existing Animator/VFX asset boundary. No
+  collider, authority, simulation, input, or network code is attached to the art.
+- **Consequences:** The three fighter silhouettes are now inspectable, mesh-backed and
+  regression-tested as distinct profiles with at least 260 combined vertices per
+  production presentation instance. The saved meshes remain a locally generated V1
+  baseline rather than commissioned final art; mobile frame time, final animation/VFX,
+  cultural safety and human visual approval remain separate gates.
+- **Evidence/sources:** `ProductionArtBuilder`, `ProductionPresentationBuilder`, the
+  33-file art/test commit `816d9ac`, `VerticalSlicePlayModeTests.ProductionFighterArtUsesDistinctFacetedSilhouetteMeshes`,
+  full 141/141 EditMode and 87/87 PlayMode results, and P43 in
+  `Docs/V1_RELEASE_PLAN.md`.
+- **Owner:** Human project owner

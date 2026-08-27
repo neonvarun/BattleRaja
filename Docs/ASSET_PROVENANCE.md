@@ -11,6 +11,12 @@ profiles, colours, material settings, transforms, rig hierarchy, animation curve
 burst recipes and prefab composition. They do not download assets, call a remote generation
 service, or require a third-party licence.
 
+The 2026-08-28 faceted silhouette pass is recorded in commit `816d9ac`. Its lofted torso,
+cloak, shoulder, arm and boot meshes, plus extruded badge/visor/sash/mask/scarf plates, are
+reproducible from the checked-in generator. The explicit rebuild menu action is the reviewed
+visual-change boundary; ordinary scene/build generation keeps the committed asset identities
+stable.
+
 Generated outputs:
 
 - `Assets/BattleRaja/Content/Art/V1/Meshes/*.asset`

@@ -663,3 +663,29 @@ temporary-ID, debug-signed local artifacts. Cross-machine floating-point parity,
 16 KB ARM64 runtime coverage, normalized performance/GC/GPU/battery approval, authored
 presentation/cultural review, final signing/identity, privacy/Data Safety, content rating
 and Play Console work remain open and owner-controlled.
+
+## Milestone 11 faceted fighter presentation continuation — 2026-08-28
+
+The focused art source is cleanly committed at `816d9ac` (`art: replace fighter primitives
+with faceted silhouettes`). The three saved fighter presentation prefabs now use distinct
+repository-owned faceted low-poly mesh profiles instead of the former primitive-like body
+and accessory recipes. A new PlayMode regression enforces a 260-vertex presentation floor
+and exactly three distinct fighter mesh profiles while preserving the render-only authority
+boundary. Full EditMode is **141/141**, PlayMode is **87/87**, and repository validation is
+**0 errors / 0 warnings**.
+
+The exact rebuilt local APK is 40,542,342 bytes (SHA-256
+`0517EE901A9EAE943140538366B0574E893DC6BD66A5D1714D630C2379EF5FAC`) and the AAB is
+36,367,513 bytes (SHA-256
+`BF52E649BFD92F277F5C9933A7FDF34FFB25410F1D5A18EF6FC3097AA31BA331`). Both pass the
+offline manifest, ARM64/static 16 KB, bundletool, zipalign, v3 verification and store-
+creative dimension checks. The exact APK installed on approved Lava
+`ST5GDW23LB004392`, reached the live opening match by touch, and produced a bounded
+30-second six-sample diagnostic with thermal status 0 and no configured fatal markers.
+Evidence and all hashes are indexed in `Docs/V1_RELEASE_PLAN.md` P43.
+
+This remains a generated V1 presentation baseline, not final commissioned art or Play
+readiness. Physical 16 KB runtime behavior, sustained performance, full tutorial/all-
+fighter/accessibility and human feel review, final identity/signing, privacy/Data Safety,
+cultural/legal approval and Play Console actions remain owner-controlled. No remote push
+was performed.

@@ -697,3 +697,24 @@ This remains a debug-signed temporary-ID technical candidate. Full touch/tutoria
 sustained match performance, runtime 16 KB validation, production-bot pacing, final authored
 content/cultural review, package identity/signing, privacy/Data Safety, content rating and Play
 Console approval remain open.
+
+## Exact faceted-art candidate refresh — 2026-08-28
+
+Source commit `816d9ac` replaces the primitive-like fighter presentation pieces with saved
+faceted low-poly profiles and retains the render-only rig/Animator/VFX boundary. Full
+EditMode is **141/141**, PlayMode **87/87**, and repository validation is **0 errors / 0
+warnings**. The exact rebuilt APK is 40,542,342 bytes (SHA-256
+`0517EE901A9EAE943140538366B0574E893DC6BD66A5D1714D630C2379EF5FAC`); the matching AAB is
+36,367,513 bytes (SHA-256
+`BF52E649BFD92F277F5C9933A7FDF34FFB25410F1D5A18EF6FC3097AA31BA331`). The composed offline
+checker passes manifest/API 28/36, no-network permissions, seven ARM64 libraries, static
+16 KB ELF alignment and store-creative dimensions. bundletool 1.18.3 universal extraction,
+direct/extracted `zipalign -c -P 16 -v 4` and v3 `apksigner` verification also pass.
+
+The APK installed on approved Lava `ST5GDW23LB004392` and real touch reached menu, Solo
+Raja, Bijli selection and the live opening match. A bounded six-sample, 30-second live-state
+capture found thermal status 0 and no configured fatal markers. The phone reports 4 KB
+pages, so this is not physical runtime-16-KB proof or sustained performance approval. Final
+commissioned art/animation/VFX/audio/cultural review, full tutorial/all-fighter/accessibility
+comfort, package identity/signing, privacy/Data Safety, content rating and Play Console
+actions remain open.

@@ -1,8 +1,8 @@
 # BattleRaja V1 Art Bible
 
-**Status:** V1 production-presentation baseline now includes saved transform rigs, Animator
-clips/controllers and particle VFX cues; final authored art direction, cultural review and
-human feel approval remain open.
+**Status:** V1 production-presentation baseline now includes saved faceted fighter meshes,
+transform rigs, Animator clips/controllers and particle VFX cues; final authored art
+direction, cultural review and human feel approval remain open.
 
 ## Identity
 
@@ -38,6 +38,21 @@ gameplay scripts. Their `ProductionRig` hierarchy is presentation-only, and the 
 `FighterProduction.controller` selects nine visual states from the presentation state integer.
 Particle cues are saved under `Art/V1/VFX` and are played only from existing presentation
 notifications; particle lifetime never owns damage, cooldowns or action success.
+
+## Current faceted silhouette pass — 2026-08-28
+
+The explicit `BattleRaja/Rebuild V1 Production Fighter Art` editor action in commit
+`816d9ac` replaces the former primitive-like body/accessory recipes with saved faceted
+low-poly loft and extruded-polygon profiles. Bijli now has an angular electric torso,
+visor, bolt badge, shoulder orbs, arm guards and sculpted boots; Pehel has a broad grounded
+torso, sash plate, medallion, gauntlets and boots; Maya has a tapered cloak, mask plate,
+scarf ribbons, trim and crystal core. These profiles are authored in the repository-owned
+generator and remain render-only children of the existing presentation rig.
+
+The PlayMode regression requires at least 260 combined mesh vertices per instantiated
+production silhouette and exactly three distinct mesh profiles. This is a machine-checked
+quality floor and a stronger saved baseline, not approval of final commissioned models,
+skinning, animation, VFX direction, cultural presentation or mobile performance.
 
 ## Current inventory
 

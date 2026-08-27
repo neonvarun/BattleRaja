@@ -2422,6 +2422,86 @@ the agent. They are not silently treated as passes.
 | Final package identity, release signing, privacy/Data Safety, content rating and Play Console | **Blocked** | Owner/legal/store actions are not authorized in this task |
 | Photon, PlayFab, accounts, online and Web product work | **Not applicable** | V1 scope is explicitly offline Android-only |
 
+### P43 - Faceted fighter silhouette pass and exact Android refresh - 2026-08-28
+
+The focused local art continuation is commit `816d9ac` (`art: replace fighter primitives
+with faceted silhouettes`). `ProductionArtBuilder` now contains reproducible faceted loft
+and extruded-polygon mesh recipes, and its explicit `Rebuild V1 Production Fighter Art`
+entry point regenerates the saved presentation assets after a reviewed visual change.
+Bijli, Pehel and Maya use distinct saved torso/cloak, visor, shoulder, arm, boot, sash,
+mask, scarf, badge and crystal profiles. `ProductionPresentationBuilder` reparents the
+new parts into the existing presentation-only rig while retaining the Animator/VFX
+assets. No gameplay, collider, authority, input, network or package policy code changed.
+
+The generated-art batch log is
+`Builds/Local/Logs/rebuild-production-art-faceted-20260828.log` (202,129 bytes;
+SHA-256 `701C22E3C9584AF34A69840A33BB51F637543C32600C0054EBF454F0712B5CD0`) and ends
+with the explicit rebuild completion message and Unity exit code 0. The asset-quality
+regression requires at least 260 combined vertices per instantiated production silhouette
+and exactly three distinct mesh profiles.
+
+#### P43 validation and artifacts
+
+- Static repository validation: **0 errors / 0 warnings**.
+- Full EditMode: **141/141 passed**, 0 failed, 0 skipped. XML
+  `Builds/Local/TestResults/editmode-faceted-20260828.xml` is 109,808 bytes (SHA-256
+  `F74CDDA815056DECDE881BBFBCB38364225E3EC59B6ACD6CD347A7C0356BCB49`); Unity log
+  SHA-256 `DED4DFF35248DCA70392D0B9E8E046971C8768C83CC10AB347834DABC7E11268`.
+- Full PlayMode: **87/87 passed**, 0 failed, 0 skipped, including the new faceted
+  silhouette regression. XML `Builds/Local/TestResults/playmode-faceted-20260828.xml`
+  is 76,853 bytes (SHA-256
+  `0D5876BC26F3BDA4AA83024868BE28F2A7349EAFD2A60A36D9A4F65916F1B103`); Unity log
+  SHA-256 `A347344747F506AE39BB63D6E039DA3960CB46B5680DEF982AF3CA3965BE3C81`.
+- Rebuilt debug-signed APK: 40,542,342 bytes, SHA-256
+  `0517EE901A9EAE943140538366B0574E893DC6BD66A5D1714D630C2379EF5FAC`.
+- Rebuilt release-shaped AAB: 36,367,513 bytes, SHA-256
+  `BF52E649BFD92F277F5C9933A7FDF34FFB25410F1D5A18EF6FC3097AA31BA331`.
+- The composed Android checker passed the offline manifest, API 28/36, no-network
+  permission, seven-ARM64-library and static 16 KB ELF gates, plus 512x512 icon and
+  1024x500 feature-graphic dimensions. The checker was run before the documentation
+  commit while the art change was the only source delta; a clean-worktree rerun is the
+  final documentation gate below.
+- bundletool 1.18.3 generated
+  `Builds/Local/V1GameplayTruth/Android/battleraja-v1-faceted-20260828.apks` (36,495,593
+  bytes; SHA-256
+  `B6EF2801694750F33967234AEC34F4605DEEF54D0AECFF7B53DF044239FA1B7F`). The extracted
+  universal APK is 36,495,278 bytes (SHA-256
+  `84CDE9E1ADA09E92426EF1E01BC6539D3F3734559833345F2FE4ECB9BE7509DE`); direct
+  `zipalign -c -P 16 -v 4` passed and `apksigner verify --verbose` passed with one v3
+  signer.
+
+The rebuilt APK installed on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android
+14/API 34, 4,096-byte pages). Real touch input reached the menu, Solo Raja, Bijli
+selection and the live opening match. Screenshots are retained under
+`Builds/Local/Device/Performance/20260828-lava-faceted-smoke/`: `launch.png` SHA-256
+`217984A80310452CDE4C0BBD804B255509376BAA47D01483CF5A28FEEB0EED43`, `mode.png`
+`7E8C5B975C9AE357A82BC4C4D7522F331D3A9C2BD1029EBB991CD267F9E64830`,
+`fighter-select.png` `90F6750AD276150607A0D466F3421471928F92EB80E55FAE89F11EE309B57912`,
+and `live-opening.png`
+`5390F653CFBAA2C5D0049DF6A28379C14DC043062C7C6677072BE8887184E243`. A bounded
+30-second, six-sample capture from the live state is under
+`Builds/Local/Device/Performance/20260828-lava-faceted-30s/`; its manifest is 1,118
+bytes (SHA-256 `5416A7A3334858D8CF5B6C904B51D7D4CB7BE5C5F750620060E48B9A71C8228C`),
+logcat is SHA-256
+`E67E88C8FE69548264DA29C0509FC65051BDFA08663BD57E783A321E23457FD1`, thermal status
+was 0 in all six samples, and no configured fatal markers were found.
+
+#### P43 gate delta
+
+| Gate | Classification | Evidence / limitation |
+| --- | --- | --- |
+| Saved faceted fighter meshes and distinct production profiles | **Passed (machine-verified baseline)** | 87/87 PlayMode, >=260 vertices per instance and three distinct profiles; final human art approval remains open |
+| Exact Android APK/AAB rebuild and offline technical gates | **Passed** | APK/AAB hashes above; checker, ARM64/static 16 KB, bundletool, zipalign and v3 verification passed |
+| Exact APK Lava menu -> Solo Raja -> fighter selection -> live opening match | **Passed (bounded smoke)** | Real touch route and screenshots retained; full tutorial/all-fighter/Results/rematch review remains open |
+| Exact APK Lava 30-second live-state diagnostic | **Passed (bounded)** | Six samples, thermal status 0 and no configured fatal markers; not sustained performance approval |
+| Genuine physical 16 KB runtime | **Not established** | Lava reports 4,096-byte pages; the earlier genuine 16 KB emulator diagnostic remains the only runtime-16-KB evidence |
+| Final commissioned art, animation/VFX direction, audio mix, cultural and human feel review | **Blocked** | The saved faceted meshes strengthen the generated baseline but do not replace owner approval |
+| Package identity, release signing, privacy/Data Safety, content rating and Play Console | **Blocked** | Temporary `com.example.battleraja.m11` debug-signed artifacts; owner/legal actions remain required |
+
+The generated faceted meshes are original repository-owned procedural assets and are not
+claimed as final commissioned art. No public upload, signing-key use or remote update was
+performed in this continuation.
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (100-match terminal,

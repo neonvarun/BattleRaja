@@ -1,5 +1,29 @@
 # Latest HEAD baseline
 
+## Latest faceted fighter presentation refresh — source `816d9ac` — 2026-08-28
+
+The current source replaces the former primitive-like fighter body/accessory recipes with
+saved faceted low-poly loft and extruded-polygon profiles for Bijli, Pehel and Maya. The
+explicit production-art rebuild preserves the existing render-only rig, Animator and VFX
+boundary. Full EditMode is **141/141**, full PlayMode is **87/87**, and static validation is
+**0 errors / 0 warnings**; the new PlayMode regression enforces a 260-vertex presentation
+floor and exactly three distinct fighter mesh profiles.
+
+The exact debug-signed APK is 40,542,342 bytes (SHA-256
+`0517EE901A9EAE943140538366B0574E893DC6BD66A5D1714D630C2379EF5FAC`) and the matching AAB
+is 36,367,513 bytes (SHA-256
+`BF52E649BFD92F277F5C9933A7FDF34FFB25410F1D5A18EF6FC3097AA31BA331`). The offline
+manifest, ARM64/static 16 KB, bundletool, zipalign, v3-signature and store-dimension
+checks pass. On approved Lava `ST5GDW23LB004392`, real touch reached menu -> Solo Raja ->
+Bijli selection -> live opening match. The six-sample, 30-second live-state diagnostic
+reported thermal status 0 and no configured fatal markers. Evidence and hashes are indexed
+in `Docs/V1_RELEASE_PLAN.md` P43.
+
+The mesh pass is a generated V1 baseline, not final commissioned art or human cultural/fun
+approval. Lava reports 4 KB pages; sustained performance, physical 16 KB runtime, complete
+tutorial/all-fighter/accessibility review, final signing/identity, privacy/Data Safety and
+Play Console gates remain open.
+
 ## Latest durable production replay capture — source `2a113e0` — 2026-08-27
 
 The development-only production bot harness now persists the exact ordered authority

@@ -1,6 +1,6 @@
 # BattleRaja V1 current-state index
 
-Updated: 2026-08-27
+Updated: 2026-08-28
 
 ## Evidence location policy
 
@@ -19,6 +19,31 @@ tooling exist. A Play Store Release Candidate claim is not yet justified because
 physical Lava action-by-action route review, sustained performance, final identity/
 signing, accessibility, legal/privacy/cultural approval and Play Console review
 remain open.
+
+## Latest current-source evidence — 2026-08-28
+
+The focused presentation source is cleanly committed at `816d9ac` on
+`codex/v1-playstore-release`. The saved Bijli, Pehel and Maya production prefabs now use
+distinct repository-owned faceted low-poly torso/cloak and accessory meshes. The explicit
+editor rebuild action preserves the render-only boundary; no gameplay authority, collider,
+input, network or package-policy code changed. Full EditMode is **141/141**, full PlayMode
+is **87/87**, including the faceted silhouette regression, and static validation is
+**0 errors / 0 warnings**.
+
+The exact rebuilt APK is 40,542,342 bytes (SHA-256
+`0517EE901A9EAE943140538366B0574E893DC6BD66A5D1714D630C2379EF5FAC`) and the matching AAB
+is 36,367,513 bytes (SHA-256
+`BF52E649BFD92F277F5C9933A7FDF34FFB25410F1D5A18EF6FC3097AA31BA331`). Offline manifest,
+ARM64/static 16 KB, bundletool universal extraction, zipalign, v3 verification and store
+creative dimension checks pass. The APK reached the live opening match on approved Lava
+`ST5GDW23LB004392`; a bounded six-sample, 30-second live-state capture found thermal
+status 0 and no configured fatal markers. Exact evidence is indexed in
+`Docs/V1_RELEASE_PLAN.md` P43.
+
+This is a stronger generated presentation baseline, not final commissioned art or Play
+readiness. Lava reports 4 KB pages, and physical 16 KB runtime coverage, sustained
+performance, full tutorial/all-fighter/accessibility and human feel review, final signing/
+identity, privacy/Data Safety, cultural/legal approval and Play Console actions remain open.
 
 ## Latest current-source evidence — 2026-08-27
 
