@@ -76,6 +76,13 @@ runtime 16 KB, sustained performance, full-route/accessibility, final signing/id
 privacy/Data Safety, cultural/legal review and Play Console actions remain open. See
 `Docs/V1_RELEASE_PLAN.md` P36 for the exact evidence index and gate classifications.
 
+The exact-runtime production-bot refresh is now also current at this source: **100/100**
+seeded matches completed in the 240-360 second target window, **94/100** reached at least
+three combat eliminations, **100/100** contained bot-to-bot damage, and protected,
+invalid-position and stuck invariants were zero. The report and test-log hashes are
+recorded in `Docs/V1_RELEASE_PLAN.md` P38. This does not replace human playtesting or
+the remaining physical, performance, signing, privacy/legal and Play Console gates.
+
 ## Latest exact-source tutorial-fix candidate — `f82c18c` — 2026-08-27
 
 The exact runtime source is `f82c18c1fd91e44c7f07fbd31d615cc7e9c9bea6`. Full EditMode is

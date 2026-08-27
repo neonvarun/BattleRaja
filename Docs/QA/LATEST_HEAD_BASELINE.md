@@ -1,5 +1,17 @@
 # Latest HEAD baseline
 
+## Latest exact-runtime production-bot batch — `754837e` — 2026-08-27
+
+The current runtime-bearing source `754837e4311b609560c63fa90558a1d29acec9cd` was
+run through the production scene, perception and bot decisions for 100 seeded matches
+at 50x fixed-tick playback. All **100/100** matches completed in the 240-360 second
+window; **94/100** reached at least three combat eliminations, **100/100** contained
+bot-to-bot damage, and protected, invalid-position and stuck invariants were zero.
+All three fighters and all three gadgets were used successfully. The report, NUnit
+XML and Unity-log hashes are indexed in `Docs/V1_RELEASE_PLAN.md` P38. This is gameplay
+truth evidence only; physical fun/fairness, sustained performance, genuine runtime
+16 KB, final art/audio, signing, privacy/legal/cultural review and Play gates remain open.
+
 ## Latest exact-source gadget-reconciliation candidate — `754837e` — 2026-08-27
 
 The runtime-bearing candidate source is `754837e4311b609560c63fa90558a1d29acec9cd`, adding

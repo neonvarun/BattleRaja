@@ -32,9 +32,10 @@ lesson begins; the earlier live-authority Elimination regression remains covered
 source with 2,000 executions and zero divergence. Exact hashes and classifications are
 indexed in `Docs/V1_RELEASE_PLAN.md` P35-P36.
 
-The applicable fixed-tick production-bot batch remains **100/100** terminal matches in
-the 240-360 second window, **94/100** with at least three combat eliminations,
+The fresh exact-runtime fixed-tick production-bot batch completed **100/100** terminal
+matches in the 240-360 second window, **94/100** with at least three combat eliminations,
 **100/100** with bot-to-bot damage, and zero protected/invalid/stuck invariant samples.
+Its report and hashes are indexed in `Docs/V1_RELEASE_PLAN.md` P38.
 The exact APK/AAB are debug-signed local candidates. The release checker reports
 **0 errors / 0 warnings**, seven ARM64 libraries, no network permissions and static
 16 KB alignment. The APK installed and launched on approved Lava

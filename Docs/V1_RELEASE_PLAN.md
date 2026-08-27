@@ -2123,6 +2123,53 @@ not prove genuine runtime 16 KB compatibility.
 | Sustained thermal, battery and mid-range-device approval | **Blocked** | Requires owner-operated gameplay sessions and broader device coverage |
 | Genuine runtime 16 KB validation | **Blocked** | Approved Lava reports 4 KB pages; a genuine 16 KB environment is unavailable |
 
+### P38 - Current-runtime exact 100-match production-bot batch - 2026-08-27
+
+The production-bot release harness was rerun from the current runtime-bearing source
+`754837e4311b609560c63fa90558a1d29acec9cd` (clean documentation tip at execution:
+`c6dda8cb56e958265ac34d1bbd1ae0af2e654d21`). Unity `6000.5.6f1` ran 100 seeded
+Bazaar Bastion matches at 50x fixed-tick playback through the production scene,
+perception and bot decisions. The batch report is
+`Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260827-140715586-9101.json`
+(1,794,696 bytes, SHA-256
+`5E45143047CC363927D5E1EFEDDA798908A200B5F602DB80D010DBC84FA50355`). The NUnit
+report is `Builds/Local/TestResults/playmode-production-bot-754837e.xml` (76,144 bytes,
+SHA-256 `9FEDD7ACEBC14521442C245A8D847D8EAEB0B2ABAC98FAA0FFD8D3BBD15FE6E9`) and the
+Unity log is `Builds/Local/Logs/playmode-production-bot-754837e.log` (165,970 bytes,
+SHA-256 `547E05FC446377EBA9137EEF4DF596A1566CF37BF7BC109F579E499705910F43`). The
+full PlayMode run was **86/86 passed**.
+
+#### Batch metrics
+
+- **100/100** matches completed within the tick budget and **100/100** were in the
+  240-360 second target window (all recorded at 306.0135 seconds).
+- **100/100** recorded at least one combat elimination; **94/100** recorded at least
+  three. Aandhi-only resolution was **0/100**.
+- Bot-to-bot damage occurred in **100/100** matches (7,536 damage events across 3,123
+  damaging pairs). Protected-warmup damage and invalid positions were zero; maximum
+  continuous stuck ticks and stuck recoveries were zero.
+- All three fighters appeared: Bijli, Pehel and Maya. Gadget coverage recorded 300
+  pickups and 299 successful uses: Umbrella Guard 99, Dhol Burst 100 and Tiffin
+  Station 100. Contextual failed gadget uses remain authority-rejected attempts.
+- Attack authority rejected **0** attacks; six out-of-range attempts were rejected by
+  range rules. The maximum sampled decision time was 0.1459 ms.
+
+This is the exact current runtime batch and supersedes the prior P35 batch for gameplay
+truth. It still does not establish human fairness/fun, physical full-route behavior,
+sustained performance, genuine runtime 16 KB, authored-content quality, signing,
+identity, privacy/legal, cultural review or Play eligibility.
+
+#### P38 gate delta
+
+| Gate | Classification | Evidence / limitation |
+| --- | --- | --- |
+| Current-runtime 100-match production batch | **Passed** | 100/100 terminal and in-window; report and NUnit/log hashes above |
+| Bot-to-bot combat and safety invariants | **Passed** | 100/100 damaging matches; zero protected, invalid-position, stuck-recovery and max-stuck samples |
+| Fighter and gadget coverage | **Passed** | Bijli/Pehel/Maya and all three gadget kinds used successfully |
+| Match pacing and combat-elimination thresholds | **Passed** | 100/100 with at least one combat KO; 94/100 with at least three; 306.0135-second duration |
+| Same-seed replay reproduction in this batch | **Not run** | Separate deterministic replay soak remains applicable; no duplicate bot batch requested |
+| Human fun/fairness and sustained performance | **Not run** | Requires structured owner-operated Lava playtests and budget analysis |
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (100-match terminal,
