@@ -14,8 +14,9 @@ checker log `Builds/Local/Device/release-checker-754837e.log` (SHA-256
 and 0 warnings, package `com.example.battleraja.m11`, API 28/36, no network
 permissions, ARM64-only payload and static 16 KB ELF alignment.
 
-The final clean documentation tip is `a877c509fdbec485e808039a6c4daa03fed9ea9c`;
-the same exact pair was rechecked from that tip with
+The post-P36 clean documentation tip used for the checker recheck was
+`a877c509fdbec485e808039a6c4daa03fed9ea9c`; the same exact pair was rechecked from
+that tip with
 `Builds/Local/Device/release-checker-a877c50.log` (same SHA-256 as above).
 
 On approved Lava `ST5GDW23LB004392`, the bounded exact-candidate route advanced the

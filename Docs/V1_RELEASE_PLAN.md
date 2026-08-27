@@ -2041,7 +2041,7 @@ the existing live-authority Elimination fix remains intact. This prevents a fals
   Checker log `Builds/Local/Device/release-checker-754837e.log`, SHA-256
   `E6EF2EB9DDEEDD63981B0C894A2778D163988239E2BF7176786E8DB63CA4F721`.
 - After this evidence was documented, the same exact APK/AAB pair was rechecked from
-  final clean documentation tip `a877c509fdbec485e808039a6c4daa03fed9ea9c` using
+  post-P36 clean documentation tip `a877c509fdbec485e808039a6c4daa03fed9ea9c` using
   `Builds/Local/Device/release-checker-a877c50.log` (SHA-256
   `E6EF2EB9DDEEDD63981B0C894A2778D163988239E2BF7176786E8DB63CA4F721`): **0 errors /
   0 warnings**, clean worktree.
