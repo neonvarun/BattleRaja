@@ -1978,6 +1978,12 @@ log is `Builds/Local/Logs/playmode-production-bot-f82c18c.log` (SHA-256
 `43E88FA06BA3C148A5CC5FB1E980848C552D0447736E2DBD3E2C8DCCD5ADA204`). The full
 PlayMode run was **85/85 passed**.
 
+The same clean tip was rechecked against the matching APK/AAB with
+`Builds/Local/Device/release-checker-b090bd9.log` (SHA-256
+`B73B0A1CD12F11A2941C6F629A92128F1D738122AAC866BE275742EDFD2B36F5`): **0 errors / 0
+warnings**, clean worktree, offline permissions, API 28/36, ARM64 and static 16 KB
+alignment, and store-creative dimensions all passed.
+
 #### Batch metrics
 
 - **100/100** matches completed within the harness tick budget and **100/100** were
