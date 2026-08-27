@@ -1448,3 +1448,26 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Evidence/sources:** `ProductionAudioBuilder`, `BattleRajaV1.mixer`,
   `BattleRajaAudioDirector` and `ProductionAudioUsesOwnedSourcesAndMixerGroups`.
 - **Owner:** Human project owner
+
+### ADR-064 - Never animate a legacy root renderer that owns authoritative movement
+
+- **Date:** 2026-08-27
+- **Status:** Accepted for the V1 offline presentation boundary.
+- **Context:** The legacy Bazaar scene fixture can place a placeholder `MeshRenderer` on
+  the same GameObject as `CharacterController` and `MovementPlayerAgent`. Per-frame visual
+  bobbing on that renderer therefore rewrote the authoritative movement root and made a
+  valid touch swipe appear to plateau.
+- **Options considered:** Keep animating every discovered renderer; require a scene-wide
+  prefab migration before continuing; or animate only child visual renderers while leaving
+  the actor root transform under movement authority.
+- **Decision:** `FighterPresentation` animates `bodyRenderer` only when it is a child of the
+  actor root. Root renderers remain visually static, while the generated `_silhouetteRoot`
+  and future production visual children carry presentation motion. Movement, collision and
+  authority never depend on a presentation transform write.
+- **Consequences:** Legacy scenes remain compatible without allowing presentation to mutate
+  movement. New prefabs should keep all animated visuals below the movement root. The exact
+  release candidate now attributes a real Lava movement swipe to the tutorial unlock; final
+  authored visual migration and human feel review remain open.
+- **Evidence/sources:** `FighterPresentation`, the Bijli open-lane regression fixture,
+  full EditMode/PlayMode results and exact-source Lava evidence in `V1_RELEASE_PLAN.md` P30.
+- **Owner:** Human project owner
