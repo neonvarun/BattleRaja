@@ -2370,8 +2370,19 @@ network permissions, ARM64/static 16 KB alignment and a clean worktree.
 The direct SDK check `zipalign -c -P 16 -v 4` also passed for the APK, and `apkanalyzer`
 reported package `com.example.battleraja.m11`, version `1.0.0` / code `100`, with only
 `VIBRATE` and the non-exported receiver permission. No network permission was present.
-The local SDK does not contain bundletool, so generated APK-set installation and
-bundletool-level zip alignment are **Not run**; the AAB/ELF static gate remains passed.
+Cached bundletool `1.18.3` was downloaded from the official Google bundletool release
+artifact (jar SHA-256
+`A099CFA1543F55593BC2ED16A70A7C67FE54B1747BB7301F37FDFD6D91028E29`) and generated a
+universal APK set from the exact AAB. APKS
+`Builds/Local/V1GameplayTruth/Android/battleraja-v1-current-2a113e0.apks` is 36,487,401
+bytes (SHA-256
+`C242624B588790FA3870A46E94D93E0C4D64300B81B3FD27839EDA9A52F5032E`); extracted
+`universal.apk` is 36,487,086 bytes (SHA-256
+`EA38FE8A48A2A7DE61216BBA0B9FA386C277F4B8E9C861EAEA7C5AA3F1D5D2D7`). Direct
+`zipalign -c -P 16 -v 4` passed for the extracted universal APK, and `apksigner verify`
+passed with one v3 signer. The command/result log is
+`Builds/M11/Logs/bundletool-1183-current-2a113e0.log` (1,349 bytes; SHA-256
+`36FFDC194F6686B4EF72FE7DD2C6B8E84623ACA0E9B3E542EB321A0F310E306D`).
 
 #### P42 gate delta
 
@@ -2381,6 +2392,7 @@ bundletool-level zip alignment are **Not run**; the AAB/ELF static gate remains 
 | Production-scene command capture and per-tick canonical state retention | **Passed** | Current source passed 100/100 release-gate matches and emitted 100 replay files / 918,000 ordered frames with snapshots/hashes |
 | Exact production replay read and full authority re-execution | **Passed** | Exact `.brr` read/replayed with all per-tick snapshot/hash checks passing |
 | Same-seed production command/replay reproducibility | **Passed** | Two independent seed-9101 runs matched command digest, count, duration, frame count and replay SHA |
+| APK-set generation, universal extraction, signing verification and 16 KB zip alignment | **Passed** | bundletool 1.18.3 generated the current AAB's universal APK; extracted zipalign and v3 apksigner verification passed |
 | Cross-machine floating-point parity | **Not run** | Same-machine replay evidence does not establish device/architecture parity |
 | Final human review of cosmetic presentation replay (audio/VFX/animation) | **Open** | Cosmetic presentation is intentionally not an authority replay input; human review remains required |
 
