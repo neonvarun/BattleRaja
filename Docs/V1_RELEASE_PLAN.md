@@ -1886,6 +1886,82 @@ open.
 | Exact APK/AAB technical release checks | **Passed** | `release-checker-604887b.log`; APK `A29EF1F2F28A3EAB6820F905DC57196E5496DF76A3DCFE32B65DB41BDCF26923`; AAB `F3F901E7DBE382723B878E5B37EFBF58C9AB3D04FD7C744646C52FEF06B1A748` |
 | Runtime 16 KB and final Play eligibility | **Still open** | Approved Lava is 4 KB-page; final package identity/signing/privacy/legal and Play steps require owner-controlled work |
 
+### P34 - Live-authority tutorial elimination fix and exact-candidate rebuild - 2026-08-27
+
+The tutorial elimination lesson had a real progression defect: it only inspected terminal
+results, so a player KO credited during a still-live match could not unlock the lesson.
+Commit `f82c18c1fd91e44c7f07fbd31d615cc7e9c9bea6` now baselines the player elimination
+counter and observes the authoritative `CombatEntitySnapshot` as soon as a KO is credited.
+Victory remains deliberately gated on terminal placement 1. The regression test proves the
+live snapshot unlock before `ResultsShown`.
+
+#### Automated evidence
+
+- Static validation: **0 errors / 0 warnings** (also rechecked by the release checker).
+- Full EditMode: **140/140 passed**; XML
+  `Builds/Local/TestResults/editmode-tutorial-elimination-fix.xml`, SHA-256
+  `AB8B5ACAFE3BCFDF112971896DD5DEC0E0C6812F08A031339C74F733B56B050F`; Unity log
+  `Builds/Local/Logs/editmode-tutorial-elimination-fix.log`, SHA-256
+  `1AF5440AEECAF4809667180DB4F555096FDF8660CBF129A7E853463E4F039DC6`.
+- Full PlayMode: **85/85 passed**, including
+  `EliminationLessonUnlocksFromLiveAuthoritativeSnapshotBeforeResults`; XML
+  `Builds/Local/TestResults/playmode-tutorial-elimination-fix.xml`, SHA-256
+  `C6D0F237DDEDBE54F02D70250C95C2263C87E1D631132BAE525104AD32504F4C`; Unity log
+  `Builds/Local/Logs/playmode-tutorial-elimination-fix.log`, SHA-256
+  `A28BF1AFF9C4C1E6CF31C50CAE18227EEA66CDA3AC6E2E5F2906067F5C31969E`.
+
+#### Exact release artifacts
+
+- APK `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`: **40,524,546 bytes**,
+  SHA-256 `D4E965DE27E4C8D50F57038557E70D55190DFD0AECEEA8CB4E9B30A15A91B59A`.
+- AAB `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`: **36,349,707 bytes**,
+  SHA-256 `3D1BD5D1E8DBFEACCBDFF97907EFF6CC14ECEB33CE80522EC94166ACB07E1ACF`.
+- Unity build log `Builds/M11/Logs/android-build.log`, SHA-256
+  `B935CA0D7C4F6B4D24D0C67D333E9C7BB956EC2AF1166CAE340FE2C2296C0DDE`.
+- Release checker `Builds/Local/Device/release-checker-f82c18c.log`, SHA-256
+  `B73B0A1CD12F11A2941C6F629A92128F1D738122AAC866BE275742EDFD2B36F5`: **0 errors / 0 warnings**;
+  package `com.example.battleraja.m11`, version `1.0.0`/`100`, min/target API `28/36`,
+  no network permissions, seven ARM64 libraries, static ELF loads aligned for 16 KB,
+  icon `512x512`, feature graphic `1024x500`, clean worktree.
+
+#### Exact-candidate Lava touch evidence
+
+The APK was data-cleared, installed and launched only on approved Lava
+`ST5GDW23LB004392`. Corrected touch coordinates drove the live card through Movement,
+Aim, Basic Attack and Ability. Representative captures are retained under
+`Builds/Local/Device/Screenshots/20260827-f82c18c-release/tutorial-live-elimination/`:
+
+- `restart-step1-unlocked.png` — SHA-256
+  `52464268D0B27814825C9A891B6589C24AC6EC2A4463402E848D58EA88C46D83`.
+- `restart-step2-unlocked.png` — SHA-256
+  `BDA9EA5F36CEF46342842FC4B63FAE4668350C7A245572CCC742EDE80D4589AF`.
+- `restart-step3-unlocked.png` — SHA-256
+  `C887EF03DF6EEA7968ECDF8EF65EE410103D8FF998FFDDDFEFB442EBB73E3930`.
+- `restart-step4-ability-swipe.png` — SHA-256
+  `E893EE07C932F7BE7249B74761DEB82797321C3D812C67ED7C08718B3061E2F1`.
+
+The same candidate reached the Gadget card and visibly picked up Tiffin after a real
+movement route; `gadget-after-use-deliberate.png` (SHA-256
+`2E482FF998EDCE322816E58870785CEA60F92E47067C0AC70556894C2717F779`) shows the held
+gadget feedback, but the card was still waiting when the match later reached terminal
+results. This is evidence of the route attempt, not a pass for the Gadget, Elimination
+or Victory physical gates. The authoritative PlayMode regression is the source-level
+proof for live Elimination unlocking. Full physical Elimination → Victory, replay,
+accessibility, comfort and owner approval remain open.
+
+#### P34 gate delta
+
+| Gate | Classification | Evidence / limitation |
+| --- | --- | --- |
+| Live Elimination lesson unlocks from an in-match KO | **Passed in authoritative regression** | 85/85 PlayMode; target is defeated while `ResultsShown == false`, then overlay unlocks from the snapshot |
+| Exact artifact pair matches the fixed source | **Passed** | APK/AAB rebuilt from `f82c18c`; checker clean |
+| Physical Movement/Aim/Basic Attack/Ability touch transitions | **Observed** | Exact Lava captures above; gesture timing and card visibility still need owner comfort review |
+| Physical Gadget → Aandhi → Elimination → Victory route | **Still open** | Candidate reached Gadget and collected Tiffin, but the card remained waiting before terminal results |
+
+P34 fixes a concrete tutorial correctness issue and refreshes the exact release artifacts.
+It does not change the overall classification: the product remains an offline prototype
+candidate, not a Play-ready release.
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (100-match terminal,

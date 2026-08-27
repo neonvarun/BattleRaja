@@ -23,12 +23,14 @@ remain open.
 ## Latest current-source evidence — 2026-08-27
 
 The runtime/presentation source is clean and committed on branch
-`codex/v1-playstore-release` at exact runtime source `126714a`, beneath documentation
-tip `f8570af`. Full EditMode is **140/140**, full PlayMode is **84/84**, and static
-validation is **0 errors / 0 warnings**. The 1,000-seed deterministic replay soak
+`codex/v1-playstore-release` at exact runtime source
+`f82c18c1fd91e44c7f07fbd31d615cc7e9c9bea6`. Full EditMode is **140/140**, full
+PlayMode is **85/85**, and static validation is **0 errors / 0 warnings**. The new
+PlayMode regression proves the tutorial Elimination lesson unlocks from a live
+authoritative KO before terminal results. The 1,000-seed deterministic replay soak
 remains applicable from the preceding gameplay-only source with 2,000 executions and
-zero divergence. Matching APK/AAB hashes, bundletool/zipalign evidence and gate
-classifications are in `Docs/V1_RELEASE_PLAN.md` P31-P33.
+zero divergence. Matching APK/AAB hashes, checker evidence and gate classifications
+are in `Docs/V1_RELEASE_PLAN.md` P31-P34.
 
 The exact-source fixed-tick production-bot batch completes **100/100** matches in the
 240-360 second window, with **95/100** reaching at least three combat eliminations;
@@ -51,16 +53,15 @@ the bounded KO attempt ended with `YOU KO 0`, so Elimination/Victory remains ope
 temporary diagnostic-only build from `920edc2` logged nonzero movement input and
 CharacterController displacement; the remaining action-by-action route is still open.
 
-The exact Lava candidate now also shows persisted Maya focus alignment, live ability/gadget
+The exact Lava candidate still shows persisted Maya focus alignment, live ability/gadget
 feedback, pause overlay and lifecycle resume; the tutorial opening visibly keeps the arena,
-zone ring, HUD and touch sticks behind the prompt. On the fresh 2080383 APK, default and
-left-handed tutorial captures show the prompt switching from left-stick to right-stick
-movement. The same match reached spectator/results and REMATCH returned to a fresh
-eight-alive opening. A live-match SurfaceFlinger diagnostic recorded 126 valid timestamps with
-median 16.535 ms and p95 16.567 ms; a separate 120-second exact-match capture held
-PSS to 267,935-272,772 KB, thermal status 0 and zero configured fatal markers across
-12 focused samples. These are measurement evidence only, not performance approval. The
-latest touch probe and gate delta are recorded in `Docs/V1_RELEASE_PLAN.md` P24.
+zone ring, HUD and touch sticks behind the prompt. On the refreshed `f82c18c` APK, default
+touch probes visibly reached the Movement, Aim, Basic Attack and Ability cards, and a
+deliberate route reached Gadget pickup/use feedback before the match reached terminal
+results. These are route observations, not full physical-gate approval. Earlier bounded
+SurfaceFlinger, memory and thermal diagnostics remain measurement evidence only, not
+performance approval. The latest touch probe and gate delta are recorded in
+`Docs/V1_RELEASE_PLAN.md` P34.
 Action-by-action tutorial progression/full-route, accessibility, normalized CPU/GPU/GC/
 repeated-match endurance, genuine 16 KB runtime, authored final art/audio, cultural
 review, release signing and Play/legal gates remain open.
@@ -85,33 +86,27 @@ Safety, content rating and Play Console actions remain open.
 ## Exact current source
 
 - Branch: `codex/v1-playstore-release`
-- Current branch tip contains documentation follow-ups after the exact artifact
-  source `35de9f3`; latest runtime-bearing source is `73f20a2`
-  (`accessibility: propagate reduced flash mode`).
-- Exact Android candidate source: `35de9f3`
-- Current runtime-bearing source: `73f20a2` (`accessibility: propagate reduced flash mode`)
+- Current runtime-bearing source: `f82c18c1fd91e44c7f07fbd31d615cc7e9c9bea6`
+  (`fix: unlock tutorial elimination from live authority`).
+- Exact Android candidate source: `f82c18c1fd91e44c7f07fbd31d615cc7e9c9bea6`
 - Documentation evidence anchor: the exact-source sections in this index and
   `Docs/QA/LATEST_HEAD_BASELINE.md`, updated with the release-flags candidate.
 - The exact-current release-shaped APK/AAB include the safe-area HUD and
   reduced-flash fixes. They are archived under the root-only evidence policy.
 - Unity: `6000.5.6f1`
-- EditMode: **125/125**
-- PlayMode: **73/73**
+- EditMode: **140/140**
+- PlayMode: **85/85**
 - Repository validation: **0 errors / 0 warnings**
 - Git LFS: passed
 
 The current presentation fixes keep the runtime match HUD inside the gameplay
 safe area and propagate reduced-flash settings to combat impact, hit and Aandhi
 feedback. The exact-current APK installed and launched on Lava
-`ST5GDW23LB004392`; the portrait menu is captured at
-`Builds/Local/V1Evidence/35de9f3/Android/lava-launch.png`, with foreground window
-evidence in `lava-window-state.txt`. This proves install/launch/menu presentation
-only; tutorial, full-match, accessibility and performance review remain open.
-The automated route reached results and returned to the menu; a 120-second
-Lava diagnostic capture with 12 samples is stored under
-`Builds/Local/V1Evidence/35de9f3/Android/performance-120s/`. It has no configured
-fatal markers, but it does not replace human review or establish final frame,
-thermal, battery or memory budgets.
+`ST5GDW23LB004392`; fresh tutorial probes are indexed in
+`Docs/V1_RELEASE_PLAN.md` P34. This proves install/launch and selected action-gated
+transitions only; full-match, accessibility and performance review remain open.
+Earlier bounded Lava diagnostic captures remain useful measurements but do not replace
+human review or establish final frame, thermal, battery or memory budgets.
 
 ## Prior Android artifacts used for the performance-tool baseline
 

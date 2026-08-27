@@ -1,19 +1,23 @@
 # Latest HEAD baseline
 
-## Latest exact-source physical/tutorial and technical recheck — `f8570af` / runtime `126714a` — 2026-08-27
+## Latest exact-source tutorial-fix and technical recheck — `f82c18c` — 2026-08-27
 
-Documentation tip `f8570af` is clean; the runtime-bearing source and exact release APK/AAB
-remain `126714a`. Full EditMode is **140/140**, full PlayMode is **84/84**, and static
-validation is **0 errors / 0 warnings**. The exact Lava `ST5GDW23LB004392` route unlocked
-Movement, Aim, Basic Attack, Ability, Gadget and Aandhi after genuine touch input; the
-bounded Elimination attempt ended in results with `YOU KO 0`, so Elimination/Victory,
-full-route, accessibility and owner comfort review remain open. Screenshot hashes and
-the exact artifact hashes are indexed in `Docs/V1_RELEASE_PLAN.md` P32. The P33 technical
-recheck log `Builds/Local/Device/release-checker-604887b.log` (SHA-256
-`DDD201C1E5BBE713405F9F41AADBEA8A5E5DFE7A875B2F94C4E486706C153F22`) passes repository,
-offline manifest, API 28/36, ARM64/static 16 KB and store-creative checks. Runtime 16 KB,
-sustained performance, final signing/identity, privacy/Data Safety, cultural/legal review
-and Play Console actions remain open.
+The clean runtime source is `f82c18c1fd91e44c7f07fbd31d615cc7e9c9bea6`. Full EditMode is
+**140/140**, full PlayMode is **85/85**, and static validation is **0 errors / 0 warnings**.
+The new regression proves tutorial Elimination unlocks from an authoritative live KO before
+terminal results. The exact release APK is **40,524,546 bytes** (SHA-256
+`D4E965DE27E4C8D50F57038557E70D55190DFD0AECEEA8CB4E9B30A15A91B59A`) and the matching AAB
+is **36,349,707 bytes** (SHA-256
+`3D1BD5D1E8DBFEACCBDFF97907EFF6CC14ECEB33CE80522EC94166ACB07E1ACF`). Release checker
+`Builds/Local/Device/release-checker-f82c18c.log` (SHA-256
+`B73B0A1CD12F11A2941C6F629A92128F1D738122AAC866BE275742EDFD2B36F5`) passes repository,
+offline manifest, API 28/36, ARM64/static 16 KB and store-creative checks. On approved
+Lava `ST5GDW23LB004392`, fresh touch probes reached Movement, Aim, Basic Attack and Ability;
+the Gadget route reached pickup/use feedback but the card remained waiting before terminal
+results. Physical Gadget/Aandhi/Elimination/Victory completion, runtime 16 KB, sustained
+performance, final signing/identity, privacy/Data Safety, cultural/legal review and Play
+Console actions remain open. Full hashes and screenshot evidence are indexed in
+`Docs/V1_RELEASE_PLAN.md` P34.
 
 ## Latest exact-source production-bot refresh — `90670ff` / runtime `126714a` — 2026-08-27
 

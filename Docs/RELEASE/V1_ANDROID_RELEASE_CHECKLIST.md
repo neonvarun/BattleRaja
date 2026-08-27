@@ -53,24 +53,26 @@ pwsh -File Tools/Validation/check_v1_release_candidate.ps1 `
 This gate is technical and local only. It does not sign, upload, publish, or approve
 the final identity, privacy/Data Safety, content rating, cultural review or Play track.
 
-## Latest exact-source technical and touch follow-up — `f8570af` / runtime `126714a` — 2026-08-27
+## Latest exact-source tutorial-fix candidate — `f82c18c` — 2026-08-27
 
-The runtime-bearing source remains `126714a`; documentation tip `f8570af` is clean. Full
-EditMode is **140/140**, full PlayMode is **84/84**, and static validation is **0 errors /
-0 warnings**. The exact APK is **40,526,074 bytes** (SHA-256
-`A29EF1F2F28A3EAB6820F905DC57196E5496DF76A3DCFE32B65DB41BDCF26923`) and the matching AAB
-is **36,351,246 bytes** (SHA-256
-`F3F901E7DBE382723B878E5B37EFBF58C9AB3D04FD7C744646C52FEF06B1A748`). P33 technical
-recheck log `Builds/Local/Device/release-checker-604887b.log` (SHA-256
-`DDD201C1E5BBE713405F9F41AADBEA8A5E5DFE7A875B2F94C4E486706C153F22`) passes the offline
+The exact runtime source is `f82c18c1fd91e44c7f07fbd31d615cc7e9c9bea6`. Full EditMode is
+**140/140**, full PlayMode is **85/85**, and static validation is **0 errors / 0 warnings**.
+The tutorial Elimination regression now unlocks from the authoritative live player snapshot
+before terminal results. The exact APK is **40,524,546 bytes** (SHA-256
+`D4E965DE27E4C8D50F57038557E70D55190DFD0AECEEA8CB4E9B30A15A91B59A`) and matching AAB is
+**36,349,707 bytes** (SHA-256
+`3D1BD5D1E8DBFEACCBDFF97907EFF6CC14ECEB33CE80522EC94166ACB07E1ACF`). Technical checker
+log `Builds/Local/Device/release-checker-f82c18c.log` (SHA-256
+`B73B0A1CD12F11A2941C6F629A92128F1D738122AAC866BE275742EDFD2B36F5`) passes the offline
 manifest, API 28/36, ARM64/static 16 KB and store-dimension checks.
 
-Fresh approved-Lava touch evidence in `Docs/V1_RELEASE_PLAN.md` P32 unlocks Movement,
-Aim, Basic Attack, Ability, Gadget and Aandhi action gates. The bounded KO attempt ends
-with `YOU KO 0`, so Elimination/Victory, full-route, accessibility, sustained performance,
-genuine 16 KB runtime, final signing/identity, privacy/Data Safety, cultural/legal review
-and Play Console actions remain open. The artifact is temporary-ID/debug-signed and is not
-publishable.
+Fresh approved-Lava probes reach the Movement, Aim, Basic Attack and Ability cards. The
+same route reaches Gadget pickup/use feedback but the card remains waiting before terminal
+results; physical Gadget/Aandhi/Elimination/Victory, full-route, accessibility, sustained
+performance, genuine 16 KB runtime, final signing/identity, privacy/Data Safety,
+cultural/legal review and Play Console actions remain open. The temporary-ID/debug-signed
+artifact is not publishable. Complete artifact and screenshot evidence is in
+`Docs/V1_RELEASE_PLAN.md` P34.
 
 ## Latest exact-source handedness candidate — `2080383` — 2026-08-27
 

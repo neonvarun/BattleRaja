@@ -7,18 +7,19 @@
 ## Current state
 
 - **Latest exact-source release-gate checkpoint (2026-08-27):** runtime-bearing source
-  `126714a` remains unchanged beneath documentation tip `f8570af`. Full EditMode is
-  **140/140** and PlayMode is **84/84**; static validation is **0 errors / 0 warnings**.
-  The exact-source production-bot release assertions complete **100/100** seeded
-  matches, and the exact Lava touch route now proves Movement, Aim, Basic Attack,
-  Ability, Gadget and Aandhi action gates with fresh screenshots in
-  `Docs/V1_RELEASE_PLAN.md` P32. The bounded Elimination/Victory attempt ended with
-  `YOU KO 0`, so that gate remains open. The exact APK/AAB technical recheck in P33
-  passes offline manifest, ARM64/static 16 KB and store-dimension checks. The APK remains
+  `f82c18c1fd91e44c7f07fbd31d615cc7e9c9bea6` fixes tutorial Elimination progression by
+  observing the live authoritative player snapshot before terminal results. Full EditMode
+  is **140/140** and PlayMode is **85/85**; static validation is **0 errors / 0 warnings**.
+  The exact-source production-bot release assertions remain **100/100** seeded matches.
+  The refreshed exact APK/AAB technical recheck passes offline manifest, ARM64/static
+  16 KB and store-dimension checks. Approved-Lava touch captures on the new candidate
+  observe Movement, Aim, Basic Attack and Ability transitions; the route reached Gadget
+  pickup/use feedback but the card remained waiting before terminal results, so physical
+  Gadget/Aandhi/Elimination/Victory completion remains open. The APK remains
   Android Debug-signed with temporary identity and the product remains a prototype: full
   touch-route, accessibility, sustained performance approval, genuine 16 KB runtime,
   final authored identity/cultural review, signing, privacy/Data Safety and Play Console
-  actions remain open.
+  actions remain open. See `Docs/V1_RELEASE_PLAN.md` P34.
 
 - **Working-tree gameplay truth update (2026-08-25):** unified action eligibility
   is now owned by `OfflineMatchAuthority`. Movement, ability displacement, attack,
