@@ -1601,6 +1601,47 @@ Evidence:
 | Full PlayMode regression suite at current HEAD | **Passed** | 83/83, zero failed/skipped; hashes above |
 | Physical release QA and non-test gates | **Unchanged** | Touch/tutorial attribution, sustained performance, runtime 16 KB, authored/cultural review, signing and Play actions remain open |
 
+### P27 - Virtual-stick pointer delivery regression and exact-source suite - 2026-08-27
+
+Commit `7269b4c` adds a PlayMode regression test that drives the production
+`VirtualStick` pointer handlers (`OnPointerDown`, `OnDrag`, and `OnPointerUp`) and
+asserts that `PlayerInputAdapter.ReadInput()` receives and then clears the movement
+vector. The change is test-only; it does not alter the runtime candidate APK/AAB or
+its release-compliance evidence. The focused test and both complete Unity suites were
+rerun from the clean commit with Unity `6000.5.6f1`.
+
+Evidence:
+
+- Focused pointer-delivery test: **1/1 passed**, XML
+  `Builds/Local/V1GameplayTruth/TestResults/7269b4c-touch-pointer.xml`, SHA-256
+  `4B13A8C148E98A4FD030F219F40CC7A42F4CCA2E8BCB679116632597DC26C58A`; log
+  `Builds/Local/V1GameplayTruth/Logs/7269b4c-touch-pointer.log`, SHA-256
+  `98FDDC489BF8AEC3A3C802C32236DAA0899EED156FC9766A80777D5C3AB59BDD`.
+- Full EditMode: **140/140 passed**, XML
+  `Builds/Local/V1GameplayTruth/TestResults/7269b4c-editmode.xml`, SHA-256
+  `E1B5E4983A606DF25525F9F185504EED73B3EF0E296456997EDF1E47CDE0C150`; log
+  `Builds/Local/V1GameplayTruth/Logs/7269b4c-editmode.log`, SHA-256
+  `382FE05ED94B211EE0888D55AA42C0555E15A026B27604AFF614EF11FA8F2934`.
+- Full PlayMode: **84/84 passed**, XML
+  `Builds/Local/V1GameplayTruth/TestResults/7269b4c-playmode.xml`, SHA-256
+  `C3EA6F72AAF3EE385D1821661B6BCF909A505E483D819C556A725D92F4B6C4A6`; log
+  `Builds/Local/V1GameplayTruth/Logs/7269b4c-playmode.log`, SHA-256
+  `0CD9302636D2F3036DBF8E5E7B507B9B51FE46DA9EBDD4E2583FAA41C95CAC04`.
+
+#### P27 gate delta
+
+| Gate | Status | Evidence / owner action |
+| --- | --- | --- |
+| Production virtual-stick pointer delivery | **Passed (automated regression)** | Focused 1/1 test verifies nonzero movement reaches `PlayerInputAdapter` and releases to zero |
+| Exact-source Unity regression suites | **Passed** | Commit `7269b4c`; EditMode 140/140 and PlayMode 84/84 with zero failed/skipped |
+| Physical tutorial progression and complete action route | **Still open** | Automated delivery does not replace alive-state Lava tutorial/action-by-action verification |
+| All other P26 gates | **Unchanged** | Sustained performance normalization, genuine 16 KB runtime, authored/accessibility/cultural review, signing, privacy/Data Safety and Play actions remain open |
+
+P27 closes the code-level pointer-to-adapter regression risk while preserving the
+truthful limitation on physical end-to-end tutorial attribution. The current runtime
+candidate remains the exact `2080383` APK/AAB pair documented in P22/P25; a new release
+build is not warranted for this test-only assembly change.
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (automated foundation;
