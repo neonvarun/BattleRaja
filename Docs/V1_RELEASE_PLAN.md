@@ -2489,6 +2489,21 @@ logcat is SHA-256
 `E67E88C8FE69548264DA29C0509FC65051BDFA08663BD57E783A321E23457FD1`, thermal status
 was 0 in all six samples, and no configured fatal markers were found.
 
+The same exact APK also installed and launched on the genuine 16 KB `BattleRaja_16K`
+emulator (Android 36, `sdk_gphone16k_x86_64`). `getconf PAGESIZE` reported **16,384**;
+the Unity activity was top-resumed after the same menu -> Solo Raja -> Bijli selection ->
+live opening-match route, and the route logcat contained no configured fatal markers.
+Current-source captures are under `Builds/Local/Device/Performance/20260828-16k-faceted-smoke/`:
+`launch.png` SHA-256
+`919BA18BBCA77C4C843DD07EC1470E8D0DFAE4AC3C3F012266E102ACABD55FA0`, `mode.png`
+`A79F97AC6650C7157ADF7427A2991A0932D8345A540695A851A6CAE858EA77B4`,
+`fighter-select.png` `DFAB20D0F495B5E9624C3DDCB44FE9D705319F7E19F4988F36A6F3309856FA92`,
+`live-opening.png`
+`8BA29FCF641059474D99EE4D730AA8C83CD4E90E6B62CC8218A3DC1922551EBA`, and route
+logcat SHA-256 `BB2B906201FA723FE5A87089B3664857131C1500A3B770CA4F8340D2AE3B15C6`.
+This is emulator runtime evidence only; the approved Lava device reports 4,096-byte
+pages and remains the physical-device gate.
+
 #### P43 gate delta
 
 | Gate | Classification | Evidence / limitation |
@@ -2497,7 +2512,8 @@ was 0 in all six samples, and no configured fatal markers were found.
 | Exact Android APK/AAB rebuild and offline technical gates | **Passed** | APK/AAB hashes above; checker, ARM64/static 16 KB, bundletool, zipalign and v3 verification passed |
 | Exact APK Lava menu -> Solo Raja -> fighter selection -> live opening match | **Passed (bounded smoke)** | Real touch route and screenshots retained; full tutorial/all-fighter/Results/rematch review remains open |
 | Exact APK Lava 30-second live-state diagnostic | **Passed (bounded)** | Six samples, thermal status 0 and no configured fatal markers; not sustained performance approval |
-| Genuine physical 16 KB runtime | **Not established** | Lava reports 4,096-byte pages; the earlier genuine 16 KB emulator diagnostic remains the only runtime-16-KB evidence |
+| Genuine 16 KB Android runtime on current exact APK | **Passed (diagnostic)** | Current APK route completed on `BattleRaja_16K` with `PAGESIZE=16384`; physical ARM64 16 KB coverage remains unproven |
+| Genuine physical 16 KB runtime | **Not established** | Lava reports 4,096-byte pages; current exact emulator evidence is diagnostic and does not prove physical ARM64 runtime behavior |
 | Final commissioned art, animation/VFX direction, audio mix, cultural and human feel review | **Blocked** | The saved faceted meshes strengthen the generated baseline but do not replace owner approval |
 | Package identity, release signing, privacy/Data Safety, content rating and Play Console | **Blocked** | Temporary `com.example.battleraja.m11` debug-signed artifacts; owner/legal actions remain required |
 
