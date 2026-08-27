@@ -2410,6 +2410,18 @@ human review remain separate gates.
 | Cross-machine floating-point parity | **Not run** | Same-machine replay evidence does not establish device/architecture parity |
 | Final human review of cosmetic presentation replay (audio/VFX/animation) | **Blocked** | Cosmetic presentation is intentionally not an authority replay input; owner human review remains required |
 
+The stopping-condition review for this checkpoint is explicit: the remaining V1 items are
+owner/device/legal/store gates, or require an owner judgment that cannot be made safely by
+the agent. They are not silently treated as passes.
+
+| Remaining V1 gate | Classification | Current boundary |
+| --- | --- | --- |
+| Full Lava touch tutorial, all-fighter route, accessibility comfort and fun/balance approval | **Blocked** | Approved Lava `ST5GDW23LB004392` is currently locked; do not bypass its owner lock or substitute emulator evidence |
+| Sustained CPU/GPU/GC/frame-pacing, thermal, battery and repeated-rematch budget approval | **Not run** | Requires owner-operated physical-device sessions and normalized profiling |
+| Final authored art/audio/VFX readability, originality and cultural review | **Blocked** | Saved generated baseline exists; final human selection/approval remains required |
+| Final package identity, release signing, privacy/Data Safety, content rating and Play Console | **Blocked** | Owner/legal/store actions are not authorized in this task |
+| Photon, PlayFab, accounts, online and Web product work | **Not applicable** | V1 scope is explicitly offline Android-only |
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (100-match terminal,
