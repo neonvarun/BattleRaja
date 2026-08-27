@@ -55,7 +55,9 @@ the final identity, privacy/Data Safety, content rating, cultural review or Play
 
 ## Latest exact-source gadget-reconciliation candidate — `754837e` — 2026-08-27
 
-Commit `754837e4311b609560c63fa90558a1d29acec9cd` is the current clean candidate. It
+Runtime-bearing candidate commit `754837e4311b609560c63fa90558a1d29acec9cd` is the
+current source candidate. The final clean documentation tip is
+`a877c509fdbec485e808039a6c4daa03fed9ea9c`. It
 adds presentation-only reconciliation for a gadget collected before the tutorial card
 binds. Full EditMode is **140/140**, PlayMode is **86/86**, and static validation is
 **0 errors / 0 warnings**. The APK is **40,527,614 bytes** (SHA-256
