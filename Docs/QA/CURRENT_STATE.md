@@ -51,6 +51,12 @@ Full match/Victory/rematch, accessibility, normalized CPU/GPU/GC/repeated-match
 endurance, genuine 16 KB runtime, authored final art/audio, cultural review, release
 signing, privacy/Data Safety and Play/legal gates remain open.
 
+A fresh exact-candidate 30-second Lava diagnostic (six samples, 5-second interval) found
+no configured fatal markers and thermal status 0 throughout. After startup, PSS was
+230,576-240,186 KB and RSS 346,788-356,404 KB. This is bounded launch/idle evidence only;
+it does not establish the documented dense-combat or repeated-rematch budgets. The
+capture and hashes are recorded in `Docs/V1_RELEASE_PLAN.md` P37.
+
 ## Latest current-source evidence — 2026-08-26
 
 The exact current workspace is branch `codex/v1-playstore-release` at HEAD

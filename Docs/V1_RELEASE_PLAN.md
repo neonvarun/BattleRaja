@@ -2096,6 +2096,33 @@ source change did not alter the production-bot runtime; P35 remains the applicab
 | Physical Elimination → Victory, full match and rematch | **Blocked** | No player-attributed KO/Victory in this probe; owner-operated full route remains required |
 | Final Play eligibility | **Blocked** | Genuine runtime 16 KB, signing/identity, accessibility, performance, privacy/legal/cultural review and Play Console actions remain owner-controlled or unavailable |
 
+### P37 - Exact-candidate bounded Lava performance diagnostic - 2026-08-27
+
+The exact candidate APK was launched on approved Lava `ST5GDW23LB004392` with the
+repository capture script for 30 seconds at 5-second intervals. Output is retained at
+`Builds/Local/Device/Performance/20260827-486c76b-candidate-30s/`. The manifest records
+six samples and no configured `FATAL EXCEPTION`, ANR, SIGSEGV, SIGABRT,
+`NullReferenceException` or `UnityException` markers. Manifest SHA-256 is
+`EAE93CBA70253A43E288A7FF080DF90333A0E2E3F71DA5AFA1D5E75CCB3E8D6`; captured logcat
+SHA-256 is `D50CDECC14808AB64EB6980B50C9290E121596F3F24BE9977AFAA58258A3FEAE`.
+
+Thermal status was 0 in every sample and before/after captures. PSS was 58,737 KB in
+the startup sample and stabilized at 230,576-240,186 KB across the remaining samples;
+RSS stabilized at 346,788-356,404 KB. These figures are a short launch/idle diagnostic,
+not a normalized dense-combat, final-circle, GC, GPU, battery, repeated-rematch or
+mid-range-device performance approval. The device reports 4 KB pages, so this also does
+not prove genuine runtime 16 KB compatibility.
+
+#### P37 gate delta
+
+| Gate | Classification | Evidence / limitation |
+| --- | --- | --- |
+| Exact-candidate Lava launch diagnostic | **Passed** | Six samples over 30 seconds; no configured fatal markers |
+| Thermal status during bounded capture | **Passed** | Thermal status 0 in all samples and before/after captures |
+| Full-match performance against documented budgets | **Not run** | This capture did not cover dense combat, final circle, GC/GPU or repeated rematches |
+| Sustained thermal, battery and mid-range-device approval | **Blocked** | Requires owner-operated gameplay sessions and broader device coverage |
+| Genuine runtime 16 KB validation | **Blocked** | Approved Lava reports 4 KB pages; a genuine 16 KB environment is unavailable |
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (100-match terminal,
