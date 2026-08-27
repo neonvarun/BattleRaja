@@ -1940,14 +1940,15 @@ Aim, Basic Attack and Ability. Representative captures are retained under
 - `restart-step4-ability-swipe.png` — SHA-256
   `E893EE07C932F7BE7249B74761DEB82797321C3D812C67ED7C08718B3061E2F1`.
 
-The same candidate reached the Gadget card and visibly picked up Tiffin after a real
-movement route; `gadget-after-use-deliberate.png` (SHA-256
-`2E482FF998EDCE322816E58870785CEA60F92E47067C0AC70556894C2717F779`) shows the held
-gadget feedback, but the card was still waiting when the match later reached terminal
-results. This is evidence of the route attempt, not a pass for the Gadget, Elimination
-or Victory physical gates. The authoritative PlayMode regression is the source-level
-proof for live Elimination unlocking. Full physical Elimination → Victory, replay,
-accessibility, comfort and owner approval remain open.
+The same candidate reached the Gadget card and showed Tiffin pickup/proximity feedback
+after a real movement route; `gadget-after-use-deliberate.png` (SHA-256
+`2E482FF998EDCE322816E58870785CEA60F92E47067C0AC70556894C2717F779`) records that
+attempt, but the card was still waiting when the match later reached terminal results.
+Authoritative collection/use was not independently proven in this probe, so this is
+route-attempt evidence rather than a physical Gadget, Elimination or Victory pass. The
+authoritative PlayMode regression is the source-level proof for live Elimination
+unlocking. Full physical Elimination → Victory, replay, accessibility, comfort and owner
+approval remain open.
 
 #### P34 gate delta
 
@@ -1956,7 +1957,7 @@ accessibility, comfort and owner approval remain open.
 | Live Elimination lesson unlocks from an in-match KO | **Passed in authoritative regression** | 85/85 PlayMode; target is defeated while `ResultsShown == false`, then overlay unlocks from the snapshot |
 | Exact artifact pair matches the fixed source | **Passed** | APK/AAB rebuilt from `f82c18c`; checker clean |
 | Physical Movement/Aim/Basic Attack/Ability touch transitions | **Observed** | Exact Lava captures above; gesture timing and card visibility still need owner comfort review |
-| Physical Gadget → Aandhi → Elimination → Victory route | **Still open** | Candidate reached Gadget and collected Tiffin, but the card remained waiting before terminal results |
+| Physical Gadget → Aandhi → Elimination → Victory route | **Still open** | Candidate reached Tiffin pickup/proximity feedback, but authoritative collection/use and the downstream card transitions were not proven before terminal results |
 
 P34 fixes a concrete tutorial correctness issue and refreshes the exact release artifacts.
 It does not change the overall classification: the product remains an offline prototype
