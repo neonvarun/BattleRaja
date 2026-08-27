@@ -1570,6 +1570,37 @@ Evidence:
 | Runtime 16 KB behavior and Play eligibility | **Still open** | Device reports 4 KB pages; runtime proof, release signing, package identity, privacy/Data Safety and Play Console actions remain owner-controlled |
 | All other P24 gates | **Unchanged** | See P24 classification above |
 
+### P26 - Current-HEAD full Unity suite rerun - 2026-08-27
+
+Full EditMode and PlayMode suites were rerun from clean commit `e241c48` using the
+approved Unity `6000.5.6f1` test wrapper. Both reports completed with no failures or
+skips. The run validates the current documentation-only continuation state; it does
+not claim physical touch, performance, authored-content, signing or Play completion.
+
+Evidence:
+
+- EditMode: **140/140 passed**, XML
+  `Builds/Local/V1GameplayTruth/TestResults/e241c48-editmode.xml`, SHA-256
+  `CCDAD4DF1FDC8B7B5B4441ADC07284FF2F2E578093E4A77276C447C9BBB4EE53`; log
+  `Builds/Local/V1GameplayTruth/Logs/e241c48-editmode.log`, SHA-256
+  `45235484F730E9EC36E5F84AD8DA3A251413E78FE208F20A1874F916B9885980`.
+- PlayMode: **83/83 passed**, XML
+  `Builds/Local/V1GameplayTruth/TestResults/e241c48-playmode.xml`, SHA-256
+  `61B93EEB8D69861C2431260124242C839ECCFFB2295302A4B128713639B9D1D4`; log
+  `Builds/Local/V1GameplayTruth/Logs/e241c48-playmode.log`, SHA-256
+  `7CED87E0B9A5934D7FF622734008F684788AA82803E7678C1A6CFC2F2AB44E0A`.
+- Commands: `Tools/Validation/run_unity_tests.ps1 -TestPlatform editmode` and
+  `Tools/Validation/run_unity_tests.ps1 -TestPlatform playmode`, each with explicit
+  current-commit result/log paths and Unity `6000.5.6f1`.
+
+#### P26 gate delta
+
+| Gate | Status | Evidence / owner action |
+| --- | --- | --- |
+| Full EditMode regression suite at current HEAD | **Passed** | 140/140, zero failed/skipped; hashes above |
+| Full PlayMode regression suite at current HEAD | **Passed** | 83/83, zero failed/skipped; hashes above |
+| Physical release QA and non-test gates | **Unchanged** | Touch/tutorial attribution, sustained performance, runtime 16 KB, authored/cultural review, signing and Play actions remain open |
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (automated foundation;
