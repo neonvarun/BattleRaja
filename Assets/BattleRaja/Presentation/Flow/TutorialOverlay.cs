@@ -1,4 +1,5 @@
 using BattleRaja.Core.Application;
+using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Gadgets;
 using BattleRaja.Presentation.Match;
@@ -39,6 +40,7 @@ namespace BattleRaja.Presentation.Flow
         private int _startingAbilityCount;
         private int _startingPickupCount;
         private int _startingUseCount;
+        private int _startingEliminationCount;
         private bool _telemetryReady;
 
         public TutorialStep CurrentStep => _steps.Current;
@@ -109,23 +111,20 @@ namespace BattleRaja.Presentation.Flow
                 changed |= _steps.ObserveAction(TutorialAction.AandhiObserved);
             }
 
-            if (match != null && match.ResultsShown && match.Results != null)
+            if (match != null && match.Simulation != null &&
+                match.Simulation.TryGetSnapshot(new CombatEntityId(1), out var playerSnapshot))
             {
-                for (var i = 0; i < match.Results.Length; i++)
+                if (playerSnapshot.Eliminations > _startingEliminationCount)
                 {
-                    var result = match.Results[i];
-                    if (result.Id.Value != 1) continue;
-                    if (result.Eliminations > 0)
-                    {
-                        changed |= _steps.ObserveAction(TutorialAction.Elimination);
-                    }
+                    // Elimination is an in-match lesson: observe the authoritative
+                    // counter as soon as a KO is credited, without waiting for the
+                    // terminal results screen. Victory remains result-gated below.
+                    changed |= _steps.ObserveAction(TutorialAction.Elimination);
+                }
 
-                    if (result.Placement == 1)
-                    {
-                        changed |= _steps.ObserveAction(TutorialAction.Victory);
-                    }
-
-                    break;
+                if (match.ResultsShown && playerSnapshot.Placement == 1)
+                {
+                    changed |= _steps.ObserveAction(TutorialAction.Victory);
                 }
             }
 
@@ -238,6 +237,10 @@ namespace BattleRaja.Presentation.Flow
             _startingAbilityCount = _playerPresentation.AbilityActivationCount;
             _startingPickupCount = _playerGadget.SuccessfulPickupCount;
             _startingUseCount = _playerGadget.SuccessfulUseCount;
+            _startingEliminationCount = match != null && match.Simulation != null &&
+                match.Simulation.TryGetSnapshot(new CombatEntityId(1), out var playerSnapshot)
+                ? playerSnapshot.Eliminations
+                : 0;
         }
 
         private void SaveCompletion()

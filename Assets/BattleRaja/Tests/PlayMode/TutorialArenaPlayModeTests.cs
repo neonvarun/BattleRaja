@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Linq;
 using BattleRaja.Core.Application;
+using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.AI;
 using BattleRaja.Presentation.Flow;
 using BattleRaja.Presentation.Match;
@@ -156,6 +157,59 @@ namespace BattleRaja.Tests.PlayMode
                 else PlayerPrefs.DeleteKey(leftHandedKey);
                 PlayerPrefs.Save();
             }
+        }
+
+        [UnityTest]
+        public IEnumerator EliminationLessonUnlocksFromLiveAuthoritativeSnapshotBeforeResults()
+        {
+            yield return SceneManager.LoadSceneAsync("TutorialArena", LoadSceneMode.Single);
+            yield return null;
+            yield return null;
+
+            var overlay = Object.FindAnyObjectByType<TutorialOverlay>();
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            Assert.That(overlay, Is.Not.Null);
+            Assert.That(match, Is.Not.Null);
+
+            var actions = new[]
+            {
+                TutorialAction.Movement,
+                TutorialAction.Aim,
+                TutorialAction.BasicAttack,
+                TutorialAction.Ability,
+                TutorialAction.GadgetCollected,
+                TutorialAction.GadgetUsed,
+                TutorialAction.AandhiObserved
+            };
+            for (var i = 0; i < actions.Length; i++)
+            {
+                Assert.That(overlay.ObserveAction(actions[i]), Is.True, $"action {actions[i]}");
+                overlay.Advance();
+            }
+
+            Assert.That(overlay.CurrentStep, Is.EqualTo(TutorialStep.Elimination));
+            Assert.That(overlay.CurrentStepSatisfied, Is.False);
+
+            // Let the real authority leave warmup/spawn protection, then resolve a
+            // lethal player-authored hit against a live participant. The overlay must
+            // unlock from this live snapshot; terminal Results are not required.
+            yield return new WaitForSeconds(9.2f);
+            var request = new DamageRequest(
+                new CombatEntityId(1),
+                new CombatEntityId(11),
+                CombatFaction.Player,
+                999,
+                DamageType.Projectile,
+                new Float2(-1f, 0f),
+                match.SimulationTick + 1);
+            var damage = match.ResolveDamage(request, CombatFaction.Enemy, false, false);
+            Assert.That(damage.Result.Applied, Is.True);
+            Assert.That(damage.Result.TargetDefeated, Is.True);
+            Assert.That(match.ResultsShown, Is.False);
+
+            yield return null;
+            Assert.That(overlay.CurrentStepSatisfied, Is.True);
+            Assert.That(overlay.CurrentStep, Is.EqualTo(TutorialStep.Elimination));
         }
     }
 }
