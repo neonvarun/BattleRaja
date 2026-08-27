@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using BattleRaja.Core.Application;
 using BattleRaja.Core.Domain;
@@ -693,6 +694,34 @@ namespace BattleRaja.Tests.PlayMode
                     fighter.name + " production art must not own gameplay collision");
             }
 
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator ProductionFighterArtUsesDistinctFacetedSilhouetteMeshes()
+        {
+            var fighters = Object.FindObjectsByType<FighterPresentation>();
+            Assert.That(fighters, Has.Length.EqualTo(8));
+            var seenFighterProfiles = new HashSet<string>();
+            foreach (var fighter in fighters)
+            {
+                var modelRoot = fighter.transform.Find("FighterIdentitySilhouette")?.GetChild(0);
+                Assert.That(modelRoot, Is.Not.Null, fighter.name + " is missing its saved production model instance");
+                var meshFilters = modelRoot.GetComponentsInChildren<MeshFilter>(true);
+                var meshNames = meshFilters.Where(filter => filter.sharedMesh != null)
+                    .Select(filter => filter.sharedMesh.name)
+                    .ToArray();
+                var vertexCount = meshFilters.Where(filter => filter.sharedMesh != null)
+                    .Sum(filter => filter.sharedMesh.vertexCount);
+                Assert.That(vertexCount, Is.GreaterThanOrEqualTo(260),
+                    fighter.name + " production silhouette should use authored faceted mesh detail");
+
+                var profile = modelRoot.name + ":" + string.Join(",", meshNames.OrderBy(name => name));
+                seenFighterProfiles.Add(profile);
+            }
+
+            Assert.That(seenFighterProfiles, Has.Count.EqualTo(3),
+                "Bijli, Pehel and Maya must retain distinct authored silhouette profiles");
             yield return null;
         }
 

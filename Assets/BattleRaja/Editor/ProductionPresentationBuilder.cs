@@ -71,6 +71,30 @@ namespace BattleRaja.Editor
             Debug.Log("BattleRaja production presentation generated: transform rig, Animator clips/controller and saved VFX cues.");
         }
 
+        /// <summary>
+        /// Rebuilds the prefab rig/cue composition while preserving the existing
+        /// controller and VFX asset identities. This is used only by the deliberate
+        /// production-art rebuild path after a mesh recipe changes.
+        /// </summary>
+        public static void RebuildFighterPrefabs()
+        {
+            EnsureFolders();
+            var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath);
+            if (controller == null) controller = BuildController();
+
+            var vfx = LoadVfxLibrary();
+            if (vfx == null) vfx = BuildVfxLibrary();
+            for (var i = 0; i < FighterPrefabPaths.Length; i++)
+            {
+                BuildFighterPrefab(FighterPrefabPaths[i], controller, vfx, i);
+            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            RefreshSceneReferences();
+            Debug.Log("BattleRaja production fighter prefabs rebuilt with the existing Animator/VFX assets.");
+        }
+
         public static bool HasGeneratedAssets()
         {
             if (AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath) == null) return false;
@@ -320,6 +344,30 @@ namespace BattleRaja.Editor
             return result;
         }
 
+        private static Dictionary<string, GameObject> LoadVfxLibrary()
+        {
+            var paths = new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                ["BijliAttack"] = VfxRoot + "/BijliAttackVfx.prefab",
+                ["BijliAbility"] = VfxRoot + "/BijliAbilityVfx.prefab",
+                ["PehelAttack"] = VfxRoot + "/PehelAttackVfx.prefab",
+                ["PehelAbility"] = VfxRoot + "/PehelAbilityVfx.prefab",
+                ["MayaAttack"] = VfxRoot + "/MayaAttackVfx.prefab",
+                ["MayaAbility"] = VfxRoot + "/MayaAbilityVfx.prefab",
+                ["Hit"] = VfxRoot + "/FighterHitVfx.prefab",
+                ["Elimination"] = VfxRoot + "/FighterEliminationVfx.prefab"
+            };
+            var result = new Dictionary<string, GameObject>(StringComparer.Ordinal);
+            foreach (var pair in paths)
+            {
+                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(pair.Value);
+                if (prefab == null) return null;
+                result[pair.Key] = prefab;
+            }
+
+            return result;
+        }
+
         private static GameObject BuildVfxPrefab(string name, Color color, short count, float lifetime, float size, float speed)
         {
             var path = VfxRoot + "/" + name + ".prefab";
@@ -401,6 +449,10 @@ namespace BattleRaja.Editor
 
             ReparentPart(root.transform.Find("Body"), chest);
             ReparentPart(root.transform.Find("Cloak"), chest);
+            ReparentPart(root.transform.Find("CloakTrim"), chest);
+            ReparentPart(root.transform.Find("ChestMedallion"), chest);
+            ReparentPart(root.transform.Find("EnergyCore"), chest);
+            ReparentPart(root.transform.Find("ShardCore"), chest);
             ReparentPart(root.transform.Find("Head"), head);
             ReparentPart(root.transform.Find("Hood"), head);
             ReparentPart(root.transform.Find("Visor"), head);
@@ -408,12 +460,20 @@ namespace BattleRaja.Editor
             ReparentPart(root.transform.Find("Brow"), head);
             ReparentPart(root.transform.Find("CrestLeft"), head);
             ReparentPart(root.transform.Find("CrestRight"), head);
+            ReparentPart(root.transform.Find("Crest"), head);
             ReparentPart(root.transform.Find("ShoulderLeft"), leftHand);
             ReparentPart(root.transform.Find("ShoulderRight"), rightHand);
             ReparentPart(root.transform.Find("GauntletLeft"), leftHand);
             ReparentPart(root.transform.Find("GauntletRight"), rightHand);
+            ReparentPart(root.transform.Find("ArmGuardLeft"), leftHand);
+            ReparentPart(root.transform.Find("ArmGuardRight"), rightHand);
             ReparentPart(root.transform.Find("BootLeft"), leftFoot);
             ReparentPart(root.transform.Find("BootRight"), rightFoot);
+            ReparentPart(root.transform.Find("Belt"), hips);
+            ReparentPart(root.transform.Find("Buckle"), hips);
+            ReparentPart(root.transform.Find("Sash"), chest);
+            ReparentPart(root.transform.Find("ScarfLeft"), chest);
+            ReparentPart(root.transform.Find("ScarfRight"), chest);
 
             var animator = root.AddComponent<Animator>();
             animator.runtimeAnimatorController = controller;

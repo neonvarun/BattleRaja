@@ -52,6 +52,30 @@ namespace BattleRaja.Editor
             Debug.Log("BattleRaja production art generated: six render-only V1 prefabs.");
         }
 
+        /// <summary>
+        /// Deliberately regenerates the saved render-only meshes and prefab composition
+        /// after an authored visual recipe changes. Ordinary scene/build generation uses
+        /// <see cref="BuildAll"/> and therefore keeps the committed asset identities
+        /// stable; this explicit menu path is the reviewed visual-change boundary.
+        /// </summary>
+        [MenuItem("BattleRaja/Rebuild V1 Production Fighter Art")]
+        public static void RebuildAll()
+        {
+            EnsureFolders();
+            var materials = BuildMaterials();
+            var meshes = BuildMeshes();
+            BuildBijliPrefab(materials, meshes);
+            BuildPehelPrefab(materials, meshes);
+            BuildMayaPrefab(materials, meshes);
+            BuildUmbrellaPrefab(materials, meshes);
+            BuildDholPrefab(materials, meshes);
+            BuildTiffinPrefab(materials, meshes);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            ProductionPresentationBuilder.RebuildFighterPrefabs();
+            Debug.Log("BattleRaja production art rebuilt: reviewed faceted fighter and gadget meshes.");
+        }
+
         public static bool HasGeneratedAssets()
         {
             var paths = new[]
@@ -146,11 +170,91 @@ namespace BattleRaja.Editor
         {
             var meshes = new Dictionary<string, Mesh>(StringComparer.Ordinal)
             {
-                ["BodySlim"] = CreateBox("BodySlim", new Vector3(0.72f, 1.15f, 0.5f)),
-                ["BodyBroad"] = CreateBox("BodyBroad", new Vector3(0.98f, 1.05f, 0.62f)),
-                ["Cloak"] = CreateWedge("Cloak", new Vector3(1.12f, 1.14f, 0.36f), 0.28f),
-                ["Head"] = CreateLathe("Head", new List<Vector2> { new Vector2(0.34f, -0.25f), new Vector2(0.39f, -0.12f), new Vector2(0.36f, 0.18f), new Vector2(0.25f, 0.32f) }, 12),
-                ["Shoulder"] = CreateBox("Shoulder", new Vector3(0.36f, 0.24f, 0.44f)),
+                ["BodySlim"] = CreateLoft("BodySlim", new List<LoftSection>
+                {
+                    new LoftSection(-0.54f, 0.24f, 0.18f), new LoftSection(-0.36f, 0.37f, 0.25f),
+                    new LoftSection(0.18f, 0.34f, 0.23f), new LoftSection(0.52f, 0.24f, 0.17f)
+                }, 10),
+                ["BodyBroad"] = CreateLoft("BodyBroad", new List<LoftSection>
+                {
+                    new LoftSection(-0.50f, 0.34f, 0.24f), new LoftSection(-0.34f, 0.52f, 0.33f),
+                    new LoftSection(0.22f, 0.48f, 0.31f), new LoftSection(0.50f, 0.34f, 0.24f)
+                }, 10),
+                ["Cloak"] = CreateLoft("Cloak", new List<LoftSection>
+                {
+                    new LoftSection(-0.56f, 0.38f, 0.25f, 0f, 0.04f), new LoftSection(-0.34f, 0.54f, 0.34f, 0f, 0.02f),
+                    new LoftSection(0.14f, 0.56f, 0.33f, 0f, -0.02f), new LoftSection(0.48f, 0.31f, 0.24f, 0f, -0.05f)
+                }, 12),
+                ["Head"] = CreateLoft("Head", new List<LoftSection>
+                {
+                    new LoftSection(-0.25f, 0.28f, 0.25f), new LoftSection(-0.16f, 0.37f, 0.32f),
+                    new LoftSection(0.08f, 0.35f, 0.30f), new LoftSection(0.25f, 0.27f, 0.23f),
+                    new LoftSection(0.34f, 0.12f, 0.12f)
+                }, 10),
+                ["Shoulder"] = CreateLoft("Shoulder", new List<LoftSection>
+                {
+                    new LoftSection(-0.13f, 0.18f, 0.18f), new LoftSection(-0.02f, 0.24f, 0.22f),
+                    new LoftSection(0.13f, 0.18f, 0.18f)
+                }, 10),
+                ["BijliTorso"] = CreateLoft("BijliTorso", new List<LoftSection>
+                {
+                    new LoftSection(-0.54f, 0.22f, 0.16f), new LoftSection(-0.38f, 0.39f, 0.25f),
+                    new LoftSection(-0.04f, 0.43f, 0.27f), new LoftSection(0.28f, 0.34f, 0.22f),
+                    new LoftSection(0.54f, 0.23f, 0.16f)
+                }, 12),
+                ["PehelTorso"] = CreateLoft("PehelTorso", new List<LoftSection>
+                {
+                    new LoftSection(-0.50f, 0.34f, 0.24f), new LoftSection(-0.34f, 0.54f, 0.34f),
+                    new LoftSection(0.08f, 0.56f, 0.35f), new LoftSection(0.34f, 0.47f, 0.30f),
+                    new LoftSection(0.52f, 0.32f, 0.23f)
+                }, 12),
+                ["MayaCloak"] = CreateLoft("MayaCloak", new List<LoftSection>
+                {
+                    new LoftSection(-0.56f, 0.42f, 0.28f, 0f, 0.06f), new LoftSection(-0.36f, 0.58f, 0.36f, 0f, 0.03f),
+                    new LoftSection(0.10f, 0.60f, 0.35f, 0f, -0.02f), new LoftSection(0.42f, 0.36f, 0.25f, 0f, -0.06f),
+                    new LoftSection(0.54f, 0.22f, 0.18f, 0f, -0.08f)
+                }, 14),
+                ["ShoulderOrb"] = CreateLoft("ShoulderOrb", new List<LoftSection>
+                {
+                    new LoftSection(-0.18f, 0.08f, 0.08f), new LoftSection(-0.10f, 0.22f, 0.20f),
+                    new LoftSection(0.02f, 0.26f, 0.23f), new LoftSection(0.14f, 0.20f, 0.18f),
+                    new LoftSection(0.19f, 0.07f, 0.07f)
+                }, 10),
+                ["ArmGuard"] = CreateLoft("ArmGuard", new List<LoftSection>
+                {
+                    new LoftSection(-0.18f, 0.12f, 0.12f), new LoftSection(-0.08f, 0.18f, 0.16f),
+                    new LoftSection(0.14f, 0.15f, 0.14f), new LoftSection(0.22f, 0.08f, 0.08f)
+                }, 9),
+                ["BootSculpt"] = CreateLoft("BootSculpt", new List<LoftSection>
+                {
+                    new LoftSection(-0.14f, 0.12f, 0.15f), new LoftSection(-0.06f, 0.19f, 0.22f),
+                    new LoftSection(0.12f, 0.18f, 0.21f), new LoftSection(0.18f, 0.10f, 0.13f)
+                }, 9),
+                ["BoltBadge"] = CreateExtrudedPolygon("BoltBadge", new List<Vector2>
+                {
+                    new Vector2(-0.20f, 0.34f), new Vector2(0.06f, 0.08f), new Vector2(-0.02f, 0.08f),
+                    new Vector2(0.18f, -0.34f), new Vector2(-0.04f, -0.04f), new Vector2(0.02f, -0.04f)
+                }, 0.10f),
+                ["VisorPlate"] = CreateExtrudedPolygon("VisorPlate", new List<Vector2>
+                {
+                    new Vector2(-0.26f, 0.10f), new Vector2(0.26f, 0.10f), new Vector2(0.20f, -0.10f),
+                    new Vector2(-0.20f, -0.10f)
+                }, 0.12f),
+                ["SashPlate"] = CreateExtrudedPolygon("SashPlate", new List<Vector2>
+                {
+                    new Vector2(-0.42f, 0.16f), new Vector2(0.40f, 0.08f), new Vector2(0.34f, -0.14f),
+                    new Vector2(-0.36f, -0.06f)
+                }, 0.14f),
+                ["MaskPlate"] = CreateExtrudedPolygon("MaskPlate", new List<Vector2>
+                {
+                    new Vector2(-0.24f, 0.08f), new Vector2(0.26f, 0.12f), new Vector2(0.18f, -0.10f),
+                    new Vector2(-0.22f, -0.08f)
+                }, 0.10f),
+                ["ScarfRibbon"] = CreateExtrudedPolygon("ScarfRibbon", new List<Vector2>
+                {
+                    new Vector2(-0.38f, 0.20f), new Vector2(0.34f, 0.12f), new Vector2(0.48f, -0.16f),
+                    new Vector2(0.18f, -0.08f), new Vector2(-0.40f, 0.02f)
+                }, 0.08f),
                 ["Gem"] = CreateDiamond("Gem", new Vector3(0.24f, 0.38f, 0.18f)),
                 ["Fin"] = CreateWedge("Fin", new Vector3(0.28f, 0.58f, 0.12f), 0.5f),
                 ["Flat"] = CreateBox("Flat", new Vector3(0.52f, 0.08f, 0.16f)),
@@ -313,55 +417,156 @@ namespace BattleRaja.Editor
             return mesh;
         }
 
+        private struct LoftSection
+        {
+            public readonly float Y;
+            public readonly float RadiusX;
+            public readonly float RadiusZ;
+            public readonly float OffsetX;
+            public readonly float OffsetZ;
+
+            public LoftSection(float y, float radiusX, float radiusZ, float offsetX = 0f, float offsetZ = 0f)
+            {
+                Y = y;
+                RadiusX = radiusX;
+                RadiusZ = radiusZ;
+                OffsetX = offsetX;
+                OffsetZ = offsetZ;
+            }
+        }
+
+        private static Mesh CreateLoft(string name, IReadOnlyList<LoftSection> sections, int sides)
+        {
+            if (sections == null || sections.Count < 2) throw new ArgumentException("A loft needs at least two sections.", nameof(sections));
+            sides = Mathf.Max(6, sides);
+            var vertices = new Vector3[sections.Count * sides + 2];
+            var triangles = new List<int>((sections.Count - 1) * sides * 6 + sides * 6);
+            for (var ring = 0; ring < sections.Count; ring++)
+            {
+                var section = sections[ring];
+                for (var side = 0; side < sides; side++)
+                {
+                    var angle = side * Mathf.PI * 2f / sides;
+                    vertices[ring * sides + side] = new Vector3(
+                        section.OffsetX + Mathf.Cos(angle) * section.RadiusX,
+                        section.Y,
+                        section.OffsetZ + Mathf.Sin(angle) * section.RadiusZ);
+                }
+            }
+
+            var bottomCenter = sections.Count * sides;
+            var topCenter = bottomCenter + 1;
+            vertices[bottomCenter] = new Vector3(sections[0].OffsetX, sections[0].Y, sections[0].OffsetZ);
+            var last = sections[sections.Count - 1];
+            vertices[topCenter] = new Vector3(last.OffsetX, last.Y, last.OffsetZ);
+            for (var ring = 0; ring < sections.Count - 1; ring++)
+            {
+                for (var side = 0; side < sides; side++)
+                {
+                    var next = (side + 1) % sides;
+                    var a = ring * sides + side;
+                    var b = ring * sides + next;
+                    var c = (ring + 1) * sides + next;
+                    var d = (ring + 1) * sides + side;
+                    triangles.Add(a); triangles.Add(c); triangles.Add(b);
+                    triangles.Add(a); triangles.Add(d); triangles.Add(c);
+                }
+            }
+
+            for (var side = 0; side < sides; side++)
+            {
+                var next = (side + 1) % sides;
+                triangles.Add(bottomCenter); triangles.Add(next); triangles.Add(side);
+                var top = (sections.Count - 1) * sides;
+                triangles.Add(topCenter); triangles.Add(top + side); triangles.Add(top + next);
+            }
+
+            return CreateMesh(name, vertices, triangles.ToArray());
+        }
+
+        private static Mesh CreateExtrudedPolygon(string name, IReadOnlyList<Vector2> polygon, float depth)
+        {
+            if (polygon == null || polygon.Count < 3) throw new ArgumentException("An extruded polygon needs at least three points.", nameof(polygon));
+            var count = polygon.Count;
+            var vertices = new Vector3[count * 2];
+            var halfDepth = depth * 0.5f;
+            for (var i = 0; i < count; i++)
+            {
+                vertices[i] = new Vector3(polygon[i].x, polygon[i].y, -halfDepth);
+                vertices[count + i] = new Vector3(polygon[i].x, polygon[i].y, halfDepth);
+            }
+
+            var triangles = new List<int>((count - 2) * 6 + count * 6);
+            for (var i = 1; i < count - 1; i++)
+            {
+                triangles.Add(0); triangles.Add(i); triangles.Add(i + 1);
+                triangles.Add(count); triangles.Add(count + i + 1); triangles.Add(count + i);
+            }
+
+            for (var i = 0; i < count; i++)
+            {
+                var next = (i + 1) % count;
+                triangles.Add(i); triangles.Add(count + i); triangles.Add(count + next);
+                triangles.Add(i); triangles.Add(count + next); triangles.Add(next);
+            }
+
+            return CreateMesh(name, vertices, triangles.ToArray());
+        }
+
         private static void BuildBijliPrefab(Dictionary<string, Material> materials, Dictionary<string, Mesh> meshes)
         {
             var root = CreateRoot("BijliProductionModel");
-            AddPart(root, "Body", meshes["BodySlim"], materials["BijliCyan"], new Vector3(0f, 0.72f, 0f), Vector3.one, Quaternion.identity);
+            AddPart(root, "Body", meshes["BijliTorso"], materials["BijliCyan"], new Vector3(0f, 0.72f, 0f), Vector3.one, Quaternion.identity);
             AddPart(root, "Head", meshes["Head"], materials["BijliGold"], new Vector3(0f, 1.55f, 0f), Vector3.one * 0.92f, Quaternion.identity);
-            AddPart(root, "Visor", meshes["Flat"], materials["Ink"], new Vector3(0f, 1.56f, 0.31f), new Vector3(1f, 0.8f, 0.4f), Quaternion.identity);
+            AddPart(root, "Visor", meshes["VisorPlate"], materials["Ink"], new Vector3(0f, 1.56f, 0.31f), new Vector3(1f, 0.8f, 0.65f), Quaternion.identity);
             AddPart(root, "CrestLeft", meshes["Fin"], materials["BijliGold"], new Vector3(-0.17f, 1.94f, 0f), Vector3.one * 0.6f, Quaternion.Euler(0f, 0f, -22f));
             AddPart(root, "CrestRight", meshes["Fin"], materials["BijliGold"], new Vector3(0.17f, 1.94f, 0f), Vector3.one * 0.6f, Quaternion.Euler(0f, 0f, 22f));
-            AddPart(root, "ShoulderLeft", meshes["Shoulder"], materials["BijliCyan"], new Vector3(-0.51f, 1.05f, 0f), Vector3.one * 0.8f, Quaternion.identity);
-            AddPart(root, "ShoulderRight", meshes["Shoulder"], materials["BijliCyan"], new Vector3(0.51f, 1.05f, 0f), Vector3.one * 0.8f, Quaternion.identity);
-            AddPart(root, "BootLeft", meshes["Flat"], materials["Ink"], new Vector3(-0.22f, 0.12f, 0.06f), new Vector3(1.2f, 1.2f, 1.8f), Quaternion.identity);
-            AddPart(root, "BootRight", meshes["Flat"], materials["Ink"], new Vector3(0.22f, 0.12f, 0.06f), new Vector3(1.2f, 1.2f, 1.8f), Quaternion.identity);
-            AddPart(root, "BoltTab", meshes["Gem"], materials["Crystal"], new Vector3(0f, 0.86f, 0.33f), Vector3.one * 0.72f, Quaternion.identity);
+            AddPart(root, "ShoulderLeft", meshes["ShoulderOrb"], materials["BijliCyan"], new Vector3(-0.51f, 1.05f, 0f), Vector3.one * 0.8f, Quaternion.identity);
+            AddPart(root, "ShoulderRight", meshes["ShoulderOrb"], materials["BijliGold"], new Vector3(0.51f, 1.05f, 0f), Vector3.one * 0.8f, Quaternion.identity);
+            AddPart(root, "ArmGuardLeft", meshes["ArmGuard"], materials["BijliCyan"], new Vector3(-0.58f, 0.68f, 0.02f), new Vector3(0.8f, 1.1f, 0.8f), Quaternion.Euler(0f, 0f, 18f));
+            AddPart(root, "ArmGuardRight", meshes["ArmGuard"], materials["BijliGold"], new Vector3(0.58f, 0.68f, 0.02f), new Vector3(0.8f, 1.1f, 0.8f), Quaternion.Euler(0f, 0f, -18f));
+            AddPart(root, "BootLeft", meshes["BootSculpt"], materials["Ink"], new Vector3(-0.22f, 0.12f, 0.06f), new Vector3(1.2f, 1.2f, 1.5f), Quaternion.identity);
+            AddPart(root, "BootRight", meshes["BootSculpt"], materials["Ink"], new Vector3(0.22f, 0.12f, 0.06f), new Vector3(1.2f, 1.2f, 1.5f), Quaternion.identity);
+            AddPart(root, "BoltTab", meshes["BoltBadge"], materials["Crystal"], new Vector3(0f, 0.86f, 0.33f), new Vector3(0.72f, 0.82f, 0.72f), Quaternion.identity);
+            AddPart(root, "EnergyCore", meshes["Gem"], materials["BijliGold"], new Vector3(0f, 1.10f, 0.28f), Vector3.one * 0.34f, Quaternion.identity);
             SavePrefab(root, BijliPrefabPath);
         }
 
         private static void BuildPehelPrefab(Dictionary<string, Material> materials, Dictionary<string, Mesh> meshes)
         {
             var root = CreateRoot("PehelProductionModel");
-            AddPart(root, "Body", meshes["BodyBroad"], materials["PehelClay"], new Vector3(0f, 0.70f, 0f), Vector3.one, Quaternion.identity);
+            AddPart(root, "Body", meshes["PehelTorso"], materials["PehelClay"], new Vector3(0f, 0.70f, 0f), Vector3.one, Quaternion.identity);
             AddPart(root, "Head", meshes["Head"], materials["PehelCream"], new Vector3(0f, 1.48f, 0f), Vector3.one * 1.03f, Quaternion.identity);
-            AddPart(root, "Brow", meshes["Flat"], materials["Ink"], new Vector3(0f, 1.60f, 0.30f), new Vector3(1.4f, 0.5f, 0.5f), Quaternion.identity);
-            AddPart(root, "Visor", meshes["Flat"], materials["PehelClay"], new Vector3(0f, 1.48f, 0.34f), new Vector3(1.1f, 0.4f, 0.35f), Quaternion.identity);
-            AddPart(root, "ShoulderLeft", meshes["Shoulder"], materials["PehelCream"], new Vector3(-0.58f, 1.03f, 0f), Vector3.one * 1.05f, Quaternion.identity);
-            AddPart(root, "ShoulderRight", meshes["Shoulder"], materials["PehelCream"], new Vector3(0.58f, 1.03f, 0f), Vector3.one * 1.05f, Quaternion.identity);
+            AddPart(root, "Brow", meshes["SashPlate"], materials["Ink"], new Vector3(0f, 1.60f, 0.30f), new Vector3(0.72f, 0.5f, 0.5f), Quaternion.identity);
+            AddPart(root, "Visor", meshes["VisorPlate"], materials["PehelClay"], new Vector3(0f, 1.48f, 0.34f), new Vector3(1.1f, 0.4f, 0.7f), Quaternion.identity);
+            AddPart(root, "ShoulderLeft", meshes["ShoulderOrb"], materials["PehelCream"], new Vector3(-0.58f, 1.03f, 0f), Vector3.one * 1.05f, Quaternion.identity);
+            AddPart(root, "ShoulderRight", meshes["ShoulderOrb"], materials["PehelCream"], new Vector3(0.58f, 1.03f, 0f), Vector3.one * 1.05f, Quaternion.identity);
             AddPart(root, "Belt", meshes["Ring"], materials["PehelCream"], new Vector3(0f, 0.74f, 0f), new Vector3(1.15f, 1f, 0.88f), Quaternion.identity);
             AddPart(root, "Buckle", meshes["Gem"], materials["PehelCream"], new Vector3(0f, 0.72f, 0.36f), Vector3.one * 0.7f, Quaternion.identity);
-            AddPart(root, "GauntletLeft", meshes["Shoulder"], materials["PehelClay"], new Vector3(-0.67f, 0.58f, 0f), Vector3.one * 0.8f, Quaternion.identity);
-            AddPart(root, "GauntletRight", meshes["Shoulder"], materials["PehelClay"], new Vector3(0.67f, 0.58f, 0f), Vector3.one * 0.8f, Quaternion.identity);
-            AddPart(root, "Sash", meshes["Flat"], materials["PehelCream"], new Vector3(0f, 1.00f, -0.34f), new Vector3(1.2f, 0.5f, 0.7f), Quaternion.Euler(0f, 0f, -18f));
-            AddPart(root, "BootLeft", meshes["Flat"], materials["Ink"], new Vector3(-0.26f, 0.11f, 0.04f), new Vector3(1.5f, 1.4f, 2f), Quaternion.identity);
-            AddPart(root, "BootRight", meshes["Flat"], materials["Ink"], new Vector3(0.26f, 0.11f, 0.04f), new Vector3(1.5f, 1.4f, 2f), Quaternion.identity);
+            AddPart(root, "GauntletLeft", meshes["ArmGuard"], materials["PehelClay"], new Vector3(-0.67f, 0.58f, 0f), Vector3.one * 0.8f, Quaternion.Euler(0f, 0f, 20f));
+            AddPart(root, "GauntletRight", meshes["ArmGuard"], materials["PehelClay"], new Vector3(0.67f, 0.58f, 0f), Vector3.one * 0.8f, Quaternion.Euler(0f, 0f, -20f));
+            AddPart(root, "Sash", meshes["SashPlate"], materials["PehelCream"], new Vector3(0f, 1.00f, -0.34f), new Vector3(1.2f, 0.9f, 0.9f), Quaternion.Euler(0f, 0f, -18f));
+            AddPart(root, "ChestMedallion", meshes["Gem"], materials["PehelCream"], new Vector3(0f, 1.02f, 0.28f), Vector3.one * 0.38f, Quaternion.identity);
+            AddPart(root, "BootLeft", meshes["BootSculpt"], materials["Ink"], new Vector3(-0.26f, 0.11f, 0.04f), new Vector3(1.5f, 1.4f, 1.7f), Quaternion.identity);
+            AddPart(root, "BootRight", meshes["BootSculpt"], materials["Ink"], new Vector3(0.26f, 0.11f, 0.04f), new Vector3(1.5f, 1.4f, 1.7f), Quaternion.identity);
             SavePrefab(root, PehelPrefabPath);
         }
 
         private static void BuildMayaPrefab(Dictionary<string, Material> materials, Dictionary<string, Mesh> meshes)
         {
             var root = CreateRoot("MayaProductionModel");
-            AddPart(root, "Cloak", meshes["Cloak"], materials["MayaViolet"], new Vector3(0f, 0.72f, 0f), Vector3.one, Quaternion.identity);
+            AddPart(root, "Cloak", meshes["MayaCloak"], materials["MayaViolet"], new Vector3(0f, 0.72f, 0f), Vector3.one, Quaternion.identity);
             AddPart(root, "Head", meshes["Head"], materials["MayaMint"], new Vector3(0f, 1.52f, 0f), Vector3.one * 0.95f, Quaternion.identity);
-            AddPart(root, "Hood", meshes["Cloak"], materials["MayaViolet"], new Vector3(0f, 1.54f, -0.03f), new Vector3(0.65f, 0.62f, 0.62f), Quaternion.identity);
-            AddPart(root, "Mask", meshes["Flat"], materials["MayaRose"], new Vector3(0f, 1.48f, 0.30f), new Vector3(0.9f, 0.52f, 0.38f), Quaternion.identity);
-            AddPart(root, "ScarfLeft", meshes["Fin"], materials["MayaRose"], new Vector3(-0.28f, 1.05f, 0.10f), new Vector3(0.75f, 1.1f, 0.65f), Quaternion.Euler(0f, 0f, 16f));
-            AddPart(root, "ScarfRight", meshes["Fin"], materials["MayaRose"], new Vector3(0.28f, 1.05f, 0.10f), new Vector3(0.75f, 1.1f, 0.65f), Quaternion.Euler(0f, 0f, -16f));
-            AddPart(root, "CloakTrim", meshes["Flat"], materials["MayaMint"], new Vector3(0f, 0.52f, 0.18f), new Vector3(1.3f, 0.5f, 0.75f), Quaternion.identity);
+            AddPart(root, "Hood", meshes["MayaCloak"], materials["MayaViolet"], new Vector3(0f, 1.54f, -0.03f), new Vector3(0.65f, 0.62f, 0.62f), Quaternion.identity);
+            AddPart(root, "Mask", meshes["MaskPlate"], materials["MayaRose"], new Vector3(0f, 1.48f, 0.30f), new Vector3(0.9f, 0.75f, 0.65f), Quaternion.identity);
+            AddPart(root, "ScarfLeft", meshes["ScarfRibbon"], materials["MayaRose"], new Vector3(-0.28f, 1.05f, 0.10f), new Vector3(0.75f, 1.1f, 0.65f), Quaternion.Euler(0f, 0f, 16f));
+            AddPart(root, "ScarfRight", meshes["ScarfRibbon"], materials["MayaRose"], new Vector3(0.28f, 1.05f, 0.10f), new Vector3(0.75f, 1.1f, 0.65f), Quaternion.Euler(0f, 0f, -16f));
+            AddPart(root, "CloakTrim", meshes["SashPlate"], materials["MayaMint"], new Vector3(0f, 0.52f, 0.18f), new Vector3(1.3f, 0.5f, 0.75f), Quaternion.identity);
             AddPart(root, "CharmLeft", meshes["Gem"], materials["MayaMint"], new Vector3(-0.48f, 0.75f, 0.2f), Vector3.one * 0.55f, Quaternion.identity);
             AddPart(root, "CharmRight", meshes["Gem"], materials["MayaMint"], new Vector3(0.48f, 0.75f, 0.2f), Vector3.one * 0.55f, Quaternion.identity);
-            AddPart(root, "BootLeft", meshes["Flat"], materials["Ink"], new Vector3(-0.2f, 0.1f, 0.02f), new Vector3(1.2f, 1.2f, 1.8f), Quaternion.identity);
-            AddPart(root, "BootRight", meshes["Flat"], materials["Ink"], new Vector3(0.2f, 0.1f, 0.02f), new Vector3(1.2f, 1.2f, 1.8f), Quaternion.identity);
+            AddPart(root, "ShardCore", meshes["Gem"], materials["MayaMint"], new Vector3(0f, 1.02f, 0.25f), Vector3.one * 0.34f, Quaternion.Euler(0f, 15f, 0f));
+            AddPart(root, "BootLeft", meshes["BootSculpt"], materials["Ink"], new Vector3(-0.2f, 0.1f, 0.02f), new Vector3(1.2f, 1.2f, 1.55f), Quaternion.identity);
+            AddPart(root, "BootRight", meshes["BootSculpt"], materials["Ink"], new Vector3(0.2f, 0.1f, 0.02f), new Vector3(1.2f, 1.2f, 1.55f), Quaternion.identity);
             SavePrefab(root, MayaPrefabPath);
         }
 
