@@ -1760,6 +1760,15 @@ Evidence:
   reports 4096-byte pages in `page-size.txt`, SHA-256
   `30F236F92D107CEDC1EAB7B3D6DAFA316DF3657AC88E59ECE8DF2944B6C995CA`.
 
+Exact-candidate 30-second Lava stability capture
+`Builds/Local/Device/Performance/20260827-126714a-release-30s/` recorded six
+samples with no configured fatal logcat markers. The manifest SHA-256 is
+`BDB8406B803833D2430932B241BC3CACF344C806C3C35E9FF6F7EA8E713E692A` and the
+logcat SHA-256 is `B1EF327ED9C18D773EB6E80B3D8B78FC6309EE4612BEC2368FC30839F130B6FF`.
+After scene load, sampled PSS was 230,257–237,579 KB, RSS 365,884–373,316 KB,
+graphics PSS 70,292 KB and thermal status 0; this is bounded stability evidence,
+not a normalized FPS/jank/GPU/GC/battery approval.
+
 #### P30 gate delta
 
 | Gate | Status | Evidence / owner action |
