@@ -1,5 +1,22 @@
 # Latest HEAD baseline
 
+## Latest exact-source production-bot refresh — `90670ff` / runtime `126714a` — 2026-08-27
+
+The clean documentation tip is `90670ff`; the runtime-bearing source remains
+`126714a`. Full EditMode is **140/140** and full PlayMode is **84/84**. The exact-source
+production-bot release assertions completed **100/100** seeded matches: 100/100 terminal
+results, 100/100 in the 240–360 second window at 306.014 s, 100/100 bot-to-bot damage,
+100/100 combat eliminations, and 0/100 Aandhi-only resolutions. Protected-warmup damage,
+invalid positions and continuous stuck ticks were zero; every fighter and gadget kind was
+used. Hashes for the batch report, NUnit XML and Unity log are indexed in
+`Docs/V1_RELEASE_PLAN.md` P31.
+
+The matching release-shaped APK/AAB and static Android checker remain the exact artifacts
+from `126714a` documented in P30. They use temporary package identity
+`com.example.battleraja.m11`, are not release-signed, and run on a Lava device reporting
+4 KB pages; runtime 16 KB, sustained performance, full physical route, accessibility,
+authored/cultural, privacy/Data Safety, signing and Play Console gates remain open.
+
 ## Latest exact-source release-gate candidate — `2080383` — 2026-08-27
 
 The current clean source is commit `208038362e16f8c33856e0a7cf5c4de776005ded`

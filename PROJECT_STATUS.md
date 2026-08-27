@@ -625,3 +625,19 @@ This is a clean technical Android candidate, not a Play-ready claim. The product
 threshold remains open, and human full-route/touch/accessibility, sustained match performance,
 runtime 16 KB, final authored/cultural review, package identity/signing, privacy/Data Safety,
 content rating, store assets and Play Console actions remain owner-controlled or unverified.
+
+## Milestone 11 exact-source production-bot refresh — 2026-08-27
+
+The latest clean documentation tip is `90670ff`; its runtime-bearing source remains
+`126714a`. The exact-source production-bot release assertions completed **100/100** seeded
+matches with **100/100** terminal results, **100/100** in the 240–360 second pacing window,
+**100/100** bot-to-bot damage, **100/100** combat eliminations, and **0/100** Aandhi-only
+resolutions. Protected-warmup damage, invalid positions and continuous stuck ticks were all
+zero. All three fighters and all three gadgets were exercised successfully. The full PlayMode
+test report remains **84/84**; report, log and batch hashes are recorded in `Docs/V1_RELEASE_PLAN.md`
+P31.
+
+This closes the automated production-bot pacing and safety gate. It does not close human
+touch/tutorial/accessibility, sustained performance/thermal/battery, runtime 16 KB, final
+authored/cultural review, package identity/signing, privacy/Data Safety, content rating, store
+asset or Play Console gates. No Play-ready or publication claim is made.

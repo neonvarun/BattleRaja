@@ -1784,10 +1784,49 @@ P30 closes the previously observed alive-state movement discrepancy on the exact
 release-shaped source and gives direct physical attribution for the first tutorial
 lesson. It does not claim the complete tutorial route or Play submission readiness.
 
+### P31 - Exact-source production-bot release batch - 2026-08-27
+
+The production-bot release assertions were rerun from the clean documentation tip
+`90670ff` (runtime-bearing source unchanged from `126714a`) with Unity `6000.5.6f1`,
+`BATTLERAJA_PRODUCTION_BOT_MATCHES=100`,
+`BATTLERAJA_PRODUCTION_BOT_ASSERT_RELEASE_GATES=1` and the documented 50x fixed-tick
+diagnostic playback. The run completed without changing any release threshold.
+
+Evidence:
+
+- NUnit PlayMode report `Builds/Local/TestResults/playmode-production-bot-126714a.xml`,
+  **84/84 passed**, SHA-256
+  `FC60930AF48D546D0858428E8431D6337505007CBD5946375BC6A5275A1D7612`.
+- Unity log `Builds/Local/Logs/playmode-production-bot-126714a.log`, SHA-256
+  `1A3C62FBA5436DA875770985D0542779627A781C4F45DBE69E70DBC3E8395F60`.
+- Batch report
+  `Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260827-035001860-9101.json`,
+  SHA-256 `9714C50F4293CC7C6A191FFA1C4C50EDF22CABA05BCE12D88E0EBC30DC04EFB9`.
+- All **100/100** matches reached terminal results within the 10,800-tick budget;
+  duration was **306.014 s** for every match, so **100/100** were in the 240–360 s
+  window. All **100/100** contained bot-to-bot damage and at least one combat
+  elimination; Aandhi-only resolutions were **0/100**.
+- Protected-warmup damage events and invalid-position samples were both **0**;
+  maximum continuous stuck duration was **0 ticks**. Attack telemetry recorded
+  15,323 attempts with 6 out-of-range attempts; ability telemetry recorded 35,739
+  attempts and 6,886 rejections; successful gadgets were **299** total, including
+  Umbrella Guard **99**, Dhol Burst **100**, and Tiffin Station **100**.
+
+#### P31 gate delta
+
+| Gate | Status | Evidence / owner action |
+| --- | --- | --- |
+| Exact-source 100-match production-bot terminal completion | **Passed** | 100/100 terminal results; 0 over the 360 s ceiling |
+| Exact-source 240–360 s pacing distribution | **Passed (automated)** | 100/100 in-window; original 90% target and calibrated 80% gate both pass |
+| Bot-to-bot combat and combat-elimination distribution | **Passed (automated)** | 100/100 with bot-to-bot damage and combat elimination; 0 Aandhi-only |
+| Warmup, position and stuck invariants | **Passed (automated)** | 0 protected damage, 0 invalid positions, 0 continuous stuck ticks |
+| Fighter/gadget coverage | **Passed (automated)** | Bijli, Pehel and Maya present; each gadget kind used successfully |
+| Human fun/fairness and full Lava route | **Still open** | Automated telemetry cannot replace touch comfort, accessibility, authored presentation, balance, thermal or desire-to-rematch review |
+
 ## Later checkpoints
 
-- [x] Fair fighter-specific bot AI and production match harness (automated foundation;
-  pacing/determinism and human review remain open).
+- [x] Fair fighter-specific bot AI and production match harness (100-match terminal,
+  pacing and safety gates pass; human fairness/fun review remains open).
 - [x] Controlled reference-game UX study on Lava only (research capture complete;
   deeper in-match comparison and human adaptation approval remain open).
 - [x] Current V1 art/audio/UI direction and asset-provenance documents (baseline only;

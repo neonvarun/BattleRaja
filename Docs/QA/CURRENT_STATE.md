@@ -203,3 +203,19 @@ launch/menu capture had no configured fatal markers and thermal status 0 before/
 device reports 4 KB pages, and no sustained full-match, touch/tutorial, accessibility or
 runtime 16 KB proof is claimed. The strict production-bot pacing threshold and all human,
 signing, legal, store and final-authored-content gates remain open.
+
+## Exact-source production-bot gate refresh — 2026-08-27
+
+From clean documentation tip `90670ff` (runtime-bearing source `126714a`), the release
+assertion batch completed **100/100** seeded production-pipeline matches. Every match reached
+terminal state within the 10,800-tick budget and lasted **306.014 s**, putting **100/100** in
+the 240–360 s window. Every match contained bot-to-bot damage and a combat elimination;
+Aandhi-only resolutions were **0/100**. Protected-warmup damage, invalid positions and
+continuous stuck ticks were all zero, and Bijli, Pehel, Maya, Umbrella Guard, Dhol Burst and
+Tiffin Station were all exercised. The exact report, NUnit XML and Unity log hashes are
+recorded in `Docs/V1_RELEASE_PLAN.md` P31.
+
+The automated production-bot pacing/safety gate is now passed. Human touch/tutorial,
+accessibility, sustained frame/GC/GPU/battery performance, runtime 16 KB, final authored and
+cultural review, package identity/signing, privacy/Data Safety, store assets and Play Console
+actions remain open; this is not a Play-ready claim.
