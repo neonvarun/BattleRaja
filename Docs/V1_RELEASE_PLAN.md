@@ -1823,6 +1823,49 @@ Evidence:
 | Fighter/gadget coverage | **Passed (automated)** | Bijli, Pehel and Maya present; each gadget kind used successfully |
 | Human fun/fairness and full Lava route | **Still open** | Automated telemetry cannot replace touch comfort, accessibility, authored presentation, balance, thermal or desire-to-rematch review |
 
+### P32 - Exact-release physical tutorial action-gate follow-up - 2026-08-27
+
+The exact release-shaped APK from `126714a` was freshly data-cleared and launched on
+approved Lava `ST5GDW23LB004392`. The APK SHA-256 is
+`A29EF1F2F28A3EAB6820F905DC57196E5496DF76A3DCFE32B65DB41BDCF26923`; the matching AAB
+SHA-256 is `F3F901E7DBE382723B878E5B37EFBF58C9AB3D04FD7C744646C52FEF06B1A748`. A single short ADB sequence performed real touch input
+through the first six tutorial lessons. The screenshots are retained under
+`Builds/Local/Device/Screenshots/20260827-126714a-release/fresh-action-route/` and are
+not presented as store assets.
+
+Evidence (SHA-256):
+
+- Movement waiting/unlocked: `step1-waiting.png` `DC3F5F06BE79B0F9028C7456D0250BF6A793C7274D95B3CEFC1EC440427F1609`;
+  `step1-unlocked.png` `A0B021F87EB7402BA2908F8CF6EDE5009EED2C80C431A4BAA9D71BDC6CD46586`.
+- Aim waiting/unlocked: `step2-waiting.png` `3AB49CFECFF00A1C96D1F8B8B4FD2B5D4C1312FBC4378F0170D544B82F779D2B`;
+  `step2-unlocked.png` `F12471B6CB7C656414003A9BDB5F69BA3F052C7BC297EAC1D3695F1083F0E263`.
+- Basic attack waiting/unlocked: `step3-waiting.png` `C9AB2A665E4D67EF0380D6422C02A977065A4BDDA75934819E8D4D66E14D9824`;
+  `step3-unlocked.png` `961441FFFAFEC862DC7E03FE237D825FDD9A7D838A44EDBA17F3BAD8AE5090CA`.
+- Ability waiting/unlocked: `step4-waiting.png` `69B926FF0EDB3E521B032907B0431863F20D5E4017C1E28AF8B5F8A7E96EF916`;
+  `step4-after-ability.png` `3F6725924981A6A793A40BAFDB26C3EFE7F4BDEF8FD30BB11B94AC8740B86525`.
+- Gadget waiting and post-use: `step5-gadget-waiting.png` `EA2D9592294B2C72C773FE6C27F6005753C7389D99A55CBF3A7AE7922E9CCAE2`;
+  `step5-after-gadget-tap.png` `215127004E0F8217852D1C007F90E656E63F757B0B05DADB53C70ADC59A1E47E`.
+- Aandhi action-gate unlocked: `step6-aandhi.png` `6321154EAC4B50F165FAEC42F1BC2ED185D9EAE3077FD76A8EDACAF482B315EF`.
+- Elimination remains correctly waiting after a bounded attack probe: `step7-elimination-waiting.png`
+  `6F542814B7E4C2A0FA9C4E1E67F06FE96FC751DEB58A84BD9D8FDD44947FECEE`;
+  `step7-attack-left-hold.png` `058478E120E6FD14918D80A49E7CE8E9BFB3BF8928D93FB3F3485A1C496E607E`.
+
+The fresh screenshots show the prompt changing from `WAITING FOR ACTION` to `CONTINUE`
+after genuine movement, aim, attack, ability, gadget and Aandhi observations. The player
+was still alive at 85/85 HP in the Ability and Gadget states; later attack probing reduced
+HP without producing a player-attributed KO. No elimination, victory, full match, rematch,
+accessibility or comfort pass is claimed from this run.
+
+#### P32 gate delta
+
+| Gate | Status | Evidence / owner action |
+| --- | --- | --- |
+| Exact physical Movement → Aim → Basic Attack → Ability transitions | **Passed (bounded physical check)** | Fresh exact APK route produced unlocked `CONTINUE` states after real touch actions |
+| Exact physical Gadget pickup/use transition | **Passed (bounded physical check)** | Player collected and used a Dhol pickup; `CONTINUE` enabled and HUD showed Dhol readiness |
+| Exact physical Aandhi observation transition | **Passed (bounded physical check)** | Aandhi HUD/ring state was observed and `CONTINUE` enabled |
+| Exact physical Elimination → Victory transitions | **Still open** | Player-attributed KO and final victory were not achieved in this bounded probe |
+| Full route, accessibility, comfort and repeated-match review | **Still open** | Requires owner-operated Lava QA across fighters, settings, lifecycle and rematches |
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (100-match terminal,
