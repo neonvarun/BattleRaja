@@ -1,5 +1,20 @@
 # Latest HEAD baseline
 
+## Latest exact-source physical/tutorial and technical recheck — `97e7dd0` / runtime `126714a` — 2026-08-27
+
+Documentation tip `97e7dd0` is clean; the runtime-bearing source and exact release APK/AAB
+remain `126714a`. Full EditMode is **140/140**, full PlayMode is **84/84**, and static
+validation is **0 errors / 0 warnings**. The exact Lava `ST5GDW23LB004392` route unlocked
+Movement, Aim, Basic Attack, Ability, Gadget and Aandhi after genuine touch input; the
+bounded Elimination attempt ended in results with `YOU KO 0`, so Elimination/Victory,
+full-route, accessibility and owner comfort review remain open. Screenshot hashes and
+the exact artifact hashes are indexed in `Docs/V1_RELEASE_PLAN.md` P32. The P33 technical
+recheck log `Builds/Local/Device/release-checker-604887b.log` (SHA-256
+`DDD201C1E5BBE713405F9F41AADBEA8A5E5DFE7A875B2F94C4E486706C153F22`) passes repository,
+offline manifest, API 28/36, ARM64/static 16 KB and store-creative checks. Runtime 16 KB,
+sustained performance, final signing/identity, privacy/Data Safety, cultural/legal review
+and Play Console actions remain open.
+
 ## Latest exact-source production-bot refresh — `90670ff` / runtime `126714a` — 2026-08-27
 
 The clean documentation tip is `90670ff`; the runtime-bearing source remains

@@ -23,12 +23,12 @@ remain open.
 ## Latest current-source evidence — 2026-08-27
 
 The runtime/presentation source is clean and committed on branch
-`codex/v1-playstore-release` at exact source `208038362e16f8c33856e0a7cf5c4de776005ded`
-(`fix: localize tutorial stick instructions`). Full EditMode is **140/140**, full
-PlayMode is **83/83**, and static validation is **0 errors / 0 warnings**. The 1,000-seed
-deterministic replay soak remains applicable from the preceding gameplay-only source
-with 2,000 executions and zero divergence. Matching APK/AAB hashes, bundletool/zipalign
-evidence and gate classifications are in `Docs/V1_RELEASE_PLAN.md` P22-P23.
+`codex/v1-playstore-release` at exact runtime source `126714a`, beneath documentation
+tip `97e7dd0`. Full EditMode is **140/140**, full PlayMode is **84/84**, and static
+validation is **0 errors / 0 warnings**. The 1,000-seed deterministic replay soak
+remains applicable from the preceding gameplay-only source with 2,000 executions and
+zero divergence. Matching APK/AAB hashes, bundletool/zipalign evidence and gate
+classifications are in `Docs/V1_RELEASE_PLAN.md` P31-P33.
 
 The exact-source fixed-tick production-bot batch completes **100/100** matches in the
 240-360 second window, with **95/100** reaching at least three combat eliminations;
@@ -45,9 +45,11 @@ exact-candidate touch probe showed the MOVE knob tracking and a `CONTINUE` card
 (`Builds/Local/Device/Screenshots/continuation-touch-hold.png`, SHA-256
 `94432FE6B7E261E219C809CB8F2474C2B50F31F7DFAB3F76170C7790C6B6461B`), but the
 screenshot was captured after results, so it does not independently attribute the
-unlock to that gesture. A temporary diagnostic-only build from `920edc2` logged
-nonzero movement input and CharacterController displacement; repeatable alive-state
-lesson attribution and the remaining action-by-action route are still open.
+unlock to that gesture. The fresh exact-release physical tutorial route now has
+action-attributed Movement, Aim, Basic Attack, Ability, Gadget and Aandhi transitions;
+the bounded KO attempt ended with `YOU KO 0`, so Elimination/Victory remains open. A
+temporary diagnostic-only build from `920edc2` logged nonzero movement input and
+CharacterController displacement; the remaining action-by-action route is still open.
 
 The exact Lava candidate now also shows persisted Maya focus alignment, live ability/gadget
 feedback, pause overlay and lifecycle resume; the tutorial opening visibly keeps the arena,

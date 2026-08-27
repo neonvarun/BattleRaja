@@ -6,18 +6,19 @@
 
 ## Current state
 
-- **Latest exact-source release-gate checkpoint (2026-08-27):** clean runtime commit
-  `208038362e16f8c33856e0a7cf5c4de776005ded` localizes tutorial movement/aim instructions
-  to the persisted handedness setting. Full EditMode is **140/140** and PlayMode is
-  **83/83**; static validation is **0 errors / 0 warnings**. Matching APK/AAB, checker,
-  bundletool/zipalign and fresh Lava settings/tutorial/live-match evidence are recorded
-  in `Docs/V1_RELEASE_PLAN.md` P22-P29. A later test-only commit `7269b4c` adds a
-  production virtual-stick pointer-delivery regression; its exact-source suites pass
-  EditMode **140/140** and PlayMode **84/84**. The APK remains Android Debug-signed and the
-  product remains a prototype: full touch-route, accessibility, sustained performance
-  approval (a bounded SurfaceFlinger and 120-second live-match diagnostic now exist),
-  genuine 16 KB runtime, final authored identity/cultural review, signing, privacy/
-  Data Safety and Play Console actions remain open.
+- **Latest exact-source release-gate checkpoint (2026-08-27):** runtime-bearing source
+  `126714a` remains unchanged beneath documentation tip `97e7dd0`. Full EditMode is
+  **140/140** and PlayMode is **84/84**; static validation is **0 errors / 0 warnings**.
+  The exact-source production-bot release assertions complete **100/100** seeded
+  matches, and the exact Lava touch route now proves Movement, Aim, Basic Attack,
+  Ability, Gadget and Aandhi action gates with fresh screenshots in
+  `Docs/V1_RELEASE_PLAN.md` P32. The bounded Elimination/Victory attempt ended with
+  `YOU KO 0`, so that gate remains open. The exact APK/AAB technical recheck in P33
+  passes offline manifest, ARM64/static 16 KB and store-dimension checks. The APK remains
+  Android Debug-signed with temporary identity and the product remains a prototype: full
+  touch-route, accessibility, sustained performance approval, genuine 16 KB runtime,
+  final authored identity/cultural review, signing, privacy/Data Safety and Play Console
+  actions remain open.
 
 - **Working-tree gameplay truth update (2026-08-25):** unified action eligibility
   is now owned by `OfflineMatchAuthority`. Movement, ability displacement, attack,
