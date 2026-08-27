@@ -2091,8 +2091,8 @@ source change did not alter the production-bot runtime; P35 remains the applicab
 | --- | --- | --- |
 | Gadget lesson reconciliation for pre-collected state | **Passed** | `PreCollectedGadgetIsReconciledWhenGadgetLessonBegins`; PlayMode 86/86 |
 | Exact APK/AAB technical checks from current source | **Passed** | APK/AAB hashes and checker log above; 0 errors / 0 warnings |
-| Physical Gadget lesson transition | **Passed (bounded physical check)** | `gadget-tap.png` shows the Gadget card at `CONTINUE` after a real tap |
-| Physical Aandhi lesson transition | **Passed (bounded physical check)** | `aandhi-step.png` shows the Aandhi card at `CONTINUE` |
+| Physical Gadget lesson transition | **Passed** | Bounded physical evidence: `gadget-tap.png` shows the Gadget card at `CONTINUE` after a real tap |
+| Physical Aandhi lesson transition | **Passed** | Bounded physical evidence: `aandhi-step.png` shows the Aandhi card at `CONTINUE` |
 | Physical Elimination → Victory, full match and rematch | **Blocked** | No player-attributed KO/Victory in this probe; owner-operated full route remains required |
 | Final Play eligibility | **Blocked** | Genuine runtime 16 KB, signing/identity, accessibility, performance, privacy/legal/cultural review and Play Console actions remain owner-controlled or unavailable |
 
