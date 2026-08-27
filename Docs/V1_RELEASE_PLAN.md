@@ -1539,6 +1539,37 @@ physical gesture. It does not convert a results-state screenshot or a temporary
 diagnostic build into proof of repeatable alive-state progression, a complete
 action-gated lesson, or a full release QA pass.
 
+### P25 - Clean-worktree Android compliance rerun - 2026-08-27
+
+The composed technical release checker was rerun at clean documentation commit
+`3f1c112` against the existing exact-source APK/AAB pair. It passed repository,
+manifest, ARM64/16 KB static bundle, and store-creative technical gates with **0
+errors / 0 warnings**. This is a documentation-only recheck; it does not change the
+runtime artifact or close the physical tutorial, performance, signing, privacy,
+cultural or Play Console gates.
+
+Evidence:
+
+- Checker log: `Builds/Local/Device/release-checker-3f1c112.log`, SHA-256
+  `62D0E7DF8541FD01ACAB9BC17BACE65B6A04814832ABD4CADE52469317D4DB89`.
+- APK `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`, 40,523,706 bytes,
+  SHA-256 `365ABF4A1D37BB6DC2CE7E08F5E2741AAB7662EFB9749F0B4987EBFCBDB68BDB`.
+- AAB `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`, 36,348,870 bytes,
+  SHA-256 `F1CB13C80A6408B344B5C71BE11D0AD804E58CA1D01102FE0B79D5B0712BDBA1`.
+- Manifest: package `com.example.battleraja.m11`, version `1.0.0` / code `100`,
+  min/target SDK `28/36`, VIBRATE plus Unity dynamic receiver only; network
+  permissions absent.
+- Bundle: 7 ARM64 native libraries, no other ABIs, all checked ELF loads aligned
+  to `0x4000`; store icon `512x512` and feature graphic `1024x500`.
+
+#### P25 gate delta
+
+| Gate | Status | Evidence / owner action |
+| --- | --- | --- |
+| Repository, manifest, static bundle and technical creative checks | **Passed** | Clean-worktree checker rerun at `3f1c112`; 0 errors / 0 warnings |
+| Runtime 16 KB behavior and Play eligibility | **Still open** | Device reports 4 KB pages; runtime proof, release signing, package identity, privacy/Data Safety and Play Console actions remain owner-controlled |
+| All other P24 gates | **Unchanged** | See P24 classification above |
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (automated foundation;

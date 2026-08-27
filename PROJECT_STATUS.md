@@ -11,7 +11,7 @@
   to the persisted handedness setting. Full EditMode is **140/140** and PlayMode is
   **83/83**; static validation is **0 errors / 0 warnings**. Matching APK/AAB, checker,
   bundletool/zipalign and fresh Lava settings/tutorial/live-match evidence are recorded
-  in `Docs/V1_RELEASE_PLAN.md` P22-P24. The APK remains Android Debug-signed and the
+  in `Docs/V1_RELEASE_PLAN.md` P22-P25. The APK remains Android Debug-signed and the
   product remains a prototype: full touch-route, accessibility, sustained performance
   approval (a bounded SurfaceFlinger and 120-second live-match diagnostic now exist),
   genuine 16 KB runtime, final authored identity/cultural review, signing, privacy/
