@@ -1714,6 +1714,67 @@ P29 closes the previously missing controlled reference audit without authorizing
 out-of-scope reference-app interaction or weakening BattleRaja's originality and
 offline requirements.
 
+### P30 - Presentation-root movement fix and exact-source Lava tutorial transition - 2026-08-27
+
+The prior physical tutorial probe showed valid touch input but an alive player that
+appeared to stop moving. Investigation found that the legacy placeholder `MeshRenderer`
+was on the same GameObject as the `CharacterController`; `FighterPresentation` was
+animating that renderer by writing the movement root transform every frame. Commit
+`126714a` now animates that renderer only when it is a child visual, leaving the
+generated silhouette and the authoritative movement root independent. The Bijli
+regression fixture was also moved to an open lane so its dash assertion measures the
+ability rather than an intentional scene obstacle.
+
+Evidence:
+
+- Full EditMode: **140/140 passed**, XML
+  `Builds/Local/TestResults/editmode-fighterpresentationfix.xml`, SHA-256
+  `E262AF52D10AA87873B61D2AC08505D1BBBF1FD14EC213FF87A222C846DB3CFB`; log
+  `Builds/Local/Logs/editmode-fighterpresentationfix.log`, SHA-256
+  `ED796A1A426294405CF7C7A54BFDA9E738ECB8362D5A7BDA6DC0DF322189C1AB`.
+- Full PlayMode: **84/84 passed**, XML
+  `Builds/Local/TestResults/playmode-fighterpresentationfix2.xml`, SHA-256
+  `33FE006CE2B2322DC2241784D9327B8016875B6BA4DE3773019358F38A992A1E`; log
+  `Builds/Local/Logs/playmode-fighterpresentationfix2.log`, SHA-256
+  `B92F6017BBDEAD1C20C993CC9713A0A3127AB48C508A18F30B885D07812B72C6`.
+- Exact-source release-shaped APK from `126714a`: 40,526,074 bytes, SHA-256
+  `A29EF1F2F28A3EAB6820F905DC57196E5496DF76A3DCFE32B65DB41BDCF26923`.
+- Exact-source release-shaped AAB from `126714a`: 36,351,246 bytes, SHA-256
+  `F3F901E7DBE382723B878E5B37EFBF58C9AB3D04FD7C744646C52FEF06B1A748`.
+- Technical checker: `Builds/Local/Device/release-checker-126714a.log`, SHA-256
+  `4E5553D92DCAEC181068F51E9A2511CD3854E09DCAAD3FD293AB768919AF8040`; clean
+  worktree, package `com.example.battleraja.m11`, version `1.0.0` / code `100`,
+  min/target SDK `28/36`, no network permissions, seven ARM64 libraries, all ELF
+  loads aligned to `0x4000`, and store dimensions passed.
+- The exact APK was installed only on approved Lava `ST5GDW23LB004392`. After a
+  fresh app-data clear, the initial tutorial card was captured in
+  `Builds/Local/Device/Screenshots/20260827-126714a-release/tutorial-waiting.png`,
+  SHA-256 `D35275AF33476F1D2D6EA8413D269542E9ACD55D50F95421CB2E3D8BA00ABBDF`,
+  showing `WAITING FOR ACTION` and the default left-stick prompt. A real
+  `adb shell input swipe 180 2040 280 2040 900` on the left MOVE stick then
+  produced `tutorial-movement-unlocked.png`, SHA-256
+  `78A472CE73ECA6554E69E7C1D6ED5270B1CF829C085A527D933D34FB76604987`,
+  showing the live arena, player and touch controls with `CONTINUE` enabled.
+  The package/activity dump is SHA-256 `8C2EBFCE4ADB3A85408D4076DEC3322F1EE52AF38C6430561353F25E6D7C07D4` /
+  `7302BC55F1200586BDCD1EE1F4D7FF945B5782A07B57807455D4B80FF4C1FCEF`; Lava
+  reports 4096-byte pages in `page-size.txt`, SHA-256
+  `30F236F92D107CEDC1EAB7B3D6DAFA316DF3657AC88E59ECE8DF2944B6C995CA`.
+
+#### P30 gate delta
+
+| Gate | Status | Evidence / owner action |
+| --- | --- | --- |
+| Presentation cannot rewrite the movement root | **Passed** | Commit `126714a`; full PlayMode and exact Lava action-gated movement transition pass |
+| Exact release APK technical checks | **Passed** | APK/AAB rebuilt from `126714a`; checker clean with static ARM64/16 KB alignment |
+| Exact release APK tutorial movement transition | **Passed (bounded physical check)** | Fresh Lava card changed from `WAITING FOR ACTION` to `CONTINUE` after a real left-stick swipe while the arena remained visible |
+| Full action-by-action tutorial and end-to-end touch route | **Still open** | Aim, attack, ability, gadget, Aandhi, elimination, victory, replay, settings, lifecycle and comfort review remain owner-operated QA |
+| Runtime 16 KB behavior and Play eligibility | **Still open** | Lava is a 4 KB-page device; final identity/signing, privacy/Data Safety, cultural/legal review and Play Console actions remain owner-controlled |
+| Sustained performance approval | **Still open** | Existing bounded diagnostics do not provide normalized full-match FPS/jank/GPU/GC/battery approval |
+
+P30 closes the previously observed alive-state movement discrepancy on the exact
+release-shaped source and gives direct physical attribution for the first tutorial
+lesson. It does not claim the complete tutorial route or Play submission readiness.
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (automated foundation;
