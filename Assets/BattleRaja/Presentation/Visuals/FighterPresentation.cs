@@ -144,12 +144,20 @@ namespace BattleRaja.Presentation.Visuals
 
             ApplyProductionAnimationState();
 
-            if (bodyRenderer != null)
+            if (bodyRenderer != null || _silhouetteRoot != null)
             {
                 var bob = Mathf.Sin(Time.time * bobFrequency) * bobAmplitude;
                 var pulse = _attackPulse > 0f ? 1.08f : _abilityPulse > 0f ? 1.14f : 1f;
-                bodyRenderer.transform.localPosition = _bodyBaseLocalPosition + Vector3.up * bob;
-                bodyRenderer.transform.localScale = Vector3.one * pulse;
+                // Some legacy scene fixtures keep the placeholder renderer on the
+                // movement root. Animating that renderer would rewrite the root
+                // transform every frame and erase accumulated CharacterController
+                // movement. Only animate a child renderer; the generated silhouette
+                // remains the production presentation surface.
+                if (bodyRenderer != null && bodyRenderer.transform != transform)
+                {
+                    bodyRenderer.transform.localPosition = _bodyBaseLocalPosition + Vector3.up * bob;
+                    bodyRenderer.transform.localScale = Vector3.one * pulse;
+                }
                 if (_silhouetteRoot != null)
                 {
                     _silhouetteRoot.localPosition = Vector3.up * bob;

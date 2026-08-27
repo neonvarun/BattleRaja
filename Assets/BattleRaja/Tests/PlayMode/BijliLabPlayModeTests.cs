@@ -42,7 +42,9 @@ namespace BattleRaja.Tests.PlayMode
             var movement = PlayModeTestHelpers.FindPlayer<MovementPlayerAgent>();
             var characterController = movement.GetComponent<CharacterController>();
             characterController.enabled = false;
-            movement.transform.position = new Vector3(0f, 1f, 0f);
+            // Start in an open lane so the dash assertion measures the ability
+            // displacement itself rather than the nearby training dummy.
+            movement.transform.position = new Vector3(-10f, 1f, -3f);
             characterController.enabled = true;
             Physics.SyncTransforms();
             var start = movement.transform.position;
@@ -50,7 +52,7 @@ namespace BattleRaja.Tests.PlayMode
                 new CombatEntityId(movement.ActorId),
                 0,
                 fighter.Definition.Ability.AbilityId,
-                Float2.Up,
+                new Float2(1f, 0f),
                 true);
 
             fighter.Submit(command);
@@ -58,7 +60,7 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(fighter.IsMovementLocked, Is.True);
             yield return new WaitForSeconds(0.7f);
 
-            Assert.That(Vector3.Distance(start, movement.transform.position), Is.GreaterThan(0.5f));
+            Assert.That(movement.transform.position.x, Is.GreaterThan(start.x + 0.5f));
             Assert.That(fighter.DashCooldownRemaining, Is.GreaterThan(0f));
         }
 
