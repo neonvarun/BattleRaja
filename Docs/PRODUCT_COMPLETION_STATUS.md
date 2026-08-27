@@ -13,7 +13,9 @@ terminal matches in the 240-360 second window, with **94/100** reaching at least
 three combat eliminations, **100/100** containing bot-to-bot damage, and zero
 protected-warmup, invalid-position or stuck invariant samples. All three fighters and
 all three gadgets were used successfully; report hashes are indexed in
-`Docs/V1_RELEASE_PLAN.md` P38.
+  `Docs/V1_RELEASE_PLAN.md` P38. The current clean documentation tip also passes the
+  1,000-seed deterministic replay deep soak (2,000 executions, zero divergence),
+  indexed in P40.
 
 The matching APK/AAB pass the local release checker with **0 errors / 0 warnings**,
 offline permissions, API 28/36, ARM64-only payload, static 16 KB ELF alignment and

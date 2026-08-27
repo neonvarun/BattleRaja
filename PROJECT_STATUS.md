@@ -22,7 +22,9 @@
   eliminations, **100/100** bot-to-bot damage and zero protected/invalid/stuck invariant
   samples; the report is indexed in `Docs/V1_RELEASE_PLAN.md` P38. The post-P36 checker
   was rerun from clean documentation tip `a877c509fdbec485e808039a6c4daa03fed9ea9c`;
-  see `Docs/V1_RELEASE_PLAN.md` P35-P38.
+  see `Docs/V1_RELEASE_PLAN.md` P35-P38. The current clean documentation tip also
+  passes the 1,000-seed deterministic replay deep soak (2,000 executions, zero
+  divergence); exact hashes are indexed in P40.
 
 - **Working-tree gameplay truth update (2026-08-25):** unified action eligibility
   is now owned by `OfflineMatchAuthority`. Movement, ability displacement, attack,

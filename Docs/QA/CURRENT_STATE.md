@@ -28,9 +28,10 @@ The runtime/presentation source is clean and committed on branch
 PlayMode is **86/86**, and static validation is **0 errors / 0 warnings**. The new
 PlayMode regression proves that a pre-collected tutorial gadget is reconciled when its
 lesson begins; the earlier live-authority Elimination regression remains covered. The
-1,000-seed deterministic replay soak remains applicable from the preceding gameplay-only
-source with 2,000 executions and zero divergence. Exact hashes and classifications are
-indexed in `Docs/V1_RELEASE_PLAN.md` P35-P36.
+The carried-forward 1,000-seed deterministic replay soak has 2,000 executions and zero
+divergence, and the current-tip rerun also passes with the same result. Exact current-tip
+XML/log hashes are indexed in `Docs/V1_RELEASE_PLAN.md` P40; this is same-machine evidence
+and does not establish cross-machine parity or durable production replay serialization.
 
 The fresh exact-runtime fixed-tick production-bot batch completed **100/100** terminal
 matches in the 240-360 second window, **94/100** with at least three combat eliminations,

@@ -2219,6 +2219,29 @@ dense-combat performance approval.
 | Final signed ARM64 artifact on physical 16 KB device | **Blocked** | Current candidate is Debug-signed and no physical 16 KB ARM64 device is available |
 | Dense-combat/repeated-rematch performance on 16 KB environment | **Not run** | 30-second emulator capture covered launch/tutorial only |
 
+### P40 - Current-tip deterministic replay deep soak - 2026-08-27
+
+The deterministic replay soak was rerun from clean documentation tip
+`98888d3` with the runtime-bearing source unchanged at
+`754837e4311b609560c63fa90558a1d29acec9cd`. The command used
+`BATTLERAJA_SOAK_MATCHES=1000` and filtered
+`BattleRaja.Tests.EditMode.DeterministicSoakTests.AcceleratedSeededMatchesReproduceIdenticalHashStreams`.
+Unity `6000.5.6f1` completed **1/1** test with **1,000 seeded matches executed twice
+(2,000 executions)**, zero divergence, and NUnit duration **536.0635271 seconds**.
+XML evidence is `Builds/Local/TestResults/deep-soak-current-98888d3.xml` (SHA-256
+`07DADE0702BD7B5DEC9A11E60042D66778A42344CBB33526D72073D6D8DFF4C6`); the Unity
+log is `Builds/Local/Logs/deep-soak-current-98888d3.log` (SHA-256
+`A2CC52C19961FFAAC139D68A2FF591683A5AC495F26C914A1638D101AA6D5C97`). The clean
+worktree and `git diff --check` were confirmed after the run.
+
+#### P40 gate delta
+
+| Gate | Classification | Evidence / limitation |
+| --- | --- | --- |
+| Current-tip deterministic replay/deep soak | **Passed** | 1,000 seeds x 2 executions, zero divergence; exact XML/log hashes above |
+| Cross-machine floating-point parity | **Not run** | Same-machine deterministic evidence does not establish cross-device parity |
+| Durable production replay-file serialization | **Not run** | This remains outside the current offline QA harness |
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (100-match terminal,

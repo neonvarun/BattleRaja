@@ -90,6 +90,12 @@ The six-sample capture reported no configured fatal markers. This closes the ava
 emulator runtime check; physical ARM64 16 KB coverage, signed-artifact repeatability
 and dense-combat performance remain open. See `Docs/V1_RELEASE_PLAN.md` P39.
 
+The current clean documentation tip `98888d3` also passes the deterministic replay
+deep soak: `BATTLERAJA_SOAK_MATCHES=1000`, 1,000 seeds executed twice (2,000
+executions), zero divergence, 1/1 test passed. XML/log hashes are indexed in
+`Docs/V1_RELEASE_PLAN.md` P40. This same-machine result does not establish
+cross-machine parity or durable production replay serialization.
+
 ## Latest exact-source tutorial-fix candidate — `f82c18c` — 2026-08-27
 
 The exact runtime source is `f82c18c1fd91e44c7f07fbd31d615cc7e9c9bea6`. Full EditMode is

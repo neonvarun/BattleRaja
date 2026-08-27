@@ -1,5 +1,18 @@
 # Latest HEAD baseline
 
+## Latest current-tip deterministic replay soak — runtime `754837e` / docs `98888d3` — 2026-08-27
+
+From clean documentation tip `98888d3`, Unity `6000.5.6f1` ran the filtered
+`BattleRaja.Tests.EditMode.DeterministicSoakTests.AcceleratedSeededMatchesReproduceIdenticalHashStreams`
+fixture with `BATTLERAJA_SOAK_MATCHES=1000`. The test passed **1/1**: 1,000 seeded
+matches executed twice (2,000 executions), zero divergence, duration **536.0635271 s**.
+XML `Builds/Local/TestResults/deep-soak-current-98888d3.xml` SHA-256
+`07DADE0702BD7B5DEC9A11E60042D66778A42344CBB33526D72073D6D8DFF4C6`; log
+`Builds/Local/Logs/deep-soak-current-98888d3.log` SHA-256
+`A2CC52C19961FFAAC139D68A2FF591683A5AC495F26C914A1638D101AA6D5C97`. Same-machine
+parity passed; cross-machine parity and durable production replay serialization remain
+open.
+
 ## Latest genuine 16 KB runtime check — candidate `754837e` — 2026-08-27
 
 The exact APK installed and launched successfully on a disposable Android 16

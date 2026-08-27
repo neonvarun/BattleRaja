@@ -1,13 +1,20 @@
 # BattleRaja Replay and Soak Report
 
-## Current candidate note — runtime `754837e` / docs `d8cbbb2` — 2026-08-27
+## Latest current-tip result — runtime `754837e` / clean docs `98888d3` — 2026-08-27
 
 The current runtime-bearing candidate is presentation-only relative to the deterministic
-gameplay core. The exact-runtime production bot batch is recorded in
-`Docs/V1_RELEASE_PLAN.md` P38. A new `BATTLERAJA_SOAK_MATCHES=1000` invocation was
-started during this audit but was interrupted before Unity emitted a test result; it is
-not counted as evidence. The prior successful 1,000-seed replay soak below remains the
-applicable deterministic gameplay evidence, and no cross-machine parity claim is made.
+gameplay core. From clean documentation tip `98888d3`, Unity `6000.5.6f1` ran
+`BATTLERAJA_SOAK_MATCHES=1000` with the filtered
+`BattleRaja.Tests.EditMode.DeterministicSoakTests.AcceleratedSeededMatchesReproduceIdenticalHashStreams`
+fixture. The result was **1/1 passed**: 1,000 seeded matches executed twice (2,000
+executions), zero divergence, NUnit duration **536.0635271 seconds**. XML
+`Builds/Local/TestResults/deep-soak-current-98888d3.xml` has SHA-256
+`07DADE0702BD7B5DEC9A11E60042D66778A42344CBB33526D72073D6D8DFF4C6`; Unity log
+`Builds/Local/Logs/deep-soak-current-98888d3.log` has SHA-256
+`A2CC52C19961FFAAC139D68A2FF591683A5AC495F26C914A1638D101AA6D5C97`. The worktree
+was clean after the run. This is same-machine deterministic evidence only; it does
+not establish cross-machine floating-point parity or durable production replay-file
+serialization. The exact-runtime production bot batch remains recorded in P38.
 
 ## Latest exact-source result — `8edc086` — 2026-08-27
 
