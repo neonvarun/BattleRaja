@@ -28,7 +28,7 @@ The runtime/presentation source is clean and committed on branch
 PlayMode is **83/83**, and static validation is **0 errors / 0 warnings**. The 1,000-seed
 deterministic replay soak remains applicable from the preceding gameplay-only source
 with 2,000 executions and zero divergence. Matching APK/AAB hashes, bundletool/zipalign
-evidence and gate classifications are in `Docs/V1_RELEASE_PLAN.md` P22.
+evidence and gate classifications are in `Docs/V1_RELEASE_PLAN.md` P22-P23.
 
 The exact-source fixed-tick production-bot batch completes **100/100** matches in the
 240-360 second window, with **95/100** reaching at least three combat eliminations;
