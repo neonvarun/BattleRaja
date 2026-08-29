@@ -705,3 +705,28 @@ readiness. Physical 16 KB runtime behavior, sustained performance, full tutorial
 fighter/accessibility and human feel review, final identity/signing, privacy/Data Safety,
 cultural/legal approval and Play Console actions remain owner-controlled. No remote push
 was performed.
+
+## Milestone 11 saved environment and runtime presentation continuation — 2026-08-29
+
+The exact local art/runtime commit is `ac45479` (`art: integrate saved Bazaar environment
+and runtime mesh fallbacks`). It adds a saved textured `BazaarBastionProduction.prefab`
+with a 32×32 three-submesh ground mosaic, deterministic environment textures/materials,
+themed Bazaar dressing and a backdrop LOD group. The production scene removes the legacy
+runtime architecture instance and binds the saved prefab with fallback disabled. Fighter
+prefabs now carry saved far-silhouette LOD meshes, while runtime feedback/projectile/gadget/
+decoy fallback visuals use shared custom mesh geometry; Maya decoy targetability is retained
+through an explicit capsule collider.
+
+Repository validation is **0 errors / 0 warnings**, full EditMode is **141/141** and the
+exact-source PlayMode/production-bot run is **87/87**. The strict 100-match batch is
+**100/100** terminal and in the 240–360 second window, **91/100** with at least three
+combat eliminations, **100/100** with bot-to-bot damage, **0/100** Aandhi-only and zero
+protected/invalid samples; Umbrella, Dhol and Tiffin each exercised in all 100 matches.
+The complete gate table and report hashes are in `Docs/V1_RELEASE_PLAN.md` P45.
+
+This remains a generated presentation baseline, not final commissioned art or Play
+readiness. Fresh Android rebuild/device evidence, physical 16 KB behavior, sustained
+performance, full tutorial/all-fighter/accessibility/fun review, authored art/audio/cultural
+approval, final signing/identity, privacy/Data Safety, content rating and Play Console work
+remain open and owner-controlled. The two prompt files in `PROMPTS/` remain intentional
+uncommitted owner files.

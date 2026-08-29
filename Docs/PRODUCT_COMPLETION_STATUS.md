@@ -3,6 +3,25 @@
 Updated: 2026-08-29
 Classification: **prototype**
 
+## Latest saved-environment/runtime presentation checkpoint — `ac45479` — 2026-08-29
+
+The offline presentation baseline now includes a saved, textured and collider-free Bazaar
+environment prefab, explicit environment materials/textures, fighter far-silhouette LODs and
+shared custom runtime mesh fallbacks. The Maya decoy visible surface is custom geometry while
+its targetability capsule remains explicit. Static validation is **0/0**, full EditMode is
+**141/141**, and full PlayMode is **87/87**. The exact 100-match production-bot batch is
+**100/100** terminal and in-window, **91/100** with at least three combat eliminations,
+**100/100** with bot-to-bot damage, **0/100** Aandhi-only and zero protected/invalid samples;
+all three gadgets exercised. Evidence and hashes are indexed in `Docs/V1_RELEASE_PLAN.md`
+P45.
+
+The generated environment/LOD and custom-mesh work strengthens the machine-verifiable
+baseline but does not change the classification. The rebuilt candidate still needs fresh
+approved-Lava screenshots/telemetry, and physical 16 KB behavior, sustained performance,
+full tutorial/all-fighter/accessibility/fun review, authored art/audio/cultural approval,
+final signing/identity, privacy/Data Safety, content rating and Play Console actions remain
+open.
+
 ## Latest presentation/Android checkpoint — `bc392fd` — 2026-08-29
 
 The current local continuation adds deterministic UVs to every generated mesh and saved

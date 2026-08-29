@@ -738,3 +738,15 @@ pages, so this is not physical runtime-16-KB proof or sustained performance appr
 commissioned art/animation/VFX/audio/cultural review, full tutorial/all-fighter/accessibility
 comfort, package identity/signing, privacy/Data Safety, content rating and Play Console
 actions remain open.
+
+## Current saved-environment candidate preparation — 2026-08-29
+
+The exact art/runtime source is `ac45479`. It binds the saved textured
+`BazaarBastionProduction.prefab`, saved fighter LOD meshes and custom runtime fallback
+geometry described in `Docs/V1_RELEASE_PLAN.md` P45. Rebuild both the APK and AAB from the
+final reviewed commit before using any older artifact or screenshot as evidence; the older
+`bc392fd` candidate hashes in this checklist are historical only. Install and exercise the
+new APK on Lava `ST5GDW23LB004392` only, then capture the menu, tutorial, all-fighter route,
+gadget/Aandhi flow, results/rematch and raw bounded telemetry. Do not treat the generated
+environment/LOD baseline as final art or cultural approval, and do not infer physical 16 KB
+runtime support from the 4 KB Lava phone or the diagnostic emulator.

@@ -1558,3 +1558,34 @@ Record every material choice here. Do not silently overwrite old decisions.
   `VerticalSlicePlayModeTests`, full 141/141 EditMode and 87/87 PlayMode results, and P44
   in `Docs/V1_RELEASE_PLAN.md`.
 - **Owner:** Human project owner
+
+### ADR-068 - Save the Bazaar environment and keep runtime fallback geometry custom
+
+- **Date:** 2026-08-29
+- **Status:** Accepted for the V1 offline presentation baseline; final authored environment,
+  cultural review and human feel approval remain open.
+- **Context:** The production scene still depended on a large runtime-generated architecture
+  branch and several presentation helpers constructed Unity primitives. That made the visual
+  identity harder to inspect, increased scene/build churn and left a clear distinction between
+  the saved fighter/gadget assets and the arena surface.
+- **Options considered:** Keep the runtime architecture and primitive helpers; move the
+  environment into one opaque scene-only object; or create a saved, textured render-only
+  environment prefab and use a tiny shared custom-mesh library only for development/readability
+  fallbacks.
+- **Decision:** `ProductionEnvironmentBuilder` emits a deterministic saved
+  `BazaarBastionProduction.prefab` with a three-submesh 32×32 ground mosaic, themed meshes,
+  16 small texture/material pairs and a backdrop LOD group. `BuildEntrypoints` removes the
+  legacy `BazaarArchitecture` instance and binds the saved prefab with runtime fallback
+  disabled. `PresentationMeshFactory` replaces runtime visual primitive construction in
+  feedback, projectile, gadget and decoy presentation paths; the Maya decoy adds its
+  targetability capsule explicitly rather than obtaining it from a primitive helper.
+- **Consequences:** The active production scene now has inspectable asset provenance, stable
+  prefab references, textured UV-bearing environment geometry and an explicit low-detail path.
+  The environment remains presentation-only; authored collision/navigation and all authority
+  state stay in the existing scene/domain layers. Generated art is still a technical baseline,
+  not final commissioned art, cultural approval or sustained mobile-performance approval.
+- **Evidence/sources:** `ProductionEnvironmentBuilder`, `BazaarBastionVisuals`,
+  `PresentationMeshFactory`, `ProductionPresentationBuilder.BuildLodGroup`, the environment
+  and LOD assertions in `VerticalSlicePlayModeTests`, commit `ac45479`, and P45 in
+  `Docs/V1_RELEASE_PLAN.md`.
+- **Owner:** Human project owner

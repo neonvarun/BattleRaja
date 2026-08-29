@@ -26,6 +26,16 @@ their primary MeshRenderers are disabled; the saved SkinnedMeshRenderer is the v
 presentation surface. This remains repository-owned generated art, not a claim of final
 commissioned modeling, texturing or cultural approval.
 
+The 2026-08-29 environment continuation is recorded in commit `ac45479`. The repository
+owned `Assets/BattleRaja/Editor/ProductionEnvironmentBuilder.cs` creates the saved
+`BazaarBastionProduction.prefab`, its low-detail backdrop, six environment meshes, 16
+64×64 texture assets and matching URP materials. The environment is deliberately
+collider-free so the existing authored collision/navigation layer remains authoritative.
+`Assets/BattleRaja/Presentation/Visuals/PresentationMeshFactory.cs` supplies a small
+allocation-free-after-first-use cache for emergency rings, boxes, cylinders, discs and
+faceted orbs. It is not an external asset source; all runtime-created fallback geometry is
+generated from checked-in code, and production scenes resolve saved prefabs first.
+
 Generated outputs:
 
 - `Assets/BattleRaja/Content/Art/V1/Meshes/*.asset`
@@ -39,6 +49,10 @@ Generated outputs:
 - `Assets/BattleRaja/Content/Art/V1/Animation/FighterProduction.controller`
 - `Assets/BattleRaja/Content/Art/V1/Animation/Clips/*.anim`
 - `Assets/BattleRaja/Content/Art/V1/VFX/*.prefab`
+- `Assets/BattleRaja/Content/Art/V1/Environment/Meshes/*.asset`
+- `Assets/BattleRaja/Content/Art/V1/Environment/Textures/*.asset`
+- `Assets/BattleRaja/Content/Art/V1/Environment/Materials/*.mat`
+- `Assets/BattleRaja/Content/Prefabs/Production/BazaarBastionProduction.prefab`
 
 The fighter and gadget prefabs are render-only identity assets. Their rig joints, primary
 skinned renderer, particle systems, beacon, pedestal and themed parts have no colliders;

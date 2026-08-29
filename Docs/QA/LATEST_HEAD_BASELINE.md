@@ -1,5 +1,23 @@
 # Latest HEAD baseline
 
+## Latest saved environment and runtime presentation refresh — source `ac45479` — 2026-08-29
+
+The current source adds a saved, textured and collider-free `BazaarBastionProduction.prefab`
+with a 32×32 three-submesh ground mosaic, deterministic 64×64 environment textures and a
+backdrop LOD group. Production scene generation removes the legacy runtime architecture and
+binds the saved prefab with fallback disabled. Fighter prefabs include two LOD levels and
+saved far-silhouette meshes. Runtime feedback, projectile, gadget and decoy fallbacks use
+the shared custom mesh library; Maya decoy targetability is supplied by an explicit capsule
+collider. No gameplay/domain/network/package-policy code changed.
+
+Static validation is **0 errors / 0 warnings**. Full EditMode is **141/141** and the exact
+source PlayMode run is **87/87**. The exact 100-match production-bot batch is **100/100**
+terminal and in-window, **91/100** with at least three combat eliminations, **100/100** with
+bot-to-bot damage, **0/100** Aandhi-only, zero protected/invalid samples and all three
+gadgets exercised. Detailed evidence is in `Docs/V1_RELEASE_PLAN.md` P45. Fresh matching
+Android/Lava artifacts are still pending; this remains a generated presentation baseline,
+not final art, accessibility, sustained-performance, physical-16-KB or Play approval.
+
 ## Latest UV/skinning and Android refresh — source `bc392fd` — 2026-08-29
 
 The current presentation source adds deterministic UV channels to every generated mesh and

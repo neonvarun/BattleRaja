@@ -71,6 +71,23 @@ retaining its MeshFilter for reproducible rebuilds. The skin is presentation-onl
 no collider, input, health, damage, movement or action-success state. Full EditMode and
 PlayMode regressions verify UV lengths, bind-pose/bone parity and non-zero two-bone blends.
 
+## Saved Bazaar environment and low-detail presentation — 2026-08-29
+
+Commit `ac45479` adds the saved `BazaarBastionProduction.prefab` through
+`ProductionEnvironmentBuilder`. It contains a 32×32 ground mosaic with three textured
+submeshes, a central bastion crown, gates, stalls, banners, rugs, lanterns, crates, palms
+and a backdrop LOD group. The environment meshes and 16 deterministic 64×64 textures live
+under `Assets/BattleRaja/Content/Art/V1/Environment`; every object is render-only and the
+prefab contains no colliders. `BazaarBastionVisuals` binds the saved prefab in production;
+its small emergency mesh fallback is opt-in for old development fixtures only.
+
+Fighter prefabs now include two LOD levels with saved far-silhouette meshes. Runtime
+feedback, projectile, gadget and decoy fallback visuals use the shared custom geometry in
+`PresentationMeshFactory`; the Maya decoy keeps an explicit capsule collider for target
+perception while its visible surface is still a custom mesh. These are machine-checked
+technical baselines, not final commissioned art, animation direction, cultural approval or
+mobile-performance sign-off.
+
 ## Current inventory
 
 | Asset | Editable source | Unity output | Status |
@@ -78,7 +95,7 @@ PlayMode regressions verify UV lengths, bind-pose/bone parity and non-zero two-b
 | Bijli | `ProductionArtBuilder.cs` profile + `ProductionPresentationBuilder.cs` rig/clip recipe | `BijliProduction.prefab`, `BijliAttackVfx.prefab`, `BijliAbilityVfx.prefab` | Saved V1 presentation baseline; final authored art/feel review open |
 | Pehel | `ProductionArtBuilder.cs` profile + `ProductionPresentationBuilder.cs` rig/clip recipe | `PehelProduction.prefab`, `PehelAttackVfx.prefab`, `PehelAbilityVfx.prefab` | Saved V1 presentation baseline; final authored art/feel review open |
 | Maya | `ProductionArtBuilder.cs` profile + `ProductionPresentationBuilder.cs` rig/clip recipe | `MayaProduction.prefab`, `MayaAttackVfx.prefab`, `MayaAbilityVfx.prefab` | Saved V1 presentation baseline; final authored art/feel review open |
-| Bazaar Bastion | `BazaarBastionVisuals` and scene generation tooling | authored scene + existing architecture prefab | Visual polish and collision-overlay review open |
+| Bazaar Bastion | `ProductionEnvironmentBuilder.cs` + `BazaarBastionVisuals` | `BazaarBastionProduction.prefab`, environment mesh/material/texture assets | Saved textured render-only baseline; visual polish and collision-overlay review open |
 | Gadgets | `ProductionArtBuilder.cs` profiles and material recipes | `UmbrellaProduction.prefab`, `DholProduction.prefab`, `TiffinProduction.prefab` | Saved V1 identity prefabs; final use-state/VFX review open |
 
 ## Animation and VFX inventory

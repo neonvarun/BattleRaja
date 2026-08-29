@@ -510,3 +510,49 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   and must be rechecked on the signed artifact.
 - **Recheck trigger/date:** Immediately before the first signed AAB and again before Play
   Console upload, especially after any Unity, NDK, Android Gradle or native-dependency change.
+
+### V1.0 Play listing and declaration recheck (2026-08-29)
+
+- **Question:** Which current Play Console listing and declaration inputs can be prepared
+  locally without claiming owner/legal approval?
+- **Primary sources:** [Google Play preview assets](https://support.google.com/googleplay/android-developer/answer/9866151?hl=en),
+  [Google Play content ratings](https://support.google.com/googleplay/android-developer/answer/9898843?hl=en),
+  and [Google Play Data safety](https://support.google.com/googleplay/android-developer/answer/10787469?hl=en-EN).
+- **Access date:** 2026-08-29 (IST).
+- **Relevant claims:** Play's current preview-asset guidance specifies a 512x512 PNG app
+  icon and a 1024x500 feature graphic, with separate content and metadata policy rules.
+  Each app and update requires the IARC content-rating questionnaire, while published
+  closed/open/production tracks require a Data safety form and privacy-policy link even
+  when the app collects no user data (internal-only testing is the documented exemption).
+- **Decision impact:** Keep the generated icon/feature graphic and gameplay screenshots in
+  the owner-selectable store-prep folder; retain the metadata, privacy/Data Safety worksheet
+  and IARC preparation as drafts. The release checklist now treats final artwork selection,
+  questionnaire answers, legal/privacy review and Play Console submission as owner gates.
+- **Local evidence:** `Tools/Validation/check_store_creative.ps1` passes the icon and feature
+  dimensions; current candidate screenshot captures are from the exact temporary-ID APK and
+  are explicitly labelled technical evidence rather than approved listing art.
+- **Uncertainty:** Play may revise asset rules, questionnaire wording or enforcement timing;
+  the owner must recheck the linked pages and complete declarations immediately before any
+  track upload.
+- **Recheck trigger/date:** Before final store-art selection, the first signed AAB, and any
+  Play Console submission or update.
+
+### V1.0 Unity Android player-settings recheck (2026-08-29)
+
+- **Question:** Does the approved Unity 6 player-settings guidance change the local Android
+  candidate configuration?
+- **Primary source:** [Unity 6 Android Player Settings](https://docs.unity3d.com/6000.0/Documentation/Manual/class-PlayerSettingsAndroid.html).
+- **Access date:** 2026-08-29 (IST).
+- **Relevant claim:** Unity's current Android settings documentation describes the Android
+  target SDK, scripting backend, architecture, bundle/version and player-configuration
+  controls used to produce the platform artifact; it does not replace artifact-level Play,
+  signing or 16 KB validation.
+- **Decision impact:** Preserve the pinned Unity `6000.5.6f1` project settings, ARM64,
+  IL2CPP, target API 36, min API 28, bundle version `1.0.0`, code `100`, portrait policy,
+  and the offline no-network manifest. Do not silently change Unity or package versions.
+- **Local evidence:** `ProjectSettings/ProjectSettings.asset`, `Packages/packages-lock.json`,
+  the exact APK/AAB checker, and the editor build log agree on the candidate settings.
+- **Uncertainty:** Final signing, package identity, store processing and device-specific
+  behavior still require the owner-controlled release flow.
+- **Recheck trigger/date:** After any Unity/Android/package/build-setting change and before
+  signing or uploading the AAB.

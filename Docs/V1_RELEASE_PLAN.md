@@ -2630,6 +2630,97 @@ The two prompt files remain intentional uncommitted owner work. No remote mutati
 performed in P44; `origin/main` remains at `ad078d3` while local branch
 `codex/v1-playstore-release` contains the focused unpushed commit `bc392fd`.
 
+### P45 — Saved textured Bazaar environment, LOD coverage, runtime mesh fallback hardening and exact-source gate refresh — 2026-08-29
+
+The exact local art/runtime commit is `ac45479` (`art: integrate saved Bazaar environment
+and runtime mesh fallbacks`). It is still inside the offline presentation boundary: no
+gameplay/domain, authority, input, network or package-policy code changed. The controlled
+editor path now saves `BazaarBastionProduction.prefab` with a 32×32 ground mosaic (4,096
+vertices, three material submeshes), six environment mesh assets, 16 deterministic 64×64
+textures and matching URP materials, themed gates/stalls/banners/rugs/lanterns/crates/palms
+and a backdrop LOD group. The active Bazaar scene removes the legacy `BazaarArchitecture`
+instance and binds this prefab with runtime fallback disabled. The saved environment contains
+no colliders; the existing authored collision/navigation layer remains authoritative.
+
+Fighter production prefabs now carry two LOD levels and saved far-silhouette meshes. The
+shared `PresentationMeshFactory` supplies custom boxes/cylinders/rings/discs/faceted orbs to
+runtime feedback, projectile, gadget and decoy fallback visuals. The Maya decoy visible
+surface is custom geometry and its targetability capsule is explicit, preserving local bot
+perception/projectile probes without a Unity primitive construction path. The generated
+textures, meshes, LODs and fallback library are technical V1 baselines, not commissioned
+final art, animation/VFX direction, cultural approval or performance sign-off.
+
+#### P45 editor and automated evidence
+
+- Controlled Unity generation completed with exit code 0. Logs are
+  `Builds/Local/Logs/production-art-build-fixed.log` (97,975 bytes; SHA-256
+  `B8103ADABA834A6EA526B5832A28BCA33057888F23F4F1610CF313374A1F142D`),
+  `production-environment-build.log` (65,938 bytes; SHA-256
+  `67E92DA78574FE5CF09A379F858E4D7332EBC9A745271361EEFEB071ADDE6B0D`),
+  `bazaar-scene-integration.log` (48,961 bytes; SHA-256
+  `A21A3473F83C32B0CE65AAA850029CCC4F44DE82C783374826DB9799A8307D26`) and
+  `production-art-rebuild-corrected.log` (69,155 bytes; SHA-256
+  `351C6D3B693C9A3CA42142924CBA4D45201B1A1E1373464400D01A50BACCC609`). Unity emitted
+  its known local licensing-token warning while still resolving the project entitlement;
+  no generation failure was reported.
+- Repository validation: **0 errors / 0 warnings** using
+  `Tools/Validation/validate.ps1 -RequireUnityProject` with Unity `6000.5.6f1`.
+- Full EditMode: **141/141 passed**, 0 failed, 0 skipped. XML
+  `Builds/Local/TestResults/editmode-current-ac45479.xml` (109,798 bytes; SHA-256
+  `72CCEF3D8A0139EA4F8853E714D74D14586D526EB5C26D155013D22AD20CCF1C`); Unity log
+  SHA-256 `514B93C7B5F93BA789EC14C49582DE5EA984CE071869370AACAF208D8812031E`.
+- Exact-source PlayMode/production-bot run: **87/87 passed**, 0 failed, 0 skipped. XML
+  `Builds/Local/TestResults/production-bot-100-ac45479.xml` (76,941 bytes; SHA-256
+  `715A4E12F57C0C9F103D85FB2A172D2DE1D514A9833F99E0997CB6A22495AC61`); Unity log
+  SHA-256 `9A75CF71124BDAB898BCCC538751E38C45FDAF0682ECA70BF30E8D022DFA3DD0`.
+- Exact-source deterministic replay soak: **141/141 passed**, 0 failed, 0 skipped, with
+  `BATTLERAJA_SOAK_MATCHES=1000` (1,000 seeds executed twice; zero divergence), duration
+  **565.8438552 s**. XML `Builds/Local/TestResults/deep-soak-1000-ac45479.xml`
+  (109,844 bytes; SHA-256
+  `C7E034C316A1FB89C271EB8FC4DEF2A3A26904229B05B88BC22388428B0F87EC`); Unity log
+  SHA-256 `C94B285EDB2D59450D353FAEFDD296A95E25D6D44557D4D28953F90AE3B594C3`.
+
+#### P45 exact 100-match production-bot batch
+
+The fresh report is
+`Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260829-154336643-9101.json`
+(1,823,902 bytes; SHA-256
+`6AA089797E55919CFD990C38CDA39640AB86B5D31E9CFEA4FDD47E6ACF83E1AB`). Unity
+`6000.5.6f1` ran the `BazaarBastion` scene with base seed 9101 and playback scale 90:
+
+- **100/100** matches completed within the tick budget and **100/100** landed in the
+  240–360 second window (every match 306.0135 seconds in this fixed-step harness).
+- **91/100** reached at least three combat eliminations; **100/100** had combat damage;
+  **0/100** were Aandhi-only; **100/100** had bot-to-bot damage.
+- Attacks were accepted **15,512/15,512**; 7 out-of-range attempts were observed by the
+  diagnostic counter. Abilities were accepted **28,975/35,827** (6,852 rejected); effective
+  ability work was 171,573 steps.
+- Successful gadgets were **300/496**, with Umbrella, Dhol and Tiffin each used in all
+  100 matches; 196 contextual attempts were rejected. There was 1 stuck recovery,
+  maximum continuous stuck ticks 10, and maximum decision time 0.401 ms.
+- Protected-warmup damage and invalid-position samples were zero. These are automated
+  authority/safety gates; human bot fairness, visual readability and fun review remain open.
+
+#### P45 gate delta
+
+| Gate | Classification | Evidence / limitation |
+| --- | --- | --- |
+| Saved textured Bazaar environment and render-only authority boundary | **Passed (machine-verified baseline)** | Saved prefab, 4,096-vertex three-submesh ground, 16 textures/materials, zero environment colliders and production-scene binding; final environment art/cultural review remains open |
+| Fighter far-silhouette LOD coverage | **Passed (machine-verified baseline)** | Three saved far meshes, two LOD levels per fighter, PlayMode assertions; transition/pop and human readability review remain open |
+| Runtime fallback primitive removal | **Passed (machine-verified baseline)** | Shared custom mesh library used by feedback/projectile/gadget/decoy presentation paths; explicit decoy collider retained; editor fixture primitives remain development-only |
+| Exact-source Unity regression suite | **Passed** | 141/141 EditMode and 87/87 PlayMode on `ac45479` |
+| Exact-source 100-match production-bot pacing/safety gate | **Passed** | 100/100 terminal/in-window, 91/100 ≥3 combat KOs, 100/100 bot-to-bot damage, 0 Aandhi-only, zero protected/invalid samples |
+| Exact-source deterministic replay soak | **Passed** | 1,000 seeds executed twice, zero divergence; XML/log hashes above; same-machine evidence only |
+| Matching Android APK/AAB and approved-Lava refresh | **Pending** | Must rebuild after this source commit, run the composed checker, install only on `ST5GDW23LB004392`, and capture fresh route/telemetry before claiming exact-candidate evidence |
+| Genuine physical 16 KB runtime | **Not established** | Approved Lava reports 4,096-byte pages; emulator-only 16 KB evidence remains diagnostic |
+| Final commissioned art, animation/VFX direction, audio mix, originality and cultural review | **Blocked** | Owner review remains required for the generated baseline |
+| Sustained performance, thermal, battery and repeated-rematch budgets | **Not run** | Existing bounded raw samples do not establish normalized sign-off |
+| Package identity, release signing, privacy/Data Safety, content rating and Play Console | **Blocked** | Temporary `com.example.battleraja.m11` debug-signed artifacts; owner/legal/store actions remain required |
+
+The two prompt files remain intentional uncommitted owner work. No remote mutation was made
+while P45 evidence was collected; `origin/main` remains `ad078d3` until the reviewed local
+commits are pushed without rewriting history.
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (100-match terminal,

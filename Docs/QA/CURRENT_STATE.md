@@ -20,6 +20,31 @@ physical Lava action-by-action route review, sustained performance, final identi
 signing, accessibility, legal/privacy/cultural approval and Play Console review
 remain open.
 
+## Latest current-source evidence — 2026-08-29 — commit `ac45479`
+
+The saved-presentation continuation adds a collider-free, textured
+`BazaarBastionProduction.prefab` with a 32×32 three-submesh ground mosaic, deterministic
+64×64 environment textures/materials, themed stalls/gates/banners and a backdrop LOD group.
+Production scene generation removes the legacy runtime architecture instance and binds the
+saved prefab with fallback disabled. Fighter prefabs now carry saved two-level LOD metadata
+and far-silhouette meshes. Runtime feedback, projectile, gadget and Maya-decoy fallback
+visuals use shared custom geometry; the decoy retains an explicit capsule collider for local
+target perception. No gameplay/domain/network/package-policy boundary changed.
+
+Static validation is **0 errors / 0 warnings**. Full EditMode is **141/141** and the exact
+source production-bot PlayMode run is **87/87**, including the saved-environment/LOD and
+decoy mesh/collider regressions. The exact 100-match batch is **100/100** terminal and in
+the 240–360 second window, with **91/100** matches reaching at least three combat
+eliminations, **100/100** with bot-to-bot damage, **0/100** Aandhi-only, zero protected or
+invalid samples, and all three gadgets exercised. The detailed report and hashes are in
+`Docs/V1_RELEASE_PLAN.md` P45.
+
+This remains a generated V1 presentation baseline, not final commissioned art or Play
+readiness. The matching Android candidate rebuild and approved-Lava refresh are still
+pending in this continuation; physical 16 KB behavior, sustained performance, full
+tutorial/all-fighter/accessibility and human art/audio/cultural review, final signing/
+identity, privacy/Data Safety, content rating and Play Console actions remain open.
+
 ## Latest current-source evidence — 2026-08-29 — commit `bc392fd`
 
 The focused presentation continuation adds deterministic UVs to every generated mesh and
