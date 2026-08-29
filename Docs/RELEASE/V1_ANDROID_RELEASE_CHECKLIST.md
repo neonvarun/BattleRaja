@@ -53,6 +53,29 @@ pwsh -File Tools/Validation/check_v1_release_candidate.ps1 `
 This gate is technical and local only. It does not sign, upload, publish, or approve
 the final identity, privacy/Data Safety, content rating, cultural review or Play track.
 
+## Latest exact-source candidate — documentation tip `b4b5649` (runtime/art `ac45479`) — 2026-08-29
+
+The saved-environment/runtime presentation continuation is documented in P45. The exact
+temporary-ID APK is **40,672,170 bytes** (SHA-256
+`6103F42176726E8CACE0DA7C4880BD105A55E50FFD92EB1BA8B2F531BEAA231D`) and the matching AAB
+is **36,497,323 bytes** (SHA-256
+`9893493591C4474E517B3D80A5107986493A2E70F59C850D17AC08C8B2748404`). The composed
+release checker passed **0 errors / 0 warnings**; bundletool 1.18.3 universal extraction,
+direct/extracted `zipalign -P 16`, and v2/v3 signature verification passed. These are
+temporary Android Debug-signed artifacts and are not final release signing.
+
+Fresh approved-Lava evidence is under
+`Builds/Local/Device/Performance/20260829-lava-ac45479-smoke/`. The exact APK installed
+successfully and real touch reached menu → Solo Raja → Bijli selection → live opening.
+The six-sample/30-second bounded live capture is under
+`Builds/Local/Device/Performance/20260829-lava-ac45479-30s/`; it continued into player
+defeat/spectator state with PSS **267,957–272,145 KB**, graphics PSS **75,792–79,888 KB**,
+battery level **62%**, thermal status **0**, and no configured fatal/ANR/SIGSEGV markers.
+Lava `ST5GDW23LB004392` reports 4 KB pages; this evidence is raw bounded device smoke,
+not sustained performance, battery, thermal or physical-16-KB approval. No Oppo device
+was used. Final identity/signing, legal/privacy/Data Safety, cultural/final art,
+accessibility/fun and Play Console gates remain owner-controlled.
+
 ## Latest UV/skinning candidate — `bc392fd` — 2026-08-29
 
 The current local presentation commit `bc392fd` adds deterministic UV coverage to all

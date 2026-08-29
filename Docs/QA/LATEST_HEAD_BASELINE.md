@@ -1,6 +1,6 @@
 # Latest HEAD baseline
 
-## Latest saved environment and runtime presentation refresh — source `ac45479` — 2026-08-29
+## Latest saved environment and runtime presentation refresh — documentation tip `b4b5649` (runtime/art `ac45479`) — 2026-08-29
 
 The current source adds a saved, textured and collider-free `BazaarBastionProduction.prefab`
 with a 32×32 three-submesh ground mosaic, deterministic 64×64 environment textures and a
@@ -14,9 +14,23 @@ Static validation is **0 errors / 0 warnings**. Full EditMode is **141/141** and
 source PlayMode run is **87/87**. The exact 100-match production-bot batch is **100/100**
 terminal and in-window, **91/100** with at least three combat eliminations, **100/100** with
 bot-to-bot damage, **0/100** Aandhi-only, zero protected/invalid samples and all three
-gadgets exercised. Detailed evidence is in `Docs/V1_RELEASE_PLAN.md` P45. Fresh matching
-Android/Lava artifacts are still pending; this remains a generated presentation baseline,
-not final art, accessibility, sustained-performance, physical-16-KB or Play approval.
+gadgets exercised. Detailed evidence is in `Docs/V1_RELEASE_PLAN.md` P45.
+
+The exact rebuilt temporary-ID APK is **40,672,170 bytes** (SHA-256
+`6103F42176726E8CACE0DA7C4880BD105A55E50FFD92EB1BA8B2F531BEAA231D`) and the matching
+AAB is **36,497,323 bytes** (SHA-256
+`9893493591C4474E517B3D80A5107986493A2E70F59C850D17AC08C8B2748404`). The composed
+release checker passed **0 errors / 0 warnings**; bundletool 1.18.3 universal extraction,
+direct/extracted `zipalign -P 16`, and v2/v3 signature verification also passed. Fresh
+approved-Lava touch evidence reached menu → Solo Raja → Bijli → live opening, and a
+bounded six-sample/30-second live capture continued into spectator state with PSS
+**267,957–272,145 KB**, graphics PSS **75,792–79,888 KB**, thermal status 0 and no
+configured fatal/ANR/SIGSEGV markers. Evidence paths and hashes are recorded in P45.
+
+This remains a generated presentation baseline, not final art, accessibility,
+sustained-performance, physical-16-KB or Play approval. Lava reports 4 KB pages; the
+device capture is diagnostic only. The reviewed commits are ready for a non-rewriting
+fast-forward to remote `main`; the two prompt files remain intentional owner work.
 
 ## Latest UV/skinning and Android refresh — source `bc392fd` — 2026-08-29
 

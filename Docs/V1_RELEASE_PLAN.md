@@ -2711,15 +2711,53 @@ The fresh report is
 | Exact-source Unity regression suite | **Passed** | 141/141 EditMode and 87/87 PlayMode on `ac45479` |
 | Exact-source 100-match production-bot pacing/safety gate | **Passed** | 100/100 terminal/in-window, 91/100 ≥3 combat KOs, 100/100 bot-to-bot damage, 0 Aandhi-only, zero protected/invalid samples |
 | Exact-source deterministic replay soak | **Passed** | 1,000 seeds executed twice, zero divergence; XML/log hashes above; same-machine evidence only |
-| Matching Android APK/AAB and approved-Lava refresh | **Pending** | Must rebuild after this source commit, run the composed checker, install only on `ST5GDW23LB004392`, and capture fresh route/telemetry before claiming exact-candidate evidence |
+| Matching Android APK/AAB and approved-Lava refresh | **Passed (bounded technical gate)** | Exact APK 40,672,170 bytes (`6103F42176726E8CACE0DA7C4880BD105A55E50FFD92EB1BA8B2F531BEAA231D`) and AAB 36,497,323 bytes (`9893493591C4474E517B3D80A5107986493A2E70F59C850D17AC08C8B2748404`); release checker 0/0, bundletool/zipalign/signature checks passed; approved Lava route reached live opening and 30-second capture reached spectator; evidence below |
 | Genuine physical 16 KB runtime | **Not established** | Approved Lava reports 4,096-byte pages; emulator-only 16 KB evidence remains diagnostic |
 | Final commissioned art, animation/VFX direction, audio mix, originality and cultural review | **Blocked** | Owner review remains required for the generated baseline |
-| Sustained performance, thermal, battery and repeated-rematch budgets | **Not run** | Existing bounded raw samples do not establish normalized sign-off |
+| Sustained performance, thermal, battery and repeated-rematch budgets | **Not run** | Fresh six-sample/30-second Lava capture is raw bounded evidence only: PSS 267,957–272,145 KB, graphics PSS 75,792–79,888 KB, thermal 0, battery 62%; it does not establish normalized sign-off |
 | Package identity, release signing, privacy/Data Safety, content rating and Play Console | **Blocked** | Temporary `com.example.battleraja.m11` debug-signed artifacts; owner/legal/store actions remain required |
 
-The two prompt files remain intentional uncommitted owner work. No remote mutation was made
-while P45 evidence was collected; `origin/main` remains `ad078d3` until the reviewed local
-commits are pushed without rewriting history.
+#### P45 exact Android and approved-Lava evidence
+
+- APK build command completed with exit code 0 from the reviewed source; artifact:
+  `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk` (40,672,170 bytes; SHA-256
+  `6103F42176726E8CACE0DA7C4880BD105A55E50FFD92EB1BA8B2F531BEAA231D`).
+- AAB build command completed with exit code 0; artifact:
+  `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab` (36,497,323 bytes; SHA-256
+  `9893493591C4474E517B3D80A5107986493A2E70F59C850D17AC08C8B2748404`).
+- Composed checker log `Builds/Local/Logs/release-checker-ac45479-b4b5649.log` is
+  3,245 bytes (SHA-256
+  `F05A2E9FD98D5AD73D9B9E7F1C52222CC3F535AD82516C500EADA2A50A857CDB`); it passed
+  offline permissions/API/package, ARM64/static 16 KB, icon/feature dimensions and
+  reported 0 errors / 0 warnings. The APK has only `VIBRATE` plus Unity's dynamic
+  receiver permission; no network permission is present.
+- Bundletool 1.18.3 APKS evidence is
+  `Builds/Local/V1GameplayTruth/Android/battleraja-v1-ac45479.apks` (SHA-256
+  `4E864E09557DA59892C629BA0A2AD42FDA58562EFA8485BC81B3C8D93FCD66B3`); direct and
+  extracted universal APK zipalign checks passed. Signature verification passed for
+  the temporary Android Debug signer only; final release-key handling remains open.
+- Approved Lava `ST5GDW23LB004392` only: install succeeded and real touch reached
+  menu → Solo Raja → Bijli selection → live opening. Screenshots are under
+  `Builds/Local/Device/Performance/20260829-lava-ac45479-smoke/`; `launch.png`,
+  `mode.png`, `fighter-select.png` and `live-opening.png` SHA-256 values are
+  `217984A80310452CDE4C0BBD804B255509376BAA47D01483CF5A28FEEB0EED43`,
+  `7E8C5B975C9AE357A82BC4C4D7522F331D3A9C2BD1029EBB991CD267F9E64830`,
+  `90F6750AD276150607A0D466F3421471928F92EB80E55FAE89F11EE309B57912` and
+  `615A72B4332E26DE3C0DADCEFFEA7184ABABE12722EAC3ABC8F11C533FD0DD48`.
+- Six samples at five-second intervals plus final capture are under
+  `Builds/Local/Device/Performance/20260829-lava-ac45479-30s/`; final screenshot
+  SHA-256 is `8255FA6ED94AA563355964C0C9A4B32681A2660B69C8A18BD14E1F7612234C53`,
+  final logcat SHA-256 is
+  `633C80D97AAD955DFAD03E44C15EC9DB04B2598AA922AE46CD056D26C0DACF23`, and the
+  captured state reached player defeat/spectator without configured fatal, ANR or
+  SIGSEGV markers. Lava reports 4,096-byte pages; thermal status remained 0 in the
+  capture and battery level was 62% at the final sample. This is bounded raw device
+  evidence, not normalized performance, battery, thermal, accessibility or full-route
+  approval.
+
+The two prompt files remain intentional uncommitted owner work. The reviewed local commits
+are ready for a non-rewriting fast-forward to remote `main`; remote mutation is still
+pending the final push verification.
 
 ## Later checkpoints
 

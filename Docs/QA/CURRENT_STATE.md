@@ -20,7 +20,7 @@ physical Lava action-by-action route review, sustained performance, final identi
 signing, accessibility, legal/privacy/cultural approval and Play Console review
 remain open.
 
-## Latest current-source evidence — 2026-08-29 — commit `ac45479`
+## Latest current-source evidence — 2026-08-29 — documentation tip `b4b5649` (runtime/art `ac45479`)
 
 The saved-presentation continuation adds a collider-free, textured
 `BazaarBastionProduction.prefab` with a 32×32 three-submesh ground mosaic, deterministic
@@ -40,10 +40,38 @@ invalid samples, and all three gadgets exercised. The detailed report and hashes
 `Docs/V1_RELEASE_PLAN.md` P45.
 
 This remains a generated V1 presentation baseline, not final commissioned art or Play
-readiness. The matching Android candidate rebuild and approved-Lava refresh are still
-pending in this continuation; physical 16 KB behavior, sustained performance, full
-tutorial/all-fighter/accessibility and human art/audio/cultural review, final signing/
-identity, privacy/Data Safety, content rating and Play Console actions remain open.
+readiness. The exact rebuilt temporary-ID APK is **40,672,170 bytes** (SHA-256
+`6103F42176726E8CACE0DA7C4880BD105A55E50FFD92EB1BA8B2F531BEAA231D`) and the matching
+AAB is **36,497,323 bytes** (SHA-256
+`9893493591C4474E517B3D80A5107986493A2E70F59C850D17AC08C8B2748404`). The composed
+release checker passed **0 errors / 0 warnings**; the exact checker log is
+`Builds/Local/Logs/release-checker-ac45479-b4b5649.log` (3,245 bytes; SHA-256
+`F05A2E9FD98D5AD73D9B9E7F1C52222CC3F535AD82516C500EADA2A50A857CDB`). Bundletool
+1.18.3 generated the universal APKS set (SHA-256
+`4E864E09557DA59892C629BA0A2AD42FDA58562EFA8485BC81B3C8D93FCD66B3`); direct and
+extracted APK zipalign checks passed, and v2/v3 signature verification passed for the
+temporary Android Debug signer. These are technical local gates, not release signing.
+
+Fresh approved-Lava evidence is under
+`Builds/Local/Device/Performance/20260829-lava-ac45479-smoke/`: the exact APK installed
+successfully and real touch reached menu → Solo Raja → Bijli selection → live opening.
+The menu, mode, fighter-select and live-opening screenshots have SHA-256
+`217984A80310452CDE4C0BBD804B255509376BAA47D01483CF5A28FEEB0EED43`,
+`7E8C5B975C9AE357A82BC4C4D7522F331D3A9C2BD1029EBB991CD267F9E64830`,
+`90F6750AD276150607A0D466F3421471928F92EB80E55FAE89F11EE309B57912` and
+`615A72B4332E26DE3C0DADCEFFEA7184ABABE12722EAC3ABC8F11C533FD0DD48` respectively.
+A six-sample, five-second-interval, approximately 30-second live capture is under
+`Builds/Local/Device/Performance/20260829-lava-ac45479-30s/`; its final screenshot hash
+is `8255FA6ED94AA563355964C0C9A4B32681A2660B69C8A18BD14E1F7612234C53`, PSS ranged
+**267,957–272,145 KB**, graphics PSS **75,792–79,888 KB**, battery level stayed at
+**62%**, and thermal status was **0**. The player was defeated and the app remained in
+the spectator state; no configured fatal/ANR/SIGSEGV markers were found. This is bounded
+raw device evidence, not normalized sustained-performance, battery or thermal approval.
+
+The device is Lava `ST5GDW23LB004392` (Android 14/API 34, 4,096-byte pages); no Oppo
+device was used. Physical 16 KB behavior, sustained performance, full tutorial/all-
+fighter/accessibility and human art/audio/cultural review, final signing/identity,
+privacy/Data Safety, content rating and Play Console actions remain open.
 
 ## Latest current-source evidence — 2026-08-29 — commit `bc392fd`
 

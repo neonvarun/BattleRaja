@@ -3,7 +3,7 @@
 Updated: 2026-08-29
 Classification: **prototype**
 
-## Latest saved-environment/runtime presentation checkpoint — `ac45479` — 2026-08-29
+## Latest saved-environment/runtime presentation checkpoint — documentation tip `b4b5649` (runtime/art `ac45479`) — 2026-08-29
 
 The offline presentation baseline now includes a saved, textured and collider-free Bazaar
 environment prefab, explicit environment materials/textures, fighter far-silhouette LODs and
@@ -16,11 +16,21 @@ all three gadgets exercised. Evidence and hashes are indexed in `Docs/V1_RELEASE
 P45.
 
 The generated environment/LOD and custom-mesh work strengthens the machine-verifiable
-baseline but does not change the classification. The rebuilt candidate still needs fresh
-approved-Lava screenshots/telemetry, and physical 16 KB behavior, sustained performance,
-full tutorial/all-fighter/accessibility/fun review, authored art/audio/cultural approval,
-final signing/identity, privacy/Data Safety, content rating and Play Console actions remain
-open.
+baseline but does not change the classification. The exact rebuilt temporary-ID APK is
+**40,672,170 bytes** (SHA-256
+`6103F42176726E8CACE0DA7C4880BD105A55E50FFD92EB1BA8B2F531BEAA231D`) and the matching AAB
+is **36,497,323 bytes** (SHA-256
+`9893493591C4474E517B3D80A5107986493A2E70F59C850D17AC08C8B2748404`). The release
+checker passed **0 errors / 0 warnings**; bundletool 1.18.3 universal extraction,
+direct/extracted zipalign and v2/v3 signature checks also passed.
+
+Fresh approved-Lava touch evidence reached menu → Solo Raja → Bijli selection → live
+opening. A bounded six-sample/30-second live capture continued into spectator state with
+PSS **267,957–272,145 KB**, graphics PSS **75,792–79,888 KB**, thermal status 0 and no
+configured fatal/ANR/SIGSEGV markers. This closes the exact-candidate bounded smoke
+refresh only; physical 16 KB behavior, sustained performance, full tutorial/all-fighter/
+accessibility/fun review, authored art/audio/cultural approval, final signing/identity,
+privacy/Data Safety, content rating and Play Console actions remain open.
 
 ## Latest presentation/Android checkpoint — `bc392fd` — 2026-08-29
 

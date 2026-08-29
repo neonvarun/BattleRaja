@@ -7,20 +7,21 @@
 ## Current state
 
 - **Latest exact-source presentation/Android checkpoint (2026-08-29):** local HEAD is
-  `195ab092a5fb7ae70f6eb92838a46107f17e9089`, with runtime/art source in
-  `bc392fd06ca5125b2821de5331097ac6fd50fa6f`. The focused continuation adds deterministic
-  UVs to every generated mesh and saved two-bone primary skins for Bijli, Pehel and Maya;
+  `b4b56496a185bd2ab2c52dfb28a1d4d8c2229b0a`, with runtime/art source in
+  `ac45479`. The saved Bazaar environment/custom-mesh continuation is documented in P45;
   no gameplay, authority, input, network or package-policy code changed. Full EditMode is
   **141/141**, PlayMode is **87/87**, static validation is **0 errors / 0 warnings**, and
   the exact temporary-ID APK/AAB pass offline manifest, ARM64/static 16 KB, bundletool,
-  alignment, signature and store-dimension checks. Approved Lava
-  `ST5GDW23LB004392` reached menu → Solo Raja → Bijli → live opening; the bounded capture
-  is raw diagnostic evidence only. A genuine `BattleRaja_16K` emulator reached the same
-  opening with `PAGE_SIZE=16384`, which is emulator evidence only. The product remains a
-  prototype: final authored art/audio/cultural review, full human Lava route and
-  accessibility/fun review, normalized sustained performance, physical 16 KB, final
-  identity/signing, privacy/Data Safety and Play Console actions remain open. The two
-  prompt files are intentional owner work; no remote mutation was made in this checkpoint.
+  alignment, signature and store-dimension checks. Fresh exact APK evidence on approved
+  Lava `ST5GDW23LB004392` reached menu → Solo Raja → Bijli → live opening; a bounded
+  six-sample/30-second live diagnostic continued into player defeat/spectating with
+  thermal status 0, PSS **267,957–272,145 KB**, graphics PSS **75,792–79,888 KB**, and
+  no configured fatal/ANR/SIGSEGV markers. This is raw diagnostic evidence only. The
+  product remains a prototype: final authored art/audio/cultural review, full human Lava
+  route and accessibility/fun review, normalized sustained performance, physical 16 KB,
+  final identity/signing, privacy/Data Safety and Play Console actions remain open. The
+  two prompt files are intentional owner work; the reviewed commits are ready for a
+  non-rewriting fast-forward to remote `main`.
 
 - **Latest exact-source release-gate checkpoint (2026-08-27):** commit
   `2a113e0c4798e8e51a43379a0fa0facd7e8f0fe1` persists ordered production replay captures
