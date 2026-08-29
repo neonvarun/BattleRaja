@@ -479,3 +479,34 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   accessibility, cultural fit, or final store presentation.
 - **Recheck trigger/date:** Revisit only if BattleRaja's entry/navigation hierarchy changes or
   before owner approval of final store-facing UX; continue to use observation-only controls.
+
+### V1.0 Android/Play policy recheck (2026-08-29)
+
+- **Question:** Does the current official Android/Play guidance change the technical
+  requirements that apply to the offline V1 candidate before synchronising the reviewed
+  source to `main`?
+- **Primary sources:** [Google Play target API level requirement](https://developer.android.com/google/play/requirements/target-sdk),
+  [Android 16 KB page-size guidance](https://developer.android.com/guide/practices/page-sizes),
+  and [Play Console app setup, versioning and signing](https://support.google.com/googleplay/android-developer/answer/9859152?hl=en).
+- **Access date:** 2026-08-29 (IST).
+- **Relevant claims:** The target-API page currently states that new apps and updates must
+  target Android 16/API 36 or higher from 31 August 2026. The 16 KB guidance requires native
+  libraries to use 16 KB ELF/zip alignment and recommends testing in a genuine 16 KB
+  environment; it documents `PAGE_ALIGNMENT_16K` bundle configuration and `adb shell
+  getconf PAGE_SIZE` runtime checks. Play setup requires a digitally signed artifact and an
+  Android App Bundle for upload, with monotonically increasing version codes.
+- **Decision impact:** Keep the candidate on target API 36 with ARM64/IL2CPP, static ELF and
+  bundle alignment checks, bundletool verification, and the offline no-network permission
+  policy. The local APK/AAB remain debug-signed with temporary package ID
+  `com.example.battleraja.m11`; the owner must choose the final identity, sign the AAB, and
+  repeat the checks immediately before any Play upload.
+- **Local evidence:** The exact candidate checker passed target/min API 36/28, seven ARM64
+  libraries, static 16 KB alignment, no forbidden network permissions, store dimensions and
+  clean-worktree validation. APK SHA-256 is
+  `0517EE901A9EAE943140538366B0574E893DC6BD66A5D1714D630C2379EF5FAC`; AAB SHA-256 is
+  `BF52E649BFD92F277F5C9933A7FDF34FFB25410F1D5A18EF6FC3097AA31BA331`.
+- **Uncertainty:** Policy text, enforcement timing, developer verification, final package
+  identity, privacy/Data Safety declarations and Play Console checks remain owner-controlled
+  and must be rechecked on the signed artifact.
+- **Recheck trigger/date:** Immediately before the first signed AAB and again before Play
+  Console upload, especially after any Unity, NDK, Android Gradle or native-dependency change.
