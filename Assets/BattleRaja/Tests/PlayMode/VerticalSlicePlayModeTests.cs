@@ -52,7 +52,12 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(Object.FindObjectsByType<PehelFighterController>(), Has.Length.GreaterThanOrEqualTo(1));
             Assert.That(Object.FindObjectsByType<MayaFighterController>(), Has.Length.GreaterThanOrEqualTo(1));
             Assert.That(GameObject.Find("BazaarBastion"), Is.Not.Null);
-            Assert.That(GameObject.Find("BazaarArchitecture"), Is.Not.Null);
+            Assert.That(GameObject.Find("BazaarArchitecture"), Is.Null,
+                "The production scene must not instantiate the legacy primitive BazaarArchitecture kit.");
+            var environment = Object.FindAnyObjectByType<BazaarBastionVisuals>();
+            Assert.That(environment, Is.Not.Null);
+            Assert.That(environment.UsesSavedEnvironment, Is.True,
+                "The production scene must reference the saved Bazaar Bastion environment prefab.");
             var production = Object.FindAnyObjectByType<BazaarBastionScene>();
             Assert.That(production, Is.Not.Null);
             Assert.That(Object.FindAnyObjectByType<MovementLabScene>(), Is.Null,
@@ -177,6 +182,10 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(maya.IsDecoyActive, Is.True);
             var decoy = GameObject.Find("MayaDecoy");
             Assert.That(decoy, Is.Not.Null);
+            Assert.That(decoy.GetComponent<MeshFilter>()?.sharedMesh, Is.Not.Null,
+                "Maya decoys must use the shared faceted presentation mesh rather than a Unity primitive asset.");
+            Assert.That(decoy.GetComponent<CapsuleCollider>(), Is.Not.Null,
+                "Maya decoys remain targetable for local perception and projectile probes.");
             var decoyTarget = decoy.GetComponent<CombatTarget>();
             var decoyHealth = decoy.GetComponent<CombatHealth>();
             Assert.That(decoyTarget, Is.Not.Null);
@@ -648,6 +657,19 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(groundMesh, Is.Not.Null);
             Assert.That(groundMesh.subMeshCount, Is.EqualTo(3));
             Assert.That(groundMesh.vertexCount, Is.GreaterThan(3000));
+            var groundRenderer = ground.GetComponent<MeshRenderer>();
+            Assert.That(groundRenderer, Is.Not.Null);
+            Assert.That(groundRenderer.sharedMaterials, Has.Length.EqualTo(3));
+            foreach (var material in groundRenderer.sharedMaterials)
+            {
+                Assert.That(material, Is.Not.Null, "Ground mosaic has a missing saved material");
+                Assert.That(material.mainTexture, Is.Not.Null, "Ground mosaic material must carry its saved UV texture");
+            }
+            Assert.That(arena.transform.Find("V1BastionVisuals").GetComponentsInChildren<Collider>(true), Is.Empty,
+                "The saved presentation kit must not own authoritative collision");
+            var backdrop = arena.transform.Find("V1BastionVisuals/BastionBackdrop");
+            Assert.That(backdrop, Is.Not.Null);
+            Assert.That(backdrop.GetComponent<LODGroup>(), Is.Not.Null, "Backdrop must expose saved near/far LOD metadata");
 
             var fighters = Object.FindObjectsByType<FighterPresentation>();
             Assert.That(fighters, Has.Length.EqualTo(8));
@@ -707,6 +729,12 @@ namespace BattleRaja.Tests.PlayMode
                     Assert.That(skin.sharedMesh.uv, Has.Length.EqualTo(skin.sharedMesh.vertexCount),
                         fighter.name + " skinned primary must carry deterministic UVs");
                 }
+
+                var lod = modelRoot.GetComponent<LODGroup>();
+                Assert.That(lod, Is.Not.Null, fighter.name + " must have a saved LODGroup");
+                Assert.That(lod.GetLODs(), Has.Length.EqualTo(2), fighter.name + " must have near and far presentation LODs");
+                Assert.That(modelRoot.transform.Find("ProductionFarSilhouette"), Is.Not.Null,
+                    fighter.name + " must have a deterministic far silhouette");
 
                 Assert.That(modelRoot.GetComponentsInChildren<Collider>(true), Is.Empty,
                     fighter.name + " production art must not own gameplay collision");

@@ -335,6 +335,8 @@ namespace BattleRaja.Editor
         public static void CreateBazaarBastionScene()
         {
             EnsureUrpAsset();
+            ProductionArtBuilder.BuildAll();
+            ProductionEnvironmentBuilder.BuildAll();
             Directory.CreateDirectory("Assets/BattleRaja/Scenes/Gameplay");
             Directory.CreateDirectory(MovementAssetFolder);
 
@@ -384,11 +386,21 @@ namespace BattleRaja.Editor
             var pehelMaterial = EnsureMaterial("BazaarBastionPehel", new Color(0.92f, 0.39f, 0.16f, 1f));
             var mayaMaterial = EnsureMaterial("BazaarBastionMaya", new Color(0.72f, 0.32f, 0.86f, 1f));
             ApplyBazaarPalette(arena.transform, floor, wall, stall);
-            if (arena.transform.Find("BazaarArchitecture") == null)
+            // The old scene copy contained a runtime-generated primitive architecture
+            // holder. Remove that presentation-only instance and bind the saved,
+            // textured production environment through the controlled editor path below.
+            var legacyArchitecture = arena.transform.Find("BazaarArchitecture");
+            if (legacyArchitecture != null)
             {
-                CreateBazaarDecor(arena.transform, wall, stall);
+                UnityEngine.Object.DestroyImmediate(legacyArchitecture.gameObject);
             }
-            EnsureBazaarArchitecturePrefab(arena.transform);
+            var environmentVisuals = arena.GetComponent<BazaarBastionVisuals>() ?? arena.AddComponent<BazaarBastionVisuals>();
+            SetObjectReference(
+                environmentVisuals,
+                "environmentPrefab",
+                AssetDatabase.LoadAssetAtPath<GameObject>(ProductionEnvironmentBuilder.EnvironmentPrefabPath));
+            SetInt(environmentVisuals, "decorationQuality", 1);
+            SetBool(environmentVisuals, "allowRuntimeFallback", false);
             if (arena.GetComponentInChildren<BattleRajaAudioDirector>(true) == null)
             {
                 var audioObject = new GameObject("AudioDirector");
@@ -689,6 +701,11 @@ namespace BattleRaja.Editor
             if (!File.Exists(BazaarArchitecturePrefabPath))
             {
                 throw new BuildFailedException("Bazaar architecture prefab is missing.");
+            }
+
+            if (!File.Exists(ProductionEnvironmentBuilder.EnvironmentPrefabPath))
+            {
+                throw new BuildFailedException("Saved Bazaar Bastion production environment prefab is missing.");
             }
 
             var fighter = AssetDatabase.LoadAssetAtPath<FighterDefinitionAsset>(FighterAssetPath);

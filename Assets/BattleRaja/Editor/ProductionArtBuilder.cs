@@ -14,6 +14,7 @@ namespace BattleRaja.Editor
     {
         private const string ArtRoot = "Assets/BattleRaja/Content/Art/V1";
         private const string MeshRoot = ArtRoot + "/Meshes";
+        private const string TextureRoot = ArtRoot + "/Textures";
         private const string MaterialRoot = ArtRoot + "/Materials";
         private const string PrefabRoot = "Assets/BattleRaja/Content/Prefabs/Production";
 
@@ -27,18 +28,20 @@ namespace BattleRaja.Editor
         [MenuItem("BattleRaja/Build V1 Production Fighter Art")]
         public static void BuildAll()
         {
+            EnsureFolders();
+            var textures = BuildTextures();
             // Generated production prefabs are committed release inputs. Keep their
             // local file IDs stable during ordinary scene/build generation; a deliberate
             // deletion or fresh checkout still enters the generation path below.
             if (HasGeneratedAssets())
             {
+                BuildMaterials(textures);
                 ProductionPresentationBuilder.BuildAll();
                 Debug.Log("BattleRaja production art already exists; keeping committed asset identities.");
                 return;
             }
 
-            EnsureFolders();
-            var materials = BuildMaterials();
+            var materials = BuildMaterials(textures);
             var meshes = BuildMeshes();
             BuildBijliPrefab(materials, meshes);
             BuildPehelPrefab(materials, meshes);
@@ -62,7 +65,8 @@ namespace BattleRaja.Editor
         public static void RebuildAll()
         {
             EnsureFolders();
-            var materials = BuildMaterials();
+            var textures = BuildTextures();
+            var materials = BuildMaterials(textures);
             var meshes = BuildMeshes();
             BuildBijliPrefab(materials, meshes);
             BuildPehelPrefab(materials, meshes);
@@ -105,6 +109,16 @@ namespace BattleRaja.Editor
                 if (!hasMesh) return false;
             }
 
+            var textureNames = new[]
+            {
+                "BijliCyan", "BijliGold", "PehelClay", "PehelCream", "MayaViolet", "MayaMint", "MayaRose",
+                "Ink", "Crystal", "GadgetInk", "GadgetDhol", "GadgetTiffin", "GadgetUmbrella", "GadgetHighlight"
+            };
+            for (var i = 0; i < textureNames.Length; i++)
+            {
+                if (AssetDatabase.LoadAssetAtPath<Texture2D>(TextureRoot + "/" + textureNames[i] + ".asset") == null) return false;
+            }
+
             return true;
         }
 
@@ -113,6 +127,7 @@ namespace BattleRaja.Editor
             EnsureFolder("Assets/BattleRaja/Content/Art");
             EnsureFolder(ArtRoot);
             EnsureFolder(MeshRoot);
+            EnsureFolder(TextureRoot);
             EnsureFolder(MaterialRoot);
             EnsureFolder("Assets/BattleRaja/Content/Prefabs");
             EnsureFolder(PrefabRoot);
@@ -130,28 +145,83 @@ namespace BattleRaja.Editor
             }
         }
 
-        private static Dictionary<string, Material> BuildMaterials()
+        private static Dictionary<string, Texture2D> BuildTextures()
         {
-            return new Dictionary<string, Material>(StringComparer.Ordinal)
+            return new Dictionary<string, Texture2D>(StringComparer.Ordinal)
             {
-                ["BijliCyan"] = CreateMaterial("BijliCyan", new Color(0.08f, 0.78f, 0.92f, 1f), 0.1f, 0.55f),
-                ["BijliGold"] = CreateMaterial("BijliGold", new Color(1f, 0.72f, 0.16f, 1f), 0.2f, 0.62f),
-                ["PehelClay"] = CreateMaterial("PehelClay", new Color(0.76f, 0.27f, 0.18f, 1f), 0.05f, 0.48f),
-                ["PehelCream"] = CreateMaterial("PehelCream", new Color(0.97f, 0.76f, 0.45f, 1f), 0.05f, 0.5f),
-                ["MayaViolet"] = CreateMaterial("MayaViolet", new Color(0.40f, 0.18f, 0.72f, 1f), 0.1f, 0.52f),
-                ["MayaMint"] = CreateMaterial("MayaMint", new Color(0.20f, 0.86f, 0.68f, 1f), 0.05f, 0.55f),
-                ["MayaRose"] = CreateMaterial("MayaRose", new Color(0.96f, 0.30f, 0.48f, 1f), 0.05f, 0.52f),
-                ["Ink"] = CreateMaterial("Ink", new Color(0.025f, 0.04f, 0.07f, 1f), 0.05f, 0.38f),
-                ["Crystal"] = CreateMaterial("Crystal", new Color(0.44f, 0.96f, 1f, 1f), 0.15f, 0.72f),
-                ["GadgetInk"] = CreateMaterial("GadgetInk", new Color(0.03f, 0.08f, 0.12f, 1f), 0.1f, 0.44f),
-                ["GadgetDhol"] = CreateMaterial("GadgetDhol", new Color(0.90f, 0.16f, 0.13f, 1f), 0.05f, 0.48f),
-                ["GadgetTiffin"] = CreateMaterial("GadgetTiffin", new Color(0.96f, 0.58f, 0.12f, 1f), 0.25f, 0.66f),
-                ["GadgetUmbrella"] = CreateMaterial("GadgetUmbrella", new Color(0.63f, 0.24f, 0.94f, 1f), 0.08f, 0.56f),
-                ["GadgetHighlight"] = CreateMaterial("GadgetHighlight", new Color(0.17f, 0.86f, 0.78f, 1f), 0.1f, 0.62f)
+                ["BijliCyan"] = CreateTexture("BijliCyan", new Color32(19, 147, 175, 255), new Color32(89, 239, 255, 255), 1),
+                ["BijliGold"] = CreateTexture("BijliGold", new Color32(208, 126, 18, 255), new Color32(255, 225, 82, 255), 3),
+                ["PehelClay"] = CreateTexture("PehelClay", new Color32(139, 46, 29, 255), new Color32(239, 104, 44, 255), 2),
+                ["PehelCream"] = CreateTexture("PehelCream", new Color32(217, 157, 72, 255), new Color32(255, 225, 146, 255), 1),
+                ["MayaViolet"] = CreateTexture("MayaViolet", new Color32(79, 35, 134, 255), new Color32(160, 71, 214, 255), 3),
+                ["MayaMint"] = CreateTexture("MayaMint", new Color32(31, 151, 121, 255), new Color32(92, 241, 189, 255), 1),
+                ["MayaRose"] = CreateTexture("MayaRose", new Color32(195, 45, 87, 255), new Color32(255, 104, 131, 255), 2),
+                ["Ink"] = CreateTexture("Ink", new Color32(7, 15, 22, 255), new Color32(29, 52, 66, 255), 0),
+                ["Crystal"] = CreateTexture("Crystal", new Color32(72, 195, 218, 255), new Color32(193, 255, 255, 255), 1),
+                ["GadgetInk"] = CreateTexture("GadgetInk", new Color32(10, 24, 32, 255), new Color32(28, 57, 67, 255), 0),
+                ["GadgetDhol"] = CreateTexture("GadgetDhol", new Color32(173, 28, 31, 255), new Color32(255, 104, 72, 255), 2),
+                ["GadgetTiffin"] = CreateTexture("GadgetTiffin", new Color32(194, 97, 14, 255), new Color32(255, 209, 62, 255), 3),
+                ["GadgetUmbrella"] = CreateTexture("GadgetUmbrella", new Color32(105, 37, 175, 255), new Color32(202, 111, 255, 255), 1),
+                ["GadgetHighlight"] = CreateTexture("GadgetHighlight", new Color32(24, 147, 132, 255), new Color32(109, 250, 214, 255), 1)
             };
         }
 
-        private static Material CreateMaterial(string name, Color color, float metallic, float smoothness)
+        private static Texture2D CreateTexture(string name, Color32 baseColor, Color32 accent, int pattern)
+        {
+            const int size = 64;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false, false) { name = name };
+            var pixels = new Color32[size * size];
+            for (var y = 0; y < size; y++)
+            {
+                for (var x = 0; x < size; x++)
+                {
+                    var checker = ((x / 8) + (y / 8)) & 1;
+                    var stripe = ((x * 2 + y + pattern * 7) % 23) < 3;
+                    var useAccent = pattern == 0 ? checker == 0 : pattern == 1 ? stripe : (checker == 0) ^ stripe;
+                    pixels[y * size + x] = useAccent ? accent : baseColor;
+                }
+            }
+            texture.SetPixels32(pixels);
+            texture.Apply(false, true);
+            texture.wrapMode = TextureWrapMode.Repeat;
+            texture.filterMode = FilterMode.Bilinear;
+            var path = TextureRoot + "/" + name + ".asset";
+            var existing = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            if (existing != null)
+            {
+                EditorUtility.CopySerialized(texture, existing);
+                existing.name = name;
+                EditorUtility.SetDirty(existing);
+                UnityEngine.Object.DestroyImmediate(texture);
+                return existing;
+            }
+
+            AssetDatabase.CreateAsset(texture, path);
+            return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+        }
+
+        private static Dictionary<string, Material> BuildMaterials(Dictionary<string, Texture2D> textures)
+        {
+            return new Dictionary<string, Material>(StringComparer.Ordinal)
+            {
+                ["BijliCyan"] = CreateMaterial("BijliCyan", new Color(0.08f, 0.78f, 0.92f, 1f), 0.1f, 0.55f, textures["BijliCyan"]),
+                ["BijliGold"] = CreateMaterial("BijliGold", new Color(1f, 0.72f, 0.16f, 1f), 0.2f, 0.62f, textures["BijliGold"]),
+                ["PehelClay"] = CreateMaterial("PehelClay", new Color(0.76f, 0.27f, 0.18f, 1f), 0.05f, 0.48f, textures["PehelClay"]),
+                ["PehelCream"] = CreateMaterial("PehelCream", new Color(0.97f, 0.76f, 0.45f, 1f), 0.05f, 0.5f, textures["PehelCream"]),
+                ["MayaViolet"] = CreateMaterial("MayaViolet", new Color(0.40f, 0.18f, 0.72f, 1f), 0.1f, 0.52f, textures["MayaViolet"]),
+                ["MayaMint"] = CreateMaterial("MayaMint", new Color(0.20f, 0.86f, 0.68f, 1f), 0.05f, 0.55f, textures["MayaMint"]),
+                ["MayaRose"] = CreateMaterial("MayaRose", new Color(0.96f, 0.30f, 0.48f, 1f), 0.05f, 0.52f, textures["MayaRose"]),
+                ["Ink"] = CreateMaterial("Ink", new Color(0.025f, 0.04f, 0.07f, 1f), 0.05f, 0.38f, textures["Ink"]),
+                ["Crystal"] = CreateMaterial("Crystal", new Color(0.44f, 0.96f, 1f, 1f), 0.15f, 0.72f, textures["Crystal"]),
+                ["GadgetInk"] = CreateMaterial("GadgetInk", new Color(0.03f, 0.08f, 0.12f, 1f), 0.1f, 0.44f, textures["GadgetInk"]),
+                ["GadgetDhol"] = CreateMaterial("GadgetDhol", new Color(0.90f, 0.16f, 0.13f, 1f), 0.05f, 0.48f, textures["GadgetDhol"]),
+                ["GadgetTiffin"] = CreateMaterial("GadgetTiffin", new Color(0.96f, 0.58f, 0.12f, 1f), 0.25f, 0.66f, textures["GadgetTiffin"]),
+                ["GadgetUmbrella"] = CreateMaterial("GadgetUmbrella", new Color(0.63f, 0.24f, 0.94f, 1f), 0.08f, 0.56f, textures["GadgetUmbrella"]),
+                ["GadgetHighlight"] = CreateMaterial("GadgetHighlight", new Color(0.17f, 0.86f, 0.78f, 1f), 0.1f, 0.62f, textures["GadgetHighlight"])
+            };
+        }
+
+        private static Material CreateMaterial(string name, Color color, float metallic, float smoothness, Texture2D texture)
         {
             var path = MaterialRoot + "/" + name + ".mat";
             var material = AssetDatabase.LoadAssetAtPath<Material>(path);
@@ -165,6 +235,9 @@ namespace BattleRaja.Editor
             if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", color);
             if (material.HasProperty("_Metallic")) material.SetFloat("_Metallic", metallic);
             if (material.HasProperty("_Smoothness")) material.SetFloat("_Smoothness", smoothness);
+            if (material.HasProperty("_BaseMap")) material.SetTexture("_BaseMap", texture);
+            if (material.HasProperty("_MainTex")) material.SetTexture("_MainTex", texture);
+            material.enableInstancing = true;
             EditorUtility.SetDirty(material);
             return material;
         }

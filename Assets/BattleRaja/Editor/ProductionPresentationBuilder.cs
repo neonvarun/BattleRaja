@@ -118,7 +118,8 @@ namespace BattleRaja.Editor
                 if (fighter == null
                     || fighter.transform.Find("ProductionRig") == null
                     || fighter.GetComponent<Animator>() == null
-                    || fighter.GetComponent<ProductionVfxCue>() == null)
+                    || fighter.GetComponent<ProductionVfxCue>() == null
+                    || fighter.GetComponent<LODGroup>() == null)
                 {
                     return false;
                 }
@@ -447,8 +448,37 @@ namespace BattleRaja.Editor
                 return;
             }
 
+            // A previous generation pass may have parented the source body/cloak under
+            // the old rig. Snapshot the editable mesh/materials and its root-relative
+            // transform before removing that rig, otherwise an idempotent rebuild would
+            // destroy the only source geometry needed for the saved skinned primary.
+            var primaryName = fighterIndex == 2 ? "Cloak" : "Body";
+            var sourcePrimary = FindDescendant(root.transform, primaryName);
+            var sourceFilter = sourcePrimary != null ? sourcePrimary.GetComponent<MeshFilter>() : null;
+            var sourceRenderer = sourcePrimary != null ? sourcePrimary.GetComponent<MeshRenderer>() : null;
+            var sourceMesh = sourceFilter != null ? sourceFilter.sharedMesh : null;
+            var sourceMaterials = sourceRenderer != null ? sourceRenderer.sharedMaterials : null;
+            var sourceToRoot = sourcePrimary != null
+                ? root.transform.worldToLocalMatrix * sourcePrimary.localToWorldMatrix
+                : Matrix4x4.identity;
+            if (sourceMesh == null)
+            {
+                var sourceMeshName = fighterIndex == 2 ? "MayaCloak" : fighterIndex == 1 ? "PehelTorso" : "BijliTorso";
+                sourceMesh = AssetDatabase.LoadAssetAtPath<Mesh>(MeshRoot + "/" + sourceMeshName + ".asset");
+                sourceToRoot = Matrix4x4.identity;
+            }
+            if (sourceMaterials == null || sourceMaterials.Length == 0 || sourceMaterials[0] == null)
+            {
+                var sourceMaterialName = fighterIndex == 2 ? "MayaViolet" : fighterIndex == 1 ? "PehelClay" : "BijliCyan";
+                var sourceMaterial = AssetDatabase.LoadAssetAtPath<Material>(MaterialRoot + "/" + sourceMaterialName + ".mat");
+                sourceMaterials = sourceMaterial != null ? new[] { sourceMaterial } : Array.Empty<Material>();
+            }
+
             RemoveChild(root.transform, "ProductionRig");
             RemoveChild(root.transform, "ProductionSkinnedPrimary");
+            RemoveChild(root.transform, "ProductionFarSilhouette");
+            var existingLod = root.GetComponent<LODGroup>();
+            if (existingLod != null) UnityEngine.Object.DestroyImmediate(existingLod, true);
             RemoveChildrenWithPrefix(root.transform, "Vfx_");
             var existingAnimator = root.GetComponent<Animator>();
             if (existingAnimator != null) UnityEngine.Object.DestroyImmediate(existingAnimator, true);
@@ -494,7 +524,7 @@ namespace BattleRaja.Editor
             ReparentPart(root.transform.Find("ScarfLeft"), chest);
             ReparentPart(root.transform.Find("ScarfRight"), chest);
 
-            BuildPrimarySkinnedMesh(root, fighterIndex, hips, chest);
+            BuildPrimarySkinnedMesh(root, fighterIndex, hips, chest, sourceMesh, sourceMaterials, sourceToRoot);
 
             var animator = root.AddComponent<Animator>();
             animator.runtimeAnimatorController = controller;
@@ -508,19 +538,17 @@ namespace BattleRaja.Editor
             var hit = AddVfxInstance(root.transform, vfx["Hit"], "Vfx_Hit");
             var elimination = AddVfxInstance(root.transform, vfx["Elimination"], "Vfx_Elimination");
             cue.Configure(attack, ability, hit, elimination);
+            BuildLodGroup(root, fighterIndex);
 
             PrefabUtility.SaveAsPrefabAsset(root, path);
             PrefabUtility.UnloadPrefabContents(root);
         }
 
-        private static void BuildPrimarySkinnedMesh(GameObject root, int fighterIndex, Transform hips, Transform chest)
+        private static void BuildPrimarySkinnedMesh(GameObject root, int fighterIndex, Transform hips, Transform chest,
+            Mesh sourceMesh, Material[] sourceMaterials, Matrix4x4 sourceToRoot)
         {
             var primaryName = fighterIndex == 2 ? "Cloak" : "Body";
-            var primary = FindDescendant(root.transform, primaryName);
-            var sourceFilter = primary != null ? primary.GetComponent<MeshFilter>() : null;
-            var sourceRenderer = primary != null ? primary.GetComponent<MeshRenderer>() : null;
-            var sourceMesh = sourceFilter != null ? sourceFilter.sharedMesh : null;
-            if (primary == null || sourceMesh == null || sourceRenderer == null)
+            if (sourceMesh == null || sourceMaterials == null || sourceMaterials.Length == 0 || sourceMaterials[0] == null)
             {
                 Debug.LogWarning("Production primary mesh is missing; skipped skin build for " + root.name + ".");
                 return;
@@ -532,12 +560,11 @@ namespace BattleRaja.Editor
             skinnedObject.transform.localRotation = Quaternion.identity;
             skinnedObject.transform.localScale = Vector3.one;
 
-            var rootLocalFromPrimary = root.transform.worldToLocalMatrix * primary.localToWorldMatrix;
             var sourceVertices = sourceMesh.vertices;
             var vertices = new Vector3[sourceVertices.Length];
             for (var i = 0; i < sourceVertices.Length; i++)
             {
-                vertices[i] = rootLocalFromPrimary.MultiplyPoint3x4(sourceVertices[i]);
+                vertices[i] = sourceToRoot.MultiplyPoint3x4(sourceVertices[i]);
             }
 
             var skinnedMesh = new Mesh
@@ -586,13 +613,15 @@ namespace BattleRaja.Editor
             skinnedRenderer.sharedMesh = savedMesh;
             skinnedRenderer.bones = new[] { hips, chest };
             skinnedRenderer.rootBone = hips;
-            skinnedRenderer.sharedMaterials = sourceRenderer.sharedMaterials;
+            skinnedRenderer.sharedMaterials = sourceMaterials;
             skinnedRenderer.quality = SkinQuality.Bone2;
             skinnedRenderer.updateWhenOffscreen = false;
 
             // Keep the source MeshFilter for deterministic rebuilds and editor
             // inspection, but let the skinned primary be the only visible body.
-            sourceRenderer.enabled = false;
+            var sourcePrimary = FindDescendant(root.transform, primaryName);
+            var sourceRenderer = sourcePrimary != null ? sourcePrimary.GetComponent<MeshRenderer>() : null;
+            if (sourceRenderer != null) sourceRenderer.enabled = false;
         }
 
         private static Mesh SaveSkinnedMesh(Mesh mesh)
@@ -610,6 +639,93 @@ namespace BattleRaja.Editor
 
             AssetDatabase.CreateAsset(mesh, path);
             return AssetDatabase.LoadAssetAtPath<Mesh>(path);
+        }
+
+        private static void BuildLodGroup(GameObject root, int fighterIndex)
+        {
+            var farObject = new GameObject("ProductionFarSilhouette", typeof(MeshFilter), typeof(MeshRenderer));
+            farObject.transform.SetParent(root.transform, false);
+            farObject.transform.localPosition = new Vector3(0f, 0.72f, 0f);
+            farObject.transform.localScale = Vector3.one * 1.1f;
+            var farMesh = CreateFarSilhouetteMesh("FarSilhouette" + fighterIndex, fighterIndex);
+            farObject.GetComponent<MeshFilter>().sharedMesh = SaveSkinnedMesh(farMesh);
+
+            Material farMaterial = null;
+            var sourceRenderers = root.GetComponentsInChildren<Renderer>(true);
+            for (var i = 0; i < sourceRenderers.Length; i++)
+            {
+                if (sourceRenderers[i] == null || sourceRenderers[i].gameObject == farObject || sourceRenderers[i].gameObject.name.StartsWith("Vfx_", StringComparison.Ordinal)) continue;
+                var materials = sourceRenderers[i].sharedMaterials;
+                if (materials != null && materials.Length > 0 && materials[0] != null)
+                {
+                    farMaterial = materials[0];
+                    break;
+                }
+            }
+            farObject.GetComponent<MeshRenderer>().sharedMaterial = farMaterial;
+
+            var nearRenderers = new List<Renderer>();
+            for (var i = 0; i < sourceRenderers.Length; i++)
+            {
+                var renderer = sourceRenderers[i];
+                if (renderer == null || renderer.gameObject == farObject || renderer.gameObject.name.StartsWith("Vfx_", StringComparison.Ordinal)) continue;
+                nearRenderers.Add(renderer);
+            }
+
+            var lod = root.GetComponent<LODGroup>();
+            if (lod == null) lod = root.AddComponent<LODGroup>();
+            if (lod == null)
+            {
+                Debug.LogError("Could not add LODGroup to production fighter " + root.name + ".");
+                return;
+            }
+            lod.fadeMode = LODFadeMode.CrossFade;
+            lod.animateCrossFading = true;
+            lod.SetLODs(new[]
+            {
+                new LOD(0.24f, nearRenderers.ToArray()),
+                new LOD(0.055f, new[] { farObject.GetComponent<Renderer>() })
+            });
+            lod.RecalculateBounds();
+        }
+
+        private static Mesh CreateFarSilhouetteMesh(string name, int fighterIndex)
+        {
+            const int sides = 8;
+            var vertices = new Vector3[sides * 2 + 2];
+            var uv = new Vector2[vertices.Length];
+            var lowerRadius = fighterIndex == 1 ? 0.46f : fighterIndex == 2 ? 0.42f : 0.34f;
+            var upperRadius = fighterIndex == 1 ? 0.38f : fighterIndex == 2 ? 0.34f : 0.27f;
+            for (var side = 0; side < sides; side++)
+            {
+                var angle = side * Mathf.PI * 2f / sides;
+                vertices[side] = new Vector3(Mathf.Cos(angle) * lowerRadius, 0f, Mathf.Sin(angle) * lowerRadius);
+                vertices[sides + side] = new Vector3(Mathf.Cos(angle) * upperRadius, 1.58f, Mathf.Sin(angle) * upperRadius);
+                uv[side] = new Vector2((float)side / sides, 0f);
+                uv[sides + side] = new Vector2((float)side / sides, 1f);
+            }
+            var bottom = sides * 2;
+            var top = bottom + 1;
+            vertices[bottom] = Vector3.zero;
+            vertices[top] = Vector3.up * 1.75f;
+            uv[bottom] = new Vector2(0.5f, 0f);
+            uv[top] = new Vector2(0.5f, 1f);
+            var triangles = new List<int>(sides * 12);
+            for (var side = 0; side < sides; side++)
+            {
+                var next = (side + 1) % sides;
+                triangles.Add(side); triangles.Add(next); triangles.Add(sides + next);
+                triangles.Add(side); triangles.Add(sides + next); triangles.Add(sides + side);
+                triangles.Add(bottom); triangles.Add(next); triangles.Add(side);
+                triangles.Add(top); triangles.Add(sides + side); triangles.Add(sides + next);
+            }
+            var mesh = new Mesh { name = name };
+            mesh.vertices = vertices;
+            mesh.triangles = triangles.ToArray();
+            mesh.uv = uv;
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+            return mesh;
         }
 
         private static Transform CreateBone(string name, Transform parent, Vector3 localPosition)

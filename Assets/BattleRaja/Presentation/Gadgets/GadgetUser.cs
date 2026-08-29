@@ -419,15 +419,24 @@ namespace BattleRaja.Presentation.Gadgets
 
         private void SpawnTiffin(GadgetEffect effect)
         {
-            var station = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            station.name = "TiffinStation";
+            var station = new GameObject("TiffinStation", typeof(MeshFilter), typeof(MeshRenderer));
             station.transform.position = new Vector3(effect.Command.Origin.X, 0.5f, effect.Command.Origin.Y);
             station.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            station.GetComponent<MeshFilter>().sharedMesh = PresentationMeshFactory.Cylinder("TiffinStationBody", 16);
+            station.GetComponent<MeshRenderer>().sharedMaterial = CreateRuntimeMaterial(new Color(0.96f, 0.58f, 0.12f, 1f));
             var component = station.AddComponent<GadgetStation>();
             component.Configure(effect.Definition, effect.StationId);
             var target = station.AddComponent<CombatTarget>();
             var stationHealth = station.GetComponent<CombatHealth>();
             target.enabled = true;
+        }
+
+        private static Material CreateRuntimeMaterial(Color color)
+        {
+            var shader = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard");
+            var material = new Material(shader) { color = color };
+            if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", color);
+            return material;
         }
 
         private void SetFeedback(string value)

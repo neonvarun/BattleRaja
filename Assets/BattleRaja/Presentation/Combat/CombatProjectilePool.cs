@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using BattleRaja.Core.Domain;
+using BattleRaja.Presentation.Visuals;
 using UnityEngine;
 
 namespace BattleRaja.Presentation.Combat
@@ -179,19 +180,11 @@ namespace BattleRaja.Presentation.Combat
 
         private CombatProjectile CreateProjectile()
         {
-            var objectToPool = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            objectToPool.name = "PooledProjectile";
+            var objectToPool = new GameObject("PooledProjectile", typeof(MeshFilter), typeof(MeshRenderer));
             objectToPool.transform.SetParent(transform, false);
             objectToPool.transform.localScale = Vector3.one * 0.28f;
-            // Keep the concrete collider type referenced so IL2CPP/WebGL does not strip
-            // SphereCollider when the primitive is created through Unity's factory.
-            var collider = objectToPool.GetComponent<SphereCollider>();
-            if (collider != null)
-            {
-                Destroy(collider);
-            }
-
-            var renderer = objectToPool.GetComponent<Renderer>();
+            objectToPool.GetComponent<MeshFilter>().sharedMesh = PresentationMeshFactory.FacetedOrb("PooledProjectileOrb", 3, 12);
+            var renderer = objectToPool.GetComponent<MeshRenderer>();
             if (projectileMaterial != null)
             {
                 renderer.sharedMaterial = projectileMaterial;

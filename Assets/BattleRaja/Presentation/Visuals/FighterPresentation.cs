@@ -10,7 +10,9 @@ namespace BattleRaja.Presentation.Visuals
     /// <summary>
     /// Replaceable stylised presentation for a fighter. Gameplay state remains in the
     /// domain/health components; this component only creates pooled-lightweight readability
-    /// primitives and code-driven animation states.
+    /// meshes and code-driven animation states. Production identity is supplied by saved
+    /// render-only prefabs; the emergency path uses custom geometry instead of Unity
+    /// primitive components.
     /// </summary>
     public sealed class FighterPresentation : MonoBehaviour
     {
@@ -332,40 +334,36 @@ namespace BattleRaja.Presentation.Visuals
             _ringMaterial = CreateMaterial(_ringColor);
             _barMaterial = CreateMaterial(new Color(0.22f, 0.92f, 0.36f, 1f));
 
-            var ringObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            ringObject.name = "GameplayColorRing";
+            var ringObject = new GameObject("GameplayColorRing", typeof(MeshFilter), typeof(MeshRenderer));
             ringObject.transform.SetParent(transform, false);
             ringObject.transform.localPosition = new Vector3(0f, -0.92f, 0f);
-            ringObject.transform.localScale = new Vector3(0.82f, 0.025f, 0.82f);
-            RemoveCollider(ringObject);
-            ringObject.GetComponent<Renderer>().sharedMaterial = _ringMaterial;
+            ringObject.transform.localScale = new Vector3(0.82f, 1f, 0.82f);
+            ringObject.GetComponent<MeshFilter>().sharedMesh = PresentationMeshFactory.Ring("FighterColorRing", 0.42f, 0.5f, 24);
+            ringObject.GetComponent<MeshRenderer>().sharedMaterial = _ringMaterial;
             _ring = ringObject.transform;
 
-            var barObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            barObject.name = "HealthStatusBar";
+            var barObject = new GameObject("HealthStatusBar", typeof(MeshFilter), typeof(MeshRenderer));
             barObject.transform.SetParent(transform, false);
             barObject.transform.localPosition = new Vector3(0f, 2.12f, 0f);
             barObject.transform.localScale = new Vector3(1.05f, 0.08f, 0.06f);
-            RemoveCollider(barObject);
-            barObject.GetComponent<Renderer>().sharedMaterial = CreateMaterial(new Color(0.08f, 0.08f, 0.1f, 1f));
+            barObject.GetComponent<MeshFilter>().sharedMesh = PresentationMeshFactory.Box("FighterHealthBar");
+            barObject.GetComponent<MeshRenderer>().sharedMaterial = CreateMaterial(new Color(0.08f, 0.08f, 0.1f, 1f));
             _healthBar = barObject.transform;
 
-            var fillObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            fillObject.name = "HealthStatusFill";
+            var fillObject = new GameObject("HealthStatusFill", typeof(MeshFilter), typeof(MeshRenderer));
             fillObject.transform.SetParent(_healthBar, false);
             fillObject.transform.localPosition = new Vector3(-0.48f, 0f, -0.04f);
             fillObject.transform.localScale = new Vector3(0.96f, 0.65f, 0.5f);
-            RemoveCollider(fillObject);
-            fillObject.GetComponent<Renderer>().sharedMaterial = _barMaterial;
+            fillObject.GetComponent<MeshFilter>().sharedMesh = PresentationMeshFactory.Box("FighterHealthFill");
+            fillObject.GetComponent<MeshRenderer>().sharedMaterial = _barMaterial;
             _healthFill = fillObject.transform;
 
-            var telegraphObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            telegraphObject.name = "AttackAbilityTelegraph";
+            var telegraphObject = new GameObject("AttackAbilityTelegraph", typeof(MeshFilter), typeof(MeshRenderer));
             telegraphObject.transform.SetParent(transform, false);
             telegraphObject.transform.localPosition = new Vector3(0f, -0.88f, 0f);
-            telegraphObject.transform.localScale = new Vector3(0.98f, 0.008f, 0.98f);
-            RemoveCollider(telegraphObject);
-            telegraphObject.GetComponent<Renderer>().sharedMaterial = CreateMaterial(new Color(1f, 0.72f, 0.12f, 1f));
+            telegraphObject.transform.localScale = new Vector3(1.96f, 1f, 1.96f);
+            telegraphObject.GetComponent<MeshFilter>().sharedMesh = PresentationMeshFactory.Ring("FighterTelegraph", 0.44f, 0.5f, 24);
+            telegraphObject.GetComponent<MeshRenderer>().sharedMaterial = CreateMaterial(new Color(1f, 0.72f, 0.12f, 1f));
             telegraphObject.SetActive(false);
             _telegraph = telegraphObject.transform;
         }
@@ -390,6 +388,9 @@ namespace BattleRaja.Presentation.Visuals
             {
                 var productionModel = Instantiate(productionPrefab, _silhouetteRoot, false);
                 productionModel.name = productionPrefab.name;
+                // Give the authored identity enough screen presence on the portrait
+                // phone camera without changing the authoritative collision capsule.
+                productionModel.transform.localScale = Vector3.one * 1.18f;
                 _ownedObjects.Add(productionModel);
                 _productionAnimator = productionModel.GetComponentInChildren<Animator>(true);
                 _productionVfx = productionModel.GetComponentInChildren<ProductionVfxCue>(true);
@@ -467,15 +468,22 @@ namespace BattleRaja.Presentation.Visuals
 
         private GameObject CreateVisualPrimitive(string name, PrimitiveType type, Vector3 position, Vector3 scale, Quaternion rotation, Material material)
         {
-            var objectToCreate = GameObject.CreatePrimitive(type);
-            objectToCreate.name = name;
+            // This method is retained for old scene fixtures, but it deliberately uses
+            // the shared custom mesh library. Production scenes always resolve the
+            // saved prefabs above, so the branch is a deterministic emergency identity
+            // rather than an authored Unity primitive fallback.
+            var mesh = type == PrimitiveType.Capsule || type == PrimitiveType.Sphere
+                ? PresentationMeshFactory.FacetedOrb(name + "Orb", 4, 12)
+                : type == PrimitiveType.Cylinder
+                    ? PresentationMeshFactory.Cylinder(name + "Cylinder", 16)
+                    : PresentationMeshFactory.Box(name + "Box");
+            var objectToCreate = new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer));
             objectToCreate.transform.SetParent(_silhouetteRoot, false);
             objectToCreate.transform.localPosition = position;
             objectToCreate.transform.localRotation = rotation;
             objectToCreate.transform.localScale = scale;
-            RemoveCollider(objectToCreate);
-            var renderer = objectToCreate.GetComponent<Renderer>();
-            if (renderer != null) renderer.sharedMaterial = material;
+            objectToCreate.GetComponent<MeshFilter>().sharedMesh = mesh;
+            objectToCreate.GetComponent<MeshRenderer>().sharedMaterial = material;
             _ownedObjects.Add(objectToCreate);
             _silhouetteParts.Add(objectToCreate.transform);
             _silhouetteBasePositions.Add(position);
@@ -491,12 +499,6 @@ namespace BattleRaja.Presentation.Visuals
             if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", color);
             _ownedMaterials.Add(material);
             return material;
-        }
-
-        private static void RemoveCollider(GameObject objectToClean)
-        {
-            var collider = objectToClean.GetComponent<Collider>();
-            if (collider != null) Destroy(collider);
         }
 
         private static Color ResolveRingColor(CombatFaction faction)

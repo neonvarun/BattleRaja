@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using BattleRaja.Presentation.Visuals;
 using UnityEngine;
 
 namespace BattleRaja.Presentation.Gadgets
@@ -54,34 +55,35 @@ namespace BattleRaja.Presentation.Gadgets
             var mint = CreateMaterial(new Color(0.24f, 0.90f, 0.72f, 1f));
             var ink = CreateMaterial(new Color(0.05f, 0.11f, 0.13f, 1f));
 
-            CreatePrimitive("StationLower", PrimitiveType.Cylinder, root, new Vector3(0f, 0.12f, 0f), new Vector3(0.62f, 0.14f, 0.62f), gold);
-            CreatePrimitive("StationUpper", PrimitiveType.Cylinder, root, new Vector3(0f, 0.38f, 0f), new Vector3(0.45f, 0.12f, 0.45f), mint);
-            CreatePrimitive("StationHandle", PrimitiveType.Cube, root, new Vector3(0f, 0.60f, 0f), new Vector3(0.12f, 0.20f, 0.12f), ink);
-            CreatePrimitive("StationCrossA", PrimitiveType.Cube, root, new Vector3(0f, 0.78f, 0f), new Vector3(0.60f, 0.06f, 0.10f), mint);
-            CreatePrimitive("StationCrossB", PrimitiveType.Cube, root, new Vector3(0f, 0.78f, 0f), new Vector3(0.10f, 0.06f, 0.60f), mint);
+            CreatePresentationMesh("StationLower", PrimitiveType.Cylinder, root, new Vector3(0f, 0.12f, 0f), new Vector3(0.62f, 0.14f, 0.62f), gold);
+            CreatePresentationMesh("StationUpper", PrimitiveType.Cylinder, root, new Vector3(0f, 0.38f, 0f), new Vector3(0.45f, 0.12f, 0.45f), mint);
+            CreatePresentationMesh("StationHandle", PrimitiveType.Cube, root, new Vector3(0f, 0.60f, 0f), new Vector3(0.12f, 0.20f, 0.12f), ink);
+            CreatePresentationMesh("StationCrossA", PrimitiveType.Cube, root, new Vector3(0f, 0.78f, 0f), new Vector3(0.60f, 0.06f, 0.10f), mint);
+            CreatePresentationMesh("StationCrossB", PrimitiveType.Cube, root, new Vector3(0f, 0.78f, 0f), new Vector3(0.10f, 0.06f, 0.60f), mint);
 
-            var radiusObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            radiusObject.name = "HealingRadiusCue";
+            var radiusObject = new GameObject("HealingRadiusCue", typeof(MeshFilter), typeof(MeshRenderer));
             radiusObject.transform.SetParent(transform, false);
             radiusObject.transform.localPosition = new Vector3(0f, 0.06f, 0f);
-            radiusObject.transform.localScale = new Vector3(2.4f, 0.012f, 2.4f);
-            var collider = radiusObject.GetComponent<Collider>();
-            if (collider != null) Destroy(collider);
-            radiusObject.GetComponent<Renderer>().sharedMaterial = mint;
+            radiusObject.transform.localScale = new Vector3(2.4f, 1f, 2.4f);
+            radiusObject.GetComponent<MeshFilter>().sharedMesh = PresentationMeshFactory.Ring("HealingRadiusRing", 0.46f, 0.5f, 32);
+            radiusObject.GetComponent<MeshRenderer>().sharedMaterial = mint;
             _radius = radiusObject.transform;
             _objects.Add(radiusObject);
         }
 
-        private GameObject CreatePrimitive(string name, PrimitiveType type, Transform parent, Vector3 position, Vector3 scale, Material material)
+        private GameObject CreatePresentationMesh(string name, PrimitiveType type, Transform parent, Vector3 position, Vector3 scale, Material material)
         {
-            var item = GameObject.CreatePrimitive(type);
-            item.name = name;
+            var mesh = type == PrimitiveType.Sphere || type == PrimitiveType.Capsule
+                ? PresentationMeshFactory.FacetedOrb(name + "Orb", 4, 12)
+                : type == PrimitiveType.Cylinder
+                    ? PresentationMeshFactory.Cylinder(name + "Cylinder", 16)
+                    : PresentationMeshFactory.Box(name + "Box");
+            var item = new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer));
             item.transform.SetParent(parent, false);
             item.transform.localPosition = position;
             item.transform.localScale = scale;
-            var collider = item.GetComponent<Collider>();
-            if (collider != null) Destroy(collider);
-            item.GetComponent<Renderer>().sharedMaterial = material;
+            item.GetComponent<MeshFilter>().sharedMesh = mesh;
+            item.GetComponent<MeshRenderer>().sharedMaterial = material;
             _objects.Add(item);
             return item;
         }

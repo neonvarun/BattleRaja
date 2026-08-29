@@ -244,11 +244,16 @@ namespace BattleRaja.Presentation.Combat
         private void SpawnDecoyObject(MatchAuthorityDecoy snapshot)
         {
             if (_decoyObject != null) return;
-            _decoyObject = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            _decoyObject.name = "MayaDecoy";
+            _decoyObject = new GameObject("MayaDecoy", typeof(MeshFilter), typeof(MeshRenderer), typeof(CapsuleCollider));
+            _decoyObject.GetComponent<MeshFilter>().sharedMesh = PresentationMeshFactory.FacetedOrb("MayaDecoyOrb", 4, 12);
             _decoyObject.transform.position = new Vector3(snapshot.Position.X, 1f, snapshot.Position.Y);
             _decoyObject.transform.localScale = Vector3.one * 0.9f;
-            if (decoyMaterial != null) _decoyObject.GetComponent<Renderer>().sharedMaterial = decoyMaterial;
+            var decoyRenderer = _decoyObject.GetComponent<MeshRenderer>();
+            if (decoyMaterial != null) decoyRenderer.sharedMaterial = decoyMaterial;
+            var decoyCollider = _decoyObject.GetComponent<CapsuleCollider>();
+            decoyCollider.direction = 1;
+            decoyCollider.height = 1.65f;
+            decoyCollider.radius = 0.42f;
             _decoyObject.AddComponent<MayaDecoyVisuals>();
             _decoyHealth = _decoyObject.AddComponent<CombatHealth>();
             _decoyHealth.ConfigureMaxHealth(Mathf.Max(1, snapshot.MaxHealth));

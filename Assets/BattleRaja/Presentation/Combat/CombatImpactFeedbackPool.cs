@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using BattleRaja.Presentation.Visuals;
 using UnityEngine;
 
 namespace BattleRaja.Presentation.Combat
@@ -102,33 +103,21 @@ namespace BattleRaja.Presentation.Combat
 
         private ImpactInstance CreateInstance()
         {
-            var objectToPool = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            objectToPool.name = "PooledImpact";
+            var objectToPool = new GameObject("PooledImpact", typeof(MeshFilter), typeof(MeshRenderer));
             objectToPool.transform.SetParent(transform, false);
-            var collider = objectToPool.GetComponent<Collider>();
-            if (collider != null)
-            {
-                Destroy(collider);
-            }
-
-            var renderer = objectToPool.GetComponent<Renderer>();
+            objectToPool.GetComponent<MeshFilter>().sharedMesh = PresentationMeshFactory.FacetedOrb("PooledImpactOrb", 3, 12);
+            var renderer = objectToPool.GetComponent<MeshRenderer>();
             if (impactMaterial != null)
             {
                 renderer.sharedMaterial = impactMaterial;
             }
 
             objectToPool.SetActive(false);
-            var haloObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            haloObject.name = "PooledImpactHalo";
+            var haloObject = new GameObject("PooledImpactHalo", typeof(MeshFilter), typeof(MeshRenderer));
             haloObject.transform.SetParent(transform, false);
             haloObject.transform.localScale = new Vector3(0.30f, 0.012f, 0.30f);
-            var haloCollider = haloObject.GetComponent<Collider>();
-            if (haloCollider != null)
-            {
-                Destroy(haloCollider);
-            }
-
-            var haloRenderer = haloObject.GetComponent<Renderer>();
+            haloObject.GetComponent<MeshFilter>().sharedMesh = PresentationMeshFactory.Ring("PooledImpactRing", 0.42f, 0.5f, 20);
+            var haloRenderer = haloObject.GetComponent<MeshRenderer>();
             if (impactMaterial != null)
             {
                 haloRenderer.sharedMaterial = impactMaterial;
