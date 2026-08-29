@@ -12,7 +12,8 @@ namespace BattleRaja.Editor
 {
     /// <summary>
     /// Builds the saved presentation layer that sits on top of the authoritative V1
-    /// actors. The rig is a lightweight transform rig (no skinning or physics), and
+    /// actors. The rig is a lightweight transform rig with a small, deterministic
+    /// two-bone primary body/cloak skin; accessories remain render-only parts, and
     /// every effect is a pooled-safe particle cue with no gameplay callbacks.
     /// </summary>
     public static class ProductionPresentationBuilder
@@ -21,6 +22,7 @@ namespace BattleRaja.Editor
         private const string AnimationRoot = ArtRoot + "/Animation";
         private const string ClipRoot = AnimationRoot + "/Clips";
         private const string VfxRoot = ArtRoot + "/VFX";
+        private const string MeshRoot = ArtRoot + "/Meshes";
         private const string MaterialRoot = ArtRoot + "/Materials";
         private const string PrefabRoot = "Assets/BattleRaja/Content/Prefabs/Production";
         private const string ControllerPath = AnimationRoot + "/FighterProduction.controller";
@@ -120,6 +122,21 @@ namespace BattleRaja.Editor
                 {
                     return false;
                 }
+
+                var skins = fighter.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+                if (skins.Length != 1
+                    || skins[0].sharedMesh == null
+                    || skins[0].bones == null
+                    || skins[0].bones.Length != 2
+                    || skins[0].sharedMesh.bindposes == null
+                    || skins[0].sharedMesh.bindposes.Length != skins[0].bones.Length
+                    || skins[0].sharedMesh.boneWeights == null
+                    || skins[0].sharedMesh.boneWeights.Length != skins[0].sharedMesh.vertexCount
+                    || skins[0].sharedMesh.uv == null
+                    || skins[0].sharedMesh.uv.Length != skins[0].sharedMesh.vertexCount)
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -192,6 +209,7 @@ namespace BattleRaja.Editor
             EnsureFolder(AnimationRoot);
             EnsureFolder(ClipRoot);
             EnsureFolder(VfxRoot);
+            EnsureFolder(MeshRoot);
             EnsureFolder(MaterialRoot);
             EnsureFolder("Assets/BattleRaja/Content/Prefabs");
             EnsureFolder(PrefabRoot);
@@ -430,6 +448,7 @@ namespace BattleRaja.Editor
             }
 
             RemoveChild(root.transform, "ProductionRig");
+            RemoveChild(root.transform, "ProductionSkinnedPrimary");
             RemoveChildrenWithPrefix(root.transform, "Vfx_");
             var existingAnimator = root.GetComponent<Animator>();
             if (existingAnimator != null) UnityEngine.Object.DestroyImmediate(existingAnimator, true);
@@ -475,6 +494,8 @@ namespace BattleRaja.Editor
             ReparentPart(root.transform.Find("ScarfLeft"), chest);
             ReparentPart(root.transform.Find("ScarfRight"), chest);
 
+            BuildPrimarySkinnedMesh(root, fighterIndex, hips, chest);
+
             var animator = root.AddComponent<Animator>();
             animator.runtimeAnimatorController = controller;
             animator.applyRootMotion = false;
@@ -492,6 +513,105 @@ namespace BattleRaja.Editor
             PrefabUtility.UnloadPrefabContents(root);
         }
 
+        private static void BuildPrimarySkinnedMesh(GameObject root, int fighterIndex, Transform hips, Transform chest)
+        {
+            var primaryName = fighterIndex == 2 ? "Cloak" : "Body";
+            var primary = FindDescendant(root.transform, primaryName);
+            var sourceFilter = primary != null ? primary.GetComponent<MeshFilter>() : null;
+            var sourceRenderer = primary != null ? primary.GetComponent<MeshRenderer>() : null;
+            var sourceMesh = sourceFilter != null ? sourceFilter.sharedMesh : null;
+            if (primary == null || sourceMesh == null || sourceRenderer == null)
+            {
+                Debug.LogWarning("Production primary mesh is missing; skipped skin build for " + root.name + ".");
+                return;
+            }
+
+            var skinnedObject = new GameObject("ProductionSkinnedPrimary");
+            skinnedObject.transform.SetParent(root.transform, false);
+            skinnedObject.transform.localPosition = Vector3.zero;
+            skinnedObject.transform.localRotation = Quaternion.identity;
+            skinnedObject.transform.localScale = Vector3.one;
+
+            var rootLocalFromPrimary = root.transform.worldToLocalMatrix * primary.localToWorldMatrix;
+            var sourceVertices = sourceMesh.vertices;
+            var vertices = new Vector3[sourceVertices.Length];
+            for (var i = 0; i < sourceVertices.Length; i++)
+            {
+                vertices[i] = rootLocalFromPrimary.MultiplyPoint3x4(sourceVertices[i]);
+            }
+
+            var skinnedMesh = new Mesh
+            {
+                name = (fighterIndex == 2 ? "MayaSkinCloak" : fighterIndex == 1 ? "PehelSkinBody" : "BijliSkinBody")
+            };
+            skinnedMesh.vertices = vertices;
+            skinnedMesh.subMeshCount = sourceMesh.subMeshCount;
+            for (var subMesh = 0; subMesh < sourceMesh.subMeshCount; subMesh++)
+            {
+                skinnedMesh.SetTriangles(sourceMesh.GetTriangles(subMesh), subMesh, true);
+            }
+
+            var sourceUv = sourceMesh.uv;
+            skinnedMesh.uv = sourceUv != null && sourceUv.Length == vertices.Length
+                ? sourceUv
+                : new Vector2[vertices.Length];
+            skinnedMesh.bindposes = new[]
+            {
+                hips.worldToLocalMatrix * skinnedObject.transform.localToWorldMatrix,
+                chest.worldToLocalMatrix * skinnedObject.transform.localToWorldMatrix
+            };
+
+            var weights = new BoneWeight[vertices.Length];
+            for (var i = 0; i < vertices.Length; i++)
+            {
+                // The generated body/cloak meshes are centered around the hips/chest
+                // chain. Blend through the waist so the saved primary silhouette
+                // follows the Animator without introducing gameplay dependencies.
+                var chestWeight = Mathf.Clamp01(Mathf.InverseLerp(0.48f, 1.08f, vertices[i].y));
+                weights[i] = new BoneWeight
+                {
+                    boneIndex0 = 0,
+                    boneIndex1 = 1,
+                    weight0 = 1f - chestWeight,
+                    weight1 = chestWeight
+                };
+            }
+
+            skinnedMesh.boneWeights = weights;
+            skinnedMesh.RecalculateNormals();
+            skinnedMesh.RecalculateBounds();
+            var savedMesh = SaveSkinnedMesh(skinnedMesh);
+
+            var skinnedRenderer = skinnedObject.AddComponent<SkinnedMeshRenderer>();
+            skinnedRenderer.sharedMesh = savedMesh;
+            skinnedRenderer.bones = new[] { hips, chest };
+            skinnedRenderer.rootBone = hips;
+            skinnedRenderer.sharedMaterials = sourceRenderer.sharedMaterials;
+            skinnedRenderer.quality = SkinQuality.Bone2;
+            skinnedRenderer.updateWhenOffscreen = false;
+
+            // Keep the source MeshFilter for deterministic rebuilds and editor
+            // inspection, but let the skinned primary be the only visible body.
+            sourceRenderer.enabled = false;
+        }
+
+        private static Mesh SaveSkinnedMesh(Mesh mesh)
+        {
+            var path = MeshRoot + "/" + mesh.name + ".asset";
+            var existing = AssetDatabase.LoadAssetAtPath<Mesh>(path);
+            if (existing != null)
+            {
+                EditorUtility.CopySerialized(mesh, existing);
+                existing.name = mesh.name;
+                EditorUtility.SetDirty(existing);
+                UnityEngine.Object.DestroyImmediate(mesh);
+                return existing;
+            }
+
+            AssetDatabase.CreateAsset(mesh, path);
+            return AssetDatabase.LoadAssetAtPath<Mesh>(path);
+        }
+
         private static Transform CreateBone(string name, Transform parent, Vector3 localPosition)
         {
             var bone = new GameObject(name).transform;
@@ -506,6 +626,19 @@ namespace BattleRaja.Editor
         {
             if (part == null || parent == null) return;
             part.SetParent(parent, true);
+        }
+
+        private static Transform FindDescendant(Transform parent, string name)
+        {
+            if (parent == null) return null;
+            if (parent.name == name) return parent;
+            for (var i = 0; i < parent.childCount; i++)
+            {
+                var match = FindDescendant(parent.GetChild(i), name);
+                if (match != null) return match;
+            }
+
+            return null;
         }
 
         private static ParticleSystem AddVfxInstance(Transform parent, GameObject prefab, string name)

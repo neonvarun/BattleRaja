@@ -688,6 +688,24 @@ namespace BattleRaja.Tests.PlayMode
                 foreach (var filter in filters)
                 {
                     Assert.That(filter.sharedMesh, Is.Not.Null, fighter.name + " has a missing saved mesh reference");
+                    Assert.That(filter.sharedMesh.uv, Has.Length.EqualTo(filter.sharedMesh.vertexCount),
+                        fighter.name + " saved mesh must carry deterministic UVs for future authored materials");
+                }
+
+                var skins = modelRoot.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+                Assert.That(skins, Has.Length.EqualTo(1), fighter.name + " must have one skinned primary body/cloak renderer");
+                foreach (var skin in skins)
+                {
+                    Assert.That(skin.sharedMesh, Is.Not.Null, fighter.name + " skinned primary has no saved mesh");
+                    Assert.That(skin.bones, Has.Length.EqualTo(2), fighter.name + " skinned primary must use the hips/chest chain");
+                    Assert.That(skin.sharedMesh.bindposes, Has.Length.EqualTo(skin.bones.Length),
+                        fighter.name + " skinned primary bindposes do not match its bones");
+                    Assert.That(skin.sharedMesh.boneWeights, Has.Length.EqualTo(skin.sharedMesh.vertexCount),
+                        fighter.name + " skinned primary has incomplete bone weights");
+                    Assert.That(skin.sharedMesh.boneWeights.Any(weight => weight.weight0 > 0.01f && weight.weight1 > 0.01f), Is.True,
+                        fighter.name + " skinned primary must blend across the hips/chest chain");
+                    Assert.That(skin.sharedMesh.uv, Has.Length.EqualTo(skin.sharedMesh.vertexCount),
+                        fighter.name + " skinned primary must carry deterministic UVs");
                 }
 
                 Assert.That(modelRoot.GetComponentsInChildren<Collider>(true), Is.Empty,
@@ -744,6 +762,8 @@ namespace BattleRaja.Tests.PlayMode
                 foreach (var filter in filters)
                 {
                     Assert.That(filter.sharedMesh, Is.Not.Null, pickup.name + " has a missing saved mesh reference");
+                    Assert.That(filter.sharedMesh.uv, Has.Length.EqualTo(filter.sharedMesh.vertexCount),
+                        pickup.name + " saved mesh must carry deterministic UVs for future authored materials");
                 }
 
                 Assert.That(modelRoot.GetComponentsInChildren<Collider>(true), Is.Empty,

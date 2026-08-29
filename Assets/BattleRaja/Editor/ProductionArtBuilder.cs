@@ -89,12 +89,15 @@ namespace BattleRaja.Editor
                 if (prefab == null) return false;
 
                 var filters = prefab.GetComponentsInChildren<MeshFilter>(true);
-                var hasMesh = false;
+                var hasMesh = filters.Length > 0;
                 for (var j = 0; j < filters.Length; j++)
                 {
-                    if (filters[j] != null && filters[j].sharedMesh != null)
+                    if (filters[j] == null
+                        || filters[j].sharedMesh == null
+                        || filters[j].sharedMesh.uv == null
+                        || filters[j].sharedMesh.uv.Length != filters[j].sharedMesh.vertexCount)
                     {
-                        hasMesh = true;
+                        hasMesh = false;
                         break;
                     }
                 }
@@ -414,7 +417,52 @@ namespace BattleRaja.Editor
             mesh.triangles = triangles;
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
+            AssignDeterministicUv(mesh, vertices);
             return mesh;
+        }
+
+        private static void AssignDeterministicUv(Mesh mesh, Vector3[] vertices)
+        {
+            if (mesh == null || vertices == null || vertices.Length == 0) return;
+
+            var bounds = mesh.bounds;
+            var size = bounds.size;
+            var largestPlanarAxis = Mathf.Max(size.x, size.y);
+            var isFlatExtrusion = size.z <= largestPlanarAxis * 0.35f;
+            var isVerticalForm = size.y >= Mathf.Max(size.x, size.z) * 0.8f;
+            var uv = new Vector2[vertices.Length];
+
+            for (var i = 0; i < vertices.Length; i++)
+            {
+                var vertex = vertices[i];
+                if (isFlatExtrusion)
+                {
+                    uv[i] = new Vector2(
+                        NormalizeCoordinate(vertex.x, bounds.min.x, bounds.max.x),
+                        NormalizeCoordinate(vertex.y, bounds.min.y, bounds.max.y));
+                }
+                else if (isVerticalForm)
+                {
+                    var angle = Mathf.Atan2(vertex.z, vertex.x) / (Mathf.PI * 2f) + 0.5f;
+                    uv[i] = new Vector2(
+                        Mathf.Repeat(angle, 1f),
+                        NormalizeCoordinate(vertex.y, bounds.min.y, bounds.max.y));
+                }
+                else
+                {
+                    uv[i] = new Vector2(
+                        NormalizeCoordinate(vertex.x, bounds.min.x, bounds.max.x),
+                        NormalizeCoordinate(vertex.z, bounds.min.z, bounds.max.z));
+                }
+            }
+
+            mesh.uv = uv;
+        }
+
+        private static float NormalizeCoordinate(float value, float min, float max)
+        {
+            var range = max - min;
+            return range > 0.0001f ? Mathf.Clamp01((value - min) / range) : 0.5f;
         }
 
         private struct LoftSection
