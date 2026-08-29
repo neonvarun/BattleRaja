@@ -20,6 +20,7 @@ namespace BattleRaja.Presentation.Visuals
         {
             Idle,
             Locomotion,
+            Aim,
             Attack,
             Ability,
             Hit,
@@ -57,6 +58,7 @@ namespace BattleRaja.Presentation.Visuals
         private Animator _productionAnimator;
         private ProductionVfxCue _productionVfx;
         private BattleRajaAudioDirector _audio;
+        private PlayerInputAdapter _playerInput;
         private CombatTarget _target;
         private float _attackPulse;
         private float _abilityPulse;
@@ -83,6 +85,7 @@ namespace BattleRaja.Presentation.Visuals
             bodyRenderer = bodyRenderer != null ? bodyRenderer : GetComponentInChildren<Renderer>();
             health = health != null ? health : GetComponent<CombatHealth>();
             movementAgent = movementAgent != null ? movementAgent : GetComponent<MovementPlayerAgent>();
+            _playerInput = GetComponent<PlayerInputAdapter>();
             _audio = FindAnyObjectByType<BattleRajaAudioDirector>();
             _bodyProperties = new MaterialPropertyBlock();
             _bodyBaseLocalPosition = bodyRenderer != null ? bodyRenderer.transform.localPosition : Vector3.zero;
@@ -142,6 +145,7 @@ namespace BattleRaja.Presentation.Visuals
             else if (_abilityPulse > 0f) CurrentAnimation = AnimationState.Ability;
             else if (_attackPulse > 0f) CurrentAnimation = AnimationState.Attack;
             else if (movementAgent != null && movementAgent.Velocity.SqrMagnitude > 0.01f) CurrentAnimation = AnimationState.Locomotion;
+            else if (_playerInput != null && _playerInput.IsAimHeld) CurrentAnimation = AnimationState.Aim;
             else CurrentAnimation = AnimationState.Idle;
 
             ApplyProductionAnimationState();
@@ -286,6 +290,10 @@ namespace BattleRaja.Presentation.Visuals
                     case AnimationState.Locomotion:
                         position.y += Mathf.Abs(sway) * 0.045f;
                         rotation *= Quaternion.Euler(0f, 0f, sway * 5f);
+                        break;
+                    case AnimationState.Aim:
+                        position.z -= 0.025f;
+                        rotation *= Quaternion.Euler(0f, sway * 4f, -sway * 3f);
                         break;
                     case AnimationState.Attack:
                         position.z -= 0.06f;

@@ -34,6 +34,21 @@ namespace BattleRaja.Presentation.Movement
         public bool AimAssistEnabled => _aimAssistEnabled;
         public bool IsAttackHeld => _hasFocus && ((_attackAction != null && _attackAction.IsPressed()) || (attackButton != null && attackButton.IsPressed));
         public bool IsAbilityPressed => _hasFocus && ((_abilityAction != null && _abilityAction.IsPressed()) || (abilityButton != null && abilityButton.IsPressed));
+        /// <summary>
+        /// Reports active aim intent without applying aim assist or doing any physics
+        /// queries. Presentation uses this to select the dedicated aim animation while
+        /// authority still consumes the canonical input frame below.
+        /// </summary>
+        public bool IsAimHeld
+        {
+            get
+            {
+                if (!_hasFocus) return false;
+                var touchAim = aimStick != null && aimStick.IsActive ? aimStick.Value : Vector2.zero;
+                if (touchAim.sqrMagnitude > 0.0001f) return true;
+                return _aimStickAction != null && _aimStickAction.ReadValue<Vector2>().sqrMagnitude > 0.0001f;
+            }
+        }
 
         private void Awake()
         {

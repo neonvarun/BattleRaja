@@ -29,7 +29,7 @@ namespace BattleRaja.Editor
 
         private static readonly string[] StateNames =
         {
-            "Idle", "Locomotion", "Attack", "Ability", "Hit", "Knockback", "Eliminated", "Victory", "Defeat"
+            "Idle", "Locomotion", "Aim", "Attack", "Ability", "Hit", "Knockback", "Eliminated", "Victory", "Defeat"
         };
 
         private static readonly string[] VfxNames =
@@ -252,7 +252,7 @@ namespace BattleRaja.Editor
             for (var i = 0; i < StateNames.Length; i++)
             {
                 var state = stateMachine.AddState(StateNames[i]);
-                state.motion = CreateAnimationClip(StateNames[i], i);
+                state.motion = CreateAnimationClip(StateNames[i]);
                 if (i == 0) stateMachine.defaultState = state;
 
                 var transition = stateMachine.AddAnyStateTransition(state);
@@ -265,16 +265,21 @@ namespace BattleRaja.Editor
             return controller;
         }
 
-        private static AnimationClip CreateAnimationClip(string stateName, int stateIndex)
+        private static AnimationClip CreateAnimationClip(string stateName)
         {
+            var loops = stateName == "Idle" || stateName == "Locomotion" || stateName == "Aim";
             var clip = new AnimationClip
             {
                 name = "Fighter" + stateName,
                 frameRate = 30f,
-                wrapMode = stateIndex <= 1 ? WrapMode.Loop : WrapMode.Once
+                wrapMode = loops ? WrapMode.Loop : WrapMode.Once
             };
 
-            var duration = stateIndex <= 1 ? 0.8f : stateIndex == 2 ? 0.18f : stateIndex == 3 ? 0.36f : 0.2f;
+            var duration = stateName == "Idle" || stateName == "Locomotion" ? 0.8f
+                : stateName == "Aim" ? 0.55f
+                : stateName == "Attack" ? 0.18f
+                : stateName == "Ability" ? 0.36f
+                : 0.2f;
             var times = new[] { 0f, duration * 0.5f, duration };
             var hipsBase = 0.65f;
             var chestPath = "ProductionRig/Root/Hips/Chest";
@@ -294,6 +299,12 @@ namespace BattleRaja.Editor
                     SetCurve(clip, rightFootPath, "m_LocalPosition.y", times, new[] { -0.65f, -0.75f, -0.65f });
                     SetCurve(clip, "ProductionRig/Root/Hips", "m_LocalPosition.y", times,
                         new[] { hipsBase, hipsBase + 0.035f, hipsBase });
+                    break;
+                case "Aim":
+                    SetCurve(clip, chestPath, "m_LocalRotation.x", times, new[] { 0f, -0.035f, 0f });
+                    SetCurve(clip, chestPath, "m_LocalRotation.w", times, new[] { 1f, 0.999f, 1f });
+                    SetCurve(clip, leftHandPath, "m_LocalPosition.z", times, new[] { 0f, 0.12f, 0f });
+                    SetCurve(clip, rightHandPath, "m_LocalPosition.z", times, new[] { 0f, 0.16f, 0f });
                     break;
                 case "Attack":
                     SetCurve(clip, leftHandPath, "m_LocalPosition.z", times, new[] { 0f, 0.20f, 0f });
