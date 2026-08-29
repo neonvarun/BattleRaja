@@ -84,3 +84,21 @@ The generated feature graphic/icon and these screenshots must not be presented a
 commissioned/culturally approved artwork. The package ID remains temporary and debug-signed;
 the owner must select final branding, signing, privacy/Data Safety answers, rating and Play
 Console materials before upload.
+
+## Exact terminal-outcome candidate screenshots - 2026-08-30
+
+For source traceability, a fresh screenshot set was captured from the exact `5d136fb`
+temporary-ID APK on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34).
+The ignored evidence folder is
+`Builds/Local/Device/Performance/20260830-lava-5d136fb-outcome/`; its `manifest.json` records
+the APK/AAB, route, telemetry and screenshot hashes. The set includes menu, Solo Raja, all
+three fighter cards, live/action feedback, Aandhi pressure/closing/final circle, defeat and
+spectating, results/rematch, settings toggles, background/resume and tutorial `8/8 COMPLETE`
+via the in-app SKIP control.
+
+These are technical evidence candidates, not approved listing art. The player reached results
+at placement #6 in this route, so no physical victory presentation was observed; the winner
+and non-winner terminal cues are covered by the exact PlayMode regression. The package remains
+debug-signed with temporary ID `com.example.battleraja.m11`. Owner approval is still required
+for final crops, visual quality, cultural safety, accessibility, copy, privacy/Data Safety,
+rating, package identity/signing and Play Console use.

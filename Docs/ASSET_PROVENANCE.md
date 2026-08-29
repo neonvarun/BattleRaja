@@ -85,3 +85,18 @@ temporary audio fallback if it is still observed, and obtain owner approval for 
 cultural and legal wording. The owned generated WAV source set and mixer are recorded in
 `Docs/AUDIO_BIBLE.md`; final mix and device loudness review remain open. Do not claim the
 directional concept images as licensed production art.
+
+## Terminal outcome VFX continuation — 2026-08-30
+
+Commit `5d136fb` extends the repository-owned generated set with
+`Assets/BattleRaja/Content/Art/V1/VFX/VictoryVfx.prefab` and `DefeatVfx.prefab`, plus their
+`VictoryVfxMaterial.mat` and `DefeatVfxMaterial.mat` materials. `ProductionPresentationBuilder`
+creates these assets deterministically from local particle recipes (gold Victory, red Defeat)
+and attaches them to the three generated fighter prefabs. `OfflineMatchController` routes the
+authoritative placement result to the existing `FighterPresentation` adapter; the VFX remain
+render-only and cannot change health, placement, cooldown, rewards or match authority.
+
+The six-cue prefab contract and terminal persistence are covered by the exact 141/141
+EditMode and 88/88 PlayMode gates in release-plan P47. These are repository-owned generated
+technical art assets with no downloaded or third-party source. They are not a claim of final
+commissioned VFX, cultural approval, accessibility approval or store-ready art direction.

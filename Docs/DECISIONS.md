@@ -1613,3 +1613,29 @@ Record every material choice here. Do not silently overwrite old decisions.
   `ProductionPresentationBuilder`, saved `FighterAim.anim`, full 141/141 EditMode and 87/87
   PlayMode results, and P46 in `Docs/V1_RELEASE_PLAN.md`.
 - **Owner:** Human project owner
+
+### ADR-070 - Drive persistent terminal outcome cues from authoritative placement
+
+- **Date:** 2026-08-30
+- **Status:** Accepted for the V1 offline presentation baseline; final authored VFX, cultural,
+  accessibility and human feel review remain open.
+- **Context:** Results were presented through the existing overlay, but fighter presentation
+  could lose its terminal state or leave the result visually ambiguous. A clearer cue must not
+  duplicate placement logic or let a particle system become gameplay authority.
+- **Options considered:** Leave the result overlay as the only cue; infer Victory/Defeat from
+  local health or eliminated flags; or pass the already-authoritative result placement into a
+  render-only presentation adapter with saved VFX assets.
+- **Decision:** `OfflineMatchController.PublishResults` calls `FighterPresentation.SetVictory`
+  for each result. First place selects persistent `AnimationState.Victory` and the saved gold
+  `VictoryVfx`; all other placements select persistent `AnimationState.Defeat` and the saved
+  red `DefeatVfx`. `ProductionVfxCue` owns only cue playback counters and particle references;
+  placement, health, elimination, rewards, cooldowns, timing and match completion remain in
+  the domain/authority layer. The winner is not marked eliminated as a presentation shortcut.
+- **Consequences:** The result state remains readable behind/after the overlay and the cue
+  contract is inspectable in the saved prefabs. The generated colors, burst recipes and clips
+  are technical baseline art, not final commissioned VFX, cultural direction or proof of touch
+  comfort. Rematch reloads the scene, so the normal lifecycle resets the presentation state.
+- **Evidence/sources:** `OfflineMatchController`, `FighterPresentation`, `ProductionVfxCue`,
+  `ProductionPresentationBuilder`, saved `VictoryVfx.prefab`/`DefeatVfx.prefab`, the terminal
+  outcome PlayMode regression, and P47 in `Docs/V1_RELEASE_PLAN.md`.
+- **Owner:** Human project owner

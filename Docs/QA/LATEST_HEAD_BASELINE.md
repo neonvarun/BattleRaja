@@ -1868,3 +1868,27 @@ installed and resumed on approved Lava `ST5GDW23LB004392`; the exact route/evide
 is `Builds/Local/Device/Performance/20260830-lava-d0de949-aim/manifest.json`. This remains a
 bounded 4 KB-device technical candidate: no runtime 16 KB proof, normalized frame/GC/GPU
 budget, sustained thermal/battery approval or final human/store gate is claimed.
+
+## Current exact terminal-outcome presentation candidate - 2026-08-30
+
+The exact runtime/art source is `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`. It adds saved
+`VictoryVfx.prefab` and `DefeatVfx.prefab` cues and routes authoritative result placement to
+persistent render-only Victory/Defeat states. The winner is not marked eliminated by the
+presentation layer, and no domain, authority, input, damage, cooldown, movement, gadget,
+zone, timing, networking or reward rule changed.
+
+Repository validation is **0 errors / 0 warnings**; exact EditMode is **141/141** and
+PlayMode is **88/88**, including the terminal-outcome regression. The matching APK/AAB pass
+the composed release checker, bundletool 1.18.3 extraction, static 16 KB alignment and
+temporary debug-signature verification. The artifact and test hashes are indexed in P47 of
+`Docs/V1_RELEASE_PLAN.md`.
+
+The exact APK installed on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34)
+and real touch reached the full offline route, settings/lifecycle and tutorial `8/8 COMPLETE`
+via SKIP. The local manifest is
+`Builds/Local/Device/Performance/20260830-lava-5d136fb-outcome/manifest.json`; the raw
+snapshot is **273,885 KB PSS / 385,796 KB RSS / 80,020 KB graphics PSS**, thermal status 0,
+and no configured fatal/ANR/SIGSEGV marker. This remains bounded evidence: Lava reports 4 KB
+pages, `gfxinfo` lacks a usable frame histogram, and runtime 16 KB, sustained performance,
+final authored/cultural/fun/accessibility approval, production signing/package identity,
+privacy/Data Safety, rating and Play Console actions remain open.

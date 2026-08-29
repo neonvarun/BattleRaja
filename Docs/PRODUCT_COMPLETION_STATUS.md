@@ -1,6 +1,6 @@
 # Product completion status
 
-Updated: 2026-08-29
+Updated: 2026-08-30
 Classification: **prototype**
 
 ## Latest saved-environment/runtime presentation checkpoint — documentation tip `b4b5649` (runtime/art `ac45479`) — 2026-08-29
@@ -533,3 +533,28 @@ marker. This does not establish normalized performance, runtime 16 KB behavior, 
 action comfort, final authored/cultural/accessibility approval, package identity/signing,
 privacy/Data Safety, content rating or Play Console readiness. Classification remains
 **prototype**.
+
+## Continuation update - 2026-08-30 - exact terminal-outcome presentation candidate
+
+The reviewed source tip is `5d136fbb6be6a5554931f6ab859be8b9a8a995a2` (`art: wire terminal
+outcome presentation cues`). The generated presentation baseline now saves explicit gold
+Victory and red Defeat VFX prefabs and passes authoritative result placement into the
+render-only fighter state. A winner remains visually in Victory rather than being marked
+eliminated as a UI shortcut; non-winning placements persist Defeat. No simulation, authority,
+balance, networking or reward behavior changed.
+
+The exact candidate passes repository validation **0/0**, EditMode **141/141**, PlayMode
+**88/88** (including winner/defeat persistence), Android release checking **0/0**, bundletool
+1.18.3 extraction, static 16 KB alignment and temporary debug-signature verification. APK/AAB
+hashes and logs are indexed in release-plan P47. The exact APK installed on approved Lava
+`ST5GDW23LB004392` and real touch reached the full menu → fighter → match → Aandhi → spectate
+→ results/rematch route, settings toggles, background/resume and tutorial `8/8 COMPLETE` via
+SKIP. Raw bounded telemetry was **273,885 KB PSS / 385,796 KB RSS / 80,020 KB graphics PSS**,
+thermal status 0 and no configured fatal/ANR/SIGSEGV marker.
+
+This improves the machine-verifiable generated presentation baseline, but does not make the
+project Play-ready. Lava reports 4 KB pages, `gfxinfo` has no usable frame histogram, and no
+sustained performance, runtime 16 KB, battery/thermal, final authored art/audio, cultural,
+fun/accessibility, package/signing, privacy/Data Safety, content-rating or Play Console gate is
+closed. Classification remains **prototype / Android offline release candidate in progress**;
+owner approval is still required for all external and subjective gates.

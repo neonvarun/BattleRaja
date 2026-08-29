@@ -6,22 +6,21 @@
 
 ## Current state
 
-- **Latest exact-source presentation/Android checkpoint (2026-08-29):** local HEAD is
-  `b4b56496a185bd2ab2c52dfb28a1d4d8c2229b0a`, with runtime/art source in
-  `ac45479`. The saved Bazaar environment/custom-mesh continuation is documented in P45;
-  no gameplay, authority, input, network or package-policy code changed. Full EditMode is
-  **141/141**, PlayMode is **87/87**, static validation is **0 errors / 0 warnings**, and
-  the exact temporary-ID APK/AAB pass offline manifest, ARM64/static 16 KB, bundletool,
-  alignment, signature and store-dimension checks. Fresh exact APK evidence on approved
-  Lava `ST5GDW23LB004392` reached menu → Solo Raja → Bijli → live opening; a bounded
-  six-sample/30-second live diagnostic continued into player defeat/spectating with
-  thermal status 0, PSS **267,957–272,145 KB**, graphics PSS **75,792–79,888 KB**, and
-  no configured fatal/ANR/SIGSEGV markers. This is raw diagnostic evidence only. The
-  product remains a prototype: final authored art/audio/cultural review, full human Lava
-  route and accessibility/fun review, normalized sustained performance, physical 16 KB,
-  final identity/signing, privacy/Data Safety and Play Console actions remain open. The
-  two prompt files are intentional owner work; the reviewed commits are ready for a
-  non-rewriting fast-forward to remote `main`.
+- **Latest exact-source presentation/Android checkpoint (2026-08-30):** local HEAD is
+  `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`. The terminal-outcome continuation saves
+  Victory/Defeat VFX and routes authoritative placement into persistent render-only fighter
+  states; no gameplay, authority, input, network or package-policy code changed. Full
+  EditMode is **141/141**, PlayMode is **88/88**, static validation is **0 errors / 0
+  warnings**, and the exact temporary-ID APK/AAB pass offline manifest, ARM64/static 16 KB,
+  bundletool, alignment, signature and store-dimension checks. Fresh exact APK evidence on
+  approved Lava `ST5GDW23LB004392` reached the full menu → fighter → match → Aandhi →
+  spectate → results/rematch route, settings/lifecycle and tutorial `8/8 COMPLETE`; the
+  player reached placement #6. Raw telemetry is **273,885 KB PSS / 385,796 KB RSS /
+  80,020 KB graphics PSS**, thermal status 0 and no configured fatal/ANR/SIGSEGV markers.
+  This is bounded diagnostic evidence only. The product remains a prototype: final authored
+  art/audio/cultural review, accessibility/fun review, normalized sustained performance,
+  physical 16 KB, final identity/signing, privacy/Data Safety and Play Console actions
+  remain open. The two prompt files are intentional owner work.
 
 - **Latest exact-source release-gate checkpoint (2026-08-27):** commit
   `2a113e0c4798e8e51a43379a0fa0facd7e8f0fe1` persists ordered production replay captures
@@ -750,3 +749,28 @@ bounded technical candidate: the phone reports 4 KB pages, raw telemetry does no
 normalized sustained budgets, and final authored/cultural/fun/accessibility approval,
 package identity/signing, privacy/Data Safety, content rating and Play Console actions remain
 owner-controlled. The prompt files remain intentional uncommitted owner work.
+
+## Milestone 11 exact terminal-outcome presentation and Android evidence - 2026-08-30
+
+The latest runtime/art source is `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`. It saves explicit
+Victory/Defeat VFX assets and routes authoritative result placement into persistent
+render-only fighter presentation; no offline rule, timing, authority, networking or reward
+behavior changed. Repository validation is **0/0**, EditMode **141/141**, PlayMode **88/88**
+and the exact APK/AAB release checker is **0/0**. The full artifact and test hash index is
+`Docs/V1_RELEASE_PLAN.md` P47.
+
+The matching APK installed successfully on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`,
+Android 14/API 34). Real touch reached the complete local route, settings/lifecycle and
+tutorial `8/8 COMPLETE` via SKIP; the player reached results at placement #6. Evidence and
+hashes are indexed in `Builds/Local/Device/Performance/20260830-lava-5d136fb-outcome/manifest.json`.
+Raw telemetry is **273,885 KB PSS / 385,796 KB RSS / 80,020 KB graphics PSS**, thermal status 0,
+and no configured app fatal/ANR/SIGSEGV marker was found. This is bounded technical evidence:
+the phone reports 4 KB pages, `gfxinfo` has no usable frame histogram, and sustained
+performance/runtime-16-KB approval is not claimed.
+
+The project remains a generated presentation baseline / Android offline release candidate in
+progress, not Play-ready. Final authored/cultural/fun/accessibility approval, final package
+identity and production signing, privacy/Data Safety, content rating, genuine 16 KB runtime,
+sustained performance/thermal/battery validation and Play Console upload/public deployment
+remain owner-controlled. The two prompt files under `PROMPTS/` remain intentional
+uncommitted owner work.

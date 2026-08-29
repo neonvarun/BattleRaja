@@ -797,3 +797,38 @@ The package is a local temporary-ID technical candidate, not an upload-ready rel
 16 KB runtime, sustained performance/thermal/battery, complete physical action comfort,
 final authored/cultural/accessibility approval, release identity/signing, privacy/Data Safety,
 IARC/content rating and Play Console actions remain owner-controlled or untested.
+
+## Exact terminal-outcome candidate refresh - 2026-08-30
+
+The current reviewed source is `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`. It saves explicit
+gold Victory and red Defeat particle prefabs and routes authoritative result placement to the
+render-only fighter presentation. Full EditMode is **141/141**, PlayMode is **88/88** and
+repository validation is **0/0**; the PlayMode suite includes winner/defeat persistence.
+
+- APK: **40,673,654 bytes**, SHA-256
+  `31D982D7334B08D0DE759CE755784547CFCF843D9CFCFB1DB0E041E7EEE2DF2D`.
+- AAB: **36,498,821 bytes**, SHA-256
+  `D49E01B63C5106B68133040F03B2D7F11831DEA80E388D32296FCC6B705C20CA`.
+- Release checker: **0 errors / 0 warnings**, SHA-256
+  `5D704A38FEC64F154382E19593AB0A82F9DB3557DAF2519D8D3852955118409D`; package remains
+  temporary `com.example.battleraja.m11`, API 28/36, no network permission, seven ARM64
+  libraries, static 16 KB alignment passed, and signer is temporary/debug only.
+- Bundletool 1.18.3 APKS SHA-256
+  `0D1961247BDACCD88343A36966201F09EB62388FEAFEB648A546E0F3A1691941`; extracted universal
+  APK SHA-256 `EB14C2826287A8083B3A2D9D610256B269D367A482F7F12DA8BBDF17DD03B24F`; direct and
+  extracted static zipalign checks passed. Full evidence log SHA-256 is
+  `2703521F09ACB310D802292F1FA0EF7F23DCF00BC49AE2FBC0C21E008E7BFF30`.
+- Approved Lava `ST5GDW23LB004392` installed the exact APK and completed the full local route:
+  menu, all three fighter cards, combat/action feedback, Aandhi pressure/closing/final circle,
+  defeat/spectating, results/rematch, settings toggles, background/resume and tutorial
+  `8/8 COMPLETE` via the in-app SKIP control. The route manifest and screenshot hashes are in
+  `Builds/Local/Device/Performance/20260830-lava-5d136fb-outcome/manifest.json`.
+- Raw telemetry: **273,885 KB PSS / 385,796 KB RSS / 80,020 KB graphics PSS**, thermal status
+  0 and no configured fatal/ANR/SIGSEGV marker. This is bounded evidence only; the phone
+  reports 4 KB pages, `gfxinfo` has no usable frame histogram, and no sustained performance,
+  runtime 16 KB, accessibility comfort or final-authored-content approval is claimed.
+
+This remains a debug-signed, temporary-ID technical candidate. Final package identity and
+signing, privacy/Data Safety, IARC/content rating, cultural/legal/fun/accessibility approval,
+genuine 16 KB runtime testing, sustained performance/thermal/battery validation and Play
+Console upload/public deployment remain owner-controlled.

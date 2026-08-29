@@ -109,10 +109,24 @@ cloak is rendered by the saved two-bone `SkinnedMeshRenderer`; accessory meshes 
 render-only children of the rig joints.
 
 Saved VFX prefabs cover fighter attack/ability signatures, hit, elimination, gadget use,
-healing, shield, zone warning, zone closing and final-circle cues. They use local particle
+healing, shield, zone warning, zone closing, final-circle, Victory and Defeat cues. The
+terminal cues are explicit saved assets at `Assets/BattleRaja/Content/Art/V1/VFX/VictoryVfx.prefab`
+and `DefeatVfx.prefab`; Victory uses a warm gold burst and Defeat uses a restrained red burst
+so the result state remains legible without relying on audio. All cues use local particle
 systems with bounded bursts and no physics or gameplay callbacks. This is a controlled
 Unity-generated presentation baseline, not a claim that a human-authored sculpt, production
 skinning pass, final VFX direction or cultural review has been approved.
+
+## Terminal outcome presentation continuation — 2026-08-30
+
+Commit `5d136fb` wires authoritative result placement to the existing render-only fighter
+presentation. A first-place result selects the persistent Victory state and gold burst; every
+other result selects the persistent Defeat state and red burst. `FighterPresentation` never
+owns placement, health, elimination, rewards or match completion, and the winner is not marked
+eliminated merely because the results overlay is shown. The six-cue prefab contract and the
+winner/defeat persistence regression are machine-checked in the 141/141 EditMode and 88/88
+PlayMode candidate gates. The generated colors and burst recipes are reviewable starting
+points; human readability, cultural, accessibility, fun and final VFX approval remain open.
 
 The four images under `Art/Concepts` are directional references only. They are not shipped
 gameplay art and must not be presented as screenshots or final asset provenance.

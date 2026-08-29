@@ -1,6 +1,6 @@
 # BattleRaja V1 current-state index
 
-Updated: 2026-08-29
+Updated: 2026-08-30
 
 ## Evidence location policy
 
@@ -360,3 +360,24 @@ ANR or SIGSEGV marker was found. Because the phone reports 4 KB pages and `gfxin
 usable frame histogram, runtime 16 KB, sustained budgets and normalized performance remain
 unclaimed. Owner gates for final art/audio/cultural/fun/accessibility, signing/package identity,
 privacy/Data Safety, content rating and Play Console remain open.
+
+## Latest exact terminal-outcome presentation candidate - 2026-08-30
+
+Source `5d136fbb6be6a5554931f6ab859be8b9a8a995a2` adds saved Victory/Defeat particle cues and
+routes authoritative result placement into persistent render-only fighter states. It does not
+change the offline domain, authority, input, damage, cooldown, movement, gadget, zone, timing,
+network or reward paths. The exact candidate passes repository validation **0/0**, EditMode
+**141/141** and PlayMode **88/88**, including a regression that exercises both winner and
+non-winner terminal presentation states. Exact Android/bundletool evidence is indexed in P47
+of `Docs/V1_RELEASE_PLAN.md` and in the local Lava manifest
+`Builds/Local/Device/Performance/20260830-lava-5d136fb-outcome/manifest.json`.
+
+Approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34) installed the exact APK
+successfully. Real touch reached menu, all three fighters, live action feedback, Aandhi
+pressure/closing/final circle, defeat/spectating, results/rematch, settings toggles,
+background/resume and tutorial `8/8 COMPLETE` via SKIP. The bounded snapshot is **273,885 KB
+PSS / 385,796 KB RSS / 80,020 KB graphics PSS**, thermal status 0, with no configured app
+fatal/ANR/SIGSEGV marker. The phone reports 4 KB pages; no runtime 16 KB, normalized FPS or
+sustained performance claim is made. Final authored/cultural/fun/accessibility review,
+production signing/package identity, privacy/Data Safety, content rating and Play Console
+actions remain owner-controlled.

@@ -2841,3 +2841,76 @@ than normalized FPS, frame-time, GC, thermal, battery, accessibility or sustaine
 
 The candidate remains a **prototype / Android offline release candidate in progress**, not
 Play-ready. The two prompt files under `PROMPTS/` remain intentional uncommitted owner work.
+
+### P47 - Exact 5d136fb terminal-outcome presentation candidate and Lava route - 2026-08-30
+
+The exact runtime/art source for this checkpoint is commit
+`5d136fbb6be6a5554931f6ab859be8b9a8a995a2` (`art: wire terminal outcome presentation cues`).
+The saved presentation layer now includes gold Victory and red Defeat VFX prefabs, and
+`OfflineMatchController` drives the render-only terminal state from authoritative results.
+`FighterPresentation` keeps Victory/Defeat persistent after results publication without
+marking a winner eliminated. No damage, cooldown, movement, gadget, zone, timing, authority,
+networking or reward rule changed.
+
+#### Machine evidence
+
+- Repository validation: **0 errors / 0 warnings** from `Tools/Validation/validate.ps1`.
+- EditMode: **141/141 passed**, XML `Builds/Local/TestResults/editmode-outcome-vfx-final.xml`
+  (SHA-256 `E51A3F7384F3144B7AE114AD4351A7BD9FC9DE9994825013DD37592924C5E581`).
+- PlayMode: **88/88 passed**, XML `Builds/Local/TestResults/playmode-5d136fb-final.xml`
+  (SHA-256 `5A3442B484486C3770626D97BBC7A3207C2388AFBC8E6CD856699588E914208A`). This includes
+  the terminal outcome persistence regression for Victory and Defeat VFX.
+- APK: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`, **40,673,654 bytes**,
+  SHA-256 `31D982D7334B08D0DE759CE755784547CFCF843D9CFCFB1DB0E041E7EEE2DF2D`.
+- AAB: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`, **36,498,821 bytes**,
+  SHA-256 `D49E01B63C5106B68133040F03B2D7F11831DEA80E388D32296FCC6B705C20CA`.
+- Build log hashes: APK `CB8CABFA532C429D614526AE8C61B6FCBC5F1692002BFF89F925290192E354A1`;
+  AAB `147D2FA6F596FB509683572BF65D8EBC29DCF278F4BE439500B89F3C2A66F223`.
+- Release checker `Builds/Local/Logs/release-checker-5d136fb.log` is **0 errors / 0 warnings**
+  (SHA-256 `5D704A38FEC64F154382E19593AB0A82F9DB3557DAF2519D8D3852955118409D`). It reports
+  package `com.example.battleraja.m11`, version `1.0.0`/code `100`, min/target API `28/36`,
+  VIBRATE plus Unity's dynamic receiver permission only, no network permission, seven ARM64
+  native libraries, static 16 KB ELF alignment, and icon/feature dimensions `512x512` and
+  `1024x500`. The signer is temporary/debug only.
+- Bundletool 1.18.3 generated
+  `Builds/Local/V1GameplayTruth/Android/battleraja-v1-5d136fb.apks` (**36,626,665 bytes**,
+  SHA-256 `0D1961247BDACCD88343A36966201F09EB62388FEAFEB648A546E0F3A1691941`) and the
+  approved-Lava universal extraction (**36,626,350 bytes**, SHA-256
+  `EB14C2826287A8083B3A2D9D610256B269D367A482F7F12DA8BBDF17DD03B24F`). Direct and extracted
+  `zipalign -c -P 16 -v 4` checks passed and temporary `apksigner` verification passed.
+  The evidence log is `Builds/Local/Logs/bundletool-5d136fb.log` (SHA-256
+  `2703521F09ACB310D802292F1FA0EF7F23DCF00BC49AE2FBC0C21E008E7BFF30`).
+
+#### Approved Lava evidence
+
+The exact APK installed successfully only on approved Lava `ST5GDW23LB004392`
+(`LAVA LXX508`, Android 14/API 34, reported 4,096-byte pages). The complete route manifest is
+`Builds/Local/Device/Performance/20260830-lava-5d136fb-outcome/manifest.json` (7,338 bytes;
+SHA-256 `B5E18E1DC126994A03ECC1B861C02A674D1A1B861D01C1BA1858ED5AF48FA16F`); it records
+artifact, route, telemetry and screenshot hashes. Real touch reached menu, Solo Raja, all
+Bijli/Pehel/Maya cards, live opening, attack/ability/gadget action feedback, Aandhi
+pressure/closing/final-circle states, player defeat and spectating, results with placement #6,
+rematch, settings toggles, background/resume, and tutorial `8/8 COMPLETE` via the in-app SKIP
+control. This is route evidence, not owner approval of touch comfort, accessibility, final art,
+victory feel or cultural presentation.
+
+The bounded raw snapshot records **273,885 KB total PSS**, **385,796 KB total RSS** and
+**80,020 KB graphics PSS** with thermal status **0**; the final full-route logcat
+`logcat-5d136fb-final.txt` is 1,200,228 bytes (SHA-256
+`42C665A195A53A2E7BCD3BB250A68E5E7D94A9D9E5554807F890FF04597114DE`) and contains no configured
+app fatal/ANR/SIGSEGV marker. `gfxinfo` exposes only Unity's view hierarchy, so no normalized
+FPS, frame-time, GC, battery, sustained thermal or performance-budget pass is claimed. The
+Lava phone is a 4 KB runtime device; static 16 KB alignment is not genuine 16 KB runtime proof.
+
+| Gate | Current classification | Evidence / remaining action |
+| --- | --- | --- |
+| Outcome Victory/Defeat presentation wiring and saved VFX assets | **Passed (machine-verified baseline)** | Six-cue fighter prefabs, saved `VictoryVfx.prefab`/`DefeatVfx.prefab`, controller state persistence test in PlayMode |
+| Exact source, tests, package manifest, offline permissions and static alignment | **Passed locally** | Source/build/test hashes above; release checker and bundletool log |
+| Approved-device install, full route, tutorial completion and bounded crash-marker smoke | **Passed locally / observed** | Lava manifest and exact screenshot set; comfort/accessibility and repeated-route review remain |
+| Genuine 16 KB runtime | **Open** | Lava reports 4,096-byte pages; requires a genuine 16 KB runtime environment |
+| Sustained performance, thermal, battery, GC/frame-time and repeated rematches | **Open** | Raw bounded telemetry only; no normalized budget approval |
+| Final authored art/audio, cultural, fun and accessibility approval | **Owner review required** | Generated presentation baseline remains a candidate |
+| Final package identity, release signing, privacy/Data Safety, IARC/content rating and Play Console | **Owner-controlled** | Drafts/checklists are prepared; no upload or public deployment performed |
+
+The candidate remains a **prototype / Android offline release candidate in progress**, not
+Play-ready. The two prompt files under `PROMPTS/` remain intentional uncommitted owner work.
