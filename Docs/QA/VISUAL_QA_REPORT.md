@@ -1,5 +1,30 @@
 # BattleRaja visual and interaction QA report
 
+## Latest exact Android presentation check — source `bc392fd` — 2026-08-29
+
+The exact temporary-ID APK was installed only on approved Lava
+`ST5GDW23LB004392` and reached the bounded menu -> Solo Raja -> Bijli -> live opening route
+with real touch input. Captures are retained under
+`Builds/Local/Device/Performance/20260829-lava-uv-skin-smoke/`:
+
+- `launch.png` — offline menu.
+- `mode.png` — Solo Raja mode selection.
+- `fighter-select.png` — Bijli/Pehel/Maya selection.
+- `live-opening.png` — Bazaar Bastion opening with HUD and touch controls.
+
+The route rendered without a blank canvas, missing material or configured fatal markers. The
+new saved UV-ready/two-bone primary skins are machine-verified in Unity, but the phone-scale
+actors still read as a generated low-detail technical baseline rather than final commissioned
+models/textures. This checkpoint is not owner approval of visual direction, cultural
+originality, accessibility, comfort, fun, audio/VFX or sustained performance. Full tutorial,
+all-fighter, results/rematch, settings/accessibility and human action-by-action review remain
+open.
+
+A genuine `BattleRaja_16K` Android 36 emulator (`PAGE_SIZE=16384`) reached the same live
+opening under `Builds/Local/Device/Performance/20260829-16k-uv-skin-runtime/` with no configured
+fatal markers. It is emulator diagnostic evidence only and does not replace physical Lava
+16 KB or normalized performance coverage.
+
 ## Exact-current Android smoke evidence — source `35de9f3` — 2026-08-24
 
 The exact-current release-shaped APK was installed only on Lava

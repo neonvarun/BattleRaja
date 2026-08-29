@@ -2521,6 +2521,115 @@ The generated faceted meshes are original repository-owned procedural assets and
 claimed as final commissioned art. No public upload, signing-key use or remote update was
 performed in this continuation.
 
+### P44 - UV-ready primary skins and exact Android verification - 2026-08-29
+
+The focused local continuation is commit `bc392fd` (`art: add UV-ready skinned fighter
+primaries`). It stays inside the offline presentation boundary: no gameplay/domain,
+authority, input, network, package-policy or store code changed. `ProductionArtBuilder`
+now assigns deterministic planar/cylindrical UVs to every generated mesh. The explicit
+production-art rebuild derives the Bijli and Pehel `Body` meshes and Maya `Cloak` into
+saved `SkinnedMeshRenderer` assets (`BijliSkinBody`, `PehelSkinBody`, `MayaSkinCloak`) with
+hips/chest bind poses and waist-blended weights; accessory parts remain saved static
+render-only children. The source primary MeshFilter is retained for reproducible rebuilds,
+with only its renderer disabled. This is technical generated art, not final commissioned
+modeling, texturing, animation direction or cultural approval.
+
+#### P44 validation and artifacts
+
+- Controlled rebuild: `Builds/Local/Logs/rebuild-production-art-uv-skin-20260829.log`
+  (60,901 bytes; SHA-256
+  `A328F236BC85E2E522CEC090334AB1FD8E067F955C6662BE27C6514C2472809E`), Unity exit code
+  0, no skin-build skips.
+- Full EditMode: **141/141 passed**, 0 failed, 0 skipped. XML
+  `Builds/Local/TestResults/editmode-uv-skin-final-20260829.xml` (109,806 bytes; SHA-256
+  `F63DE276D6EA6E6EE6B464E032D311A8AE3A5014B3370C1DDCBA608E39BFAEC`); log SHA-256
+  `21053599E557F8EF79C40B58E8B95782BBB97508DCBB7FA93C01CD7D1601D770`.
+- Full PlayMode: **87/87 passed**, 0 failed, 0 skipped. XML
+  `Builds/Local/TestResults/playmode-uv-skin-final-20260829.xml` (76,849 bytes; SHA-256
+  `4BF3FE9F93CD5BD06A62920291DA46C3126B03547315E1CC4707A0C23E2EB828`); log SHA-256
+  `54AEDE98F26BCD0BB151D9F9298008267E80DEF31D14E31430D53178BE1A676C`.
+  The new art assertions cover UV length, one saved two-bone primary per fighter,
+  bind-pose/bone parity and non-zero blended weights. The same run's bounded production
+  harness smoke completed 2/2 matches at 306.0 s average with 8 combat KOs, 2 Aandhi KOs,
+  317/317 accepted attacks, 0 out-of-range attempts, 6/6 gadget uses and zero stuck
+  recoveries. The 100-seed domain/bot release batch remains valid as carry-forward evidence
+  from `ad078d3` because this commit changes only presentation assets and tests.
+- Static repository validation: **0 errors / 0 warnings**.
+- Exact debug-signed APK: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`,
+  40,595,182 bytes, SHA-256
+  `9A0F3715BFFA208F4D821B786D68EFE22A13C05053D05CA8611F6A614D318060`.
+- Matching release-shaped AAB: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`,
+  36,420,355 bytes, SHA-256
+  `C8CA4351D4778E5C117F9E9CA29D9C2CEA5C1BFF041718D6175AA7559CF14105`.
+  The Unity Android build wrapper completed successfully for both entrypoints; the final
+  APK build log is `Builds/M11/Logs/android-build.log` (399,350 bytes; SHA-256
+  `6F5703F20ECC4FABCEE15233AD58AAD89D8F42347AE49518DF0FD8B5922BFE09`).
+- The composed release checker passed the offline manifest/API, ARM64/static 16 KB and
+  store-dimension gates. Its output is
+  `Builds/Local/Logs/release-checker-uv-skin-20260829.log` (3,055 bytes; SHA-256
+  `74AE7571DB083889F16B88F877565A33758FF894974ECA83ED09D7E6E142F31D`). It reports
+  package `com.example.battleraja.m11`, version `1.0.0` / code `100`, min API 28 / target
+  API 36, only `VIBRATE` plus the non-exported receiver permission, seven ARM64 libraries,
+  no network permissions, and 512x512 / 1024x500 creative dimensions. The worktree was
+  intentionally dirty only because of the two owner prompt files, so no clean-tree claim is
+  made for this run.
+- Bundletool `1.18.3` generated
+  `Builds/Local/V1GameplayTruth/Android/battleraja-v1-uv-skin-20260829.apks` (36,548,841
+  bytes; SHA-256
+  `359D24270F6D3A126A52D4E611A902F31DCD104F6C22E05E4FC36BB383C9B391`). Extracted
+  `universal.apk` is 36,548,526 bytes (SHA-256
+  `942EABC3E278D56C9699CF27D68F14EC30487C4CBD38F42DB50634243087D8BC`). Direct and
+  extracted `zipalign -c -P 16 -v 4` and v2/v3 `apksigner verify --verbose` all passed;
+  command/result log SHA-256 is
+  `7A71E363259D878177638482917D3DFFFB2F0338C0353C3741EAAEE14255D6BC`.
+
+#### P44 runtime evidence
+
+The exact APK was installed on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14,
+4 KB pages) and real touch reached menu -> Solo Raja -> Bijli -> live opening. Screenshots
+are under `Builds/Local/Device/Performance/20260829-lava-uv-skin-smoke/`: `launch.png`
+SHA-256 `217984A80310452CDE4C0BBD804B255509376BAA47D01483CF5A28FEEB0EED43`, `mode.png`
+`7E8C5B975C9AE357A82BC4C4D7522F331D3A9C2BD1029EBB991CD267F9E64830`, `fighter-select.png`
+`90F6750AD276150607A0D466F3421471928F92EB80E55FAE89F11EE309B57912`, and
+`live-opening.png` `F38E682D459D88C7F358A26F5B425AD72E5CFF75F94DA06BC9AAA8C8EFD5D214`.
+A six-sample, 30-second live-state diagnostic is under
+`Builds/Local/Device/Performance/20260829-lava-uv-skin-30s/`: manifest SHA-256
+`4B0BE568E635CDF02BF7FF430C148507478F1274A218ED972CFE773B17197419`, logcat SHA-256
+`9428E76888162201E876A8B4C652693BB68E0E165030723317377C0D95E2AEB8`, thermal status 0
+before/after and no configured fatal markers. Raw PSS was 263,051–269,743 KB, graphics PSS
+75,128–79,224 KB and swap PSS 389–698 KB; no normalized CPU/GPU/GC/frame-pacing or
+endurance approval is claimed.
+
+The exact APK also reached the live opening on genuine `BattleRaja_16K` (`sdk_gphone16k_x86_64`,
+Android 36, `getconf PAGE_SIZE=16384`) with no configured fatal markers. Current evidence
+is under `Builds/Local/Device/Performance/20260829-16k-uv-skin-runtime/`: `device-info.txt`
+SHA-256 `10C8E7E3AC0710CC280B8D39D53B0BE3D0E9B0605EB01510F8C3A3154FE28B9F`,
+`route-activity.txt` SHA-256 `17675F7DAF3BC61C6619B86BE22D6954306EDBDAB3430DC112F055797E9FBC57`,
+`route-logcat.txt` SHA-256 `ECCD1B18BA5269D911463C5505DCC4266869FE5A8A64F14566AA3F21D702D8CD`,
+and `live-opening.png` SHA-256
+`367169ECF4323D7AFF59CFC42C280CA633F3AAF25E4882B428AD6E25037A0BDB`. This is emulator
+diagnostic evidence only; it does not prove physical ARM64 16 KB runtime behavior.
+
+#### P44 gate delta
+
+| Gate | Classification | Evidence / limitation |
+| --- | --- | --- |
+| Deterministic UV coverage on generated meshes | **Passed** | All generated MeshFilters and saved primary skins have one UV per vertex; EditMode/PlayMode assertions pass on `bc392fd` |
+| Saved two-bone primary skin for Bijli, Pehel and Maya | **Passed (machine-verified baseline)** | Three saved meshes, hips/chest bind poses and blended weights; final authored skinning/texturing remains open |
+| Exact APK/AAB rebuild and offline technical gates | **Passed** | APK/AAB hashes above; checker, ARM64/static 16 KB, bundletool, zipalign and signature verification pass |
+| Exact APK Lava menu -> Solo Raja -> fighter selection -> live opening | **Passed (bounded smoke)** | Real touch route and screenshots retained; full tutorial/all-fighter/results/rematch review remains open |
+| Exact APK Lava 30-second live-state diagnostic | **Passed (bounded)** | Six samples, thermal status 0 and no configured fatal markers; raw-only diagnostic |
+| Genuine 16 KB Android runtime on current exact APK | **Passed (diagnostic)** | `BattleRaja_16K` route completed with `PAGE_SIZE=16384`; physical ARM64 16 KB coverage remains unproven |
+| 100-seed production bot release batch | **Passed (carry-forward)** | Prior `ad078d3` batch remains applicable because `bc392fd` is presentation-only; 2-match smoke also passed |
+| Final commissioned art, animation/VFX direction, audio mix, originality and cultural review | **Blocked** | Generated UV/skinned baseline is not owner approval |
+| Physical Lava tutorial/all-fighter/accessibility/comfort/fun review | **Blocked** | Owner-operated action-by-action review remains required |
+| Sustained performance, thermal, battery and repeated-rematch budgets | **Not run** | Current Lava capture is bounded raw telemetry, not normalized sign-off |
+| Package identity, release signing, privacy/Data Safety, content rating and Play Console | **Blocked** | Temporary package/debug signing; owner/legal/store actions remain required |
+
+The two prompt files remain intentional uncommitted owner work. No remote mutation was
+performed in P44; `origin/main` remains at `ad078d3` while local branch
+`codex/v1-playstore-release` contains the focused unpushed commit `bc392fd`.
+
 ## Later checkpoints
 
 - [x] Fair fighter-specific bot AI and production match harness (100-match terminal,

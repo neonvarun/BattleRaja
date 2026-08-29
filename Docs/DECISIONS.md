@@ -1530,3 +1530,31 @@ Record every material choice here. Do not silently overwrite old decisions.
   full 141/141 EditMode and 87/87 PlayMode results, and P43 in
   `Docs/V1_RELEASE_PLAN.md`.
 - **Owner:** Human project owner
+
+### ADR-067 - Keep generated UVs and a minimal primary skin inside the presentation boundary
+
+- **Date:** 2026-08-29
+- **Status:** Accepted for the V1 offline presentation baseline; final authored modeling,
+  texturing and cultural review remain open.
+- **Context:** The saved faceted fighter meshes were reusable and distinct, but they had no
+  UV channels and every visible piece was a static MeshRenderer. That left the generated
+  baseline unable to accept a future authored texture pass or demonstrate that the saved
+  rig can deform a primary silhouette without moving gameplay authority.
+- **Options considered:** Leave the procedural meshes unwrapped and static; add runtime
+  texture/procedural deformation; or generate deterministic UVs and a small saved two-bone
+  body/cloak skin while retaining static accessory parts and the render-only prefab boundary.
+- **Decision:** `ProductionArtBuilder.CreateMesh` assigns deterministic planar/cylindrical
+  UVs to every generated mesh. `ProductionPresentationBuilder` copies Bijli/Pehel `Body`
+  and Maya `Cloak` into saved `SkinnedMeshRenderer` meshes with hips/chest bind poses and
+  waist-blended weights. The source MeshFilter remains for reproducible rebuilds, its source
+  renderer is disabled, and the derived renderer has no collider, input, health, damage,
+  movement or action-success state. Accessories remain saved MeshFilter/MeshRenderer parts.
+- **Consequences:** The baseline now has inspectable UV coverage and real saved skin data,
+  while authority and collision remain unchanged. The generated weights and UVs are
+  technical foundations, not commissioned sculpt/textures, final animation direction,
+  mobile-performance approval or cultural sign-off.
+- **Evidence/sources:** `ProductionArtBuilder`, `ProductionPresentationBuilder`, saved
+  `BijliSkinBody`, `PehelSkinBody` and `MayaSkinCloak` meshes, the UV/skinning assertions in
+  `VerticalSlicePlayModeTests`, full 141/141 EditMode and 87/87 PlayMode results, and P44
+  in `Docs/V1_RELEASE_PLAN.md`.
+- **Owner:** Human project owner

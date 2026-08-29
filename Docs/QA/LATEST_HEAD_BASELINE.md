@@ -1,5 +1,29 @@
 # Latest HEAD baseline
 
+## Latest UV/skinning and Android refresh — source `bc392fd` — 2026-08-29
+
+The current presentation source adds deterministic UV channels to every generated mesh and
+saved two-bone primary body/cloak skins for Bijli, Pehel and Maya. The source primary
+MeshRenderer stays disabled only as a rebuild source; the saved SkinnedMeshRenderer is
+presentation-only and has no colliders or gameplay state. Full EditMode is **141/141** and
+full PlayMode is **87/87**, including UV, bind-pose/bone parity and blended-weight
+regressions. Static repository validation is **0 errors / 0 warnings**.
+
+The exact temporary-ID APK is 40,595,182 bytes (SHA-256
+`9A0F3715BFFA208F4D821B786D68EFE22A13C05053D05CA8611F6A614D318060`) and the matching AAB
+is 36,420,355 bytes (SHA-256
+`C8CA4351D4778E5C117F9E9CA29D9C2CEA5C1BFF041718D6175AA7559CF14105`). Release checker,
+ARM64/static 16 KB, bundletool, direct/extracted zipalign and signature verification pass.
+The exact APK reached menu -> Solo Raja -> Bijli -> live opening on approved Lava
+`ST5GDW23LB004392`; a bounded six-sample, 30-second live capture found PSS
+263,051–269,743 KB, graphics PSS 75,128–79,224 KB, thermal status 0 and no configured fatal
+markers. A genuine `BattleRaja_16K` emulator (Android 36, `PAGE_SIZE=16384`) reached the
+same live opening with no configured fatal markers. These captures are bounded diagnostics,
+not physical 16 KB, sustained-performance, accessibility, fun, cultural or Play approval.
+
+Evidence and hashes are indexed in `Docs/V1_RELEASE_PLAN.md` P44. The two prompt files are
+intentional owner work and remain uncommitted; no remote mutation was made in this turn.
+
 ## Latest faceted fighter presentation refresh — source `816d9ac` — 2026-08-28
 
 The current source replaces the former primitive-like fighter body/accessory recipes with

@@ -17,6 +17,15 @@ reproducible from the checked-in generator. The explicit rebuild menu action is 
 visual-change boundary; ordinary scene/build generation keeps the committed asset identities
 stable.
 
+The 2026-08-29 technical-art continuation is recorded in commit `bc392fd`. The generator now
+assigns deterministic UVs to every saved mesh. The presentation builder derives the primary
+Bijli/Pehel body and Maya cloak into the saved `BijliSkinBody.asset`, `PehelSkinBody.asset`
+and `MayaSkinCloak.asset` meshes with two-bone hips/chest bind poses and waist-blended
+weights. The source MeshFilters remain in the prefabs for deterministic rebuilds, while only
+their primary MeshRenderers are disabled; the saved SkinnedMeshRenderer is the visible
+presentation surface. This remains repository-owned generated art, not a claim of final
+commissioned modeling, texturing or cultural approval.
+
 Generated outputs:
 
 - `Assets/BattleRaja/Content/Art/V1/Meshes/*.asset`
@@ -31,9 +40,10 @@ Generated outputs:
 - `Assets/BattleRaja/Content/Art/V1/Animation/Clips/*.anim`
 - `Assets/BattleRaja/Content/Art/V1/VFX/*.prefab`
 
-The fighter and gadget prefabs are render-only identity assets. Their rig joints, particle
-systems, beacon, pedestal and themed parts have no colliders; pickup availability, collection
-radius, inventory and authority remain on the scene actors. The Bazaar, Tutorial and
+The fighter and gadget prefabs are render-only identity assets. Their rig joints, primary
+skinned renderer, particle systems, beacon, pedestal and themed parts have no colliders;
+pickup availability, collection radius, inventory and authority remain on the scene actors.
+The Bazaar, Tutorial and
 MovementLab scenes store explicit references to the current generated prefab roots, and the
 editor generator includes a reference-refresh pass after prefab regeneration.
 

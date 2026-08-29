@@ -1,6 +1,6 @@
 # BattleRaja V1 current-state index
 
-Updated: 2026-08-28
+Updated: 2026-08-29
 
 ## Evidence location policy
 
@@ -19,6 +19,33 @@ tooling exist. A Play Store Release Candidate claim is not yet justified because
 physical Lava action-by-action route review, sustained performance, final identity/
 signing, accessibility, legal/privacy/cultural approval and Play Console review
 remain open.
+
+## Latest current-source evidence — 2026-08-29 — commit `bc392fd`
+
+The focused presentation continuation adds deterministic UVs to every generated mesh and
+saved two-bone primary body/cloak skins (`BijliSkinBody`, `PehelSkinBody` and
+`MayaSkinCloak`). The source primary MeshRenderer is retained but disabled for reproducible
+rebuilds; the visible SkinnedMeshRenderer remains presentation-only and owns no gameplay
+state or colliders. Full EditMode is **141/141** and full PlayMode is **87/87**, including
+UV coverage, bind-pose parity and non-zero two-bone blend regressions. Static repository
+validation is **0 errors / 0 warnings**.
+
+The exact debug-signed APK is 40,595,182 bytes (SHA-256
+`9A0F3715BFFA208F4D821B786D68EFE22A13C05053D05CA8611F6A614D318060`) and the matching AAB
+is 36,420,355 bytes (SHA-256
+`C8CA4351D4778E5C117F9E9CA29D9C2CEA5C1BFF041718D6175AA7559CF14105`). The release checker,
+bundletool universal extraction, direct/extracted `zipalign -P 16` and v2/v3 verification
+pass. Approved Lava `ST5GDW23LB004392` reached menu -> Solo Raja -> Bijli -> live opening
+with the exact APK. Its bounded six-sample, 30-second live capture reported PSS
+263,051–269,743 KB, graphics PSS 75,128–79,224 KB, thermal status 0 and no configured
+fatal markers; this is raw diagnostic data, not normalized performance approval.
+
+The exact APK also reached the same live opening on genuine `BattleRaja_16K` (Android 36,
+`sdk_gphone16k_x86_64`, `getconf PAGE_SIZE=16384`) with no configured fatal markers. This is
+emulator diagnostic evidence only: Lava reports 4,096-byte pages, and physical 16 KB,
+sustained performance, full tutorial/all-fighter/accessibility and human art/audio/cultural
+review remain open. The two prompt files in the working tree are intentional owner files;
+the focused code/art commit itself is clean and no remote mutation was performed.
 
 ## Latest current-source evidence — 2026-08-28
 

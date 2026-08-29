@@ -1,7 +1,23 @@
 # Product completion status
 
-Updated: 2026-08-27
+Updated: 2026-08-29
 Classification: **prototype**
+
+## Latest presentation/Android checkpoint — `bc392fd` — 2026-08-29
+
+The current local continuation adds deterministic UVs to every generated mesh and saved
+two-bone primary body/cloak skins for Bijli, Pehel and Maya while keeping the render-only
+prefab and gameplay-authority boundary intact. Full EditMode is **141/141** and PlayMode is
+**87/87**, with UV, bind-pose and blended-weight regressions included. The exact temporary-ID
+APK/AAB pair passes the offline manifest, ARM64/static 16 KB, bundletool, zipalign, signature
+and store-dimension checks; hashes and evidence are in `Docs/V1_RELEASE_PLAN.md` P44.
+
+The exact APK reached the bounded menu -> Solo Raja -> Bijli -> live opening route on the
+approved Lava `ST5GDW23LB004392` and on the genuine `BattleRaja_16K` emulator
+(`PAGE_SIZE=16384`). This does not change the truthful classification: sustained performance,
+full physical tutorial/all-fighter/accessibility/fun review, authored art/audio/cultural
+approval, physical 16 KB behavior, final signing/identity, privacy/Data Safety, content
+rating and Play Console actions remain open.
 
 ## Latest exact-runtime release-candidate checkpoint — runtime `754837e` / evidence `d8cbbb2` — 2026-08-27
 

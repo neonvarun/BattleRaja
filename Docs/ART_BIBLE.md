@@ -1,8 +1,9 @@
 # BattleRaja V1 Art Bible
 
 **Status:** V1 production-presentation baseline now includes saved faceted fighter meshes,
-transform rigs, Animator clips/controllers and particle VFX cues; final authored art
-direction, cultural review and human feel approval remain open.
+deterministic UVs, lightweight two-bone primary skins, transform rigs, Animator
+clips/controllers and particle VFX cues; final authored art direction, cultural review and
+human feel approval remain open.
 
 ## Identity
 
@@ -27,7 +28,8 @@ real community, political symbol or historical character.
 
 `Assets/BattleRaja/Editor/ProductionArtBuilder.cs` is the reproducible Unity Editor mesh and
 prefab generator. `Assets/BattleRaja/Editor/ProductionPresentationBuilder.cs` adds the
-reproducible transform-rig, Animator and particle-cue layer. It creates custom low-poly mesh assets under `Assets/BattleRaja/Content/Art/V1/Meshes`,
+reproducible transform-rig, two-bone primary skin, Animator and particle-cue layer. It
+creates custom low-poly mesh assets under `Assets/BattleRaja/Content/Art/V1/Meshes`,
 material assets under `.../Materials`, and render-only fighter prefabs under
 `Assets/BattleRaja/Content/Prefabs/Production`.
 
@@ -36,6 +38,10 @@ creation. Scene generation assigns all three prefabs to `FighterPresentation`; t
 fighter controller selects which model is instantiated. The prefabs contain no colliders or
 gameplay scripts. Their `ProductionRig` hierarchy is presentation-only, and the shared
 `FighterProduction.controller` selects nine visual states from the presentation state integer.
+The primary `Body` (Bijli/Pehel) or `Cloak` (Maya) is copied into a saved
+`SkinnedMeshRenderer` with hips/chest bind poses and blended weights; accessory parts remain
+static saved render-only children. All generated meshes carry deterministic UVs so a future
+authored texture pass does not require rebuilding the gameplay layer.
 Particle cues are saved under `Art/V1/VFX` and are played only from existing presentation
 notifications; particle lifetime never owns damage, cooldowns or action success.
 
@@ -50,9 +56,20 @@ scarf ribbons, trim and crystal core. These profiles are authored in the reposit
 generator and remain render-only children of the existing presentation rig.
 
 The PlayMode regression requires at least 260 combined mesh vertices per instantiated
-production silhouette and exactly three distinct mesh profiles. This is a machine-checked
-quality floor and a stronger saved baseline, not approval of final commissioned models,
-skinning, animation, VFX direction, cultural presentation or mobile performance.
+production silhouette, exactly three distinct mesh profiles, UV coverage on every mesh and
+one two-bone skinned primary per fighter. This is a machine-checked quality floor and a
+stronger saved baseline, not approval of final commissioned models, authored skinning,
+animation, VFX direction, cultural presentation or mobile performance.
+
+## UV and lightweight skin continuation — 2026-08-29
+
+Commit `bc392fd` adds deterministic planar/cylindrical UV generation to every mesh emitted
+by `ProductionArtBuilder`. `ProductionPresentationBuilder` now derives and saves
+`BijliSkinBody.asset`, `PehelSkinBody.asset` and `MayaSkinCloak.asset`, assigns hips/chest
+bind poses and waist-blended weights, and disables only the source primary renderer while
+retaining its MeshFilter for reproducible rebuilds. The skin is presentation-only: it owns
+no collider, input, health, damage, movement or action-success state. Full EditMode and
+PlayMode regressions verify UV lengths, bind-pose/bone parity and non-zero two-bone blends.
 
 ## Current inventory
 
@@ -70,14 +87,15 @@ skinning, animation, VFX direction, cultural presentation or mobile performance.
 shared nine-state presentation controller. Its editable clips are saved in
 `Assets/BattleRaja/Content/Art/V1/Animation/Clips`: Idle, Locomotion, Attack, Ability, Hit,
 Knockback, Eliminated, Victory and Defeat. Each fighter prefab contains the named
-`ProductionRig/Root/Hips/Chest` chain with hand, head and foot joints; meshes remain
-render-only children of those joints.
+`ProductionRig/Root/Hips/Chest` chain with hand, head and foot joints. The primary body or
+cloak is rendered by the saved two-bone `SkinnedMeshRenderer`; accessory meshes remain
+render-only children of the rig joints.
 
 Saved VFX prefabs cover fighter attack/ability signatures, hit, elimination, gadget use,
 healing, shield, zone warning, zone closing and final-circle cues. They use local particle
 systems with bounded bursts and no physics or gameplay callbacks. This is a controlled
-Unity-generated presentation baseline, not a claim that a human-authored sculpt, skinning
-rig or final VFX pass has been approved.
+Unity-generated presentation baseline, not a claim that a human-authored sculpt, production
+skinning pass, final VFX direction or cultural review has been approved.
 
 The four images under `Art/Concepts` are directional references only. They are not shipped
 gameplay art and must not be presented as screenshots or final asset provenance.

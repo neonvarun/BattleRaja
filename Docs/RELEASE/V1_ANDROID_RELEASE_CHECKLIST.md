@@ -53,6 +53,26 @@ pwsh -File Tools/Validation/check_v1_release_candidate.ps1 `
 This gate is technical and local only. It does not sign, upload, publish, or approve
 the final identity, privacy/Data Safety, content rating, cultural review or Play track.
 
+## Latest UV/skinning candidate — `bc392fd` — 2026-08-29
+
+The current local presentation commit `bc392fd` adds deterministic UV coverage to all
+generated meshes and saved two-bone primary body/cloak skins. Full EditMode is **141/141**
+and PlayMode is **87/87**; static validation is **0 errors / 0 warnings**. The exact
+temporary-ID APK is **40,595,182 bytes** (SHA-256
+`9A0F3715BFFA208F4D821B786D68EFE22A13C05053D05CA8611F6A614D318060`) and the matching AAB
+is **36,420,355 bytes** (SHA-256
+`C8CA4351D4778E5C117F9E9CA29D9C2CEA5C1BFF041718D6175AA7559CF14105`). The checker passes
+the offline manifest, ARM64/static 16 KB, and creative-dimension gates. Bundletool 1.18.3
+universal extraction, direct/extracted `zipalign -P 16`, and v2/v3 signature verification
+also pass. Evidence is indexed in `Docs/V1_RELEASE_PLAN.md` P44.
+
+The exact APK reached menu -> Solo Raja -> Bijli -> live opening on approved Lava
+`ST5GDW23LB004392`; the bounded six-sample/30-second capture is raw diagnostic evidence
+only. A genuine `BattleRaja_16K` Android 36 emulator reached the same route with
+`PAGE_SIZE=16384`. Physical 16 KB, sustained performance, full touch/accessibility,
+final signing/identity, privacy/Data Safety, cultural review and Play Console actions
+remain open.
+
 ## Latest durable replay source — `2a113e0` — 2026-08-27
 
 The current release-shaped APK/AAB were rebuilt from source commit
