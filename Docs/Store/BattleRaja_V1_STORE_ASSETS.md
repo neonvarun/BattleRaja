@@ -102,3 +102,22 @@ and non-winner terminal cues are covered by the exact PlayMode regression. The p
 debug-signed with temporary ID `com.example.battleraja.m11`. Owner approval is still required
 for final crops, visual quality, cultural safety, accessibility, copy, privacy/Data Safety,
 rating, package identity/signing and Play Console use.
+
+### Tracked current-candidate copies
+
+The following copies are tracked under `Docs/Store/V1/` so the owner can review candidates
+without relying on ignored build evidence. Each is an unmodified PNG from the exact Lava route
+(SHA-256 values match the manifest):
+
+| Intended listing use | Tracked candidate | SHA-256 |
+|---|---|---|
+| Menu | `Docs/Store/V1/BattleRaja-V1-Lava-5d136fb-Menu.png` | `217984A80310452CDE4C0BBD804B255509376BAA47D01483CF5A28FEEB0EED43` |
+| Fighter selection | `Docs/Store/V1/BattleRaja-V1-Lava-5d136fb-FighterSelection.png` | `90F6750AD276150607A0D466F3421471928F92EB80E55FAE89F11EE309B57912` |
+| Combat / ability / gadget | `Docs/Store/V1/BattleRaja-V1-Lava-5d136fb-CombatActions.png` | `E4458ED5CD0CE6A346FB6F656F9D7FBC692BB664EBB475E304644EC2403D8DFC` |
+| Aandhi pressure | `Docs/Store/V1/BattleRaja-V1-Lava-5d136fb-Aandhi.png` | `2706C7C74B7F1E17F4075DA167C95CDD6DB2534F2018B20F06B71571FF0670A8` |
+| Results | `Docs/Store/V1/BattleRaja-V1-Lava-5d136fb-Results.png` | `926367A3D5C5250867B1D95AD73AD5846AE4D3414A4560B658B7A2F112C035FF` |
+| Settings / accessibility | `Docs/Store/V1/BattleRaja-V1-Lava-5d136fb-Settings.png` | `3EE1868598C408A8A0A959116874375ADFD5A2F8E0F38D7E12D030BFD93A769B` |
+
+These tracked PNGs are technical candidates only. The owner must approve crops, text/UI
+readability, cultural safety, accessibility, final AAB identity and listing use before any
+submission.

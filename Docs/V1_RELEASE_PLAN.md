@@ -2894,6 +2894,9 @@ rematch, settings toggles, background/resume, and tutorial `8/8 COMPLETE` via th
 control. This is route evidence, not owner approval of touch comfort, accessibility, final art,
 victory feel or cultural presentation.
 
+Selected unmodified PNG copies for owner store review are tracked under `Docs/Store/V1/` with
+the `5d136fb` suffix; their paths and hashes are listed in `Docs/Store/BattleRaja_V1_STORE_ASSETS.md`.
+
 The bounded raw snapshot records **273,885 KB total PSS**, **385,796 KB total RSS** and
 **80,020 KB graphics PSS** with thermal status **0**; the final full-route logcat
 `logcat-5d136fb-final.txt` is 1,200,228 bytes (SHA-256
