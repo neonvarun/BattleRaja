@@ -2885,8 +2885,8 @@ networking or reward rule changed.
 
 The exact APK installed successfully only on approved Lava `ST5GDW23LB004392`
 (`LAVA LXX508`, Android 14/API 34, reported 4,096-byte pages). The complete route manifest is
-`Builds/Local/Device/Performance/20260830-lava-5d136fb-outcome/manifest.json` (7,338 bytes;
-SHA-256 `B5E18E1DC126994A03ECC1B861C02A674D1A1B861D01C1BA1858ED5AF48FA16F`); it records
+`Builds/Local/Device/Performance/20260830-lava-5d136fb-outcome/manifest.json` (7,337 bytes;
+SHA-256 `0BB2714E7940954C0EEE6E164012DE3AE2D63996973328617A20056A036EA915`); it records
 artifact, route, telemetry and screenshot hashes. Real touch reached menu, Solo Raja, all
 Bijli/Pehel/Maya cards, live opening, attack/ability/gadget action feedback, Aandhi
 pressure/closing/final-circle states, player defeat and spectating, results with placement #6,
