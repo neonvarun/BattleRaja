@@ -7,6 +7,7 @@ using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Movement;
 using BattleRaja.Presentation.Gadgets;
 using BattleRaja.Presentation.AI;
+using BattleRaja.Presentation.Visuals;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -700,6 +701,26 @@ namespace BattleRaja.Presentation.Match
             if (_resultsShown || Simulation == null) return;
             Results = Simulation.GetSnapshots();
             _resultsShown = true;
+            ApplyOutcomePresentation();
+        }
+
+        private void ApplyOutcomePresentation()
+        {
+            if (Results == null || Results.Length == 0) return;
+            for (var i = 0; i < _actors.Count; i++)
+            {
+                var actor = _actors[i];
+                var presentation = actor.Transform.GetComponent<FighterPresentation>();
+                if (presentation == null) continue;
+
+                for (var resultIndex = 0; resultIndex < Results.Length; resultIndex++)
+                {
+                    var result = Results[resultIndex];
+                    if (result.Id != actor.Target.Id) continue;
+                    presentation.SetVictory(result.Placement == 1);
+                    break;
+                }
+            }
         }
 
         /// <summary>

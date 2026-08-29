@@ -12,27 +12,37 @@ namespace BattleRaja.Presentation.Visuals
         [SerializeField] private ParticleSystem abilityBurst;
         [SerializeField] private ParticleSystem hitBurst;
         [SerializeField] private ParticleSystem eliminationBurst;
+        [SerializeField] private ParticleSystem victoryBurst;
+        [SerializeField] private ParticleSystem defeatBurst;
 
         public int AttackPlayCount { get; private set; }
         public int AbilityPlayCount { get; private set; }
         public int HitPlayCount { get; private set; }
         public int EliminationPlayCount { get; private set; }
+        public int VictoryPlayCount { get; private set; }
+        public int DefeatPlayCount { get; private set; }
 
         public bool HasAttackCue => attackBurst != null;
         public bool HasAbilityCue => abilityBurst != null;
         public bool HasHitCue => hitBurst != null;
         public bool HasEliminationCue => eliminationBurst != null;
+        public bool HasVictoryCue => victoryBurst != null;
+        public bool HasDefeatCue => defeatBurst != null;
 
         public void Configure(
             ParticleSystem attack,
             ParticleSystem ability,
             ParticleSystem hit,
-            ParticleSystem elimination)
+            ParticleSystem elimination,
+            ParticleSystem victory,
+            ParticleSystem defeat)
         {
             attackBurst = attack;
             abilityBurst = ability;
             hitBurst = hit;
             eliminationBurst = elimination;
+            victoryBurst = victory;
+            defeatBurst = defeat;
         }
 
         public void PlayAttack()
@@ -57,6 +67,18 @@ namespace BattleRaja.Presentation.Visuals
         {
             EliminationPlayCount++;
             Play(eliminationBurst);
+        }
+
+        public void PlayVictory()
+        {
+            VictoryPlayCount++;
+            Play(victoryBurst);
+        }
+
+        public void PlayDefeat()
+        {
+            DefeatPlayCount++;
+            Play(defeatBurst);
         }
 
         private static void Play(ParticleSystem cue)

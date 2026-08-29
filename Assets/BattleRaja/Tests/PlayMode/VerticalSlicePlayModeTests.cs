@@ -825,9 +825,10 @@ namespace BattleRaja.Tests.PlayMode
 
                 var cue = modelRoot.GetComponent<ProductionVfxCue>();
                 Assert.That(cue, Is.Not.Null, fighter.name + " is missing its production VFX cue component");
-                Assert.That(cue.HasAttackCue && cue.HasAbilityCue && cue.HasHitCue && cue.HasEliminationCue, Is.True,
+                Assert.That(cue.HasAttackCue && cue.HasAbilityCue && cue.HasHitCue && cue.HasEliminationCue
+                    && cue.HasVictoryCue && cue.HasDefeatCue, Is.True,
                     fighter.name + " is missing one or more saved VFX cues");
-                Assert.That(modelRoot.GetComponentsInChildren<ParticleSystem>(true), Has.Length.GreaterThanOrEqualTo(4));
+                Assert.That(modelRoot.GetComponentsInChildren<ParticleSystem>(true), Has.Length.GreaterThanOrEqualTo(6));
             }
 
             var first = fighters[0];
@@ -883,6 +884,36 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(impactPool.ActiveCount, Is.EqualTo(activeBefore + 1));
             yield return new WaitForSeconds(0.22f);
             Assert.That(impactPool.ActiveCount, Is.LessThanOrEqualTo(activeBefore));
+        }
+
+        [UnityTest]
+        public IEnumerator MatchOutcomeDrivesPersistentVictoryAndDefeatPresentation()
+        {
+            var fighters = Object.FindObjectsByType<FighterPresentation>()
+                .OrderBy(item => item.GetComponent<CombatTarget>()?.Id.Value ?? int.MaxValue)
+                .Take(2)
+                .ToArray();
+            Assert.That(fighters.Length, Is.EqualTo(2));
+
+            var winnerCue = fighters[0].transform.Find("FighterIdentitySilhouette")?.GetChild(0)
+                ?.GetComponent<ProductionVfxCue>();
+            var loserCue = fighters[1].transform.Find("FighterIdentitySilhouette")?.GetChild(0)
+                ?.GetComponent<ProductionVfxCue>();
+            Assert.That(winnerCue, Is.Not.Null);
+            Assert.That(loserCue, Is.Not.Null);
+
+            fighters[0].SetVictory(true);
+            fighters[1].SetVictory(false);
+            yield return null;
+
+            Assert.That(fighters[0].CurrentAnimation, Is.EqualTo(FighterPresentation.AnimationState.Victory));
+            Assert.That(fighters[1].CurrentAnimation, Is.EqualTo(FighterPresentation.AnimationState.Defeat));
+            Assert.That(winnerCue.VictoryPlayCount, Is.EqualTo(1));
+            Assert.That(loserCue.DefeatPlayCount, Is.EqualTo(1));
+
+            yield return new WaitForSeconds(0.1f);
+            Assert.That(fighters[0].CurrentAnimation, Is.EqualTo(FighterPresentation.AnimationState.Victory));
+            Assert.That(fighters[1].CurrentAnimation, Is.EqualTo(FighterPresentation.AnimationState.Defeat));
         }
 
         [UnityTest]

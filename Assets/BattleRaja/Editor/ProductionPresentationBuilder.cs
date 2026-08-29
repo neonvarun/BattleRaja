@@ -37,7 +37,7 @@ namespace BattleRaja.Editor
             "BijliAttackVfx", "BijliAbilityVfx", "PehelAttackVfx", "PehelAbilityVfx",
             "MayaAttackVfx", "MayaAbilityVfx", "FighterHitVfx", "FighterEliminationVfx",
             "GadgetUseVfx", "HealingVfx", "ShieldVfx", "ZoneWarningVfx", "ZoneClosingVfx",
-            "ZoneFinalCircleVfx"
+            "ZoneFinalCircleVfx", "VictoryVfx", "DefeatVfx"
         };
 
         private static readonly string[] FighterPrefabPaths =
@@ -371,6 +371,8 @@ namespace BattleRaja.Editor
             result["ZoneWarning"] = BuildVfxPrefab("ZoneWarningVfx", new Color(1f, 0.66f, 0.12f), 18, 0.42f, 0.10f, 0.9f);
             result["ZoneClosing"] = BuildVfxPrefab("ZoneClosingVfx", new Color(1f, 0.20f, 0.16f), 24, 0.52f, 0.12f, 1.0f);
             result["ZoneFinal"] = BuildVfxPrefab("ZoneFinalCircleVfx", new Color(0.72f, 0.24f, 1f), 28, 0.60f, 0.13f, 1.1f);
+            result["Victory"] = BuildVfxPrefab("VictoryVfx", new Color(1f, 0.84f, 0.18f), 26, 0.72f, 0.15f, 1.35f);
+            result["Defeat"] = BuildVfxPrefab("DefeatVfx", new Color(1f, 0.22f, 0.20f), 18, 0.56f, 0.13f, 0.65f);
             return result;
         }
 
@@ -385,7 +387,9 @@ namespace BattleRaja.Editor
                 ["MayaAttack"] = VfxRoot + "/MayaAttackVfx.prefab",
                 ["MayaAbility"] = VfxRoot + "/MayaAbilityVfx.prefab",
                 ["Hit"] = VfxRoot + "/FighterHitVfx.prefab",
-                ["Elimination"] = VfxRoot + "/FighterEliminationVfx.prefab"
+                ["Elimination"] = VfxRoot + "/FighterEliminationVfx.prefab",
+                ["Victory"] = VfxRoot + "/VictoryVfx.prefab",
+                ["Defeat"] = VfxRoot + "/DefeatVfx.prefab"
             };
             var result = new Dictionary<string, GameObject>(StringComparer.Ordinal);
             foreach (var pair in paths)
@@ -548,7 +552,9 @@ namespace BattleRaja.Editor
             var ability = AddVfxInstance(root.transform, vfx[abilityKey], "Vfx_Ability");
             var hit = AddVfxInstance(root.transform, vfx["Hit"], "Vfx_Hit");
             var elimination = AddVfxInstance(root.transform, vfx["Elimination"], "Vfx_Elimination");
-            cue.Configure(attack, ability, hit, elimination);
+            var victory = AddVfxInstance(root.transform, vfx["Victory"], "Vfx_Victory");
+            var defeat = AddVfxInstance(root.transform, vfx["Defeat"], "Vfx_Defeat");
+            cue.Configure(attack, ability, hit, elimination, victory, defeat);
             BuildLodGroup(root, fighterIndex);
 
             PrefabUtility.SaveAsPrefabAsset(root, path);

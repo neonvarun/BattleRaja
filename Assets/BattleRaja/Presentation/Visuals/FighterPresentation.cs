@@ -68,6 +68,7 @@ namespace BattleRaja.Presentation.Visuals
         private Color _ringColor = new Color(0.18f, 0.78f, 1f, 1f);
         private bool _eliminated;
         private bool _victory;
+        private bool _matchOutcomeShown;
         private bool _silhouetteBuilt;
         private bool _flashApplied;
         private Vector3 _bodyBaseLocalPosition;
@@ -130,6 +131,18 @@ namespace BattleRaja.Presentation.Visuals
             if (health != null && health.Snapshot.IsDefeated && !_eliminated)
             {
                 SetEliminated();
+            }
+
+            // Match resolution is a presentation boundary. Preserve the terminal
+            // outcome state after the authority has published placements so a
+            // winner's victory pose or a survivor's defeat pose is not immediately
+            // replaced by Idle on the next render frame.
+            if (_matchOutcomeShown)
+            {
+                CurrentAnimation = _victory ? AnimationState.Victory : AnimationState.Defeat;
+                ApplyProductionAnimationState();
+                ApplySilhouetteAnimation();
+                return;
             }
 
             if (_eliminated)
@@ -221,9 +234,11 @@ namespace BattleRaja.Presentation.Visuals
         public void SetVictory(bool victory)
         {
             _victory = victory;
-            if (victory) _eliminated = true;
+            _matchOutcomeShown = true;
             CurrentAnimation = victory ? AnimationState.Victory : AnimationState.Defeat;
             ApplyProductionAnimationState();
+            if (victory) _productionVfx?.PlayVictory();
+            else _productionVfx?.PlayDefeat();
         }
 
         private void OnDamageResolved(DamageResult result)
