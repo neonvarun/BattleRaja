@@ -512,3 +512,24 @@ to a checksummed `.brr` file; the exact generated file re-reads and re-executes 
 EditMode. This is diagnostic evidence for the offline authority, not a network protocol or
 human approval of cosmetic animation/audio/VFX. Cross-machine parity and all external release
 gates remain open.
+
+## Continuation update - 2026-08-30 - exact aim-state Android candidate
+
+The exact runtime/art source is `d0de9499e764045d72dbf092da4c8f2d85fb0b36`. The presentation
+baseline now includes a saved `FighterAim.anim` clip and controller state driven only by the
+player's existing aim intent; no gameplay authority or balance rule changed. Repository
+validation is **0/0**, EditMode is **141/141**, PlayMode is **87/87**, and the matching APK/AAB
+are indexed in release-plan P46. The offline release checker remains **0 errors / 0 warnings**
+with API 28/36, no network permission, seven ARM64 libraries, static 16 KB alignment and
+store-creative dimensions passing.
+
+The exact APK installed on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34)
+and real touch reached the menu, Solo Raja, all three fighter cards, live combat/action
+feedback, Aandhi/elimination/spectator/results/rematch, settings toggles, background/resume and
+tutorial `8/8 COMPLETE`. The evidence is bounded and indexed in
+`Builds/Local/Device/Performance/20260830-lava-d0de949-aim/manifest.json`; raw action telemetry
+is **265,746 KB PSS / 378,096 KB RSS / 75,792 KB graphics PSS** with no configured app fatal
+marker. This does not establish normalized performance, runtime 16 KB behavior, full physical
+action comfort, final authored/cultural/accessibility approval, package identity/signing,
+privacy/Data Safety, content rating or Play Console readiness. Classification remains
+**prototype**.

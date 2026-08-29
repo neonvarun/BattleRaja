@@ -2780,3 +2780,64 @@ pending the final push verification.
 
 Final publication, signing, package identity, branding, cultural/legal approval and Play
 Console actions remain owner-controlled and are not authorized by this plan.
+
+### P46 - Exact d0de949 aim-state candidate and approved Lava route - 2026-08-30
+
+The exact runtime/art source for this checkpoint is commit `d0de9499e764045d72dbf092da4c8f2d85fb0b36`
+(`art: add dedicated fighter aim animation state`). `PlayerInputAdapter.IsAimHeld` now exposes
+the existing player aim intent without physics or aim-assist side effects; `FighterPresentation`
+selects a dedicated render-only `Aim` state; and `ProductionPresentationBuilder` saves a
+looping `FighterAim.anim` clip into the existing controller. No authority, damage, cooldown,
+movement, gadget, or simulation timing rule changed. Rebuilding the source art first and then
+the presentation prefabs preserved the saved accessory meshes.
+
+#### Machine evidence
+
+- Repository validation: **0 errors / 0 warnings** from `Tools/Validation/validate.ps1`.
+- EditMode: **141/141 passed**, XML `Builds/Local/TestResults/editmode-d0de949.xml`.
+- PlayMode: **87/87 passed**, XML `Builds/Local/TestResults/playmode-d0de949.xml`.
+- APK: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`, **40,676,862 bytes**,
+  SHA-256 `334EC0F8E1F0F2B04CEF52DB44586842E3004E76B28143007FB10EC310B308E9`.
+- AAB: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`, **36,502,035 bytes**,
+  SHA-256 `958792924DA7925474AAB40C9B5A5D588E4776AE756E333D0C8437EF4D5FF086`.
+- Release checker: `Builds/Local/Logs/release-checker-d0de949.log`, **0 errors / 0 warnings**;
+  package `com.example.battleraja.m11`, version `1.0.0`/code `100`, min/target API `28/36`,
+  only VIBRATE plus Unity's dynamic receiver permission, no network permission, seven ARM64
+  native libraries, static 16 KB ELF alignment, and icon/feature dimensions `512x512`/`1024x500`.
+- Bundletool 1.18.3: `battleraja-v1-d0de949.apks` SHA-256
+  `A96663A491A41AF5782328317115B10DB32E32A766CB06FFB1F1ABE972C17862`; extracted universal
+  APK SHA-256 `19787B8DE1CD71937E53051029A6E9013BE830035255C7D250B62668F0D9F17F`; direct and
+  extracted `zipalign -c -P 16 -v 4` checks passed, and temporary debug-signature verification
+  passed. This is not production signing.
+
+#### Approved Lava evidence
+
+The exact APK installed successfully only on approved Lava `ST5GDW23LB004392`
+(`LAVA LXX508`, Android 14/API 34, reported 4,096-byte pages). The evidence folder is
+`Builds/Local/Device/Performance/20260830-lava-d0de949-aim/`; its `manifest.json` indexes
+all filenames and hashes. Real touch reached menu, Solo Raja, all three fighter cards
+(Bijli, Pehel and Maya), live opening, attack/ability/gadget action feedback, mid-match
+Aandhi warning/closing, player elimination, spectator/final-circle state, results with
+placement and rematch, pause/settings, left-handed/high-contrast/aim-assist toggles, restored
+settings, background/resume, and tutorial completion. The tutorial route reached `8/8 COMPLETE`
+through the in-app SKIP control after the player was eliminated by the closing Aandhi; this is
+valid completion-state evidence, not a claim that every action-gated step was comfortable or
+that a victory was observed on the physical device.
+
+The action telemetry snapshot records **265,746 KB total PSS**, **378,096 KB total RSS** and
+**75,792 KB graphics PSS**. The captured logcat has no configured app fatal/ANR/SIGSEGV marker;
+`gfxinfo` exposes only the Unity view hierarchy, so these are bounded raw observations rather
+than normalized FPS, frame-time, GC, thermal, battery, accessibility or sustained-match approval.
+
+| Gate | Current classification | Evidence / remaining action |
+| --- | --- | --- |
+| Source, tests, package manifest, offline permissions and static alignment | **Passed locally** | Exact d0de949 results and release checker above |
+| Approved-device install, launch, route and bounded crash-marker smoke | **Passed locally** | Lava folder and manifest; only `ST5GDW23LB004392` was used |
+| Tutorial completion, spectator/results/rematch/settings/lifecycle observations | **Observed / bounded** | Exact screenshots; owner comfort and repeated-route review remain |
+| Genuine 16 KB runtime | **Open** | Lava reports 4 KB pages; requires a genuine 16 KB runtime environment |
+| Sustained performance, thermal, battery, GC/frame-time and repeated rematches | **Open** | Current telemetry is raw and bounded; no normalized budget pass claimed |
+| Final authored art/audio, cultural, fun and accessibility approval | **Owner review required** | Generated presentation baseline remains a candidate |
+| Final package identity, release signing, privacy/Data Safety, IARC/content rating and Play Console | **Owner-controlled** | Drafts/checklists are prepared; no upload or public deployment performed |
+
+The candidate remains a **prototype / Android offline release candidate in progress**, not
+Play-ready. The two prompt files under `PROMPTS/` remain intentional uncommitted owner work.

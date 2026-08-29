@@ -731,3 +731,22 @@ performance, full tutorial/all-fighter/accessibility/fun review, authored art/au
 approval, final signing/identity, privacy/Data Safety, content rating and Play Console work
 remain open and owner-controlled. The two prompt files in `PROMPTS/` remain intentional
 uncommitted owner files.
+
+## Milestone 11 exact d0de949 Aim-state and Android evidence continuation - 2026-08-30
+
+The latest runtime/art source is `d0de9499e764045d72dbf092da4c8f2d85fb0b36`. It adds a
+dedicated render-only fighter Aim animation state driven by existing input intent; no offline
+authority, balance, networking or package-policy behavior changed. Repository validation is
+**0/0**, EditMode is **141/141**, PlayMode is **87/87**, and the exact APK/AAB release checker
+passes **0/0**. The exact artifact hashes and route table are recorded in `Docs/V1_RELEASE_PLAN.md`
+P46.
+
+The exact APK installed successfully on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`,
+Android 14/API 34) and real touch reached menu, Solo Raja, all three fighter cards, live
+actions/Aandhi/elimination/spectator/results/rematch, settings/lifecycle and tutorial
+`8/8 COMPLETE`. The local evidence manifest is
+`Builds/Local/Device/Performance/20260830-lava-d0de949-aim/manifest.json`. This remains a
+bounded technical candidate: the phone reports 4 KB pages, raw telemetry does not establish
+normalized sustained budgets, and final authored/cultural/fun/accessibility approval,
+package identity/signing, privacy/Data Safety, content rating and Play Console actions remain
+owner-controlled. The prompt files remain intentional uncommitted owner work.

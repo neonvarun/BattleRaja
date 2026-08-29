@@ -341,3 +341,22 @@ The automated production-bot pacing/safety gate is now passed. Human touch/tutor
 accessibility, sustained frame/GC/GPU/battery performance, runtime 16 KB, final authored and
 cultural review, package identity/signing, privacy/Data Safety, store assets and Play Console
 actions remain open; this is not a Play-ready claim.
+
+## Exact current-source aim-state refresh - 2026-08-30
+
+The reviewed source tip for this refresh is `d0de9499e764045d72dbf092da4c8f2d85fb0b36`.
+It adds a dedicated render-only Aim animation state and intent adapter while leaving the
+offline authority, input command, damage, cooldown, movement, gadget and timing paths intact.
+The saved clip/controller and regenerated fighter prefabs are covered by **141/141 EditMode**
+and **87/87 PlayMode** passes; repository validation and the composed Android checker both
+report **0 errors / 0 warnings**.
+
+The exact temporary-ID APK/AAB and bundletool universal evidence are recorded in P46 of
+`Docs/V1_RELEASE_PLAN.md`. Approved Lava `ST5GDW23LB004392` installation succeeded, and the
+current route captured all fighter cards, live action/Aandhi/elimination/spectator/results/
+rematch/settings/lifecycle observations plus tutorial `8/8 COMPLETE`. The raw action snapshot
+is **265,746 KB PSS / 378,096 KB RSS / 75,792 KB graphics PSS**; no configured app fatal,
+ANR or SIGSEGV marker was found. Because the phone reports 4 KB pages and `gfxinfo` has no
+usable frame histogram, runtime 16 KB, sustained budgets and normalized performance remain
+unclaimed. Owner gates for final art/audio/cultural/fun/accessibility, signing/package identity,
+privacy/Data Safety, content rating and Play Console remain open.

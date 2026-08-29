@@ -1589,3 +1589,27 @@ Record every material choice here. Do not silently overwrite old decisions.
   and LOD assertions in `VerticalSlicePlayModeTests`, commit `ac45479`, and P45 in
   `Docs/V1_RELEASE_PLAN.md`.
 - **Owner:** Human project owner
+
+### ADR-069 - Keep fighter Aim animation render-only and input-intent driven
+
+- **Date:** 2026-08-30
+- **Status:** Accepted for the V1 offline presentation baseline; final authored animation,
+  accessibility and human feel review remain open.
+- **Context:** The saved fighter controller had action, ability, hit and locomotion states but
+  no distinct visual response while the player held the aim control. Adding that response must
+  not create a second input path or allow presentation to mutate authoritative combat.
+- **Options considered:** Reuse locomotion/idle, add a physics-facing aim mode, or expose the
+  existing player aim intent to a dedicated render-only state.
+- **Decision:** `PlayerInputAdapter.IsAimHeld` reports the existing focus/virtual-stick/action
+  intent, `FighterPresentation` selects `AnimationState.Aim` after higher-priority attack,
+  ability, hit and movement checks, and `ProductionPresentationBuilder` saves a looping
+  `FighterAim.anim` clip/controller state with a subtle torso/hand pose. The state does not
+  own aim assist, projectile direction, cooldowns, damage, movement, physics or action
+  success; those remain in the canonical input/authority path.
+- **Consequences:** Players receive a clear aim silhouette cue and the saved controller is
+  inspectable, while gameplay determinism and authority boundaries remain unchanged. The clip
+  is generated baseline art, not final authored animation or proof of touch comfort.
+- **Evidence/sources:** `PlayerInputAdapter`, `FighterPresentation`,
+  `ProductionPresentationBuilder`, saved `FighterAim.anim`, full 141/141 EditMode and 87/87
+  PlayMode results, and P46 in `Docs/V1_RELEASE_PLAN.md`.
+- **Owner:** Human project owner

@@ -773,3 +773,27 @@ new APK on Lava `ST5GDW23LB004392` only, then capture the menu, tutorial, all-fi
 gadget/Aandhi flow, results/rematch and raw bounded telemetry. Do not treat the generated
 environment/LOD baseline as final art or cultural approval, and do not infer physical 16 KB
 runtime support from the 4 KB Lava phone or the diagnostic emulator.
+
+## Exact aim-state package refresh - 2026-08-30
+
+The current artifact source is `d0de9499e764045d72dbf092da4c8f2d85fb0b36`. It contains the
+dedicated render-only fighter Aim state and passes **141/141 EditMode**, **87/87 PlayMode**,
+repository validation **0/0** and the composed release checker **0/0**.
+
+- APK: **40,676,862 bytes**, SHA-256
+  `334EC0F8E1F0F2B04CEF52DB44586842E3004E76B28143007FB10EC310B308E9`.
+- AAB: **36,502,035 bytes**, SHA-256
+  `958792924DA7925474AAB40C9B5A5D588E4776AE756E333D0C8437EF4D5FF086`.
+- Manifest: `com.example.battleraja.m11`, version `1.0.0`/code `100`, min/target API `28/36`,
+  no network permission, seven ARM64 libraries, static 16 KB alignment passed.
+- Bundletool 1.18.3 universal extraction and direct/extracted static zipalign checks passed;
+  signature verification is temporary debug signing only.
+- Exact Lava route evidence and all screenshot hashes are indexed at
+  `Builds/Local/Device/Performance/20260830-lava-d0de949-aim/manifest.json`. Installation,
+  launch/resume, all-fighter cards, action/Aandhi/elimination/spectator/results/rematch,
+  settings/lifecycle and tutorial completion were observed on `ST5GDW23LB004392` only.
+
+The package is a local temporary-ID technical candidate, not an upload-ready release. Genuine
+16 KB runtime, sustained performance/thermal/battery, complete physical action comfort,
+final authored/cultural/accessibility approval, release identity/signing, privacy/Data Safety,
+IARC/content rating and Play Console actions remain owner-controlled or untested.

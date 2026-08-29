@@ -63,3 +63,24 @@ privacy/legal text require owner review.
 - Confirm privacy policy/Data Safety answers match the shipped permissions and
   SDK inventory.
 - Supply release signing configuration and approve Play Console submission.
+
+## Exact current gameplay screenshot evidence - 2026-08-30
+
+The latest technical screenshot set was captured from the exact d0de949 APK on approved Lava
+`ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34). Files remain in the ignored local
+evidence folder `Builds/Local/Device/Performance/20260830-lava-d0de949-aim/`; the companion
+`manifest.json` records every filename and SHA-256. This set supersedes the older screenshot
+copies for source verification but is still **technical evidence, not approved listing art**.
+
+| Route | Current evidence | Status |
+| --- | --- | --- |
+| Menu, Solo Raja and fighter selection | `menu.png`, `mode.png`, `fighter-select.png`, `fighter-pehel.png`, `fighter-bijli.png` | Exact temporary-ID runtime; owner crop/art review required |
+| Live combat and Aandhi | `live-opening.png`, `combat-actions.png`, `midmatch.png`, `aandhi-final.png` | Exact runtime; presentation/fun review required |
+| Elimination, spectator, results and rematch | `postmatch.png`, `postmatch-2.png`, `rematch.png` | Exact runtime; winner/placement and copy review required |
+| Settings, accessibility toggles and lifecycle | `pause-settings.png`, `settings-toggles.png`, `settings-restored.png`, `match-after-settings.png`, `lifecycle-before-home.png`, `lifecycle-resume.png` | Exact runtime; owner comfort/accessibility review required |
+| Tutorial | `tutorial-start.png`, movement/aim/attack evidence, `tutorial-skip-current.png`, `menu-after-tutorial-current.png` | `8/8 COMPLETE` observed; action-by-action comfort and full victory route remain open |
+
+The generated feature graphic/icon and these screenshots must not be presented as final
+commissioned/culturally approved artwork. The package ID remains temporary and debug-signed;
+the owner must select final branding, signing, privacy/Data Safety answers, rating and Play
+Console materials before upload.

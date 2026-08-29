@@ -556,3 +556,32 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   behavior still require the owner-controlled release flow.
 - **Recheck trigger/date:** After any Unity/Android/package/build-setting change and before
   signing or uploading the AAB.
+
+### V1.0 Android/Play policy recheck - 2026-08-30
+
+- **Question:** Which current platform and Play requirements must the local V1 candidate keep
+  visible before the owner signs or uploads it?
+- **Primary sources:** [Android target API requirements](https://developer.android.com/google/play/requirements/target-sdk),
+  [Android 16 KB page-size guidance](https://developer.android.com/guide/practices/page-sizes),
+  [Google Play Data safety](https://support.google.com/googleplay/android-developer/answer/10787469?hl=en-EN),
+  [Google Play target audience](https://support.google.com/googleplay/android-developer/answer/9867159?hl=en),
+  and [Google Play content ratings](https://support.google.com/googleplay/android-developer/answer/9859655?hl=en).
+- **Access date:** 2026-08-30 (IST).
+- **Relevant claims:** Google's current target-API page says that from **2026-08-31** new
+  apps and updates must target Android 16/API 36 or higher. Android's page-size guidance
+  distinguishes static alignment from behavior on a genuine 16 KB runtime environment. Play's
+  Data safety guidance requires a form and privacy-policy link for published closed/open/
+  production tracks, even when no data is collected; internal-only testing is the documented
+  exemption. Target-audience and IARC content-rating inputs remain Play Console declarations.
+- **Decision impact:** Keep target API 36, static 16 KB checks, no-network permission evidence,
+  privacy/Data Safety draft, target-audience worksheet and content-rating preparation in the
+  release package. Treat the Lava 4 KB device and local debug-signed AAB as technical evidence
+  only; do not claim Play eligibility or runtime 16 KB support.
+- **Local evidence:** P46 exact d0de949 APK/AAB checker log, bundletool/zipalign outputs and
+  `Builds/Local/Device/Performance/20260830-lava-d0de949-aim/manifest.json`.
+- **Uncertainty:** Google may change target dates, declaration wording, review enforcement or
+  page-size requirements; final package identity, signing, legal/privacy answers and Play
+  Console submission remain owner-controlled.
+- **Recheck trigger/date:** Immediately before selecting the final signed package, completing
+  declarations, and uploading any Play track; repeat after any Unity/Android/NDK/dependency
+  change.

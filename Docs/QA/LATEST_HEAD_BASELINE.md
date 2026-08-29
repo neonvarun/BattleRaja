@@ -1853,3 +1853,18 @@ The same exact source passes the 1,000-seed deterministic replay soak twice with
 divergence. Two strict 100-match production-bot retries completed all matches and all safety
 invariants but reached only 70/100 and 76/100 in the 240–360 second pacing window; this is
 the documented timing-sensitive 50x shortcut, with no threshold loosening.
+
+## Latest exact source - 2026-08-30
+
+The exact presentation/runtime source is `d0de9499e764045d72dbf092da4c8f2d85fb0b36`. A
+dedicated saved `FighterAim.anim`/Animator state is selected from `PlayerInputAdapter.IsAimHeld`
+and remains strictly render-only. Full EditMode **141/141** and PlayMode **87/87** pass after
+the controlled art/presentation rebuild, with repository validation **0 errors / 0 warnings**.
+
+The exact APK (`334EC0F8E1F0F2B04CEF52DB44586842E3004E76B28143007FB10EC310B308E9`) and AAB
+(`958792924DA7925474AAB40C9B5A5D588E4776AE756E333D0C8437EF4D5FF086`) pass the composed
+offline checker, bundletool universal extraction and static 16 KB alignment checks. The APK
+installed and resumed on approved Lava `ST5GDW23LB004392`; the exact route/evidence manifest
+is `Builds/Local/Device/Performance/20260830-lava-d0de949-aim/manifest.json`. This remains a
+bounded 4 KB-device technical candidate: no runtime 16 KB proof, normalized frame/GC/GPU
+budget, sustained thermal/battery approval or final human/store gate is claimed.
