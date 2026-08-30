@@ -88,6 +88,18 @@ namespace BattleRaja.Presentation.Movement
             }
         }
 
+        private void OnApplicationPause(bool paused)
+        {
+            // Android can deliver a pause without a matching focus callback. Treat
+            // the lifecycle transition as an input boundary so a held touch or
+            // keyboard action cannot resume as an unintended attack/ability.
+            _hasFocus = !paused;
+            if (paused)
+            {
+                ResetInputState();
+            }
+        }
+
         public MovementInputFrame ReadInput()
         {
             if (!_hasFocus)

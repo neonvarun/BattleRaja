@@ -7,6 +7,7 @@ using BattleRaja.Presentation.Gadgets;
 using BattleRaja.Presentation.Movement;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
@@ -170,17 +171,35 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(settings.activeSelf, Is.False);
             Assert.That(Time.timeScale, Is.EqualTo(1f));
 
+            var adapter = Object.FindObjectsByType<PlayerInputAdapter>()
+                .First(candidate => candidate.GetComponent<MovementPlayerAgent>()?.ActorId == 1);
+            var attack = GameObject.Find("AttackButton")?.GetComponent<AttackButton>();
+            Assert.That(attack, Is.Not.Null);
+            var pointer = new PointerEventData(EventSystem.current)
+            {
+                pointerId = 91,
+                position = Vector2.zero
+            };
+            attack.OnPointerDown(pointer);
+            Assert.That(adapter.IsAttackHeld, Is.True);
+
             hud.SendMessage("OnApplicationPause", true);
+            adapter.SendMessage("OnApplicationPause", true);
             yield return null;
 
             Assert.That(settings.activeSelf, Is.True);
             Assert.That(Time.timeScale, Is.EqualTo(0f));
+            Assert.That(adapter.IsAttackHeld, Is.False,
+                "Lifecycle pause must clear a held attack before the app resumes.");
+            Assert.That(adapter.HasFocus, Is.False);
 
             hud.SendMessage("OnApplicationPause", false);
+            adapter.SendMessage("OnApplicationPause", false);
             yield return null;
 
             Assert.That(settings.activeSelf, Is.False);
             Assert.That(Time.timeScale, Is.EqualTo(1f));
+            Assert.That(adapter.HasFocus, Is.True);
         }
 
         [UnityTest]

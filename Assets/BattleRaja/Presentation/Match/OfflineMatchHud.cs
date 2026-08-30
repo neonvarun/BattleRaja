@@ -479,6 +479,7 @@ namespace BattleRaja.Presentation.Match
                 // Do not alter a pause the player opened deliberately. Only remember
                 // and resume a pause that this lifecycle callback created.
                 if (_paused) return;
+                _playerInput?.ResetInputState();
                 _settingsPanel.SetActive(true);
                 _paused = true;
                 _lifecyclePaused = true;

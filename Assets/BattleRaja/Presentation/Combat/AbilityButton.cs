@@ -18,5 +18,10 @@ namespace BattleRaja.Presentation.Combat
         public void OnPointerUp(PointerEventData eventData) => IsPressed = false;
         public void OnPointerExit(PointerEventData eventData) => IsPressed = false;
         public void ResetButton() => IsPressed = false;
+
+        private void OnApplicationPause(bool paused)
+        {
+            if (paused) ResetButton();
+        }
     }
 }

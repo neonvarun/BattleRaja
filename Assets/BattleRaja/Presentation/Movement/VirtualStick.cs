@@ -42,6 +42,14 @@ namespace BattleRaja.Presentation.Movement
             }
         }
 
+        private void OnApplicationPause(bool paused)
+        {
+            if (paused)
+            {
+                ResetStick();
+            }
+        }
+
         public void OnPointerDown(PointerEventData eventData)
         {
             if (IsActive)
