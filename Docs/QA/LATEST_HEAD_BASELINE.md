@@ -1892,3 +1892,16 @@ and no configured fatal/ANR/SIGSEGV marker. This remains bounded evidence: Lava 
 pages, `gfxinfo` lacks a usable frame histogram, and runtime 16 KB, sustained performance,
 final authored/cultural/fun/accessibility approval, production signing/package identity,
 privacy/Data Safety, rating and Play Console actions remain open.
+
+## P48 exact-candidate focused performance capture - 2026-08-30
+
+The exact `5d136fbb6be6a5554931f6ab859be8b9a8a995a2` candidate was captured on Lava
+`ST5GDW23LB004392` for 180 seconds using 36 five-second samples during a live match with
+movement, attack, ability and gadget input. Warm-up-excluded samples measured PSS
+**261,702-273,769 KB**, RSS **384,112-396,696 KB**, graphics PSS **75,792-81,936 KB** and
+current-process `top` CPU **87.5-118.0%** (100%-per-core scale). Battery stayed at 76% while
+USB-powered, thermal status remained 0 and no configured fatal markers were found. The raw
+capture and 30-second Perfetto trace are indexed in P48 of `Docs/V1_RELEASE_PLAN.md`.
+Simpleperf could not sample the temporary non-profileable candidate, and Unity `gfxinfo`
+still emitted no usable frame histogram. This is raw stability evidence, not normalized
+sustained performance, battery, runtime-16-KB or human approval.
