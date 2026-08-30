@@ -7,6 +7,7 @@ using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Flow;
 using BattleRaja.Presentation.Gadgets;
 using BattleRaja.Presentation.Match;
+using BattleRaja.Presentation.Movement;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -195,6 +196,27 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator TutorialEliminationTargetStartsInReadableOpenLane()
+        {
+            yield return SceneManager.LoadSceneAsync("TutorialArena", LoadSceneMode.Single);
+            yield return null;
+            yield return null;
+
+            var player = Object.FindObjectsByType<MovementPlayerAgent>()
+                .First(agent => agent.ActorId == 1);
+            var target = Object.FindObjectsByType<MovementPlayerAgent>()
+                .First(agent => agent.ActorId == 11);
+
+            Assert.That(target.transform.position.x, Is.EqualTo(0f).Within(0.01f));
+            Assert.That(target.transform.position.z, Is.EqualTo(-3.2f).Within(0.01f));
+            Assert.That(target.transform.position.z, Is.LessThan(-2f),
+                "The tutorial target must stay south of the central wall lane.");
+            Assert.That(Vector3.Distance(player.transform.position, target.transform.position),
+                Is.GreaterThanOrEqualTo(2.5f),
+                "The target must remain a valid separated match participant.");
+        }
+
+        [UnityTest]
         public IEnumerator EliminationLessonUnlocksFromLiveAuthoritativeSnapshotBeforeResults()
         {
             yield return SceneManager.LoadSceneAsync("TutorialArena", LoadSceneMode.Single);
@@ -245,6 +267,40 @@ namespace BattleRaja.Tests.PlayMode
             yield return null;
             Assert.That(overlay.CurrentStepSatisfied, Is.True);
             Assert.That(overlay.CurrentStep, Is.EqualTo(TutorialStep.Elimination));
+        }
+
+        [UnityTest]
+        public IEnumerator TutorialLocalAttackCanResolveReadableTarget()
+        {
+            yield return SceneManager.LoadSceneAsync("TutorialArena", LoadSceneMode.Single);
+            yield return null;
+            yield return null;
+
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            var player = Object.FindObjectsByType<MovementPlayerAgent>()
+                .First(agent => agent.ActorId == 1);
+            var target = Object.FindObjectsByType<MovementPlayerAgent>()
+                .First(agent => agent.ActorId == 11);
+            var attack = player.GetComponent<CombatAttackController>();
+            var health = target.GetComponent<CombatHealth>();
+            Assert.That(match, Is.Not.Null);
+            Assert.That(attack, Is.Not.Null);
+            Assert.That(health, Is.Not.Null);
+
+            yield return new WaitForSeconds(9.2f);
+            var direction = new Float2(
+                target.transform.position.x - player.transform.position.x,
+                target.transform.position.z - player.transform.position.z).Normalized;
+            var origin = new Float2(player.transform.position.x, player.transform.position.z) + direction * 0.7f;
+            attack.Submit(AttackCommandFactory.Create(
+                new CombatEntityId(1),
+                match.SimulationTick + 1,
+                origin,
+                direction,
+                true));
+
+            yield return new WaitForSeconds(0.5f);
+            Assert.That(health.Snapshot.CurrentHealth, Is.LessThan(health.MaxHealth));
         }
     }
 }

@@ -564,6 +564,12 @@ namespace BattleRaja.Editor
                 var existingArena = GameObject.Find("TutorialArena");
                 if (existingArena != null && existingArena.GetComponentInChildren<TutorialOverlay>(true) != null)
                 {
+                    if (ConfigureTutorialEliminationTarget(existingArena.transform))
+                    {
+                        EditorSceneManager.MarkSceneDirty(existingTutorial);
+                        EditorSceneManager.SaveScene(existingTutorial, TutorialArenaScenePath);
+                    }
+
                     EditorBuildSettings.scenes = new[]
                     {
                         new EditorBuildSettingsScene(BootstrapScenePath, true),
@@ -581,6 +587,7 @@ namespace BattleRaja.Editor
             var arena = GameObject.Find("MovementLab");
             if (arena == null) throw new BuildFailedException("MovementLab root was not found while creating Tutorial Arena.");
             arena.name = "TutorialArena";
+            ConfigureTutorialEliminationTarget(arena.transform);
 
             foreach (var brain in arena.GetComponentsInChildren<BotBrain>(true))
             {
@@ -608,6 +615,31 @@ namespace BattleRaja.Editor
             };
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+        }
+
+        /// <summary>
+        /// Keeps the first elimination lesson readable on a compact portrait screen. The
+        /// tutorial keeps the real match authority and all seven participants, but places
+        /// actor 11 in the open south lane so a default upward aim can reach a stationary
+        /// target without requiring a diagonal camera-coordinate guess. Production spawns
+        /// and the MovementLab regression fixture are intentionally unchanged.
+        /// </summary>
+        private static bool ConfigureTutorialEliminationTarget(Transform arena)
+        {
+            if (arena == null) return false;
+
+            var target = arena.GetComponentsInChildren<MovementPlayerAgent>(true)
+                .FirstOrDefault(agent => agent != null && agent.ActorId == 11);
+            if (target == null) return false;
+
+            var desiredPosition = new Vector3(0f, 1f, -3.2f);
+            if ((target.transform.position - desiredPosition).sqrMagnitude <= 0.0001f)
+            {
+                return false;
+            }
+
+            target.transform.position = desiredPosition;
+            return true;
         }
 
         private static void ConfigurePlayerFighterSelection(
