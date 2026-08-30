@@ -20,7 +20,15 @@ physical Lava action-by-action route review, sustained performance, final identi
 signing, accessibility, legal/privacy/cultural approval and Play Console review
 remain open.
 
-## Latest current-source evidence — 2026-08-29 — documentation tip `b4b5649` (runtime/art `ac45479`)
+## Latest current-source evidence — 2026-08-30 — P55 source `56df201`
+
+The exact current candidate adds the generated `ZoneFinalCircle.wav` cue and plays it once
+when the authoritative match phase enters Final Circle. Static validation is **0 errors / 0
+warnings**, EditMode is **141/141**, and PlayMode is **89/89**. The current temporary-ID APK
+and release-shaped AAB, exact hashes, approved-Lava Final Circle/results/lifecycle captures,
+and the remaining owner/human gates are indexed in P55 of `Docs/V1_RELEASE_PLAN.md`.
+
+## Historical current-source evidence — 2026-08-29 — documentation tip `b4b5649` (runtime/art `ac45479`)
 
 The saved-presentation continuation adds a collider-free, textured
 `BazaarBastionProduction.prefab` with a 32×32 three-submesh ground mosaic, deterministic
