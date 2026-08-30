@@ -136,6 +136,34 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator CompletedTutorialCanDismissOverlayForResultsAndRematch()
+        {
+            yield return SceneManager.LoadSceneAsync("TutorialArena", LoadSceneMode.Single);
+            yield return null;
+            yield return null;
+
+            var overlay = Object.FindAnyObjectByType<TutorialOverlay>();
+            var panel = FindSceneObject("TutorialPanel");
+            var secondaryButton = panel.transform.Find("Skip").GetComponent<Button>();
+            Assert.That(overlay, Is.Not.Null);
+            Assert.That(overlay.CurrentStep, Is.EqualTo(TutorialStep.Movement));
+
+            overlay.Skip();
+            Assert.That(overlay.CurrentStep, Is.EqualTo(TutorialStep.Complete));
+            Assert.That(secondaryButton.GetComponentInChildren<Text>().text, Is.EqualTo("CLOSE CARD"));
+            Assert.That(overlay.IsShowing, Is.True);
+
+            overlay.DismissCompletionCard();
+            Assert.That(overlay.IsShowing, Is.False);
+            Assert.That(panel.activeSelf, Is.False,
+                "The completion card must release the underlying Results and REMATCH controls.");
+
+            // Dismissal is idempotent if a device sends a duplicate release/click.
+            Assert.DoesNotThrow(() => overlay.DismissCompletionCard());
+            Assert.That(overlay.IsShowing, Is.False);
+        }
+
+        [UnityTest]
         public IEnumerator TutorialPromptNamesTheActiveStickWhenLeftHanded()
         {
             const string leftHandedKey = "battleraja.settings.left_handed";

@@ -29,6 +29,7 @@ namespace BattleRaja.Presentation.Flow
         private Text _body;
         private Text _progress;
         private Button _advanceButton;
+        private Button _secondaryButton;
         private GameObject _panel;
         private bool _showing;
         private MovementPlayerAgent _playerAgent;
@@ -187,20 +188,24 @@ namespace BattleRaja.Presentation.Flow
 
         private void Refresh()
         {
-            // Keep the completion card visible. The tutorial prompt is intentionally the
-            // only full-width surface: the live arena, player and touch controls remain
-            // visible behind it so every lesson can be performed in context.
+            // Keep the active lesson card visible over the live arena. Once the walkthrough
+            // is complete, the player can dismiss the card to reach the authoritative
+            // Results/REMATCH controls underneath it.
             _showing = true;
             _panel.SetActive(true);
             if (_steps.IsComplete)
             {
                 _title.text = "TUTORIAL COMPLETE";
-                _body.text = "You have seen the complete offline loop. Replay any time from the main menu.";
+                _body.text = "You have seen the complete offline loop. Close this card to inspect results and choose REMATCH or MENU. Replay any time from the main menu.";
                 _progress.text = "8 / 8 COMPLETE";
                 SetButtonLabel("REPLAY TUTORIAL");
                 _advanceButton.onClick.RemoveAllListeners();
                 _advanceButton.onClick.AddListener(Replay);
                 _advanceButton.interactable = true;
+                SetSecondaryButtonLabel("CLOSE CARD");
+                _secondaryButton.onClick.RemoveAllListeners();
+                _secondaryButton.onClick.AddListener(DismissCompletionCard);
+                _secondaryButton.interactable = true;
                 return;
             }
 
@@ -221,6 +226,22 @@ namespace BattleRaja.Presentation.Flow
             _advanceButton.onClick.RemoveAllListeners();
             _advanceButton.onClick.AddListener(Advance);
             _advanceButton.interactable = _steps.CurrentStepSatisfied;
+            SetSecondaryButtonLabel("SKIP");
+            _secondaryButton.onClick.RemoveAllListeners();
+            _secondaryButton.onClick.AddListener(Skip);
+            _secondaryButton.interactable = true;
+        }
+
+        public void DismissCompletionCard()
+        {
+            if (!_steps.IsComplete)
+            {
+                Refresh();
+                return;
+            }
+
+            _showing = false;
+            if (_panel != null) _panel.SetActive(false);
         }
 
         private void ResolvePlayerTelemetry()
@@ -325,7 +346,7 @@ namespace BattleRaja.Presentation.Flow
             _body = CreateText(_panel.transform, "Body", new Vector2(0.07f, 0.32f), new Vector2(0.93f, 0.68f), 20, TextAnchor.MiddleCenter);
             _progress = CreateText(_panel.transform, "Progress", new Vector2(0.05f, 0.18f), new Vector2(0.95f, 0.32f), 16, TextAnchor.MiddleCenter);
             _advanceButton = CreateButton(_panel.transform, "Advance", "I'M READY", new Vector2(0.28f, 0.03f), new Vector2(0.72f, 0.16f), Advance);
-            CreateButton(_panel.transform, "Skip", "SKIP", new Vector2(0.75f, 0.03f), new Vector2(0.95f, 0.16f), Skip);
+            _secondaryButton = CreateButton(_panel.transform, "Skip", "SKIP", new Vector2(0.75f, 0.03f), new Vector2(0.95f, 0.16f), Skip);
             CreateButton(_panel.transform, "Menu", "MENU", new Vector2(0.05f, 0.03f), new Vector2(0.25f, 0.16f), ReturnToMenu);
         }
 
@@ -333,6 +354,13 @@ namespace BattleRaja.Presentation.Flow
         {
             if (_advanceButton == null) return;
             var text = _advanceButton.GetComponentInChildren<Text>();
+            if (text != null) text.text = label;
+        }
+
+        private void SetSecondaryButtonLabel(string label)
+        {
+            if (_secondaryButton == null) return;
+            var text = _secondaryButton.GetComponentInChildren<Text>();
             if (text != null) text.text = label;
         }
 
