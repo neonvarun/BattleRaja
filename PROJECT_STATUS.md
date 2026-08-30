@@ -7,8 +7,9 @@
 ## Current state
 
 - **Latest runtime/art presentation checkpoint (2026-08-30):** runtime/art source remains
-  `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`; local HEAD is the test-only follow-up
-  `4c4c67cbbc20062e3723cc90ee3bb7c266bbeda4`. The terminal-outcome continuation saves
+  `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`; the latest test-bearing follow-up is
+  `4c4c67cbbc20062e3723cc90ee3bb7c266bbeda4`, with the current documentation tip adding
+  only release-evidence indexes on top. The terminal-outcome continuation saves
   Victory/Defeat VFX and routes authoritative placement into persistent render-only fighter
   states; the follow-up adds direct player Umbrella Guard pickup/use/mitigation PlayMode coverage without changing
   runtime behavior. Full EditMode is **141/141**, PlayMode is **89/89**, static validation is **0 errors / 0

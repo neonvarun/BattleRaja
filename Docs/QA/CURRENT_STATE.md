@@ -453,7 +453,7 @@ green; no runtime/build/test evidence changed, and P47-P50 remain the exact cand
 
 ## P52 player-facing Umbrella Guard regression - 2026-08-30 07:21 IST
 
-The test-only branch tip is `4c4c67cbbc20062e3723cc90ee3bb7c266bbeda4`, based on runtime/art
+The latest test-bearing tip is `4c4c67cbbc20062e3723cc90ee3bb7c266bbeda4`, based on runtime/art
 source `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`. A new `GadgetPlayModeTests` regression
 exercises player Umbrella Guard pickup/use through the MovementLab authority path and checks
 inventory consumption, configured shield duration, feedback, success telemetry, front-facing

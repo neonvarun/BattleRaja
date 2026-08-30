@@ -1959,7 +1959,7 @@ remain open.
 
 ## P52 player-facing Umbrella Guard regression - 2026-08-30 07:21 IST
 
-The current local tip is test-only commit `4c4c67cbbc20062e3723cc90ee3bb7c266bbeda4` on top
+The latest test-bearing tip is commit `4c4c67cbbc20062e3723cc90ee3bb7c266bbeda4` on top
 of runtime/art source `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`. The added PlayMode regression
 proves player Umbrella Guard pickup/use, one-slot consumption, shield duration, feedback and
 success telemetry, front-facing projectile mitigation and the Aandhi bypass through the existing

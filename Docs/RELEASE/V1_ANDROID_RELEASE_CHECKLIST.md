@@ -861,7 +861,7 @@ human, legal, performance or Play Console gates.
 
 ## P52 player-facing Umbrella Guard regression - 2026-08-30 07:21 IST
 
-The test-only tip is `4c4c67cbbc20062e3723cc90ee3bb7c266bbeda4`, based on runtime/art source
+The latest test-bearing tip is `4c4c67cbbc20062e3723cc90ee3bb7c266bbeda4`, based on runtime/art source
 `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`. `GadgetPlayModeTests` now directly exercises
 player pickup/use of Umbrella Guard and asserts one-slot consumption, configured shield
 duration, player feedback, success telemetry, front-facing projectile mitigation and the Aandhi
