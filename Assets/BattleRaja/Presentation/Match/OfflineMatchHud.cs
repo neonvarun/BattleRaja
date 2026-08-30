@@ -346,9 +346,9 @@ namespace BattleRaja.Presentation.Match
                 {
                     builder.Append('#').Append(participant.Placement)
                         .Append(' ').Append(participantLabel)
-                        .Append(" K").Append(participant.Eliminations)
-                        .Append(" A").Append(participant.Assists)
-                        .Append(" D").Append(participant.DamageDealt)
+                        .Append("  KOs ").Append(participant.Eliminations)
+                        .Append("  AST ").Append(participant.Assists)
+                        .Append("  DMG ").Append(participant.DamageDealt)
                         .Append('\n');
                 }
                 else
@@ -440,7 +440,7 @@ namespace BattleRaja.Presentation.Match
             statusRect.anchorMin = compact ? new Vector2(0.42f, 0.90f) : new Vector2(0.42f, 0.94f);
             statusRect.anchorMax = new Vector2(0.98f, 0.99f);
             _statusText.fontSize = targetStatusSize;
-            if (_resultsText != null) _resultsText.fontSize = Mathf.RoundToInt((compact ? 16f : 20f) * _textScale);
+            if (_resultsText != null) _resultsText.fontSize = Mathf.RoundToInt((compact ? 18f : 20f) * _textScale);
 
             var spectatorRect = _spectatorText.rectTransform;
             spectatorRect.anchorMin = compact ? new Vector2(0.42f, 0.84f) : new Vector2(0.42f, 0.88f);

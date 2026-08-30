@@ -996,6 +996,10 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(text, Does.Contain("#1 YOU  KOs 3  AST 1  DMG 120  SURV 25.0s"));
             Assert.That(text, Does.Contain("#2 RIVAL A  KOs 1  AST 2  DMG 40  SURV 12.0s"));
             Assert.That(text, Does.Not.Contain("PLAYER 1"));
+
+            var compactText = OfflineMatchHud.FormatResults(results, compact: true);
+            Assert.That(compactText, Does.Contain("#1 YOU  KOs 3  AST 1  DMG 120"));
+            Assert.That(compactText, Does.Not.Contain(" K3 A1 D120"));
         }
 
         [Test]

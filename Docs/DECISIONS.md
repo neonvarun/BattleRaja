@@ -1744,3 +1744,25 @@ Record every material choice here. Do not silently overwrite old decisions.
   141/141 EditMode and 92/92 PlayMode reruns, and the P60 approved-Lava capture in
   `Docs/V1_RELEASE_PLAN.md`.
 - **Owner:** Human project owner
+
+### ADR-075 - Spell out compact results metrics on portrait HUDs
+
+- **Date:** 2026-08-31
+- **Status:** Accepted for the V1 offline presentation baseline; final mobile readability
+  and localization review remain open.
+- **Context:** The compact results formatter shortened eliminations, assists and damage to
+  `K1 A1 D163`. That saved a few characters but read like internal telemetry on the
+  1080x2460 approved-Lava capture and was harder to scan at 16 px type.
+- **Options considered:** Retain single-letter labels; fully expand every metric; or keep the
+  compact one-line-per-placement structure while using the same short player-facing labels as
+  the wide card.
+- **Decision:** Use `KOs`, `AST` and `DMG` labels in compact results and raise the compact
+  result text from 16 px to 18 px before the user's text-scale preference is applied. This is
+  presentation-only; placement, damage, rewards and authority state are unchanged.
+- **Consequences:** The result card is more scannable without adding another panel or risking
+  long `ELIMINATIONS`/`ASSISTS`/`DAMAGE` wrapping on the tested portrait width. Smaller devices,
+  localization and final visual approval remain open.
+- **Evidence/sources:** `OfflineMatchHud.FormatResults`, the compact result regression in
+  `VerticalSlicePlayModeTests.ResultsFormatterListsPlacementsAndCombatStats`, and the exact
+  P60 Lava result capture under `Builds/Local/Device/final-circle-20260830/p60-full-route`.
+- **Owner:** Human project owner
