@@ -877,3 +877,31 @@ remains an accelerated diagnostic rather than same-seed determinism evidence; P1
 the real-time determinism record. Human full-route/touch/accessibility/fun review, normalized
 sustained performance, physical 16 KB, final authored/cultural approval, signing/package
 identity, privacy/Data Safety, content rating and Play Console actions remain owner-controlled.
+
+## Milestone 11 P54 saved-fighter presentation and portrait settings refresh - 2026-08-30
+
+The focused presentation-only follow-up is committed at `6d67fe3`, on top of documentation
+tip `ec7e97c`. `FighterPresentation` now suppresses the legacy root capsule
+only after a saved Bijli, Pehel or Maya production prefab provides mesh/skinned renderers;
+the root dash `TrailRenderer` remains available and hit/elimination tinting targets the saved
+renderers. `OfflineMatchHud` uses a centered modal for compact portrait settings while wide
+layouts retain the side sheet. Gameplay authority, collision, input, timing, networking and
+reward code are unchanged. ADR-071 records the decision.
+
+Fresh validation is **0 errors / 0 warnings**, EditMode **141/141**, and PlayMode **89/89**.
+The rebuilt temporary-ID APK/AAB pass the offline manifest, ARM64/static 16 KB and store-
+creative technical gates; exact hashes and logs are indexed in `Docs/V1_RELEASE_PLAN.md`
+P54. The exact APK installed and launched on approved Lava `ST5GDW23LB004392` only, and
+fresh captures show the saved faceted identities in the live arena plus the centered portrait
+settings modal. A current-source 180-second Lava capture (36 five-second samples) found no
+configured fatal markers; warm-up-excluded PSS was **231,718-239,663 KB**, RSS
+**354,052-362,000 KB**, graphics PSS **63,012-69,168 KB**, and process CPU
+**51.5-62.5%** on Android's 100%-per-core scale. The run was USB-powered and Lava reports
+4 KB pages, so this is bounded stability evidence rather than normalized performance,
+unplugged endurance or physical 16 KB proof. Oppo was not used.
+
+The product remains a generated presentation baseline / Android offline release candidate in
+progress, not Play-ready. Final authored/cultural/fun/accessibility approval, genuine physical
+16 KB runtime, normalized sustained performance, final package identity/signing, privacy/Data
+Safety, content rating and Play Console actions remain owner-controlled. The two prompt files
+under `PROMPTS/` remain intentional uncommitted owner work.

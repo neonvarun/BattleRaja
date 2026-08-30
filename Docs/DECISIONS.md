@@ -1639,3 +1639,32 @@ Record every material choice here. Do not silently overwrite old decisions.
   `ProductionPresentationBuilder`, saved `VictoryVfx.prefab`/`DefeatVfx.prefab`, the terminal
   outcome PlayMode regression, and P47 in `Docs/V1_RELEASE_PLAN.md`.
 - **Owner:** Human project owner
+
+### ADR-071 - Suppress legacy fighter meshes when saved identity art is active
+
+- **Date:** 2026-08-30
+- **Status:** Accepted for the V1 offline presentation baseline; final authored art,
+  accessibility and human feel review remain open.
+- **Context:** The production scenes retain a capsule `MeshRenderer` on the same actor
+  GameObject as the authoritative `CharacterController`. `FighterPresentation` correctly
+  instantiated the saved faceted identity prefab, but left that legacy mesh enabled, so the
+  capsule visually overlaid the production silhouette on the Android portrait camera.
+- **Options considered:** Migrate every scene fixture immediately; remove the fallback
+  mesh and risk old fixtures becoming invisible; or keep the fallback for scenes without a
+  saved model and suppress only direct root mesh renderers after a valid saved identity is
+  instantiated.
+- **Decision:** `FighterPresentation` keeps the root mesh as a deterministic emergency
+  fallback, but disables only direct root `MeshRenderer` components when a saved production
+  prefab has mesh/skinned renderers. Hit and elimination tinting now uses the saved renderers
+  through `MaterialPropertyBlock`; the root `TrailRenderer` remains available for Bijli's
+  dash telegraph. No movement, collision, authority, input, timing, or reward state is
+  changed.
+- **Consequences:** The saved Bijli, Pehel and Maya silhouettes are the actual gameplay
+  presentation surface on Android, while legacy fixtures remain recoverable when no saved
+  identity is available. The generated meshes and tint path remain a technical V1 baseline,
+  not commissioned final art, animation, cultural approval or sustained mobile-performance
+  approval.
+- **Evidence/sources:** `FighterPresentation`, `ProductionFighterArtUsesSavedRenderOnlyPrefabs`,
+  fresh 141/141 EditMode and 89/89 PlayMode results, the rebuilt technical gate, and the
+  approved-Lava captures indexed in `Docs/V1_RELEASE_PLAN.md` P54.
+- **Owner:** Human project owner

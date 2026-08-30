@@ -437,6 +437,18 @@ namespace BattleRaja.Presentation.Match
             spectatorRect.anchorMin = compact ? new Vector2(0.42f, 0.84f) : new Vector2(0.42f, 0.88f);
             spectatorRect.anchorMax = compact ? new Vector2(0.98f, 0.89f) : new Vector2(0.98f, 0.93f);
             _spectatorText.fontSize = Mathf.RoundToInt((compact ? 16f : 20f) * _textScale);
+
+            if (_settingsPanel != null)
+            {
+                // On a portrait phone, a centered modal keeps the controls readable
+                // and leaves an intentional gameplay margin on both sides. Wide
+                // layouts retain the compact side sheet for desktop/tablet play.
+                var settingsRect = _settingsPanel.GetComponent<RectTransform>();
+                settingsRect.anchorMin = compact ? new Vector2(0.06f, 0.10f) : new Vector2(0.58f, 0.16f);
+                settingsRect.anchorMax = compact ? new Vector2(0.94f, 0.90f) : new Vector2(0.96f, 0.86f);
+                settingsRect.offsetMin = Vector2.zero;
+                settingsRect.offsetMax = Vector2.zero;
+            }
         }
 
         private void ToggleSettings()

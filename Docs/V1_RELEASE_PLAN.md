@@ -2842,6 +2842,79 @@ than normalized FPS, frame-time, GC, thermal, battery, accessibility or sustaine
 The candidate remains a **prototype / Android offline release candidate in progress**, not
 Play-ready. The two prompt files under `PROMPTS/` remain intentional uncommitted owner work.
 
+### P54 - Current-source saved-fighter presentation and portrait settings refresh - 2026-08-30
+
+The focused presentation-only follow-up is committed at `6d67fe3` on top of exact
+documentation tip `ec7e97c79030fa15496a0e688c2e823cb919652e`. `FighterPresentation` now keeps the
+legacy root capsule as an emergency fallback, but suppresses direct root `MeshRenderer`
+components whenever a saved Bijli, Pehel or Maya identity prefab has mesh/skinned renderers.
+Hit and elimination tinting uses the saved mesh renderers through `MaterialPropertyBlock`,
+while the root `TrailRenderer` remains available for Bijli's dash telegraph. `OfflineMatchHud`
+now presents a centered portrait settings modal (`0.06..0.94` width, `0.10..0.90` height)
+and retains the side-sheet layout for wide screens. Gameplay authority, collision, input,
+timing, networking and reward code are unchanged. The decision is recorded as ADR-071.
+
+#### Machine evidence
+
+- Repository validation: **0 errors / 0 warnings**.
+- EditMode: **141/141 passed**. XML `Builds/Local/TestResults/editmode-v1-visual-fix-20260830.xml`
+  (109,805 bytes; SHA-256 `88CD406BD12480E31033415C64733A53C77A90A37A3089DB767BD35FD89A216D`);
+  log SHA-256 `0BA0663F7EC7EB3F14E4D1C2FCD33565F0AA3CB3C89BF1D3F264B4F2E7FD9D1F`.
+- PlayMode: **89/89 passed**. XML `Builds/Local/TestResults/playmode-v1-visual-fix-20260830.xml`
+  (78,372 bytes; SHA-256 `6758CDDF094BCC55968EF96A208E9C8692DEC41458B8FE96E7B2B84E596CF5AE`);
+  log SHA-256 `97D5F3CAAC24330836795831809DAB78CDA7E04073B4D827F4E7C900C815E75A`.
+  The suite now asserts that each production fighter is using saved tintable renderers and
+  that any legacy root `MeshRenderer` is disabled.
+- APK: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`, **40,679,022 bytes**,
+  SHA-256 `533F9D462AF5C917768015C3DC5CB09DB7AEBC2D60AEC4774F907BDAECF92CF0`.
+- AAB: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`, **36,504,187 bytes**,
+  SHA-256 `FFE762B4CC60A10695B4AC76D1254243A62D2EB143A1F48A5155C318136E6248`.
+- Composed release checker log `Builds/Local/Logs/release-checker-v1-visual-fix-20260830.log`
+  (3,245 bytes; SHA-256 `3F2C3D6E7BC56F219B407C8943326DCA69ADBBD77519F1AE3F0F0B25D56439E0`)
+  passed the offline manifest gate, ARM64-only/static 16 KB alignment gate and store
+  creative dimension gate. It reports package `com.example.battleraja.m11`, version
+  `1.0.0`/code `100`, min/target API `28/36`, VIBRATE plus Unity's dynamic receiver
+  permission, and no network permissions. The signer remains temporary/debug-only.
+
+#### Approved Lava smoke
+
+The exact APK installed and launched on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`,
+Android 14/API 34). A fresh route reached the branded menu, Solo Raja, the fighter cards,
+live opening match and settings. The live capture
+`Builds/Local/Device/lava-v1-visual-fix-live-20260830.png` (324,725 bytes; SHA-256
+`D83E9E2C70EB7D300D6AE4735F32798B5247C2E42BA8524817C654117E9AB605`) shows the saved
+faceted fighter identity geometry in the arena; the settings capture
+`Builds/Local/Device/lava-v1-visual-fix-settings-20260830.png` (120,795 bytes; SHA-256
+`4901B3D3F22D257A1C49DCD2FACCD7DAF41A46FE12E9562696BD0E7279B34867`) shows the centered
+portrait modal. App-scoped logcat had no `FATAL EXCEPTION`, `AndroidRuntime`, `SIGSEGV`,
+`SIGABRT` or ANR marker. Oppo was not used.
+
+A fresh 180-second Lava capture ran with 36 five-second samples under
+`Builds/Local/Device/Performance/v1-visual-fix-180s-20260830/`; the manifest is 4,927 bytes
+(SHA-256 `FE55E2F33F4B85946982AB10E780DA8DC04FC58AC3326FA691F6079425F19BF3`) and the
+logcat is 1,109,363 bytes (SHA-256
+`F285C8EEE5D247D0E76B4D2EF5ADA7443DA19369E7F1F737D7740AB863704FFF`). No configured fatal
+markers were found. Warm-up-excluded samples 11-36 measured **231,718-239,663 KB PSS**
+(average **236,654 KB**), **354,052-362,000 KB RSS** (average **358,988 KB**),
+**63,012-69,168 KB graphics PSS** (average **66,803 KB**), and a constant reported battery
+temperature of **34 C**. `top` sampled the app at **51.5-62.5% CPU** (average **58.6%**;
+Android's 100%-per-core scale). The phone was USB-powered and reports 4 KB pages, so this
+is bounded stability telemetry rather than normalized FPS/GC/GPU approval, unplugged battery
+endurance, or genuine physical 16 KB runtime evidence.
+
+| Gate | Current classification | Evidence / remaining action |
+| --- | --- | --- |
+| Saved fighter identity is the visible production surface | **Passed locally** | PlayMode renderer assertion and Lava live capture show saved faceted profiles; ADR-071 |
+| Portrait settings readability | **Passed locally / owner review remains** | Centered modal in exact Lava capture; owner still reviews touch comfort and accessibility |
+| Exact tests, APK/AAB manifest, offline permissions, ARM64/static 16 KB and store dimensions | **Passed locally** | P54 XML/log/checker hashes above |
+| 180-second current-source Lava stability smoke | **Passed as bounded diagnostic** | 36 samples, no configured fatal markers; USB-powered and not a normalized performance pass |
+| Genuine 16 KB physical runtime, normalized frame/GC/GPU budgets, unplugged endurance | **Open** | Lava reports 4 KB pages; P49 host-GPU AVD is profile-specific evidence |
+| Final authored art/audio, cultural/fun/accessibility approval | **Owner review required** | Generated presentation remains a V1 technical baseline |
+| Final package identity/signing, privacy/Data Safety, IARC/content rating and Play Console | **Owner-controlled** | Drafts/checklists prepared; no upload or public deployment performed |
+
+The candidate remains a **prototype / Android offline release candidate in progress**, not
+Play-ready. The two prompt files under `PROMPTS/` remain intentional uncommitted owner work.
+
 ### P51 - Exact current release-handoff documentation tip - 2026-08-30 07:05 IST
 
 This docs-only continuation is aligned with `origin/main` and does not change the runtime source,

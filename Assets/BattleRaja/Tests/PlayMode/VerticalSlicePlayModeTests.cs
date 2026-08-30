@@ -700,6 +700,17 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(fighters, Has.Length.EqualTo(8));
             foreach (var fighter in fighters)
             {
+                Assert.That(fighter.UsesProductionModel, Is.True,
+                    fighter.name + " must use the saved production identity at runtime");
+                Assert.That(fighter.ProductionRendererCount, Is.GreaterThan(0),
+                    fighter.name + " saved production identity has no tintable mesh renderers");
+                var legacyBodyMesh = fighter.GetComponent<MeshRenderer>();
+                if (legacyBodyMesh != null)
+                {
+                    Assert.That(legacyBodyMesh.enabled, Is.False,
+                        fighter.name + " legacy capsule must be hidden when saved identity art is active");
+                }
+
                 var modelRoot = fighter.transform.Find("FighterIdentitySilhouette")?.GetChild(0);
                 Assert.That(modelRoot, Is.Not.Null, fighter.name + " is missing its saved production model instance");
                 Assert.That(modelRoot.name, Does.Match("(Bijli|Pehel|Maya)Production"));

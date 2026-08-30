@@ -50,6 +50,7 @@ namespace BattleRaja.Presentation.Visuals
         private readonly List<Vector3> _silhouetteBasePositions = new List<Vector3>(24);
         private readonly List<Quaternion> _silhouetteBaseRotations = new List<Quaternion>(24);
         private readonly List<Vector3> _silhouetteBaseScales = new List<Vector3>(24);
+        private readonly List<Renderer> _productionRenderers = new List<Renderer>(12);
         private Transform _ring;
         private Transform _healthBar;
         private Transform _healthFill;
@@ -77,6 +78,8 @@ namespace BattleRaja.Presentation.Visuals
         public bool IsEliminated => _eliminated;
         public bool IsVictory => _victory;
         public int AnimatedPartCount => _silhouetteParts.Count;
+        public bool UsesProductionModel => _productionRenderers.Count > 0;
+        public int ProductionRendererCount => _productionRenderers.Count;
         public int AttackActivationCount { get; private set; }
         public int AbilityActivationCount { get; private set; }
         public bool ReducedFlashMode { get => reducedFlashMode; set => reducedFlashMode = value; }
@@ -186,11 +189,9 @@ namespace BattleRaja.Presentation.Visuals
 
             ApplySilhouetteAnimation();
 
-            if (_flashApplied && _hitRemaining <= 0f && bodyRenderer != null && !_eliminated)
+            if (_flashApplied && _hitRemaining <= 0f && (_productionRenderers.Count > 0 || bodyRenderer != null) && !_eliminated)
             {
-                bodyRenderer.GetPropertyBlock(_bodyProperties);
-                _bodyProperties.SetColor("_BaseColor", _baseBodyColor);
-                bodyRenderer.SetPropertyBlock(_bodyProperties);
+                ApplyPresentationColor(_baseBodyColor);
                 _flashApplied = false;
             }
 
@@ -246,11 +247,9 @@ namespace BattleRaja.Presentation.Visuals
             if (!result.Applied) return;
             _hitRemaining = reducedFlashMode ? 0.04f : 0.12f;
             _telegraphRemaining = reducedFlashMode ? 0.04f : 0.08f;
-            if (!reducedFlashMode && bodyRenderer != null)
+            if (!reducedFlashMode && (_productionRenderers.Count > 0 || bodyRenderer != null))
             {
-                bodyRenderer.GetPropertyBlock(_bodyProperties);
-                _bodyProperties.SetColor("_BaseColor", new Color(1f, 0.9f, 0.22f, 1f));
-                bodyRenderer.SetPropertyBlock(_bodyProperties);
+                ApplyPresentationColor(new Color(1f, 0.9f, 0.22f, 1f));
                 _flashApplied = true;
             }
 
@@ -264,12 +263,7 @@ namespace BattleRaja.Presentation.Visuals
         {
             _eliminated = true;
             CurrentAnimation = AnimationState.Eliminated;
-            if (bodyRenderer != null)
-            {
-                bodyRenderer.GetPropertyBlock(_bodyProperties);
-                _bodyProperties.SetColor("_BaseColor", new Color(0.22f, 0.22f, 0.25f, 1f));
-                bodyRenderer.SetPropertyBlock(_bodyProperties);
-            }
+            ApplyPresentationColor(new Color(0.22f, 0.22f, 0.25f, 1f));
 
             _flashApplied = false;
 
@@ -282,6 +276,28 @@ namespace BattleRaja.Presentation.Visuals
         {
             if (_productionAnimator == null || !_productionAnimator.isActiveAndEnabled) return;
             _productionAnimator.SetInteger("State", (int)CurrentAnimation);
+        }
+
+        private void ApplyPresentationColor(Color color)
+        {
+            if (_productionRenderers.Count > 0)
+            {
+                for (var i = 0; i < _productionRenderers.Count; i++)
+                {
+                    var renderer = _productionRenderers[i];
+                    if (renderer == null) continue;
+                    renderer.GetPropertyBlock(_bodyProperties);
+                    _bodyProperties.SetColor("_BaseColor", color);
+                    renderer.SetPropertyBlock(_bodyProperties);
+                }
+
+                return;
+            }
+
+            if (bodyRenderer == null) return;
+            bodyRenderer.GetPropertyBlock(_bodyProperties);
+            _bodyProperties.SetColor("_BaseColor", color);
+            bodyRenderer.SetPropertyBlock(_bodyProperties);
         }
 
         private void ApplySilhouetteAnimation()
@@ -420,6 +436,11 @@ namespace BattleRaja.Presentation.Visuals
                 var renderers = productionModel.GetComponentsInChildren<Renderer>(true);
                 for (var i = 0; i < renderers.Length; i++)
                 {
+                    if (renderers[i] is MeshRenderer || renderers[i] is SkinnedMeshRenderer)
+                    {
+                        _productionRenderers.Add(renderers[i]);
+                    }
+
                     var part = renderers[i] != null ? renderers[i].transform : null;
                     if (part == null) continue;
                     _silhouetteParts.Add(part);
@@ -428,9 +449,20 @@ namespace BattleRaja.Presentation.Visuals
                     _silhouetteBaseScales.Add(part.localScale);
                 }
 
-                if (_silhouetteParts.Count > 0) return;
+                if (_productionRenderers.Count > 0)
+                {
+                    SuppressLegacyRootBodyMesh();
+                    _baseBodyColor = ResolveRendererBaseColor(_productionRenderers[0]);
+                    return;
+                }
+
                 Destroy(productionModel);
                 _ownedObjects.Remove(productionModel);
+                _silhouetteParts.Clear();
+                _silhouetteBasePositions.Clear();
+                _silhouetteBaseRotations.Clear();
+                _silhouetteBaseScales.Clear();
+                _productionRenderers.Clear();
             }
 
             if (bijli != null && bijli.enabled)
@@ -487,6 +519,26 @@ namespace BattleRaja.Presentation.Visuals
                 CreateVisualPrimitive("MayaTailL", PrimitiveType.Cube, new Vector3(-0.32f, -0.08f, 0.28f), new Vector3(0.18f, 0.12f, 0.36f), Quaternion.Euler(0f, -18f, 0f), mint);
                 CreateVisualPrimitive("MayaTailR", PrimitiveType.Cube, new Vector3(0.32f, -0.08f, 0.28f), new Vector3(0.18f, 0.12f, 0.36f), Quaternion.Euler(0f, 18f, 0f), violet);
             }
+        }
+
+        private void SuppressLegacyRootBodyMesh()
+        {
+            // Scene fixtures retain a capsule mesh as a gameplay-safe fallback. Once a
+            // saved production identity is present, hide only that root mesh and keep
+            // the TrailRenderer available for Bijli's dash telegraph.
+            var rootMeshes = GetComponents<MeshRenderer>();
+            for (var i = 0; i < rootMeshes.Length; i++)
+            {
+                if (rootMeshes[i] != null) rootMeshes[i].enabled = false;
+            }
+        }
+
+        private static Color ResolveRendererBaseColor(Renderer renderer)
+        {
+            var material = renderer != null ? renderer.sharedMaterial : null;
+            return material != null && material.HasProperty("_BaseColor")
+                ? material.GetColor("_BaseColor")
+                : Color.white;
         }
 
         private GameObject CreateVisualPrimitive(string name, PrimitiveType type, Vector3 position, Vector3 scale, Quaternion rotation, Material material)

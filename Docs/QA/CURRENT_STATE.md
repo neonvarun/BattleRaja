@@ -480,3 +480,32 @@ This closes the current automated production-bot pacing/safety gate locally. The
 the determinism record. Human route, comfort/accessibility/fun, authored/cultural review,
 normalized sustained performance, physical 16 KB, signing, legal/privacy, rating and Play
 Console gates remain open.
+
+## P54 current-source saved-fighter presentation and portrait settings refresh - 2026-08-30
+
+The focused presentation-only follow-up is committed at `6d67fe3`, on top of documentation
+tip `ec7e97c`. Saved Bijli, Pehel and Maya production prefabs now replace the
+legacy root capsule at runtime; the root mesh remains available as a fallback for fixtures
+without a saved identity, and the root dash `TrailRenderer` is preserved. Hit/elimination
+tinting targets the saved mesh renderers. On compact portrait layouts, the settings surface
+is a centered modal rather than a right-side sheet. ADR-071 records the boundary and rationale.
+
+Fresh validation is **0 errors / 0 warnings**, EditMode **141/141**, and PlayMode **89/89**.
+The rebuilt temporary-ID APK/AAB pass the offline manifest, ARM64/static 16 KB and store-
+creative technical gates; exact hashes and logs are indexed in `Docs/V1_RELEASE_PLAN.md`
+P54. The exact APK installed and launched on approved Lava `ST5GDW23LB004392` only. Fresh
+captures show the saved faceted fighter identities in the live arena and the centered portrait
+settings modal; sampled app logcat has no configured fatal/ANR/SIGSEGV/SIGABRT markers.
+
+A current-source 180-second Lava capture contains 36 five-second samples with warm-up-
+excluded PSS **231,718-239,663 KB**, RSS **354,052-362,000 KB**, graphics PSS
+**63,012-69,168 KB**, and process CPU **51.5-62.5%** (100%-per-core scale). It was
+USB-powered, reported 4 KB pages, and found no configured fatal markers. These are bounded
+stability observations, not normalized FPS/frame-time/GC/GPU approval, unplugged endurance,
+physical 16 KB runtime proof or final human visual/accessibility approval. Oppo was not used.
+
+The product remains a **prototype / Android offline release candidate in progress**, not
+Play-ready. Final authored/cultural/fun/accessibility review, physical 16 KB, normalized
+sustained performance, final package identity/signing, privacy/Data Safety, content rating
+and Play Console actions remain owner-controlled. The two prompt files under `PROMPTS/`
+remain intentional uncommitted owner work.
