@@ -987,6 +987,30 @@ repeated-rematch approval, normalized performance, physical 16 KB proof, final a
 content approval or Play Store approval. The project remains a prototype / Android offline
 release candidate in progress.
 
+## Latest exact-candidate compact-results evidence — P61 — 2026-08-31
+
+The P61 runtime checkpoint `f80b565372d7446e070cf1a37de042bd018345c4` keeps the P60 `ZONE`
+label and replaces compact result rows' ambiguous `K/A/D` sequence with `KOs`, `AST` and
+`DMG`; portrait result type rises from 16 px to 18 px. Full EditMode (**141/141**) and
+PlayMode (**92/92**) remain green, repository validation and the release checker report
+**0 errors / 0 warnings**, and the rebuilt temporary-ID APK/AAB fingerprints are recorded in
+`Docs/V1_RELEASE_PLAN.md` P61.
+
+The exact rebuilt APK installed successfully only on approved Lava
+`ST5GDW23LB004392`. The route reached live match → player defeat/spectator → Aandhi/final
+circle → Results → REMATCH. The result capture
+`Builds/Local/Device/final-circle-20260830/p60-results-copy-route/05-results.png` is 301,689
+bytes (SHA-256
+`313F180C6177C5A78F80B68D115C0E52E2E44C3FDB79CA157737B62BADC79676`) and visibly shows the
+expanded metric labels. `05-rematch-opening.png` is 322,280 bytes (SHA-256
+`2137A249A70D9005A563AA259652F672D182C132B96069B21ED2DBB731D2FF26`). The route index is
+`Builds/Local/Device/final-circle-20260830/p61-results-copy-manifest.json` (4,936 bytes;
+SHA-256 `0C868F852FE57C409B914871845DF317EFC7C89398CEFD3A8AB98E5F1137671F`).
+
+This closes the exact-candidate compact-results copy observation only. Smaller-device,
+localization, final visual, all-fighter action-by-action comfort, sustained performance,
+physical 16 KB, release signing, legal/privacy and human approval remain open.
+
 ## Latest exact-candidate compact-HUD copy evidence — P60 — 2026-08-31
 
 The P60 runtime checkpoint `c3cfb27e08f13ecf4b91a4234269aa11e675bfe9` replaces the compact

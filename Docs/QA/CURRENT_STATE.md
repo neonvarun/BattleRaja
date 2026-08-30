@@ -660,6 +660,33 @@ proof, final authored art/audio, human accessibility/fun/fairness/cultural appro
 Store readiness. The project remains **Prototype — Android offline release candidate in
 progress**.
 
+## P61 compact portrait results metrics - 2026-08-31
+
+The current runtime/test checkpoint is `f80b565372d7446e070cf1a37de042bd018345c4`. Compact
+results now spell out `KOs`, `AST` and `DMG` instead of the ambiguous `K/A/D` sequence, and
+portrait result type is 18 px before the saved text-scale preference. ADR-075 records the
+presentation-only decision; placement, damage, rewards and authority state are unchanged.
+
+The rebuilt APK is 40,679,695 bytes (SHA-256
+`922DB673B579BD88705BB4483C36A21A2D903A1CD05D2C2F50F47D26A564EA91`) and the AAB is
+36,504,994 bytes (SHA-256
+`FDBCED4B1D6D69E4F637C283298188B037D58F152DE4D9B69F897147F85093CF`). Repository validation,
+full EditMode (**141/141**), full PlayMode (**92/92**) and the release checker all report
+**0 errors / 0 warnings**. The package remains temporary `com.example.battleraja.m11`, version
+`1.0.0`/code `100`, API `28/36`, ARM64-only, statically 16 KB aligned and debug-signed.
+
+On approved Lava `ST5GDW23LB004392` only, the exact rebuilt APK reached a fresh live match,
+player defeat/spectator, Aandhi/final circle, Results and REMATCH. The result capture
+`Builds/Local/Device/final-circle-20260830/p60-results-copy-route/05-results.png` (301,689
+bytes; SHA-256 `313F180C6177C5A78F80B68D115C0E52E2E44C3FDB79CA157737B62BADC79676`) visibly
+shows the expanded labels. The rematch capture `05-rematch-opening.png` is 322,280 bytes;
+the route manifest is
+`Builds/Local/Device/final-circle-20260830/p61-results-copy-manifest.json` (4,936 bytes;
+SHA-256 `0C868F852FE57C409B914871845DF317EFC7C89398CEFD3A8AB98E5F1137671F`). The app log
+has no configured fatal/ANR/SIGSEGV/SIGABRT marker; known Lava graphics, Play Core and Swappy
+diagnostics remain recorded. This is exact-candidate readability/route evidence, not final
+authored UX, localization, comfort, performance, physical 16 KB or Play approval.
+
 ## P60 compact portrait HUD copy - 2026-08-31
 
 The current runtime checkpoint is `c3cfb27e08f13ecf4b91a4234269aa11e675bfe9`. The compact

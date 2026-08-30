@@ -940,6 +940,29 @@ Console actions remain owner-controlled. The truthful state remains **Prototype 
 offline release candidate in progress**; the two prompt files are intentional uncommitted owner
 work.
 
+## Milestone 11 P61 compact portrait results metrics - 2026-08-31
+
+The runtime/test checkpoint is `f80b565372d7446e070cf1a37de042bd018345c4`. Compact results
+now spell out `KOs`, `AST` and `DMG` instead of the ambiguous single-letter `K/A/D` sequence,
+and portrait result type rises from 16 px to 18 px. ADR-075 records the presentation-only
+decision; placement, damage, rewards and authority state remain unchanged. The change is
+covered by full EditMode **141/141** and PlayMode **92/92** reruns.
+
+The rebuilt temporary-ID APK/AAB passed repository validation and the release checker with
+**0 errors / 0 warnings**. APK SHA-256 is
+`922DB673B579BD88705BB4483C36A21A2D903A1CD05D2C2F50F47D26A564EA91`; AAB SHA-256 is
+`FDBCED4B1D6D69E4F637C283298188B037D58F152DE4D9B69F897147F85093CF`.
+
+On approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34, 4 KB pages), the
+exact rebuilt APK reached live match, defeat/spectator, Aandhi/final circle, Results and
+REMATCH. The result capture visibly shows `KOs`, `AST` and `DMG`; the route index is
+`Builds/Local/Device/final-circle-20260830/p61-results-copy-manifest.json` (4,936 bytes;
+SHA-256 `0C868F852FE57C409B914871845DF317EFC7C89398CEFD3A8AB98E5F1137671F`). The app log
+has no configured fatal/ANR/SIGSEGV/SIGABRT marker; known Lava graphics diagnostics remain
+recorded. The truthful state remains **Prototype — Android offline release candidate in
+progress**; final authored/cultural/fun/accessibility, normalized performance/endurance,
+physical 16 KB, identity/signing, legal/privacy, rating and Play gates remain open.
+
 ## Milestone 11 P60 compact portrait HUD copy - 2026-08-31
 
 The runtime/test checkpoint is `c3cfb27e08f13ecf4b91a4234269aa11e675bfe9`. The compact

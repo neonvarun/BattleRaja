@@ -2999,6 +2999,76 @@ Play-ready. P59 adds current-candidate all-fighter and accessibility observation
 does not close the subjective, physical, performance, identity, legal or Play gates. The two
 prompt files under `PROMPTS/` remain intentional uncommitted owner work.
 
+### P61 - Clarify compact results metrics on the portrait HUD - 2026-08-31
+
+The current runtime/test checkpoint is `f80b565372d7446e070cf1a37de042bd018345c4`
+(`ui: clarify compact result metrics`). The compact results card now uses the player-facing
+`KOs`, `AST` and `DMG` labels instead of the ambiguous single-letter `K/A/D` sequence, and its
+portrait result text rises from 16 px to 18 px before the saved text-scale preference is
+applied. Placement, damage, rewards and authority state are unchanged. ADR-075 records the
+decision and the compact formatter regression.
+
+#### Machine evidence
+
+- `Tools/Validation/validate.ps1` returned **0 errors / 0 warnings**. Log:
+  `Builds/Local/Logs/validate-results-copy-20260831.log` (SHA-256
+  `7EF09129DBD03921DF243F43AC65AE932A8C74C4DD76FAD8E6A013BFC804E322`).
+- Full EditMode returned **141/141 passed**. XML
+  `Builds/Local/TestResults/editmode-results-copy-20260831.xml` (SHA-256
+  `25F2F5E0E6BC89405D2D5371412C6A9E057C2EEED9C847BB18460B3700A15486`).
+- Full PlayMode returned **92/92 passed**. XML
+  `Builds/Local/TestResults/playmode-results-copy-20260831.xml` (SHA-256
+  `1BE01E5420DD4674598417DF26C4CE9A8470E386CAF442D1C041B56767AA58B9`).
+- The rebuilt APK is 40,679,695 bytes (SHA-256
+  `922DB673B579BD88705BB4483C36A21A2D903A1CD05D2C2F50F47D26A564EA91`) and the AAB is
+  36,504,994 bytes (SHA-256
+  `FDBCED4B1D6D69E4F637C283298188B037D58F152DE4D9B69F897147F85093CF`). Build logs are
+  `Builds/Local/Logs/android-v1-apk-results-copy-20260831.log` (SHA-256
+  `C2159CD2A0165B101E57FB92F60B536CC81C94271274EADC3D468FF10E61A182`) and
+  `Builds/Local/Logs/android-v1-aab-results-copy-20260831.log` (SHA-256
+  `D1017D1AC97FC908D6B98FB95538058FF2EDB6371AB51150E0082212C69ED0CD`).
+- The release checker returned **0 errors / 0 warnings**. Final log:
+  `Builds/Local/Logs/release-checker-results-copy-20260831.log` (SHA-256
+  `25A9FF28668DAB739B5CD795487783BBCF8668D981FF5891B51EA38B9277AD6F`). It reports package
+  `com.example.battleraja.m11`, version `1.0.0`/code `100`, API 28/36, no network permission,
+  seven ARM64 native libraries and static 16 KB alignment.
+
+#### Approved Lava exact-candidate route
+
+The rebuilt APK installed successfully on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`,
+Android 14/API 34, reported 4 KB pages). Fresh touch reached menu → Play Offline → Solo Raja →
+Bijli → live match, then player defeat/spectator, Aandhi pressure/final circle, Results and
+REMATCH. The exact current result capture
+`Builds/Local/Device/final-circle-20260830/p60-results-copy-route/05-results.png` is 301,689
+bytes (SHA-256
+`313F180C6177C5A78F80B68D115C0E52E2E44C3FDB79CA157737B62BADC79676`) and visibly shows
+`KOs`, `AST` and `DMG` on every placement row. The fresh rematch capture
+`05-rematch-opening.png` is 322,280 bytes (SHA-256
+`2137A249A70D9005A563AA259652F672D182C132B96069B21ED2DBB731D2FF26`) and shows
+`SPAWN SHIELD` / `ALIVE 8  ZONE 14.0 > 14.0`.
+
+The route index is
+`Builds/Local/Device/final-circle-20260830/p61-results-copy-manifest.json` (4,936 bytes;
+SHA-256 `0C868F852FE57C409B914871845DF317EFC7C89398CEFD3A8AB98E5F1137671F`). The current
+app-scoped log is 15,783 bytes (SHA-256
+`D88E416E0487E13919C3C928A10E4372EACA3E624C29A7FC0BC0980FF8BBA833`) with no configured
+`FATAL EXCEPTION`, `ANR in`, `SIGSEGV` or `SIGABRT` marker; known Lava gralloc/AHardwareBuffer,
+Play Core class-probe and Swappy diagnostics remain recorded. The UI tree is SurfaceView-only
+and screenshot-derived coordinates were required.
+
+#### P61 gate delta
+
+| Gate | Current classification | Evidence / remaining action |
+| --- | --- | --- |
+| Compact results metric copy and portrait type size | **Passed by exact source/test/device evidence** | `OfflineMatchHud.FormatResults`, ADR-075, full 141/141 + 92/92 reruns, exact rebuilt Lava result/rematch capture |
+| Exact rebuilt APK/AAB technical checks | **Passed locally** | Rebuilt artifacts, repository validation and release checker above |
+| Full all-fighter/accessibility route on this rebuilt artifact | **Open / prior observation remains** | P59 route evidence is on the preceding copy-only candidate; fresh all-fighter comfort review remains required |
+| Final authored art/audio, localization, cultural, fun and accessibility approval | **Owner/human review required** | Generated presentation baseline remains a candidate |
+| Sustained performance, battery/thermal, physical 16 KB and Play gates | **Open / owner-controlled** | Existing bounded evidence and drafts do not replace these approvals |
+
+The project remains a **prototype / Android offline release candidate in progress**, not
+Play-ready. The two prompt files under `PROMPTS/` remain intentional uncommitted owner work.
+
 ### P60 - Spell out compact zone telemetry for the portrait HUD - 2026-08-31
 
 The current runtime/test checkpoint is `c3cfb27e08f13ecf4b91a4234269aa11e675bfe9`
