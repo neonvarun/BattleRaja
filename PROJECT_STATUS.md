@@ -6,11 +6,12 @@
 
 ## Current state
 
-- **Latest exact-source presentation/Android checkpoint (2026-08-30):** local HEAD is
-  `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`. The terminal-outcome continuation saves
+- **Latest runtime/art presentation checkpoint (2026-08-30):** runtime/art source remains
+  `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`; local HEAD is the test-only follow-up
+  `a3d4afc90cbd80f109174a6432159b333c449900`. The terminal-outcome continuation saves
   Victory/Defeat VFX and routes authoritative placement into persistent render-only fighter
-  states; no gameplay, authority, input, network or package-policy code changed. Full
-  EditMode is **141/141**, PlayMode is **88/88**, static validation is **0 errors / 0
+  states; the follow-up adds direct player Umbrella Guard PlayMode coverage without changing
+  runtime behavior. Full EditMode is **141/141**, PlayMode is **89/89**, static validation is **0 errors / 0
   warnings**, and the exact temporary-ID APK/AAB pass offline manifest, ARM64/static 16 KB,
   bundletool, alignment, signature and store-dimension checks. Fresh exact APK evidence on
   approved Lava `ST5GDW23LB004392` reached the full menu → fighter → match → Aandhi →
@@ -837,3 +838,15 @@ older multi-platform store copy as superseded for V1 Android. Store-creative dim
 repository validation (**0 errors / 0 warnings**), `git diff --check` and Git LFS pointer
 validation pass. No runtime source, build artifact or package identity changed; the exact
 `5d136fb` candidate evidence and remaining owner/human gates in P47-P50 remain authoritative.
+
+## Milestone 11 P52 player-facing Umbrella Guard regression - 2026-08-30 07:21 IST
+
+The test-only tip is `a3d4afc90cbd80f109174a6432159b333c449900`. It adds a direct MovementLab
+PlayMode assertion that the player can collect and use Umbrella Guard, consume the one-slot
+inventory, receive the configured shield duration and feedback, and record the successful-use
+counter. Full EditMode is **141/141**, PlayMode is **89/89**, repository validation is
+**0 errors / 0 warnings**, and `git diff --check` passes. No runtime-bearing code, package,
+APK/AAB or P47-P50 device evidence changed, so the exact `5d136fb` candidate artifacts remain
+authoritative. Final authored/cultural/fun/accessibility approval, sustained performance,
+physical 16 KB, signing, privacy/Data Safety, content rating and Play Console actions remain
+owner-controlled; the two prompt files remain intentional uncommitted owner work.

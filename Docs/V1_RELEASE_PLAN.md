@@ -2865,6 +2865,38 @@ older Web-inclusive store copy is marked historical/superseded for the V1 Androi
 | Runtime/build/test evidence | **Unchanged / still current** | P47-P50 exact `5d136fb` candidate evidence remains authoritative |
 | Final identity, signing, legal/privacy, cultural/accessibility/fun review and Play Console | **Owner/human gate required** | No submission, signing-key handling, questionnaire or deployment was performed |
 
+### P52 - Player-facing Umbrella Guard route regression - 2026-08-30 07:21 IST
+
+This test-only continuation is based on commit `a3d4afc90cbd80f109174a6432159b333c449900`,
+which adds direct PlayMode coverage for collecting and using the player-facing Umbrella Guard
+through the existing MovementLab authority path. The regression asserts successful pickup and
+use, one-slot consumption, the configured shield duration, player feedback and the success
+telemetry counter. No runtime-bearing gameplay, art, package, manifest or build input changed;
+the exact `5d136fb` APK/AAB and P47-P50 device evidence remain the release-candidate artifacts.
+
+#### P52 machine evidence
+
+- Repository validation: **0 errors / 0 warnings** from `Tools/Validation/validate.ps1`.
+- EditMode: **141/141 passed** in **3.8201455 s**. XML
+  `Builds/Local/TestResults/editmode-umbrella-player.xml` (109,819 bytes; SHA-256
+  `D942D4A52D27136DA9E97D28FE1B6AED1F1CA233222B3EEE2290EE5FC07DB4CA`); log
+  `Builds/Local/Logs/editmode-umbrella-player.log` (35,450 bytes; SHA-256
+  `5546D02B79D8C0F8C340CF46F2B0298CFDA8EAC959EAEFF386B844F0960B0329`).
+- PlayMode: **89/89 passed** in **80.3095409 s**. XML
+  `Builds/Local/TestResults/playmode-umbrella-player.xml` (78,374 bytes; SHA-256
+  `1077A1B644A59E016882DFF30B31EAB579656687453CB0D15624014A704D2EB8`); log
+  `Builds/Local/Logs/playmode-umbrella-player.log` (107,804 bytes; SHA-256
+  `A48315A033BD74D4DEE0294370589C98FC5C2A1C7552F041CCAA651A2D1D4B84`).
+- `git diff --check` passed. The two prompt files under `PROMPTS/` remain intentional
+  uncommitted owner work.
+
+| Gate | Current classification | Evidence / remaining action |
+| --- | --- | --- |
+| Player-facing Umbrella Guard pickup/use route | **Passed locally** | New `GadgetPlayModeTests.PlayerCanCollectAndUseUmbrellaGuard` regression; full PlayMode 89/89 |
+| Domain, authority and production-bot gadget coverage | **Unchanged / retained** | Existing EditMode, production-bot and production-scene coverage; no rule change |
+| APK/AAB and device evidence | **Unchanged / retained** | P47-P50 exact `5d136fb` runtime/art candidate remains authoritative; no rebuild needed for test-only source |
+| Final authored/accessibility/fun/cultural/performance approval | **Owner/human gate required** | Test evidence does not replace subjective review or sustained device acceptance |
+
 ### P50 - Exact-candidate Lava live-match SurfaceFlinger diagnostic - 2026-08-30
 
 The exact terminal-outcome candidate from source `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`

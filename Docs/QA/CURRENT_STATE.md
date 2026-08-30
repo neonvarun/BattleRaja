@@ -450,3 +450,15 @@ checklist. It also corrects the Play metadata wording so the generated productio
 is not described as “procedural placeholders”, and marks the older Web-inclusive store copy
 as historical for the V1 Android scope. Store-creative checks and repository validation are
 green; no runtime/build/test evidence changed, and P47-P50 remain the exact candidate index.
+
+## P52 player-facing Umbrella Guard regression - 2026-08-30 07:21 IST
+
+The test-only branch tip is `a3d4afc90cbd80f109174a6432159b333c449900`, based on runtime/art
+source `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`. A new `GadgetPlayModeTests` regression
+exercises player Umbrella Guard pickup/use through the MovementLab authority path and checks
+inventory consumption, configured shield duration, feedback and success telemetry. Full
+EditMode is **141/141**, PlayMode is **89/89**, and repository validation is **0/0**; exact
+XML/log hashes are indexed in `Docs/V1_RELEASE_PLAN.md` P52. No runtime artifact or device
+evidence changed, and P47-P50 remain authoritative. Human authored/cultural/fun/accessibility
+review, normalized performance, physical 16 KB, signing, legal/privacy, rating and Play
+Console gates remain open.

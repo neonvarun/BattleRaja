@@ -859,6 +859,18 @@ repository validation remain green; P47-P50 runtime, artifact, Lava and 16 KB ev
 unchanged. This does not change the temporary package ID/debug signing or close owner,
 human, legal, performance or Play Console gates.
 
+## P52 player-facing Umbrella Guard regression - 2026-08-30 07:21 IST
+
+The test-only tip is `a3d4afc90cbd80f109174a6432159b333c449900`, based on runtime/art source
+`5d136fbb6be6a5554931f6ab859be8b9a8a995a2`. `GadgetPlayModeTests` now directly exercises
+player pickup/use of Umbrella Guard and asserts one-slot consumption, configured shield
+duration, player feedback and success telemetry. Full EditMode is **141/141**, PlayMode is
+**89/89**, and repository validation is **0 errors / 0 warnings**; exact hashes are in P52 of
+`Docs/V1_RELEASE_PLAN.md`. No runtime artifact, APK/AAB, or device evidence changed, so P47-P50
+remain authoritative. The candidate is still temporary-ID/debug-signed; final identity,
+signing, human/cultural/accessibility/fun review, performance, privacy/rating and Play
+Console gates remain open.
+
 ## Exact-candidate P48 performance refresh - 2026-08-30
 
 The exact `5d136fbb6be6a5554931f6ab859be8b9a8a995a2` candidate was exercised on approved Lava

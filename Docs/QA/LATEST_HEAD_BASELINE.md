@@ -1956,3 +1956,14 @@ explicitly historical/superseded for the offline-Android V1 scope. Store dimensi
 repository validation (0/0), whitespace and Git LFS checks pass. P47-P50 runtime, artifact,
 Lava and 16 KB evidence is unchanged; final authored/human, signing, legal and Play gates
 remain open.
+
+## P52 player-facing Umbrella Guard regression - 2026-08-30 07:21 IST
+
+The current local tip is test-only commit `a3d4afc90cbd80f109174a6432159b333c449900` on top
+of runtime/art source `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`. The added PlayMode regression
+proves player Umbrella Guard pickup/use, one-slot consumption, shield duration, feedback and
+success telemetry through the existing MovementLab authority route. Full EditMode is
+**141/141**, PlayMode **89/89**, and repository validation **0 errors / 0 warnings**; exact
+test artifact hashes are indexed in `Docs/V1_RELEASE_PLAN.md` P52. No APK/AAB or runtime/device
+evidence changed, so P47-P50 remain the candidate artifact index. Final human, legal, signing,
+performance and Play Console gates remain open.
