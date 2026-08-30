@@ -2842,6 +2842,56 @@ than normalized FPS, frame-time, GC, thermal, battery, accessibility or sustaine
 The candidate remains a **prototype / Android offline release candidate in progress**, not
 Play-ready. The two prompt files under `PROMPTS/` remain intentional uncommitted owner work.
 
+### P49 - Genuine 16 KB Android 16 AVD host-GPU smoke - 2026-08-30
+
+The exact P47 terminal-outcome APK (`31D982D7334B08D0DE759CE755784547CFCF843D9CFCFB1DB0E041E7EEE2DF2D`)
+was installed successfully on the genuine `BattleRaja_16K` Android Virtual Device using the
+host-GPU renderer. The environment reports model `sdk_gphone16k_x86_64`, Android 16/API 36,
+`ro.product.cpu.abilist=x86_64,arm64-v8a` and `getconf PAGESIZE=16384`; the package remains
+`com.example.battleraja.m11` with version `1.0.0`/code `100` and the ARM64 native payload from
+the release candidate.
+
+- The exact install evidence is `Builds/Local/Device/Performance/20260830-16k-5d136fb/install.txt`.
+  A clean direct relaunch produced the normal branded menu in
+  `Builds/Local/Device/Performance/20260830-16k-5d136fb/host-gpu/launch-final.png`
+  (SHA-256 `919BA18BBCA77C4C843DD07EC1470E8D0DFAE4AC3C3F012266E102ACABD55FA0`). Its
+  app-scoped logcat has no configured fatal, ANR, SIGSEGV, SIGABRT or shader-link marker
+  (SHA-256 `28379F7FE3650BD8C0B9013802242055D06416277E23A6EEAF49747E6F6DF8F6`).
+- The repository performance harness captured **18 samples at 5-second intervals over
+  90 seconds** under `Builds/Local/Device/Performance/20260830-16k-5d136fb-host/`;
+  manifest SHA-256 is `AC691AF0BB69983AFE0001F87A4AF92543454D3F190C61FB974734A42EE48B61`.
+  Warm-up-excluded samples 11-18 measured **435,726-436,966 KB PSS** (average
+  **436,659 KB**), **617,304-621,236 KB RSS** (average **618,586 KB**) and a constant
+  **31,416 KB GraphicBufferAllocator estimate**. `top` reported **96.1-123.0%** process
+  CPU (average **104.5%**, Android's 100%-per-core scale); these are synthetic-emulator
+  observations, not a mid-range-device budget.
+- The emulator battery remained at 100%/5,000 mV/25 C and thermal status stayed **0**;
+  this powered virtual battery is not endurance evidence. Unity `gfxinfo` exposed the
+  ViewRoot and buffer summary but no usable frame histogram. The live-match checkpoint
+  screenshots are `...-host/match.png` (SHA-256
+  `22413DF9E3E5D6BA765E77D91B462ED3A8790EA0D4A7A96F4297467490353967`) and
+  `...-host/match-end.png` (SHA-256
+  `174FCDEE2BABAB93A1D4E5561744BB1A45737121E9BE8A83977F210AC3F8B4C5`); the latter is
+  a live-match checkpoint, not a terminal results screen.
+
+The same AVD was also tried with `-gpu swiftshader_indirect`. That diagnostic reached the
+match but rendered severe red/black geometry corruption and logged repeated
+`Universal Render Pipeline/Lit` GLSL link failures because the SwiftShader profile exceeded
+`GL_MAX_VERTEX_UNIFORM_VECTORS (256)`. The raw evidence is retained at
+`Builds/Local/Device/Performance/20260830-16k-5d136fb-route/` (`after15.png` SHA-256
+`D0F773030BDD2BA2BC78BBC8CE3D0A65143650464359FF44221ECBB1BA81C481`, logcat SHA-256
+`2D176EF6AA53318B38BF6BD61C21045E31E6F3CAB293556FA769B4EA18A3B3F4`). It is classified as
+a superseded renderer-profile limitation; no source-wide material rewrite was made because
+the host-GPU run renders normally.
+
+| Gate | Current classification | Evidence / remaining action |
+| --- | --- | --- |
+| Genuine 16 KB runtime page-size smoke | **Passed for host-GPU Android 16 AVD profile** | `getconf PAGESIZE=16384`, exact APK install, normal menu/live-match launch, 90-second capture and clean app-scoped logcat |
+| Universal/physical 16 KB compatibility | **Open** | Repeat on an ARM64 physical 16 KB device and other supported GPU profiles; Lava is 4 KB |
+| Normalized FPS, frame-time, GC, GPU and render-thread budget | **Open** | No usable Unity frame histogram; emulator CPU/battery are not product-tier evidence |
+| SwiftShader AVD profile | **Superseded diagnostic / known limitation** | URP/Lit uniform-limit corruption retained for follow-up if SwiftShader is a required target |
+| Final authored/accessibility/fun/performance approval | **Owner review required** | Runtime smoke does not replace human review |
+
 ### P48 - Exact-candidate 180-second Lava focused performance capture - 2026-08-30
 
 The exact `5d136fbb6be6a5554931f6ab859be8b9a8a995a2` APK was relaunched on the approved Lava
@@ -2944,7 +2994,7 @@ Lava phone is a 4 KB runtime device; static 16 KB alignment is not genuine 16 KB
 | Outcome Victory/Defeat presentation wiring and saved VFX assets | **Passed (machine-verified baseline)** | Six-cue fighter prefabs, saved `VictoryVfx.prefab`/`DefeatVfx.prefab`, controller state persistence test in PlayMode |
 | Exact source, tests, package manifest, offline permissions and static alignment | **Passed locally** | Source/build/test hashes above; release checker and bundletool log |
 | Approved-device install, full route, tutorial completion and bounded crash-marker smoke | **Passed locally / observed** | Lava manifest and exact screenshot set; comfort/accessibility and repeated-route review remain |
-| Genuine 16 KB runtime | **Open** | Lava reports 4,096-byte pages; requires a genuine 16 KB runtime environment |
+| Genuine 16 KB runtime | **Open for the P47 snapshot; superseded by P49 profile smoke** | Lava reports 4,096-byte pages; P49 adds host-GPU AVD `PAGESIZE=16384` evidence, while physical/other-profile coverage remains open |
 | Sustained performance, thermal, battery, GC/frame-time and repeated rematches | **Open** | Raw bounded telemetry only; no normalized budget approval |
 | Final authored art/audio, cultural, fun and accessibility approval | **Owner review required** | Generated presentation baseline remains a candidate |
 | Final package identity, release signing, privacy/Data Safety, IARC/content rating and Play Console | **Owner-controlled** | Drafts/checklists are prepared; no upload or public deployment performed |

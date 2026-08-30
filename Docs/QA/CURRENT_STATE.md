@@ -397,3 +397,26 @@ Simpleperf correctly refused the non-profileable temporary candidate. Unity `gfx
 has no usable frame histogram. This strengthens raw warm-up/stability evidence only; no
 normalized sustained performance, unplugged battery, genuine 16 KB runtime, or human approval
 claim is made.
+
+## P49 genuine 16 KB Android 16 AVD smoke - 2026-08-30
+
+The exact terminal-outcome APK from `5d136fb` installed and launched on the `BattleRaja_16K`
+Android 16/API 36 AVD with host-GPU rendering. The model is `sdk_gphone16k_x86_64`,
+`getconf PAGESIZE` returned **16384**, and the ABI list includes `x86_64,arm64-v8a`. The
+branded menu and live-match checkpoints rendered normally; the clean menu capture is
+`Builds/Local/Device/Performance/20260830-16k-5d136fb/host-gpu/launch-final.png` (SHA-256
+`919BA18BBCA77C4C843DD07EC1470E8D0DFAE4AC3C3F012266E102ACABD55FA0`). The app-scoped launch
+logcat has no configured fatal, ANR, SIGSEGV, SIGABRT or shader-link marker.
+
+The 90-second harness run (18 five-second samples) is indexed by manifest SHA-256
+`AC691AF0BB69983AFE0001F87A4AF92543454D3F190C61FB974734A42EE48B61`. Warm-up samples
+measured PSS **435,726-436,966 KB**, RSS **617,304-621,236 KB**, GraphicBufferAllocator
+estimate **31,416 KB**, and process `top` CPU **96.1-123.0%** on Android's 100%-per-core
+scale. The virtual battery stayed at 100%/5,000 mV/25 C and thermal status 0. Unity `gfxinfo`
+has no usable frame histogram, so this is synthetic runtime/page-size evidence rather than a
+product-tier performance pass.
+
+The same AVD with SwiftShader reached combat but showed URP/Lit uniform-limit corruption;
+that retained folder is superseded renderer diagnostics, while host-GPU is the authoritative
+normal-rendering profile. Local classification is **16 KB host-GPU AVD smoke passed**;
+physical 16 KB, other GPU profiles, normalized performance and human approval remain open.

@@ -585,3 +585,29 @@ Research current primary sources before selecting technical versions, APIs, SDKs
 - **Recheck trigger/date:** Immediately before selecting the final signed package, completing
   declarations, and uploading any Play track; repeat after any Unity/Android/NDK/dependency
   change.
+
+### V1.0 genuine 16 KB runtime smoke refresh (2026-08-30)
+
+- **Question:** Does the exact current offline candidate execute on a genuine 16 KB Android
+  runtime, and what limitation remains after that check?
+- **Primary source:** [Android 16 KB page-size guidance](https://developer.android.com/guide/practices/page-sizes).
+- **Access date:** 2026-08-30 (IST).
+- **Relevant claim:** Android's guidance distinguishes static ELF/bundle alignment from runtime
+  behavior and recommends `adb shell getconf PAGE_SIZE` in a genuine 16 KB environment.
+- **Local evidence:** The exact `5d136fb` APK installed on the `BattleRaja_16K` Android 16/API
+  36 AVD (`sdk_gphone16k_x86_64`) with host-GPU rendering; `getconf PAGESIZE` returned `16384`.
+  The branded menu and live-match checkpoints rendered normally, the app-scoped relaunch log
+  had no configured fatal/ANR/SIGSEGV/SIGABRT/shader-link marker, and the 90-second harness
+  capture recorded 18 samples (manifest SHA-256
+  `AC691AF0BB69983AFE0001F87A4AF92543454D3F190C61FB974734A42EE48B61`).
+- **Decision impact:** Classify genuine 16 KB runtime smoke as passed for this host-GPU AVD
+  profile, while retaining physical ARM64 coverage, other GPU profiles, normalized performance
+  and owner review as open. A same-AVD SwiftShader attempt showed URP/Lit uniform-limit
+  corruption; retain it as a superseded renderer diagnostic rather than rewrite project
+  materials without evidence that SwiftShader is a required target.
+- **Uncertainty:** An x86_64 emulator with arm64 support is not a physical ARM64 device, and
+  emulator CPU/battery/renderer behavior cannot establish universal 16 KB compatibility or a
+  mid-range performance budget. Re-run on an ARM64 physical 16 KB device and supported GPU
+  profiles before claiming broad compatibility.
+- **Recheck trigger/date:** Before final signed AAB selection, after any Unity/NDK/native
+  dependency or renderer change, and before any Play upload.

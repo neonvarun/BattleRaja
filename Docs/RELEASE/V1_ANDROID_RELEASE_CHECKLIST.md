@@ -22,8 +22,9 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
   2026-08-31 to target Android 16/API 36 or higher; this candidate is configured
   for API 36.
 - Google’s 16 KB page-size guidance applies to 64-bit apps targeting API 35+;
-  the current AAB has passed static ARM64/16 KB checks, but the final signed
-  artifact still needs the same inspection and a compatible runtime check.
+  the current AAB has passed static ARM64/16 KB checks and the exact debug APK has a
+  host-GPU Android 16 16 KB AVD smoke; the final signed artifact still needs the same
+  inspection and physical/other-profile runtime checks.
 - Google requires an accurate Data safety form and privacy-policy link for apps
   published on closed, open or production tracks, including apps that collect no
   data. An app kept exclusively on internal testing is exempt from the Data safety
@@ -498,7 +499,7 @@ performance and Play approval gates remain open.
 | Signing | Not started | Approve upload key/Play App Signing path; never commit the key |
 | Target API | Configured to API 36 | Recheck against current Play policy at upload time |
 | 64-bit | Passed with evidence for the current debug-signed AAB: 7 ARM64 libraries, 0 other ABIs | Re-run inspection after any package/plugin change |
-| 16 KB pages | Static evidence passed: zipalign `-P 16` and all eight ARM64 ELF LOAD segments at `0x4000`; runtime 16 KB environment still open | Re-run the checker after any package/plugin change and install on a 16 KB Android environment when available |
+| 16 KB pages | Static evidence passed; host-GPU Android 16 `BattleRaja_16K` smoke also returned `PAGESIZE=16384` and rendered the exact APK | Re-run the checker after any package/plugin change; repeat on an ARM64 physical 16 KB device and supported GPU profiles before claiming universal compatibility |
 | Permissions | **Passed for the exact debug APK**: `VIBRATE` and Unity's dynamic-receiver permission only; no `INTERNET`, `ACCESS_NETWORK_STATE` or SD-card permission | Recheck the final signed AAB/APK and document any future online permission change |
 | Device QA | Release-shaped launch/menu smoke passed on Lava (`ST5GDW23LB004392`); full touch, accessibility, battery and thermal review open | Owner performs touch, accessibility, battery and thermal review |
 | Store/legal | Draft only | Approve privacy, data-safety, content rating, cultural and legal copy |
@@ -642,8 +643,9 @@ bundle processing and signing checks that must be repeated in the owner-controll
 
 ## Lava validation
 
-Use only the approved Lava serial. Do not use the Oppo phone or the local emulator for the
-release evidence.
+Use only the approved Lava serial for physical release evidence. Do not use the Oppo phone.
+The `BattleRaja_16K` emulator is valid only for the profile-specific 16 KB smoke indexed in
+P49; it does not replace physical Lava route, thermal, battery, accessibility or owner review.
 
 ```powershell
 $adb = 'C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe'
@@ -772,7 +774,8 @@ final reviewed commit before using any older artifact or screenshot as evidence;
 new APK on Lava `ST5GDW23LB004392` only, then capture the menu, tutorial, all-fighter route,
 gadget/Aandhi flow, results/rematch and raw bounded telemetry. Do not treat the generated
 environment/LOD baseline as final art or cultural approval, and do not infer physical 16 KB
-runtime support from the 4 KB Lava phone or the diagnostic emulator.
+runtime support from the 4 KB Lava phone; the P49 emulator result is profile-specific smoke,
+not physical or universal 16 KB approval.
 
 ## Exact aim-state package refresh - 2026-08-30
 
@@ -847,3 +850,26 @@ trace is retained there, but no local trace processor was available; Unity `gfxi
 has no usable frame histogram and Simpleperf cannot sample the non-profileable candidate.
 This is stronger raw stability evidence, not normalized sustained performance, battery,
 runtime-16-KB or final human approval.
+
+## Genuine 16 KB runtime smoke - P49 - 2026-08-30
+
+The exact `5d136fb` APK installed on the `BattleRaja_16K` Android 16/API 36 AVD with the
+host-GPU renderer. The model is `sdk_gphone16k_x86_64`, the ABI list includes
+`x86_64,arm64-v8a`, and `adb shell getconf PAGESIZE` returned **16384**. A clean direct launch
+rendered the branded menu (`Builds/Local/Device/Performance/20260830-16k-5d136fb/host-gpu/launch-final.png`,
+SHA-256 `919BA18BBCA77C4C843DD07EC1470E8D0DFAE4AC3C3F012266E102ACABD55FA0`) and existing
+live-match checkpoints rendered normally. The app-scoped launch logcat has no configured
+fatal, ANR, SIGSEGV, SIGABRT or shader-link marker.
+
+The 90-second harness capture is under
+`Builds/Local/Device/Performance/20260830-16k-5d136fb-host/` with manifest SHA-256
+`AC691AF0BB69983AFE0001F87A4AF92543454D3F190C61FB974734A42EE48B61`; warm-up PSS was
+**435,726-436,966 KB**, RSS **617,304-621,236 KB**, GraphicBufferAllocator estimate
+**31,416 KB**, and process CPU **96.1-123.0%** on Android's 100%-per-core scale. Thermal
+status was 0, but the virtual battery and emulator CPU are not product-tier endurance data;
+Unity `gfxinfo` still has no usable frame histogram.
+
+This closes only the **host-GPU AVD 16 KB smoke**. A SwiftShader attempt on the same AVD
+showed URP/Lit GLSL uniform-limit corruption and is retained as superseded renderer diagnostics
+under `Builds/Local/Device/Performance/20260830-16k-5d136fb-route/`. Physical ARM64 16 KB
+coverage, other GPU profiles, normalized budgets and human approval remain open.

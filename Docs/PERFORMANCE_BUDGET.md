@@ -691,3 +691,35 @@ cannot establish 16 KB runtime compatibility.
   a usable frame histogram. Lava reports 4 KB pages. This P48 run strengthens warm-up and
   stability evidence but does not close sustained FPS/frame-time/GC/GPU, unplugged battery,
   physical 16 KB runtime, or human performance approval gates.
+
+## V1 P49 genuine 16 KB Android 16 AVD host-GPU smoke - 2026-08-30
+
+The exact P47 terminal-outcome APK (`31D982D7334B08D0DE759CE755784547CFCF843D9CFCFB1DB0E041E7EEE2DF2D`)
+installed and launched on the `BattleRaja_16K` Android 16/API 36 AVD with host-GPU rendering.
+The device identity is `sdk_gphone16k_x86_64`; `getconf PAGESIZE` returned **16384** and
+the ABI list is `x86_64,arm64-v8a`. A clean direct launch rendered the branded menu and the
+existing live-match checkpoints rendered normally. The final menu screenshot is
+`Builds/Local/Device/Performance/20260830-16k-5d136fb/host-gpu/launch-final.png` (SHA-256
+`919BA18BBCA77C4C843DD07EC1470E8D0DFAE4AC3C3F012266E102ACABD55FA0`); the app-scoped launch
+logcat has no configured fatal, ANR, SIGSEGV, SIGABRT or shader-link marker (SHA-256
+`28379F7FE3650BD8C0B9013802242055D06416277E23A6EEAF49747E6F6DF8F6`).
+
+The harness captured 18 samples at 5-second intervals for 90 seconds in
+`Builds/Local/Device/Performance/20260830-16k-5d136fb-host/` (manifest SHA-256
+`AC691AF0BB69983AFE0001F87A4AF92543454D3F190C61FB974734A42EE48B61`). After warm-up,
+PSS was **435,726-436,966 KB** (average **436,659 KB**), RSS was **617,304-621,236 KB**
+(average **618,586 KB**) and the GraphicBufferAllocator estimate was **31,416 KB**.
+Process `top` CPU was **96.1-123.0%** (average **104.5%**, Android's 100%-per-core scale).
+The virtual battery stayed at 100%/5,000 mV/25 C and thermal status stayed 0. Unity `gfxinfo`
+still has no usable frame histogram; this is raw page-size/runtime stability evidence, not
+a normalized frame budget or endurance result.
+
+The same AVD under `-gpu swiftshader_indirect` produced severe geometry corruption and
+repeated URP/Lit GLSL link failures (`GL_MAX_VERTEX_UNIFORM_VECTORS (256)`). The retained
+diagnostic is `Builds/Local/Device/Performance/20260830-16k-5d136fb-route/`; it is a
+renderer-profile limitation superseded by the normal host-GPU run, not evidence to rewrite
+all project materials.
+
+This closes the local **host-GPU 16 KB page-size smoke** classification only. Physical ARM64
+16 KB coverage, other GPU profiles, normalized frame/GC/GPU budgets, unplugged endurance and
+human acceptance remain open.

@@ -21,6 +21,8 @@
   art/audio/cultural review, accessibility/fun review, normalized sustained performance,
   physical 16 KB, final identity/signing, privacy/Data Safety and Play Console actions
   remain open. The two prompt files are intentional owner work.
+  The exact APK also passed a genuine 16 KB host-GPU Android 16 AVD smoke; physical ARM64
+  coverage, other GPU profiles and normalized performance remain open (P49).
 
 - **Latest exact-source release-gate checkpoint (2026-08-27):** commit
   `2a113e0c4798e8e51a43379a0fa0facd7e8f0fe1` persists ordered production replay captures
@@ -786,3 +788,25 @@ remained 0, and no configured fatal markers were found. The raw manifest and 30-
 Perfetto trace are indexed in `Docs/V1_RELEASE_PLAN.md` P48. The capture strengthens local
 stability evidence but does not close normalized frame/GC/GPU, unplugged battery, genuine
 16 KB runtime or human approval gates.
+
+## Milestone 11 P49 genuine 16 KB Android 16 AVD smoke - 2026-08-30
+
+The exact terminal-outcome APK from `5d136fb` installed and launched on the genuine
+`BattleRaja_16K` Android 16/API 36 AVD with host-GPU rendering. The model is
+`sdk_gphone16k_x86_64`, the ABI list includes `x86_64,arm64-v8a`, and
+`adb shell getconf PAGESIZE` returned **16384**. The clean branded-menu capture and app-scoped
+logcat are under `Builds/Local/Device/Performance/20260830-16k-5d136fb/host-gpu/`; no
+configured fatal, ANR, SIGSEGV, SIGABRT or shader-link marker was found.
+
+The 90-second harness capture (18 five-second samples) is indexed in
+`Docs/V1_RELEASE_PLAN.md` P49. Warm-up PSS was **435,726-436,966 KB**, RSS
+**617,304-621,236 KB**, GraphicBufferAllocator estimate **31,416 KB**, and process `top` CPU
+**96.1-123.0%** on Android's 100%-per-core scale; thermal status was 0. This is a genuine
+host-GPU 16 KB page-size/runtime smoke result, but emulator CPU/battery and the missing Unity
+frame histogram do not establish a product-tier performance budget.
+
+The same AVD under SwiftShader showed URP/Lit uniform-limit corruption and is retained as a
+superseded renderer-profile diagnostic. Physical ARM64 16 KB coverage, other GPU profiles,
+normalized performance, final authored/accessibility/cultural approval and owner-controlled
+identity/signing/privacy/Play gates remain open. The two prompt files under `PROMPTS/` remain
+intentional uncommitted owner work.
