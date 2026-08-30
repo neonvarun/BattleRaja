@@ -2885,12 +2885,12 @@ The exact APK installed successfully with `adb install -r -d` only on approved L
 all three fighter cards, selected Pehel and Maya detail states, portrait settings toggles and
 restoration, live opening, combat actions, player defeat/spectating, `FINAL CIRCLE` with the
 cyan endgame ring, and the Results placement panel. The exact final-circle capture is
-`final-circle-60s.png` (SHA-256
-`BA062B378221F2BF83115C03FEEABF6DEA9DC873B2FB748CABDF0E873CE328C2`); the results panel is
-the same captured terminal frame after the bounded match route. Other key capture hashes are
+`midmatch-120s.png` (SHA-256
+`55152F4A7DDE2E980E7442B8F0D2359A4F0D76673A3F2019C420237324F87EFB`); the subsequent Results
+panel is `final-circle-60s.png` (SHA-256
+`BA062B378221F2BF83115C03FEEABF6DEA9DC873B2FB748CABDF0E873CE328C2`). Other key capture hashes are
 `live-opening.png` `8BC68F1F41F025ECF997FA0DB21FFA7B7F0BD34106A831B4730AA85ABB458D2C`,
 `combat-actions.png` `51AF19BC7BC2D4871E7505256A545E40A88F8DA634CAEE868C33E6088EC82448`,
-`midmatch-120s.png` `55152F4A7DDE2E980E7442B8F0D2359A4F0D76673A3F2019C420237324F87EFB`,
 `settings-toggles.png` `C820A4D388BBBBEC9B6B6479AB9C5142470CB828B3D430C67C8170D1FA12FDC5`, and
 `settings-restored.png` `3006D20CA7775F230705371B9B206B28521E2E521B7044A8D7F58D6A84739F39`.
 
