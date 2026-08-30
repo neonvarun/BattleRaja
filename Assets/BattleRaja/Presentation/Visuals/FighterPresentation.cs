@@ -51,6 +51,7 @@ namespace BattleRaja.Presentation.Visuals
         private readonly List<Quaternion> _silhouetteBaseRotations = new List<Quaternion>(24);
         private readonly List<Vector3> _silhouetteBaseScales = new List<Vector3>(24);
         private readonly List<Renderer> _productionRenderers = new List<Renderer>(12);
+        private readonly List<Color> _productionBaseColors = new List<Color>(12);
         private Transform _ring;
         private Transform _healthBar;
         private Transform _healthFill;
@@ -191,7 +192,7 @@ namespace BattleRaja.Presentation.Visuals
 
             if (_flashApplied && _hitRemaining <= 0f && (_productionRenderers.Count > 0 || bodyRenderer != null) && !_eliminated)
             {
-                ApplyPresentationColor(_baseBodyColor);
+                RestorePresentationColors();
                 _flashApplied = false;
             }
 
@@ -298,6 +299,25 @@ namespace BattleRaja.Presentation.Visuals
             bodyRenderer.GetPropertyBlock(_bodyProperties);
             _bodyProperties.SetColor("_BaseColor", color);
             bodyRenderer.SetPropertyBlock(_bodyProperties);
+        }
+
+        private void RestorePresentationColors()
+        {
+            if (_productionRenderers.Count > 0)
+            {
+                for (var i = 0; i < _productionRenderers.Count; i++)
+                {
+                    var renderer = _productionRenderers[i];
+                    if (renderer == null) continue;
+                    renderer.GetPropertyBlock(_bodyProperties);
+                    _bodyProperties.SetColor("_BaseColor", _productionBaseColors[i]);
+                    renderer.SetPropertyBlock(_bodyProperties);
+                }
+
+                return;
+            }
+
+            ApplyPresentationColor(_baseBodyColor);
         }
 
         private void ApplySilhouetteAnimation()
@@ -439,6 +459,7 @@ namespace BattleRaja.Presentation.Visuals
                     if (renderers[i] is MeshRenderer || renderers[i] is SkinnedMeshRenderer)
                     {
                         _productionRenderers.Add(renderers[i]);
+                        _productionBaseColors.Add(ResolveRendererBaseColor(renderers[i]));
                     }
 
                     var part = renderers[i] != null ? renderers[i].transform : null;
@@ -463,6 +484,7 @@ namespace BattleRaja.Presentation.Visuals
                 _silhouetteBaseRotations.Clear();
                 _silhouetteBaseScales.Clear();
                 _productionRenderers.Clear();
+                _productionBaseColors.Clear();
             }
 
             if (bijli != null && bijli.enabled)
