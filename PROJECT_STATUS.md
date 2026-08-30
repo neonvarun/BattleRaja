@@ -973,10 +973,11 @@ only on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34), rea
 Solo Raja/Bijli Opening Fight, stayed at Android HOME for approximately five seconds, and
 returned to the same RESUMED Unity activity. The route manifest is
 `Builds/Local/Device/final-circle-20260830/p66-lifecycle-route/p66-lifecycle-route-manifest.json`
-(7,210 bytes; SHA-256
-`FC5CEC3545CE16152D65F766CD2394A65CE0E0A2AB80B52D9042E5580328F7D2`). Paired captures retain
+(8,192 bytes; SHA-256
+`217589DAE7592EC397328F12D8C3DF88246B7AEE035776584DF5FE9624499103`). Paired captures retain
 `ALIVE 8` and `ZONE 14.0 > 11.0`; Lava reports 4 KB pages and route logcat has zero
-configured fatal/ANR/native/managed-crash markers.
+configured fatal/ANR/native/managed-crash markers. Bundletool 1.18.3 universal extraction,
+zipalign and temporary v3 signature verification also pass for the exact AAB.
 
 This is bounded exact-device evidence, not a claim of full lifecycle comfort, physical 16 KB,
 normalized performance, endurance, final authored/cultural/accessibility/fun approval,

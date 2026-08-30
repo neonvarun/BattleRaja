@@ -683,12 +683,14 @@ validation is **0 errors / 0 warnings**. The exact rebuilt APK is 40,679,115 byt
 The APK was installed only on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android
 14/API 34). The route manifest is
 `Builds/Local/Device/final-circle-20260830/p66-lifecycle-route/p66-lifecycle-route-manifest.json`
-(7,210 bytes; SHA-256
-`FC5CEC3545CE16152D65F766CD2394A65CE0E0A2AB80B52D9042E5580328F7D2`). It records a live
+(8,192 bytes; SHA-256
+`217589DAE7592EC397328F12D8C3DF88246B7AEE035776584DF5FE9624499103`). It records a live
 Solo Raja/Bijli Opening Fight capture, approximately five seconds at Android HOME, and a
 return to the same RESUMED Unity activity. Before/after captures retain `ALIVE 8` and
 `ZONE 14.0 > 11.0`; Lava reports 4,096-byte pages and the route logcat has zero configured
-fatal, ANR, native-crash or managed-exception markers.
+fatal, ANR, native-crash or managed-exception markers. Bundletool 1.18.3 universal extraction,
+direct/extracted `zipalign -P 16` and temporary v3 `apksigner` verification also passed for
+this exact AAB; APKS/universal hashes are retained in the P66 manifest.
 
 This is bounded exact-candidate evidence. It does not close held-input comfort across every
 phase, repeated rematches, normalized performance, unplugged endurance, physical 16 KB,

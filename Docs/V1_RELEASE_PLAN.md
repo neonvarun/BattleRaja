@@ -3038,7 +3038,7 @@ is `Builds/M11/Logs/android-build.log` (419,793 bytes; SHA-256
 - The rebuilt APK was installed only on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`,
   Android 14/API 34). The route manifest is
   `Builds/Local/Device/final-circle-20260830/p66-lifecycle-route/p66-lifecycle-route-manifest.json`
-  (7,210 bytes; SHA-256 `FC5CEC3545CE16152D65F766CD2394A65CE0E0A2AB80B52D9042E5580328F7D2`).
+  (8,192 bytes; SHA-256 `217589DAE7592EC397328F12D8C3DF88246B7AEE035776584DF5FE9624499103`).
   It records the exact install, Solo Raja/Bijli live Opening Fight state, Android HOME for
   approximately five seconds, return to the same `UnityPlayerGameActivity`, Android 14,
   Lava's 4,096-byte page size and all evidence hashes. `live-before-rerun.png` is 332,133
@@ -3048,7 +3048,15 @@ is `Builds/M11/Logs/android-build.log` (419,793 bytes; SHA-256
   `OPENING FIGHT`, `ALIVE 8`, `ZONE 14.0 > 11.0` and the same live arena presentation.
   The focused activity dump is RESUMED/visible after return; the route logcat is 74,073
   bytes (SHA-256 `18DF04B1E92D7F323DB81B95DC90B7D4695DE960256870040531A97EF2D842EE`) with
-  zero configured fatal, ANR, native-crash or managed-exception markers.
+  zero configured fatal, ANR, native-crash or managed-exception markers. Bundletool 1.18.3
+  generated `battleraja-v1-p66.apks` (36,635,054 bytes; SHA-256
+  `C49CE1483292B32895753FA0400537F6CF4A7A185C88BF7F5845CD9EEF0A4FC8`) and a universal APK
+  (36,634,739 bytes; SHA-256
+  `319CA36522B7899FFB913C875D15A2F70DFDD3CA54B7A2A31704734808CBAB25`). Direct universal
+  `zipalign -c -P 16 -v 4` and `apksigner verify --verbose` both passed; the latter reports
+  one temporary v3 signer. The bundletool log is
+  `Builds/Local/Logs/bundletool-p66-20260831.log` (35,293 bytes; SHA-256
+  `F7C41244F025B2A9442C31C6BB19A1B03BDE1821FEA7165B572438DDA45A574A`).
 
 #### P66 gate delta
 
