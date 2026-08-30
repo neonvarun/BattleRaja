@@ -2842,6 +2842,83 @@ than normalized FPS, frame-time, GC, thermal, battery, accessibility or sustaine
 The candidate remains a **prototype / Android offline release candidate in progress**, not
 Play-ready. The two prompt files under `PROMPTS/` remain intentional uncommitted owner work.
 
+### P55 - Current-source final-circle audio cue and exact Lava endgame capture - 2026-08-30
+
+The current source tip is commit `56df201` (`audio: add final-circle escalation cue`). It adds
+the owned generated `ZoneFinalCircle.wav` cue, loads it through `BattleRajaAudioDirector`, and
+plays it once when the authoritative `MatchPhase` enters `FinalCircle`. No gameplay authority,
+damage, cooldown, movement, pickup, reward, networking or package-policy rule changed. The
+audio bible and provenance record the generated source and leave final human mix/loudness/voice
+review open.
+
+#### Machine evidence
+
+- `Tools/Validation/validate.ps1`: **0 errors / 0 warnings**.
+- EditMode: **141/141 passed**, XML
+  `Builds/Local/TestResults/editmode-v1-final-circle-20260830.xml` (SHA-256
+  `601B03047869E4C9AEB5FA8B51520400DAB9D2F369A22F14619D8345FC9C2F11`).
+- PlayMode: **89/89 passed**, XML
+  `Builds/Local/TestResults/playmode-v1-final-circle-20260830.xml` (SHA-256
+  `637991EA95D8399BCD5A7A5E090B7F486BB07B799C473B50520144FC78AC24A6`), including the
+  owned-audio-clip contract with `ZoneFinalCircle`.
+- Generated cue: `Assets/BattleRaja/Resources/Audio/V1/ZoneFinalCircle.wav`, 37,088 bytes,
+  SHA-256 `269DD92C83A3592DDA9AE7F186C76A9D25C9F9BEFF882897DD3F6727581F4F85`.
+- Exact temporary-ID APK: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`,
+  40,681,059 bytes, SHA-256
+  `AB4974445DA2BAEB023DBCEB5EFF557F161A53F25695B0FD9BD417045FF29855`.
+- Exact release-shaped AAB: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`,
+  36,506,374 bytes, SHA-256
+  `E1658F47D855693FB8F281385EB21176CA4E81C19D86554FC70F91FD94A7F90E`.
+- Both packages report `com.example.battleraja.m11`, version `1.0.0`/code `100`, min/target
+  API `28/36`, ARM64-only native payload, no `INTERNET` or `ACCESS_NETWORK_STATE`, seven
+  ARM64 native libraries and static 16 KB ELF alignment. The post-commit checker log
+  `Builds/Local/Logs/release-checker-v1-final-circle-postcommit-20260830.log` is **0 errors /
+  0 warnings**, SHA-256 `50DF0FD36AC182E2444E1C89A24BC1A955CB5F1CFAB3C115B260A07D861D614A`.
+  The checker reports the two intentional prompt-file changes as the only dirty worktree
+  entries; the packages are temporary/debug-signed candidates, not production-signed builds.
+
+#### Approved Lava evidence
+
+The exact APK installed successfully with `adb install -r -d` only on approved Lava
+`ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34). The evidence folder is
+`Builds/Local/Device/final-circle-20260830/`. Captures show the branded menu, Solo Raja,
+all three fighter cards, selected Pehel and Maya detail states, portrait settings toggles and
+restoration, live opening, combat actions, player defeat/spectating, `FINAL CIRCLE` with the
+cyan endgame ring, and the Results placement panel. The exact final-circle capture is
+`final-circle-60s.png` (SHA-256
+`BA062B378221F2BF83115C03FEEABF6DEA9DC873B2FB748CABDF0E873CE328C2`); the results panel is
+the same captured terminal frame after the bounded match route. Other key capture hashes are
+`live-opening.png` `8BC68F1F41F025ECF997FA0DB21FFA7B7F0BD34106A831B4730AA85ABB458D2C`,
+`combat-actions.png` `51AF19BC7BC2D4871E7505256A545E40A88F8DA634CAEE868C33E6088EC82448`,
+`midmatch-120s.png` `55152F4A7DDE2E980E7442B8F0D2359A4F0D76673A3F2019C420237324F87EFB`,
+`settings-toggles.png` `C820A4D388BBBBEC9B6B6479AB9C5142470CB828B3D430C67C8170D1FA12FDC5`, and
+`settings-restored.png` `3006D20CA7775F230705371B9B206B28521E2E521B7044A8D7F58D6A84739F39`.
+
+The route's filtered app-process log contains **144 lines** and no configured
+`AndroidRuntime`, `FATAL EXCEPTION`, `ANR in`, `SIGSEGV`, `SIGABRT`, `NullReferenceException`
+or `UnityException` marker (`post-actions-app-logcat.txt`, SHA-256
+`001E3A26040D1E39D3BE0417BE0CFCF573D4713F674BA17CC1F3CD5A253DA09F`). A separate HOME →
+monkey relaunch capture returned to the app without configured fatal markers;
+`lifecycle-app-logcat.txt` SHA-256 is
+`7112BD61F851CF84996502CCFD3BF9CA9FD14C0E2B6A8EE91806CA4757DD923A` and the route record
+`lifecycle-route.txt` SHA-256 is `A9A450A4C4C53F5923F505D3C4BC07E2903BA4F15A16489A5A5B3E16B527432C`.
+The Lava phone reports 4 KB pages; this is not physical 16 KB runtime evidence. The Unity
+SurfaceView exposes no semantic UI tree, so the route coordinates were visually verified and
+the capture does not claim action-by-action tutorial comfort or human accessibility approval.
+
+| Gate | Current classification | Evidence / remaining action |
+| --- | --- | --- |
+| Final-circle audio source, authoritative phase transition and owned-clip regression | **Passed locally** | Generated WAV, source wiring and 89/89 PlayMode contract; final mix/loudness/voice review remains open |
+| Exact source, tests, APK/AAB, offline manifest, ARM64 and static alignment | **Passed locally** | 0/0 validation, test XMLs, package hashes and post-commit checker above |
+| Approved Lava final-circle/results/lifecycle smoke | **Passed locally / observed** | Exact APK and current screenshot/logcat folder above; full comfort, repeated-match and tutorial action review remain |
+| Genuine physical 16 KB runtime | **Open** | Lava reports 4 KB; P49 host-GPU Android 16 AVD is profile-specific |
+| Normalized FPS/frame-time/GC/GPU, unplugged battery and sustained thermal acceptance | **Open** | Existing captures are bounded diagnostics, not budget approval |
+| Final authored art/audio, cultural, fun and accessibility approval | **Owner review required** | Generated presentation baseline and audio remain candidates |
+| Package identity, release signing, privacy/Data Safety, IARC/content rating and Play Console | **Owner-controlled** | No upload or public deployment performed |
+
+The candidate remains a **prototype / Android offline release candidate in progress**, not
+Play-ready. The two prompt files under `PROMPTS/` remain intentional uncommitted owner work.
+
 ### P54 - Current-source saved-fighter presentation and portrait settings refresh - 2026-08-30
 
 The current presentation source is committed at `ae0d294c97fa62386317e7e5ebf77cd5ebcbafee`,

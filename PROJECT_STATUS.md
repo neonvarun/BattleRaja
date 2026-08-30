@@ -6,10 +6,17 @@
 
 ## Current state
 
-- **Latest runtime/art presentation checkpoint (2026-08-30):** runtime/art source remains
-  `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`; the latest test-bearing follow-up is
-  `4c4c67cbbc20062e3723cc90ee3bb7c266bbeda4`, with the current documentation tip adding
-  only release-evidence indexes on top. The terminal-outcome continuation saves
+- **Latest runtime/art/audio presentation checkpoint (2026-08-30):** source tip is now
+  `56df201` (`audio: add final-circle escalation cue`), following runtime/art source
+  `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`. It adds the owned generated `ZoneFinalCircle`
+  cue and plays it once on authoritative `MatchPhase.FinalCircle`; the final mix/loudness/
+  voice review remains open. The exact current APK/AAB, 141/141 EditMode, 89/89 PlayMode,
+  static validation and approved-Lava Final Circle/results/lifecycle evidence are indexed in
+  `Docs/V1_RELEASE_PLAN.md` P55. No gameplay authority, package-policy or networking rule
+  changed.
+  The prior P54 runtime/art source remains
+  `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`; the earlier test-bearing follow-up was
+  `4c4c67cbbc20062e3723cc90ee3bb7c266bbeda4`. The terminal-outcome continuation saves
   Victory/Defeat VFX and routes authoritative placement into persistent render-only fighter
   states; the follow-up adds direct player Umbrella Guard pickup/use/mitigation PlayMode coverage without changing
   runtime behavior. Full EditMode is **141/141**, PlayMode is **89/89**, static validation is **0 errors / 0
@@ -907,3 +914,28 @@ progress, not Play-ready. Final authored/cultural/fun/accessibility approval, ge
 16 KB runtime, normalized sustained performance, final package identity/signing, privacy/Data
 Safety, content rating and Play Console actions remain owner-controlled. The two prompt files
 under `PROMPTS/` remain intentional uncommitted owner work.
+
+## Milestone 11 P55 final-circle audio cue and current Lava endgame evidence - 2026-08-30
+
+The current source tip is `56df201` (`audio: add final-circle escalation cue`). It adds the
+owned generated `ZoneFinalCircle.wav` source and wires a one-shot cue to the authoritative
+`MatchPhase.FinalCircle` transition through `BattleRajaAudioDirector`. Gameplay authority,
+damage, cooldown, movement, pickup, reward, networking and package-policy code are unchanged;
+final mix, loudness and voice-priority review remain open.
+
+Fresh static validation is **0 errors / 0 warnings**, EditMode is **141/141**, and PlayMode is
+**89/89**. The current temporary-ID APK/AAB are the exact artifacts listed in P55 of
+`Docs/V1_RELEASE_PLAN.md`; the post-commit release checker is **0 errors / 0 warnings** and
+confirms package `com.example.battleraja.m11`, version `1.0.0`/code `100`, API `28/36`,
+offline network permissions absent, ARM64-only payload and static 16 KB alignment.
+
+The APK installed successfully only on approved Lava `ST5GDW23LB004392`. Current evidence
+under `Builds/Local/Device/final-circle-20260830/` reaches the branded menu, all three fighter
+cards, settings toggles/restoration, live combat, Aandhi Final Circle, Results and a HOME →
+relaunch lifecycle. Filtered app logs contain no configured fatal/ANR/native-crash markers.
+Lava reports 4 KB pages, so physical 16 KB compatibility remains open; the host-GPU Android 16
+AVD result is profile-specific. Final authored art/audio, cultural/fun/accessibility review,
+normalized performance, battery/thermal endurance, signing, legal/privacy, rating and Play
+Console actions remain owner-controlled. The truthful state remains **Prototype — Android
+offline release candidate in progress**; the two prompt files are intentional uncommitted owner
+work.

@@ -511,3 +511,29 @@ Play-ready. Final authored/cultural/fun/accessibility review, physical 16 KB, no
 sustained performance, final package identity/signing, privacy/Data Safety, content rating
 and Play Console actions remain owner-controlled. The two prompt files under `PROMPTS/`
 remain intentional uncommitted owner work.
+
+## P55 current-source final-circle audio cue and exact Lava endgame capture - 2026-08-30
+
+The current source tip is `56df201`. It adds the owned generated `ZoneFinalCircle.wav` cue,
+loads it through `BattleRajaAudioDirector`, and plays it once on the authoritative transition
+to `MatchPhase.FinalCircle`; gameplay rules and the offline/networking boundary are unchanged.
+The cue hash is `269DD92C83A3592DDA9AE7F186C76A9D25C9F9BEFF882897DD3F6727581F4F85`.
+
+Fresh validation is **0 errors / 0 warnings**, EditMode **141/141**, and PlayMode **89/89**.
+The exact temporary-ID APK is 40,681,059 bytes (SHA-256
+`AB4974445DA2BAEB023DBCEB5EFF557F161A53F25695B0FD9BD417045FF29855`) and the AAB is
+36,506,374 bytes (SHA-256
+`E1658F47D855693FB8F281385EB21176CA4E81C19D86554FC70F91FD94A7F90E`). The post-commit
+release checker is **0 errors / 0 warnings**; package, API, offline permission, ARM64 and
+static 16 KB details are indexed in `Docs/V1_RELEASE_PLAN.md` P55.
+
+The exact APK installed successfully only on Lava `ST5GDW23LB004392`. Current captures under
+`Builds/Local/Device/final-circle-20260830/` show menu/fighter/settings/live combat, the
+`FINAL CIRCLE` state and the Results panel. Filtered route and HOME → relaunch app logs contain
+no configured fatal/ANR/native-crash markers. Lava is a 4 KB device; this does not prove a
+physical 16 KB runtime. The Unity SurfaceView has no semantic UI tree, and no action-by-action
+tutorial comfort, final audio mix, authored-art, cultural, fun, accessibility, normalized
+performance, battery/thermal, signing, legal/privacy or Play approval is claimed.
+
+The truthful classification remains **Prototype — Android offline release candidate in
+progress**. The two prompt files remain intentional uncommitted owner work.
