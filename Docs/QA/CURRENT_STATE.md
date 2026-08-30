@@ -545,3 +545,63 @@ performance, battery/thermal, signing, legal/privacy or Play approval is claimed
 
 The truthful classification remains **Prototype — Android offline release candidate in
 progress**. The two prompt files remain intentional uncommitted owner work.
+
+## P57 tutorial elimination target readability and refreshed real-touch route - 2026-08-30
+
+The source checkpoint is now committed as `c9e3d3091a38852be794f74ad97420b91461599a`
+(`tutorial: place elimination target in readable lane`). This is a tutorial-only layout
+adjustment: actor 11 is at `(0, 1, -3.2)` in the open south lane, while production spawns,
+the MovementLab fixture, offline authority and package/network policy are unchanged. The
+new PlayMode coverage checks the layout and resolves a local projectile against that target.
+
+The exact candidate was rebuilt and checked locally: `validate.ps1` is **0/0** (post-checkpoint
+log SHA-256 `7EF09129DBD03921DF243F43AC65AE932A8C74C4DD76FAD8E6A013BFC804E322`), EditMode is
+**141/141**, the target checkpoint PlayMode is **90/90**, and the focused follow-up suite is
+**91/91**. The APK is **40,681,055 bytes** (`DA6CC4B6B2F4160A2D62BDE9FFA4C1686D0D401AB0F354604AF8AC077269222B`); the AAB is
+**36,506,363 bytes** (`A379C725D46E8829F9DE9EEF59E49D906E817F9F6392E031EE065A532DD6C37C`). The
+release checker remains **0 errors / 0 warnings** and confirms the temporary package,
+offline permissions, ARM64 payload and static alignment. Exact XML/log hashes and artifact
+paths are indexed in `Docs/V1_RELEASE_PLAN.md` P57.
+
+On approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34, 4 KB pages), Aim Assist
+was enabled in Settings & Accessibility. A fresh real-touch run completed MOVEMENT, AIM,
+BASIC ATTACK, ABILITY, GADGET and AANDHI; the adjusted target then unlocked the ELIMINATION
+card. `Builds/Local/Device/final-circle-20260830/tutorial-target-aimassist-moveclose-step7-final.png`
+(SHA-256 `27E22DED8D06035806F3EE85B339286A28019025B20B32BC099BC4BE2B77A76E`) is the exact
+step-7 capture showing `CONTINUE`. The offline match then resolved to a real `RESULTS /
+WINNER YOU / #1` placement (`tutorial-target-after-wait.png`, SHA-256
+`9710C1C2A111652CC79E625D0D46E177BF65FC9490636F3FD6C47FCF088FBC7D`), and tapping
+`FINISH TUTORIAL` produced `TUTORIAL COMPLETE 8/8`
+(`tutorial-target-finished-results.png`, SHA-256
+`76E40B9F20BCDAFAE13FF217029CA75A3B92D8B9A23B58F98802C224493BAA49`). The route index is
+`Builds/Local/Device/final-circle-20260830/tutorial-target-touch-route-manifest.json`.
+
+This closes the previously observed touch-elimination layout defect for the captured run and
+records terminal placement plus tutorial completion, but does not claim full action-by-action
+victory/rematch comfort. The product
+remains **Prototype — Android offline release candidate in progress**, not Play-ready. Final
+authored art/audio, cultural/fun/accessibility review, normalized performance and
+battery/thermal endurance, physical 16 KB runtime, final identity/signing, privacy/Data
+Safety, content rating and Play Console work remain open and owner-controlled.
+
+## P56 real-touch tutorial comfort probe on the exact current candidate - 2026-08-30
+
+The exact `56df201` candidate was replayed on approved Lava `ST5GDW23LB004392` after enabling
+AIM ASSIST in Settings & Accessibility. Real touch advanced MOVEMENT, AIM, BASIC ATTACK,
+ABILITY, GADGET and AANDHI. Exact captures and SHA-256 values are indexed in
+`Builds/Local/Device/final-circle-20260830/tutorial-touch-route-manifest.json`; the settings
+proof is `tutorial-settings-aim-assist-on.png`.
+
+The ELIMINATION card remained waiting after repeated real aim/attack attempts. A later Results
+panel showed `WINNER YOU`, `#1 YOU`, `KO 0`, `D 0`, so Aandhi ended that route without a player
+KO. This is a useful comfort defect signal, not a completed tutorial claim. P47/P54's physical
+`8/8 COMPLETE` result was obtained through SKIP, and the editor eight-step test is deterministic
+logic coverage; neither is action-by-action touch comfort evidence.
+
+The final Unity UI tree (`tutorial-route-ui.xml`) exposes only a SurfaceView, so no semantic
+button coordinates were available. The app-scoped logcat (`tutorial-route-app-logcat.txt`, SHA
+`909FDF92B11825C3229670134770FE238A23069141B871FBDF77DA54D85B1DF4`) contains no configured
+fatal/ANR/native-crash markers. This probe does not change the release classification: the
+project remains a **Prototype — Android offline release candidate in progress**. Final authored
+art/audio, human cultural/fun/accessibility review, normalized performance, battery/thermal,
+physical 16 KB, signing, legal/privacy, rating and Play Console gates remain open.

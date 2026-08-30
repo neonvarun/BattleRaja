@@ -2842,6 +2842,167 @@ than normalized FPS, frame-time, GC, thermal, battery, accessibility or sustaine
 The candidate remains a **prototype / Android offline release candidate in progress**, not
 Play-ready. The two prompt files under `PROMPTS/` remain intentional uncommitted owner work.
 
+### P57 tutorial elimination target readability and real-touch route refresh - 2026-08-30
+
+The current source checkpoint is commit `c9e3d3091a38852be794f74ad97420b91461599a`
+(`tutorial: place elimination target in readable lane`). The change is tutorial-scoped: it
+places actor 11 at `(0, 1, -3.2)` in the open south lane, keeps the target stationary, and
+leaves production spawns, the MovementLab fixture, the offline authority and all package
+policy settings unchanged. The PlayMode coverage adds a readable-lane invariant and a local
+projectile regression against the real target path.
+
+#### Machine evidence
+
+- `Tools/Validation/validate.ps1`: **0 errors / 0 warnings** after the source checkpoint;
+  post-checkpoint log `Builds/Local/Logs/validate-tutorial-target-postcommit-20260830.log`
+  (SHA-256 `7EF09129DBD03921DF243F43AC65AE932A8C74C4DD76FAD8E6A013BFC804E322`).
+- EditMode: **141/141 passed**, XML
+  `Builds/Local/TestResults/editmode-tutorial-target-20260830.xml` (SHA-256
+  `3ABEB32CC5A0270F3199ABA3FF81EEA5F24365D7A0921E4411D397E9B5EB042E`).
+- PlayMode target checkpoint: **90/90 passed**, XML
+  `Builds/Local/TestResults/playmode-tutorial-target-20260830.xml` (SHA-256
+  `5215CB2AED45EF29782A9A801CF53F89D7DECF57110CF8B27D05349235A27E7F`).
+- Focused follow-up PlayMode suite including the local projectile regression: **91/91
+  passed**, XML `Builds/Local/TestResults/playmode-tutorial-local-attack-20260830.xml`
+  (SHA-256 `2C65048E75501A3C75DCCD6315453B39C0C1AF3BC973B801BC35D3B9BDBCD327`).
+- Exact temporary-ID APK: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`,
+  **40,681,055 bytes**, SHA-256
+  `DA6CC4B6B2F4160A2D62BDE9FFA4C1686D0D401AB0F354604AF8AC077269222B`.
+- Exact release-shaped AAB: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`,
+  **36,506,363 bytes**, SHA-256
+  `A379C725D46E8829F9DE9EEF59E49D906E817F9F6392E031EE065A532DD6C37C`.
+- `check_v1_release_candidate.ps1`: **0 validation errors / 0 warnings**;
+  `Builds/Local/Logs/release-checker-tutorial-target-20260830.log` (SHA-256
+  `1D19EB98F4E726DA1BDB4B54D3C9C397718F84DEDBC71E98578F225E72F1C25F`). The package remains
+  `com.example.battleraja.m11`, version `1.0.0`/code `100`, min/target API `28/36`, offline
+  permissions absent, ARM64-only, statically 16 KB aligned, and temporary debug-signed.
+
+#### Approved Lava real-touch evidence
+
+The exact APK was installed and exercised only on approved Lava `ST5GDW23LB004392`
+(`LAVA LXX508`, Android 14/API 34, reported 4 KB pages). The complete machine-readable
+index is `Builds/Local/Device/final-circle-20260830/tutorial-target-touch-route-manifest.json`
+(5,757 bytes, SHA-256
+`75D43FB3C56E18A6706800EB27409258184B7B72F87BC494040494303DCFC7A7`).
+Aim Assist was enabled in the in-app Settings & Accessibility surface; the proof capture is
+`tutorial-target-settings-check.png` (SHA-256
+`C481E30733BFF3892B0ECC41EE11FE1FCEDF8DD8599519353FCD2C980F19BB8B`).
+
+The fresh route completed MOVEMENT, AIM, BASIC ATTACK, ABILITY, GADGET and AANDHI by real
+touch. After a short forward movement to align the player's marker with the new open-lane
+target, the ELIMINATION card visibly unlocked: `tutorial-target-aimassist-moveclose-step7-final.png`
+(SHA-256 `27E22DED8D06035806F3EE85B339286A28019025B20B32BC099BC4BE2B77A76E`). The offline
+match then resolved to a real `RESULTS / WINNER YOU / #1` placement
+(`tutorial-target-after-wait.png`, SHA-256
+`9710C1C2A111652CC79E625D0D46E177BF65FC9490636F3FD6C47FCF088FBC7D`). Tapping `FINISH
+TUTORIAL` produced `TUTORIAL COMPLETE 8/8` (`tutorial-target-finished-results.png`, SHA-256
+`76E40B9F20BCDAFAE13FF217029CA75A3B92D8B9A23B58F98802C224493BAA49`). This closes the
+previous P56 elimination-comfort defect for the observed run and records terminal tutorial
+completion, but it does not close full action-by-action victory/rematch comfort.
+
+The route's earlier card captures, retained in the same folder, are:
+
+- MOVEMENT `tutorial-target-fresh-step1-moved.png` —
+  `46D9E7B6DE60E925A8AB48704FFC4ADFC65D5AD04194094325E0A3FB64409CC7`.
+- AIM `tutorial-target-fresh-step2-aimed.png` —
+  `BDF0FAFE8EC2C8C66F6BB293048B2AED417D34823D579B6B5D731D234D58B507`.
+- BASIC ATTACK `tutorial-target-fresh-step3-attacked.png` —
+  `4552D81480F0CC266A991E3CC917C24D136BFF0A6A6EE5A3D0F2EFD2944F4232`.
+- ABILITY `tutorial-target-fresh-step4-ability.png` —
+  `23D07DADCC3AD9B2C35002B1A502AA8C4909DA9FBF6FB788AABA1765F6C1FD60`.
+- GADGET `tutorial-target-aimassist-moveclose-step5-gadget.png` —
+  `13FFE4B026AE1AB56AF440B181EFB95EE9E4A12E8E4DE5B7A73147E1F201CBD8`.
+- AANDHI `tutorial-target-aimassist-moveclose-step6.png` —
+  `A81AEA6B3FDE73B65842495774FA8CF568285591CB4627D8433298076CB0AF5A`.
+
+The Android UI tree remains a Unity `SurfaceView` only, so visually derived touch
+coordinates were used and no semantic-locator claim is made. The final route UI tree is
+`tutorial-target-route-ui.xml` (2,546 bytes, SHA-256
+`A8235CD2CFEE7BFCFB0A515F9337E4ABF6E6C16C10ACDCF446DE87E9AEF094BD`). The app-scoped
+logcat is `tutorial-target-route-app-logcat.txt` (884 bytes, SHA-256
+`F7B3FE5885A0760F5F9E381254F4A770E49DB34BA9F853D19D90A7133DAEFC7D`); it has no configured
+fatal/ANR/native-crash markers and contains one non-fatal BLASTBufferQueue max-frame warning.
+The exact paths and observations are recorded in the manifest.
+
+| Gate | Current classification | Evidence / remaining action |
+| --- | --- | --- |
+| Tutorial movement through AANDHI by real touch | **Observed locally** | Exact Lava captures and manifest above |
+| Tutorial elimination by real touch | **Observed locally on refreshed target layout** | Step-7 card unlocked after target alignment; repeat on human-owned candidate for comfort approval |
+| Tutorial victory/result by real touch | **Observed locally** | Terminal `RESULTS / WINNER YOU / #1` and `TUTORIAL COMPLETE 8/8` captures above |
+| Full action-by-action victory comfort and rematch on this refreshed route | **Open** | Repeat with human-owned comfort review and exercise the underlying REMATCH control |
+| Exact source, tests, APK/AAB, offline manifest and static alignment | **Passed locally** | Machine evidence above; temporary signing only |
+| Genuine 16 KB runtime | **Open** | Lava reports 4 KB pages; static alignment is not runtime proof |
+| Sustained performance, thermal, battery, GC/frame-time and repeated rematches | **Open** | Existing observations remain bounded, not normalized acceptance |
+| Final authored art/audio, cultural, fun and accessibility approval | **Owner review required** | Generated presentation baseline remains a candidate |
+| Package identity, release signing, privacy/Data Safety, IARC/content rating and Play Console | **Owner-controlled** | No upload or public deployment performed |
+
+The product remains a **Prototype — Android offline release candidate in progress**, not
+Play-ready. P56 remains the prior-candidate comfort record; this P57 checkpoint supersedes its
+tutorial target layout while preserving its evidence. The two prompt files under `PROMPTS/`
+remain intentional uncommitted owner work.
+
+### P56 current-candidate real-touch tutorial comfort probe - 2026-08-30
+
+This probe used the exact current candidate built from runtime/audio source `56df201` on the
+approved Lava `ST5GDW23LB004392` only. Aim Assist was enabled through the in-app Settings &
+Accessibility surface before replaying TutorialArena. Because Android UI automation exposes
+only Unity's `SurfaceView` for this build, the route used visually derived control coordinates;
+the captured UI tree is retained as evidence rather than treated as a semantic locator.
+
+The real-touch route advanced the first six tutorial lessons:
+
+- MOVEMENT: `tutorial-aimassist-step1-moved.png` (SHA-256
+  `09AD92A4CC207B605AB88A16C731F2086040E96316FCBA684BBC63C97A3B25DD`).
+- AIM: `tutorial-aimassist-step2-aimed.png` (SHA-256
+  `6093A1988D2F26FFB68ECD239479E27B8E01E9847FC25E3A5958ABF8E7C744F5`).
+- BASIC ATTACK: `tutorial-aimassist-step3-attacked.png` (SHA-256
+  `64D6471FBEA782CD5494AD0B15B6A6CF1A54167CAA0658DB953109546CB30003`).
+- ABILITY: `tutorial-aimassist-step4-ability.png` (SHA-256
+  `E83A435B3C59CEA1EC8BC37852F1E332A31A3E0B6EFAB31BEBEB8D8377B00F9D`).
+- GADGET: `tutorial-aimassist-step5-gadget-first.png` (SHA-256
+  `C200A518521A3421ACF91F0816FA68F5C348BCD86FE0FBB918EDB4BF073C841E`). The nearby Tiffin
+  is authoritatively reconciled before this lesson (covered by
+  `PreCollectedGadgetIsReconciledWhenGadgetLessonBegins`); a real gadget touch produced the
+  station and enabled CONTINUE.
+- AANDHI: `tutorial-aimassist-step6-aandhi.png` (SHA-256
+  `9D0DA7BF5862E56114A6DF0C8624E2BE4BB37EA135D28736D8ABB8F065703D4C`).
+
+The ELIMINATION lesson did **not** advance after several real aim/attack attempts. The latest
+waiting-state capture is `tutorial-aimassist-close2-step7-single-leftup.png` (SHA-256
+`0C4616071D940071F64C56E08CAE8C4C11302281CD4A8F8EF2032691827706CA`); an additional burst
+attempt is `tutorial-aimassist-step7-tap-burst.png` (SHA-256
+`163BCC182038A22BBD76F575257E9E36232810303AC0B0F1A7E981EEABA30310`). A later terminal panel
+showed `WINNER YOU` and `#1 YOU` with `KO 0` / `D 0` in
+`tutorial-aimassist-step7-attack-left.png` (SHA-256
+`A87735215BB1F8F1FAED9EF2A2C975C3791401C5D5F0CC0DCE114886631CBBC1`), indicating that Aandhi
+resolved the route without satisfying the player-elimination lesson. No action-by-action
+elimination or victory comfort claim is made. The earlier P47/P54 physical `8/8 COMPLETE`
+route used the in-app SKIP control; editor tests cover deterministic eight-step progression,
+but neither substitutes for the missing real-touch elimination review.
+
+The Settings capture proving the probe configuration is
+`tutorial-settings-aim-assist-on.png` (SHA-256
+`9100144E6411C2BA9D6C2D0B40FD036A2849946BED6D1E68F82AD5D7069C5F56`). The final UI tree is
+`Builds/Local/Device/final-circle-20260830/tutorial-route-ui.xml` (SHA-256
+`A8235CD2CFEE7BFCFB0A515F9337E4ABF6E6C16C10ACDCF446DE87E9AEF094BD`), and the app-scoped
+logcat is `tutorial-route-app-logcat.txt` (1,693 bytes; SHA-256
+`909FDF92B11825C3229670134770FE238A23069141B871FBDF77DA54D85B1DF4`) with no configured
+fatal/ANR/native-crash markers. The complete machine-readable index is
+`Builds/Local/Device/final-circle-20260830/tutorial-touch-route-manifest.json` (5,200 bytes;
+SHA-256 `5ACCBA1BCDD4CDC4563AFB5F137F50544F1E8442804379D8B49895C1EC2E3863`).
+
+| Gate | Current classification | Evidence / remaining action |
+| --- | --- | --- |
+| Tutorial movement, aim, attack, ability, gadget and Aandhi lessons by real touch | **Observed locally** | Six exact Lava captures listed above; Aim Assist setting recorded. |
+| Tutorial elimination and victory comfort by real touch | **Open** | Elimination remained waiting and the terminal result had KO 0; reproduce on a human-owned candidate and review control readability/feedback. |
+| Tutorial 8/8 through SKIP and deterministic editor progression | **Passed as scoped evidence** | P47/P54 physical SKIP route and `TutorialArenaPlayModeTests`; not action-by-action comfort proof. |
+| Exact candidate, crash-marker smoke and offline route baseline | **Passed locally / observed** | P55 artifacts and this probe's clean app-scoped logcat; Lava reports 4 KB pages. |
+| Final authored art/audio, human cultural/fun/accessibility approval, normalized performance, battery/thermal, physical 16 KB, signing, legal/privacy, rating and Play Console | **Open / owner-controlled** | No local evidence closes these gates. |
+
+The truthful classification remains **Prototype — Android offline release candidate in
+progress**, not Play-ready. The two prompt files under `PROMPTS/` remain intentional
+uncommitted owner work.
+
 ### P55 - Current-source final-circle audio cue and exact Lava endgame capture - 2026-08-30
 
 The current source tip is commit `56df201` (`audio: add final-circle escalation cue`). It adds

@@ -1668,3 +1668,28 @@ Record every material choice here. Do not silently overwrite old decisions.
   fresh 141/141 EditMode and 89/89 PlayMode results, the rebuilt technical gate, and the
   approved-Lava captures indexed in `Docs/V1_RELEASE_PLAN.md` P54.
 - **Owner:** Human project owner
+
+### ADR-072 - Place the tutorial elimination target in a readable open lane
+
+- **Date:** 2026-08-30
+- **Status:** Accepted for the V1 offline presentation baseline; action-by-action comfort,
+  accessibility and human-fun review remain open.
+- **Context:** On the approved Lava route, the tutorial elimination target spawned in a
+  diagonal corner position that was visually reachable but difficult to acquire with the
+  portrait touch controls. This blocked the intended elimination lesson even though the
+  authority projectile path was valid.
+- **Options considered:** Keep the diagonal spawn and rely on repeated aim gestures; alter
+  authority collision or aim rules; or move only the tutorial target to a stationary open
+  lane while preserving production spawns and rules.
+- **Decision:** Keep actor 11's tutorial-only transform at `(0, 1, -3.2)` in the open south
+  lane. `BuildEntrypoints.ConfigureTutorialEliminationTarget` applies the same placement when
+  generating or repairing the saved TutorialArena. Production spawns, MovementLab fixtures,
+  collision, damage, timing and offline authority remain unchanged.
+- **Consequences:** A short forward touch movement now lines the player up with the target,
+  and the refreshed exact-candidate Lava route unlocked ELIMINATION, reached terminal
+  RESULTS / WINNER YOU / #1, and completed TUTORIAL 8/8. The route remains evidence for a
+  release candidate, not final comfort or fun approval.
+- **Evidence/sources:** `BuildEntrypoints`, saved `TutorialArena.unity`,
+  `TutorialArenaPlayModeTests`, focused 91/91 PlayMode results, and the P57 route captures
+  indexed in `Docs/V1_RELEASE_PLAN.md`.
+- **Owner:** Human project owner

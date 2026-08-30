@@ -697,3 +697,30 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   owner must recheck immediately before final signing and any Play upload.
 - **Recheck trigger/date:** Before choosing the final signed AAB, completing declarations or
   uploading a track, and after any Unity/Android/NDK/native dependency change.
+
+### V1.0 official Android/Play recheck during P56 continuation (2026-08-30)
+
+- **Question:** Did the latest official Android and Google Play guidance change the current
+  candidate's target API, 16 KB, Data safety or content-rating obligations?
+- **Primary sources:** [Android target API requirements](https://developer.android.com/google/play/requirements/target-sdk),
+  [Android 16 KB page-size guidance](https://developer.android.com/guide/practices/page-sizes),
+  [Google Play Data safety](https://support.google.com/googleplay/android-developer/answer/10787469?hl=en),
+  and [Google Play content ratings](https://support.google.com/googleplay/android-developer/answer/9898843?hl=en).
+- **Access date:** 2026-08-30 (IST).
+- **Relevant claims:** The target-API page currently states that from **2026-08-31** new
+  apps and updates must target Android 16/API 36 or higher. The page-size guidance separates
+  static ELF/bundle alignment from behavior on a genuine 16 KB runtime and describes the
+  current Play compatibility timeline. Play's Data safety guidance requires accurate
+  declarations and a privacy-policy link for published tracks, and the content-rating page
+  requires an accurate IARC questionnaire for every Play app.
+- **Decision impact:** Keep the exact candidate at target API 36, ARM64/IL2CPP and static
+  16 KB alignment checks. Continue to classify Lava's 4 KB device and the host-GPU AVD as
+  scoped evidence only; retain physical 16 KB, signed identity, privacy/Data safety, IARC
+  and Play Console actions as owner-controlled gates. No project setting or dependency change
+  is justified by this recheck.
+- **Local evidence:** P55 APK/AAB checker output, `Docs/V1_RELEASE_PLAN.md` P55 and the
+  exact Lava/AVD evidence folders.
+- **Uncertainty:** Policy dates, declaration wording and enforcement may change; the owner
+  must recheck immediately before selecting the final signed AAB and submitting any track.
+- **Recheck trigger/date:** Before final signing, completing Play declarations or uploading,
+  and after any Unity/Android/NDK/native dependency or renderer change.

@@ -939,3 +939,68 @@ normalized performance, battery/thermal endurance, signing, legal/privacy, ratin
 Console actions remain owner-controlled. The truthful state remains **Prototype — Android
 offline release candidate in progress**; the two prompt files are intentional uncommitted owner
 work.
+
+## Milestone 11 P57 tutorial elimination target readability and refreshed touch route - 2026-08-30
+
+The latest source checkpoint is `c9e3d3091a38852be794f74ad97420b91461599a`
+(`tutorial: place elimination target in readable lane`). The change is limited to the
+TutorialArena layout/build helper and PlayMode coverage: actor 11 is placed at `(0, 1, -3.2)`
+in the open south lane, with production spawns, the MovementLab fixture, offline authority
+and package/network policy unchanged.
+
+Validation after the checkpoint remains green: static validation **0 errors / 0 warnings**
+(post-checkpoint log SHA-256 `7EF09129DBD03921DF243F43AC65AE932A8C74C4DD76FAD8E6A013BFC804E322`),
+EditMode **141/141**, target checkpoint PlayMode **90/90**, and focused local-projectile
+follow-up PlayMode **91/91**. The exact APK is 40,681,055 bytes (SHA-256
+`DA6CC4B6B2F4160A2D62BDE9FFA4C1686D0D401AB0F354604AF8AC077269222B`); the exact AAB is
+36,506,363 bytes (SHA-256
+`A379C725D46E8829F9DE9EEF59E49D906E817F9F6392E031EE065A532DD6C37C`). The release checker
+is **0 errors / 0 warnings** and still reports temporary package `com.example.battleraja.m11`,
+API `28/36`, offline network permissions absent, ARM64-only payload and static alignment.
+These are local debug-signed candidates, not production-signed uploads.
+
+On approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34, 4 KB pages), Aim Assist
+was enabled in Settings & Accessibility. A fresh real-touch route completed MOVEMENT, AIM,
+BASIC ATTACK, ABILITY, GADGET and AANDHI, then unlocked the ELIMINATION lesson after a short
+forward alignment movement. The exact step-7 capture is
+`Builds/Local/Device/final-circle-20260830/tutorial-target-aimassist-moveclose-step7-final.png`
+(SHA-256 `27E22DED8D06035806F3EE85B339286A28019025B20B32BC099BC4BE2B77A76E`). The VICTORY
+card then resolved to a real `RESULTS / WINNER YOU / #1` placement (`tutorial-target-after-wait.png`,
+SHA-256 `9710C1C2A111652CC79E625D0D46E177BF65FC9490636F3FD6C47FCF088FBC7D`). Tapping
+`FINISH TUTORIAL` produced `TUTORIAL COMPLETE 8/8` over that result
+(`tutorial-target-finished-results.png`, SHA-256
+`76E40B9F20BCDAFAE13FF217029CA75A3B92D8B9A23B58F98802C224493BAA49`). Full exact paths,
+earlier card captures, device facts, UI-tree interpretation and the app-scoped logcat are
+indexed in `Docs/V1_RELEASE_PLAN.md` P57 and
+`Builds/Local/Device/final-circle-20260830/tutorial-target-touch-route-manifest.json`.
+
+The product remains a **generated presentation baseline / Android offline release candidate
+in progress**, not Play-ready. The refreshed target closes the captured touch-elimination
+layout defect and the route now records terminal placement plus tutorial completion; it does
+not close full action-by-action victory/rematch comfort, final authored/cultural/fun/
+accessibility approval, normalized performance and endurance, physical 16 KB runtime,
+package identity/signing, privacy/Data safety, IARC/content rating or Play Console gates.
+The two prompt files under `PROMPTS/` remain intentional uncommitted owner work.
+
+## Milestone 11 P56 real-touch tutorial comfort probe - 2026-08-30
+
+The exact current candidate from source `56df201` was replayed on approved Lava
+`ST5GDW23LB004392` with AIM ASSIST enabled through the in-app settings surface. Real touch
+advanced the MOVEMENT, AIM, BASIC ATTACK, ABILITY, GADGET and AANDHI lessons. The exact
+screenshots, hashes, device facts, UI-tree capture and app-scoped logcat are indexed in
+`Builds/Local/Device/final-circle-20260830/tutorial-touch-route-manifest.json` and the P56
+section of `Docs/V1_RELEASE_PLAN.md`.
+
+The ELIMINATION lesson remained waiting after repeated real aim/attack attempts. A later
+terminal Results panel displayed `WINNER YOU`, `#1 YOU`, `KO 0`, `D 0`, meaning Aandhi resolved
+that route without satisfying the player-elimination lesson. Therefore action-by-action
+elimination/victory tutorial comfort remains **open**. P47/P54 physical `8/8 COMPLETE` evidence
+used SKIP; editor tests cover deterministic progression but do not replace touch comfort review.
+
+The probe's Unity UI tree exposed only a SurfaceView, and its app-scoped logcat contained no
+configured fatal/ANR/native-crash markers. The product remains **Prototype — Android offline
+release candidate in progress**, not Play-ready. Final authored/cultural/fun/accessibility
+approval, normalized sustained performance, battery/thermal endurance, physical 16 KB runtime,
+final package identity/signing, privacy/Data Safety, content rating and Play Console actions
+remain owner-controlled. The two prompt files under `PROMPTS/` remain intentional uncommitted
+owner work.
