@@ -1,5 +1,38 @@
 # Android and Web Performance Budget
 
+## Latest exact-candidate P63 bounded live-match refresh — P61 runtime `f80b565` — 2026-08-31
+
+The exact P61 APK from `f80b565372d7446e070cf1a37de042bd018345c4` was kept in a live Solo
+Raja match on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34) while
+`Tools/Validation/capture_android_performance.ps1` requested 120 seconds at five-second
+intervals. Movement swipes plus attack, ability and gadget taps were sent during the run.
+The raw capture is under
+`Builds/Local/Device/Performance/20260831-lava-f80b565-p62-perf120/`.
+
+- The run produced **24 samples**. `manifest.json` is 5,611 bytes (SHA-256
+  `EBB5C4F43E27E0579E0EAC3E116E8A3DB0F47DEB35EAEDEE7C05A945FF067D7D`); the checked
+  `p63-performance-route-summary.json` is 3,478 bytes (SHA-256
+  `4413810D5295345586E497846AA4A55C6B83AC9645FA807EB159ADDEA6B4467B`).
+- `live-start.png` (323,756 bytes; SHA-256
+  `4FCCA4F9BDFEAD5B3391FCCED6C86D1F1D567290A40DB806168C805D4CBAF8A4`) shows Bijli in
+  Opening Fight. `live-end.png` (317,880 bytes; SHA-256
+  `720F5D9361887079AAEB3950509360F92B8EA4D658CA42BC931C1BC94FD4C013`) shows Final
+  Circle, player defeat/spectating and Alive 4.
+- Total PSS across all samples was **223,078-244,059 KB** and RSS was
+  **356,732-365,932 KB**. After the first four samples, PSS was **223,078-223,273 KB**
+  (average **223,190.8 KB**), RSS was **356,972-357,168 KB** (average **357,085.0 KB**),
+  graphics PSS was constant at **17,480 KB**, and `top` process CPU was **59.2-131.0%**
+  (warm-sample average **113.8%**, Android's per-core scale).
+- Thermal status stayed **0** before, during and after; HAL CPU/GPU was **43.537-49.148 C**
+  and skin was **39.305-39.969 C**. The phone was USB-powered; battery changed from
+  **44% / 3,841 mV / 35 C** to **43% / 3,825 mV / 35 C**. The 1,058,413-byte logcat
+  (SHA-256 `139ED06981B4524B4C288A47DC0FBDF9859F8DAC2767024C4A3ED252F80112B2`) has no
+  configured fatal, ANR, SIGSEGV, SIGABRT, NullReferenceException or UnityException marker.
+- Android `gfxinfo` reported zero total frames and no usable Unity SurfaceView histogram.
+  Lava reports 4 KB pages. This is a bounded raw diagnostic and does not establish a
+  normalized FPS/frame-time/GC/GPU budget, unplugged endurance, repeated-match growth,
+  physical 16 KB runtime compatibility or human performance approval.
+
 ## Latest exact-source candidate — `2080383` — 2026-08-27
 
 The current clean Android candidate is commit `208038362e16f8c33856e0a7cf5c4de776005ded`.

@@ -987,6 +987,32 @@ repeated-rematch approval, normalized performance, physical 16 KB proof, final a
 content approval or Play Store approval. The project remains a prototype / Android offline
 release candidate in progress.
 
+## Latest exact-candidate P63 bounded live-match performance evidence — 2026-08-31
+
+The exact P61 APK (`f80b565372d7446e070cf1a37de042bd018345c4`) remained installed on approved
+Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34) during a requested 120-second
+performance-harness run at five-second intervals. Movement swipes plus attack, ability and
+gadget taps were sent while the match advanced from Opening Fight to Final Circle, player
+defeat/spectating and Alive 4. No data was cleared and no artifact was rebuilt. Raw evidence:
+`Builds/Local/Device/Performance/20260831-lava-f80b565-p62-perf120/`.
+
+The 24-sample `manifest.json` is 5,611 bytes (SHA-256
+`EBB5C4F43E27E0579E0EAC3E116E8A3DB0F47DEB35EAEDEE7C05A945FF067D7D`); the checked summary is
+`p63-performance-route-summary.json` (3,478 bytes; SHA-256
+`4413810D5295345586E497846AA4A55C6B83AC9645FA807EB159ADDEA6B4467B`). Warm-sample PSS was
+223,078-223,273 KB (average 223,190.8 KB), RSS 356,972-357,168 KB (average 357,085.0 KB),
+graphics PSS 17,480 KB, and instantaneous `top` CPU 59.2-131.0% (warm average 113.8%).
+Thermal status stayed 0; HAL CPU/GPU was 43.537-49.148 C and skin 39.305-39.969 C. The
+phone was USB-powered and battery changed from 44% / 3,841 mV / 35 C to 43% / 3,825 mV / 35 C.
+Logcat (1,058,413 bytes; SHA-256
+`139ED06981B4524B4C288A47DC0FBDF9859F8DAC2767024C4A3ED252F80112B2`) has no configured
+fatal/ANR/SIGSEGV/SIGABRT/managed-exception marker.
+
+This is raw bounded telemetry, not a performance pass: Unity `gfxinfo` reports zero frames
+and no usable SurfaceView histogram, Lava reports 4 KB pages, and normalized frame-time,
+GC/GPU, unplugged endurance, repeated-match growth, physical 16 KB and owner approval remain
+open.
+
 ## Latest exact-candidate accessibility, persistence and lifecycle evidence — P62 — 2026-08-31
 
 The exact P61 APK (`f80b565372d7446e070cf1a37de042bd018345c4`) was freshly installed on

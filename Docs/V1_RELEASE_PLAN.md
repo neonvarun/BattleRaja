@@ -2999,6 +2999,57 @@ Play-ready. P59 adds current-candidate all-fighter and accessibility observation
 does not close the subjective, physical, performance, identity, legal or Play gates. The two
 prompt files under `PROMPTS/` remain intentional uncommitted owner work.
 
+### P63 - Exact P61 candidate bounded Lava live-match performance refresh - 2026-08-31
+
+The exact P61 APK from `f80b565372d7446e070cf1a37de042bd018345c4` was already installed on
+approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34) and was kept in a live
+Solo Raja match while `Tools/Validation/capture_android_performance.ps1` requested a
+120-second capture at five-second intervals. Movement swipes plus attack, ability and gadget
+taps were sent during the sample window. No application data was cleared and no artifact was
+rebuilt. The raw capture is under
+`Builds/Local/Device/Performance/20260831-lava-f80b565-p62-perf120/`.
+
+#### P63 machine evidence
+
+- The harness wrote **24 samples**. `manifest.json` is 5,611 bytes (SHA-256
+  `EBB5C4F43E27E0579E0EAC3E116E8A3DB0F47DEB35EAEDEE7C05A945FF067D7D`), and the checked
+  summary is `p63-performance-route-summary.json`, 3,478 bytes (SHA-256
+  `4413810D5295345586E497846AA4A55C6B83AC9645FA807EB159ADDEA6B4467B`).
+- The opening capture `live-start.png` is 323,756 bytes (SHA-256
+  `4FCCA4F9BDFEAD5B3391FCCED6C86D1F1D567290A40DB806168C805D4CBAF8A4`) and shows the
+  Bijli live HUD in Opening Fight. The ending capture `live-end.png` is 317,880 bytes
+  (SHA-256 `720F5D9361887079AAEB3950509360F92B8EA4D658CA42BC931C1BC94FD4C013`) and
+  shows Final Circle, player defeat/spectating and Alive 4.
+- Across all samples, total PSS was **223,078-244,059 KB** and RSS was
+  **356,732-365,932 KB**. After the first four samples, PSS was **223,078-223,273 KB**
+  (average **223,190.8 KB**) and RSS was **356,972-357,168 KB** (average
+  **357,085.0 KB**); graphics PSS stayed at **17,480 KB**. `top` reported **59.2-131.0%**
+  instantaneous process CPU (warm-sample average **113.8%** on Android's per-core scale).
+- Thermal status was **0** before, during and after; HAL CPU/GPU readings were
+  **43.537-49.148 C** and skin readings **39.305-39.969 C**. Battery remained USB-powered;
+  the service changed from **44% / 3,841 mV / 35 C** to **43% / 3,825 mV / 35 C**.
+  The app-scoped logcat is 1,058,413 bytes (SHA-256
+  `139ED06981B4524B4C288A47DC0FBDF9859F8DAC2767024C4A3ED252F80112B2`) with no configured
+  fatal, ANR, SIGSEGV, SIGABRT, NullReferenceException or UnityException marker.
+- Android `gfxinfo` reported zero total frames and no usable Unity SurfaceView frame
+  histogram. Lava reports 4 KB pages. This is raw current-candidate telemetry, not a
+  normalized frame-time, GC, GPU, battery-endurance or physical 16 KB result.
+
+#### P63 gate delta
+
+| Gate | Current classification | Evidence / remaining action |
+| --- | --- | --- |
+| Exact P61 live-match telemetry and bounded route | **Passed as raw diagnostic evidence** | 24-sample manifest, live Opening Fight to Final Circle/spectator captures, and clean marker scan |
+| Warm memory stability during this capture | **Observed / bounded** | PSS/RSS/graphics ranges above; repeated-match growth and budget approval remain open |
+| Normalized FPS, frame-time, GC, GPU and render-thread budget | **Open** | Unity `gfxinfo` exposes no usable histogram; use supported profiler/trace interpretation |
+| Battery endurance and sustained thermal acceptance | **Open** | This run was USB-powered and short; unplugged endurance and owner criteria remain required |
+| Genuine physical 16 KB runtime | **Open** | Lava reports 4 KB pages; the host-GPU AVD smoke is profile-specific |
+| Final authored/accessibility/fun/cultural/performance approval | **Owner/human review required** | Raw telemetry does not replace comfort, presentation, fairness or cultural review |
+
+The truthful classification remains **prototype / Android offline release candidate in
+progress**, not Play-ready. This P63 refresh does not change the P61 APK/AAB or any gameplay
+rule. The prompt files under `PROMPTS/` remain intentional uncommitted owner work.
+
 ### P62 - Re-run accessibility, persistence and lifecycle route on the exact P61 candidate - 2026-08-31
 
 The exact rebuilt P61 APK from `f80b565372d7446e070cf1a37de042bd018345c4` was installed on

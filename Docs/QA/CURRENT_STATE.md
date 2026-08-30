@@ -660,6 +660,33 @@ proof, final authored art/audio, human accessibility/fun/fairness/cultural appro
 Store readiness. The project remains **Prototype — Android offline release candidate in
 progress**.
 
+## P63 bounded exact-candidate live-match performance refresh - 2026-08-31
+
+The exact P61 APK from `f80b565372d7446e070cf1a37de042bd018345c4` was already installed on
+approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34) and remained in a live
+Solo Raja match while the repository performance harness requested 120 seconds at five-second
+intervals. Movement swipes plus attack, ability and gadget taps were sent during the run. Raw
+evidence is under
+`Builds/Local/Device/Performance/20260831-lava-f80b565-p62-perf120/`; the 24-sample
+`manifest.json` is 5,611 bytes (SHA-256
+`EBB5C4F43E27E0579E0EAC3E116E8A3DB0F47DEB35EAEDEE7C05A945FF067D7D`) and the checked
+summary is 3,478 bytes (SHA-256
+`4413810D5295345586E497846AA4A55C6B83AC9645FA807EB159ADDEA6B4467B`).
+
+The start capture shows Bijli in Opening Fight (`live-start.png`, SHA-256
+`4FCCA4F9BDFEAD5B3391FCCED6C86D1F1D567290A40DB806168C805D4CBAF8A4`); the end capture
+shows Final Circle, player defeat/spectating and Alive 4 (`live-end.png`, SHA-256
+`720F5D9361887079AAEB3950509360F92B8EA4D658CA42BC931C1BC94FD4C013`). After the first four
+samples, PSS was 223,078-223,273 KB (average 223,190.8 KB), RSS was 356,972-357,168 KB
+(average 357,085.0 KB), graphics PSS was 17,480 KB, and `top` CPU was 59.2-131.0%
+(warm-sample average 113.8%). Thermal status stayed 0; HAL CPU/GPU was 43.537-49.148 C,
+skin was 39.305-39.969 C, and USB-powered battery changed from 44% / 3,841 mV / 35 C to
+43% / 3,825 mV / 35 C. The app logcat has no configured fatal marker.
+
+This is bounded current-candidate telemetry only. Unity `gfxinfo` still has no usable frame
+histogram, Lava reports 4 KB pages, and normalized FPS/frame-time/GC/GPU, unplugged endurance,
+repeated-match growth, physical 16 KB runtime and human performance approval remain open.
+
 ## P62 accessibility, persistence and lifecycle route - 2026-08-31
 
 The exact P61 APK from `f80b565372d7446e070cf1a37de042bd018345c4` was freshly installed on

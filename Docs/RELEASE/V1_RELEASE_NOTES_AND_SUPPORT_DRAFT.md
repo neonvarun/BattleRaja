@@ -7,7 +7,8 @@ content rating, target audience, screenshots and support destination are approve
 
 ## Candidate anchor
 
-- Source checkpoint: `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`.
+- Source checkpoint: `f80b565372d7446e070cf1a37de042bd018345c4` (current P61 runtime/art
+  candidate; the P63 performance refresh uses this exact installed APK).
 - Candidate version: `1.0.0` / version code `100`.
 - Current temporary application ID: `com.example.battleraja.m11`.
 - Candidate APK: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`.
@@ -58,7 +59,7 @@ for this candidate.
 - Lava `ST5GDW23LB004392` reports 4 KB pages. The host-GPU Android 16 `BattleRaja_16K`
   emulator provided a genuine 16 KB smoke, but this is not physical 16 KB proof or coverage
   for every renderer/device profile.
-- The Lava P48/P50 captures are bounded diagnostics. `gfxinfo` supplied no usable frame
+- The Lava P48/P50/P63 captures are bounded diagnostics. `gfxinfo` supplied no usable frame
   histogram, and no normalized sustained CPU/GPU, battery or thermal approval is claimed.
 - The current fixed-tick production-bot release-gate rerun completed **100/100** seeded
   matches in the 240-360 second window with combat and bot-to-bot damage in every match,

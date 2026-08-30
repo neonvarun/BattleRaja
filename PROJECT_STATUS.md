@@ -940,6 +940,29 @@ Console actions remain owner-controlled. The truthful state remains **Prototype 
 offline release candidate in progress**; the two prompt files are intentional uncommitted owner
 work.
 
+## Milestone 11 P63 bounded exact-candidate live-match performance refresh - 2026-08-31
+
+The exact P61 APK from `f80b565372d7446e070cf1a37de042bd018345c4` remained installed on
+approved Lava `ST5GDW23LB004392` during a requested 120-second performance-harness capture at
+five-second intervals. Movement swipes plus attack, ability and gadget taps were sent while
+the run advanced from Opening Fight to Final Circle, player defeat/spectating and Alive 4. Raw
+evidence is under
+`Builds/Local/Device/Performance/20260831-lava-f80b565-p62-perf120/`; the 24-sample manifest is
+5,611 bytes (SHA-256
+`EBB5C4F43E27E0579E0EAC3E116E8A3DB0F47DEB35EAEDEE7C05A945FF067D7D`) and the checked summary
+is 3,478 bytes (SHA-256
+`4413810D5295345586E497846AA4A55C6B83AC9645FA807EB159ADDEA6B4467B`).
+
+After the first four samples, PSS was 223,078-223,273 KB (average 223,190.8 KB), RSS was
+356,972-357,168 KB (average 357,085.0 KB), graphics PSS was 17,480 KB, and instantaneous
+`top` CPU was 59.2-131.0% (warm average 113.8%). Thermal status stayed 0; HAL CPU/GPU was
+43.537-49.148 C and skin was 39.305-39.969 C. USB-powered battery changed from 44% /
+3,841 mV / 35 C to 43% / 3,825 mV / 35 C. The app logcat has no configured fatal marker.
+Unity `gfxinfo` still has no usable frame histogram and Lava reports 4 KB pages, so this is
+bounded raw telemetry only; normalized performance, endurance, physical 16 KB and owner review
+remain open. The truthful state remains **Prototype — Android offline release candidate in
+progress**, not Play-ready.
+
 ## Milestone 11 P62 accessibility, persistence and lifecycle route - 2026-08-31
 
 The exact P61 APK (`f80b565372d7446e070cf1a37de042bd018345c4`) was freshly installed on
