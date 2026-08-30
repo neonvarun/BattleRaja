@@ -880,7 +880,7 @@ identity, privacy/Data Safety, content rating and Play Console actions remain ow
 
 ## Milestone 11 P54 saved-fighter presentation and portrait settings refresh - 2026-08-30
 
-The focused presentation-only follow-up is committed at `6d67fe3`, on top of documentation
+The focused presentation-only follow-up is committed at `3d8fda7`, on top of documentation
 tip `ec7e97c`. `FighterPresentation` now suppresses the legacy root capsule
 only after a saved Bijli, Pehel or Maya production prefab provides mesh/skinned renderers;
 the root dash `TrailRenderer` remains available and hit/elimination tinting targets the saved

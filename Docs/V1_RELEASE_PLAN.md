@@ -2844,7 +2844,7 @@ Play-ready. The two prompt files under `PROMPTS/` remain intentional uncommitted
 
 ### P54 - Current-source saved-fighter presentation and portrait settings refresh - 2026-08-30
 
-The focused presentation-only follow-up is committed at `6d67fe3` on top of exact
+The focused presentation-only follow-up is committed at `3d8fda7` on top of exact
 documentation tip `ec7e97c79030fa15496a0e688c2e823cb919652e`. `FighterPresentation` now keeps the
 legacy root capsule as an emergency fallback, but suppresses direct root `MeshRenderer`
 components whenever a saved Bijli, Pehel or Maya identity prefab has mesh/skinned renderers.

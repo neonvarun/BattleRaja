@@ -483,7 +483,7 @@ Console gates remain open.
 
 ## P54 current-source saved-fighter presentation and portrait settings refresh - 2026-08-30
 
-The focused presentation-only follow-up is committed at `6d67fe3`, on top of documentation
+The focused presentation-only follow-up is committed at `3d8fda7`, on top of documentation
 tip `ec7e97c`. Saved Bijli, Pehel and Maya production prefabs now replace the
 legacy root capsule at runtime; the root mesh remains available as a fallback for fixtures
 without a saved identity, and the root dash `TrailRenderer` is preserved. Hit/elimination
