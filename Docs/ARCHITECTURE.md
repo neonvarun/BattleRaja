@@ -234,9 +234,10 @@ Android and Web share domain, application and most presentation code. Platform-s
   pause/settings, rematch and a results panel without moving authoritative state into
   the UI layer.
 - The settings surface includes left-handed stick swapping, reduced-flash propagation
-  to `FighterPresentation`, high-contrast status text and a Web-safe audio user-gesture
-  entry point. Labels remain short and replaceable by localization keys; the current
-  `AIM ASSIST (READY)` control is intentionally a placeholder, not a gameplay claim.
+  to `FighterPresentation`, high-contrast status text, bounded local aim-assist guidance
+  and a Web-safe audio user-gesture entry point. Labels remain short and replaceable by
+  localization keys; aim assist only adjusts local input direction within the configured
+  range/cone and never decides authority, collision or damage.
 - The layout uses normalized anchors and a scale-with-screen-size canvas so Android
   safe-area/device review and Web responsive review remain explicit follow-up gates.
   Main-menu/bootstrap flow, complete offline/tutorial progression, localization assets,
