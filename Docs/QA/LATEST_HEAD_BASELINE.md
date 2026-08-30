@@ -1944,3 +1944,15 @@ telemetry was **277,284 KB PSS / 400,500 KB RSS / 80,052 KB graphics PSS**, batt
 markers. This is bounded compositor evidence only: Lava reports 4 KB pages, Unity `gfxinfo`
 has no usable histogram, and normalized performance, physical 16 KB and human approval remain
 open.
+
+## Current release-handoff documentation tip - 2026-08-30 07:05 IST
+
+The current docs-only tip is aligned with `origin/main`. The owner-selectable release handoff is
+`Docs/RELEASE/V1_RELEASE_NOTES_AND_SUPPORT_DRAFT.md`; it contains v1.0.0 release notes,
+tester quick start, known issues, support copy and the exact owner submission checklist.
+`Docs/RELEASE/PLAY_STORE_METADATA_DRAFT.md` now describes the generated presentation as a
+candidate baseline rather than procedural placeholders, and `Docs/STORE_DRAFT_COPY.md` is
+explicitly historical/superseded for the offline-Android V1 scope. Store dimensions,
+repository validation (0/0), whitespace and Git LFS checks pass. P47-P50 runtime, artifact,
+Lava and 16 KB evidence is unchanged; final authored/human, signing, legal and Play gates
+remain open.

@@ -2842,6 +2842,29 @@ than normalized FPS, frame-time, GC, thermal, battery, accessibility or sustaine
 The candidate remains a **prototype / Android offline release candidate in progress**, not
 Play-ready. The two prompt files under `PROMPTS/` remain intentional uncommitted owner work.
 
+### P51 - Exact current release-handoff documentation tip - 2026-08-30 07:05 IST
+
+This docs-only continuation is aligned with `origin/main` and does not change the runtime source,
+candidate artifacts or P47-P50 evidence. The current owner handoff now has one explicit
+draft for release notes, invited-tester steps, known issues, support copy and the final
+submission checklist at `Docs/RELEASE/V1_RELEASE_NOTES_AND_SUPPORT_DRAFT.md`. The metadata
+draft no longer calls the saved production presentation “procedural placeholders”, and the
+older Web-inclusive store copy is marked historical/superseded for the V1 Android scope.
+
+- `Tools/Validation/check_store_creative.ps1 -ScreenshotDirectory Docs/Store/V1` — all
+  supplied icon, feature-graphic and screenshot dimensions pass.
+- `Tools/Validation/validate.ps1 -ProjectRoot C:\Projects\BattleRaja -RequireUnityProject
+  -UnityExe C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Unity.exe` — **0 errors /
+  0 warnings**.
+- `git diff --check` and `git lfs fsck --pointers` — pass.
+
+| Gate | Current classification | Evidence / remaining action |
+| --- | --- | --- |
+| Release notes, tester, known-issues and support draft | **Prepared locally** | New owner-selectable draft; replace support destination and approve before publication |
+| Current Play metadata wording and V1 scope | **Clarified locally** | Metadata links the new handoff; historical Web copy is explicitly superseded |
+| Runtime/build/test evidence | **Unchanged / still current** | P47-P50 exact `5d136fb` candidate evidence remains authoritative |
+| Final identity, signing, legal/privacy, cultural/accessibility/fun review and Play Console | **Owner/human gate required** | No submission, signing-key handling, questionnaire or deployment was performed |
+
 ### P50 - Exact-candidate Lava live-match SurfaceFlinger diagnostic - 2026-08-30
 
 The exact terminal-outcome candidate from source `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`

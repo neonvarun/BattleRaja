@@ -836,6 +836,15 @@ signing, privacy/Data Safety, IARC/content rating, cultural/legal/fun/accessibil
 genuine 16 KB runtime testing, sustained performance/thermal/battery validation and Play
 Console upload/public deployment remain owner-controlled.
 
+## Current release-handoff documentation tip — 2026-08-30 07:05 IST
+
+The current docs-only tip is aligned with `origin/main`. The current owner-selectable release notes, invited-tester quick start, known issues,
+support copy and submission checklist are consolidated in
+`Docs/RELEASE/V1_RELEASE_NOTES_AND_SUPPORT_DRAFT.md`. Store-creative dimensions and
+repository validation remain green; P47-P50 runtime, artifact, Lava and 16 KB evidence is
+unchanged. This does not change the temporary package ID/debug signing or close owner,
+human, legal, performance or Play Console gates.
+
 ## Exact-candidate P48 performance refresh - 2026-08-30
 
 The exact `5d136fbb6be6a5554931f6ab859be8b9a8a995a2` candidate was exercised on approved Lava

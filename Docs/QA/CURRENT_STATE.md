@@ -440,3 +440,13 @@ was **277,284 KB PSS / 400,500 KB RSS / 80,052 KB graphics PSS**, battery **75% 
 `gfxinfo` still has no usable Unity histogram; Lava reports 4 KB pages. This is bounded raw
 frame-present/stability evidence only, not normalized performance, runtime-16-KB or human
 approval.
+
+## Current release-handoff documentation tip — 2026-08-30 07:05 IST
+
+The current documentation tip is aligned with `origin/main` after a docs-only continuation. It adds
+`Docs/RELEASE/V1_RELEASE_NOTES_AND_SUPPORT_DRAFT.md` with release notes, invited-tester
+quick-start steps, known limitations, support/feedback copy and an owner submission
+checklist. It also corrects the Play metadata wording so the generated production baseline
+is not described as “procedural placeholders”, and marks the older Web-inclusive store copy
+as historical for the V1 Android scope. Store-creative checks and repository validation are
+green; no runtime/build/test evidence changed, and P47-P50 remain the exact candidate index.

@@ -827,3 +827,13 @@ The end state was player defeat/spectating during Aandhi closing. End telemetry 
 raw compositor evidence only; Lava reports 4 KB pages, `gfxinfo` has no usable Unity
 histogram, and normalized performance, physical 16 KB, final authored/accessibility/cultural
 approval and owner-controlled identity/signing/privacy/Play gates remain open.
+
+## Milestone 11 current release-handoff documentation tip — 2026-08-30 07:05 IST
+
+The docs-only continuation is aligned with `origin/main`. It adds the owner-selectable V1 release-notes, tester,
+known-issues and support handoff at `Docs/RELEASE/V1_RELEASE_NOTES_AND_SUPPORT_DRAFT.md`,
+removes stale “procedural placeholders” wording from the Play metadata draft, and labels the
+older multi-platform store copy as superseded for V1 Android. Store-creative dimensions,
+repository validation (**0 errors / 0 warnings**), `git diff --check` and Git LFS pointer
+validation pass. No runtime source, build artifact or package identity changed; the exact
+`5d136fb` candidate evidence and remaining owner/human gates in P47-P50 remain authoritative.
