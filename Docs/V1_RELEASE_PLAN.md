@@ -2896,7 +2896,11 @@ candidate; the clean menu settings capture
 portrait settings surface. App-scoped logcat
 `Builds/Local/Device/lava-v1-color-reset-settings-logcat-20260830.txt` (15,477 bytes; SHA-256
 `C2665DD1058B5029B43C1CAE5CF8CD808F209B028F53DC71EAA94BEF7A3CFDBC`) had no `FATAL EXCEPTION`,
-`AndroidRuntime`, `SIGSEGV`, `SIGABRT` or ANR marker. Oppo was not used.
+`AndroidRuntime`, `SIGSEGV`, `SIGABRT` or ANR marker. The exact-final lifecycle log
+`Builds/Local/Device/lava-v1-color-reset-lifecycle-20260830.txt` (387 bytes; SHA-256
+`EEF4118A2736B1DA0D2EF6F6AEE4DB529C7C4A250CD2B6E3F75A68EF712565C1`) records HOME moving
+to the launcher, relaunch returning `UnityPlayerGameActivity` top-resumed, and zero app-scoped
+fatal markers. Oppo was not used.
 
 A fresh 180-second Lava capture ran with 36 five-second samples under
 `Builds/Local/Device/Performance/v1-color-reset-180s-20260830/`; the manifest is 4,927 bytes
