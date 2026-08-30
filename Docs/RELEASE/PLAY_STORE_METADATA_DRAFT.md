@@ -50,5 +50,10 @@ human cultural reviewer must approve screenshots, icon, feature graphic and stor
 ## Required creative package
 
 The final submission still needs owner-approved original PNG/JPEG exports for the app icon,
-feature graphic and phone/tablet screenshots. Current runtime visuals are deliberately
-procedural placeholders and are not final store art.
+feature graphic and phone/tablet screenshots. The current candidate has a generated,
+repository-owned production presentation baseline and technical gameplay captures, but
+those captures and drafts are not final listing art until the owner completes visual,
+cultural and legal review.
+
+For the current release-notes, tester, known-issues and support handoff, see
+`Docs/RELEASE/V1_RELEASE_NOTES_AND_SUPPORT_DRAFT.md`.
