@@ -57,6 +57,7 @@ namespace BattleRaja.Editor
             yield return new ClipSpec("GadgetTiffin", 0.22f, CombatSampleRate, 1, 17);
             yield return new ClipSpec("ZoneWarning", 0.26f, CombatSampleRate, 1, 18);
             yield return new ClipSpec("ZoneClosing", 0.32f, CombatSampleRate, 1, 19);
+            yield return new ClipSpec("ZoneFinalCircle", 0.42f, CombatSampleRate, 1, 24);
             yield return new ClipSpec("Victory", 0.48f, CombatSampleRate, 1, 20);
             yield return new ClipSpec("Defeat", 0.38f, CombatSampleRate, 1, 21);
             yield return new ClipSpec("BazaarAmbience", 12f, MusicSampleRate, 2, 22);
@@ -126,6 +127,11 @@ namespace BattleRaja.Editor
                 case 17: value = Note(time, 320f, 0.28f) + Note(time, 640f, 0.17f, 0.08f); break;
                 case 18: value = Note(time, 260f, 0.24f) + Note(time, 390f, 0.15f, 0.12f); break;
                 case 19: value = Chirp(time, 210f, 120f, 0.18f) + Noise(time, 0.06f); break;
+                case 24:
+                    value = Chirp(time, 360f, 920f, 0.22f)
+                        + Note(time, 1380f, 0.10f, 0.10f)
+                        + Drum(time, 0.20f, 180f) * 0.30f;
+                    break;
                 case 20: value = Note(time, 523.25f, 0.18f) + Note(time, 659.25f, 0.15f, 0.11f) + Note(time, 783.99f, 0.12f, 0.22f); break;
                 case 21: value = Note(time, 220f, 0.25f) + Note(time, 164.81f, 0.18f, 0.12f); break;
                 case 22: value = 0.09f * (Noise(time, 1f) + Note(time, 146.83f, 0.12f) + Note(time, 220f, 0.08f, 2.6f)); break;

@@ -53,6 +53,8 @@ Generated outputs:
 - `Assets/BattleRaja/Content/Art/V1/Environment/Textures/*.asset`
 - `Assets/BattleRaja/Content/Art/V1/Environment/Materials/*.mat`
 - `Assets/BattleRaja/Content/Prefabs/Production/BazaarBastionProduction.prefab`
+- `Assets/BattleRaja/Resources/Audio/V1/*.wav` (including the generated `ZoneFinalCircle`
+  endgame cue) and `BattleRajaV1.mixer`
 
 The fighter and gadget prefabs are render-only identity assets. Their rig joints, primary
 skinned renderer, particle systems, beacon, pedestal and themed parts have no colliders;

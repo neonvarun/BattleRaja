@@ -46,6 +46,7 @@ namespace BattleRaja.Presentation.Match
         private bool _controlsCompactLayout;
         private bool _controlsLayoutInitialized;
         private AandhiState _lastAandhiState = AandhiState.Stable;
+        private MatchPhase _lastMatchPhase = MatchPhase.LoadWarmup;
         private bool _resultsCuePlayed;
         private AandhiZoneVisual _aandhiVisual;
         private bool _hasStatusKey;
@@ -89,6 +90,7 @@ namespace BattleRaja.Presentation.Match
             }
             LoadPreferences();
             _lastAandhiState = match != null ? match.AandhiState : AandhiState.Stable;
+            _lastMatchPhase = match != null ? match.CurrentPhase : MatchPhase.LoadWarmup;
             _playerInput?.SetAimAssistEnabled(_aimAssist);
             BuildCanvasUi();
             ApplyHandedLayout();
@@ -263,6 +265,13 @@ namespace BattleRaja.Presentation.Match
 
         private void UpdateAudioCues()
         {
+            var matchPhase = match.CurrentPhase;
+            if (matchPhase != _lastMatchPhase)
+            {
+                if (matchPhase == MatchPhase.FinalCircle) _audio?.PlayZoneFinalCircle();
+                _lastMatchPhase = matchPhase;
+            }
+
             var aandhiState = match.AandhiState;
             if (aandhiState != _lastAandhiState)
             {

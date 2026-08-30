@@ -27,8 +27,8 @@ contains the Master, Music, Ambience, UI, Combat, Abilities, Gadgets and Zone bu
 runtime routes music and effects through the mixer when it is present.
 
 The source set includes UI confirm/back, generic and fighter-specific attack/ability cues,
-hit, elimination, pickup, generic and gadget-specific cues, zone warning/closing, victory,
-defeat, Bazaar ambience and match music. Combat cues are mono 44.1 kHz PCM; ambience/music
+hit, elimination, pickup, generic and gadget-specific cues, zone warning/closing/final-circle,
+victory, defeat, Bazaar ambience and match music. Combat cues are mono 44.1 kHz PCM; ambience/music
 are stereo 22.05 kHz PCM. Generated files are owned project sources, not extracted,
 recorded or imitated reference-game audio.
 
@@ -43,7 +43,9 @@ audio-structure test verifies the buses and owned clips without relying on that 
   zone, victory and defeat WAV sources.
 - Add fighter-specific attack/ability signatures for Bijli, Pehel and Maya.
 - Add Umbrella, Dhol and Tiffin identity cues plus station healing feedback.
-- Add Bazaar ambience and a loopable match bed with a clear final-circle layer.
+- Add Bazaar ambience and a loopable match bed with a clear final-circle layer. The generated
+  `ZoneFinalCircle` cue now fires once when the authoritative match phase enters Final Circle;
+  final human mix, loudness and voice-priority review remain open.
 - Route and meter each group, cap simultaneous voices, and check clipping on Lava.
 - Preserve a silent/reduced-flash route and respect music/effects settings.
 

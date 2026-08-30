@@ -42,6 +42,7 @@ namespace BattleRaja.Presentation.Visuals
         private AudioClip _tiffinClip;
         private AudioClip _zoneWarningClip;
         private AudioClip _zoneClosingClip;
+        private AudioClip _zoneFinalCircleClip;
         private AudioClip _victoryClip;
         private AudioClip _defeatClip;
         private readonly List<AudioClip> _generatedClips = new List<AudioClip>(16);
@@ -98,6 +99,7 @@ namespace BattleRaja.Presentation.Visuals
             _tiffinClip = LoadOrFallback("GadgetTiffin", 320f, 0.20f);
             _zoneWarningClip = LoadOrFallback("ZoneWarning", 260f, 0.24f);
             _zoneClosingClip = LoadOrFallback("ZoneClosing", 180f, 0.30f);
+            _zoneFinalCircleClip = LoadOrFallback("ZoneFinalCircle", 720f, 0.40f);
             _victoryClip = LoadOrFallback("Victory", 760f, 0.40f);
             _defeatClip = LoadOrFallback("Defeat", 150f, 0.34f);
             _musicClip = Resources.Load<AudioClip>("Audio/V1/MatchMusic") ?? CreateMusicLoop();
@@ -166,6 +168,7 @@ namespace BattleRaja.Presentation.Visuals
         public void PlayUiBack() => Play(_uiBackClip);
         public void PlayZoneWarning() => Play(_zoneWarningClip);
         public void PlayZoneClosing() => Play(_zoneClosingClip);
+        public void PlayZoneFinalCircle() => Play(_zoneFinalCircleClip);
         public void PlayVictory() => Play(_victoryClip);
         public void PlayDefeat() => Play(_defeatClip);
 

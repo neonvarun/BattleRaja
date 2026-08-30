@@ -866,7 +866,7 @@ namespace BattleRaja.Tests.PlayMode
                      {
                          "UiConfirm", "UiBack", "AttackBijli", "AttackPehel", "AttackMaya",
                          "AbilityBijli", "AbilityPehel", "AbilityMaya", "GadgetUmbrella", "GadgetDhol",
-                         "GadgetTiffin", "Hit", "Elimination", "ZoneWarning", "ZoneClosing", "Victory",
+                         "GadgetTiffin", "Hit", "Elimination", "ZoneWarning", "ZoneClosing", "ZoneFinalCircle", "Victory",
                          "Defeat", "BazaarAmbience", "MatchMusic"
                      })
             {
