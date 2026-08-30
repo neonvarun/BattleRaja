@@ -940,6 +940,27 @@ Console actions remain owner-controlled. The truthful state remains **Prototype 
 offline release candidate in progress**; the two prompt files are intentional uncommitted owner
 work.
 
+## Milestone 11 P65 exact P61 physical all-gadget route - 2026-08-31
+
+The exact P61 APK from `f80b565372d7446e070cf1a37de042bd018345c4` remained installed on
+approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34). No rebuild or source
+change was made. The manifest is
+`Builds/Local/Device/final-circle-20260830/p65-gadget-route/p65-gadget-route-manifest.json`
+(4,269 bytes; SHA-256
+`48598855AEEDCD286C837219632ACFC6B972CEC0CB69B7E9D8EE28163BDED807`).
+
+The route physically collected and used Tiffin Station, Dhol Burst and Umbrella Guard. The
+captured HUD feedback was `TIFFIN STATION DEPLOYED` (`13-tiffin-aimed.png`), `DHOL BURST`
+(`19-dhol-use.png`) and `UMBRELLA GUARD ACTIVE` (`24-umbrella-use.png`), with pickup states
+captured in `18-left-to-dhol.png` and `23-diagonal-left-progress.png`. App-scoped logcat
+SHA-256 is `7237171A826BE8F5308B871270F1477551296A903F5E2B5DC626669DAE113E9F`, with zero
+configured fatal/ANR/native/managed-crash markers. Tutorial SKIP/CLOSE CARD was used after
+fresh activity starts; this is bounded device evidence, not action-by-action tutorial,
+comfort, audio, cultural, endurance, normalized performance, physical 16 KB or Play approval.
+
+The truthful state remains **Prototype — Android offline release candidate in progress**, not
+Play-ready.
+
 ## Milestone 11 P64 immediate-after-resume lifecycle pause observation - 2026-08-31
 
 The exact P61 APK from `f80b565372d7446e070cf1a37de042bd018345c4` was started on approved

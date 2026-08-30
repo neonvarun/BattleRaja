@@ -987,6 +987,34 @@ repeated-rematch approval, normalized performance, physical 16 KB proof, final a
 content approval or Play Store approval. The project remains a prototype / Android offline
 release candidate in progress.
 
+## Latest exact-candidate P65 all-gadget route evidence — 2026-08-31
+
+The exact P61 APK (`f80b565372d7446e070cf1a37de042bd018345c4`) remained installed on approved
+Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34). No rebuild or source change was
+made for this route. Manifest:
+`Builds/Local/Device/final-circle-20260830/p65-gadget-route/p65-gadget-route-manifest.json`
+(4,269 bytes; SHA-256
+`48598855AEEDCD286C837219632ACFC6B972CEC0CB69B7E9D8EE28163BDED807`).
+
+All three gadgets were physically collected and used. Tiffin deployment is shown in
+`13-tiffin-aimed.png` (SHA-256
+`91928CA0C0FB3A9957DCDDF402A758C98C4460A98BF0D09237AD6CABE88A8748`); Dhol pickup/use in
+`18-left-to-dhol.png` (SHA-256
+`FD8C97861217A2A5AFBFD6C537954079BC00A328C15B392D58E52B8FBE5D7F4F`) and
+`19-dhol-use.png` (SHA-256
+`C67D9FCBB8F873038598A4F92446AE7B40E9C61DF50B9F14906197BD85CD50E8`); Umbrella
+pickup/use in `23-diagonal-left-progress.png` (SHA-256
+`EAD710DF6318380F8BCB8CBD04118BD8E4B3A05BE7B62672EF3BD20BC4E331F7`) and
+`24-umbrella-use.png` (SHA-256
+`B35585DE8FC7A2448413502FCCBB2C2A139D6E2127BCB7DEE2DF836D4FCD0FC8`). Visible feedback
+was `TIFFIN STATION DEPLOYED`, `DHOL BURST` and `UMBRELLA GUARD ACTIVE`.
+
+This is bounded physical route evidence, not action-by-action tutorial comfort, final
+presentation/audio/cultural approval, endurance, normalized performance, physical 16 KB or
+Play approval. App-scoped logcat SHA-256 is
+`7237171A826BE8F5308B871270F1477551296A903F5E2B5DC626669DAE113E9F` with zero configured
+fatal/ANR/native/managed-crash markers.
+
 ## Latest exact-candidate P64 immediate-after-resume lifecycle evidence — 2026-08-31
 
 The exact P61 APK (`f80b565372d7446e070cf1a37de042bd018345c4`) was started on approved Lava

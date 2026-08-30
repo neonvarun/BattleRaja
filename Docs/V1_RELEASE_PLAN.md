@@ -2999,6 +2999,54 @@ Play-ready. P59 adds current-candidate all-fighter and accessibility observation
 does not close the subjective, physical, performance, identity, legal or Play gates. The two
 prompt files under `PROMPTS/` remain intentional uncommitted owner work.
 
+### P65 - Exact P61 physical all-gadget route on approved Lava - 2026-08-31
+
+The exact P61 APK from `f80b565372d7446e070cf1a37de042bd018345c4` remained installed on
+approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34). No build or source
+change was made for this route. The route manifest is
+`Builds/Local/Device/final-circle-20260830/p65-gadget-route/p65-gadget-route-manifest.json`
+(4,269 bytes; SHA-256 `48598855AEEDCD286C837219632ACFC6B972CEC0CB69B7E9D8EE28163BDED807`).
+
+#### P65 machine evidence
+
+- In the first Solo Raja/Bijli run, the initially held Tiffin was used with a valid aim
+  direction. `13-tiffin-aimed.png` is 90,107 bytes (SHA-256
+  `91928CA0C0FB3A9957DCDDF402A758C98C4460A98BF0D09237AD6CABE88A8748`) and shows
+  `TIFFIN STATION DEPLOYED` with an empty gadget slot.
+- The route reached the Dhol pickup and the HUD showed `GADGET DHOL` / `DHOL READY` in
+  `18-left-to-dhol.png` (80,572 bytes; SHA-256
+  `FD8C97861217A2A5AFBFD6C537954079BC00A328C15B392D58E52B8FBE5D7F4F`).
+  `19-dhol-use.png` is 84,281 bytes (SHA-256
+  `C67D9FCBB8F873038598A4F92446AE7B40E9C61DF50B9F14906197BD85CD50E8`) and shows
+  `DHOL BURST` feedback.
+- In a fresh Solo Raja/Bijli run, Tiffin was deployed again before the left-side route;
+  `22-tiffin-use-before-umbrella.png` is 90,754 bytes (SHA-256
+  `0A3682598BD16C39E68C28686680CC9DA4B6678EB90418E7C08B6FD2EC992E97`). The route reached
+  `GADGET UMBRELLA` / `UMBRELLA READY` in `23-diagonal-left-progress.png` (77,258 bytes;
+  SHA-256 `EAD710DF6318380F8BCB8CBD04118BD8E4B3A05BE7B62672EF3BD20BC4E331F7`), then
+  `24-umbrella-use.png` (82,924 bytes; SHA-256
+  `B35585DE8FC7A2448413502FCCBB2C2A139D6E2127BCB7DEE2DF836D4FCD0FC8`) showed
+  `UMBRELLA GUARD ACTIVE` feedback.
+- App-scoped logcat `p65-gadget-app-logcat.txt` is 264,235 bytes (SHA-256
+  `7237171A826BE8F5308B871270F1477551296A903F5E2B5DC626669DAE113E9F`) with zero
+  configured fatal, ANR, SIGSEGV, SIGABRT, NullReferenceException or UnityException markers.
+  The tutorial overlay appeared after fresh activity starts; the in-app SKIP and CLOSE CARD
+  controls were used, so this route is not action-by-action tutorial comfort evidence.
+
+#### P65 gate delta
+
+| Gate | Current classification | Evidence / remaining action |
+| --- | --- | --- |
+| Physical Tiffin Station pickup and use | **Passed by bounded exact-device observation** | `13-tiffin-aimed.png` / `22-tiffin-use-before-umbrella.png`; valid aim and deployment feedback |
+| Physical Dhol Burst pickup and use | **Passed by bounded exact-device observation** | `18-left-to-dhol.png` and `19-dhol-use.png`; pickup and `DHOL BURST` feedback |
+| Physical Umbrella Guard pickup and use | **Passed by bounded exact-device observation** | `23-diagonal-left-progress.png` and `24-umbrella-use.png`; pickup and `UMBRELLA GUARD ACTIVE` feedback |
+| Human all-gadget presentation, comfort, audio and cultural review | **Open** | Device captures do not replace subjective owner review |
+| Full match, repeated rematch, normalized performance, endurance and physical 16 KB | **Open** | Existing P61-P64 limits remain unchanged |
+
+The truthful classification remains **prototype / Android offline release candidate in
+progress**, not Play-ready. P65 changes no runtime code or APK/AAB artifact. The prompt files
+under `PROMPTS/` remain intentional uncommitted owner work.
+
 ### P64 - Immediate-after-resume lifecycle pause observation on exact P61 candidate - 2026-08-31
 
 The exact P61 APK from `f80b565372d7446e070cf1a37de042bd018345c4` was started on approved
