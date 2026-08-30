@@ -1004,3 +1004,39 @@ approval, normalized sustained performance, battery/thermal endurance, physical 
 final package identity/signing, privacy/Data Safety, content rating and Play Console actions
 remain owner-controlled. The two prompt files under `PROMPTS/` remain intentional uncommitted
 owner work.
+
+## Milestone 11 P58 dismissible tutorial completion card and exact-candidate route - 2026-08-31
+
+The current UI/test checkpoint is `888421f0b332a2e5b9b41fcb6ae669adec836612`
+(`ui: release results after tutorial completion`). In the completed tutorial state,
+`TutorialOverlay` now changes its secondary action from `SKIP` to `CLOSE CARD`; dismissal
+hides only the tutorial surface so the authoritative Results/REMATCH/MENU controls can be
+inspected. Replay and return-to-menu behavior remain available, and the new
+`CompletedTutorialCanDismissOverlayForResultsAndRematch` PlayMode regression checks the
+state transition and idempotent dismissal.
+
+The exact candidate was rebuilt from that source content: static validation is **0 errors / 0
+warnings**, EditMode is **141/141**, PlayMode is **92/92**, and the release checker is **0
+errors / 0 warnings**. The APK is 40,682,359 bytes (SHA-256
+`B3D4EF4749270FDAD30474113683E050693BFA013173FF5EB1E3848C26C87F44`); the AAB is 36,507,683
+bytes (SHA-256
+`CC5D2B362EA8330BB3FA22E93D530CD018D4933305744E26EF2504300B88D6F6`). Package, version,
+offline permissions, ARM64 payload and static alignment remain the temporary-ID/debug-signed
+candidate recorded in `Docs/V1_RELEASE_PLAN.md` P58.
+
+On approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34, 4 KB pages), the
+exact APK was launched, Tutorial was opened, in-app SKIP reached `TUTORIAL COMPLETE 8/8`,
+and real touch on `CLOSE CARD` exposed the live HUD. The match then reached Results with
+REMATCH/MENU, and REMATCH opened a fresh TutorialArena movement card. Evidence and hashes are
+under `Builds/Local/Device/final-circle-20260830/` in
+`tutorial-dismiss-route-manifest.json` (5,230 bytes; SHA-256
+`85D7E29C683C04D71C12F9FADB7720C49F68D6947A5E2C94A0F278BB9389D42D`). The UI tree remains
+Unity SurfaceView-only; the app log has no configured fatal/ANR/SIGSEGV/SIGABRT marker but
+contains known Lava gralloc/AHardwareBuffer format-allocation noise.
+
+This closes the captured completion-card obstruction and records the exact candidate's
+Results/rematch route, but it does not claim action-by-action tutorial comfort, repeated
+rematch comfort, final authored/cultural/fun/accessibility approval, normalized performance
+or endurance, physical 16 KB runtime, final identity/signing, privacy/Data Safety, rating or
+Play Console approval. The two prompt files under `PROMPTS/` remain intentional uncommitted
+owner work.

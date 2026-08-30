@@ -2842,6 +2842,97 @@ than normalized FPS, frame-time, GC, thermal, battery, accessibility or sustaine
 The candidate remains a **prototype / Android offline release candidate in progress**, not
 Play-ready. The two prompt files under `PROMPTS/` remain intentional uncommitted owner work.
 
+### P58 - Dismissible tutorial completion card and exact-candidate Results/rematch route - 2026-08-31
+
+The current UI/test source checkpoint is `888421f0b332a2e5b9b41fcb6ae669adec836612`
+(`ui: release results after tutorial completion`). The completed `TutorialOverlay` state now
+uses `CLOSE CARD` for its secondary action instead of leaving `SKIP` in place. The new public
+`DismissCompletionCard` method hides only the tutorial panel after completion; `REPLAY TUTORIAL`
+and `MENU` remain available. This preserves the authoritative `OfflineMatchHud` Results,
+REMATCH and MENU controls underneath the card without changing simulation, authority, timing,
+or reward state. `TutorialArenaPlayModeTests.CompletedTutorialCanDismissOverlayForResultsAndRematch`
+asserts the label, visibility transition and idempotent repeated dismissal.
+
+#### Machine evidence
+
+- `Tools/Validation/validate.ps1` returned **0 errors / 0 warnings**. Log:
+  `Builds/Local/Logs/validate-tutorial-dismiss-20260830.log` (SHA-256
+  `7EF09129DBD03921DF243F43AC65AE932A8C74C4DD76FAD8E6A013BFC804E322`).
+- Full EditMode returned **141/141 passed**. XML
+  `Builds/Local/TestResults/editmode-tutorial-dismiss-20260830.xml` (SHA-256
+  `3C192135EFB96B491189B2B0E85F7D1E0D786A1236803221870134E3B70FA829`); Unity log SHA-256
+  `1B0669DD49E9404C30D008613CC0AFB792E85388AD22638C5530FFB5884DB0E5`.
+- Full PlayMode returned **92/92 passed**. XML
+  `Builds/Local/TestResults/playmode-tutorial-dismiss-20260830.xml` (SHA-256
+  `F829645D0B4F901DF1CFB8A1DFD1ABBD8CC65AC956E15CD39A81DA7EFBA1A92F`); Unity log SHA-256
+  `5993EB13B9FA30C1EEBBCDDF6A8B5E9931B5DB653D1243A9F2E854F415E3D611`.
+- Unity's Android APK entrypoint completed successfully. APK
+  `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk` is **40,682,359 bytes**,
+  SHA-256 `B3D4EF4749270FDAD30474113683E050693BFA013173FF5EB1E3848C26C87F44`; build-log
+  SHA-256 `756CDBBFBFFAF9DCEEA1DAF69C61FCD587AEB914CB453EA445BC9B48F04559BA`.
+- Unity/Gradle AAB packaging completed successfully. AAB
+  `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab` is **36,507,683 bytes**,
+  SHA-256 `CC5D2B362EA8330BB3FA22E93D530CD018D4933305744E26EF2504300B88D6F6`; build-log
+  SHA-256 `62E7DA4E4FF745B435C0BDF2754AF37D5216EC0CED32E2BF020234BA94FBA617`.
+- `Tools/Validation/check_v1_release_candidate.ps1` returned **0 errors / 0 warnings**.
+  Log `Builds/Local/Logs/release-checker-tutorial-dismiss-20260830.log` has SHA-256
+  `A397FA27D8FF577EDF7FC0EC4A2181DED55C2BF794BA48E9E020DCF029C88446`. It reports the
+  temporary package `com.example.battleraja.m11`, version `1.0.0`/code `100`, min/target
+  API `28/36`, no INTERNET or ACCESS_NETWORK_STATE permission, seven ARM64 libraries,
+  static 16 KB alignment and temporary/debug signing. Worktree dirtiness is expected from
+  the two owner prompt files.
+
+#### Approved Lava evidence
+
+The rebuilt APK was installed and exercised only on approved Lava
+`ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34, reported 4 KB pages). The route opened
+Tutorial from the branded menu, used the in-app `SKIP` control to reach `TUTORIAL COMPLETE
+8/8`, tapped the new `CLOSE CARD` action, and captured the exposed live HUD. The offline
+match then reached its Results panel with placement data and `REMATCH`/`MENU`; tapping
+REMATCH opened a fresh TutorialArena movement card. Because this route intentionally used
+SKIP and the rematch run was not a full action-by-action replay, it is route evidence only,
+not tutorial-comfort, repeated-rematch, fun or accessibility approval.
+
+Exact retained evidence is indexed by
+`Builds/Local/Device/final-circle-20260830/tutorial-dismiss-route-manifest.json` (5,230
+bytes; SHA-256
+`85D7E29C683C04D71C12F9FADB7720C49F68D6947A5E2C94A0F278BB9389D42D`):
+
+- `tutorial-dismiss-complete-card.png` — 111,545 bytes, SHA-256
+  `091BAC6D49F04A8ABCA8EBB062F9FE8C6694EA40E0F4ADC9EAE3BB761FF05C06`.
+- `tutorial-dismiss-live-after-close.png` — 81,757 bytes, SHA-256
+  `BF64E635D06E75A337B50D912BD4A18234BFC4C0F4C81629A894F3AE2F1D0598`.
+- `tutorial-dismiss-results-final.png` — 108,834 bytes, SHA-256
+  `9571D928D827B26C6389AF85A384A53DD16F3FD9D109CF050B667B17C519DE8D`.
+- `tutorial-dismiss-rematch-opening.png` — 102,465 bytes, SHA-256
+  `DEC4C3CBD6AABA813A09CE05F2FBBAE0738C534E629A01F81583075D0DCD5E0A`.
+- UI tree `tutorial-dismiss-route-ui.xml` is 2,546 bytes, SHA-256
+  `A8235CD2CFEE7BFCFB0A515F9337E4ABF6E6C16C10ACDCF446DE87E9AEF094BD`; it exposes only
+  Unity's `SurfaceView`, so the touch coordinates were visually derived and are not semantic
+  UI-locator evidence.
+- App-scoped logcat `tutorial-dismiss-route-app-logcat.txt` is 15,054 bytes, SHA-256
+  `F6347EC04E3156B8CF5056DC51B175D2646F5A6430613F1AE0A40262D2E8F0FE`; no configured app
+  fatal/ANR/SIGSEGV/SIGABRT marker was found. Known Lava gralloc/AHardwareBuffer
+  format-allocation noise is retained as a non-fatal observation.
+
+#### P58 gate delta
+
+| Gate | Current classification | Evidence / remaining action |
+| --- | --- | --- |
+| Completion card can release the underlying Results/REMATCH surface | **Passed locally** | 92/92 PlayMode regression plus exact Lava `CLOSE CARD` and live-HUD captures |
+| Exact source, APK/AAB rebuild, offline permissions and static alignment | **Passed locally** | Exact artifact hashes, checker 0/0 and manifest above; artifacts remain temporary/debug-signed |
+| Exact-candidate Results and rematch route | **Observed / bounded** | Results placement and REMATCH were reached; rematch reopened TutorialArena after an idle run, so repeated comfort remains open |
+| Full action-by-action tutorial and all-fighter/all-gadget touch comfort | **Open** | SKIP was used for this route; repeat the exact candidate with human-owned comfort review |
+| Genuine physical 16 KB runtime | **Open** | Lava reports 4 KB; host-GPU Android 16 AVD evidence is profile-specific |
+| Normalized performance, battery, thermal and repeated-match memory | **Open** | Existing captures remain bounded raw diagnostics, not acceptance |
+| Final authored art/audio, cultural, accessibility, fun and fairness approval | **Owner/human review required** | Generated presentation baseline remains a candidate |
+| Final identity/signing/privacy/Data Safety/rating/support URL/Play Console | **Owner-controlled** | No final key, upload, legal acceptance or public deployment performed |
+
+The candidate remains a **prototype / Android offline release candidate in progress**, not
+Play-ready. P58 closes the captured completion-card obstruction; it does not claim human
+approval or close the remaining physical, subjective, performance, identity, legal or Play
+gates. The two prompt files under `PROMPTS/` remain intentional uncommitted owner work.
+
 ### P57 tutorial elimination target readability and real-touch route refresh - 2026-08-30
 
 The current source checkpoint is commit `c9e3d3091a38852be794f74ad97420b91461599a`

@@ -605,3 +605,33 @@ fatal/ANR/native-crash markers. This probe does not change the release classific
 project remains a **Prototype — Android offline release candidate in progress**. Final authored
 art/audio, human cultural/fun/accessibility review, normalized performance, battery/thermal,
 physical 16 KB, signing, legal/privacy, rating and Play Console gates remain open.
+
+## P58 exact-candidate completion-card dismissal and Results/rematch route - 2026-08-31
+
+Source checkpoint `888421f0b332a2e5b9b41fcb6ae669adec836612` adds a real completion-card
+exit: the tutorial secondary action becomes `CLOSE CARD` after `8/8 COMPLETE`, while replay
+and menu remain available. The PlayMode regression
+`CompletedTutorialCanDismissOverlayForResultsAndRematch` verifies that dismissal hides the
+card and is safe when repeated.
+
+The exact rebuilt candidate passed repository validation (**0 errors / 0 warnings**), full
+EditMode (**141/141**), full PlayMode (**92/92**) and the release checker (**0 errors / 0
+warnings**). APK SHA-256 is
+`B3D4EF4749270FDAD30474113683E050693BFA013173FF5EB1E3848C26C87F44`; AAB SHA-256 is
+`CC5D2B362EA8330BB3FA22E93D530CD018D4933305744E26EF2504300B88D6F6`. Exact logs, sizes and
+technical gate details are indexed in `Docs/V1_RELEASE_PLAN.md` P58.
+
+On approved Lava `ST5GDW23LB004392` only, real touch opened Tutorial, used SKIP to reach
+`TUTORIAL COMPLETE 8/8`, tapped `CLOSE CARD` to expose the live HUD, waited to Results, and
+tapped REMATCH to open a fresh TutorialArena movement card. The exact screenshot/UI/logcat
+hashes and route caveats are in
+`Builds/Local/Device/final-circle-20260830/tutorial-dismiss-route-manifest.json`. The UI
+tree exposes only Unity's SurfaceView, and the app-scoped log contains no configured fatal,
+ANR, SIGSEGV or SIGABRT marker; known Lava gralloc/AHardwareBuffer format-allocation noise
+is retained as a non-fatal observation. This is route evidence, not action-by-action tutorial,
+repeated-rematch, human comfort, fun or final visual approval.
+
+The project remains a **Prototype — Android offline release candidate in progress**. Final
+authored art/audio, cultural/fun/accessibility review, normalized performance and endurance,
+physical 16 KB runtime, final package identity/signing, privacy/Data Safety, rating and Play
+Console gates remain open.

@@ -1693,3 +1693,31 @@ Record every material choice here. Do not silently overwrite old decisions.
   `TutorialArenaPlayModeTests`, focused 91/91 PlayMode results, and the P57 route captures
   indexed in `Docs/V1_RELEASE_PLAN.md`.
 - **Owner:** Human project owner
+
+### ADR-073 - Make the completed tutorial card dismissible without mutating match state
+
+- **Date:** 2026-08-31
+- **Status:** Accepted for the V1 offline presentation baseline; action-by-action comfort,
+  accessibility and human-fun review remain open.
+- **Context:** The tutorial completion card remained over the live Results surface after the
+  walkthrough ended, so the player could not inspect placement or choose the underlying
+  REMATCH control without replaying the tutorial. The fix must not bypass authoritative
+  results or create a second rematch path.
+- **Options considered:** Keep the completion card permanently visible; route completion
+  directly into a new match; or expose a secondary dismissal action while preserving the
+  existing replay and menu actions.
+- **Decision:** Keep the completion card as the primary terminal acknowledgement, change its
+  secondary action to `CLOSE CARD`, and have `DismissCompletionCard` hide only the tutorial
+  panel once `_steps.IsComplete` is true. Incomplete cards remain guarded and refresh instead
+  of dismissing. The existing `OfflineMatchHud` remains the sole owner of Results, REMATCH,
+  MENU, timing and match state.
+- **Consequences:** Players can inspect the exact Results/REMATCH surface after tutorial
+  completion, and the behavior is covered by a 92/92 PlayMode run plus a real-touch Lava
+  capture on the exact rebuilt candidate. Rematch from TutorialArena still reloads the
+  tutorial scene; this route observation is not a claim of repeated-rematch comfort. The
+  generated presentation baseline and all human review gates remain open.
+- **Evidence/sources:** `TutorialOverlay`,
+  `TutorialArenaPlayModeTests.CompletedTutorialCanDismissOverlayForResultsAndRematch`,
+  exact candidate P58 artifacts and Lava route in `Docs/V1_RELEASE_PLAN.md`, and
+  `tutorial-dismiss-route-manifest.json`.
+- **Owner:** Human project owner

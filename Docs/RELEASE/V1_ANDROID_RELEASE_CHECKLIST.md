@@ -945,3 +945,24 @@ end telemetry was **277,284 KB PSS / 400,500 KB RSS / 80,052 KB graphics PSS**, 
 markers. This is bounded compositor evidence only. Lava reports 4 KB pages, Unity `gfxinfo`
 has no usable histogram, and normalized performance, physical 16 KB and human release
 approval remain open.
+
+## Latest exact UI candidate — P58 — 2026-08-31
+
+The current UI/test source checkpoint is `888421f0b332a2e5b9b41fcb6ae669adec836612`.
+The completed tutorial card now exposes `CLOSE CARD`, allowing the player to inspect the
+underlying Results/REMATCH controls. Full EditMode is **141/141**, PlayMode is **92/92**,
+static validation is **0 errors / 0 warnings**, and the exact rebuilt APK/AAB pass the local
+release checker with **0 errors / 0 warnings**. APK SHA-256 is
+`B3D4EF4749270FDAD30474113683E050693BFA013173FF5EB1E3848C26C87F44`; AAB SHA-256 is
+`CC5D2B362EA8330BB3FA22E93D530CD018D4933305744E26EF2504300B88D6F6`. These remain
+temporary Android Debug-signed artifacts with package `com.example.battleraja.m11`, version
+`1.0.0`/code `100`, API `28/36`, no network permissions, ARM64 payload and static 16 KB
+alignment.
+
+The exact APK was installed only on approved Lava `ST5GDW23LB004392`. Real touch used the
+in-app SKIP route to reach `TUTORIAL COMPLETE 8/8`, tapped `CLOSE CARD`, reached Results and
+REMATCH, and observed a fresh TutorialArena opening after REMATCH. The route manifest and
+screenshots are under `Builds/Local/Device/final-circle-20260830/`; this is bounded route
+evidence, not action-by-action tutorial, repeated-rematch, accessibility, final art/audio,
+physical 16 KB, normalized performance or human approval. See P58 in
+`Docs/V1_RELEASE_PLAN.md` for exact hashes and remaining gates.
