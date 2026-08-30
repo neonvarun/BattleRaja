@@ -1766,3 +1766,31 @@ Record every material choice here. Do not silently overwrite old decisions.
   `VerticalSlicePlayModeTests.ResultsFormatterListsPlacementsAndCombatStats`, and the exact
   P60 Lava result capture under `Builds/Local/Device/final-circle-20260830/p60-full-route`.
 - **Owner:** Human project owner
+
+### ADR-076 - Release transient input on Android lifecycle pause
+
+- **Date:** 2026-08-31
+- **Status:** Accepted for the V1 offline presentation/input baseline; full device comfort,
+  lifecycle endurance and human release review remain open.
+- **Context:** Android can deliver an application pause without a matching focus callback.
+  A held touch, virtual-stick drag or keyboard/button state must not survive backgrounding and
+  resume as an unintended movement or action. The lifecycle boundary must release transient
+  presentation input without changing authoritative simulation timing or replay semantics.
+- **Options considered:** Rely only on `OnApplicationFocus`, poll input state from the HUD,
+  or clear every transient control and player-input adapter on `OnApplicationPause` while
+  retaining the existing focus gate.
+- **Decision:** `PlayerInputAdapter.OnApplicationPause` now updates the focus gate and clears
+  its input state. `VirtualStick`, `AttackButton`, `AbilityButton` and `GadgetUseButton` reset
+  their transient control state on pause. `OfflineMatchHud` clears the player adapter before
+  showing the lifecycle pause/settings boundary. No gameplay authority, simulation clock,
+  replay or networking rule changes.
+- **Consequences:** Android backgrounding cannot resume with a stale held action from these
+  controls, and the existing focus-loss safety remains explicit. The change is presentation/
+  input-boundary hardening only; smaller-device behavior, full phase coverage, endurance and
+  human comfort remain open.
+- **Evidence/sources:** `Assets/BattleRaja/Presentation/Movement/PlayerInputAdapter.cs`,
+  `VirtualStick.cs`, `AttackButton.cs`, `AbilityButton.cs`, `GadgetUseButton.cs`,
+  `OfflineMatchHud.cs`, the focused `OfflineMatchPlayModeTests.BackgroundLifecyclePausesAndResumesMatchSafely`,
+  full 141/141 EditMode and 92/92 PlayMode reruns, exact P66 APK/AAB rebuild/checker and
+  approved-Lava P66 lifecycle route recorded in `Docs/V1_RELEASE_PLAN.md`.
+- **Owner:** Human project owner

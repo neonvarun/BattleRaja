@@ -2999,6 +2999,73 @@ Play-ready. P59 adds current-candidate all-fighter and accessibility observation
 does not close the subjective, physical, performance, identity, legal or Play gates. The two
 prompt files under `PROMPTS/` remain intentional uncommitted owner work.
 
+### P66 - Lifecycle input hardening and exact Android candidate rerun - 2026-08-31
+
+The release-candidate source tip is `e603ce7e7f1cb279f5e3e9d606ea5eae89603ecb`
+(`android: clear input on lifecycle pause`). `PlayerInputAdapter`, `VirtualStick`,
+`AttackButton`, `AbilityButton` and `GadgetUseButton` now clear transient state on
+`OnApplicationPause`; `OfflineMatchHud` clears the player adapter before opening its
+lifecycle pause boundary. ADR-076 records this presentation/input-only decision. No
+authority, simulation-timing, replay, networking or package-policy rule changed.
+
+The exact APK/AAB pair was rebuilt locally from this source. The APK is 40,679,115 bytes
+(SHA-256 `349F02C67DE4CC801C5CB81B9CEC375A18D89B136C1A3AD9BB9549E9640A41CB`) and the AAB is
+36,504,445 bytes (SHA-256
+`9A5BE261D2504007BCBAF4105568F19437CBA8A4DEFAA3383371DE35386D51E0`). The composed release
+checker passed **0 errors / 0 warnings** for package `com.example.battleraja.m11`, version
+`1.0.0`/code `100`, API `28/36`, no network permissions, seven ARM64 libraries and static
+`0x4000` ELF load alignment. Checker log:
+`Builds/Local/Logs/release-checker-results-p66-20260831.log` (3,296 bytes; SHA-256
+`C84C63625E9063698CE2DDD3CCEDD90901B94A5E0B56309CE1C39189C2D27337`). The Android build log
+is `Builds/M11/Logs/android-build.log` (419,793 bytes; SHA-256
+`770AC42466F4461093ECAA699B4DA2A0CEAE2271B55BE39562208F2E73D993C7`).
+
+#### P66 machine evidence
+
+- The focused PlayMode regression `OfflineMatchPlayModeTests.BackgroundLifecyclePausesAndResumesMatchSafely`
+  passed **1/1** (0 failed, 0 skipped). Result XML is
+  `Builds/Local/TestResults/p66-lifecycle-results-20260831.xml` (3,857 bytes; SHA-256
+  `CF2AB2BE427AC2B50DA99311FAA52465D008FB29D2C64C20D15AB1F06F4DC38D`); log is
+  `Builds/Local/Logs/p66-lifecycle-results-20260831.log` (47,280 bytes; SHA-256
+  `1E6B99E76F5FECF9FE71B7625AF92966C149B3AA3DC0DFA7B7824A05AE56775A`). The test presses
+  Attack, sends pause callbacks, verifies the held action is cleared and focus is false,
+  then resumes and verifies the settings boundary closes with focus restored.
+- Full EditMode passed **141/141** and full PlayMode passed **92/92**, both with zero failed
+  or skipped tests. The result/log hashes are recorded in the P66 route manifest.
+- Static repository validation passed **0 errors / 0 warnings**; log
+  `Builds/Local/Logs/validate-results-p66-20260831.log` is 94 bytes (SHA-256
+  `7EF09129DBD03921DF243F43AC65AE932A8C74C4DD76FAD8E6A013BFC804E322`).
+- The rebuilt APK was installed only on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`,
+  Android 14/API 34). The route manifest is
+  `Builds/Local/Device/final-circle-20260830/p66-lifecycle-route/p66-lifecycle-route-manifest.json`
+  (7,210 bytes; SHA-256 `FC5CEC3545CE16152D65F766CD2394A65CE0E0A2AB80B52D9042E5580328F7D2`).
+  It records the exact install, Solo Raja/Bijli live Opening Fight state, Android HOME for
+  approximately five seconds, return to the same `UnityPlayerGameActivity`, Android 14,
+  Lava's 4,096-byte page size and all evidence hashes. `live-before-rerun.png` is 332,133
+  bytes (SHA-256 `C5A8F9A0385905257E20F42C9BBAEAF6762D9F9814EE2AB8A43494BA48CA272A`) and
+  `live-after-resume-rerun.png` is 332,100 bytes (SHA-256
+  `38DB3E26D7900971CA485CF1D0450F042FC1FD58008E69CD58DAF4C02685AC33`). Both show
+  `OPENING FIGHT`, `ALIVE 8`, `ZONE 14.0 > 11.0` and the same live arena presentation.
+  The focused activity dump is RESUMED/visible after return; the route logcat is 74,073
+  bytes (SHA-256 `18DF04B1E92D7F323DB81B95DC90B7D4695DE960256870040531A97EF2D842EE`) with
+  zero configured fatal, ANR, native-crash or managed-exception markers.
+
+#### P66 gate delta
+
+| Gate | Current classification | Evidence / remaining action |
+| --- | --- | --- |
+| Android lifecycle clears held transient input at pause | **Passed by focused PlayMode regression** | Attack-held pause/resume assertion in `OfflineMatchPlayModeTests`; adapter and all touch-control reset paths covered by source review |
+| Exact rebuilt APK/AAB technical gate | **Passed locally** | APK/AAB hashes, static validation and composed release checker above |
+| Exact-device launch, HOME/resume return and live presentation | **Passed by bounded exact-device observation** | P66 manifest, paired Lava captures, RESUMED activity dump and marker-clean route log |
+| Full lifecycle, all phases, repeated rematches, normalized performance, endurance and physical 16 KB | **Open** | Lava is 4 KB; physical route is short and does not replace sustained or 16 KB coverage |
+| Final authored art/audio, accessibility, cultural, fairness and fun approval | **Owner/human review required** | Machine tests and bounded capture do not establish subjective approval |
+| Final package identity/signing/privacy/Data Safety/rating/support URL/Play Console | **Owner-controlled** | Candidate remains temporary debug-signed; no irreversible upload or publication action |
+
+The truthful classification remains **prototype / Android offline release candidate in
+progress**, not Play-ready. P66 hardens lifecycle input release and refreshes the exact
+candidate evidence; it does not close owner-controlled product, physical-device or Play
+gates. The two prompt files under `PROMPTS/` remain intentional uncommitted owner work.
+
 ### P65 - Exact P61 physical all-gadget route on approved Lava - 2026-08-31
 
 The exact P61 APK from `f80b565372d7446e070cf1a37de042bd018345c4` remained installed on

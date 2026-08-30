@@ -1,6 +1,6 @@
 # BattleRaja V1 current-state index
 
-Updated: 2026-08-30
+Updated: 2026-08-31
 
 ## Evidence location policy
 
@@ -20,13 +20,22 @@ physical Lava action-by-action route review, sustained performance, final identi
 signing, accessibility, legal/privacy/cultural approval and Play Console review
 remain open.
 
-## Latest current-source evidence — 2026-08-30 — P55 source `56df201`
+## Latest current-source evidence — 2026-08-31 — P66 source `e603ce7`
 
-The exact current candidate adds the generated `ZoneFinalCircle.wav` cue and plays it once
-when the authoritative match phase enters Final Circle. Static validation is **0 errors / 0
-warnings**, EditMode is **141/141**, and PlayMode is **89/89**. The current temporary-ID APK
-and release-shaped AAB, exact hashes, approved-Lava Final Circle/results/lifecycle captures,
-and the remaining owner/human gates are indexed in P55 of `Docs/V1_RELEASE_PLAN.md`.
+The exact current candidate hardens Android lifecycle input release: pause clears the player
+adapter, virtual stick, attack, ability and gadget transient states, and the HUD clears the
+adapter before its lifecycle boundary. Focused PlayMode is **1/1**, full EditMode is
+**141/141**, full PlayMode is **92/92**, and static validation is **0 errors / 0 warnings**.
+The rebuilt APK/AAB and checker hashes, plus the approved-Lava launch → HOME → resume route,
+are indexed in P66 of `Docs/V1_RELEASE_PLAN.md`. The candidate remains temporary
+debug-signed and the final human, physical-device, legal and Play gates remain open.
+
+## Historical current-source evidence — 2026-08-30 — P55 source `56df201`
+
+The exact prior candidate adds the generated `ZoneFinalCircle.wav` cue and plays it once when
+the authoritative match phase enters Final Circle. Its static validation, 141/141 EditMode,
+89/89 PlayMode, APK/AAB hashes and approved-Lava evidence remain indexed in P55 of
+`Docs/V1_RELEASE_PLAN.md`.
 
 ## Historical current-source evidence — 2026-08-29 — documentation tip `b4b5649` (runtime/art `ac45479`)
 
@@ -659,6 +668,33 @@ tutorial comfort, repeated-rematch comfort, normalized performance, physical 16 
 proof, final authored art/audio, human accessibility/fun/fairness/cultural approval or Play
 Store readiness. The project remains **Prototype — Android offline release candidate in
 progress**.
+
+## P66 lifecycle input hardening and exact Android candidate rerun - 2026-08-31
+
+The current source tip is `e603ce7e7f1cb279f5e3e9d606ea5eae89603ecb`. Android pause now
+clears the player adapter, virtual stick and action-button transient state, and the HUD clears
+the adapter before opening its lifecycle pause boundary (ADR-076). The focused lifecycle
+regression is **1/1**, full EditMode is **141/141**, full PlayMode is **92/92**, and static
+validation is **0 errors / 0 warnings**. The exact rebuilt APK is 40,679,115 bytes (SHA-256
+`349F02C67DE4CC801C5CB81B9CEC375A18D89B136C1A3AD9BB9549E9640A41CB`) and the AAB is
+36,504,445 bytes (SHA-256
+`9A5BE261D2504007BCBAF4105568F19437CBA8A4DEFAA3383371DE35386D51E0`).
+
+The APK was installed only on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android
+14/API 34). The route manifest is
+`Builds/Local/Device/final-circle-20260830/p66-lifecycle-route/p66-lifecycle-route-manifest.json`
+(7,210 bytes; SHA-256
+`FC5CEC3545CE16152D65F766CD2394A65CE0E0A2AB80B52D9042E5580328F7D2`). It records a live
+Solo Raja/Bijli Opening Fight capture, approximately five seconds at Android HOME, and a
+return to the same RESUMED Unity activity. Before/after captures retain `ALIVE 8` and
+`ZONE 14.0 > 11.0`; Lava reports 4,096-byte pages and the route logcat has zero configured
+fatal, ANR, native-crash or managed-exception markers.
+
+This is bounded exact-candidate evidence. It does not close held-input comfort across every
+phase, repeated rematches, normalized performance, unplugged endurance, physical 16 KB,
+final authored art/audio/accessibility/cultural/fun approval, signing/identity, privacy or
+Play Console gates. The truthful state remains **Prototype — Android offline release candidate
+in progress**.
 
 ## P65 exact P61 physical all-gadget route - 2026-08-31
 

@@ -68,6 +68,33 @@ pwsh -File Tools/Validation/check_v1_release_candidate.ps1 `
 This gate is technical and local only. It does not sign, upload, publish, or approve
 the final identity, privacy/Data Safety, content rating, cultural review or Play track.
 
+## Latest exact-source lifecycle candidate — P66 — 2026-08-31
+
+Source tip `e603ce7e7f1cb279f5e3e9d606ea5eae89603ecb` clears transient player input on
+`OnApplicationPause` across the adapter, virtual stick and attack/ability/gadget buttons;
+the HUD clears the adapter before its lifecycle pause boundary. ADR-076 records the
+presentation/input-only decision. Focused lifecycle PlayMode is **1/1**, full EditMode is
+**141/141**, full PlayMode is **92/92**, and static validation is **0 errors / 0 warnings**.
+
+The exact rebuilt temporary-ID APK is **40,679,115 bytes** (SHA-256
+`349F02C67DE4CC801C5CB81B9CEC375A18D89B136C1A3AD9BB9549E9640A41CB`) and matching AAB is
+**36,504,445 bytes** (SHA-256
+`9A5BE261D2504007BCBAF4105568F19437CBA8A4DEFAA3383371DE35386D51E0`). The composed checker
+passes **0 errors / 0 warnings**: package `com.example.battleraja.m11`, version `1.0.0` /
+code `100`, API `28/36`, no network permissions, seven ARM64 libraries and static `0x4000`
+load alignment. These remain temporary debug-signed artifacts and are not Play-ready.
+
+The APK was installed only on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android
+14/API 34). P66 records a live Opening Fight → Android HOME for approximately five seconds
+→ resumed Unity activity route in
+`Builds/Local/Device/final-circle-20260830/p66-lifecycle-route/`; the manifest is 7,210 bytes
+(SHA-256 `FC5CEC3545CE16152D65F766CD2394A65CE0E0A2AB80B52D9042E5580328F7D2`). Both captures
+retain `ALIVE 8` and `ZONE 14.0 > 11.0`, the activity dump is RESUMED, Lava reports 4 KB
+pages, and route logcat has zero configured fatal/ANR/native/managed-crash markers.
+Physical 16 KB, full lifecycle/held-input comfort, normalized performance, endurance,
+final authored/cultural/accessibility/fun review, signing, privacy/Data Safety, rating,
+support URL and Play Console actions remain open.
+
 ## Latest exact-source candidate — documentation tip `b4b5649` (runtime/art `ac45479`) — 2026-08-29
 
 The saved-environment/runtime presentation continuation is documented in P45. The exact
@@ -986,6 +1013,24 @@ recorded. This is bounded device observation, not action-by-action tutorial comf
 repeated-rematch approval, normalized performance, physical 16 KB proof, final authored
 content approval or Play Store approval. The project remains a prototype / Android offline
 release candidate in progress.
+
+## Latest exact-candidate P66 lifecycle input evidence — 2026-08-31
+
+The exact rebuilt source tip is `e603ce7e7f1cb279f5e3e9d606ea5eae89603ecb`. Focused lifecycle
+PlayMode is **1/1**, full EditMode is **141/141**, full PlayMode is **92/92**, and static
+validation is **0 errors / 0 warnings**. The candidate APK/AAB hashes and checker output are
+recorded above and in P66 of `Docs/V1_RELEASE_PLAN.md`.
+
+On approved Lava `ST5GDW23LB004392`, the exact APK reached a live Solo Raja/Bijli Opening Fight,
+was sent to Android HOME for approximately five seconds, and returned to the same RESUMED
+`UnityPlayerGameActivity`. Paired captures retain `ALIVE 8` and `ZONE 14.0 > 11.0`; the
+device reports Android 14/API 34 and 4 KB pages. Manifest:
+`Builds/Local/Device/final-circle-20260830/p66-lifecycle-route/p66-lifecycle-route-manifest.json`
+(7,210 bytes; SHA-256
+`FC5CEC3545CE16152D65F766CD2394A65CE0E0A2AB80B52D9042E5580328F7D2`). Route logcat has no
+configured fatal, ANR, native-crash or managed-exception marker. This is bounded exact-device
+evidence; physical 16 KB, all-phase lifecycle, held-input comfort, endurance and owner/Play
+gates remain open.
 
 ## Latest exact-candidate P65 all-gadget route evidence — 2026-08-31
 

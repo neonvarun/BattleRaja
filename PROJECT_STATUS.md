@@ -6,7 +6,23 @@
 
 ## Current state
 
-- **Latest runtime/art/audio presentation checkpoint (2026-08-30):** source tip is now
+- **Latest exact-source lifecycle checkpoint (2026-08-31):** source tip is now
+  `e603ce7e7f1cb279f5e3e9d606ea5eae89603ecb` (`android: clear input on lifecycle pause`).
+  Android pause clears transient player input across the adapter, virtual stick and
+  attack/ability/gadget buttons, and the HUD clears the adapter before the lifecycle pause
+  boundary; ADR-076 records the presentation/input-only decision. Focused lifecycle PlayMode
+  is **1/1**, full EditMode is **141/141**, full PlayMode is **92/92**, and static validation
+  is **0 errors / 0 warnings**. The exact rebuilt APK is 40,679,115 bytes (SHA-256
+  `349F02C67DE4CC801C5CB81B9CEC375A18D89B136C1A3AD9BB9549E9640A41CB`) and AAB is
+  36,504,445 bytes (SHA-256
+  `9A5BE261D2504007BCBAF4105568F19437CBA8A4DEFAA3383371DE35386D51E0`). Approved-Lava
+  launch → HOME → resume evidence is recorded in P66 of `Docs/V1_RELEASE_PLAN.md`.
+  The product remains a prototype: physical 16 KB, full lifecycle/held-input comfort,
+  normalized performance, endurance, final authored/accessibility/cultural/fun review,
+  signing/identity, privacy/Data Safety and Play Console gates remain open. The two prompt
+  files are intentional owner work.
+
+- **Historical runtime/art/audio presentation checkpoint (2026-08-30):** source tip was
   `56df201` (`audio: add final-circle escalation cue`), following runtime/art source
   `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`. It adds the owned generated `ZoneFinalCircle`
   cue and plays it once on authoritative `MatchPhase.FinalCircle`; the final mix/loudness/
@@ -939,6 +955,33 @@ normalized performance, battery/thermal endurance, signing, legal/privacy, ratin
 Console actions remain owner-controlled. The truthful state remains **Prototype — Android
 offline release candidate in progress**; the two prompt files are intentional uncommitted owner
 work.
+
+## Milestone 11 P66 lifecycle input hardening and exact Android candidate rerun - 2026-08-31
+
+Source tip `e603ce7e7f1cb279f5e3e9d606ea5eae89603ecb` clears transient player input on
+Android pause across the adapter, virtual stick and attack/ability/gadget buttons, while the
+HUD clears the adapter before its lifecycle pause boundary. Focused lifecycle PlayMode is
+**1/1**, full EditMode is **141/141**, full PlayMode is **92/92**, and static validation is
+**0 errors / 0 warnings**. ADR-076 records the presentation/input-only decision; gameplay
+authority, simulation timing, replay and networking boundaries are unchanged.
+
+The exact rebuilt APK is 40,679,115 bytes (SHA-256
+`349F02C67DE4CC801C5CB81B9CEC375A18D89B136C1A3AD9BB9549E9640A41CB`) and AAB is 36,504,445
+bytes (SHA-256
+`9A5BE261D2504007BCBAF4105568F19437CBA8A4DEFAA3383371DE35386D51E0`). The APK was installed
+only on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34), reached a live
+Solo Raja/Bijli Opening Fight, stayed at Android HOME for approximately five seconds, and
+returned to the same RESUMED Unity activity. The route manifest is
+`Builds/Local/Device/final-circle-20260830/p66-lifecycle-route/p66-lifecycle-route-manifest.json`
+(7,210 bytes; SHA-256
+`FC5CEC3545CE16152D65F766CD2394A65CE0E0A2AB80B52D9042E5580328F7D2`). Paired captures retain
+`ALIVE 8` and `ZONE 14.0 > 11.0`; Lava reports 4 KB pages and route logcat has zero
+configured fatal/ANR/native/managed-crash markers.
+
+This is bounded exact-device evidence, not a claim of full lifecycle comfort, physical 16 KB,
+normalized performance, endurance, final authored/cultural/accessibility/fun approval,
+production signing, legal/privacy completion or Play approval. The truthful state remains
+**Prototype — Android offline release candidate in progress**.
 
 ## Milestone 11 P65 exact P61 physical all-gadget route - 2026-08-31
 
