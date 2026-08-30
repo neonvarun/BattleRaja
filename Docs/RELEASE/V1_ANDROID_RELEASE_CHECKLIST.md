@@ -832,3 +832,18 @@ This remains a debug-signed, temporary-ID technical candidate. Final package ide
 signing, privacy/Data Safety, IARC/content rating, cultural/legal/fun/accessibility approval,
 genuine 16 KB runtime testing, sustained performance/thermal/battery validation and Play
 Console upload/public deployment remain owner-controlled.
+
+## Exact-candidate P48 performance refresh - 2026-08-30
+
+The exact `5d136fbb6be6a5554931f6ab859be8b9a8a995a2` candidate was exercised on approved Lava
+`ST5GDW23LB004392` using the repository performance-capture script for 180 seconds (36
+five-second samples). Warm-up-excluded PSS was **261,702-273,769 KB**, RSS
+**384,112-396,696 KB**, graphics PSS **75,792-81,936 KB**, and process `top` CPU
+**87.5-118.0%** on Android's 100%-per-core scale. Battery stayed at 76% while USB-powered,
+thermal status stayed 0, and no configured fatal markers were found. The full raw capture is
+`Builds/Local/Device/Performance/20260830-lava-5d136fb-perf2/`; its manifest SHA-256 is
+`7728C80ADFEA814D1D9E63D3344C527825CFCF413236AB89131C62C46C2D459D`. A 30-second Perfetto
+trace is retained there, but no local trace processor was available; Unity `gfxinfo` still
+has no usable frame histogram and Simpleperf cannot sample the non-profileable candidate.
+This is stronger raw stability evidence, not normalized sustained performance, battery,
+runtime-16-KB or final human approval.

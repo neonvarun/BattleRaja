@@ -655,3 +655,39 @@ cannot establish 16 KB runtime compatibility.
   configured fatal markers were found. Lava reports 4 KB pages. This remains opening-
   screen evidence, not a sustained full-match CPU/GPU/GC/thermal/battery measurement or
   genuine 16 KB runtime proof.
+
+## V1 P48 exact-candidate 180-second Lava focused capture — 2026-08-30
+
+- The exact terminal-outcome candidate from source `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`
+  was relaunched on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34).
+  `Tools/Validation/capture_android_performance.ps1` captured **36 samples at 5-second
+  intervals over 180 seconds** while the menu -> Solo Raja -> fighter -> live-match flow
+  was driven with movement, attack, ability and gadget input. The run manifest is
+  `Builds/Local/Device/Performance/20260830-lava-5d136fb-perf2/manifest.json` (SHA-256
+  `7728C80ADFEA814D1D9E63D3344C527825CFCF413236AB89131C62C46C2D459D`).
+- Startup samples (1-10) ranged from **67,991 to 243,311 KB PSS**, **152,762 to
+  365,728 KB RSS** and **12,198 to 72,468 KB graphics PSS**. After warm-up (samples
+  11-36), PSS was **261,702-273,769 KB** (average **270,386 KB**), RSS was
+  **384,112-396,696 KB** (average **393,151 KB**) and graphics PSS was **75,792-81,936 KB**
+  (average **79,314 KB**). This shows a warm steady range for this run, not a universal
+  device-tier budget.
+- `top` reported the current process at **39.2-118.0% instantaneous CPU** (Android's
+  100%-per-core scale; warm-up-excluded average **108.0%**). The bundled `dumpsys cpuinfo`
+  output retained an older process PID after the relaunch, so it is not used as a current
+  process average; the per-sample `top.txt` rows are the authoritative CPU snapshots.
+- Battery remained **76%**, 4,128 -> 4,129 mV, and 30.0-31.0 C while USB-powered;
+  thermal status stayed **0**. The logcat capture is
+  `Builds/Local/Device/Performance/20260830-lava-5d136fb-perf2/logcat.txt` (SHA-256
+  `3F3825762955C1DD4500D11C97E397C32FF6171B831AF567C8FE4F831F91C8FB`) with no configured
+  fatal markers.
+- A 30-second system trace was captured at
+  `Builds/Local/Device/Performance/20260830-lava-5d136fb-perf2/battleraja-perf2.pftrace`
+  (33,418,400 bytes; SHA-256
+  `46FF1407EC657F800AEE7B5498A19620A7DEEC38305B75C4D2D7966B9A5680AE`). No local
+  trace-processor binary is installed, so the trace is retained as raw evidence and no
+  frame-timeline interpretation is claimed. Simpleperf correctly refused the temporary
+  candidate because it is not debuggable/profileable; no CPU sample profile is claimed.
+- `dumpsys gfxinfo` continued to expose only Unity's ViewRoot/render-node summary, without
+  a usable frame histogram. Lava reports 4 KB pages. This P48 run strengthens warm-up and
+  stability evidence but does not close sustained FPS/frame-time/GC/GPU, unplugged battery,
+  physical 16 KB runtime, or human performance approval gates.

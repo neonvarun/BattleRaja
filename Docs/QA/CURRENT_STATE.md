@@ -381,3 +381,19 @@ fatal/ANR/SIGSEGV marker. The phone reports 4 KB pages; no runtime 16 KB, normal
 sustained performance claim is made. Final authored/cultural/fun/accessibility review,
 production signing/package identity, privacy/Data Safety, content rating and Play Console
 actions remain owner-controlled.
+
+## P48 exact-candidate focused performance evidence - 2026-08-30
+
+The provided Android performance capture ran against the exact `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`
+candidate on Lava `ST5GDW23LB004392` for **180 seconds**, with 36 five-second samples and
+movement/attack/ability/gadget input during a live match. The manifest is
+`Builds/Local/Device/Performance/20260830-lava-5d136fb-perf2/manifest.json` (SHA-256
+`7728C80ADFEA814D1D9E63D3344C527825CFCF413236AB89131C62C46C2D459D`). Warm-up-excluded
+PSS was **261,702-273,769 KB**, RSS **384,112-396,696 KB**, graphics PSS **75,792-81,936 KB**,
+and current-process `top` CPU **87.5-118.0%** (Android 100%-per-core scale). Battery stayed
+at 76% while USB-powered, thermal status stayed 0, and no configured crash markers were
+found. A 30-second Perfetto trace is retained, but no host trace processor was available;
+Simpleperf correctly refused the non-profileable temporary candidate. Unity `gfxinfo` still
+has no usable frame histogram. This strengthens raw warm-up/stability evidence only; no
+normalized sustained performance, unplugged battery, genuine 16 KB runtime, or human approval
+claim is made.

@@ -2842,6 +2842,40 @@ than normalized FPS, frame-time, GC, thermal, battery, accessibility or sustaine
 The candidate remains a **prototype / Android offline release candidate in progress**, not
 Play-ready. The two prompt files under `PROMPTS/` remain intentional uncommitted owner work.
 
+### P48 - Exact-candidate 180-second Lava focused performance capture - 2026-08-30
+
+The exact `5d136fbb6be6a5554931f6ab859be8b9a8a995a2` APK was relaunched on the approved Lava
+`ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34). The provided
+`Tools/Validation/capture_android_performance.ps1` ran for **180 seconds**, sampling every
+5 seconds (**36 samples**) while movement, attack, ability and gadget input were exercised
+after the menu -> Solo Raja -> fighter route. The run manifest is
+`Builds/Local/Device/Performance/20260830-lava-5d136fb-perf2/manifest.json`, SHA-256
+`7728C80ADFEA814D1D9E63D3344C527825CFCF413236AB89131C62C46C2D459D`.
+
+- Warm-up-excluded samples 11-36 measured **261,702-273,769 KB PSS** (average 270,386 KB),
+  **384,112-396,696 KB RSS** (average 393,151 KB), **75,792-81,936 KB graphics PSS**
+  (average 79,314 KB), and current-process `top` CPU **87.5-118.0%** (average 108.0%;
+  Android's 100%-per-core scale).
+- Battery remained at **76%** (4,128 -> 4,129 mV; USB-powered), battery temperature
+  30.0-31.0 C, thermal status **0**, and the logcat scan found no configured fatal marker.
+  Logcat SHA-256 is `3F3825762955C1DD4500D11C97E397C32FF6171B831AF567C8FE4F831F91C8FB`.
+- A 30-second Perfetto trace is retained at
+  `Builds/Local/Device/Performance/20260830-lava-5d136fb-perf2/battleraja-perf2.pftrace`
+  (33,418,400 bytes; SHA-256
+  `46FF1407EC657F800AEE7B5498A19620A7DEEC38305B75C4D2D7966B9A5680AE`). No host
+  trace-processor was available, so no frame-timeline claim is made. Simpleperf was
+  attempted and refused because the temporary candidate is not debuggable/profileable.
+- Unity `gfxinfo` still supplies no usable frame histogram. Lava reports 4 KB pages; this
+  is not physical 16 KB runtime evidence.
+
+| Gate | Current classification | Evidence / remaining action |
+| --- | --- | --- |
+| 180-second exact-candidate warm-up/stability capture | **Passed as raw diagnostic evidence** | 36-sample manifest and per-sample meminfo/top/thermal/battery/activity files |
+| Normalized FPS, frame-time, GC, GPU and render-thread budget | **Open** | Unity SurfaceView has no usable gfxinfo histogram; parse a future Perfetto trace or use a supported profiler |
+| Battery endurance and sustained thermal acceptance | **Open** | Run unplugged, longer repeated-match capture with owner acceptance criteria |
+| Genuine 16 KB runtime | **Open** | Lava reports 4 KB pages; use a genuine 16 KB runtime |
+| Final authored/accessibility/fun/performance approval | **Owner review required** | Raw telemetry does not replace human review |
+
 ### P47 - Exact 5d136fb terminal-outcome presentation candidate and Lava route - 2026-08-30
 
 The exact runtime/art source for this checkpoint is commit

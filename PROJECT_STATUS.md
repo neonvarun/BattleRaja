@@ -774,3 +774,15 @@ identity and production signing, privacy/Data Safety, content rating, genuine 16
 sustained performance/thermal/battery validation and Play Console upload/public deployment
 remain owner-controlled. The two prompt files under `PROMPTS/` remain intentional
 uncommitted owner work.
+
+## Milestone 11 P48 focused Android performance evidence - 2026-08-30
+
+The exact terminal-outcome candidate was exercised on approved Lava
+`ST5GDW23LB004392` for 180 seconds with 36 five-second samples during a live match. After
+startup warm-up, PSS stayed within **261,702-273,769 KB**, RSS within **384,112-396,696 KB**,
+graphics PSS within **75,792-81,936 KB**, and `top` reported **87.5-118.0%** instantaneous
+process CPU (100%-per-core scale). Battery remained 76% while USB-powered, thermal status
+remained 0, and no configured fatal markers were found. The raw manifest and 30-second
+Perfetto trace are indexed in `Docs/V1_RELEASE_PLAN.md` P48. The capture strengthens local
+stability evidence but does not close normalized frame/GC/GPU, unplugged battery, genuine
+16 KB runtime or human approval gates.
