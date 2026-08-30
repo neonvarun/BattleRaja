@@ -2933,6 +2933,72 @@ Play-ready. P58 closes the captured completion-card obstruction; it does not cla
 approval or close the remaining physical, subjective, performance, identity, legal or Play
 gates. The two prompt files under `PROMPTS/` remain intentional uncommitted owner work.
 
+### P59 - Exact-candidate all-fighter and accessibility route evidence - 2026-08-31
+
+The P58 candidate (`888421f0b332a2e5b9b41fcb6ae669adec836612`) was exercised further on the
+approved Lava phone without changing source or artifacts. This closes a useful local
+observation gap: the current APK now has fresh live-opening, attack, ability-input and
+gadget-feedback captures for Bijli, Maya and Pehel, plus a fresh accessibility/settings
+route. It is observation evidence rather than a claim of human comfort, fun, final art,
+or repeated-match approval.
+
+#### Approved Lava route
+
+Only `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34, reported 4 KB pages) was used;
+the connected Oppo was explicitly excluded. From a fresh launch, real touch opened Play
+Offline / Solo Raja, inspected all three fighter cards, launched each fighter in the live
+arena, and exercised attack, ability input and Tiffin Station gadget input. The route then
+opened in-match Settings & Accessibility, toggled left-handed controls, reduced flashes,
+high contrast, aim assist and text scaling, observed the left-handed live layout, verified
+settings persistence from the main menu, and reset all toggles to defaults. The Unity UI
+tree remains SurfaceView-only, so coordinates are visually derived rather than semantic
+node locators.
+
+The machine-readable index is
+`Builds/Local/Device/final-circle-20260830/p58-fighter-accessibility-route-manifest.json`
+(7,285 bytes; SHA-256
+`F9D43C679971029EC9CC8881913A0BF62A28555A2F7C14C7A1FB94554C7D2409`).
+It indexes 23 screenshot captures, the 2,546-byte UI tree
+(`A8235CD2CFEE7BFCFB0A515F9337E4ABF6E6C16C10ACDCF446DE87E9AEF094BD`) and the app-scoped
+logcat (15,630 bytes;
+`F75016454F2A8A56716AED56E9942CAC918CDF44083B55C4A80B108B60E8D9AD`). The log has no
+configured `FATAL EXCEPTION`, `ANR in`, `SIGSEGV` or `SIGABRT` marker. Known non-fatal Lava
+gralloc/AHardwareBuffer format-allocation diagnostics, the Unity Play Core
+`AssetPackManager` class-probe, and Swappy `libgame.so` lookup diagnostics are retained,
+not hidden or reclassified as a clean zero-error log.
+
+Representative current-candidate captures include:
+
+- `p58-bijli-live-opening.png`, `p58-bijli-attack.png`, `p58-bijli-ability.png` and
+  `p58-bijli-gadget.png` — Bijli live/action feedback.
+- `p58-maya-live-opening.png`, `p58-maya-attack.png`, `p58-maya-ability.png` and
+  `p58-maya-gadget.png` — Maya live/action feedback.
+- `p58-pehel-live-opening.png`, `p58-pehel-attack.png`, `p58-pehel-ability.png`,
+  `p58-pehel-ability-followup.png` and `p58-pehel-gadget.png` — Pehel live/action input
+  checkpoints and Tiffin Station feedback.
+- `p58-left-handed-live.png`, `p58-settings-aim-assist.png`,
+  `p58-settings-reduced-flashes.png`, `p58-settings-high-contrast.png`,
+  `p58-settings-text-plus.png` and `p58-settings-reset.png` — accessibility toggles,
+  left-handed layout and restored defaults.
+
+#### P59 gate delta
+
+| Gate | Current classification | Evidence / remaining action |
+| --- | --- | --- |
+| Current APK live opening for Bijli, Maya and Pehel | **Observed / bounded** | Fresh exact-candidate Lava captures; no human visual or comfort approval claimed |
+| Current APK attack, ability input and Tiffin Station feedback across all fighters | **Observed / bounded** | Screenshot route index; effect timing/comfort still needs human review |
+| Settings, left-handed controls, reduced flashes, high contrast, aim assist, text scale and reset | **Observed / bounded** | Fresh Lava captures; accessibility comfort and device-size coverage remain open |
+| App-scoped crash-marker smoke | **Passed locally with known platform noise** | No configured app fatal marker; Lava graphics diagnostics retained |
+| Full action-by-action tutorial comfort, repeated rematches and multiple consecutive matches | **Open** | P58 SKIP/rematch route and this fighter route do not replace sustained human review |
+| Genuine physical 16 KB runtime, normalized performance, battery/thermal and memory growth | **Open** | Lava reports 4 KB; existing data remains bounded diagnostics |
+| Final authored art/audio, cultural, accessibility, fun and fairness approval | **Owner/human review required** | Current saved faceted assets remain a generated presentation baseline |
+| Final package identity/signing/privacy/Data Safety/rating/support URL/Play Console | **Owner-controlled** | No irreversible identity, signing, legal or upload action performed |
+
+The project remains a **prototype / Android offline release candidate in progress**, not
+Play-ready. P59 adds current-candidate all-fighter and accessibility observations only; it
+does not close the subjective, physical, performance, identity, legal or Play gates. The two
+prompt files under `PROMPTS/` remain intentional uncommitted owner work.
+
 ### P57 tutorial elimination target readability and real-touch route refresh - 2026-08-30
 
 The current source checkpoint is commit `c9e3d3091a38852be794f74ad97420b91461599a`

@@ -1040,3 +1040,27 @@ rematch comfort, final authored/cultural/fun/accessibility approval, normalized 
 or endurance, physical 16 KB runtime, final identity/signing, privacy/Data Safety, rating or
 Play Console approval. The two prompt files under `PROMPTS/` remain intentional uncommitted
 owner work.
+
+## Milestone 11 P59 exact-candidate all-fighter and accessibility route - 2026-08-31
+
+The unchanged P58 candidate was exercised further on approved Lava
+`ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34, reported 4 KB pages). Fresh evidence
+covers all three fighter cards and current live openings for Bijli, Maya and Pehel, attack
+and ability-input checkpoints, Tiffin Station feedback, in-match Settings & Accessibility,
+left-handed controls, reduced flashes, high contrast, aim assist, text scaling, persistence
+and reset-to-defaults. The connected Oppo was excluded.
+
+The exact route index is
+`Builds/Local/Device/final-circle-20260830/p58-fighter-accessibility-route-manifest.json`
+(7,285 bytes; SHA-256
+`F9D43C679971029EC9CC8881913A0BF62A28555A2F7C14C7A1FB94554C7D2409`). The UI tree is
+SurfaceView-only. The 15,630-byte app-scoped logcat has no configured fatal/ANR/SIGSEGV/
+SIGABRT marker; known Lava gralloc/AHardwareBuffer, Unity Play Core class-probe and Swappy
+diagnostics remain recorded as non-fatal platform noise.
+
+This closes a current-candidate observation gap, not the human action-by-action tutorial,
+repeated-rematch, accessibility comfort, fun/fairness, final authored art/audio, normalized
+performance, battery/thermal, physical 16 KB, final identity/signing, privacy/Data Safety,
+content rating or Play Console gates. The truthful state remains **Prototype — Android offline
+release candidate in progress**, and the two prompt files remain intentional uncommitted owner
+work.

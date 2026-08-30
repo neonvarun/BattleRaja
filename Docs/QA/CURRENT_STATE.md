@@ -635,3 +635,27 @@ The project remains a **Prototype — Android offline release candidate in progr
 authored art/audio, cultural/fun/accessibility review, normalized performance and endurance,
 physical 16 KB runtime, final package identity/signing, privacy/Data Safety, rating and Play
 Console gates remain open.
+
+## P59 exact-candidate all-fighter and accessibility route - 2026-08-31
+
+Without changing the P58 source or artifacts, the exact candidate was exercised further on
+approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34, reported 4 KB pages).
+Fresh route evidence covers all three fighter cards and live openings for Bijli, Maya and
+Pehel, attack and ability-input checkpoints, Tiffin Station feedback, in-match Settings &
+Accessibility, left-handed controls, reduced flashes, high contrast, aim assist, text
+scaling, persistence and reset-to-defaults. The connected Oppo was excluded.
+
+The route index is
+`Builds/Local/Device/final-circle-20260830/p58-fighter-accessibility-route-manifest.json`
+(7,285 bytes; SHA-256
+`F9D43C679971029EC9CC8881913A0BF62A28555A2F7C14C7A1FB94554C7D2409`). The exact APK/AAB
+remain the P58 temporary-ID/debug-signed artifacts. The UI tree is SurfaceView-only. The
+15,630-byte app-scoped logcat has no configured `FATAL EXCEPTION`, `ANR in`, `SIGSEGV` or
+`SIGABRT` marker; known Lava gralloc/AHardwareBuffer, Play Core class-probe and Swappy
+diagnostics remain recorded as non-fatal platform noise.
+
+This adds bounded current-candidate observation only. It does not claim action-by-action
+tutorial comfort, repeated-rematch comfort, normalized performance, physical 16 KB runtime
+proof, final authored art/audio, human accessibility/fun/fairness/cultural approval or Play
+Store readiness. The project remains **Prototype — Android offline release candidate in
+progress**.

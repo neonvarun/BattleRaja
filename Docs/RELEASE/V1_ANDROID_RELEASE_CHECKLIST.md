@@ -966,3 +966,23 @@ screenshots are under `Builds/Local/Device/final-circle-20260830/`; this is boun
 evidence, not action-by-action tutorial, repeated-rematch, accessibility, final art/audio,
 physical 16 KB, normalized performance or human approval. See P58 in
 `Docs/V1_RELEASE_PLAN.md` for exact hashes and remaining gates.
+
+## Latest exact-candidate all-fighter/accessibility evidence — P59 — 2026-08-31
+
+The unchanged P58 candidate was exercised further on approved Lava
+`ST5GDW23LB004392` only. Fresh captures cover the Bijli, Maya and Pehel live openings,
+attack and ability-input checkpoints, Tiffin Station feedback, in-match Settings &
+Accessibility, left-handed control layout, reduced flashes, high contrast, aim assist,
+text scaling, persistence and reset-to-defaults. The connected Oppo was excluded. The
+machine-readable route index is
+`Builds/Local/Device/final-circle-20260830/p58-fighter-accessibility-route-manifest.json`
+(7,285 bytes; SHA-256
+`F9D43C679971029EC9CC8881913A0BF62A28555A2F7C14C7A1FB94554C7D2409`).
+
+The app-scoped logcat and UI-tree files are retained beside the screenshots. The UI tree is
+SurfaceView-only, and the log has no configured app fatal/ANR/SIGSEGV/SIGABRT marker; known
+Lava gralloc/AHardwareBuffer, Unity Play Core class-probe and Swappy diagnostics remain
+recorded. This is bounded device observation, not action-by-action tutorial comfort,
+repeated-rematch approval, normalized performance, physical 16 KB proof, final authored
+content approval or Play Store approval. The project remains a prototype / Android offline
+release candidate in progress.
