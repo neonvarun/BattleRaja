@@ -2865,6 +2865,58 @@ older Web-inclusive store copy is marked historical/superseded for the V1 Androi
 | Runtime/build/test evidence | **Unchanged / still current** | P47-P50 exact `5d136fb` candidate evidence remains authoritative |
 | Final identity, signing, legal/privacy, cultural/accessibility/fun review and Play Console | **Owner/human gate required** | No submission, signing-key handling, questionnaire or deployment was performed |
 
+### P53 - Current exact-source 50x production-bot release-gate refresh - 2026-08-30 08:03 IST
+
+The current fixed-tick production-bot harness was rerun from documentation tip
+`7167f33839a15a0f0c7e11eb27a97302f93c0b37` with Unity `6000.5.6f1`,
+`BATTLERAJA_PRODUCTION_BOT_MATCHES=100`,
+`BATTLERAJA_PRODUCTION_BOT_ASSERT_RELEASE_GATES=1`,
+`BATTLERAJA_PRODUCTION_BOT_PLAYBACK_SCALE=50`, and base seed `9101`. The runtime/art
+source is unchanged from `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`; the later source
+change is test-only Umbrella Guard coverage. The run uses the actual `BazaarBastion`
+scene and the canonical 30 Hz fixed-tick driver.
+
+#### P53 machine evidence
+
+- NUnit PlayMode report: **89/89 passed**, 0 failed, 0 skipped, duration **268.1340989 s**.
+  XML `Builds/Local/TestResults/production-bot-50x-current.xml` (78,474 bytes; SHA-256
+  `329FCEA04321DFDFEBD640537CD34C78772F9653506813B34CE4D2D62585DB77`); Unity log
+  `Builds/Local/Logs/production-bot-50x-current.log` (167,249 bytes; SHA-256
+  `5B5D76684E977E13578AC93ED68B082835D76FDE02E36BD804A740F4928FBB2D`). The passing
+  test includes `ProductionBotHarnessPlayModeTests.Harness_CompletesSeededMatches_ThroughProductionPipeline`
+  and the release assertions were enabled.
+- Batch report `Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260830-022934170-9101.json`
+  (1,823,815 bytes; SHA-256
+  `EFAD6078F7C3BFFD8563CC4D758135CA77511F63BA2795681A4C92D3DE4EFEBA`). It records
+  `CapturedAtUtc=2026-08-30 02:32:54 AM`, `PlaybackScale=50`, `SceneName=BazaarBastion`
+  and 100 seeded match records.
+- **100/100** matches reached terminal results within the 10,800-tick budget and every
+  duration was **306.0135193 s**, so **100/100** landed in the 240-360 second window.
+  All **100/100** had at least one combat elimination and bot-to-bot damage; Aandhi-only
+  resolutions were **0/100**. Aggregate combat eliminations were 362 and Aandhi
+  eliminations 64.
+- Protected-warmup damage and invalid-position samples were both **0**. There was one
+  stuck recovery, maximum continuous stuck duration was **10 ticks (0.333 s)**, and the
+  maximum outside-participant count was 5. Attack telemetry accepted **15,512/15,512**
+  attacks with 7 out-of-range diagnostic attempts. Ability telemetry accepted
+  **28,152/34,726** attempts (6,574 rejected). Successful contextual gadgets were
+  **300/496**, with Umbrella Guard, Dhol Burst and Tiffin Station each used in all 100
+  matches.
+
+This fresh current-source run supersedes the stale P15/P16 timing observations for the
+fixed-tick production harness; those historical reports remain retained for auditability.
+The 50x path is still an accelerated diagnostic and is not used as same-seed command-stream
+determinism evidence. The real-time same-seed result in P10 remains the determinism record.
+
+#### P53 gate delta
+
+| Gate | Classification | Evidence / limitation |
+| --- | --- | --- |
+| Current exact-source 100-match terminal, pacing and safety assertions | **Passed locally** | 100/100 terminal and in-window; release assertions enabled; batch/XML/log hashes above |
+| Combat, bot-to-bot and fighter/gadget distribution | **Passed locally** | 100/100 combat-positive and bot-to-bot; 0 Aandhi-only; all three gadgets used in all 100 matches |
+| Accelerated same-seed command-stream determinism | **Not claimed** | 50x remains frame-scheduling-sensitive; use P10 real-time evidence for this separate gate |
+| Human bot fairness, touch comfort, accessibility, presentation and sustained device budgets | **Owner/human gate required** | Automated fixed-tick telemetry cannot replace full route, balance, authored-content or performance review |
+
 ### P52 - Player-facing Umbrella Guard route regression - 2026-08-30 07:21 IST
 
 This test-only continuation is based on commit `4c4c67cbbc20062e3723cc90ee3bb7c266bbeda4`,

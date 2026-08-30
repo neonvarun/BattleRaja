@@ -25,6 +25,13 @@
   remain open. The two prompt files are intentional owner work.
   The exact APK also passed a genuine 16 KB host-GPU Android 16 AVD smoke; physical ARM64
   coverage, other GPU profiles and normalized performance remain open (P49).
+  A fresh current-source fixed-tick production-bot release-gate rerun at 50x completed
+  **100/100** seeded matches in the 240-360 second window, with combat-positive and
+  bot-to-bot damage in all 100 matches, zero Aandhi-only resolutions, zero protected or
+  invalid samples, and all three gadgets used in every match; the 89/89 PlayMode report,
+  batch report and hashes are indexed in P53. This closes the automated pacing/safety
+  gate for the current harness, while the accelerated path remains separate from the
+  real-time same-seed determinism evidence in P10.
 
 - **Latest exact-source release-gate checkpoint (2026-08-27):** commit
   `2a113e0c4798e8e51a43379a0fa0facd7e8f0fe1` persists ordered production replay captures
@@ -623,12 +630,14 @@ technical checker (**0 errors / 0 warnings**), bundletool universal extraction a
 soak twice with zero divergence. The exact APK installs on approved Lava
 `ST5GDW23LB004392` and the 30-second launch/menu capture has no configured fatal markers.
 
-The strict 100-match production harness still completes all seeded matches but its 50x pacing
-shortcut is timing-sensitive: the two final-source attempts reached 70/100 and 76/100 in the
-240–360 second window. No threshold was loosened. Human full-route/touch/accessibility,
-sustained performance/thermal/battery, runtime 16 KB, authored art/audio/cultural review,
-signing/package identity, privacy/Data Safety, content rating and Play Console actions remain
-open; this is not a Play-ready completion claim.
+At that 2026-08-26 checkpoint, the strict 50x shortcut was timing-sensitive and two
+final-source attempts reached 70/100 and 76/100 in the 240-360 second window; those
+historical results remain retained. Subsequent fixed-tick current-source batches, including
+P31, P45 and the fresh P53 rerun, complete 100/100 in-window without loosening the threshold.
+The accelerated path is still not same-seed determinism evidence. Human full-route/touch/
+accessibility, sustained performance/thermal/battery, runtime 16 KB, authored art/audio/
+cultural review, signing/package identity, privacy/Data Safety, content rating and Play
+Console actions remain open; this is not a Play-ready completion claim.
 
 ## Milestone 11 exact clean-source refresh — 2026-08-27
 
@@ -851,3 +860,20 @@ APK/AAB or P47-P50 device evidence changed, so the exact `5d136fb` candidate art
 authoritative. Final authored/cultural/fun/accessibility approval, sustained performance,
 physical 16 KB, signing, privacy/Data Safety, content rating and Play Console actions remain
 owner-controlled; the two prompt files remain intentional uncommitted owner work.
+
+## Milestone 11 P53 current exact-source production-bot gate refresh - 2026-08-30 08:03 IST
+
+The current fixed-tick production-bot harness was rerun with Unity `6000.5.6f1`, 100
+matches, release assertions enabled, playback scale 50 and base seed 9101. The runtime/art
+source remains `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`; the current documentation tip was
+`7167f33839a15a0f0c7e11eb27a97302f93c0b37`. PlayMode passed **89/89**. All **100/100**
+matches reached terminal results in the 240-360 second window (306.0135193 seconds each),
+had combat and bot-to-bot damage, and exercised Umbrella Guard, Dhol Burst and Tiffin Station;
+zero protected-warmup or invalid-position samples were observed. Exact report, XML/log
+hashes and aggregate telemetry are indexed in `Docs/V1_RELEASE_PLAN.md` P53.
+
+This closes the current automated production-bot pacing/safety gate locally. The 50x path
+remains an accelerated diagnostic rather than same-seed determinism evidence; P10 retains
+the real-time determinism record. Human full-route/touch/accessibility/fun review, normalized
+sustained performance, physical 16 KB, final authored/cultural approval, signing/package
+identity, privacy/Data Safety, content rating and Play Console actions remain owner-controlled.

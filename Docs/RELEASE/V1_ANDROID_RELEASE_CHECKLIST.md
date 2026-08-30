@@ -872,6 +872,23 @@ remain authoritative. The candidate is still temporary-ID/debug-signed; final id
 signing, human/cultural/accessibility/fun review, performance, privacy/rating and Play
 Console gates remain open.
 
+## P53 current exact-source production-bot gate refresh - 2026-08-30 08:03 IST
+
+The current fixed-tick production-bot harness was rerun with Unity `6000.5.6f1`, 100
+matches, release assertions enabled, playback scale 50 and base seed 9101. Runtime/art
+source remains `5d136fb`; PlayMode passed **89/89**. All **100/100** matches reached
+terminal results at **306.0135193 s** each and landed in the 240-360 second window. Every
+match had combat and bot-to-bot damage, **0/100** were Aandhi-only, protected-warmup and
+invalid-position samples were zero, and Umbrella Guard, Dhol Burst and Tiffin Station were
+each used in all 100 matches. The exact XML/log/batch paths and SHA-256 values are indexed
+in `Docs/V1_RELEASE_PLAN.md` P53.
+
+This closes the current automated production-bot pacing/safety gate locally. The accelerated
+50x path remains separate from same-seed determinism evidence; P10's real-time result remains
+the determinism record. The candidate is still temporary-ID/debug-signed and owner gates for
+route/accessibility/fun, authored/cultural review, normalized sustained performance, physical
+16 KB, signing, legal/privacy, rating and Play Console remain open.
+
 ## Exact-candidate P48 performance refresh - 2026-08-30
 
 The exact `5d136fbb6be6a5554931f6ab859be8b9a8a995a2` candidate was exercised on approved Lava

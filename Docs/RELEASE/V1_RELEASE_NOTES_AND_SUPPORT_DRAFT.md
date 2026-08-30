@@ -60,9 +60,12 @@ for this candidate.
   for every renderer/device profile.
 - The Lava P48/P50 captures are bounded diagnostics. `gfxinfo` supplied no usable frame
   histogram, and no normalized sustained CPU/GPU, battery or thermal approval is claimed.
-- A final-art production-bot retry passed terminal and invariant checks but was timing-
-  sensitive in two strict retries; the earlier 100/100 pacing run remains historical
-  evidence and no threshold was loosened.
+- The current fixed-tick production-bot release-gate rerun completed **100/100** seeded
+  matches in the 240-360 second window with combat and bot-to-bot damage in every match,
+  zero Aandhi-only resolutions and all three gadgets exercised in every match. The exact
+  report and test hashes are indexed in `Docs/V1_RELEASE_PLAN.md` P53. Historical timing-
+  sensitive retries are retained for auditability; accelerated 50x playback is not used
+  as same-seed determinism evidence.
 - Physical route observation has not individually verified every Umbrella Guard, Dhol Burst
   and Victory presentation path on Lava, even though automated and other route evidence
   covers the underlying systems.
