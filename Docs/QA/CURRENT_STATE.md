@@ -659,3 +659,33 @@ tutorial comfort, repeated-rematch comfort, normalized performance, physical 16 
 proof, final authored art/audio, human accessibility/fun/fairness/cultural approval or Play
 Store readiness. The project remains **Prototype — Android offline release candidate in
 progress**.
+
+## P60 compact portrait HUD copy - 2026-08-31
+
+The current runtime checkpoint is `c3cfb27e08f13ecf4b91a4234269aa11e675bfe9`. The compact
+portrait match status now spells out `ZONE` instead of the ambiguous one-letter `Z`; the
+existing phase, alive count, zone radii, warning and closing information are unchanged.
+The change is covered by the full **141/141 EditMode** and **92/92 PlayMode** reruns and
+ADR-074.
+
+The rebuilt APK/AAB passed repository validation and the release checker with **0 errors /
+0 warnings**. The APK is 40,682,347 bytes (SHA-256
+`4EFF24C7251DD57C2FCAA4D280C369175D33FA6C8D26B969ABBAA72D9EAF32A7`); the AAB is
+36,507,651 bytes (SHA-256
+`D60B09EE6324C0AA75781BF1F9DB8461A6A1AE05D788A9232EA227DBC1349936`). The package remains
+temporary `com.example.battleraja.m11`, version `1.0.0`/code `100`, API `28/36`, ARM64-only,
+statically 16 KB aligned and debug-signed.
+
+On approved Lava `ST5GDW23LB004392` only, the fresh live-opening capture
+`Builds/Local/Device/final-circle-20260830/p60-live-zone-copy.png` (324,315 bytes;
+SHA-256 `13AEFABE9A51364B28B85B6293B2237D6D7189C32278863E591964C252FE8A3D`) shows
+`GET READY` and `ALIVE 8  ZONE 14.0 > 14.0`. The route manifest is
+`Builds/Local/Device/final-circle-20260830/p60-zone-copy-manifest.json` (3,822 bytes;
+SHA-256 `B235CAC4A041644B7A05FED6C613A5BB2563CDD6929C19EF9E2B6F445F1C7E39`). The
+app-scoped logcat has no configured fatal/ANR/SIGSEGV/SIGABRT marker; known Lava graphics
+diagnostics remain recorded.
+
+This is a localized readability improvement with bounded device evidence. It does not claim
+final visual, localization, comfort, performance, thermal, battery, memory-growth, physical
+16 KB or Play approval. The project remains **Prototype — Android offline release candidate
+in progress**.

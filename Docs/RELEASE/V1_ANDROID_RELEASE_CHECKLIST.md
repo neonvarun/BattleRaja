@@ -986,3 +986,24 @@ recorded. This is bounded device observation, not action-by-action tutorial comf
 repeated-rematch approval, normalized performance, physical 16 KB proof, final authored
 content approval or Play Store approval. The project remains a prototype / Android offline
 release candidate in progress.
+
+## Latest exact-candidate compact-HUD copy evidence — P60 — 2026-08-31
+
+The P60 runtime checkpoint `c3cfb27e08f13ecf4b91a4234269aa11e675bfe9` replaces the compact
+portrait HUD's ambiguous `Z` abbreviation with the player-facing `ZONE` label. Full
+EditMode (**141/141**) and PlayMode (**92/92**) remain green; repository validation and the
+release checker both report **0 errors / 0 warnings**. The rebuilt temporary-ID APK is
+40,682,347 bytes (SHA-256
+`4EFF24C7251DD57C2FCAA4D280C369175D33FA6C8D26B969ABBAA72D9EAF32A7`) and the AAB is
+36,507,651 bytes (SHA-256
+`D60B09EE6324C0AA75781BF1F9DB8461A6A1AE05D788A9232EA227DBC1349936`).
+
+The exact APK installed successfully only on approved Lava `ST5GDW23LB004392`; the fresh
+portrait live capture shows `GET READY` and `ALIVE 8  ZONE 14.0 > 14.0`:
+`Builds/Local/Device/final-circle-20260830/p60-live-zone-copy.png` (324,315 bytes;
+SHA-256 `13AEFABE9A51364B28B85B6293B2237D6D7189C32278863E591964C252FE8A3D`). The route
+index is
+`Builds/Local/Device/final-circle-20260830/p60-zone-copy-manifest.json` (3,822 bytes;
+SHA-256 `B235CAC4A041644B7A05FED6C613A5BB2563CDD6929C19EF9E2B6F445F1C7E39`). This is
+bounded readability evidence on a 1080x2460, 4 KB-page device; smaller-device,
+localization, final visual and human comfort approval remain open.

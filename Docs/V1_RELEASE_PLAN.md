@@ -2999,6 +2999,77 @@ Play-ready. P59 adds current-candidate all-fighter and accessibility observation
 does not close the subjective, physical, performance, identity, legal or Play gates. The two
 prompt files under `PROMPTS/` remain intentional uncommitted owner work.
 
+### P60 - Spell out compact zone telemetry for the portrait HUD - 2026-08-31
+
+The current runtime/test checkpoint is `c3cfb27e08f13ecf4b91a4234269aa11e675bfe9`
+(`ui: spell out compact zone telemetry`). The portrait HUD previously rendered the zone
+label as a one-letter `Z`, which was ambiguous beside the alive count and read like internal
+debug text. `OfflineMatchHud` now uses the same player-facing `ZONE {current} > {next}` copy
+in compact and wide formats; authority, timing, input and match state are unchanged. The
+PlayMode regression now asserts the full label and rejects the old abbreviation. ADR-074
+records the rationale and scope.
+
+#### Machine evidence
+
+- `Tools/Validation/validate.ps1` returned **0 errors / 0 warnings**. Log:
+  `Builds/Local/Logs/validate-zone-copy-20260831.log` (SHA-256
+  `7EF09129DBD03921DF243F43AC65AE932A8C74C4DD76FAD8E6A013BFC804E322`).
+- Full EditMode returned **141/141 passed**. XML
+  `Builds/Local/TestResults/editmode-zone-copy-20260831.xml` (SHA-256
+  `6191ABFE488A415899818C0B4BAC6CD7690A0829B86B2433D8A09C8C5F4F0018`); Unity log
+  SHA-256 `94046A10E17E05038C8644FFAD73E9D76033EDB1BA182D87794BE39EDE4A70A1`.
+- Full PlayMode returned **92/92 passed**. XML
+  `Builds/Local/TestResults/playmode-zone-copy-20260831.xml` (SHA-256
+  `8D76395DE9168D1171784615BCB0DA5F4FE08FE035433B17998C6D5CB66B89B4`); Unity log
+  SHA-256 `2BBDE2E4CA7E35DF0C1698CDE587F0739F571C081FF8ED9590A7E3E88116B880`.
+- The APK entrypoint completed successfully. APK
+  `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk` is **40,682,347 bytes**,
+  SHA-256 `4EFF24C7251DD57C2FCAA4D280C369175D33FA6C8D26B969ABBAA72D9EAF32A7`;
+  build-log SHA-256 `AD2DEC322AB36C04BF60FFCB00ECB85168A6BA21DAAADA279D8DEF15B42E31FE`.
+- The AAB entrypoint completed successfully. AAB
+  `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab` is **36,507,651 bytes**,
+  SHA-256 `D60B09EE6324C0AA75781BF1F9DB8461A6A1AE05D788A9232EA227DBC1349936`;
+  build-log SHA-256 `EE53E5BDE4C6304FF8E5B9B0421769A690283DECBD464D15F542024DB285C2CC`.
+- `Tools/Validation/check_v1_release_candidate.ps1` returned **0 errors / 0 warnings**.
+  Log `Builds/Local/Logs/release-checker-zone-copy-20260831.log` (SHA-256
+  `92C300B878DC5292C9EED5E04D1884B97AA57AF80386054A6D5B224ACCF06895`) confirms package
+  `com.example.battleraja.m11`, version `1.0.0`/code `100`, API `28/36`, no network
+  permissions, seven ARM64 libraries, static 16 KB alignment and temporary/debug signing.
+
+#### Approved Lava evidence
+
+The rebuilt APK was installed and launched only on approved Lava
+`ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34, reported 4 KB pages). A fresh
+Play Offline → Solo Raja → Bijli route captured the compact HUD text as
+`GET READY` / `ALIVE 8  ZONE 14.0 > 14.0` in
+`Builds/Local/Device/final-circle-20260830/p60-live-zone-copy.png` (324,315 bytes;
+SHA-256 `13AEFABE9A51364B28B85B6293B2237D6D7189C32278863E591964C252FE8A3D`). The route
+index is
+`Builds/Local/Device/final-circle-20260830/p60-zone-copy-manifest.json` (3,822 bytes;
+SHA-256 `B235CAC4A041644B7A05FED6C613A5BB2563CDD6929C19EF9E2B6F445F1C7E39`). The
+app-scoped logcat (15,630 bytes; SHA-256
+`82D8E71FA20D555DFB8170A5AEB3B3060674B7EAD37AA07469BB3D592107E23E`) has no configured
+`FATAL EXCEPTION`, `ANR in`, `SIGSEGV` or `SIGABRT` marker. Known Lava gralloc/
+AHardwareBuffer, Unity Play Core class-probe and Swappy diagnostics remain recorded as
+non-fatal platform noise. The UI tree is SurfaceView-only (2,546 bytes; SHA-256
+`A8235CD2CFEE7BFCFB0A515F9337E4ABF6E6C16C10ACDCF446DE87E9AEF094BD`).
+
+#### P60 gate delta
+
+| Gate | Current classification | Evidence / remaining action |
+| --- | --- | --- |
+| Compact portrait HUD zone label is player-facing | **Passed locally** | 141/141 EditMode, 92/92 PlayMode, and exact Lava capture show `ZONE` rather than `Z` |
+| Exact APK/AAB rebuild and Android technical checks | **Passed locally** | Artifact hashes, release checker 0/0, ARM64/static 16 KB and offline permissions |
+| Exact Lava launch and compact-HUD route | **Observed / bounded** | Fresh install/launch and live opening on approved Lava; no human visual approval claimed |
+| Smaller-device localization, final visual, comfort and accessibility review | **Open** | Tested viewport is 1080x2460; owner review remains required |
+| Sustained performance, battery/thermal, memory growth and physical 16 KB runtime | **Open** | Existing data remains bounded diagnostics; Lava reports 4 KB |
+| Final identity/signing/privacy/Data Safety/rating/support URL/Play Console | **Owner-controlled** | No irreversible identity, signing, legal or upload action performed |
+
+The project remains a **prototype / Android offline release candidate in progress**, not
+Play-ready. P60 improves player-facing compact-HUD copy and adds exact evidence; it does not
+close final authored-content, subjective, physical, performance, identity, legal or Play
+gates. The two prompt files under `PROMPTS/` remain intentional uncommitted owner work.
+
 ### P57 tutorial elimination target readability and real-touch route refresh - 2026-08-30
 
 The current source checkpoint is commit `c9e3d3091a38852be794f74ad97420b91461599a`

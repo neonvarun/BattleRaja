@@ -940,6 +940,32 @@ Console actions remain owner-controlled. The truthful state remains **Prototype 
 offline release candidate in progress**; the two prompt files are intentional uncommitted owner
 work.
 
+## Milestone 11 P60 compact portrait HUD copy - 2026-08-31
+
+The runtime/test checkpoint is `c3cfb27e08f13ecf4b91a4234269aa11e675bfe9`. The compact
+portrait match status now spells out `ZONE` instead of the ambiguous one-letter `Z`; phase,
+alive count, radii, warning and closing state remain unchanged. ADR-074 records the
+player-facing copy decision and the change is covered by full EditMode **141/141** and
+PlayMode **92/92** reruns.
+
+The rebuilt temporary-ID APK/AAB passed repository validation and the release checker with
+**0 errors / 0 warnings**. APK SHA-256 is
+`4EFF24C7251DD57C2FCAA4D280C369175D33FA6C8D26B969ABBAA72D9EAF32A7`; AAB SHA-256 is
+`D60B09EE6324C0AA75781BF1F9DB8461A6A1AE05D788A9232EA227DBC1349936`.
+
+On approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34, 4 KB pages), the
+exact APK launched through Play Offline → Solo Raja → Bijli and captured the compact HUD
+as `GET READY` / `ALIVE 8  ZONE 14.0 > 14.0`. The route index is
+`Builds/Local/Device/final-circle-20260830/p60-zone-copy-manifest.json` (3,822 bytes;
+SHA-256 `B235CAC4A041644B7A05FED6C613A5BB2563CDD6929C19EF9E2B6F445F1C7E39`). The app
+log has no configured fatal/ANR/SIGSEGV/SIGABRT marker; known Lava graphics diagnostics
+remain recorded.
+
+This is a localized readability improvement with bounded device evidence, not final visual,
+localization, comfort, performance, thermal, battery, memory-growth, physical 16 KB or Play
+approval. The truthful state remains **Prototype — Android offline release candidate in
+progress**, and the two prompt files remain intentional uncommitted owner work.
+
 ## Milestone 11 P57 tutorial elimination target readability and refreshed touch route - 2026-08-30
 
 The latest source checkpoint is `c9e3d3091a38852be794f74ad97420b91461599a`
