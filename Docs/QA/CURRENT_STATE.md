@@ -483,12 +483,13 @@ Console gates remain open.
 
 ## P54 current-source saved-fighter presentation and portrait settings refresh - 2026-08-30
 
-The focused presentation-only follow-up is committed at `3d8fda7`, on top of documentation
-tip `ec7e97c`. Saved Bijli, Pehel and Maya production prefabs now replace the
-legacy root capsule at runtime; the root mesh remains available as a fallback for fixtures
-without a saved identity, and the root dash `TrailRenderer` is preserved. Hit/elimination
-tinting targets the saved mesh renderers. On compact portrait layouts, the settings surface
-is a centered modal rather than a right-side sheet. ADR-071 records the boundary and rationale.
+The current presentation source is committed at `ae0d294c97fa62386317e7e5ebf77cd5ebcbafee`,
+following the saved-identity integration in `3d8fda7`. Saved Bijli, Pehel and Maya production
+prefabs now replace the legacy root capsule at runtime; the root mesh remains available as a
+fallback for fixtures without a saved identity, the root dash `TrailRenderer` is preserved,
+and per-renderer base colors survive hit/elimination flash reset. Hit/elimination tinting
+targets the saved mesh renderers. On compact portrait layouts, the settings surface is a
+centered modal rather than a right-side sheet. ADR-071 records the boundary and rationale.
 
 Fresh validation is **0 errors / 0 warnings**, EditMode **141/141**, and PlayMode **89/89**.
 The rebuilt temporary-ID APK/AAB pass the offline manifest, ARM64/static 16 KB and store-
@@ -498,8 +499,9 @@ captures show the saved faceted fighter identities in the live arena and the cen
 settings modal; sampled app logcat has no configured fatal/ANR/SIGSEGV/SIGABRT markers.
 
 A current-source 180-second Lava capture contains 36 five-second samples with warm-up-
-excluded PSS **231,718-239,663 KB**, RSS **354,052-362,000 KB**, graphics PSS
-**63,012-69,168 KB**, and process CPU **51.5-62.5%** (100%-per-core scale). It was
+excluded PSS **238,249-244,525 KB** (average **241,729 KB**), RSS **360,572-366,836 KB**
+(average **364,046 KB**), graphics PSS **70,288-74,396 KB** (average **72,267 KB**), and
+process CPU **35.7-62.5%** (average **57.8%**, 100%-per-core scale). It was
 USB-powered, reported 4 KB pages, and found no configured fatal markers. These are bounded
 stability observations, not normalized FPS/frame-time/GC/GPU approval, unplugged endurance,
 physical 16 KB runtime proof or final human visual/accessibility approval. Oppo was not used.

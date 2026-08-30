@@ -2844,33 +2844,38 @@ Play-ready. The two prompt files under `PROMPTS/` remain intentional uncommitted
 
 ### P54 - Current-source saved-fighter presentation and portrait settings refresh - 2026-08-30
 
-The focused presentation-only follow-up is committed at `3d8fda7` on top of exact
-documentation tip `ec7e97c79030fa15496a0e688c2e823cb919652e`. `FighterPresentation` now keeps the
-legacy root capsule as an emergency fallback, but suppresses direct root `MeshRenderer`
-components whenever a saved Bijli, Pehel or Maya identity prefab has mesh/skinned renderers.
-Hit and elimination tinting uses the saved mesh renderers through `MaterialPropertyBlock`,
-while the root `TrailRenderer` remains available for Bijli's dash telegraph. `OfflineMatchHud`
-now presents a centered portrait settings modal (`0.06..0.94` width, `0.10..0.90` height)
-and retains the side-sheet layout for wide screens. Gameplay authority, collision, input,
-timing, networking and reward code are unchanged. The decision is recorded as ADR-071.
+The current presentation source is committed at `ae0d294c97fa62386317e7e5ebf77cd5ebcbafee`,
+following the saved-identity integration in `3d8fda7`. `FighterPresentation` keeps the legacy
+root capsule as an emergency fallback, suppresses direct root `MeshRenderer` components when
+a saved Bijli, Pehel or Maya identity prefab supplies mesh/skinned renderers, and preserves
+each saved renderer's base color after hit/elimination flash reset. Hit and elimination tinting
+uses the saved mesh renderers through `MaterialPropertyBlock`, while the root `TrailRenderer`
+remains available for Bijli's dash telegraph. `OfflineMatchHud` presents a centered portrait
+settings modal (`0.06..0.94` width, `0.10..0.90` height) and retains the side-sheet layout for
+wide screens. Gameplay authority, collision, input, timing, networking and reward code are
+unchanged. The decision is recorded as ADR-071.
 
 #### Machine evidence
 
 - Repository validation: **0 errors / 0 warnings**.
-- EditMode: **141/141 passed**. XML `Builds/Local/TestResults/editmode-v1-visual-fix-20260830.xml`
-  (109,805 bytes; SHA-256 `88CD406BD12480E31033415C64733A53C77A90A37A3089DB767BD35FD89A216D`);
-  log SHA-256 `0BA0663F7EC7EB3F14E4D1C2FCD33565F0AA3CB3C89BF1D3F264B4F2E7FD9D1F`.
-- PlayMode: **89/89 passed**. XML `Builds/Local/TestResults/playmode-v1-visual-fix-20260830.xml`
-  (78,372 bytes; SHA-256 `6758CDDF094BCC55968EF96A208E9C8692DEC41458B8FE96E7B2B84E596CF5AE`);
-  log SHA-256 `97D5F3CAAC24330836795831809DAB78CDA7E04073B4D827F4E7C900C815E75A`.
+- EditMode: **141/141 passed**. XML `Builds/Local/TestResults/editmode-v1-color-reset-20260830.xml`
+  (109,805 bytes; SHA-256 `5F8618A00354B574DCB5990615B7616A84E667153F05B997324D5B53E5B2299F`);
+  log SHA-256 `44EBEF77C680967E819E98C3A62FB490620FE7BA87BCAF8324594A91E1308709`.
+- PlayMode: **89/89 passed**. XML `Builds/Local/TestResults/playmode-v1-color-reset-20260830.xml`
+  (78,381 bytes; SHA-256 `8C274CA588B96D79436F2E3CFC4D5B365EF2A293E8DE31E7ABC91FA4EB156F36`);
+  log SHA-256 `70AB6ED5B1354AE1D9457CAA28388A989636DEA2B9AA753BA2C2031C8FC07099`.
   The suite now asserts that each production fighter is using saved tintable renderers and
   that any legacy root `MeshRenderer` is disabled.
-- APK: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`, **40,679,022 bytes**,
-  SHA-256 `533F9D462AF5C917768015C3DC5CB09DB7AEBC2D60AEC4774F907BDAECF92CF0`.
-- AAB: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`, **36,504,187 bytes**,
-  SHA-256 `FFE762B4CC60A10695B4AC76D1254243A62D2EB143A1F48A5155C318136E6248`.
-- Composed release checker log `Builds/Local/Logs/release-checker-v1-visual-fix-20260830.log`
-  (3,245 bytes; SHA-256 `3F2C3D6E7BC56F219B407C8943326DCA69ADBBD77519F1AE3F0F0B25D56439E0`)
+- APK: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`, **40,676,742 bytes**,
+  SHA-256 `1A8E1CA746E9209F404B52920B1D2A5B7BF2BCFC0FE50F5A56525EBE36D489ED`.
+- AAB: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`, **36,501,907 bytes**,
+  SHA-256 `F14D1D592662DDFFE9EF9FD33BAD2D07A5BE85E25A3D4F11972D22D37B678891`.
+- APK build log `Builds/Local/Logs/android-v1-apk-color-reset-20260830.log` (420,293 bytes;
+  SHA-256 `FD25A8E259FF074811114CDD38E37E665FF200CE813B8D5E9AD3B5A4F011751B`); AAB build log
+  `Builds/Local/Logs/android-v1-aab-color-reset-20260830.log` (419,447 bytes; SHA-256
+  `B6E9A66FB7EEEC0220A303DAADAA97EB55AEFA251798BB3000C99577D12C2209`).
+- Final audit release checker log `Builds/Local/Logs/release-checker-v1-final-audit-20260830.log`
+  (3,245 bytes; SHA-256 `815C2812F4C519D91BC1573835F5C5350585E8B9ED3D7A74DAA4EF6C308AC971`)
   passed the offline manifest gate, ARM64-only/static 16 KB alignment gate and store
   creative dimension gate. It reports package `com.example.battleraja.m11`, version
   `1.0.0`/code `100`, min/target API `28/36`, VIBRATE plus Unity's dynamic receiver
@@ -2880,24 +2885,25 @@ timing, networking and reward code are unchanged. The decision is recorded as AD
 
 The exact APK installed and launched on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`,
 Android 14/API 34). A fresh route reached the branded menu, Solo Raja, the fighter cards,
-live opening match and settings. The live capture
-`Builds/Local/Device/lava-v1-visual-fix-live-20260830.png` (324,725 bytes; SHA-256
-`D83E9E2C70EB7D300D6AE4735F32798B5247C2E42BA8524817C654117E9AB605`) shows the saved
-faceted fighter identity geometry in the arena; the settings capture
-`Builds/Local/Device/lava-v1-visual-fix-settings-20260830.png` (120,795 bytes; SHA-256
-`4901B3D3F22D257A1C49DCD2FACCD7DAF41A46FE12E9562696BD0E7279B34867`) shows the centered
-portrait modal. App-scoped logcat had no `FATAL EXCEPTION`, `AndroidRuntime`, `SIGSEGV`,
-`SIGABRT` or ANR marker. Oppo was not used.
+live opening match and settings. The menu capture
+`Builds/Local/Device/lava-v1-color-reset-menu-20260830.png` (71,755 bytes; SHA-256
+`217984A80310452CDE4C0BBD804B255509376BAA47D01483CF5A28FEEB0EED43`) and live capture
+`Builds/Local/Device/lava-v1-color-reset-live-20260830.png` (324,777 bytes; SHA-256
+`CACAA52627DCBE7DF82414917519F15180280965E7765BBDE73EA1BBB81F0878`) show the current
+candidate; the settings capture `Builds/Local/Device/lava-v1-color-reset-settings-20260830.png`
+(109,716 bytes; SHA-256 `83FF6B05C677E33A3DC27AC02F84B8AAAC9CA00D16F97C6D20D01E05F89907E1`)
+shows the centered portrait modal. App-scoped logcat had no `FATAL EXCEPTION`,
+`AndroidRuntime`, `SIGSEGV`, `SIGABRT` or ANR marker. Oppo was not used.
 
 A fresh 180-second Lava capture ran with 36 five-second samples under
-`Builds/Local/Device/Performance/v1-visual-fix-180s-20260830/`; the manifest is 4,927 bytes
-(SHA-256 `FE55E2F33F4B85946982AB10E780DA8DC04FC58AC3326FA691F6079425F19BF3`) and the
-logcat is 1,109,363 bytes (SHA-256
-`F285C8EEE5D247D0E76B4D2EF5ADA7443DA19369E7F1F737D7740AB863704FFF`). No configured fatal
-markers were found. Warm-up-excluded samples 11-36 measured **231,718-239,663 KB PSS**
-(average **236,654 KB**), **354,052-362,000 KB RSS** (average **358,988 KB**),
-**63,012-69,168 KB graphics PSS** (average **66,803 KB**), and a constant reported battery
-temperature of **34 C**. `top` sampled the app at **51.5-62.5% CPU** (average **58.6%**;
+`Builds/Local/Device/Performance/v1-color-reset-180s-20260830/`; the manifest is 4,927 bytes
+(SHA-256 `D2F8FF8021094911A585444F9639E32B2E08C45993A3253B8B3E4CEBE36C054B`) and the
+logcat is 1,110,450 bytes (SHA-256
+`144C41A54EB24235028C014963D6DF2472DAD0392A5A2E571A82F29B329E5B34`). No configured fatal
+markers were found. Warm-up-excluded samples 11-36 measured **238,249-244,525 KB PSS**
+(average **241,729 KB**), **360,572-366,836 KB RSS** (average **364,046 KB**),
+**70,288-74,396 KB graphics PSS** (average **72,267 KB**), and a constant reported battery
+temperature of **34 C**. `top` sampled the app at **35.7-62.5% CPU** (average **57.8%**;
 Android's 100%-per-core scale). The phone was USB-powered and reports 4 KB pages, so this
 is bounded stability telemetry rather than normalized FPS/GC/GPU approval, unplugged battery
 endurance, or genuine physical 16 KB runtime evidence.
