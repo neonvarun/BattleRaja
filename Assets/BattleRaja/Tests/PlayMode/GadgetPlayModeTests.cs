@@ -50,6 +50,28 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator PlayerCanCollectAndUseUmbrellaGuard()
+        {
+            foreach (var bot in Object.FindObjectsByType<BotBrain>()) bot.enabled = false;
+            var user = PlayModeTestHelpers.FindPlayer<GadgetUser>();
+            var match = Object.FindAnyObjectByType<BattleRaja.Presentation.Match.OfflineMatchController>();
+            for (var i = 0; i < 9; i++) match.Simulation.Advance(1f);
+
+            var pickup = System.Linq.Enumerable.First(
+                Object.FindObjectsByType<GadgetPickup>(),
+                candidate => candidate.GadgetId.Equals(GadgetDefinition.UmbrellaGuard.GadgetId));
+
+            Assert.That(user.TryPickup(pickup.GadgetId), Is.True);
+            Assert.That(user.UseHeld(), Is.True);
+            Assert.That(user.HasGadget, Is.False);
+            Assert.That(user.ShieldRemaining,
+                Is.EqualTo(GadgetDefinition.UmbrellaGuard.DurationSeconds).Within(0.001f));
+            Assert.That(user.Feedback, Is.EqualTo("Umbrella Guard active"));
+            Assert.That(user.SuccessfulUmbrellaGuardUses, Is.EqualTo(1));
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator PlayerCanCollectSpatialGadgetThroughMatchAuthority()
         {
             foreach (var bot in Object.FindObjectsByType<BotBrain>()) bot.enabled = false;
