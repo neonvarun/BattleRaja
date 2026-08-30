@@ -66,6 +66,13 @@ Record every fighter, weapon, gadget, Aandhi or match-rule balance change with:
   in the 240-360 s window, 95/100 with >=3 combat eliminations, 100/100 with
   bot-to-bot damage, and zero invalid/protected samples. A same-seed rerun on the
   same source reproduced duration, command count and command digest exactly.
+- **Follow-up 2026-08-30 (P53)**: the current fixed-tick harness rerun at playback scale
+  50 completed **100/100** seeded matches in the 240-360 s window (306.0135 s each),
+  with combat and bot-to-bot damage in every match, zero Aandhi-only resolutions, zero
+  protected/invalid samples, and all three gadgets used in all 100 matches. This confirms
+  the calibrated 80% automated gate and the original 90% pacing target for the current
+  fixed-tick production path; accelerated 50x playback remains unsuitable for same-seed
+  command-stream determinism claims.
 
 ## 2026-08-26 — V1 bot interaction regression fix and saved art baseline
 
