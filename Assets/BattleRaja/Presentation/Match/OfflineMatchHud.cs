@@ -20,7 +20,7 @@ namespace BattleRaja.Presentation.Match
     public sealed class OfflineMatchHud : MonoBehaviour
     {
         private const string MatchFormat = "MATCH {0}\nALIVE {1}  ZONE {2:0.0} > {3:0.0}{4}";
-        private const string CompactMatchFormat = "{0}\nALIVE {1}  Z {2:0.0} > {3:0.0}{4}";
+        private const string CompactMatchFormat = "{0}\nALIVE {1}  ZONE {2:0.0} > {3:0.0}{4}";
 
         [SerializeField] private OfflineMatchController match;
         [SerializeField] private bool showZoneOverlay = true;

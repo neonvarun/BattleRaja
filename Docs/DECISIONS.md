@@ -1721,3 +1721,26 @@ Record every material choice here. Do not silently overwrite old decisions.
   exact candidate P58 artifacts and Lava route in `Docs/V1_RELEASE_PLAN.md`, and
   `tutorial-dismiss-route-manifest.json`.
 - **Owner:** Human project owner
+
+### ADR-074 - Keep compact zone telemetry player-facing on portrait HUDs
+
+- **Date:** 2026-08-31
+- **Status:** Accepted for the V1 offline presentation baseline; final mobile readability
+  and localization review remain open.
+- **Context:** The portrait/compact match HUD abbreviated the zone label to `Z`, which was
+  ambiguous beside the alive count and read like internal debug telemetry even though the
+  radii are useful player information.
+- **Options considered:** Keep the one-letter abbreviation; remove zone radii entirely; or
+  retain the same two-line telemetry while spelling out `ZONE`.
+- **Decision:** Use `ZONE {current} > {next}` in both wide and compact player-facing match
+  status formats. Keep the existing phase, alive count, warning and closing labels, and do
+  not move any authoritative state into the presentation layer.
+- **Consequences:** Portrait screenshots now show `ALIVE 8  ZONE 14.0 > 14.0`, removing
+  the internal-looking abbreviation without adding a new layout or runtime allocation.
+  The copy remains short enough for the tested 1080x2460 Lava viewport; smaller devices,
+  localization and final visual approval remain open.
+- **Evidence/sources:** `OfflineMatchHud.FormatMatchStatus`,
+  `VerticalSlicePlayModeTests.CompactMatchStatusKeepsZoneTelemetryReadable`, the full
+  141/141 EditMode and 92/92 PlayMode reruns, and the P60 approved-Lava capture in
+  `Docs/V1_RELEASE_PLAN.md`.
+- **Owner:** Human project owner

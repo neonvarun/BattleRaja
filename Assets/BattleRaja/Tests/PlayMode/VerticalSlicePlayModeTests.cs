@@ -963,7 +963,8 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(status, Does.Contain("\n"));
             Assert.That(status, Does.Contain("SPAWN SHIELD"));
             Assert.That(status, Does.Not.Contain("SPAWNPROTECTION"));
-            Assert.That(status, Does.Contain("Z 14.0 > 8.0"));
+            Assert.That(status, Does.Contain("ZONE 14.0 > 8.0"));
+            Assert.That(status, Does.Not.Contain(" Z "));
             Assert.That(status, Does.Contain("WARN 2.5s"));
         }
 
