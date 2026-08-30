@@ -687,6 +687,15 @@ has no configured fatal/ANR/SIGSEGV/SIGABRT marker; known Lava graphics, Play Co
 diagnostics remain recorded. This is exact-candidate readability/route evidence, not final
 authored UX, localization, comfort, performance, physical 16 KB or Play approval.
 
+The same rebuilt artifact also received a fresh all-fighter checkpoint: Bijli, Pehel and Maya
+cards and live openings were captured, attack taps and Tiffin Station use were exercised, and
+each ability was repeated after the Opening phase so the Bijli dash cooldown, Pehel charge
+cooldown and Maya decoy-active feedback were visible. The route manifest is
+`Builds/Local/Device/final-circle-20260830/p61-all-fighter-manifest.json` (5,506 bytes;
+SHA-256 `9FA8762B504330189A686605A6DD60836C4992B5359E526B91E8527A813E1598`). This is bounded
+exact-candidate action evidence; accessibility toggles, action-by-action tutorial comfort,
+repeated-match comfort and human approval remain open.
+
 ## P60 compact portrait HUD copy - 2026-08-31
 
 The current runtime checkpoint is `c3cfb27e08f13ecf4b91a4234269aa11e675bfe9`. The compact

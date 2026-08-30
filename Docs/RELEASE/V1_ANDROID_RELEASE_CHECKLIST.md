@@ -1007,6 +1007,13 @@ expanded metric labels. `05-rematch-opening.png` is 322,280 bytes (SHA-256
 `Builds/Local/Device/final-circle-20260830/p61-results-copy-manifest.json` (4,936 bytes;
 SHA-256 `0C868F852FE57C409B914871845DF317EFC7C89398CEFD3A8AB98E5F1137671F`).
 
+The same rebuilt candidate has a separate all-fighter manifest
+`Builds/Local/Device/final-circle-20260830/p61-all-fighter-manifest.json` (5,506 bytes;
+SHA-256 `9FA8762B504330189A686605A6DD60836C4992B5359E526B91E8527A813E1598`). It records
+Bijli, Pehel and Maya selection/live/attack/Tiffin checkpoints plus Opening-phase ability
+feedback. This is bounded action observation; accessibility comfort, action-by-action tutorial
+comfort and human approval remain open.
+
 This closes the exact-candidate compact-results copy observation only. Smaller-device,
 localization, final visual, all-fighter action-by-action comfort, sustained performance,
 physical 16 KB, release signing, legal/privacy and human approval remain open.

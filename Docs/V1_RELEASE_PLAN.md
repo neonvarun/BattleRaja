@@ -3056,13 +3056,25 @@ app-scoped log is 15,783 bytes (SHA-256
 Play Core class-probe and Swappy diagnostics remain recorded. The UI tree is SurfaceView-only
 and screenshot-derived coordinates were required.
 
+A second exact-candidate route exercised all three fighter cards and live action checkpoints
+on the same rebuilt APK: Bijli, Pehel and Maya selection/opening, attack taps, Tiffin Station
+use, and ability feedback after the Opening phase (Bijli dash cooldown, Pehel charge cooldown,
+Maya decoy active). Its manifest is
+`Builds/Local/Device/final-circle-20260830/p61-all-fighter-manifest.json` (5,506 bytes;
+SHA-256 `9FA8762B504330189A686605A6DD60836C4992B5359E526B91E8527A813E1598`). The route's
+current app-scoped log is 15,630 bytes (SHA-256
+`4F8734236C6CA4D314B38F441FE12617CABE8D85E2C8A04DB0E0E0E8A5DEF0AB`) with no configured
+fatal/ANR/SIGSEGV/SIGABRT marker. This is bounded action observation; accessibility comfort,
+full tutorial comfort and repeated-match approval remain open.
+
 #### P61 gate delta
 
 | Gate | Current classification | Evidence / remaining action |
 | --- | --- | --- |
 | Compact results metric copy and portrait type size | **Passed by exact source/test/device evidence** | `OfflineMatchHud.FormatResults`, ADR-075, full 141/141 + 92/92 reruns, exact rebuilt Lava result/rematch capture |
 | Exact rebuilt APK/AAB technical checks | **Passed locally** | Rebuilt artifacts, repository validation and release checker above |
-| Full all-fighter/accessibility route on this rebuilt artifact | **Open / prior observation remains** | P59 route evidence is on the preceding copy-only candidate; fresh all-fighter comfort review remains required |
+| All three fighter cards and live action checkpoints on this rebuilt artifact | **Passed by bounded exact-candidate observation** | P61 all-fighter manifest and 15 capture set; action-by-action comfort and sustained play remain open |
+| Accessibility settings and left-handed route on this rebuilt artifact | **Open / prior observation remains** | P59 captured the toggles on the preceding copy-only candidate; fresh comfort review remains required |
 | Final authored art/audio, localization, cultural, fun and accessibility approval | **Owner/human review required** | Generated presentation baseline remains a candidate |
 | Sustained performance, battery/thermal, physical 16 KB and Play gates | **Open / owner-controlled** | Existing bounded evidence and drafts do not replace these approvals |
 

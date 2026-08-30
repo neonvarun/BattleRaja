@@ -963,6 +963,13 @@ recorded. The truthful state remains **Prototype — Android offline release can
 progress**; final authored/cultural/fun/accessibility, normalized performance/endurance,
 physical 16 KB, identity/signing, legal/privacy, rating and Play gates remain open.
 
+The same exact rebuilt artifact also has bounded all-fighter action evidence: Bijli, Pehel and
+Maya selection/live/attack/Tiffin checkpoints plus Opening-phase ability feedback. The route
+index is `Builds/Local/Device/final-circle-20260830/p61-all-fighter-manifest.json` (5,506 bytes;
+SHA-256 `9FA8762B504330189A686605A6DD60836C4992B5359E526B91E8527A813E1598`). Accessibility
+comfort, action-by-action tutorial comfort, repeated-match comfort and human approval remain
+open.
+
 ## Milestone 11 P60 compact portrait HUD copy - 2026-08-31
 
 The runtime/test checkpoint is `c3cfb27e08f13ecf4b91a4234269aa11e675bfe9`. The compact
