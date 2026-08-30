@@ -2999,6 +2999,55 @@ Play-ready. P59 adds current-candidate all-fighter and accessibility observation
 does not close the subjective, physical, performance, identity, legal or Play gates. The two
 prompt files under `PROMPTS/` remain intentional uncommitted owner work.
 
+### P62 - Re-run accessibility, persistence and lifecycle route on the exact P61 candidate - 2026-08-31
+
+The exact rebuilt P61 APK from `f80b565372d7446e070cf1a37de042bd018345c4` was installed on
+approved Lava `ST5GDW23LB004392` after clearing app data. The fresh route exercised menu and
+in-match Settings & Accessibility, all five requested accessibility changes, left-handed live
+controls, persistence across return/relaunch, reset-to-defaults and a bounded live
+background/resume cycle. The route index is
+`Builds/Local/Device/final-circle-20260830/p61-accessibility-route/p62-accessibility-route-manifest.json`
+(8,901 bytes; SHA-256
+`0DAE55EBFC6DD57F78D9BF28D0A9172659102FFB2D30BFBB2ADC8AB610D4BCF9`).
+
+#### Exact-candidate route evidence
+
+- The menu Settings summary captured all defaults, then showed `LEFT-HANDED: ON`,
+  `REDUCED FLASHES: ON`, `HIGH CONTRAST: ON`, `AIM ASSIST: ON` and `TEXT SIZE: 110%` after
+  the in-match changes. The left-handed live capture visibly moved the action row to the
+  opposite side. The settings were toggled back and the post-relaunch summary returned to
+  `OFF`/`100%` defaults.
+- The route retained 25 selected screenshots, including
+  `18-menu-settings-persisted.png` (99,659 bytes; SHA-256
+  `31F424FE3F8BC5AB9B49F2C9DA2A09490307ECC088D2F255CA6384FE248CF59D`),
+  `15-left-handed-live-retry.png` (311,075 bytes; SHA-256
+  `0A088A13908B94ED1639E08F54F85251966A5C729CA2DB1CB50E3C08046AD5DD`) and
+  `25-menu-settings-reset-persisted.png` (98,072 bytes; SHA-256
+  `D3144806370F530C662E730BDF17C61D4638FF8846012BDCCA2E9BA9B9F9316F`).
+- The bounded background/resume pair returned to the same live Opening Fight state. The
+  warning timer decreased during the observation window, so this is lifecycle return evidence,
+  not a claim that the simulation remained frozen for the entire background interval.
+- The UI tree remains SurfaceView-only: `p61-accessibility-ui.xml` is 2,546 bytes (SHA-256
+  `A8235CD2CFEE7BFCFB0A515F9337E4ABF6E6C16C10ACDCF446DE87E9AEF094BD`). The app-scoped
+  logcat is 24,935 bytes (SHA-256
+  `2AA7EA1065F8FA035226E760454961ACC9BE770ACBDA9B7A003F5037ED278C27`) with no configured
+  `FATAL EXCEPTION`, `ANR in`, `SIGSEGV` or `SIGABRT` marker. Known Lava gralloc/AHardwareBuffer,
+  Play Core class-probe and Swappy diagnostics remain recorded.
+
+#### P62 gate delta
+
+| Gate | Current classification | Evidence / remaining action |
+| --- | --- | --- |
+| Accessibility toggles, left-handed layout, persistence and reset on exact P61 APK | **Passed by bounded exact-candidate observation** | P62 manifest and 25 selected captures; smaller-device coverage and human comfort remain open |
+| Live background/resume return on exact P61 APK | **Observed / bounded** | P62 before/after captures return to live Opening Fight; simulation pause invariance and sustained lifecycle testing remain open |
+| Exact rebuilt APK/AAB technical checks | **Passed locally** | P61 artifacts, repository validation and release checker above remain unchanged |
+| Full action-by-action tutorial, repeated matches, final authored content and human approval | **Open / owner-controlled** | Physical route evidence does not replace action comfort, fun, cultural or accessibility review |
+| Sustained performance, battery/thermal, physical 16 KB and Play gates | **Open / owner-controlled** | Lava reports 4 KB pages; existing bounded diagnostics do not replace these approvals |
+
+The truthful classification remains **prototype / Android offline release candidate in
+progress**, not Play-ready. The prompt files under `PROMPTS/` remain intentional uncommitted
+owner work.
+
 ### P61 - Clarify compact results metrics on the portrait HUD - 2026-08-31
 
 The current runtime/test checkpoint is `f80b565372d7446e070cf1a37de042bd018345c4`

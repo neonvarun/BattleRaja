@@ -660,6 +660,23 @@ proof, final authored art/audio, human accessibility/fun/fairness/cultural appro
 Store readiness. The project remains **Prototype — Android offline release candidate in
 progress**.
 
+## P62 accessibility, persistence and lifecycle route - 2026-08-31
+
+The exact P61 APK from `f80b565372d7446e070cf1a37de042bd018345c4` was freshly installed on
+approved Lava `ST5GDW23LB004392` after clearing app data. The route opened in-match Settings &
+Accessibility, toggled left-handed controls, reduced flashes, high contrast, aim assist and
+text scale, visibly moved the left-handed live action row, verified persistence after returning
+to the menu and relaunching, then restored all changed settings to defaults. The route manifest
+is `Builds/Local/Device/final-circle-20260830/p61-accessibility-route/p62-accessibility-route-manifest.json`
+(8,901 bytes; SHA-256
+`0DAE55EBFC6DD57F78D9BF28D0A9172659102FFB2D30BFBB2ADC8AB610D4BCF9`).
+
+The bounded live background/resume pair returned to Opening Fight on the same exact artifact;
+the warning timer moved during the observation window, so full simulation pause invariance is
+not claimed. The UI tree remains SurfaceView-only and the 24,935-byte app-scoped logcat has no
+configured `FATAL EXCEPTION`, `ANR in`, `SIGSEGV` or `SIGABRT` marker. Accessibility comfort,
+smaller-device coverage, sustained lifecycle testing and human approval remain open.
+
 ## P61 compact portrait results metrics - 2026-08-31
 
 The current runtime/test checkpoint is `f80b565372d7446e070cf1a37de042bd018345c4`. Compact

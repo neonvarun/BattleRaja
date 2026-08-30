@@ -940,6 +940,22 @@ Console actions remain owner-controlled. The truthful state remains **Prototype 
 offline release candidate in progress**; the two prompt files are intentional uncommitted owner
 work.
 
+## Milestone 11 P62 accessibility, persistence and lifecycle route - 2026-08-31
+
+The exact P61 APK (`f80b565372d7446e070cf1a37de042bd018345c4`) was freshly installed on
+approved Lava `ST5GDW23LB004392` after clearing app data. The route exercised in-match Settings
+& Accessibility, left-handed controls, reduced flashes, high contrast, aim assist and text
+scale, observed the left-handed live action layout, verified persistence after return/relaunch,
+and restored defaults. The route manifest is
+`Builds/Local/Device/final-circle-20260830/p61-accessibility-route/p62-accessibility-route-manifest.json`
+(8,901 bytes; SHA-256
+`0DAE55EBFC6DD57F78D9BF28D0A9172659102FFB2D30BFBB2ADC8AB610D4BCF9`).
+
+A bounded live background/resume pair returned to Opening Fight. The warning timer moved during
+the observation window, so full simulation pause invariance is not claimed. The route log has no
+configured fatal/ANR/native-crash marker; smaller-device coverage, accessibility comfort,
+sustained lifecycle testing and human approval remain open.
+
 ## Milestone 11 P61 compact portrait results metrics - 2026-08-31
 
 The runtime/test checkpoint is `f80b565372d7446e070cf1a37de042bd018345c4`. Compact results

@@ -987,6 +987,27 @@ repeated-rematch approval, normalized performance, physical 16 KB proof, final a
 content approval or Play Store approval. The project remains a prototype / Android offline
 release candidate in progress.
 
+## Latest exact-candidate accessibility, persistence and lifecycle evidence — P62 — 2026-08-31
+
+The exact P61 APK (`f80b565372d7446e070cf1a37de042bd018345c4`) was freshly installed on
+approved Lava `ST5GDW23LB004392` after clearing app data. The route opened in-match Settings &
+Accessibility, exercised left-handed controls, reduced flashes, high contrast, aim assist and
+text scale, observed the left-handed live action layout, verified persistence after return and
+relaunch, and restored defaults. The route manifest is
+`Builds/Local/Device/final-circle-20260830/p61-accessibility-route/p62-accessibility-route-manifest.json`
+(8,901 bytes; SHA-256
+`0DAE55EBFC6DD57F78D9BF28D0A9172659102FFB2D30BFBB2ADC8AB610D4BCF9`). It also records a
+bounded live background/resume return; the warning timer moved during that interval, so full
+simulation pause invariance is not claimed.
+
+The route's UI tree is SurfaceView-only (`p61-accessibility-ui.xml`, 2,546 bytes; SHA-256
+`A8235CD2CFEE7BFCFB0A515F9337E4ABF6E6C16C10ACDCF446DE87E9AEF094BD`). Its app-scoped logcat
+is 24,935 bytes (SHA-256
+`2AA7EA1065F8FA035226E760454961ACC9BE770ACBDA9B7A003F5037ED278C27`) with no configured
+fatal/ANR/SIGSEGV/SIGABRT marker; known Lava graphics, Play Core and Swappy diagnostics remain
+recorded. Smaller-device coverage, accessibility comfort, sustained lifecycle testing and
+human approval remain open.
+
 ## Latest exact-candidate compact-results evidence — P61 — 2026-08-31
 
 The P61 runtime checkpoint `f80b565372d7446e070cf1a37de042bd018345c4` keeps the P60 `ZONE`
