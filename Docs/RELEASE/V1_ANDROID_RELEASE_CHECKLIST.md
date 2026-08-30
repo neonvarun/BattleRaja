@@ -873,3 +873,22 @@ This closes only the **host-GPU AVD 16 KB smoke**. A SwiftShader attempt on the 
 showed URP/Lit GLSL uniform-limit corruption and is retained as superseded renderer diagnostics
 under `Builds/Local/Device/Performance/20260830-16k-5d136fb-route/`. Physical ARM64 16 KB
 coverage, other GPU profiles, normalized budgets and human approval remain open.
+
+## Exact-candidate P50 Lava live-match SurfaceFlinger diagnostic - 2026-08-30
+
+The exact `5d136fb` terminal-outcome APK was relaunched on approved Lava
+`ST5GDW23LB004392` through Rematch. A roughly 45-second live-match SurfaceFlinger ring-buffer
+sample recorded **126 valid present timestamps / 125 intervals** after excluding one
+`Long.MaxValue` sentinel. The middle timestamp series measured min/median/p95/p99/max
+intervals **16.447 / 16.534 / 16.565 / 33.078 / 33.367 ms**, with one interval over 2×
+refresh. Raw evidence is under
+`Builds/Local/Device/Performance/20260830-lava-5d136fb-sf/`; summary SHA-256 is
+`21369E4FC3BF33BF1DB234BE2F23F1A8D32BD45D0DF29F8682DC90D17489B144` and raw latency SHA-256
+is `D83D61790C60E5D76CB9BBC5B0D25CA91D0AD044BC63686DAD417F71942B3D26`.
+
+The end capture remained in the spectator state after player defeat with Aandhi closing;
+end telemetry was **277,284 KB PSS / 400,500 KB RSS / 80,052 KB graphics PSS**, battery
+**75% / 4,120 mV / 31 C** while USB-powered, thermal status 0 and no configured fatal
+markers. This is bounded compositor evidence only. Lava reports 4 KB pages, Unity `gfxinfo`
+has no usable histogram, and normalized performance, physical 16 KB and human release
+approval remain open.

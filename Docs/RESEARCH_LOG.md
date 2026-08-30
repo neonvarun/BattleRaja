@@ -611,3 +611,30 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   profiles before claiming broad compatibility.
 - **Recheck trigger/date:** Before final signed AAB selection, after any Unity/NDK/native
   dependency or renderer change, and before any Play upload.
+
+### V1.0 live-match SurfaceFlinger diagnostic refresh (2026-08-30)
+
+- **Question:** Can the exact terminal-outcome candidate provide a reproducible Android
+  frame-present diagnostic during a live match when Unity `gfxinfo` has no usable histogram?
+- **Primary source:** [Android Open Source Project SurfaceFlinger dump implementation](https://android.googlesource.com/platform/frameworks/native/+/master/services/surfaceflinger/SurfaceFlinger.cpp)
+  and [AOSP SurfaceFlinger latency test](https://android.googlesource.com/platform/frameworks/native/+/06bf5557c902dd6a1bb88acbd3b5fd8ec48e1278/services/surfaceflinger/tests/Dumpsys_test.cpp).
+- **Access date:** 2026-08-30 (IST).
+- **Relevant claim:** SurfaceFlinger exposes `--latency` and `--latency-clear` for a layer;
+  the returned refresh period and bounded timestamp buffer can be used for a raw present-
+  interval diagnostic. Sentinel rows must be excluded before interval calculations.
+- **Local evidence:** The exact `5d136fb` APK ran on approved Lava `ST5GDW23LB004392` during
+  a live Solo Raja match. The raw 45-second sample is
+  `Builds/Local/Device/Performance/20260830-lava-5d136fb-sf/surfaceflinger-latency-live-45s.txt`
+  (SHA-256 `D83D61790C60E5D76CB9BBC5B0D25CA91D0AD044BC63686DAD417F71942B3D26`); its
+  summary records 126 valid timestamps, median interval 16.534 ms, p95 16.565 ms, max
+  33.367 ms and one interval over 2× refresh.
+- **Decision impact:** Retain the capture as bounded raw compositor evidence and use it to
+  guide future profiling; do not classify it as normalized FPS, GPU/GC, endurance or final
+  performance approval. Keep the Lava 4 KB page-size limitation and the genuine 16 KB AVD
+  smoke classification separate.
+- **Uncertainty:** The ring buffer covers only a bounded recent window, `gfxinfo` exposes no
+  usable Unity frame histogram, and no host trace processor/Unity Profiler capture is
+  available locally. Physical 16 KB, normalized performance and human acceptance remain
+  open.
+- **Recheck trigger/date:** Repeat with supported Unity/Perfetto frame-timeline tooling,
+  unplugged repeated matches, and the final signed artifact before Play submission.

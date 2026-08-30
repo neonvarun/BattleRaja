@@ -692,6 +692,40 @@ cannot establish 16 KB runtime compatibility.
   stability evidence but does not close sustained FPS/frame-time/GC/GPU, unplugged battery,
   physical 16 KB runtime, or human performance approval gates.
 
+## V1 P50 exact-candidate Lava live-match SurfaceFlinger diagnostic - 2026-08-30
+
+The exact terminal-outcome candidate from source `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`
+was relaunched on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34)
+through the documented Rematch route. Android SurfaceFlinger latency was cleared and
+collected for approximately 45 seconds while the player was in a live Solo Raja match;
+the player was defeated and the final screenshot remained in the spectator state with
+Aandhi closing. The raw folder is
+`Builds/Local/Device/Performance/20260830-lava-5d136fb-sf/`.
+
+- `summary.json` is 1,847 bytes (SHA-256
+  `21369E4FC3BF33BF1DB234BE2F23F1A8D32BD45D0DF29F8682DC90D17489B144`) and records the
+  layer, timestamps, device identity, artifact hash and parsing convention. The raw
+  `surfaceflinger-latency-live-45s.txt` is 6,239 bytes (SHA-256
+  `D83D61790C60E5D76CB9BBC5B0D25CA91D0AD044BC63686DAD417F71942B3D26`).
+- The 16.666667 ms refresh period produced **126 valid present timestamps** and **125
+  intervals** after excluding one `Long.MaxValue` sentinel. Using the middle timestamp
+  column consistently with the earlier diagnostic, min/median/p95/p99/max intervals were
+  **16.447 / 16.534 / 16.565 / 33.078 / 33.367 ms**; three intervals exceeded one refresh
+  period and one exceeded 2×. This is a SurfaceFlinger ring-buffer measurement, not a
+  Unity Profiler frame-time or normalized FPS result.
+- The start screenshot `rematch-start.png` (SHA-256
+  `5B7E42E4AD6DC1EE333DEE902D4E5F8877AB8CEF944CF1D0E00D480B751A1A80`) shows the fresh
+  opening fight. The end screenshot `live-end.png` (SHA-256
+  `E8E27A5A92CB8098F28A235885AF64133EFE70EC8DA7635956D14230F98CA973`) shows player
+  defeat, spectator state and Aandhi closing. The end snapshot measured **277,284 KB
+  PSS**, **400,500 KB RSS** and **80,052 KB graphics PSS**; battery was **75% / 4,120 mV /
+  31 C** while USB-powered, thermal status was **0**, and the configured logcat marker
+  scan found **0** hits.
+- `dumpsys gfxinfo` again exposed no usable Unity frame histogram. Lava reports 4 KB pages,
+  so this strengthens raw live-match stability/frame-present evidence only; it does not
+  close normalized FPS/frame-time/GC/GPU, unplugged endurance, physical 16 KB or human
+  performance approval gates.
+
 ## V1 P49 genuine 16 KB Android 16 AVD host-GPU smoke - 2026-08-30
 
 The exact P47 terminal-outcome APK (`31D982D7334B08D0DE759CE755784547CFCF843D9CFCFB1DB0E041E7EEE2DF2D`)

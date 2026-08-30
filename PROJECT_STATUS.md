@@ -810,3 +810,20 @@ superseded renderer-profile diagnostic. Physical ARM64 16 KB coverage, other GPU
 normalized performance, final authored/accessibility/cultural approval and owner-controlled
 identity/signing/privacy/Play gates remain open. The two prompt files under `PROMPTS/` remain
 intentional uncommitted owner work.
+
+## Milestone 11 P50 Lava live-match SurfaceFlinger diagnostic - 2026-08-30
+
+The exact terminal-outcome APK from `5d136fb` was relaunched on approved Lava
+`ST5GDW23LB004392` through Rematch. A 45-second live Solo Raja sample produced **126 valid
+SurfaceFlinger present timestamps** and **125 intervals**, excluding one `Long.MaxValue`
+sentinel. Middle-column min/median/p95/p99/max intervals were **16.447 / 16.534 / 16.565 /
+33.078 / 33.367 ms**; three intervals exceeded one refresh period and one exceeded 2×. The
+raw evidence and summary are indexed in `Docs/V1_RELEASE_PLAN.md` P50 (summary SHA-256
+`21369E4FC3BF33BF1DB234BE2F23F1A8D32BD45D0DF29F8682DC90D17489B144`).
+
+The end state was player defeat/spectating during Aandhi closing. End telemetry was
+**277,284 KB PSS / 400,500 KB RSS / 80,052 KB graphics PSS**, battery **75% / 4,120 mV /
+31 C** while USB-powered, thermal status 0 and no configured fatal markers. This is bounded
+raw compositor evidence only; Lava reports 4 KB pages, `gfxinfo` has no usable Unity
+histogram, and normalized performance, physical 16 KB, final authored/accessibility/cultural
+approval and owner-controlled identity/signing/privacy/Play gates remain open.

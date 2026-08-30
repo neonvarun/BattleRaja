@@ -1925,3 +1925,22 @@ usable frame histogram; this is synthetic runtime/page-size evidence, not a prod
 performance pass. SwiftShader on the same AVD produced URP/Lit uniform-limit corruption and
 is retained as a superseded renderer diagnostic. Host-GPU 16 KB smoke is passed locally;
 physical 16 KB, other GPU profiles, normalized budgets and human approval remain open.
+
+## P50 exact-candidate Lava live-match SurfaceFlinger diagnostic - 2026-08-30
+
+The exact `5d136fb` APK was relaunched on approved Lava `ST5GDW23LB004392` through Rematch.
+During approximately 45 seconds of a live Solo Raja match, SurfaceFlinger reported **126
+valid present timestamps** and **125 intervals** after excluding one `Long.MaxValue`
+sentinel. Using the middle timestamp column, min/median/p95/p99/max intervals were
+**16.447 / 16.534 / 16.565 / 33.078 / 33.367 ms**; three intervals exceeded one refresh
+period and one exceeded 2×. The raw folder is
+`Builds/Local/Device/Performance/20260830-lava-5d136fb-sf/`; its summary SHA-256 is
+`21369E4FC3BF33BF1DB234BE2F23F1A8D32BD45D0DF29F8682DC90D17489B144`, and the latency-file
+SHA-256 is `D83D61790C60E5D76CB9BBC5B0D25CA91D0AD044BC63686DAD417F71942B3D26`.
+
+The end screenshot shows player defeat and spectator state while Aandhi closes. End
+telemetry was **277,284 KB PSS / 400,500 KB RSS / 80,052 KB graphics PSS**, battery
+**75% / 4,120 mV / 31 C** while USB-powered, thermal status 0, and no configured fatal
+markers. This is bounded compositor evidence only: Lava reports 4 KB pages, Unity `gfxinfo`
+has no usable histogram, and normalized performance, physical 16 KB and human approval remain
+open.

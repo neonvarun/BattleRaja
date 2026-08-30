@@ -2842,6 +2842,46 @@ than normalized FPS, frame-time, GC, thermal, battery, accessibility or sustaine
 The candidate remains a **prototype / Android offline release candidate in progress**, not
 Play-ready. The two prompt files under `PROMPTS/` remain intentional uncommitted owner work.
 
+### P50 - Exact-candidate Lava live-match SurfaceFlinger diagnostic - 2026-08-30
+
+The exact terminal-outcome candidate from source `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`
+was relaunched on approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34)
+through the documented Rematch route. A SurfaceFlinger latency ring-buffer sample was
+cleared and collected for approximately 45 seconds while the player was in a live Solo
+Raja match. The player was defeated during the sample; the end capture remains in the
+spectator state while Aandhi is closing.
+
+#### Machine evidence
+
+- Raw evidence is under `Builds/Local/Device/Performance/20260830-lava-5d136fb-sf/`.
+  `summary.json` is 1,847 bytes with SHA-256
+  `21369E4FC3BF33BF1DB234BE2F23F1A8D32BD45D0DF29F8682DC90D17489B144`; the raw
+  `surfaceflinger-latency-live-45s.txt` is 6,239 bytes with SHA-256
+  `D83D61790C60E5D76CB9BBC5B0D25CA91D0AD044BC63686DAD417F71942B3D26`.
+- The 16.666667 ms refresh period produced **126 valid present timestamps** and **125
+  intervals** after excluding one `Long.MaxValue` sentinel. The middle timestamp column
+  is the present-time series, matching the earlier P21 diagnostic. Min/median/p95/p99/max
+  intervals were **16.447 / 16.534 / 16.565 / 33.078 / 33.367 ms**; three intervals were
+  over one refresh period and one was over 2×.
+- The fresh opening screenshot is `rematch-start.png` (SHA-256
+  `5B7E42E4AD6DC1EE333DEE902D4E5F8877AB8CEF944CF1D0E00D480B751A1A80`); the live end
+  screenshot is `live-end.png` (SHA-256
+  `E8E27A5A92CB8098F28A235885AF64133EFE70EC8DA7635956D14230F98CA973`). End-of-sample
+  Android telemetry was **277,284 KB PSS / 400,500 KB RSS / 80,052 KB graphics PSS**,
+  battery **75% / 4,120 mV / 31 C** while USB-powered, thermal status **0**, and zero
+  configured fatal/ANR/SIGSEGV markers.
+- Android `gfxinfo` still has no usable Unity frame histogram. This is a bounded compositor
+  diagnostic, not Unity Profiler data, normalized FPS/frame-time/GC/GPU approval, or a
+  physical 16 KB result; Lava reports 4 KB pages.
+
+| Gate | Current classification | Evidence / remaining action |
+| --- | --- | --- |
+| Live-match SurfaceFlinger frame-present stream | **Passed as raw diagnostic evidence** | 126 valid present timestamps; summary and raw-file hashes above |
+| Normalized FPS, frame-time, GC, GPU and render-thread budget | **Open** | Unity `gfxinfo` has no usable histogram; use supported Unity/Perfetto tooling |
+| Battery endurance and sustained thermal acceptance | **Open** | Unplugged, longer repeated-match capture with owner criteria |
+| Genuine 16 KB runtime | **Open on Lava** | Lava reports 4 KB pages; P49 host-GPU AVD smoke is profile-specific |
+| Final authored/accessibility/fun/performance approval | **Owner review required** | Raw compositor telemetry does not replace human review |
+
 ### P49 - Genuine 16 KB Android 16 AVD host-GPU smoke - 2026-08-30
 
 The exact P47 terminal-outcome APK (`31D982D7334B08D0DE759CE755784547CFCF843D9CFCFB1DB0E041E7EEE2DF2D`)
