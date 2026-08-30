@@ -1,4 +1,8 @@
-# Store/Web Draft Copy — Human Review Required
+# Historical Store/Web Draft Copy — Superseded for V1 Android
+
+This retained pre-M11 draft is not the active V1 store copy. V1 scope is offline Android
+only; use `Docs/RELEASE/PLAY_STORE_METADATA_DRAFT.md` and
+`Docs/RELEASE/V1_RELEASE_NOTES_AND_SUPPORT_DRAFT.md` for the current owner/legal handoff.
 
 ## Short description
 
