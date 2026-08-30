@@ -2890,9 +2890,12 @@ live opening match and settings. The menu capture
 `217984A80310452CDE4C0BBD804B255509376BAA47D01483CF5A28FEEB0EED43`) and live capture
 `Builds/Local/Device/lava-v1-color-reset-live-20260830.png` (324,777 bytes; SHA-256
 `CACAA52627DCBE7DF82414917519F15180280965E7765BBDE73EA1BBB81F0878`) show the current
-candidate; the settings capture `Builds/Local/Device/lava-v1-color-reset-settings-20260830.png`
-(109,716 bytes; SHA-256 `83FF6B05C677E33A3DC27AC02F84B8AAAC9CA00D16F97C6D20D01E05F89907E1`)
-shows the centered portrait modal. App-scoped logcat had no `FATAL EXCEPTION`,
+candidate; the clean menu settings capture
+`Builds/Local/Device/lava-v1-color-reset-menu-settings-20260830.png` (104,506 bytes; SHA-256
+`70295A74F05C4EADFB1C820543C773D071967B1DE4ACC63E22C1D992965B78D4`) shows the centered
+portrait settings surface. App-scoped logcat
+`Builds/Local/Device/lava-v1-color-reset-settings-logcat-20260830.txt` (15,477 bytes; SHA-256
+`C2665DD1058B5029B43C1CAE5CF8CD808F209B028F53DC71EAA94BEF7A3CFDBC`) had no `FATAL EXCEPTION`,
 `AndroidRuntime`, `SIGSEGV`, `SIGABRT` or ANR marker. Oppo was not used.
 
 A fresh 180-second Lava capture ran with 36 five-second samples under
