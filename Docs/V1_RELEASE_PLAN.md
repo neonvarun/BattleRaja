@@ -2867,32 +2867,33 @@ older Web-inclusive store copy is marked historical/superseded for the V1 Androi
 
 ### P52 - Player-facing Umbrella Guard route regression - 2026-08-30 07:21 IST
 
-This test-only continuation is based on commit `a3d4afc90cbd80f109174a6432159b333c449900`,
+This test-only continuation is based on commit `4c4c67cbbc20062e3723cc90ee3bb7c266bbeda4`,
 which adds direct PlayMode coverage for collecting and using the player-facing Umbrella Guard
 through the existing MovementLab authority path. The regression asserts successful pickup and
-use, one-slot consumption, the configured shield duration, player feedback and the success
-telemetry counter. No runtime-bearing gameplay, art, package, manifest or build input changed;
+use, one-slot consumption, the configured shield duration, player feedback, the success
+telemetry counter, front-facing projectile mitigation and the Aandhi bypass. No runtime-bearing
+gameplay, art, package, manifest or build input changed;
 the exact `5d136fb` APK/AAB and P47-P50 device evidence remain the release-candidate artifacts.
 
 #### P52 machine evidence
 
 - Repository validation: **0 errors / 0 warnings** from `Tools/Validation/validate.ps1`.
-- EditMode: **141/141 passed** in **3.8201455 s**. XML
-  `Builds/Local/TestResults/editmode-umbrella-player.xml` (109,819 bytes; SHA-256
-  `D942D4A52D27136DA9E97D28FE1B6AED1F1CA233222B3EEE2290EE5FC07DB4CA`); log
-  `Builds/Local/Logs/editmode-umbrella-player.log` (35,450 bytes; SHA-256
-  `5546D02B79D8C0F8C340CF46F2B0298CFDA8EAC959EAEFF386B844F0960B0329`).
-- PlayMode: **89/89 passed** in **80.3095409 s**. XML
-  `Builds/Local/TestResults/playmode-umbrella-player.xml` (78,374 bytes; SHA-256
-  `1077A1B644A59E016882DFF30B31EAB579656687453CB0D15624014A704D2EB8`); log
-  `Builds/Local/Logs/playmode-umbrella-player.log` (107,804 bytes; SHA-256
-  `A48315A033BD74D4DEE0294370589C98FC5C2A1C7552F041CCAA651A2D1D4B84`).
+- EditMode: **141/141 passed** in **3.1482472 s**. XML
+  `Builds/Local/TestResults/editmode-umbrella-mitigation.xml` (109,806 bytes; SHA-256
+  `F04ADFE67CF5AB0277E38B258066CC19BCCC457F26240803092D84F8BEA520B7`); log
+  `Builds/Local/Logs/editmode-umbrella-mitigation.log` (35,805 bytes; SHA-256
+  `63D1E76E775DE4CACB7FE3477EF855D9911B8C35312E07B77405F52478A531F7`).
+- PlayMode: **89/89 passed** in **71.8220509 s**. XML
+  `Builds/Local/TestResults/playmode-umbrella-mitigation.xml` (78,376 bytes; SHA-256
+  `B980C51E835CCE4B4047423D2996A7E49D49413D665FDD250E72B43FF939B44F`); log
+  `Builds/Local/Logs/playmode-umbrella-mitigation.log` (110,661 bytes; SHA-256
+  `47A16D698B3E320AF799073CBA2059E65E39DA0228293F57AABB950887824E88`).
 - `git diff --check` passed. The two prompt files under `PROMPTS/` remain intentional
   uncommitted owner work.
 
 | Gate | Current classification | Evidence / remaining action |
 | --- | --- | --- |
-| Player-facing Umbrella Guard pickup/use route | **Passed locally** | New `GadgetPlayModeTests.PlayerCanCollectAndUseUmbrellaGuard` regression; full PlayMode 89/89 |
+| Player-facing Umbrella Guard pickup/use/mitigation route | **Passed locally** | New `GadgetPlayModeTests.PlayerCanCollectAndUseUmbrellaGuard` regression; full PlayMode 89/89 |
 | Domain, authority and production-bot gadget coverage | **Unchanged / retained** | Existing EditMode, production-bot and production-scene coverage; no rule change |
 | APK/AAB and device evidence | **Unchanged / retained** | P47-P50 exact `5d136fb` runtime/art candidate remains authoritative; no rebuild needed for test-only source |
 | Final authored/accessibility/fun/cultural/performance approval | **Owner/human gate required** | Test evidence does not replace subjective review or sustained device acceptance |

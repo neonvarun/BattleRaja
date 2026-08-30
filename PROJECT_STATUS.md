@@ -8,9 +8,9 @@
 
 - **Latest runtime/art presentation checkpoint (2026-08-30):** runtime/art source remains
   `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`; local HEAD is the test-only follow-up
-  `a3d4afc90cbd80f109174a6432159b333c449900`. The terminal-outcome continuation saves
+  `4c4c67cbbc20062e3723cc90ee3bb7c266bbeda4`. The terminal-outcome continuation saves
   Victory/Defeat VFX and routes authoritative placement into persistent render-only fighter
-  states; the follow-up adds direct player Umbrella Guard PlayMode coverage without changing
+  states; the follow-up adds direct player Umbrella Guard pickup/use/mitigation PlayMode coverage without changing
   runtime behavior. Full EditMode is **141/141**, PlayMode is **89/89**, static validation is **0 errors / 0
   warnings**, and the exact temporary-ID APK/AAB pass offline manifest, ARM64/static 16 KB,
   bundletool, alignment, signature and store-dimension checks. Fresh exact APK evidence on
@@ -841,10 +841,10 @@ validation pass. No runtime source, build artifact or package identity changed; 
 
 ## Milestone 11 P52 player-facing Umbrella Guard regression - 2026-08-30 07:21 IST
 
-The test-only tip is `a3d4afc90cbd80f109174a6432159b333c449900`. It adds a direct MovementLab
+The test-only tip is `4c4c67cbbc20062e3723cc90ee3bb7c266bbeda4`. It adds a direct MovementLab
 PlayMode assertion that the player can collect and use Umbrella Guard, consume the one-slot
-inventory, receive the configured shield duration and feedback, and record the successful-use
-counter. Full EditMode is **141/141**, PlayMode is **89/89**, repository validation is
+inventory, receive the configured shield duration and feedback, record the successful-use
+counter, mitigate front-facing projectile damage and leave Aandhi damage unmitigated. Full EditMode is **141/141**, PlayMode is **89/89**, repository validation is
 **0 errors / 0 warnings**, and `git diff --check` passes. No runtime-bearing code, package,
 APK/AAB or P47-P50 device evidence changed, so the exact `5d136fb` candidate artifacts remain
 authoritative. Final authored/cultural/fun/accessibility approval, sustained performance,

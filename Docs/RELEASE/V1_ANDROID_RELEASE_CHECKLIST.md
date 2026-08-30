@@ -861,10 +861,11 @@ human, legal, performance or Play Console gates.
 
 ## P52 player-facing Umbrella Guard regression - 2026-08-30 07:21 IST
 
-The test-only tip is `a3d4afc90cbd80f109174a6432159b333c449900`, based on runtime/art source
+The test-only tip is `4c4c67cbbc20062e3723cc90ee3bb7c266bbeda4`, based on runtime/art source
 `5d136fbb6be6a5554931f6ab859be8b9a8a995a2`. `GadgetPlayModeTests` now directly exercises
 player pickup/use of Umbrella Guard and asserts one-slot consumption, configured shield
-duration, player feedback and success telemetry. Full EditMode is **141/141**, PlayMode is
+duration, player feedback, success telemetry, front-facing projectile mitigation and the Aandhi
+bypass. Full EditMode is **141/141**, PlayMode is
 **89/89**, and repository validation is **0 errors / 0 warnings**; exact hashes are in P52 of
 `Docs/V1_RELEASE_PLAN.md`. No runtime artifact, APK/AAB, or device evidence changed, so P47-P50
 remain authoritative. The candidate is still temporary-ID/debug-signed; final identity,
