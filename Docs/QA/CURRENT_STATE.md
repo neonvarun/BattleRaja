@@ -660,6 +660,26 @@ proof, final authored art/audio, human accessibility/fun/fairness/cultural appro
 Store readiness. The project remains **Prototype — Android offline release candidate in
 progress**.
 
+## P64 immediate-after-resume lifecycle pause observation - 2026-08-31
+
+The exact P61 APK from `f80b565372d7446e070cf1a37de042bd018345c4` was started on approved
+Lava `ST5GDW23LB004392` after tutorial completion. A live Opening Fight baseline was captured,
+the app was sent to Android HOME for approximately five seconds, and the Unity activity was
+resumed with a screenshot approximately 220 ms later. The route manifest is
+`Builds/Local/Device/final-circle-20260830/p64-lifecycle-pause-manifest.json` (3,354 bytes;
+SHA-256 `DC3677479D95C4E2EBA7DD79C6E46C03418D58F379AE32708A1C5B2FFCB4EA99`).
+
+Both captures show Bijli at 85/85 HP in Opening Fight with `ALIVE 8` and `ZONE 14.0 > 11.0`;
+the warning countdown is 11.6 seconds before HOME and 10.8 seconds in the immediate
+post-resume capture. The five-second background interval therefore shows no observed
+simulation/zone progression; the approximately 0.8-second movement is after resume during
+activity start and screenshot capture. The retained trace and app logcat record the Unity
+pause/stop and start/resume callbacks on the same process with no configured fatal marker.
+
+This closes the narrow bounded lifecycle-observation gap, not full phase coverage, held-input
+release comfort, endurance or human approval. Normalized performance, repeated-match growth,
+physical 16 KB and Play gates remain open.
+
 ## P63 bounded exact-candidate live-match performance refresh - 2026-08-31
 
 The exact P61 APK from `f80b565372d7446e070cf1a37de042bd018345c4` was already installed on

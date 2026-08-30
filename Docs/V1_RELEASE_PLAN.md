@@ -2999,6 +2999,50 @@ Play-ready. P59 adds current-candidate all-fighter and accessibility observation
 does not close the subjective, physical, performance, identity, legal or Play gates. The two
 prompt files under `PROMPTS/` remain intentional uncommitted owner work.
 
+### P64 - Immediate-after-resume lifecycle pause observation on exact P61 candidate - 2026-08-31
+
+The exact P61 APK from `f80b565372d7446e070cf1a37de042bd018345c4` was started on approved
+Lava `ST5GDW23LB004392` after tutorial completion. A live Opening Fight baseline was captured,
+the app was sent to Android HOME for approximately five seconds, and the Unity activity was
+resumed with a screenshot approximately 220 ms later. The route manifest is
+`Builds/Local/Device/final-circle-20260830/p64-lifecycle-pause-manifest.json` (3,354 bytes;
+SHA-256 `DC3677479D95C4E2EBA7DD79C6E46C03418D58F379AE32708A1C5B2FFCB4EA99`).
+
+#### P64 machine evidence
+
+- `lifecycle-tight-warn4-before.png` is 81,148 bytes (SHA-256
+  `7F39DFDEDDB0E559BBDFB402F85D0505CCEF8F4A013577EA2AD4D0F4BAD39D0C`) and shows
+  `BIJLI HP 85/85`, `OPENING FIGHT`, `ALIVE 8`, `ZONE 14.0 > 11.0`, `WARN 11.6s`.
+  `lifecycle-tight-warn4-after-220ms.png` is 82,140 bytes (SHA-256
+  `64EF1598B2D145588B718224CD18F08CE059144CA6F9D58DA03F55E01A9AF3BB`) and shows the
+  same live state and zone values with `WARN 10.8s`.
+- `lifecycle-tight-warn4-trace.txt` records the baseline, HOME, resume and capture times
+  (295 bytes; SHA-256
+  `78964CC53E6A81112B44052E6D0A63B6C4CDBA474EC70415DF11937EF58083B0`). The requested
+  background window was five seconds; the post-resume capture delay was approximately
+  0.74 seconds. App-scoped logcat `p64-lifecycle-app-logcat.txt` is 24,519 bytes (SHA-256
+  `BEE20E9200B5C9FFC85D8CF7B5D700B62E418241B8CDDFDED10A6230A857D7C3`) and records
+  `APP_CMD_PAUSE/STOP` followed by `APP_CMD_START/RESUME` on the same process, with no
+  configured fatal, ANR, SIGSEGV or SIGABRT marker.
+- No simulation state or zone value changed across the five-second background interval in
+  these paired captures. The warning countdown's roughly 0.8-second movement is consistent
+  with the post-resume activity/screenshot delay; this is bounded lifecycle evidence, not a
+  claim of long-duration timing or endurance behavior.
+
+#### P64 gate delta
+
+| Gate | Current classification | Evidence / remaining action |
+| --- | --- | --- |
+| Exact P61 HOME/resume lifecycle callback and live-state return | **Passed by bounded exact-device observation** | P64 manifest, paired Opening Fight captures and lifecycle logcat |
+| Simulation pause invariant across the measured background interval | **Observed / bounded** | Zone/live state held across five seconds; repeat across phases and held-input cases for final approval |
+| Full lifecycle, repeated-match, battery and thermal acceptance | **Open** | P64 is a short plugged observation; endurance and memory-growth testing remain required |
+| Normalized FPS, frame-time, GC/GPU and physical 16 KB runtime | **Open** | Existing gfxinfo/4 KB Lava limitations remain unchanged |
+| Final authored/accessibility/fun/cultural/performance approval | **Owner/human review required** | Device evidence does not replace comfort or presentation review |
+
+The truthful classification remains **prototype / Android offline release candidate in
+progress**, not Play-ready. P64 changes no runtime code or artifact. The prompt files under
+`PROMPTS/` remain intentional uncommitted owner work.
+
 ### P63 - Exact P61 candidate bounded Lava live-match performance refresh - 2026-08-31
 
 The exact P61 APK from `f80b565372d7446e070cf1a37de042bd018345c4` was already installed on

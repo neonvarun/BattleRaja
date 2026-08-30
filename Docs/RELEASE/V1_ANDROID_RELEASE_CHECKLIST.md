@@ -987,6 +987,23 @@ repeated-rematch approval, normalized performance, physical 16 KB proof, final a
 content approval or Play Store approval. The project remains a prototype / Android offline
 release candidate in progress.
 
+## Latest exact-candidate P64 immediate-after-resume lifecycle evidence — 2026-08-31
+
+The exact P61 APK (`f80b565372d7446e070cf1a37de042bd018345c4`) was started on approved Lava
+`ST5GDW23LB004392` after tutorial completion. A live Opening Fight baseline was captured,
+Android HOME was held for approximately five seconds, and the Unity activity was resumed with
+a screenshot approximately 220 ms later. The route manifest is
+`Builds/Local/Device/final-circle-20260830/p64-lifecycle-pause-manifest.json` (3,354 bytes;
+SHA-256 `DC3677479D95C4E2EBA7DD79C6E46C03418D58F379AE32708A1C5B2FFCB4EA99`).
+
+The paired captures show `BIJLI HP 85/85`, `OPENING FIGHT`, `ALIVE 8` and `ZONE 14.0 > 11.0`
+both before and immediately after resume; the warning countdown is 11.6 seconds before HOME
+and 10.8 seconds after the 220 ms resume capture. The trace and app logcat record
+`APP_CMD_PAUSE/STOP` followed by `APP_CMD_START/RESUME` on the same process. This is bounded
+pause-invariant evidence; repeat across match phases and held-input cases for final comfort
+approval. It is not full lifecycle/endurance, normalized performance, physical 16 KB or Play
+approval.
+
 ## Latest exact-candidate P63 bounded live-match performance evidence — 2026-08-31
 
 The exact P61 APK (`f80b565372d7446e070cf1a37de042bd018345c4`) remained installed on approved
