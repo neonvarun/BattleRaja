@@ -2890,7 +2890,10 @@ live opening match and settings. The menu capture
 `217984A80310452CDE4C0BBD804B255509376BAA47D01483CF5A28FEEB0EED43`) and live capture
 `Builds/Local/Device/lava-v1-color-reset-live-20260830.png` (324,777 bytes; SHA-256
 `CACAA52627DCBE7DF82414917519F15180280965E7765BBDE73EA1BBB81F0878`) show the current
-candidate; the clean menu settings capture
+candidate. The fighter-selection capture
+`Builds/Local/Device/lava-v1-color-reset-selection-20260830.png` (89,725 bytes; SHA-256
+`90F6750AD276150607A0D466F3421471928F92EB80E55FAE89F11EE309B57912`) shows all three
+distinct fighter cards and their ability summaries; the clean menu settings capture
 `Builds/Local/Device/lava-v1-color-reset-menu-settings-20260830.png` (104,506 bytes; SHA-256
 `70295A74F05C4EADFB1C820543C773D071967B1DE4ACC63E22C1D992965B78D4`) shows the centered
 portrait settings surface. App-scoped logcat
