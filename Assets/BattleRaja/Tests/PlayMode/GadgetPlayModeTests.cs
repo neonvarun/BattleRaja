@@ -68,6 +68,24 @@ namespace BattleRaja.Tests.PlayMode
                 Is.EqualTo(GadgetDefinition.UmbrellaGuard.DurationSeconds).Within(0.001f));
             Assert.That(user.Feedback, Is.EqualTo("Umbrella Guard active"));
             Assert.That(user.SuccessfulUmbrellaGuardUses, Is.EqualTo(1));
+
+            var incoming = new DamageRequest(
+                new CombatEntityId(2),
+                new CombatEntityId(1),
+                CombatFaction.Enemy,
+                100,
+                DamageType.Projectile,
+                new Float2(0f, -1f),
+                1);
+            Assert.That(user.ModifyIncomingDamage(incoming), Is.EqualTo(30));
+            Assert.That(user.ModifyIncomingDamage(new DamageRequest(
+                incoming.InstigatorId,
+                incoming.TargetId,
+                incoming.InstigatorFaction,
+                incoming.RawAmount,
+                DamageType.Aandhi,
+                incoming.HitDirection,
+                incoming.SimulationTick)), Is.EqualTo(100));
             yield return null;
         }
 
