@@ -16,15 +16,17 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
   outside the Android runtime. Final signed-bundle inspection is still required before
   Play submission.
 
-## Current policy recheck — 2026-08-24
+## Policy recheck baseline — 2026-08-24 (superseded by the 2026-08-30 addendum below)
 
 - Google’s target-API guidance requires new apps and updates submitted from
   2026-08-31 to target Android 16/API 36 or higher; this candidate is configured
   for API 36.
-- Google’s 16 KB page-size guidance applies to 64-bit apps targeting API 35+;
-  the current AAB has passed static ARM64/16 KB checks and the exact debug APK has a
-  host-GPU Android 16 16 KB AVD smoke; the final signed artifact still needs the same
-  inspection and physical/other-profile runtime checks.
+- Google’s current 16 KB page-size guidance requires apps targeting API 35+ to support
+  16 KB memory pages on 64-bit Google Play devices; from 2027-02-01, updates that do not
+  support 16 KB pages cannot be released. The current AAB has passed static ARM64/16 KB
+  checks and the exact debug APK has a host-GPU Android 16 16 KB AVD smoke; the final
+  signed artifact still needs the same inspection and physical/other-profile runtime
+  checks.
 - Google requires an accurate Data safety form and privacy-policy link for apps
   published on closed, open or production tracks, including apps that collect no
   data. An app kept exclusively on internal testing is exempt from the Data safety
@@ -35,7 +37,19 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
 Primary sources: `https://developer.android.com/google/play/requirements/target-sdk`,
 `https://developer.android.com/guide/practices/page-sizes`,
 `https://support.google.com/googleplay/android-developer/answer/10787469`, and
-`https://support.google.com/googleplay/android-developer/answer/9859655`.
+`https://support.google.com/googleplay/android-developer/answer/9898843`.
+
+## Latest policy recheck — 2026-08-30
+
+The current Android target-API page keeps the **2026-08-31** requirement for new apps and
+updates to target Android 16/API 36 or higher. The current 16 KB guidance requires API 35+
+apps to support 16 KB memory pages on 64-bit Google Play devices and states that unsupported
+updates cannot be released from **2027-02-01**. Data safety declarations and a privacy-policy
+link remain required for published tracks, including no-data apps; apps exclusively on
+internal testing are exempt. Google Play requires an accurate IARC content-rating
+questionnaire for every app. These policy facts do not change the local candidate settings,
+but they do reinforce the owner-controlled signed-artifact, declaration and Play Console
+gates. See the dated source record in `Docs/RESEARCH_LOG.md`.
 
 The local technical gate for an exact artifact pair is:
 

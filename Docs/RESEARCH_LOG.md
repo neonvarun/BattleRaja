@@ -638,3 +638,34 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   open.
 - **Recheck trigger/date:** Repeat with supported Unity/Perfetto frame-timeline tooling,
   unplugged repeated matches, and the final signed artifact before Play submission.
+
+### V1.0 official policy addendum — 2026-08-30 07:11 IST
+
+- **Question:** Did the current official Android/Google Play pages change the target-API,
+  16 KB, Data safety or content-rating release gates after the previous recheck?
+- **Primary sources:** [Android target API requirements](https://developer.android.com/google/play/requirements/target-sdk),
+  [Android 16 KB page-size guidance](https://developer.android.com/guide/practices/page-sizes),
+  [Google Play Data safety](https://support.google.com/googleplay/android-developer/answer/10787469?hl=en),
+  and [Google Play content ratings](https://support.google.com/googleplay/android-developer/answer/9898843?hl=en).
+- **Access date:** 2026-08-30 (IST).
+- **Relevant claims:** The target-API page states that from **2026-08-31** new apps and
+  updates must target Android 16/API 36 or higher. The page-size guidance states that apps
+  targeting API 35+ must support 16 KB memory pages on 64-bit Google Play devices and that,
+  from **2027-02-01**, unsupported updates cannot be released. The Data safety page requires
+  accurate declarations and a privacy-policy link for published closed/open/production
+  tracks, including no-data apps; an app exclusively on internal testing is exempt. The
+  content-rating page requires an accurate IARC questionnaire for every Play app.
+- **Decision impact:** Keep the candidate at target API 36, retain static ELF/zip alignment
+  and genuine 16 KB runtime smoke as separate gates, and keep Data safety, privacy, target
+  audience and IARC preparation owner-controlled. No project setting change is justified by
+  this recheck; the current temporary-ID/debug-signed artifact must not be treated as
+  upload-ready.
+- **Local evidence:** The exact `5d136fb` candidate passes the local manifest/release
+  checker, ARM64/static-alignment checks and host-GPU 16 KB AVD smoke; Lava remains a 4 KB
+  device. Current release and content-rating checklists now point to the current official
+  pages.
+- **Uncertainty:** Google may revise dates, enforcement, declarations or page-size guidance;
+  the owner must recheck immediately before selecting the final signed AAB and submitting
+  any Play track.
+- **Recheck trigger/date:** Before final signing, Play Console declaration completion or
+  upload, and after any Unity, Android, NDK, native dependency or renderer change.

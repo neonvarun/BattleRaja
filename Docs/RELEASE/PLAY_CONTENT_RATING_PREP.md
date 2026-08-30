@@ -3,6 +3,8 @@
 This is a factual preparation sheet for the owner completing Google Play's official
 target-audience and content-rating questionnaires. It is not an assigned rating.
 
+Official reference: `https://support.google.com/googleplay/android-developer/answer/9898843`.
+
 ## Current V1 facts to verify against the final signed build
 
 - Category: game; stylized top-down 3D battle royale.
