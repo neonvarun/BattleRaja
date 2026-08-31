@@ -50,8 +50,13 @@ namespace BattleRaja.Presentation.Visuals
 
         private void EnsureLighting()
         {
-            RenderSettings.ambientMode = AmbientMode.Flat;
-            RenderSettings.ambientLight = new Color(0.22f, 0.28f, 0.34f, 1f);
+            // A warm key over a cool fill gives the authored stalls and fighter
+            // silhouettes visible planes instead of a flat colour wash. Keep the
+            // shadow mode hard and the strength restrained for mid-range Android.
+            RenderSettings.ambientMode = AmbientMode.Trilight;
+            RenderSettings.ambientSkyColor = new Color(0.16f, 0.23f, 0.30f, 1f);
+            RenderSettings.ambientEquatorColor = new Color(0.30f, 0.24f, 0.22f, 1f);
+            RenderSettings.ambientGroundColor = new Color(0.09f, 0.08f, 0.11f, 1f);
             RenderSettings.ambientIntensity = 1f;
 
             var existingLights = FindObjectsByType<Light>();
@@ -63,8 +68,11 @@ namespace BattleRaja.Presentation.Visuals
             var light = _lightingObject.AddComponent<Light>();
             light.type = LightType.Directional;
             light.color = new Color(1f, 0.86f, 0.72f, 1f);
-            light.intensity = 1.15f;
-            light.shadows = LightShadows.None;
+            light.intensity = 1.25f;
+            light.shadows = LightShadows.Hard;
+            light.shadowStrength = 0.42f;
+            light.shadowBias = 0.035f;
+            light.shadowNormalBias = 0.4f;
         }
 
         private void ApplyDecorationQuality(GameObject instance)

@@ -50,11 +50,13 @@ namespace BattleRaja.Editor
         private const string DevelopmentApplicationId = "com.example.battleraja.m11";
         private const string AndroidApplicationIdEnvironmentVariable = "BATTLERAJA_ANDROID_APPLICATION_ID";
         private const string V1IconAssetPath = "Assets/BattleRaja/Art/V1/BattleRaja-AppIcon-PlayStore.png";
+        private const string V1FeatureArtAssetPath = "Assets/BattleRaja/Art/V1/BattleRaja-FeatureArt-Candidate.png";
         private const string GadgetAssetFolder = "Assets/BattleRaja/Content/Gadgets";
 
         public static void CreateBootstrapScene()
         {
             EnsureUrpAsset();
+            ProductionArtBuilder.BuildAll();
 
             var scene = File.Exists(BootstrapScenePath)
                 ? EditorSceneManager.OpenScene(BootstrapScenePath, OpenSceneMode.Single)
@@ -83,6 +85,15 @@ namespace BattleRaja.Editor
             {
                 var flowObject = new GameObject("ProductionFlow");
                 flowObject.AddComponent<ProductionFlowController>();
+            }
+
+            var flow = GameObject.Find("ProductionFlow")?.GetComponent<ProductionFlowController>();
+            if (flow != null)
+            {
+                SetObjectReference(flow, "menuFeatureArt", AssetDatabase.LoadAssetAtPath<Texture2D>(V1FeatureArtAssetPath));
+                SetObjectReference(flow, "bijliPreviewPrefab", AssetDatabase.LoadAssetAtPath<GameObject>(ProductionArtBuilder.BijliPrefabPath));
+                SetObjectReference(flow, "pehelPreviewPrefab", AssetDatabase.LoadAssetAtPath<GameObject>(ProductionArtBuilder.PehelPrefabPath));
+                SetObjectReference(flow, "mayaPreviewPrefab", AssetDatabase.LoadAssetAtPath<GameObject>(ProductionArtBuilder.MayaPrefabPath));
             }
 
             if (UnityEngine.Object.FindAnyObjectByType<EventSystem>() == null)
@@ -430,6 +441,11 @@ namespace BattleRaja.Editor
             var playerAgent = arena.GetComponentsInChildren<MovementPlayerAgent>(true)
                 .FirstOrDefault(agent => agent.ActorId == 1);
             var cameraController = UnityEngine.Object.FindAnyObjectByType<TopDownCameraController>();
+            // Frame the action like a compact arena game: the full combat space is
+            // still discoverable, but fighters and pickups have enough screen
+            // presence to read at a glance on the approved phone.
+            SetVector3(cameraController, "cameraOffset", new Vector3(0f, 10f, -11f));
+            SetFloat(cameraController, "orthographicSize", 8.25f);
             SetObjectReference(productionMarker, "player", playerAgent);
             SetObjectReference(productionMarker, "cameraController", cameraController);
             SetObjectReference(productionMarker, "matchController", matchController);
@@ -1698,6 +1714,19 @@ namespace BattleRaja.Editor
             }
 
             property.floatValue = value;
+            serializedObject.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void SetVector3(UnityEngine.Object target, string propertyName, Vector3 value)
+        {
+            var serializedObject = new SerializedObject(target);
+            var property = serializedObject.FindProperty(propertyName);
+            if (property == null)
+            {
+                throw new InvalidOperationException($"Serialized property not found: {target.name}.{propertyName}");
+            }
+
+            property.vector3Value = value;
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
         }
 

@@ -33,6 +33,11 @@ namespace BattleRaja.Presentation.Flow
         [SerializeField] private string gameplaySceneName = "BazaarBastion";
         [SerializeField] private string tutorialSceneName = "TutorialArena";
         [SerializeField] private Canvas canvas;
+        [Header("Presentation art")]
+        [SerializeField] private Texture2D menuFeatureArt;
+        [SerializeField] private GameObject bijliPreviewPrefab;
+        [SerializeField] private GameObject pehelPreviewPrefab;
+        [SerializeField] private GameObject mayaPreviewPrefab;
 
         private readonly ProductionFlowMachine _flow = new ProductionFlowMachine();
         private ProductionFighter _selectedFighter;
@@ -75,6 +80,9 @@ namespace BattleRaja.Presentation.Flow
         private Button _bijliButton;
         private Button _pehelButton;
         private Button _mayaButton;
+        private BattleRajaFighterPreview _bijliPreview;
+        private BattleRajaFighterPreview _pehelPreview;
+        private BattleRajaFighterPreview _mayaPreview;
 
         public ProductionFlowState State => _flow.State;
         public ProductionGameMode Mode => _flow.Mode;
@@ -314,6 +322,7 @@ namespace BattleRaja.Presentation.Flow
             _selectedFighter = fighter;
             SavePreferences();
             Apply(_flow.SelectFighter(fighter));
+            RefreshFighterCardVisuals();
             // Touch clicks update the flow summary but may leave the EventSystem's
             // navigation selection on the first card. Keep the visual focus ring and
             // keyboard/switch navigation aligned with the fighter the player chose.
@@ -468,6 +477,7 @@ namespace BattleRaja.Presentation.Flow
             ApplyContrast();
             if (transition.Current == ProductionFlowState.FighterSelection)
             {
+                RefreshFighterCardVisuals();
                 SelectFighterButton(_selectedFighter);
                 return;
             }
@@ -542,24 +552,48 @@ namespace BattleRaja.Presentation.Flow
             heroRect.anchorMax = new Vector2(0.90f, 0.69f);
             heroRect.offsetMin = Vector2.zero;
             heroRect.offsetMax = Vector2.zero;
-            CreateButton(_mainMenuPanel.transform, "Offline", "PLAY OFFLINE", new Vector2(0.28f, 0.42f), new Vector2(0.72f, 0.52f), OpenModeSelection);
+            var heroGraphic = heroObject.GetComponent<BattleRajaHeroGraphic>();
+            if (menuFeatureArt != null)
+            {
+                var featureArtObject = new GameObject("FeatureArt", typeof(RectTransform), typeof(RawImage), typeof(AspectRatioFitter));
+                featureArtObject.transform.SetParent(_mainMenuPanel.transform, false);
+                featureArtObject.transform.SetAsFirstSibling();
+                var featureRect = featureArtObject.GetComponent<RectTransform>();
+                featureRect.anchorMin = new Vector2(0.08f, 0.47f);
+                featureRect.anchorMax = new Vector2(0.92f, 0.70f);
+                featureRect.offsetMin = Vector2.zero;
+                featureRect.offsetMax = Vector2.zero;
+                var featureImage = featureArtObject.GetComponent<RawImage>();
+                featureImage.texture = menuFeatureArt;
+                featureImage.color = new Color(1f, 1f, 1f, 0.92f);
+                featureImage.raycastTarget = false;
+                var featureFitter = featureArtObject.GetComponent<AspectRatioFitter>();
+                featureFitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
+                featureFitter.aspectRatio = 1f;
+                // Keep the old vector identity alive as a fallback for fixtures or
+                // scenes that have not been rebound to the authored art texture.
+                heroGraphic.enabled = false;
+            }
+            CreateButton(_mainMenuPanel.transform, "Offline", "PLAY OFFLINE", new Vector2(0.28f, 0.42f), new Vector2(0.72f, 0.52f), OpenModeSelection, true);
             CreateButton(_mainMenuPanel.transform, "Tutorial", "TUTORIAL REPLAY", new Vector2(0.28f, 0.30f), new Vector2(0.72f, 0.40f), OpenTutorial);
             CreateButton(_mainMenuPanel.transform, "Settings", "SETTINGS & ACCESSIBILITY", new Vector2(0.28f, 0.18f), new Vector2(0.72f, 0.28f), OpenSettings);
             CreateButton(_mainMenuPanel.transform, "Help", "HELP & CONTROLS", new Vector2(0.28f, 0.06f), new Vector2(0.72f, 0.16f), OpenTutorial);
 
             _modePanel = CreatePanel(_safeArea.transform, "ModePanel");
+            AddFeatureBackdrop(_modePanel, "ModeBackdrop", 0.14f);
             CreateButton(_modePanel.transform, "Offline", "DROP IN  •  1 RAJA + 7 BOTS", new Vector2(0.18f, 0.49f), new Vector2(0.82f, 0.63f), SelectOfflineMode, true);
             CreateText(_modePanel.transform, "ModeHint", new Vector2(0.14f, 0.33f), new Vector2(0.86f, 0.46f), 18, TextAnchor.MiddleCenter).text = "Every match is deterministic, replayable and playable without an account.";
             CreateButton(_modePanel.transform, "Back", "BACK TO MENU", new Vector2(0.32f, 0.14f), new Vector2(0.68f, 0.26f), ReturnToMenu);
 
             _fighterPanel = CreatePanel(_safeArea.transform, "FighterPanel");
+            AddFeatureBackdrop(_fighterPanel, "FighterBackdrop", 0.08f);
             _fighterSummaryText = CreateText(_fighterPanel.transform, "FighterSummary", new Vector2(0.12f, 0.72f), new Vector2(0.88f, 0.84f), 22, TextAnchor.MiddleCenter);
             _bijliButton = CreateButton(_fighterPanel.transform, "Bijli", "BIJLI\nELECTRIC DASH", new Vector2(0.08f, 0.49f), new Vector2(0.31f, 0.65f), SelectBijli);
             _pehelButton = CreateButton(_fighterPanel.transform, "Pehel", "PEHEL\nCHARGE THROW", new Vector2(0.385f, 0.49f), new Vector2(0.615f, 0.65f), SelectPehel);
             _mayaButton = CreateButton(_fighterPanel.transform, "Maya", "MAYA\nDECOY", new Vector2(0.69f, 0.49f), new Vector2(0.92f, 0.65f), SelectMaya);
-            AddFighterCardArt(_bijliButton, BattleRajaFighterCardKind.Bijli);
-            AddFighterCardArt(_pehelButton, BattleRajaFighterCardKind.Pehel);
-            AddFighterCardArt(_mayaButton, BattleRajaFighterCardKind.Maya);
+            _bijliPreview = AddFighterCardArt(_bijliButton, BattleRajaFighterCardKind.Bijli, bijliPreviewPrefab, new Color(0.025f, 0.12f, 0.18f, 1f));
+            _pehelPreview = AddFighterCardArt(_pehelButton, BattleRajaFighterCardKind.Pehel, pehelPreviewPrefab, new Color(0.18f, 0.075f, 0.055f, 1f));
+            _mayaPreview = AddFighterCardArt(_mayaButton, BattleRajaFighterCardKind.Maya, mayaPreviewPrefab, new Color(0.12f, 0.055f, 0.18f, 1f));
             BattleRajaUiTheme.StyleButton(_bijliButton, BattleRajaUiTheme.Cyan);
             BattleRajaUiTheme.StyleButton(_pehelButton, BattleRajaUiTheme.Saffron);
             BattleRajaUiTheme.StyleButton(_mayaButton, BattleRajaUiTheme.Magenta);
@@ -604,6 +638,7 @@ namespace BattleRaja.Presentation.Flow
             ApplyMainMenuLayout(Screen.width > Screen.height);
             SetAllPanelsInactive();
             ApplyContrast();
+            RefreshFighterCardVisuals();
         }
 
         private void SetLoadingProgress(float progress, string label)
@@ -622,19 +657,22 @@ namespace BattleRaja.Presentation.Flow
             SetAnchors(_mainMenuPanel.transform.Find("HeroIllustration"),
                 wide ? new Vector2(0.08f, 0.20f) : new Vector2(0.10f, 0.48f),
                 wide ? new Vector2(0.54f, 0.70f) : new Vector2(0.90f, 0.69f));
+            SetAnchors(_mainMenuPanel.transform.Find("FeatureArt"),
+                wide ? new Vector2(0.04f, 0.10f) : new Vector2(0.08f, 0.47f),
+                wide ? new Vector2(0.56f, 0.74f) : new Vector2(0.92f, 0.70f));
 
             SetAnchors(_mainMenuPanel.transform.Find("Offline"),
-                wide ? new Vector2(0.60f, 0.52f) : new Vector2(0.28f, 0.42f),
-                wide ? new Vector2(0.92f, 0.64f) : new Vector2(0.72f, 0.52f));
+                wide ? new Vector2(0.60f, 0.52f) : new Vector2(0.28f, 0.30f),
+                wide ? new Vector2(0.92f, 0.64f) : new Vector2(0.72f, 0.40f));
             SetAnchors(_mainMenuPanel.transform.Find("Tutorial"),
-                wide ? new Vector2(0.60f, 0.38f) : new Vector2(0.28f, 0.30f),
-                wide ? new Vector2(0.92f, 0.50f) : new Vector2(0.72f, 0.40f));
+                wide ? new Vector2(0.60f, 0.38f) : new Vector2(0.28f, 0.19f),
+                wide ? new Vector2(0.92f, 0.50f) : new Vector2(0.72f, 0.29f));
             SetAnchors(_mainMenuPanel.transform.Find("Settings"),
-                wide ? new Vector2(0.60f, 0.24f) : new Vector2(0.28f, 0.18f),
-                wide ? new Vector2(0.92f, 0.36f) : new Vector2(0.72f, 0.28f));
+                wide ? new Vector2(0.60f, 0.24f) : new Vector2(0.28f, 0.08f),
+                wide ? new Vector2(0.92f, 0.36f) : new Vector2(0.72f, 0.18f));
             SetAnchors(_mainMenuPanel.transform.Find("Help"),
-                wide ? new Vector2(0.60f, 0.10f) : new Vector2(0.28f, 0.06f),
-                wide ? new Vector2(0.92f, 0.22f) : new Vector2(0.72f, 0.16f));
+                wide ? new Vector2(0.60f, 0.10f) : new Vector2(0.28f, 0.005f),
+                wide ? new Vector2(0.92f, 0.22f) : new Vector2(0.72f, 0.105f));
 
             _menuLayoutWide = wide;
             _menuLayoutInitialized = true;
@@ -872,9 +910,9 @@ namespace BattleRaja.Presentation.Flow
             return text;
         }
 
-        private static void AddFighterCardArt(Button button, BattleRajaFighterCardKind fighter)
+        private BattleRajaFighterPreview AddFighterCardArt(Button button, BattleRajaFighterCardKind fighter, GameObject prefab, Color previewBackground)
         {
-            if (button == null) return;
+            if (button == null) return null;
             var label = button.GetComponentInChildren<Text>(true);
             if (label != null)
             {
@@ -886,7 +924,7 @@ namespace BattleRaja.Presentation.Flow
                 label.fontSize = 14;
             }
 
-            var artObject = new GameObject("FighterGlyph", typeof(RectTransform), typeof(BattleRajaFighterCardGraphic));
+            var artObject = new GameObject("FighterGlyph", typeof(RectTransform), typeof(AspectRatioFitter));
             artObject.transform.SetParent(button.transform, false);
             artObject.transform.SetAsFirstSibling();
             var artRect = artObject.GetComponent<RectTransform>();
@@ -894,7 +932,58 @@ namespace BattleRaja.Presentation.Flow
             artRect.anchorMax = new Vector2(0.92f, 0.98f);
             artRect.offsetMin = Vector2.zero;
             artRect.offsetMax = Vector2.zero;
-            artObject.GetComponent<BattleRajaFighterCardGraphic>().SetFighter(fighter);
+            // The card itself is intentionally wide for the fighter name and role.
+            // Keep the portrait render square inside that slot so a square RenderTexture
+            // is never stretched into a flat horizontal token on landscape devices.
+            var artFitter = artObject.GetComponent<AspectRatioFitter>();
+            artFitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
+            artFitter.aspectRatio = 1f;
+
+            if (prefab != null)
+            {
+                var previewImage = artObject.AddComponent<RawImage>();
+                previewImage.color = Color.white;
+                previewImage.raycastTarget = false;
+                var preview = artObject.AddComponent<BattleRajaFighterPreview>();
+                preview.Configure(prefab, previewBackground);
+                return preview;
+            }
+
+            // Keep the original glyph as a safe fallback for older fixtures that do
+            // not yet carry serialized production prefab references.
+            var glyph = artObject.AddComponent<BattleRajaFighterCardGraphic>();
+            glyph.SetFighter(fighter);
+            return null;
+        }
+
+        private void RefreshFighterCardVisuals()
+        {
+            var selected = _selectedFighter;
+            _bijliPreview?.SetSelected(selected == ProductionFighter.Bijli);
+            _pehelPreview?.SetSelected(selected == ProductionFighter.Pehel);
+            _mayaPreview?.SetSelected(selected == ProductionFighter.Maya);
+        }
+
+        private void AddFeatureBackdrop(GameObject panel, string name, float alpha)
+        {
+            if (panel == null || menuFeatureArt == null) return;
+
+            var backdropObject = new GameObject(name, typeof(RectTransform), typeof(RawImage), typeof(AspectRatioFitter));
+            backdropObject.transform.SetParent(panel.transform, false);
+            backdropObject.transform.SetAsFirstSibling();
+            var rect = backdropObject.GetComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0.02f, 0.02f);
+            rect.anchorMax = new Vector2(0.98f, 0.98f);
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+
+            var image = backdropObject.GetComponent<RawImage>();
+            image.texture = menuFeatureArt;
+            image.color = new Color(1f, 1f, 1f, Mathf.Clamp01(alpha));
+            image.raycastTarget = false;
+            var fitter = backdropObject.GetComponent<AspectRatioFitter>();
+            fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+            fitter.aspectRatio = 1f;
         }
 
         private static Button CreateButton(Transform parent, string name, string label, Vector2 min, Vector2 max, UnityEngine.Events.UnityAction action, bool primary = false)
@@ -906,7 +995,7 @@ namespace BattleRaja.Presentation.Flow
             rect.anchorMax = max;
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
-            var text = CreateText(buttonObject.transform, name + "Label", Vector2.zero, Vector2.one, 18, TextAnchor.MiddleCenter);
+            var text = CreateText(buttonObject.transform, name + "Label", Vector2.zero, Vector2.one, primary ? 24 : 18, TextAnchor.MiddleCenter);
             text.text = label;
             var button = buttonObject.GetComponent<Button>();
             button.onClick.AddListener(() =>

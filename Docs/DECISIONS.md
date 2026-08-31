@@ -1794,3 +1794,38 @@ Record every material choice here. Do not silently overwrite old decisions.
   full 141/141 EditMode and 92/92 PlayMode reruns, exact P66 APK/AAB rebuild/checker and
   approved-Lava P66 lifecycle route recorded in `Docs/V1_RELEASE_PLAN.md`.
 - **Owner:** Human project owner
+
+### ADR-077 - Use authored entry art and isolated fighter portraits for V1 offline presentation
+
+- **Date:** 2026-08-31
+- **Status:** Accepted for the V1 offline presentation baseline; final authored,
+  accessibility, cultural-fit and store-facing visual review remain open.
+- **Context:** Observation-only sessions of the installed Brawl Stars and Smash Karts
+  packages on the approved Lava handset showed the value of one dominant play action,
+  character-led entry context and clear availability states. BattleRaja's earlier menu
+  and fighter cards still read as a toy prototype: the hero was a vector fallback, the
+  primary action was visually quiet, and shared preview layers composited multiple
+  fighters into flattened card strips.
+- **Options considered:** Keep the vector/capsule fallback as the primary presentation;
+  reproduce a reference game's protected layout or expression; or use BattleRaja's
+  existing authored feature art and saved production prefabs with presentation-only
+  isolation.
+- **Decision:** Use the owned `BattleRaja-FeatureArt-Candidate.png` as the contextual
+  menu/mode/fighter backdrop, make the offline play actions the strongest buttons, and
+  render the saved Bijli, Pehel and Maya production prefabs into square card portraits.
+  Each portrait owns a separate render layer/camera, keeps the near identity mesh,
+  suppresses live VFX/animation noise, and never enters gameplay authority or collision.
+  The live arena uses the authored near fighter LOD and a closer lower three-quarter
+  camera with restrained warm/cool lighting. No reference assets, names, economy,
+  account flow, networking, Photon or PlayFab behavior are introduced.
+- **Consequences:** The entry flow now has a clear offline CTA, persistent Bazaar
+  context and distinct character silhouettes; the live arena keeps authored fighter
+  identity readable on the approved phone. Portrait previews consume a bounded set of
+  presentation-only layers and render textures; final smaller-device, localization,
+  performance and owner visual approval remain open.
+- **Evidence/sources:** Observation captures
+  `Builds/Local/Device/audits/20260831-presentation/ref-brawlstars-launch.png` and
+  `ref-smashkarts-launch.png`; BattleRaja captures `39-menu-final-presentation.png`,
+  `37-fighter-isolated.png` and `38-live-final-presentation.png`; the exact candidate
+  APK, static validation, full 141/141 EditMode and 92/92 PlayMode reruns.
+- **Owner:** Human project owner

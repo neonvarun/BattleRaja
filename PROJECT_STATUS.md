@@ -6,6 +6,20 @@
 
 ## Current state
 
+- **Working-tree presentation pass (2026-08-31):** An observation-only review of the
+  installed Brawl Stars and Smash Karts entry surfaces on approved Lava informed an
+  original BattleRaja polish pass. The menu now uses the owned Bazaar feature art with
+  a dominant `PLAY OFFLINE` action; mode and fighter screens retain that context; square
+  isolated portraits render distinct Bijli, Pehel and Maya production prefabs; and the
+  live arena uses authored near fighter meshes with a closer camera and restrained
+  warm/cool lighting. The exact candidate APK is **41,375,996 bytes** with SHA-256
+  `3F12B3D36F5B34DE9288F55C838530A41C584D11122308A2420B0A2F0AA3B059`.
+  Static validation is **0 errors / 0 warnings**, full EditMode is **141/141** and full
+  PlayMode is **92/92**. Approved-Lava evidence is under
+  `Builds/Local/Device/audits/20260831-presentation/`; this remains a presentation-only
+  offline candidate and not a Play Store submission. ADR-077 and the 2026-08-31
+  reference rerun in `Docs/RESEARCH_LOG.md` record the scope and originality boundary.
+
 - **Latest exact-source lifecycle checkpoint (2026-08-31):** source tip is now
   `e603ce7e7f1cb279f5e3e9d606ea5eae89603ecb` (`android: clear input on lifecycle pause`).
   Android pause clears transient player input across the adapter, virtual stick and

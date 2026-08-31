@@ -10,14 +10,20 @@ namespace BattleRaja.Presentation.Movement
 
     public sealed class TopDownCameraController : MonoBehaviour
     {
-        private const float PortraitFramingCapMultiplier = 3.5f;
+        // Keep the playable arena readable on tall phones without reducing fighters
+        // to postage stamps. The old 3.5x cap showed the entire arena at once and
+        // created a large dead band around the action; this closer framing still fits
+        // the authored 25.6-unit V1 arena while giving combat more screen presence.
+        private const float PortraitFramingCapMultiplier = 2.8f;
 
         [SerializeField] private Transform followTarget;
         [SerializeField] private CameraProjectionMode projectionMode = CameraProjectionMode.Orthographic;
         [SerializeField] private Vector3 targetOffset = new Vector3(0f, 0.75f, 0f);
-        [SerializeField] private Vector3 cameraOffset = new Vector3(0f, 12f, -8f);
+        // A slightly lower 3/4 angle keeps fighter silhouettes readable while
+        // preserving the compact top-down tactical view.
+        [SerializeField] private Vector3 cameraOffset = new Vector3(0f, 10f, -11f);
         [SerializeField] private float followSmoothTime = 0.08f;
-        [SerializeField] private float orthographicSize = 9.5f;
+        [SerializeField] private float orthographicSize = 8.25f;
         [SerializeField] private float referenceAspect = 16f / 9f;
         [SerializeField] private float perspectiveFieldOfView = 48f;
         [SerializeField] private LayerMask obstructionMask = 1;

@@ -724,3 +724,31 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   must recheck immediately before selecting the final signed AAB and submitting any track.
 - **Recheck trigger/date:** Before final signing, completing Play declarations or uploading,
   and after any Unity/Android/NDK/native dependency or renderer change.
+
+### V1.0 controlled reference-game observation rerun (2026-08-31)
+
+- **Question:** Which entry-flow readability lessons from the installed reference games
+  should guide the V1 presentation pass without copying protected expression?
+- **Primary sources:** Observation-only cold launches on the approved Lava
+  `ST5GDW23LB004392`: Brawl Stars `com.supercell.brawlstars` (version `68.279`) and
+  Smash Karts `com.tallteam.citychase` (version `2.15.1`). No account, purchase, APK
+  extraction, network interception or private-data access was performed.
+- **Access date:** 2026-08-31 (IST).
+- **Relevant claims:** Brawl Stars presented a character-led landscape home with one
+  dominant play action and contextual coaching; Smash Karts presented one central play
+  action with lightweight secondary controls and visible locked/account state.
+- **Decision impact:** Keep BattleRaja's entry route offline and original while applying
+  only the abstract hierarchy: one bright play CTA, clear mode/fighter readiness and
+  persistent arena context. Use the existing authored feature art and production fighter
+  prefabs rather than placeholder glyphs or copied reference-game styling.
+- **Local evidence:** Reference captures are saved locally at
+  `Builds/Local/Device/audits/20260831-presentation/ref-brawlstars-launch.png` and
+  `ref-smashkarts-launch.png`. BattleRaja verification captures are
+  `39-menu-final-presentation.png`, `37-fighter-isolated.png` and `38-live-final-presentation.png`;
+  the prior redacted principle audit remains in `Docs/Research/REFERENCE_UX_AUDIT.md`.
+- **Uncertainty:** The reference observation covered entry surfaces only. Existing
+  account/network state and the short session prevented a complete private or online
+  route; orientation, touch comfort, accessibility, cultural fit and final store-facing
+  approval remain BattleRaja owner gates.
+- **Recheck trigger/date:** Revisit if the BattleRaja entry hierarchy changes or before
+  final owner approval of the store-facing presentation.

@@ -72,7 +72,10 @@ namespace BattleRaja.Presentation.UI
             var image = button.GetComponent<Image>();
             if (image == null) return;
 
-            var normal = Color.Lerp(SurfaceRaised, accent, primary ? 0.24f : 0.12f);
+            // The primary action must read immediately on a busy game surface. A
+            // brighter accent and a grounded shadow give it the tactile weight of a
+            // finished mobile game while secondary actions remain quieter.
+            var normal = Color.Lerp(SurfaceRaised, accent, primary ? 0.52f : 0.12f);
             var highlighted = Color.Lerp(normal, accent, 0.28f);
             var pressed = Color.Lerp(normal, Ink, 0.22f);
             image.color = normal;
@@ -92,6 +95,10 @@ namespace BattleRaja.Presentation.UI
             var outline = button.GetComponent<Outline>() ?? button.gameObject.AddComponent<Outline>();
             outline.effectColor = new Color(accent.r, accent.g, accent.b, primary ? 0.70f : 0.40f);
             outline.effectDistance = new Vector2(2f, -2f);
+
+            var shadow = button.GetComponent<Shadow>() ?? button.gameObject.AddComponent<Shadow>();
+            shadow.effectColor = new Color(0f, 0f, 0f, primary ? 0.42f : 0.28f);
+            shadow.effectDistance = new Vector2(0f, -6f);
 
             var label = button.GetComponentInChildren<Text>(true);
             if (label != null)
@@ -114,7 +121,9 @@ namespace BattleRaja.Presentation.UI
                 var button = image.GetComponent<Button>();
                 if (button != null)
                 {
-                    StyleButton(button, image.gameObject.name.IndexOf("Start", StringComparison.OrdinalIgnoreCase) >= 0);
+                    var primary = image.gameObject.name.IndexOf("Start", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                                  image.gameObject.name.IndexOf("Offline", StringComparison.OrdinalIgnoreCase) >= 0;
+                    StyleButton(button, primary);
                     if (highContrast)
                     {
                         image.color = Color.Lerp(Color.black, Color.white, 0.18f);

@@ -450,6 +450,12 @@ namespace BattleRaja.Presentation.Visuals
                 // Give the authored identity enough screen presence on the portrait
                 // phone camera without changing the authoritative collision capsule.
                 productionModel.transform.localScale = Vector3.one * 1.18f;
+                // The match camera keeps the full arena in view, so the prefab's far
+                // LOD would otherwise replace each fighter with a generic capsule.
+                // Eight active fighters are well within the V1 budget; preserve the
+                // authored near identity mesh for readable silhouettes and accents.
+                var lodGroup = productionModel.GetComponentInChildren<LODGroup>(true);
+                if (lodGroup != null) lodGroup.ForceLOD(0);
                 _ownedObjects.Add(productionModel);
                 _productionAnimator = productionModel.GetComponentInChildren<Animator>(true);
                 _productionVfx = productionModel.GetComponentInChildren<ProductionVfxCue>(true);

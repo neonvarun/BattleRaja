@@ -399,6 +399,10 @@ MonoBehaviour:
   gameplaySceneName: BazaarBastion
   tutorialSceneName: TutorialArena
   canvas: {fileID: 0}
+  menuFeatureArt: {fileID: 2800000, guid: dc122a05dcb3aea44ab7e44c64370a76, type: 3}
+  bijliPreviewPrefab: {fileID: 7421119186593271460, guid: 0ed235262457772429b6938e29f5a725, type: 3}
+  pehelPreviewPrefab: {fileID: 8732139114975687101, guid: 75e0996a7bffba94b88f97c0f2487f5a, type: 3}
+  mayaPreviewPrefab: {fileID: 8289780981713570129, guid: 0329d760646aaf54db91d7fadcbba417, type: 3}
 --- !u!4 &1900219770
 Transform:
   m_ObjectHideFlags: 0
