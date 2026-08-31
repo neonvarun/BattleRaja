@@ -65,7 +65,8 @@ namespace BattleRaja.Core.Domain
         WrongTarget = 2,
         SelfHit = 3,
         FriendlyFire = 4,
-        AlreadyDefeated = 5
+        AlreadyDefeated = 5,
+        SpawnProtection = 6
     }
 
     public readonly struct DamageResult

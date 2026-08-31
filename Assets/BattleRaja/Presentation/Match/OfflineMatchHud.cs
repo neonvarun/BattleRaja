@@ -61,6 +61,16 @@ namespace BattleRaja.Presentation.Match
         private bool _hasSpectatingState;
         private MatchParticipantSnapshot[] _lastResultsReference;
         private bool _lastResultsCompact;
+        private bool _hasBastionStatusKey;
+        private int _lastBastionRajaScore;
+        private int _lastBastionRivalScore;
+        private int _lastBastionRajaTickets;
+        private int _lastBastionRivalTickets;
+        private int _lastBastionCrownCarrier;
+        private int _lastBastionCrownSocket;
+        private int _lastBastionCrownChannelTenth;
+        private int _lastBastionClockTenth;
+        private bool _lastBastionOvertime;
 
         private void Awake()
         {
@@ -197,6 +207,46 @@ namespace BattleRaja.Presentation.Match
             if (_statusText != null)
             {
                 _statusText.gameObject.SetActive(showZoneOverlay);
+                if (match.IsBastionCrown)
+                {
+                    var rajaScore = match.BastionRajaScore.Score;
+                    var rivalScore = match.BastionRivalScore.Score;
+                    var rajaTickets = match.BastionRajaTickets.Remaining;
+                    var rivalTickets = match.BastionRivalTickets.Remaining;
+                    var crown = match.BastionCrownState;
+                    var clockTenth = Mathf.RoundToInt(match.BastionElapsedSeconds * 10f);
+                    var channelTenth = Mathf.RoundToInt(crown.DepositProgress * 10f);
+                    if (!_hasBastionStatusKey || rajaScore != _lastBastionRajaScore || rivalScore != _lastBastionRivalScore ||
+                        rajaTickets != _lastBastionRajaTickets || rivalTickets != _lastBastionRivalTickets ||
+                        crown.CarrierId.Value != _lastBastionCrownCarrier || crown.SocketIndex != _lastBastionCrownSocket ||
+                        channelTenth != _lastBastionCrownChannelTenth || clockTenth != _lastBastionClockTenth ||
+                        match.BastionOvertime != _lastBastionOvertime || compact != _lastStatusCompact)
+                    {
+                        _statusText.text = FormatBastionStatus(
+                            match.BastionElapsedSeconds,
+                            match.BastionOvertime,
+                            rajaScore,
+                            rivalScore,
+                            rajaTickets,
+                            rivalTickets,
+                            crown,
+                            compact);
+                        _hasBastionStatusKey = true;
+                        _lastBastionRajaScore = rajaScore;
+                        _lastBastionRivalScore = rivalScore;
+                        _lastBastionRajaTickets = rajaTickets;
+                        _lastBastionRivalTickets = rivalTickets;
+                        _lastBastionCrownCarrier = crown.CarrierId.Value;
+                        _lastBastionCrownSocket = crown.SocketIndex;
+                        _lastBastionCrownChannelTenth = channelTenth;
+                        _lastBastionClockTenth = clockTenth;
+                        _lastBastionOvertime = match.BastionOvertime;
+                        _lastStatusCompact = compact;
+                    }
+                    _statusText.color = _highContrast ? Color.white : new Color(0.9f, 0.96f, 1f, 1f);
+                }
+                else
+                {
                 var phase = match.CurrentPhase;
                 var aliveCount = match.AliveCount;
                 var zoneRadiusTenth = Mathf.RoundToInt(match.ZoneRadius * 10f);
@@ -230,6 +280,7 @@ namespace BattleRaja.Presentation.Match
                     _lastStatusCompact = compact;
                 }
                 _statusText.color = _highContrast ? Color.white : new Color(0.9f, 0.96f, 1f, 1f);
+                }
             }
 
             if (_spectatorText != null)
@@ -238,7 +289,9 @@ namespace BattleRaja.Presentation.Match
                 _spectatorText.gameObject.SetActive(spectating);
                 if (!_hasSpectatingState || spectating != _lastSpectating)
                 {
-                    _spectatorText.text = "SPECTATING  •  tap SPECTATE to cycle";
+                    _spectatorText.text = match.IsBastionCrown
+                        ? "OUT OF ACTION  •  respawn or spectate an ally"
+                        : "SPECTATING  •  tap SPECTATE to cycle";
                     _lastSpectating = spectating;
                     _hasSpectatingState = true;
                 }
@@ -252,7 +305,9 @@ namespace BattleRaja.Presentation.Match
                 if (resultsShown && results != null &&
                     (results != _lastResultsReference || compact != _lastResultsCompact))
                 {
-                    _resultsText.text = FormatResults(results, compact);
+                    _resultsText.text = match.IsBastionCrown
+                        ? FormatBastionResults(match.BastionResult, results, compact)
+                        : FormatResults(results, compact);
                     _lastResultsReference = results;
                     _lastResultsCompact = compact;
                 }
@@ -311,6 +366,50 @@ namespace BattleRaja.Presentation.Match
             return string.Format(format, FriendlyPhaseLabel(phase), aliveCount, zoneRadius, nextZoneRadius, warning);
         }
 
+        public static string FormatBastionStatus(
+            float elapsedSeconds,
+            bool overtime,
+            int rajaScore,
+            int rivalScore,
+            int rajaTickets,
+            int rivalTickets,
+            CrownSparkSnapshot crown,
+            bool compact)
+        {
+            var totalSeconds = Mathf.Max(0, Mathf.FloorToInt(elapsedSeconds));
+            var minutes = totalSeconds / 60;
+            var seconds = totalSeconds % 60;
+            var clock = string.Format("{0:00}:{1:00}", minutes, seconds);
+            var crownLabel = crown.IsCarried
+                ? (crown.CarrierId.Value <= 4 ? "RAJA CARRIER" : "RIVAL CARRIER")
+                : crown.Dropped ? "CROWN DROPPED" : string.Format("SOCKET {0}", crown.SocketIndex + 1);
+            var channel = crown.ChannelActorId.Value > 0
+                ? string.Format("  DEPOSIT {0}%", Mathf.RoundToInt(crown.DepositProgress * 100f))
+                : string.Empty;
+            if (compact)
+            {
+                return string.Format(
+                    "BASTION CROWN  {0}\nRAJA {1}/15  TIX {2}   RIVAL {3}/15  TIX {4}\n{5}{6}",
+                    overtime ? "OVERTIME" : clock,
+                    rajaScore,
+                    rajaTickets,
+                    rivalScore,
+                    rivalTickets,
+                    crownLabel,
+                    channel);
+            }
+
+            return string.Format(
+                "BASTION CROWN  {0}\nTEAM RAJA  {1}/15  •  TICKETS {2}    RIVAL  {3}/15  •  TICKETS {4}\nCROWN SPARK  •  {5}{6}",
+                overtime ? "OVERTIME" : clock,
+                rajaScore,
+                rajaTickets,
+                rivalScore,
+                rivalTickets,
+                crownLabel,
+                channel);
+        }
+
         public static string FriendlyPhaseLabel(MatchPhase phase)
         {
             switch (phase)
@@ -360,6 +459,34 @@ namespace BattleRaja.Presentation.Match
                         .Append("  DMG ").Append(participant.DamageDealt)
                         .Append("  SURV ").Append(participant.SurvivalTimeSeconds.ToString("0.0"))
                         .Append('s').Append('\n');
+                }
+            }
+
+            return builder.ToString().TrimEnd();
+        }
+
+        public static string FormatBastionResults(
+            BastionResultSummary result,
+            MatchParticipantSnapshot[] participants,
+            bool compact)
+        {
+            var winner = result.IsDraw ? "DRAW" : result.Winner == BastionTeamId.Raja ? "TEAM RAJA" : "RIVAL";
+            var builder = new StringBuilder(320);
+            builder.Append("BASTION CROWN RESULTS\nWINNER ").Append(winner).Append("  •  ").Append(result.Reason).Append('\n');
+            builder.Append("RAJA ").Append(result.Raja.Score).Append("  DEPOSITS ").Append(result.Raja.Deposits)
+                .Append("  KOs ").Append(result.Raja.KOs).Append("  TICKETS ").Append(result.RajaTickets.Remaining).Append('\n');
+            builder.Append("RIVAL ").Append(result.Rival.Score).Append("  DEPOSITS ").Append(result.Rival.Deposits)
+                .Append("  KOs ").Append(result.Rival.KOs).Append("  TICKETS ").Append(result.RivalTickets.Remaining).Append('\n');
+            if (!compact && participants != null)
+            {
+                for (var i = 0; i < participants.Length; i++)
+                {
+                    var participant = participants[i];
+                    if (participant.Id.Value <= 0) continue;
+                    builder.Append(participant.Id.Value == 1 ? "YOU" : string.Format("FIGHTER {0}", participant.Id.Value))
+                        .Append("  KOs ").Append(participant.Eliminations)
+                        .Append("  AST ").Append(participant.Assists)
+                        .Append("  DMG ").Append(participant.DamageDealt).Append('\n');
                 }
             }
 

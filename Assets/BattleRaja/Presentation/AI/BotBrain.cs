@@ -60,6 +60,7 @@ namespace BattleRaja.Presentation.AI
         private int _continuousStuckTicks;
         private ProjectileWeaponDefinition _autonomousWeaponDefinition;
         private bool _hasAutonomousWeaponDefinition;
+        private BastionSquadPlan _bastionPlan = BastionSquadPlan.Regroup;
         private bool _subscribedToCanonicalTick;
         private bool _subscribedToAuthorityTick;
         private readonly Stopwatch _decisionTimer = new Stopwatch();
@@ -82,6 +83,7 @@ namespace BattleRaja.Presentation.AI
         public int MaxStuckSimulationTick { get; private set; }
         public ulong CommandDigest { get; private set; }
         public int CommandCount { get; private set; }
+        public BastionSquadPlan CurrentBastionPlan => _bastionPlan;
         public ProjectileWeaponAsset AutonomousWeaponAsset => weaponAsset;
         public string DebugSummary => $"{_decision.State} target={_decision.TargetId.Value} utility={_decision.UtilityScore:0.0} threats={_decision.PerceivedThreats} stuck={_decision.StuckRecovery}";
 
@@ -158,6 +160,7 @@ namespace BattleRaja.Presentation.AI
             _hasRecoveryMovement = false;
             _recoveryTicks = 0;
             _continuousStuckTicks = 0;
+            _bastionPlan = BastionSquadPlan.Regroup;
             attackController?.ResetAttackState();
             movementAgent?.ResetAuthorityCommandTelemetry();
             perception?.ResetTelemetry();
@@ -363,6 +366,39 @@ namespace BattleRaja.Presentation.AI
             }
 
             var movement = _decision.Movement;
+            var objectiveAim = _decision.Aim;
+            var objectiveMovement = Float2.Zero;
+            var objectivePlan = BastionSquadPlan.Regroup;
+            var hasBastionIntent = matchController != null && matchController.TryGetBastionBotIntent(
+                new CombatEntityId(movementAgent.ActorId),
+                out objectiveMovement,
+                out objectiveAim,
+                out objectivePlan);
+            if (matchController != null && matchController.IsBastionCrown)
+            {
+                _bastionPlan = objectivePlan;
+            }
+
+            if (hasBastionIntent)
+            {
+                // A visible hostile target keeps combat readable. When the
+                // combat engine is exploring or looting, the squad objective
+                // supplies the dominant destination so runners actually reach
+                // the Crown and escorts return a carrier to their shrine.
+                if (_decision.TargetId.Value == 0 ||
+                    _decision.State == BotDecisionState.Explore ||
+                    _decision.State == BotDecisionState.Loot ||
+                    _decision.State == BotDecisionState.Reposition)
+                {
+                    movement = (objectiveMovement * 0.82f + movement * 0.18f).Normalized;
+                    if (_decision.TargetId.Value == 0) objectiveAim = objectiveMovement;
+                }
+            }
+            else if (matchController == null || !matchController.IsBastionCrown)
+            {
+                _bastionPlan = BastionSquadPlan.Regroup;
+            }
+
             if (_decision.StuckRecovery)
             {
                 movement = _hasRecoveryMovement ? _recoveryMovement : FindRecoveryMovement(movement);
@@ -378,11 +414,11 @@ namespace BattleRaja.Presentation.AI
             }
 
             _lastSubmittedMovement = movement;
-            var input = new MovementInputFrame(movement, _decision.Aim);
+            var input = new MovementInputFrame(movement, objectiveAim);
             movementAgent.Submit(MovementCommandFactory.Create(movementAgent.ActorId, _simulationTick, input, movementAgent.Tuning), fixedDeltaSeconds);
 
             var attackCommandIssued = false;
-            var commandAim = _decision.Aim;
+            var commandAim = objectiveAim;
             if (CombatEnabled && attackController != null && _decision.Attack && _simulationTick >= _nextAttackTick)
             {
                 var currentRange = attackController.AuthorityWeaponDefinition.MaxRange * 0.95f;
@@ -396,7 +432,7 @@ namespace BattleRaja.Presentation.AI
                     AttackAttemptCount++;
                     if (perception.TryGetCurrentTargetAim(_decision.TargetId, out var currentAim))
                     {
-                        commandAim = (currentAim * 0.88f + _decision.Aim * 0.12f).Normalized;
+                        commandAim = (currentAim * 0.88f + objectiveAim * 0.12f).Normalized;
                     }
 
                     var origin = new Float2(transform.position.x, transform.position.z) + commandAim * 0.7f;
@@ -424,7 +460,7 @@ namespace BattleRaja.Presentation.AI
                     new CombatEntityId(movementAgent.ActorId),
                     _simulationTick,
                     _abilityController.AbilityId,
-                    _decision.Aim,
+                    _decision.TargetId.Value == 0 ? objectiveAim : _decision.Aim,
                     true));
                 _abilityIssued = true;
                 abilityCommandIssued = true;

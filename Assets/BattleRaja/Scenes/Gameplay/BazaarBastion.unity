@@ -556,7 +556,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c559b9f0d56d4549aed19416ad32d2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.AI.BotPerceptionSensor
-  actorId: 16
+  actorId: 8
   health: {fileID: 243717757}
   selfTarget: {fileID: 243717756}
   weaponAsset: {fileID: 11400000, guid: e8335a607a351d549a36817b4daeebd0, type: 2}
@@ -579,7 +579,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe4156971cc855840b413461e28853a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Combat.CombatAttackController
-  actorId: 16
+  actorId: 8
   faction: 2
   weapon: {fileID: 0}
   fighterDefinition: {fileID: 11400000, guid: f0e338147aa5046489cd8935e9272140, type: 2}
@@ -600,7 +600,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 357c48995bd3877409964829cea8fdea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Combat.CombatTarget
-  entityId: 16
+  entityId: 8
   faction: 2
   health: {fileID: 243717757}
 --- !u!114 &243717757
@@ -628,7 +628,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a14ec2c696b8a6e46bb4b277c116fcf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Movement.MovementPlayerAgent
-  actorId: 16
+  actorId: 8
   tuningAsset: {fileID: 11400000, guid: 0894189ebf233444eb346f28e831a800, type: 2}
   inputAdapter: {fileID: 0}
   aimIndicator: {fileID: 0}
@@ -1888,7 +1888,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c559b9f0d56d4549aed19416ad32d2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.AI.BotPerceptionSensor
-  actorId: 12
+  actorId: 4
   health: {fileID: 392919024}
   selfTarget: {fileID: 392919023}
   weaponAsset: {fileID: 11400000, guid: ac14f6867d08a0a49839466e8c01323d, type: 2}
@@ -1911,8 +1911,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe4156971cc855840b413461e28853a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Combat.CombatAttackController
-  actorId: 12
-  faction: 2
+  actorId: 4
+  faction: 1
   weapon: {fileID: 0}
   fighterDefinition: {fileID: 11400000, guid: fdcd21f8e2ca40845bd8b526b5679ef2, type: 2}
   inputAdapter: {fileID: 0}
@@ -1932,8 +1932,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 357c48995bd3877409964829cea8fdea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Combat.CombatTarget
-  entityId: 12
-  faction: 2
+  entityId: 4
+  faction: 1
   health: {fileID: 392919024}
 --- !u!114 &392919024
 MonoBehaviour:
@@ -1960,7 +1960,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a14ec2c696b8a6e46bb4b277c116fcf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Movement.MovementPlayerAgent
-  actorId: 12
+  actorId: 4
   tuningAsset: {fileID: 11400000, guid: 0894189ebf233444eb346f28e831a800, type: 2}
   inputAdapter: {fileID: 0}
   aimIndicator: {fileID: 0}
@@ -2086,7 +2086,7 @@ MonoBehaviour:
   fighterDefinition: {fileID: 11400000, guid: fdcd21f8e2ca40845bd8b526b5679ef2, type: 2}
   inputAdapter: {fileID: 0}
   movementAgent: {fileID: 392919025}
-  faction: 2
+  faction: 1
   decoyMaterial: {fileID: 2100000, guid: f784691073af283478dcb9f965bb30eb, type: 2}
   simulationTickRate: 30
 --- !u!1 &413627760
@@ -2559,7 +2559,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c559b9f0d56d4549aed19416ad32d2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.AI.BotPerceptionSensor
-  actorId: 13
+  actorId: 5
   health: {fileID: 795220289}
   selfTarget: {fileID: 795220288}
   weaponAsset: {fileID: 11400000, guid: e8335a607a351d549a36817b4daeebd0, type: 2}
@@ -2582,7 +2582,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe4156971cc855840b413461e28853a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Combat.CombatAttackController
-  actorId: 13
+  actorId: 5
   faction: 2
   weapon: {fileID: 0}
   fighterDefinition: {fileID: 11400000, guid: f0e338147aa5046489cd8935e9272140, type: 2}
@@ -2603,7 +2603,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 357c48995bd3877409964829cea8fdea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Combat.CombatTarget
-  entityId: 13
+  entityId: 5
   faction: 2
   health: {fileID: 795220289}
 --- !u!114 &795220289
@@ -2631,7 +2631,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a14ec2c696b8a6e46bb4b277c116fcf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Movement.MovementPlayerAgent
-  actorId: 13
+  actorId: 5
   tuningAsset: {fileID: 11400000, guid: 0894189ebf233444eb346f28e831a800, type: 2}
   inputAdapter: {fileID: 0}
   aimIndicator: {fileID: 0}
@@ -3304,7 +3304,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c559b9f0d56d4549aed19416ad32d2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.AI.BotPerceptionSensor
-  actorId: 11
+  actorId: 3
   health: {fileID: 989590242}
   selfTarget: {fileID: 989590241}
   weaponAsset: {fileID: 11400000, guid: b826f07521387aa4bb2589648e94ff90, type: 2}
@@ -3327,8 +3327,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe4156971cc855840b413461e28853a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Combat.CombatAttackController
-  actorId: 11
-  faction: 2
+  actorId: 3
+  faction: 1
   weapon: {fileID: 0}
   fighterDefinition: {fileID: 11400000, guid: f061347d18d197941bf2e4c5507dd393, type: 2}
   inputAdapter: {fileID: 0}
@@ -3348,8 +3348,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 357c48995bd3877409964829cea8fdea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Combat.CombatTarget
-  entityId: 11
-  faction: 2
+  entityId: 3
+  faction: 1
   health: {fileID: 989590242}
 --- !u!114 &989590242
 MonoBehaviour:
@@ -3376,7 +3376,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a14ec2c696b8a6e46bb4b277c116fcf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Movement.MovementPlayerAgent
-  actorId: 11
+  actorId: 3
   tuningAsset: {fileID: 11400000, guid: 0894189ebf233444eb346f28e831a800, type: 2}
   inputAdapter: {fileID: 0}
   aimIndicator: {fileID: 0}
@@ -3504,7 +3504,7 @@ MonoBehaviour:
   movementAgent: {fileID: 989590243}
   characterController: {fileID: 989590244}
   damageResolver: {fileID: 1585441181}
-  faction: 2
+  faction: 1
   simulationTickRate: 30
   chargeCollisionMask:
     serializedVersion: 2
@@ -5191,7 +5191,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c559b9f0d56d4549aed19416ad32d2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.AI.BotPerceptionSensor
-  actorId: 14
+  actorId: 6
   health: {fileID: 1574973502}
   selfTarget: {fileID: 1574973501}
   weaponAsset: {fileID: 11400000, guid: e8335a607a351d549a36817b4daeebd0, type: 2}
@@ -5214,7 +5214,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe4156971cc855840b413461e28853a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Combat.CombatAttackController
-  actorId: 14
+  actorId: 6
   faction: 2
   weapon: {fileID: 0}
   fighterDefinition: {fileID: 11400000, guid: f0e338147aa5046489cd8935e9272140, type: 2}
@@ -5235,7 +5235,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 357c48995bd3877409964829cea8fdea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Combat.CombatTarget
-  entityId: 14
+  entityId: 6
   faction: 2
   health: {fileID: 1574973502}
 --- !u!114 &1574973502
@@ -5263,7 +5263,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a14ec2c696b8a6e46bb4b277c116fcf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Movement.MovementPlayerAgent
-  actorId: 14
+  actorId: 6
   tuningAsset: {fileID: 11400000, guid: 0894189ebf233444eb346f28e831a800, type: 2}
   inputAdapter: {fileID: 0}
   aimIndicator: {fileID: 0}
@@ -6004,7 +6004,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c559b9f0d56d4549aed19416ad32d2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.AI.BotPerceptionSensor
-  actorId: 10
+  actorId: 2
   health: {fileID: 1715868717}
   selfTarget: {fileID: 1715868716}
   weaponAsset: {fileID: 11400000, guid: e8335a607a351d549a36817b4daeebd0, type: 2}
@@ -6027,8 +6027,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe4156971cc855840b413461e28853a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Combat.CombatAttackController
-  actorId: 10
-  faction: 2
+  actorId: 2
+  faction: 1
   weapon: {fileID: 0}
   fighterDefinition: {fileID: 11400000, guid: f0e338147aa5046489cd8935e9272140, type: 2}
   inputAdapter: {fileID: 0}
@@ -6048,8 +6048,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 357c48995bd3877409964829cea8fdea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Combat.CombatTarget
-  entityId: 10
-  faction: 2
+  entityId: 2
+  faction: 1
   health: {fileID: 1715868717}
 --- !u!114 &1715868717
 MonoBehaviour:
@@ -6076,7 +6076,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a14ec2c696b8a6e46bb4b277c116fcf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Movement.MovementPlayerAgent
-  actorId: 10
+  actorId: 2
   tuningAsset: {fileID: 11400000, guid: 0894189ebf233444eb346f28e831a800, type: 2}
   inputAdapter: {fileID: 0}
   aimIndicator: {fileID: 0}
@@ -6293,6 +6293,7 @@ GameObject:
   - component: {fileID: 1723574740}
   - component: {fileID: 1723574741}
   - component: {fileID: 1723574742}
+  - component: {fileID: 1723574743}
   m_Layer: 0
   m_Name: BazaarBastion
   m_TagString: Untagged
@@ -6379,6 +6380,23 @@ MonoBehaviour:
   decorationQuality: 1
   environmentPrefab: {fileID: 4465772689411217330, guid: 0eb47df6f66ec3048a175d4cdd3af388, type: 3}
   allowRuntimeFallback: 0
+--- !u!114 &1723574743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1723574739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e7020c04f671e04b9a80e8b5a446f47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Visuals.BastionCrownObjectiveView
+  match: {fileID: 1720232523}
+  crownVisual: {fileID: 0}
+  markerMaterial: {fileID: 0}
+  crownHeight: 1.65
+  pulseSpeed: 3.2
 --- !u!1 &1731748462
 GameObject:
   m_ObjectHideFlags: 0
@@ -7376,7 +7394,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c559b9f0d56d4549aed19416ad32d2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.AI.BotPerceptionSensor
-  actorId: 15
+  actorId: 7
   health: {fileID: 2058019587}
   selfTarget: {fileID: 2058019586}
   weaponAsset: {fileID: 11400000, guid: e8335a607a351d549a36817b4daeebd0, type: 2}
@@ -7399,7 +7417,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe4156971cc855840b413461e28853a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Combat.CombatAttackController
-  actorId: 15
+  actorId: 7
   faction: 2
   weapon: {fileID: 0}
   fighterDefinition: {fileID: 11400000, guid: f0e338147aa5046489cd8935e9272140, type: 2}
@@ -7420,7 +7438,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 357c48995bd3877409964829cea8fdea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Combat.CombatTarget
-  entityId: 15
+  entityId: 7
   faction: 2
   health: {fileID: 2058019587}
 --- !u!114 &2058019587
@@ -7448,7 +7466,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a14ec2c696b8a6e46bb4b277c116fcf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BattleRaja.Presentation::BattleRaja.Presentation.Movement.MovementPlayerAgent
-  actorId: 15
+  actorId: 7
   tuningAsset: {fileID: 11400000, guid: 0894189ebf233444eb346f28e831a800, type: 2}
   inputAdapter: {fileID: 0}
   aimIndicator: {fileID: 0}

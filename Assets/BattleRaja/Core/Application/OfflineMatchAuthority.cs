@@ -493,6 +493,8 @@ namespace BattleRaja.Core.Application
         private readonly Dictionary<CombatEntityId, WeaponCooldownState> _attackCooldowns = new Dictionary<CombatEntityId, WeaponCooldownState>();
         private readonly Dictionary<CombatEntityId, int> _lastAttackTicks = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<CombatEntityId, int> _lastAttackSequences = new Dictionary<CombatEntityId, int>();
+        private readonly Dictionary<CombatEntityId, float> _spawnProtectionRemaining = new Dictionary<CombatEntityId, float>();
+        private readonly List<CombatEntityId> _spawnProtectionIds = new List<CombatEntityId>(8);
         private readonly Dictionary<CombatEntityId, ProjectileWeaponDefinition> _participantWeapons = new Dictionary<CombatEntityId, ProjectileWeaponDefinition>();
         private readonly Dictionary<CombatEntityId, int> _participantTickRates = new Dictionary<CombatEntityId, int>();
         private readonly Dictionary<CombatEntityId, int> _participantCombatGroups = new Dictionary<CombatEntityId, int>();
@@ -601,6 +603,8 @@ namespace BattleRaja.Core.Application
             _attackCooldowns.Clear();
             _lastAttackTicks.Clear();
             _lastAttackSequences.Clear();
+            _spawnProtectionRemaining.Clear();
+            _spawnProtectionIds.Clear();
             _participantWeapons.Clear();
             _participantTickRates.Clear();
             _participantCombatGroups.Clear();
@@ -631,6 +635,8 @@ namespace BattleRaja.Core.Application
                 _attackCooldowns[spawns[i].Id] = new WeaponCooldownState();
                 _lastAttackTicks[spawns[i].Id] = -1;
                 _lastAttackSequences[spawns[i].Id] = -1;
+                _spawnProtectionRemaining[spawns[i].Id] = Math.Max(0f, _definition.SpawnProtectionSeconds);
+                _spawnProtectionIds.Add(spawns[i].Id);
                 _participantWeapons[spawns[i].Id] = ProjectileWeaponDefinition.TrainingBolt;
                 _participantTickRates[spawns[i].Id] = 30;
                 _participantCombatGroups[spawns[i].Id] = spawns[i].Id.Value;
@@ -727,6 +733,27 @@ namespace BattleRaja.Core.Application
         }
 
         public bool SetPosition(CombatEntityId id, Float2 position) => RequireSimulation().SetPosition(id, position);
+
+        public bool IsSpawnProtected(CombatEntityId actorId)
+        {
+            return _spawnProtectionRemaining.TryGetValue(actorId, out var remaining) && remaining > 0.0001f;
+        }
+
+        public void ClearSpawnProtection(CombatEntityId actorId)
+        {
+            if (_spawnProtectionRemaining.ContainsKey(actorId)) _spawnProtectionRemaining[actorId] = 0f;
+        }
+
+        public bool RespawnParticipant(CombatEntityId actorId, Float2 position)
+        {
+            var respawned = RequireSimulation().Respawn(actorId, position);
+            if (respawned)
+            {
+                _spawnProtectionRemaining[actorId] = Math.Max(0f, _definition.SpawnProtectionSeconds);
+            }
+
+            return respawned;
+        }
 
         public void ConfigureMovement(CombatEntityId id, MovementTuning tuning)
         {
@@ -1581,8 +1608,20 @@ namespace BattleRaja.Core.Application
                     0);
             }
 
+            if (IsSpawnProtected(request.TargetId))
+            {
+                return new MatchAuthorityDamage(
+                    request,
+                    new DamageResult(false, 0, false, DamageRejectionReason.SpawnProtection),
+                    targetEligibility.Snapshot.CurrentHealth);
+            }
+
             var mitigated = ApplyDamageMitigation(request);
             var result = RequireSimulation().ApplyDamage(mitigated, targetFaction, allowSelfHit, allowFriendlyFire);
+            if (result.Applied && request.InstigatorId.Value > 0)
+            {
+                ClearSpawnProtection(request.InstigatorId);
+            }
             var currentHealthAfter = 0;
             var snapshots = RequireSimulation().GetSnapshots();
             for (var i = 0; i < snapshots.Length; i++)
@@ -1628,6 +1667,19 @@ namespace BattleRaja.Core.Application
                 projectileDamageEvents);
             var dashSteps = AdvanceBijliDashes(simulationTick, fixedDeltaSeconds);
             var result = simulation.Advance(fixedDeltaSeconds);
+            // Bastion Crown's ready countdown is presentation-only. Its spawn
+            // shield starts at the live boundary, while Solo retains the legacy
+            // warmup countdown semantics.
+            if (_spawnProtectionRemaining.Count > 0 &&
+                (!_definition.IsTeamMode || result.Phase >= MatchPhase.Opening))
+            {
+                for (var protectionIndex = 0; protectionIndex < _spawnProtectionIds.Count; protectionIndex++)
+                {
+                    var protectionId = _spawnProtectionIds[protectionIndex];
+                    var remaining = Math.Max(0f, _spawnProtectionRemaining[protectionId] - fixedDeltaSeconds);
+                    _spawnProtectionRemaining[protectionId] = remaining;
+                }
+            }
             var tickSnapshots = simulation.GetSnapshots();
             var healingIntents = new List<GadgetHealingIntent>();
             var expiredStationIds = new List<int>();
@@ -1739,6 +1791,8 @@ namespace BattleRaja.Core.Application
                 hash.CombineInt((int)faction);
                 _participantCombatGroups.TryGetValue(s.Id, out var combatGroup);
                 hash.CombineInt(combatGroup);
+                _spawnProtectionRemaining.TryGetValue(s.Id, out var spawnProtection);
+                hash.CombineFloat(spawnProtection);
                 _movementTunings.TryGetValue(s.Id, out var tuning);
                 hash.CombineFloat(tuning.MaxSpeed);
                 hash.CombineFloat(tuning.Acceleration);

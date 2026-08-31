@@ -15,6 +15,38 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Evidence/sources:**
 - **Owner:**
 
+### ADR-078 — Adapt Bastion Crown through a first-class offline team authority
+
+- **Date:** 2026-08-31
+- **Status:** Accepted for the V1 offline production route.
+- **Context:** The existing Solo Raja foundation was mechanically healthy, but the
+  player-facing route lacked the team objective loop required by the V1 product brief.
+  Recolouring seven free-for-all bots would not provide trustworthy allies, shared
+  tickets, respawn protection or an authoritative Crown objective.
+- **Options considered:** Rebuild the Solo simulation around scene objects; add a
+  presentation-only team overlay; or keep Solo intact and add a pure deterministic
+  Bastion Crown rules layer behind an explicit Unity adapter.
+- **Decision:** Use immutable `BastionCrownContracts` plus mutable
+  `BastionCrownMatch` as the offline team authority. Require exactly actor IDs 1–8
+  (actor 1 human on Raja, actors 2–4 allied AI, actors 5–8 Rival AI), and mirror
+  movement/health/objective ticks into the existing authority-driven scene. The
+  controller owns no score, ticket, respawn or winner decisions; it only routes common
+  commands, applies authoritative snapshots and presents Crown/socket/shrine state.
+  Solo remains an explicit compatibility mode in domain/application fixtures and is not
+  advertised by the primary V1 menu. No Photon, PlayFab, account, economy or online
+  authority is introduced.
+- **Consequences:** The production scene and bots now have team identity, role/plan
+  intent, carrier slowdown, Crown pickup/drop/rotation/deposit, KO/assist idempotence,
+  shared tickets, protected respawn, overtime and explicit draw results. Existing Solo
+  replay/soak evidence remains valid but does not prove Bastion replay parity. Physical
+  Lava, final authored presentation and Play Store gates remain separate.
+- **Evidence/sources:** `Assets/BattleRaja/Core/Domain/BastionCrownContracts.cs`,
+  `BastionCrownMatch.cs`, `OfflineMatchController.cs`, `BotBrain.cs`,
+  `BastionCrownObjectiveView.cs`, regenerated `BazaarBastion.unity`,
+  `BastionCrownMatchTests.cs`, `VerticalSlicePlayModeTests.cs`, and the 148/148
+  EditMode plus 94/94 PlayMode reports under `Builds/Local/V1GameplayTruth/TestResults/`.
+- **Owner:** Human project owner
+
 ### ADR-058 — Unify action eligibility behind the authority clock
 
 - **Date:** 2026-08-25

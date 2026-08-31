@@ -6,7 +6,8 @@ namespace BattleRaja.Core.Application
 {
     public enum MatchReplayScenario
     {
-        SoloRaja = 0
+        SoloRaja = 0,
+        BastionCrown = 1
     }
 
     public readonly struct MatchReplayParticipant
@@ -449,6 +450,9 @@ namespace BattleRaja.Core.Application
                 case MatchReplayScenario.SoloRaja:
                     definition = OfflineMatchDefinition.SoloRaja;
                     break;
+                case MatchReplayScenario.BastionCrown:
+                    definition = OfflineMatchDefinition.BastionCrown;
+                    break;
                 default:
                     throw new InvalidOperationException("Unsupported replay scenario.");
             }
@@ -460,9 +464,13 @@ namespace BattleRaja.Core.Application
             {
                 var participant = header.Participants[i];
                 authority.ConfigureFaction(participant.ActorId, participant.Faction);
-                // Solo Raja replays use one combatant group per actor. The stored
-                // faction remains a presentation label and does not create teams.
-                authority.ConfigureCombatGroup(participant.ActorId, participant.ActorId.Value);
+                // Solo Raja replays use one combatant group per actor. Bastion
+                // Crown replays use the canonical Raja (1-4) and Rival (5-8)
+                // groups; the stored faction remains a compatibility label.
+                var combatGroup = header.Scenario == MatchReplayScenario.BastionCrown
+                    ? participant.ActorId.Value <= 4 ? 1 : 2
+                    : participant.ActorId.Value;
+                authority.ConfigureCombatGroup(participant.ActorId, combatGroup);
                 authority.ConfigureWeapon(participant.ActorId, participant.Weapon, participant.TickRate);
                 authority.ConfigureMovement(participant.ActorId, participant.Movement);
             }

@@ -71,6 +71,7 @@ namespace BattleRaja.Tests.PlayMode
             var beforeHealth = target.Health.Snapshot.CurrentHealth;
             var beforeDamage = match.Simulation.GetSnapshots().First(item => item.Id == source.Id).DamageDealt;
             for (var i = 0; i < 9; i++) match.Simulation.Advance(1f);
+            match.ClearSpawnProtection(target.Id);
 
             var result = resolver.Resolve(
                 target,
@@ -251,6 +252,7 @@ namespace BattleRaja.Tests.PlayMode
 
             for (var i = 0; i < targets.Length; i++)
             {
+                match.ClearSpawnProtection(targets[i].Id);
                 resolver.Resolve(
                     targets[i],
                     new DamageRequest(
@@ -305,6 +307,7 @@ namespace BattleRaja.Tests.PlayMode
 
                 foreach (var target in targets)
                 {
+                    match.ClearSpawnProtection(target.Id);
                     resolver.Resolve(
                         target,
                         new DamageRequest(

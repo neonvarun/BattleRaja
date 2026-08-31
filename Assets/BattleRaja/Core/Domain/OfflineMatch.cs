@@ -20,6 +20,15 @@ namespace BattleRaja.Core.Domain
         Closing = 2
     }
 
+    /// <summary>Ruleset selected by the offline presentation adapter. Solo is
+    /// retained for replay and regression fixtures; Bastion Crown owns its team
+    /// result layer without changing the legacy snapshot shape.</summary>
+    public enum OfflineMatchMode
+    {
+        SoloRaja = 0,
+        BastionCrown = 1
+    }
+
     public readonly struct MatchPhaseDefinition
     {
         public MatchPhaseDefinition(MatchPhase phase, float durationSeconds, float radius, int outsideDamagePerSecond, float warningSeconds = 0f)
@@ -41,15 +50,27 @@ namespace BattleRaja.Core.Domain
     public readonly struct OfflineMatchDefinition
     {
         public OfflineMatchDefinition(float spawnProtectionSeconds, Float2 zoneCenter, MatchPhaseDefinition[] phases)
+            : this(spawnProtectionSeconds, zoneCenter, phases, OfflineMatchMode.SoloRaja)
+        {
+        }
+
+        public OfflineMatchDefinition(
+            float spawnProtectionSeconds,
+            Float2 zoneCenter,
+            MatchPhaseDefinition[] phases,
+            OfflineMatchMode mode)
         {
             SpawnProtectionSeconds = spawnProtectionSeconds;
             ZoneCenter = zoneCenter;
             Phases = phases ?? Array.Empty<MatchPhaseDefinition>();
+            Mode = mode;
         }
 
         public float SpawnProtectionSeconds { get; }
         public Float2 ZoneCenter { get; }
         public MatchPhaseDefinition[] Phases { get; }
+        public OfflineMatchMode Mode { get; }
+        public bool IsTeamMode => Mode == OfflineMatchMode.BastionCrown;
 
         public float TargetDurationSeconds
         {
@@ -75,6 +96,28 @@ namespace BattleRaja.Core.Domain
                 new MatchPhaseDefinition(MatchPhase.Pressure, 115f, 11f, 1, 25f),
                 new MatchPhaseDefinition(MatchPhase.FinalCircle, 78f, 5f, 2)
             });
+
+        /// <summary>
+        /// The legacy zone channel used by the presentation bridge for the
+        /// authoritative Bastion Crown match. The team layer owns score,
+        /// tickets and overtime; this definition supplies the shared fixed-step
+        /// phase/zone telemetry and keeps Solo's definition untouched.
+        /// </summary>
+        public static OfflineMatchDefinition BastionCrown => new OfflineMatchDefinition(
+            spawnProtectionSeconds: 2.5f,
+            zoneCenter: Float2.Zero,
+            phases: new[]
+            {
+                new MatchPhaseDefinition(MatchPhase.LoadWarmup, 3f, 14f, 0),
+                // A zero-length legacy phase keeps action eligibility live at
+                // the exact three-second ready boundary. Spawn protection is
+                // enforced by the authority's per-actor protection state.
+                new MatchPhaseDefinition(MatchPhase.SpawnProtection, 0f, 14f, 0),
+                new MatchPhaseDefinition(MatchPhase.Opening, 180f, 14f, 0),
+                new MatchPhaseDefinition(MatchPhase.Pressure, 60f, 10f, 1, 30f),
+                new MatchPhaseDefinition(MatchPhase.FinalCircle, 30f, 5f, 2)
+            },
+            OfflineMatchMode.BastionCrown);
     }
 
     public readonly struct MatchSpawn
@@ -256,7 +299,7 @@ namespace BattleRaja.Core.Domain
                 _elapsed += deltaSeconds;
                 var timedOut = _elapsed >= _definition.TargetDurationSeconds;
                 if (!timedOut) UpdatePhase();
-                if (AliveCount <= 1 || timedOut)
+                if (!_definition.IsTeamMode && (AliveCount <= 1 || timedOut))
                 {
                     ResolveWinner();
                 }
@@ -306,7 +349,7 @@ namespace BattleRaja.Core.Domain
                 Eliminate(participant);
             }
 
-            if (_started && AliveCount <= 1) ResolveWinner();
+            if (_started && !_definition.IsTeamMode && AliveCount <= 1) ResolveWinner();
             return true;
         }
 
@@ -359,7 +402,7 @@ namespace BattleRaja.Core.Domain
 
                 _damageContributions.Remove(target.Id);
 
-                if (AliveCount <= 1) ResolveWinner();
+                if (AliveCount <= 1 && !_definition.IsTeamMode) ResolveWinner();
             }
 
             return true;
@@ -420,6 +463,22 @@ namespace BattleRaja.Core.Domain
             return true;
         }
 
+        /// <summary>
+        /// Revives one defeated participant for the team-mode adapter. Solo
+        /// callers may use this only when they explicitly own a compatible
+        /// respawn rule; no new participant is ever created.
+        /// </summary>
+        public bool Respawn(CombatEntityId id, Float2 position)
+        {
+            var participant = Find(id);
+            if (participant == null || participant.Alive) return false;
+            participant.Position = position;
+            participant.CurrentHealth = participant.MaxHealth;
+            participant.Alive = true;
+            participant.Placement = 0;
+            return true;
+        }
+
         public MatchParticipantSnapshot[] GetSnapshots()
         {
             var snapshots = new MatchParticipantSnapshot[_participants.Count];
@@ -473,6 +532,15 @@ namespace BattleRaja.Core.Domain
             _started = false;
             _lastDamageEventId = 0;
             _emittedDamageEvents = 0;
+        }
+
+        /// <summary>Ends a team-mode simulation after its separate team result
+        /// authority has resolved. Legacy Solo resolution remains private to its
+        /// existing terminal rules.</summary>
+        public void ForceResolve()
+        {
+            if (!_started || _phase == MatchPhase.Resolution) return;
+            ResolveWinner();
         }
 
         private void UpdatePhase()

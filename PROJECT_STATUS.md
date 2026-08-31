@@ -6,6 +6,34 @@
 
 ## Current state
 
+- **Bastion Crown V1 implementation checkpoint (2026-08-31):** The player-facing
+  production route is now the original offline Bastion Crown 4v4 loop: actor 1 human
+  plus actors 2–4 allied AI versus actors 5–8 rival AI. The pure domain owns canonical
+  teams, roles, Crown Spark pickup/drop/rotation/deposit, KOs/assists, shared tickets,
+  protected respawn, overtime and draw resolution; the Unity controller is an adapter
+  and the existing Solo foundation remains available to deterministic fixtures. The
+  production scene is regenerated through `BuildEntrypoints` with canonical actor IDs,
+  team-aware bot plans, carrier slowdown, shrine/socket telegraphs, team HUD and
+  Bastion result copy. New gates are **148/148 EditMode** and **94/94 PlayMode**;
+  static validation remains **0 errors / 0 warnings**. Evidence is indexed in
+  `Docs/AI/BASTION_CROWN_PRODUCT_BRIEF_2026-08-31.md` and
+  `Builds/Local/V1GameplayTruth/TestResults/`.
+
+- **Fresh Android candidate (2026-08-31):** The non-development ARM64 APK was rebuilt
+  from the implementation checkpoint: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`,
+  **41,438,372 bytes**, SHA-256
+  `6EDC5C0E5D304529A6059A94F00F7AB32AB9C71A4464044D3B0D3ED5D3E2C507`.
+  The matching release-shaped AAB was rebuilt from the same source: **37,263,881
+  bytes**, SHA-256
+  `3D12A358E0F9159A2CA3749A4E53DBB712AF19B0FCCC6E6D80F96DE5944508EE`.
+  The local V1 technical gate passed the offline manifest, ARM64-only/static
+  16 KB alignment and store-creative dimension checks.
+  It remains temporary/debug identity `com.example.battleraja.m11` and is not a
+  publishable signed artifact. A local Android 16 emulator (ANGLE renderer) reached
+  the menu, Bastion Crown briefing, fighter portraits and live arena; the approved
+  Lava serial `ST5GDW23LB004392` was not connected in this run, so physical-device
+  and reference-app evidence remain open.
+
 - **Working-tree presentation pass (2026-08-31):** An observation-only review of the
   installed Brawl Stars and Smash Karts entry surfaces on approved Lava informed an
   original BattleRaja polish pass. The menu now uses the owned Bazaar feature art with

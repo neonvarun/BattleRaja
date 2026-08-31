@@ -69,6 +69,113 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator ProductionSceneStartsCanonicalBastionTeamsAndObjectivePresentation()
+        {
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            var agents = Object.FindObjectsByType<MovementPlayerAgent>()
+                .Where(agent => agent.AuthorityDrivenMovement)
+                .OrderBy(agent => agent.ActorId)
+                .ToArray();
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match.IsBastionCrown, Is.True);
+            Assert.That(agents.Select(agent => agent.ActorId), Is.EqualTo(new[] { 1, 2, 3, 4, 5, 6, 7, 8 }));
+            Assert.That(match.BastionCrown.AreAllies(new CombatEntityId(1), new CombatEntityId(2)), Is.True);
+            Assert.That(match.BastionCrown.AreEnemies(new CombatEntityId(1), new CombatEntityId(5)), Is.True);
+            Assert.That(match.BastionRajaTickets.Remaining, Is.EqualTo(12));
+            Assert.That(match.BastionRivalTickets.Remaining, Is.EqualTo(12));
+
+            for (var i = 1; i <= 8; i++)
+            {
+                Assert.That(match.BastionCrown.TryGetParticipant(new CombatEntityId(i), out var participant), Is.True);
+                Assert.That(participant.Member.TeamId,
+                    Is.EqualTo(i <= 4 ? BastionTeamId.Raja : BastionTeamId.Rival),
+                    $"actor {i} must be assigned to the canonical Bastion team");
+                Assert.That(participant.Member.IsHuman, Is.EqualTo(i == 1));
+            }
+
+            var objectiveView = Object.FindAnyObjectByType<BastionCrownObjectiveView>();
+            Assert.That(objectiveView, Is.Not.Null);
+            yield return null;
+            for (var i = 0; i < 3; i++)
+            {
+                Assert.That(objectiveView.transform.Find("CrownSocketRing" + i), Is.Not.Null,
+                    "The production arena must expose all three Crown socket telegraphs.");
+            }
+            Assert.That(objectiveView.transform.Find("RajaShrineRing"), Is.Not.Null);
+            Assert.That(objectiveView.transform.Find("RivalShrineRing"), Is.Not.Null);
+
+            var status = GameObject.Find("MatchStatus")?.GetComponent<Text>();
+            Assert.That(status, Is.Not.Null);
+            StringAssert.Contains("BASTION CROWN", status.text);
+            StringAssert.Contains("RAJA", status.text);
+            StringAssert.Contains("RIVAL", status.text);
+        }
+
+        [UnityTest]
+        public IEnumerator ProductionCrownPickupAndDepositUsesTeamAuthority()
+        {
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            var player = Object.FindObjectsByType<MovementPlayerAgent>().Single(agent => agent.ActorId == 1);
+            Assert.That(match, Is.Not.Null);
+            Assert.That(player, Is.Not.Null);
+
+            var previousTimeScale = Time.timeScale;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            var previousHarnessSimulation = OfflineMatchController.SuppressAutomaticSimulationForHarness;
+            OfflineMatchController.SuppressAutomaticSimulationForHarness = true;
+#endif
+            try
+            {
+                var crownSocket = match.BastionCrownState.Position;
+                SetProductionActorPosition(match, player, crownSocket);
+
+                // The Crown is a live objective, so its pickup must be earned over
+                // the canonical contact channel rather than awarded by a test seam.
+                for (var i = 0; i < 125; i++)
+                {
+                    match.AdvanceHarnessSimulationTick();
+                    yield return null;
+                }
+
+                Assert.That(match.BastionCrownState.CarrierId, Is.EqualTo(new CombatEntityId(1)));
+                Assert.That(match.BastionCrown.GetMovementMultiplier(new CombatEntityId(1)), Is.LessThan(1f));
+
+                var shrine = match.BastionCrown.Definition.Raja.ShrinePosition;
+                SetProductionActorPosition(match, player, shrine);
+                for (var i = 0; i < 70; i++)
+                {
+                    match.AdvanceHarnessSimulationTick();
+                    yield return null;
+                }
+
+                Assert.That(match.BastionRajaScore.Score, Is.EqualTo(3));
+                Assert.That(match.BastionRajaScore.Deposits, Is.EqualTo(1));
+                Assert.That(match.BastionCrownState.IsCarried, Is.False);
+                Assert.That(match.BastionResult.IsDraw, Is.False);
+            }
+            finally
+            {
+                Time.timeScale = previousTimeScale;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                OfflineMatchController.SuppressAutomaticSimulationForHarness = previousHarnessSimulation;
+#endif
+            }
+        }
+
+        private static void SetProductionActorPosition(
+            OfflineMatchController match,
+            MovementPlayerAgent agent,
+            Float2 position)
+        {
+            var actorId = new CombatEntityId(agent.ActorId);
+            Assert.That(match.Simulation.SetPosition(actorId, position), Is.True);
+            agent.ApplyAuthoritativePosition(position);
+            agent.ResetMovement(Float2.Zero);
+            Physics.SyncTransforms();
+        }
+
+        [UnityTest]
         public IEnumerator ProductionBotsResolveTheirOwnFighterAbilityControllers()
         {
             var brains = Object.FindObjectsByType<BotBrain>();
@@ -100,7 +207,12 @@ namespace BattleRaja.Tests.PlayMode
             yield return new WaitForSeconds(4f);
 
             var match = Object.FindAnyObjectByType<OfflineMatchController>();
-            Assert.That(match.CurrentPhase, Is.EqualTo(MatchPhase.SpawnProtection));
+            // Bastion Crown's live clock starts at the three-second ready
+            // boundary; its per-actor shield is authoritative and continues
+            // through the opening phase.
+            Assert.That(match.CurrentPhase, Is.EqualTo(MatchPhase.Opening));
+            Assert.That(match.IsBastionCrown, Is.True);
+            Assert.That(match.BastionElapsedSeconds, Is.GreaterThanOrEqualTo(3f));
             Assert.That(player.Snapshot.CurrentHealth, Is.EqualTo(initialHealth),
                 "Bots must not deal combat damage during load warmup or spawn protection.");
         }
@@ -466,7 +578,11 @@ namespace BattleRaja.Tests.PlayMode
                 .OrderBy(controller => controller.GetComponent<MovementPlayerAgent>().ActorId)
                 .First();
             var pehelAgent = pehel.GetComponent<MovementPlayerAgent>();
-            var player = PlayModeTestHelpers.FindPlayer<CombatTarget>();
+            var player = Object.FindObjectsByType<MovementPlayerAgent>()
+                .Where(agent => agent.AuthorityDrivenMovement && agent.ActorId >= 5)
+                .OrderBy(agent => agent.ActorId)
+                .Select(agent => agent.GetComponent<CombatTarget>())
+                .First();
             var playerAgent = player.GetComponent<MovementPlayerAgent>();
             Assert.That(match, Is.Not.Null);
             Assert.That(pehelAgent, Is.Not.Null);
@@ -491,6 +607,8 @@ namespace BattleRaja.Tests.PlayMode
             Physics.SyncTransforms();
 
             var beforeHealth = player.Health.Snapshot.CurrentHealth;
+            match.ClearSpawnProtection(pehelAgent.GetComponent<CombatTarget>().Id);
+            match.ClearSpawnProtection(player.Id);
             pehel.Submit(AbilityCommandFactory.Create(
                 new CombatEntityId(pehelAgent.ActorId),
                 match.SimulationTick + 1,
@@ -521,13 +639,13 @@ namespace BattleRaja.Tests.PlayMode
         {
             var match = Object.FindAnyObjectByType<OfflineMatchController>();
             var agents = Object.FindObjectsByType<MovementPlayerAgent>()
-                .Where(agent => agent.AuthorityDrivenMovement && agent.ActorId >= 10)
+                .Where(agent => agent.AuthorityDrivenMovement && agent.ActorId >= 2 && agent.ActorId <= 8)
                 .OrderBy(agent => agent.ActorId)
                 .ToArray();
-            Assert.That(agents.Length, Is.GreaterThanOrEqualTo(2));
+            Assert.That(agents.Length, Is.EqualTo(7));
 
-            var shooterAgent = agents[0];
-            var targetAgent = agents[1];
+            var shooterAgent = agents.First(agent => agent.ActorId == 2);
+            var targetAgent = agents.First(agent => agent.ActorId == 5);
             var shooter = shooterAgent.GetComponent<CombatTarget>();
             var target = targetAgent.GetComponent<CombatTarget>();
             var presentation = target.GetComponent<FighterPresentation>();
@@ -557,6 +675,8 @@ namespace BattleRaja.Tests.PlayMode
 
             // Advance the pure match to Opening without waiting through protection.
             for (var i = 0; i < 9; i++) match.Simulation.Advance(1f);
+            match.ClearSpawnProtection(shooter.Id);
+            match.ClearSpawnProtection(target.Id);
             // Keep this authority/reconciliation regression independent of the
             // production bot's bounded PvE weapon scale: one point guarantees a
             // single accepted projectile is terminal for the selected target.
@@ -606,7 +726,7 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(match.TryGetMayaDecoySnapshot(ownerId, out _), Is.False);
             for (var i = 0; i < 9; i++) match.Simulation.Advance(1f);
 
-            maya.Submit(AbilityCommandFactory.Create(ownerId, 1, maya.AbilityId, Float2.Up, true));
+            maya.Submit(AbilityCommandFactory.Create(ownerId, match.SimulationTick + 1, maya.AbilityId, Float2.Up, true));
             yield return new WaitForSecondsRealtime(0.25f);
 
             Assert.That(match.TryGetMayaDecoySnapshot(ownerId, out var spawned), Is.True);
@@ -615,13 +735,14 @@ namespace BattleRaja.Tests.PlayMode
                 .First(target => target.Id == spawned.DecoyId);
             var resolver = Object.FindAnyObjectByType<CombatDamageResolver>();
             Assert.That(resolver, Is.Not.Null);
-            var attackerId = new CombatEntityId(ownerId.Value == 1 ? 2 : 1);
+            var attackerId = new CombatEntityId(ownerId.Value <= 4 ? 5 : 1);
+            var attackerFaction = attackerId.Value <= 4 ? CombatFaction.Player : CombatFaction.Enemy;
             var result = resolver.Resolve(
                 decoy,
                 new DamageRequest(
                     attackerId,
                     spawned.DecoyId,
-                    CombatFaction.Player,
+                    attackerFaction,
                     spawned.MaxHealth,
                     DamageType.Projectile,
                     Float2.Up,

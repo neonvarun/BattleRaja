@@ -14,6 +14,38 @@ Research current primary sources before selecting technical versions, APIs, SDKs
 - **Uncertainty:**
 - **Recheck trigger/date:**
 
+### Bastion Crown V1 rebaseline and Android smoke — 2026-08-31
+
+- **Date checked:** 2026-08-31
+- **Question:** What can be claimed after replacing the player-facing Solo route with
+  the original offline Bastion Crown 4v4 loop while preserving the existing foundation?
+- **Primary source:** `PROMPTS/99_MASTER_V1_GOAL.md`, `PROMPTS/README.md`,
+  `PROMPTS/01_CURRENT_STATE_AND_REFERENCE_AUDIT.md` through
+  `PROMPTS/16_FINAL_INTEGRATION_REGRESSION_AND_V1_RELEASE_GATE.md`,
+  `Docs/MASTER_VISION.md`, `Docs/ARCHITECTURE.md` and the controlled Unity build/test
+  entrypoints. Android runtime observation used only the local
+  `BattleRaja_16K` AVD with the ANGLE renderer; no reference-game asset or terminology
+  was copied.
+- **Relevant claim:** The implementation is an offline, deterministic 1-human +
+  3-allied-AI versus 4-rival-AI mode with Crown Spark objective, team scores/tickets,
+  respawn protection, Aandhi pressure, team-aware bot plans and explicit results. The
+  current static gate is 0/0, EditMode is 148/148 and PlayMode is 94/94. The fresh
+  ARM64 APK reaches menu → Bastion briefing → fighter portraits → live team HUD on the
+  local emulator. The approved Lava serial `ST5GDW23LB004392` was not connected during
+  this run, so physical-device performance, 16 KB compatibility and installed
+  Brawl Stars/Smash Karts observation are unverified here.
+- **Decision impact:** Keep the pure Solo layer as compatibility/future coverage, keep
+  the Bastion team authority separate from Unity presentation, treat emulator evidence
+  as non-substitutive for Lava evidence, and leave package identity/signing, Data Safety,
+  final authorship and Play Console actions owner-gated. No Unity/package/API version
+  change was made by this implementation.
+- **Uncertainty:** The emulator uses x86_64 Android 16 and ANGLE, not Lava ARM64
+  hardware. Its default host renderer crashed the AVD during fighter-screen transition;
+  the ANGLE rerun passed the same route. This is an emulator configuration limitation,
+  not evidence of a production-device crash or a fix for physical GPU compatibility.
+- **Recheck trigger/date:** Repeat on Lava before any V1 release claim; repeat official
+  Android/Play policy checks immediately before signing, listing or upload.
+
 ## Initial required topics
 
 - Unity 6 production-supported release

@@ -441,11 +441,11 @@ namespace BattleRaja.Presentation.Flow
             {
                 case ProductionFlowState.MainMenu:
                     _mainMenuPanel.SetActive(true);
-                    SetHeader("BATTLE RAJA", "SOLO RAJA  •  1 RAJA + 7 RIVALS  •  NO INTERNET REQUIRED");
+                    SetHeader("BATTLE RAJA", "BASTION CROWN  •  4V4 OFFLINE  •  NO INTERNET REQUIRED");
                     break;
                 case ProductionFlowState.ModeSelection:
                     _modePanel.SetActive(true);
-                    SetHeader("SOLO RAJA", "Choose your fighter, then drop into Bazaar Bastion.");
+                    SetHeader("BASTION CROWN", "Team Raja versus Rival. Carry the Crown Spark to your shrine.");
                     break;
                 case ProductionFlowState.FighterSelection:
                     _fighterPanel.SetActive(true);
@@ -538,13 +538,13 @@ namespace BattleRaja.Presentation.Flow
             _titleText = CreateText(_safeArea.transform, "Title", new Vector2(0.08f, 0.69f), new Vector2(0.92f, 0.79f), 42, TextAnchor.MiddleCenter);
             _messageText = CreateText(_safeArea.transform, "Message", new Vector2(0.10f, 0.62f), new Vector2(0.90f, 0.70f), 20, TextAnchor.MiddleCenter);
             var eyebrow = CreateText(_safeArea.transform, "Eyebrow", new Vector2(0.18f, 0.965f), new Vector2(0.82f, 0.995f), 12, TextAnchor.MiddleCenter, BattleRajaUiTheme.Cyan, true);
-            eyebrow.text = "OFFLINE ARCADE  •  BAZAAR BASTION";
+            eyebrow.text = "BASTION CROWN  •  BAZAAR BASTION";
             var version = CreateText(_safeArea.transform, "Version", new Vector2(0.04f, 0.015f), new Vector2(0.52f, 0.055f), 14, TextAnchor.MiddleLeft, BattleRajaUiTheme.MutedText);
-            version.text = "OFFLINE ARCADE  •  8-ACTOR MATCHES";
+            version.text = "OFFLINE 4V4  •  8 FIGHTERS  •  AIRPLANE MODE READY";
 
             _mainMenuPanel = CreatePanel(_safeArea.transform, "MainMenuPanel");
             CreateText(_mainMenuPanel.transform, "LoopSummary", new Vector2(0.12f, 0.70f), new Vector2(0.88f, 0.88f), 17, TextAnchor.MiddleCenter, BattleRajaUiTheme.MutedText).text =
-                "1 RAJA  •  7 RIVALS\nREAD THE ZONE  •  GRAB A GADGET  •  SURVIVE";
+                "TEAM RAJA 4  •  RIVAL 4\nGRAB THE CROWN  •  DEPOSIT AT YOUR SHRINE";
             var heroObject = new GameObject("HeroIllustration", typeof(RectTransform), typeof(BattleRajaHeroGraphic));
             heroObject.transform.SetParent(_mainMenuPanel.transform, false);
             var heroRect = heroObject.GetComponent<RectTransform>();
@@ -581,8 +581,8 @@ namespace BattleRaja.Presentation.Flow
 
             _modePanel = CreatePanel(_safeArea.transform, "ModePanel");
             AddFeatureBackdrop(_modePanel, "ModeBackdrop", 0.14f);
-            CreateButton(_modePanel.transform, "Offline", "DROP IN  •  1 RAJA + 7 BOTS", new Vector2(0.18f, 0.49f), new Vector2(0.82f, 0.63f), SelectOfflineMode, true);
-            CreateText(_modePanel.transform, "ModeHint", new Vector2(0.14f, 0.33f), new Vector2(0.86f, 0.46f), 18, TextAnchor.MiddleCenter).text = "Every match is deterministic, replayable and playable without an account.";
+            CreateButton(_modePanel.transform, "Offline", "BASTION CROWN  •  4V4", new Vector2(0.18f, 0.49f), new Vector2(0.82f, 0.63f), SelectOfflineMode, true);
+            CreateText(_modePanel.transform, "ModeHint", new Vector2(0.12f, 0.30f), new Vector2(0.88f, 0.46f), 18, TextAnchor.MiddleCenter).text = "TEAM RAJA: YOU + 3 ALLIES\nRIVAL: 4 BOTS  •  CROWN + KOs + SHARED TICKETS";
             CreateButton(_modePanel.transform, "Back", "BACK TO MENU", new Vector2(0.32f, 0.14f), new Vector2(0.68f, 0.26f), ReturnToMenu);
 
             _fighterPanel = CreatePanel(_safeArea.transform, "FighterPanel");
@@ -600,7 +600,7 @@ namespace BattleRaja.Presentation.Flow
             CreateText(_fighterPanel.transform, "BijliHint", new Vector2(0.08f, 0.42f), new Vector2(0.31f, 0.49f), 13, TextAnchor.MiddleCenter, BattleRajaUiTheme.MutedText).text = "BURST • MID-RANGE";
             CreateText(_fighterPanel.transform, "PehelHint", new Vector2(0.385f, 0.42f), new Vector2(0.615f, 0.49f), 13, TextAnchor.MiddleCenter, BattleRajaUiTheme.MutedText).text = "CAPTURE • THROW";
             CreateText(_fighterPanel.transform, "MayaHint", new Vector2(0.69f, 0.42f), new Vector2(0.92f, 0.49f), 13, TextAnchor.MiddleCenter, BattleRajaUiTheme.MutedText).text = "DECOY • MISDIRECT";
-            CreateButton(_fighterPanel.transform, "Start", "START SOLO RAJA", new Vector2(0.22f, 0.28f), new Vector2(0.78f, 0.41f), BeginOfflineMatch, true);
+            CreateButton(_fighterPanel.transform, "Start", "START BASTION CROWN", new Vector2(0.22f, 0.28f), new Vector2(0.78f, 0.41f), BeginOfflineMatch, true);
             CreateButton(_fighterPanel.transform, "Back", "BACK", new Vector2(0.32f, 0.10f), new Vector2(0.68f, 0.22f), OpenModeSelection);
 
             _loadingPanel = CreatePanel(_safeArea.transform, "LoadingPanel");

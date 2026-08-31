@@ -118,7 +118,7 @@ namespace BattleRaja.Tests.PlayMode
             yield return null;
 
             var version = GameObject.Find("SafeArea/Version").GetComponent<Text>();
-            Assert.That(version.text, Does.Contain("OFFLINE ARCADE"));
+            Assert.That(version.text, Does.Contain("OFFLINE 4V4"));
             Assert.That(version.text.ToUpperInvariant(), Does.Not.Contain("CANDIDATE"));
             Assert.That(version.text.ToUpperInvariant(), Does.Not.Contain("DEBUG"));
         }

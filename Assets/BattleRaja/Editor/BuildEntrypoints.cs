@@ -438,6 +438,8 @@ namespace BattleRaja.Editor
             var projectilePool = arena.GetComponentInChildren<CombatProjectilePool>();
             var matchController = arena.GetComponentInChildren<OfflineMatchController>(true);
             if (matchController == null) throw new BuildFailedException("Bazaar Bastion match controller is missing.");
+            var objectiveView = arena.GetComponent<BastionCrownObjectiveView>() ?? arena.AddComponent<BastionCrownObjectiveView>();
+            SetObjectReference(objectiveView, "match", matchController);
             var playerAgent = arena.GetComponentsInChildren<MovementPlayerAgent>(true)
                 .FirstOrDefault(agent => agent.ActorId == 1);
             var cameraController = UnityEngine.Object.FindAnyObjectByType<TopDownCameraController>();
@@ -458,7 +460,7 @@ namespace BattleRaja.Editor
             var bots = UnityEngine.Object.FindObjectsByType<BotBrain>()
                 .OrderBy(bot => bot.GetComponent<MovementPlayerAgent>() != null ? bot.GetComponent<MovementPlayerAgent>().ActorId : int.MaxValue)
                 .ToArray();
-            if (bots.Length < 7) throw new BuildFailedException("Bazaar Bastion requires seven autonomous bot actors in the production scene.");
+            if (bots.Length != 7) throw new BuildFailedException($"Bazaar Bastion requires exactly seven autonomous bot actors in the production scene; found {bots.Length}.");
 
             ConfigureProductionBotSpawns(bots);
 
@@ -472,6 +474,18 @@ namespace BattleRaja.Editor
             for (var i = 3; i < bots.Length; i++)
             {
                 ConfigureProductionBot(bots[i], bijliAsset, bijliMaterial, null, damageResolver, projectilePool, bijliWeapon, pehelWeapon, mayaWeapon);
+            }
+
+            // Production is the canonical 1 human + 3 allied AI versus 4 rival AI
+            // contract. Older scene copies used actor IDs 10-16 and marked every
+            // bot as Enemy; reconcile the complete authority identity on every
+            // controlled generation pass instead of relying on scene history.
+            for (var i = 0; i < bots.Length; i++)
+            {
+                ConfigureBastionBotIdentity(
+                    bots[i],
+                    i + 2,
+                    i < 3 ? CombatFaction.Player : CombatFaction.Enemy);
             }
 
             ConfigurePlayerFighterSelection(arena.transform, tuningAsset, pehelAsset, mayaAsset, mayaMaterial, damageResolver);
@@ -1250,6 +1264,35 @@ namespace BattleRaja.Editor
             SetObjectReference(gadget, "health", health);
             SetObjectReference(gadget, "damageResolver", damageResolver);
             SetBool(gadget, "botControlled", true);
+        }
+
+        private static void ConfigureBastionBotIdentity(BotBrain brain, int actorId, CombatFaction faction)
+        {
+            if (brain == null) throw new BuildFailedException("A Bastion Crown bot slot is missing its BotBrain.");
+            var bot = brain.gameObject;
+            var agent = bot.GetComponent<MovementPlayerAgent>();
+            var target = bot.GetComponent<CombatTarget>();
+            var attack = bot.GetComponent<CombatAttackController>();
+            var perception = bot.GetComponent<BotPerceptionSensor>();
+            if (agent == null || target == null || attack == null || perception == null)
+            {
+                throw new BuildFailedException($"Bastion Crown bot slot {bot.name} is missing an authority identity component.");
+            }
+
+            SetInt(agent, "actorId", actorId);
+            SetInt(target, "entityId", actorId);
+            SetEnum(target, "faction", faction);
+            SetInt(attack, "actorId", actorId);
+            SetEnum(attack, "faction", faction);
+            SetInt(perception, "actorId", actorId);
+
+            // Pehel and Maya carry a faction field for their ability-side target
+            // filtering. Bijli's dash is resolved through the authority attack
+            // bridge and has no separate faction field.
+            var pehel = bot.GetComponent<PehelFighterController>();
+            if (pehel != null) SetEnum(pehel, "faction", faction);
+            var maya = bot.GetComponent<MayaFighterController>();
+            if (maya != null) SetEnum(maya, "faction", faction);
         }
 
         private static void ApplyBazaarPalette(Transform arena, Material floor, Material wall, Material stall)

@@ -31,6 +31,7 @@ namespace BattleRaja.Presentation.Match
 
         private readonly List<MatchActorBinding> _actors = new List<MatchActorBinding>(8);
         private OfflineMatchAuthority _authority;
+        private BastionCrownMatch _bastionCrown;
         private FixedSimulationClock _simulationClock;
         private bool _playerSpectating;
         private bool _resultsShown;
@@ -85,6 +86,16 @@ namespace BattleRaja.Presentation.Match
         public float SimulationStepSeconds => _simulationClock != null ? (float)_simulationClock.StepSeconds : 1f / Mathf.Max(1, simulationTickRate);
         public double SimulationInterpolationAlpha => _simulationClock != null ? _simulationClock.InterpolationAlpha : 0d;
         public bool AuthorityDrivenMovement => authorityDrivenMovement;
+        public BastionCrownMatch BastionCrown => _bastionCrown;
+        public bool IsBastionCrown => _bastionCrown != null;
+        public float BastionElapsedSeconds => _bastionCrown != null ? _bastionCrown.ElapsedSeconds : 0f;
+        public bool BastionOvertime => _bastionCrown != null && _bastionCrown.IsOvertime;
+        public CrownSparkSnapshot BastionCrownState => _bastionCrown != null ? _bastionCrown.Crown : default(CrownSparkSnapshot);
+        public TeamScore BastionRajaScore => _bastionCrown != null ? _bastionCrown.GetTeamScore(BastionTeamId.Raja) : default(TeamScore);
+        public TeamScore BastionRivalScore => _bastionCrown != null ? _bastionCrown.GetTeamScore(BastionTeamId.Rival) : default(TeamScore);
+        public TeamTicketPool BastionRajaTickets => _bastionCrown != null ? _bastionCrown.GetTickets(BastionTeamId.Raja) : default(TeamTicketPool);
+        public TeamTicketPool BastionRivalTickets => _bastionCrown != null ? _bastionCrown.GetTickets(BastionTeamId.Rival) : default(TeamTicketPool);
+        public BastionResultSummary BastionResult => _bastionCrown != null ? _bastionCrown.Result : default(BastionResultSummary);
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         /// <summary>
@@ -122,7 +133,7 @@ namespace BattleRaja.Presentation.Match
                 matchSeed,
                 (MatchSpawn[])_replaySpawns.Clone(),
                 (float)_simulationClock.StepSeconds,
-                MatchReplayScenario.SoloRaja,
+                _bastionCrown != null ? MatchReplayScenario.BastionCrown : MatchReplayScenario.SoloRaja,
                 participants,
                 (MatchPickupDefinition[])_replayPickupDefinitions.Clone(),
                 (GadgetPickupDefinition[])_replayGadgetPickupDefinitions.Clone());
@@ -153,6 +164,74 @@ namespace BattleRaja.Presentation.Match
         public bool AreActorsHostile(CombatEntityId first, CombatEntityId second)
         {
             return _authority != null && _authority.AreActorsHostile(first, second);
+        }
+
+        /// <summary>
+        /// Diagnostic/test seam for fast-forwarded offline fixtures. Production
+        /// gameplay clears protection through elapsed authority ticks or a valid
+        /// combat action; this method never mutates the pure team result layer.
+        /// </summary>
+        public void ClearSpawnProtection(CombatEntityId actorId)
+        {
+            _authority?.ClearSpawnProtection(actorId);
+            _bastionCrown?.ClearSpawnProtection(actorId);
+        }
+
+        /// <summary>
+        /// Supplies a deterministic squad destination for the production bot
+        /// adapter. Combat target selection remains shared with Solo, while the
+        /// Bastion layer gives each role a clear objective: contest the Crown,
+        /// escort its carrier, defend a shrine, or collapse the enemy carrier.
+        /// </summary>
+        public bool TryGetBastionBotIntent(
+            CombatEntityId actorId,
+            out Float2 movement,
+            out Float2 aim,
+            out BastionSquadPlan plan)
+        {
+            movement = Float2.Zero;
+            aim = Float2.Up;
+            plan = BastionSquadPlan.Regroup;
+            if (_bastionCrown == null || !_bastionCrown.IsLive ||
+                !_bastionCrown.TryGetParticipant(actorId, out var self) || !self.Alive)
+            {
+                return false;
+            }
+
+            var crown = _bastionCrown.Crown;
+            var destination = crown.Position;
+            if (crown.IsCarried && _bastionCrown.TryGetParticipant(crown.CarrierId, out var carrier))
+            {
+                if (carrier.TeamId == self.TeamId)
+                {
+                    destination = carrier.ActorId == actorId
+                        ? self.TeamId == BastionTeamId.Raja
+                            ? _bastionCrown.Definition.Raja.ShrinePosition
+                            : _bastionCrown.Definition.Rival.ShrinePosition
+                        : carrier.Position;
+                    plan = BastionSquadPlan.EscortCarrier;
+                }
+                else
+                {
+                    destination = carrier.Position;
+                    plan = BastionSquadPlan.CollapseTarget;
+                }
+            }
+            else if (self.Member.Role == BastionRole.Anchor)
+            {
+                destination = self.TeamId == BastionTeamId.Raja
+                    ? _bastionCrown.Definition.Raja.ShrinePosition
+                    : _bastionCrown.Definition.Rival.ShrinePosition;
+                plan = BastionSquadPlan.DefendShrine;
+            }
+            else
+            {
+                plan = BastionSquadPlan.ContestCrown;
+            }
+
+            movement = (destination - self.Position).Normalized;
+            aim = movement.SqrMagnitude > 0.000001f ? movement : Float2.Up;
+            return movement.SqrMagnitude > 0.000001f;
         }
 
         public bool ApplyAuthoritativeDisplacement(GadgetDisplacementIntent displacement)
@@ -470,6 +549,18 @@ namespace BattleRaja.Presentation.Match
                 if (authorityDrivenMovement)
                 {
                     var command = actor.Agent.GetAuthorityCommand(simulationTick);
+                    if (_bastionCrown != null)
+                    {
+                        var carrierSpeed = _bastionCrown.GetMovementMultiplier(actor.Target.Id);
+                        if (carrierSpeed < 0.9999f)
+                        {
+                            command = new MovementCommand(
+                                command.ActorId,
+                                command.SimulationTick,
+                                command.Movement * carrierSpeed,
+                                command.Aim);
+                        }
+                    }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                     AuthorityMovementCommandCaptured?.Invoke(command);
 #endif
@@ -488,6 +579,21 @@ namespace BattleRaja.Presentation.Match
             var authorityTick = _authority.Advance(simulationTick, (float)_simulationClock.StepSeconds);
             AuthorityTickResolved?.Invoke(authorityTick);
             var tick = authorityTick.Result;
+            BastionCrownTick bastionTick = default(BastionCrownTick);
+            if (_bastionCrown != null)
+            {
+                SyncBastionFromAuthority(authorityTick);
+                ProcessBastionObjectiveInteractions((float)_simulationClock.StepSeconds);
+                bastionTick = _bastionCrown.Advance((float)_simulationClock.StepSeconds, simulationTick);
+                ApplyBastionRespawns(bastionTick);
+                if (bastionTick.MatchEnded)
+                {
+                    // The legacy snapshot remains useful to existing result and
+                    // replay consumers, but its terminal phase is forced only
+                    // after the team authority has selected the real outcome.
+                    _authority.Simulation.ForceResolve();
+                }
+            }
             if (projectilePool != null)
             {
                 projectilePool.Reconcile(authorityTick.ProjectileSnapshots);
@@ -504,7 +610,7 @@ namespace BattleRaja.Presentation.Match
             ApplyAuthoritativeCollections(authorityTick);
             MirrorItemAvailability();
             UpdateSpectator(tick);
-            if (tick.MatchEnded)
+            if (tick.MatchEnded || (_bastionCrown != null && bastionTick.MatchEnded))
             {
                 PublishResults();
                 return true;
@@ -517,8 +623,16 @@ namespace BattleRaja.Presentation.Match
         {
             CacheActors();
             var spawns = _actors.Select(actor => new MatchSpawn(actor.Target.Id, new Float2(actor.Transform.position.x, actor.Transform.position.z), actor.Health.MaxHealth)).ToList();
+            var useBastionCrown = IsBastionCrownScene();
+            if (useBastionCrown && !HasCanonicalBastionSlots(spawns))
+            {
+                throw new InvalidOperationException("Bastion Crown requires exactly actor slots 1-8; the scene was not silently downgraded to Solo.");
+            }
+
             _replaySpawns = spawns.ToArray();
-            _authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja, outsideDamageTickSeconds);
+            _bastionCrown = null;
+            var definition = useBastionCrown ? OfflineMatchDefinition.BastionCrown : OfflineMatchDefinition.SoloRaja;
+            _authority = new OfflineMatchAuthority(definition, outsideDamageTickSeconds);
             var pickupDefinitions = new List<MatchPickupDefinition>(pickups != null ? pickups.Length : 0);
             if (pickups != null)
             {
@@ -557,13 +671,29 @@ namespace BattleRaja.Presentation.Match
             _replayGadgetPickupDefinitions = gadgetDefinitions.ToArray();
             _authority.ConfigureItems(_replayPickupDefinitions, _replayGadgetPickupDefinitions);
             _authority.Start(spawns);
+            var bastionSlots = useBastionCrown ? new List<BastionCrownSlot>(BastionCrownMatch.ParticipantCount) : null;
             for (var i = 0; i < _actors.Count; i++)
             {
                 var actor = _actors[i];
                 _authority.ConfigureFaction(actor.Target.Id, actor.Target.Faction);
-                // Solo Raja is a true free-for-all even though the presentation
-                // compatibility label remains Enemy for every autonomous bot.
-                _authority.ConfigureCombatGroup(actor.Target.Id, actor.Target.Id.Value);
+                // Solo Raja is a true free-for-all. Bastion Crown uses the
+                // explicit team group only for authority target filtering; the
+                // first-class team result/objective state lives in _bastionCrown.
+                var team = actor.Target.Id.Value <= 4 ? BastionTeamId.Raja : BastionTeamId.Rival;
+                _authority.ConfigureCombatGroup(actor.Target.Id, useBastionCrown ? (team == BastionTeamId.Raja ? 1 : 2) : actor.Target.Id.Value);
+                if (useBastionCrown)
+                {
+                    var fighterId = ResolveFighterIdRuntime(actor.Transform);
+                    bastionSlots.Add(new BastionCrownSlot(
+                        new TeamMember(
+                            actor.Target.Id,
+                            team,
+                            fighterId,
+                            ResolveBastionRole(fighterId, actor.Target.Id.Value),
+                            actor.Target.Id.Value == 1),
+                        new Float2(actor.Transform.position.x, actor.Transform.position.z),
+                        actor.Health.MaxHealth));
+                }
                 var attack = actor.Transform.GetComponent<CombatAttackController>();
                 if (attack != null)
                 {
@@ -590,6 +720,12 @@ namespace BattleRaja.Presentation.Match
                     _authority.ConfigureMovement(actor.Target.Id, actor.Agent.Tuning);
                 }
             }
+            if (useBastionCrown)
+            {
+                _bastionCrown = new BastionCrownMatch(
+                    unchecked((uint)DateTime.UtcNow.Ticks));
+                _bastionCrown.Start(bastionSlots);
+            }
             _simulationClock = new FixedSimulationClock(Math.Max(1, simulationTickRate));
             ZoneCenter = Float2.Zero;
             NextZoneCenter = Float2.Zero;
@@ -600,6 +736,147 @@ namespace BattleRaja.Presentation.Match
             _playerSpectating = false;
             _resultsShown = false;
             Results = null;
+        }
+
+        private bool IsBastionCrownScene()
+        {
+            return string.Equals(gameObject.scene.name, "BazaarBastion", StringComparison.Ordinal);
+        }
+
+        private static bool HasCanonicalBastionSlots(IReadOnlyList<MatchSpawn> spawns)
+        {
+            if (spawns == null || spawns.Count != BastionCrownMatch.ParticipantCount) return false;
+            for (var i = 0; i < spawns.Count; i++)
+            {
+                if (spawns[i].Id.Value != i + 1) return false;
+            }
+
+            return true;
+        }
+
+        private static ContentId ResolveFighterIdRuntime(Transform actor)
+        {
+            var bijli = actor.GetComponent<BijliFighterController>();
+            if (bijli != null && bijli.enabled) return FighterDefinition.Bijli.FighterId;
+            var pehel = actor.GetComponent<PehelFighterController>();
+            if (pehel != null && pehel.enabled) return FighterDefinition.Pehel.FighterId;
+            var maya = actor.GetComponent<MayaFighterController>();
+            if (maya != null && maya.enabled) return FighterDefinition.Maya.FighterId;
+            throw new InvalidOperationException($"Actor {actor.name} has no active fighter definition.");
+        }
+
+        private static BastionRole ResolveBastionRole(ContentId fighterId, int actorId)
+        {
+            if (fighterId.Equals(FighterDefinition.Pehel.FighterId)) return BastionRole.Anchor;
+            if (fighterId.Equals(FighterDefinition.Maya.FighterId)) return BastionRole.Runner;
+            // A second Bijli is a deliberate flex/skirmisher slot rather than a
+            // hidden fourth fighter or a numerical difficulty override.
+            return actorId == 4 || actorId == 8 ? BastionRole.Flex : BastionRole.Skirmisher;
+        }
+
+        private void SyncBastionFromAuthority(MatchAuthorityTick authorityTick)
+        {
+            if (_bastionCrown == null || Simulation == null) return;
+
+            for (var i = 0; i < authorityTick.DamageEvents.Length; i++)
+            {
+                var damage = authorityTick.DamageEvents[i];
+                if (damage.AmountApplied <= 0) continue;
+                _bastionCrown.NotifyCombatDamage(
+                    damage.InstigatorId,
+                    damage.TargetId,
+                    damage.AmountApplied,
+                    damage.TargetDefeated,
+                    damage.EventId);
+            }
+
+            var snapshots = Simulation.GetSnapshots();
+            for (var i = 0; i < snapshots.Length; i++)
+            {
+                var snapshot = snapshots[i];
+                _bastionCrown.SetPosition(snapshot.Id, snapshot.Position);
+                _bastionCrown.SetHealth(snapshot.Id, snapshot.CurrentHealth);
+                if (!snapshot.Alive && _bastionCrown.TryGetParticipant(snapshot.Id, out var teamSnapshot) && teamSnapshot.Alive)
+                {
+                    _bastionCrown.SyncParticipant(snapshot.Id, snapshot.Position, 0, false);
+                }
+            }
+        }
+
+        private void ProcessBastionObjectiveInteractions(float fixedDeltaSeconds)
+        {
+            if (_bastionCrown == null || !_bastionCrown.IsLive || fixedDeltaSeconds <= 0f) return;
+
+            var crown = _bastionCrown.Crown;
+            if (!crown.IsCarried)
+            {
+                var candidateId = default(CombatEntityId);
+                var candidateDistance = float.MaxValue;
+                for (var i = 0; i < _actors.Count; i++)
+                {
+                    var actorId = _actors[i].Target.Id;
+                    if (!_bastionCrown.TryGetParticipant(actorId, out var participant) || !participant.Alive) continue;
+                    var distance = Float2.Distance(participant.Position, crown.Position);
+                    if (distance > _bastionCrown.Definition.Objective.ContactRadius ||
+                        distance > candidateDistance ||
+                        (Mathf.Abs(distance - candidateDistance) <= 0.0001f &&
+                            (candidateId.Value == 0 || actorId.Value >= candidateId.Value)))
+                    {
+                        continue;
+                    }
+
+                    candidateId = actorId;
+                    candidateDistance = distance;
+                }
+
+                if (candidateId.Value > 0)
+                {
+                    _bastionCrown.TryPickupCrown(candidateId, fixedDeltaSeconds);
+                }
+                else
+                {
+                    // A zero-delta invalid attempt is the domain's explicit
+                    // deterministic reset for an interrupted pickup channel.
+                    _bastionCrown.TryPickupCrown(new CombatEntityId(1), 0f);
+                }
+
+                return;
+            }
+
+            var carrierId = crown.CarrierId;
+            if (!_bastionCrown.TryGetParticipant(carrierId, out var carrier) || !carrier.Alive)
+            {
+                _bastionCrown.CancelDeposit(carrierId);
+                return;
+            }
+
+            var shrine = carrier.TeamId == BastionTeamId.Raja
+                ? _bastionCrown.Definition.Raja.ShrinePosition
+                : _bastionCrown.Definition.Rival.ShrinePosition;
+            if (Float2.Distance(carrier.Position, shrine) <= _bastionCrown.Definition.Objective.ContactRadius * 1.35f)
+            {
+                _bastionCrown.TryBeginDeposit(carrierId);
+            }
+            else
+            {
+                _bastionCrown.CancelDeposit(carrierId);
+            }
+        }
+
+        private void ApplyBastionRespawns(BastionCrownTick tick)
+        {
+            if (_bastionCrown == null || _authority == null) return;
+            for (var i = 0; i < tick.RespawnedActors.Length; i++)
+            {
+                var actorId = tick.RespawnedActors[i];
+                if (!_bastionCrown.TryGetParticipant(actorId, out var snapshot)) continue;
+                if (!_authority.RespawnParticipant(actorId, snapshot.Position)) continue;
+                var actor = _actors.FirstOrDefault(binding => binding.Target.Id == actorId);
+                if (actor == null) continue;
+                actor.Agent.ApplyAuthoritativePosition(snapshot.Position);
+                actor.Health.SetAuthoritativeHealth(snapshot.CurrentHealth);
+                actor.Input?.ResetInputState();
+            }
         }
 
         private ProjectileWeaponDefinition ScaleAutonomousBotWeapon(ProjectileWeaponDefinition weapon)
@@ -831,7 +1108,29 @@ namespace BattleRaja.Presentation.Match
         private void UpdateSpectator(MatchTickResult tick)
         {
             var player = _actors.FirstOrDefault(actor => actor.Target.Id.Value == 1);
-            if (player == null || !player.Health.Snapshot.IsDefeated) return;
+            if (player == null) return;
+            if (_bastionCrown != null && _bastionCrown.TryGetParticipant(new CombatEntityId(1), out var bastionPlayer))
+            {
+                if (bastionPlayer.Alive)
+                {
+                    _playerSpectating = false;
+                    cameraController?.SetFollowTarget(player.Transform);
+                    return;
+                }
+
+                if (!_playerSpectating)
+                {
+                    _playerSpectating = true;
+                    player.Input?.ReleasePointerFocus();
+                    var nextBastion = SpectatorTargetSelector.SelectNext(Simulation.GetSnapshots(), player.Target.Id);
+                    var bastionActor = _actors.FirstOrDefault(binding => binding.Target.Id == nextBastion);
+                    if (bastionActor != null) cameraController?.SetFollowTarget(bastionActor.Transform);
+                }
+
+                return;
+            }
+
+            if (!player.Health.Snapshot.IsDefeated) return;
             if (!_playerSpectating)
             {
                 _playerSpectating = true;
