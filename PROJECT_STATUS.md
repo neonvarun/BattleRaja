@@ -17,10 +17,10 @@
   Static validation is **0 errors / 0 warnings**, full EditMode is **141/141** and full
   PlayMode is **92/92**. Approved-Lava evidence is under
   `Builds/Local/Device/audits/20260831-presentation/`; this remains a presentation-only
-  offline candidate and not a Play Store submission. ADR-077 and the 2026-08-31
+  offline candidate and not a Play Store submission. Commit `425e30d`, ADR-077 and the 2026-08-31
   reference rerun in `Docs/RESEARCH_LOG.md` record the scope and originality boundary.
 
-- **Latest exact-source lifecycle checkpoint (2026-08-31):** source tip is now
+- **Previous exact-source lifecycle checkpoint (2026-08-31):** source tip was
   `e603ce7e7f1cb279f5e3e9d606ea5eae89603ecb` (`android: clear input on lifecycle pause`).
   Android pause clears transient player input across the adapter, virtual stick and
   attack/ability/gadget buttons, and the HUD clears the adapter before the lifecycle pause
