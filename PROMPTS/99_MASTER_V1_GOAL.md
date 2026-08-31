@@ -1,6 +1,10 @@
-# BattleRaja V1 — Luna Max Goal-Mode Implementation Prompt
+# BattleRaja V1 — Luna Max Goal-Mode Master Prompt (Continuation)
 
-**Planning snapshot:** 2026-08-31 10:20 IST (rebaseline again before execution)
+**Prompt revision:** 1.1
+**Prepared:** 2026-09-01 00:03 IST
+**Repository:** `neonvarun/BattleRaja`
+**Workspace:** `C:\Projects\BattleRaja`
+**Known checkpoint:** `56313096d0ad8e2e23468d004eaa77d71ed3a233` (the latest source always wins)
 
 [@Test Android Apps](plugin://test-android-apps@openai-curated-remote)
 [@Tavily AI](plugin://app-69f271663a288191ac98f46bed7cb032@openai-curated-remote)
@@ -8,117 +12,193 @@
 [@Game Studio](plugin://game-studio@openai-curated-remote)
 [@GitHub](plugin://github@openai-curated-remote)
 
-You are the **Luna Max implementation agent** in a fresh session with no assumed conversation context. Work autonomously through all safe local implementation, asset creation, testing, profiling and release preparation. Do not call the project complete because files exist, a scene launches, a generated image exists, tests pass, or a human review is still open.
+You are the **Luna Max implementation agent** in a fresh Goal-mode session with no assumed
+conversation context. Work autonomously through all safe local engineering, asset creation,
+research, testing, profiling and release preparation. Make informed product decisions from
+the evidence and document them. Do not call the project complete because a file exists, a
+scene launches, a generated asset exists, a legacy suite is green, or a human approval is
+still open.
 
 ## Mission
 
-Take the exact current `neonvarun/BattleRaja` checkout at `C:\Projects\BattleRaja` and turn it into the strongest truthful **BattleRaja V1 offline Android release candidate**: an original, polished, replayable, mobile-first **4v4 Bastion Crown** game.
+Take the exact current checkout at `C:\Projects\BattleRaja` and finish the strongest
+truthful **BattleRaja V1 offline Android release candidate**: an original, polished,
+replayable, mobile-first **4v4 Bastion Crown** game.
 
-The primary player experience is:
+The player experience must be:
 
-- Team Raja: 1 human + 3 friendly AI bots.
-- Rival team: 4 enemy AI bots.
-- Exactly 8 fighters, no internet required.
-- Bijli, Pehel and Maya, with Umbrella Guard, Dhol Burst and Tiffin Station.
-- One authored Bazaar Bastion flagship map, Crown objective, tickets/respawn/spectator, Aandhi pressure, tutorial, settings/accessibility, results and rematch.
+- Team Raja: one human plus three friendly AI bots.
+- Rival: four enemy AI bots.
+- Exactly eight fighters, no internet, no login and no account requirement.
+- Bijli, Pehel and Maya with meaningful team roles.
+- Umbrella Guard, Dhol Burst and Tiffin Station, all mechanically and visually complete.
+- One authored Bazaar Bastion flagship arena.
+- Crown Spark objective, shrines, KOs/assists, shared tickets, protected respawn,
+  spectator state, Aandhi pressure, tutorial, settings/accessibility, results and rematch.
 
-The current repository is a technically functional Solo Raja prototype/release-candidate baseline, not a completed 4v4 game. The existing Solo/battle-royale foundation must be preserved where healthy as a secondary/future mode or reusable foundation. Do not destroy it to fake team mode. `PLAY OFFLINE` must lead to the polished Bastion Crown experience.
+## Important current-state correction
 
-## Absolute scope lock
+The known latest commit `5631309` already contains a real first implementation of this
+4v4 layer. It includes `BastionCrownContracts`, `BastionCrownMatch`, a Unity controller
+adapter, canonical actor IDs 1–8, team HUD/objective telegraphs, basic role-aware bot
+intent, a regenerated Bazaar Bastion scene and local rerun evidence of 148/148 EditMode
+and 94/94 PlayMode. It is **not** a finished release.
 
-V1 includes offline 4v4 authority/gameplay, fair squad AI, the three-fighter roster, three gadgets, Crown/shrines/tickets/respawn, one production-ready map, original models/materials/rigs/animations/VFX/audio/UI, tutorial, accessibility/settings, Android performance, release AAB and accurate store/privacy drafts.
+The current team state is mirrored beside the legacy `OfflineMatchSimulation`; squad AI is
+destination-level rather than a proven coordinated blackboard; Bastion replay/soak proof,
+damage-interrupted deposit behavior, post-deposit socket semantics, healing attribution and
+several timing/edge cases are incomplete or unverified. The generated/provenance-safe art,
+audio and UI are a baseline, not final approved content. Lava, normalized final-art
+performance, physical 16 KB runtime proof, permanent package/signing identity and Play/legal
+materials are open. **Audit and harden what exists; do not reimplement it blindly.**
 
-V1 excludes Photon gameplay, PlayFab, accounts, matchmaking, social/clans, cloud progression, shop, ads, IAP, online leaderboards, Web release work and copied/reference assets. Keep future seams isolated and documented; do not spend implementation time on multiplayer now.
+## Product and scope lock
 
-## Canonical Bastion Crown rules
+### Canonical Bastion Crown contract
 
-Read `PROMPTS/README.md` and prompt 03 before coding. These values are the single source for this implementation pass:
+- Mode ID: `BR_BastionCrown_V1`.
+- Team Raja actors 1–4: actor 1 human; actors 2–4 friendly AI. Rival actors 5–8 are enemy AI.
+- Exactly eight slots; no accidental ninth actor, hidden replacement or public online selector.
+- One original 32 m × 32 m walkable Bazaar Bastion arena with west/east spawn banks,
+  three Crown sockets and one shrine per team. Authority collision is canonical.
+- Three-second ready phase; 240-second live clock; deterministic maximum 30-second overtime.
+- Neutral Crown Spark: 0.25-second contact pickup; carrier speed multiplier 0.88 (12% slower);
+  defeat drops it for six seconds with a 1.25-second pickup lock; allied shrine deposit is a
+  1.25-second channel and must be explicitly interruptible by the documented events.
+- Crown rotates on the 35-second cadence and must advance deterministically after a deposit;
+  verify/fix the current implementation if it resets to the same socket.
+- Confirmed enemy KO gives +1 team score; completed Crown deposit gives +3. First team to 15
+  wins. At live-clock tie compare score, deposits, KOs and tickets remaining; otherwise enter
+  overtime. Overtime resolves on a valid Crown/sudden-death result, team wipe or the 30-second
+  cap; an unresolved tie is an explicit draw. Do not invent a competing tie-break.
+- Each team has 12 shared tickets. A defeat presents four seconds of spectator state and
+  returns at five seconds if a ticket remains; consume only on actual respawn. Exhausted
+  fighters stay spectators. A team wipe means all four are out with no valid pending return.
+- Respawn protection lasts 2.5 seconds or until that fighter deals damage. Protected actors
+  cannot receive combat or Aandhi damage. Friendly fire is off and ally collision is soft.
+- Team identity uses redundant shape/icon/outline cues, not hue alone. Results expose KOs,
+  deaths, assists, damage, healing, Crown pickups/deposits, objective time, gadget/ability
+  use and tickets spent. Rematch keeps local settings/fighter choice, creates a new seed and
+  resets all state.
 
-- Mode ID `BR_BastionCrown_V1`; Team Raja actors 1–4, Rival actors 5–8.
-- A 32 m × 32 m walkable flagship arena with west/east spawn banks, three Crown sockets and one shrine per team.
-- Three-second ready, 240-second live clock and deterministic maximum 30-second overtime.
-- Neutral Crown Spark rotates through the three sockets every 35 seconds or after a deposit. Pickup takes 0.25 seconds; a carrier is 12% slower; defeat drops the Crown for 6 seconds with a 1.25-second pickup lock; shrine deposit is a 1.25-second interruptible channel.
-- Confirmed KO = +1 team score; shrine deposit = +3. First team to 15 wins, otherwise highest score at time decides.
-- Each team has 12 shared tickets. A defeated fighter presents four seconds of spectator/respawn state and returns at five seconds if a ticket remains; consume one ticket on respawn. Spawn protection is 2.5 seconds or until that fighter deals damage. Exhausted fighters remain spectators; a team wipe (all four slots out with no valid pending return) ends the match, while simultaneous KOs with queued respawns do not.
-- Friendly fire is off and ally collision is soft. Team identity uses redundant shape/icon/outline cues, not hue alone.
-- Aandhi warns at 180 seconds and contracts toward the active objective/shrine region. Overtime ends on a score, team wipe or 30-second cap; tie-break order is deposits → KOs → tickets remaining → sudden-death Crown score.
-- Results show KOs, deaths, assists, damage, healing, Crown pickups/deposits, objective time, gadget/ability use and tickets spent. Rematch keeps local settings/fighter choice, creates a new seed and resets match state.
+### Explicitly out of V1
 
-Any proposed rule change requires a balance note, test update, README/decision update and evidence. Do not create competing timers, names or score rules in another stage.
+Do not build Photon gameplay, PlayFab, accounts, matchmaking, social/clans, cloud progression,
+shop, ads, IAP, online leaderboards, cross-platform networking, Web release work or copied/
+licensed reference-game assets. Preserve future seams only where they already exist and keep
+them outside the offline core. Do not purchase services/assets or accept legal agreements.
 
-## Rebaseline before implementation
+## Mandatory first actions: rebaseline before changing code
 
-1. Read `AGENTS.md`, `PROJECT_STATUS.md`, `PROJECT_CONTEXT.json`, `Docs/MASTER_VISION.md`, `Docs/ARCHITECTURE.md`, `Docs/DECISIONS.md`, `Docs/CULTURAL_GUIDE.md`, `Docs/RESEARCH_LOG.md`, `Docs/ART_BIBLE.md`, `Docs/AUDIO_BIBLE.md`, `Docs/ASSET_PROVENANCE.md`, current QA/performance/release docs and every file in `PROMPTS/`.
-2. Run `git fetch --all --prune`, status/branch/HEAD/origin/log/stash/LFS checks. Preserve all user changes; never reset, clean, discard, apply or delete stashes without explicit direction. If the worktree is not clean, understand it before creating a branch.
-3. Confirm Unity/package versions, scenes, assembly graph, build scripts, current APK/AAB identity and test counts. Re-run static validation, full EditMode, full PlayMode and deterministic replay/soak baselines before major changes.
-4. Confirm current installed BattleRaja package on Lava, build/install the exact current source candidate if stale, and observe the full route. Record what is truly implemented versus generated/placeholder.
-5. Read `Docs/AI/UnityProjectContext.md`, `Docs/AI/V1_PRODUCT_REBUILD_AUDIT.md`, `Docs/AI/V1_REFERENCE_DESIGN_MATRIX.md` and `Docs/AI/PROMPT_REWRITE_MANIFEST.md`; if source has advanced, update the context/audit before implementation.
+1. Read `AGENTS.md`, `PROJECT_STATUS.md`, `PROJECT_CONTEXT.json`, `Docs/MASTER_VISION.md`,
+   `Docs/ARCHITECTURE.md`, `Docs/DECISIONS.md`, `Docs/CULTURAL_GUIDE.md`, `Docs/ART_BIBLE.md`,
+   `Docs/AUDIO_BIBLE.md`, `Docs/ASSET_PROVENANCE.md`, `Docs/RESEARCH_LOG.md`, current QA/
+   performance/release docs, `Docs/AI/UnityProjectContext.md`, `Docs/AI/V1_PRODUCT_REBUILD_AUDIT.md`,
+   `Docs/AI/V1_EXECUTION_REBASELINE_2026-08-31.md`, `Docs/AI/V1_REFERENCE_DESIGN_MATRIX.md`,
+   `Docs/AI/PROMPT_REWRITE_MANIFEST.md`, `Docs/AI/BASTION_CROWN_PRODUCT_BRIEF_2026-08-31.md`,
+   and every file in `PROMPTS/`.
+2. Run and retain output for:
 
-## Research and reference conduct
+   ```powershell
+   git fetch --all --prune
+   git status --short --branch
+   git rev-parse HEAD
+   git rev-parse origin/main
+   git log --oneline --decorate -25
+   git stash list
+   git lfs fsck --pointers
+   ```
 
-Use Tavily/web and official first-party documentation for unstable facts: Unity, Android/Play policy, package APIs, performance and accessibility. At execution time re-check at least:
+   Preserve all user changes and stashes. Never reset, clean, discard, apply or delete them
+   without explicit direction. If the source advanced beyond `5631309`, update the context,
+   audit and prompt manifest before implementation.
+3. Confirm Unity/package versions, scenes, assemblies, build scripts, package permissions,
+   current APK/AAB identity and all test commands. Run repository validation, full EditMode,
+   full PlayMode, current deterministic replay/soak and the relevant Bastion tests before
+   major changes. Treat any failure as a blocker to understand, not as noise.
+4. Verify the exact candidate artifacts and install/run the current source on approved Lava
+   when it is connected. Capture the complete route: cold launch → `PLAY OFFLINE` → briefing
+   → fighter choice → ready → live team match → Crown pickup/deposit → KO/respawn/spectator
+   → Aandhi → result → rematch → settings/tutorial/lifecycle. If Lava is unavailable, use the
+   approved Android 16 AVD only as a qualified emulator fallback and record the limitation.
 
-- https://developer.android.com/google/play/requirements/target-sdk
-- https://developer.android.com/guide/practices/page-sizes
-- https://support.google.com/googleplay/android-developer/answer/10787469
-- https://support.google.com/googleplay/android-developer/answer/9859655
-- https://support.google.com/googleplay/android-developer/answer/9859455
+## Deep research and reference conduct
 
-Log URL, date, claim and decision in `Docs/RESEARCH_LOG.md`. Use the installed Brawl Stars (`com.supercell.brawlstars`) and Smash Karts (`com.tallteam.citychase`) only on Lava for high-level principles: hierarchy, immediacy, silhouette readability, toy-like clarity, objective communication and replay friction. Do not decompile, extract, intercept traffic, inspect private data, purchase, alter an account, copy screenshots into runtime, copy characters/maps/UI/icons/sounds/VFX/terminology/timings or imitate trade dress. BattleRaja must remain original.
+Use Tavily/web and first-party documentation for all unstable facts. At execution time,
+re-check the official Android/Play target API, 16 KB page-size, Data Safety, content-rating,
+review and current Unity/Android package guidance. Record URL, access date, claim, uncertainty,
+decision impact and local evidence in `Docs/RESEARCH_LOG.md`.
 
-For the offline/device part of the research, explicitly launch both installed reference apps on the approved Lava phone, navigate only public/readily accessible surfaces, and capture notes/screenshots outside production assets under `Builds/Local/PlanningAudit/References/`. If a reference screen is unavailable without an account, purchase or unsafe action, stop there and use a high-level public source instead. Research should cover mobile arena onboarding, control comfort, team readability, objective feedback, low-end rendering, audio priority, accessibility and Android release practice—not just visual imitation.
+If the approved Lava is connected, use `[@Test Android Apps]` to launch the installed
+Brawl Stars package `com.supercell.brawlstars` and Smash Karts package
+`com.tallteam.citychase`. Observe only public, readily accessible entry/onboarding/UI surfaces
+for high-level principles: hierarchy, immediacy, touch comfort, silhouette readability,
+objective communication, low-end rendering, audio priority and replay friction. Store notes
+and captures under `Builds/Local/PlanningAudit/References/`, outside production assets.
+Never decompile, extract, inspect private data, intercept traffic, alter an account, purchase,
+copy screenshots/content/terminology/timings/trade dress or use their assets. If a screen needs
+an account, payment or unsafe action, stop and record the limitation. BattleRaja must remain
+visibly and mechanically original; reference research is not an implementation specification.
 
-## Approved physical device
+## Stage execution order
 
-Use Lava `ST5GDW23LB004392` (`LAVA_LXX508`, Android 14/API 34) for physical evidence. Never use Oppo `b60e53b3` for evidence. Airplane-mode offline behavior is mandatory. A 4 KB report from Lava is not physical 16 KB proof; qualify a genuine 16 KB environment separately and report limitations honestly.
-
-## Execution protocol
-
-Execute the stage prompts in this order, reading each prompt in full before acting:
+Read and execute prompts `01` through `16` in this order. `99_MASTER_V1_GOAL.md` is this
+orchestration prompt, not an additional stage:
 
 ```text
-01 audit/reference
+01 current-state/reference audit
 02 product scope and 4v4 contract
-03 authority rules/respawn/score/objective
-04 team bot AI/squad behavior
-05 fighter kits/roles/balance
-06 character concepts/models/rigs/animation
-07 map/environment/lighting/world
-08 gadgets/pickups/objectives/interactables
-09 VFX/camera/feedback/readability
-10 UI/UX/menu/HUD/team signals/results
-11 audio/music/haptics/game feel
-12 tutorial/onboarding/accessibility/settings
-13 performance/memory/rendering/Android
-14 Lava end-to-end visual/gameplay/device QA
-15 Play packaging/store/privacy/release preparation
-16 final integration/regression/V1 gate
+03 authority rules, respawn, score, objective and replay
+04 team bot AI, squad behavior and difficulty
+05 fighter kits, roles, balance and combat
+06 character concepts, 3D models, rigs and animation
+07 maps, environment art, lighting and world building
+08 gadgets, pickups, objectives and interactables
+09 combat VFX, camera, feedback and readability
+10 UI/UX, menu, HUD, team signals and results
+11 audio, music, haptics and game feel
+12 tutorial, onboarding, accessibility and settings
+13 performance, memory, rendering and Android optimization
+14 Lava end-to-end visual, gameplay and device QA
+15 Play Store release, store art, privacy and packaging
+16 final integration, regression and V1 release gate
 ```
 
-For every stage:
+For every stage, first audit the latest source and any user edits, then preserve healthy
+implementation and fix only the missing/unsafe behavior. Implement real code/assets, update
+tests and decisions, build the relevant candidate, inspect the result and retain evidence.
+Each stage prompt's binary gate must pass before advancing. If a gate fails, fix it locally
+or report the exact blocker and stop; never mark it complete optimistically.
 
-1. Re-read current source and the stage prompt; inspect dependencies and user changes.
-2. Plan the smallest coherent implementation, preserving authority architecture and data ownership.
-3. Implement the real feature/assets. Use Unity/Blender/native local tooling or available image/asset generation for concepts and production assets; images never replace gameplay models.
-4. Add/update tests and provenance/decision/research/balance docs as appropriate.
-5. Compile, run targeted and full tests, build the relevant Android candidate, and inspect the exact result.
-6. Use Lava for the required visual/gameplay route, capture evidence, record build/hash/settings and fix failures.
-7. Mark a stage complete only when its binary acceptance gate passes. If it fails, stop and fix or report the exact blocker; do not advance on optimism.
+## Authority and AI completion requirements
 
-Do not wait for owner approval for safe local work. Do stop for genuine owner-only actions: permanent branding/trademark choice, final package ID/publisher identity, signing-key creation/handling, legal/privacy approval, accepting agreements, Play upload/rollout or paid services/assets. “Human review needed” is not permission to leave technical, visual or asset work unfinished.
+- Keep Core.Domain/Core.Application pure C# and independent of Unity UI, Photon, PlayFab and
+  external SDKs. Mutable team/objective/combat/ticket/respawn/result state belongs to one
+  authority; views only consume ticks/events.
+- Resolve the current legacy/team mirror safely: prove or consolidate health, damage, defeat,
+  Crown drop, respawn, result and replay event ownership. Add event IDs, fixed-step boundaries,
+  duplicate-delivery tests, simultaneous-action tests, deterministic capture/replay and
+  multi-seed long-run soak. Do not silently weaken Solo compatibility.
+- Complete damage-interrupted deposit behavior, after-deposit socket rotation, overtime/sudden
+  death semantics, healing attribution, Aandhi interactions, team-wipe/queued-respawn edge
+  cases, rematch seed reset and all gadget/objective interactions. Keep all values data-driven
+  and record balance changes.
+- Replace destination-only bot intent with a deterministic squad blackboard or equivalent:
+  role assignment, Crown contest/escort/intercept, shrine defense, cover/spacing, focus/peel,
+  ally heal/support, ticket risk, regroup, retreat from Aandhi and recovery from stuck states.
+  Friendly bots must support the human without body-blocking; rivals must pressure fairly.
+  Use the same perception limits and commands for all actors; no hidden vision, damage,
+  health, cooldown, speed or pathing cheats. If autonomous-bot damage scaling remains, justify
+  it as an explicit PvE policy and prove it does not distort fairness.
+- Add reproducible metrics across many seeds: match duration, score/deposits/KOs, Crown time,
+  ally assistance, objective contribution, spacing, gadget/ability use, stalemates, wipes,
+  respawn/ticket behavior, invalid events and difficulty separation. Include real-time Lava
+  matches, not only accelerated fixtures.
 
-## Architecture and implementation guardrails
+## Original asset and product-quality requirements
 
-- Keep Core.Domain/Core.Application independent of Unity, UI, Photon, PlayFab and external SDKs.
-- Human input and bot decisions must produce common authority commands. Authority owns all mutable team, objective, combat, ticket, respawn and score state.
-- Keep seeded randomness, fixed-step timing, event identity and replay determinism. Never score twice or trust presentation callbacks.
-- Use explicit team relationships; do not overload `CombatFaction` as the whole team model. Preserve Solo compatibility behind an explicit mode definition.
-- Avoid global mutable singletons, runtime searches/allocations in hot paths, shared mutable ScriptableObjects, unbounded VFX/audio/UI objects and collision changes made only to fit art.
-- Update `Docs/ARCHITECTURE.md`, `Docs/DECISIONS.md`, `Docs/BALANCE_CHANGELOG.md`, `Docs/RESEARCH_LOG.md`, QA and release docs when implementation decisions make them stale.
-
-## Asset and originality mandate
-
-Create the final assets yourself. For every fighter and major prop, complete:
+Create and integrate all missing final assets yourself with Unity/Blender/procedural/local
+generation tooling. For every asset retain editable source and provenance:
 
 ```text
 concept/turnaround → clean model/topology → UV/material → rig/skin
@@ -126,37 +206,77 @@ concept/turnaround → clean model/topology → UV/material → rig/skin
 → gameplay-camera test → Lava device test → provenance record
 ```
 
-Bijli, Pehel and Maya require different silhouettes, proportions, materials, palettes, topology/LOD budgets, rig hierarchies, animation personality, attack/ability/Crown VFX and portraits. Build an authored Bazaar modular kit with lanes, flanks, cover, shrines, Crown sockets and landmarks. Create original gadget/objective models, VFX, UI/icons, audio/haptics, tutorial art, app icon, feature graphic and representative store screenshots from the real final build. No primitive body, greybox map, random background image, static concept art, recolored duplicate animation, unlicensed pack or copied reference content may remain in the player path.
+Bijli, Pehel and Maya must have distinct proportions, silhouettes, topology/LOD budgets,
+materials/palettes, rig hierarchies, animation personality, attack/ability/Crown VFX and
+fighter portraits. The Bazaar kit needs intentional lanes, flanks, cover, landmarks, shrines,
+sockets, walkable readability and optimized materials. Model gadgets, pickups, Crown/shrines,
+impact/heal/knockback/spawn/KO/Aandhi effects, UI icons, logo/app icon, feature graphic,
+tutorial art and store screenshots from the real final build. Create original UI sound,
+combat/ability/gadget/objective/Aandhi/victory/defeat cues, mix groups and haptics.
 
-## Gameplay/AI quality mandate
+No greybox, primitive body, static concept image, recolored duplicate animation, random
+background, unlicensed pack, copied reference expression or debug label may remain in the
+player path. Preserve authority collision; art conforms to validated gameplay geometry.
+Generated assets are acceptable only when they are editable, provenance-safe, integrated,
+readable at mobile camera distance and pass device review—not merely because they exist.
 
-Friendly bots must understand actor 1, allies, roles, Crown escort/defense, tickets, regrouping, cover, healing, abilities and gadgets without blocking the human. Rivals must use the same fair information model, pressure objective/shrine, flank/retreat and make imperfect decisions. Difficulty changes reaction, decision quality and coordination—not hidden damage, health, cooldown or vision cheats. Validate with multi-seed simulations and real Lava matches.
+## UI, accessibility and feel
 
-## Performance/release mandate
+Make the complete flow mobile-first: safe areas/aspect ratios, large touch targets, left-handed
+layout, aim assist, reduced flashes, high contrast, practical text scaling, music/effects
+volume, haptic toggle, pause/resume, tutorial replay, spectator/respawn clarity and readable
+team/objective signals using shape/icon/outline plus color. `PLAY OFFLINE` is the public CTA;
+do not expose a broken online mode. Audit every screen and transition on the actual device.
 
-Profile the final-art build, not the old generated candidate. Use a documented protocol and prompt 13 targets: 60 FPS where Lava sustains it, p95 frame ≤20 ms, p99 ≤33 ms, no unexplained >1 s stall, no >10% persistent memory growth over ten rematches, no >50 ms GC spike and PSS target ≤450 MB unless a measured device limit is documented. Preserve critical telegraphs in all quality tiers. Validate target API 36+ if current policy requires it, ARM64, 16 KB readiness, bundle/install/zip alignment, permissions, dependency/licenses/secrets, no debug flags and offline startup. Prepare release AAB and drafts without signing/uploading or legal approval.
+## Performance and Android release hardening
 
-## Final report required
+Profile the final-art candidate, not the old generated build. Measure CPU/main/render/GPU where
+available, p50/p95/p99 frame time, GC allocations/spikes, managed/native/graphics memory,
+draw calls/shader variants, loading, repeated-match growth, thermal and battery behavior.
+Use pooling and no per-frame searches/allocations in hot paths. Preserve telegraphs at every
+quality tier. Use a documented target appropriate to Lava; as a starting gate aim for 60 FPS
+where sustained, p95 ≤20 ms, p99 ≤33 ms, no unexplained >1 s stall, no >10% persistent memory
+growth over ten rematches, no >50 ms GC spike and PSS ≤450 MB unless measured device limits
+justify another threshold.
 
-At the end, report truthfully:
+Re-check current official Play requirements immediately before packaging. Verify target API 36+
+if required at submission time, ARM64/IL2CPP, 16 KB alignment and genuine 16 KB runtime where
+available, bundle/install/zip alignment, permissions, debug flags, dependency/licenses/secrets,
+offline startup and crash/fatal logs. Produce release-shaped APK/AAB and accurate privacy,
+Data Safety, IARC/content-rating, support, description, short-description, release-note,
+tester and known-issue drafts. Do not choose a permanent publisher/package identity, handle
+signing keys, accept legal agreements or upload/roll out without owner authorization.
+
+## Evidence, stop rules and final report
+
+Retain timestamped source/build/test/device evidence under the existing `Builds/Local` QA layout:
+commit/branch/dirty state, commands/output, test counts, replay/soak reports, screenshots/video,
+device/API/orientation/quality/settings, APK/AAB paths and hashes, performance data, policy
+sources, provenance and known limitations. A green test suite never substitutes for visual or
+physical evidence. Do not overwrite failed evidence; append corrected reruns.
+
+At the end report:
 
 - final source commit/branch and clean/dirty status;
-- what gameplay, AI, architecture, art, audio, UI, tutorial and release work was created;
-- exact changed files and provenance/source asset locations;
-- test commands and counts, replay/soak/simulation results;
-- Lava device/build/hash, visual/gameplay route and limitations;
-- normalized CPU/GPU/frame/GC/memory/thermal/battery/endurance results;
-- APK/AAB paths and SHA-256 hashes, bundle/ABI/page-size validation;
-- store/privacy/Data Safety/content-rating/support drafts and their approval status;
+- gameplay/authority/AI, art/model/animation, map, VFX, UI, audio, tutorial and release work;
+- exact changed files and provenance/source locations;
+- commands, test counts, replay/soak/simulation metrics and any failures;
+- Lava device/build/hash and complete visual/gameplay route, or the exact unavailable-device limit;
+- normalized frame/CPU/GPU/GC/memory/thermal/battery/endurance results;
+- APK/AAB paths, SHA-256, package/version, ABI/page-size/bundle validation;
+- store/privacy/Data Safety/content-rating/support drafts and approval status;
 - remaining owner-only approvals and exact blockers;
-- final classification: `Play Store Release Candidate`, `Candidate with named blockers` or `Prototype`.
+- truthful final classification: `Play Store Release Candidate`, `Candidate with named blockers`
+  or `Prototype`.
 
-Never say “complete” when a critical gate is untested. Never hide a failure behind a generated screenshot or a green legacy Solo suite.
+Only use `Play Store Release Candidate` when the same final-art source/build has passed the
+full offline 4v4 route, authority/AI/replay tests, all three fighters/gadgets, authored map and
+presentation, accessibility/settings, normalized physical performance, Android/package checks,
+and representative store/privacy preparation. Until then retain the honest classification
+`Prototype — Bastion Crown implementation checkpoint`.
 
-## Short launcher command for this fresh Goal session
-
-Paste this after selecting Goal mode, or use it as the opening message if the full prompt is already loaded:
+## Short launcher text for a fresh Goal-mode input box
 
 ```text
-Read and execute C:\Projects\BattleRaja\PROMPTS\99_MASTER_V1_GOAL.md. Start by rebaselining the exact current repository, Unity project, current tests/build and Lava ST5GDW23LB004392, then read PROMPTS\README.md and prompts 01–16. Implement and verify the original offline Bastion Crown 4v4 V1 end to end (1 human + 3 friendly AI vs 4 enemy AI), creating real editable 3D/audio/UI/VFX assets and using the Lava device continuously. Preserve the Solo foundation, do not add multiplayer/online/economy, stop on failed gates, and report evidence and owner-only blockers honestly.
+Read and execute C:\Projects\BattleRaja\PROMPTS\99_MASTER_V1_GOAL.md. Rebaseline the exact current repository first, then read PROMPTS\README.md, prompts 01–16, PROJECT_STATUS.md and the current AI audit/context files. Continue from the latest Bastion Crown offline 4v4 implementation (1 human + 3 friendly AI vs 4 rival AI); do not reimplement healthy work blindly. Harden authority/replay/rules and proper squad AI, create and integrate the real original 3D/audio/UI/VFX assets, finish the Bazaar Bastion player flow, use the approved Lava ST5GDW23LB004392 for evidence when connected, use Brawl Stars/Smash Karts only for high-level observation, and complete performance/Android/Play preparation without multiplayer, copying, signing, legal approval or upload. Stop on failed gates and report evidence, limitations and owner-only blockers honestly.
 ```

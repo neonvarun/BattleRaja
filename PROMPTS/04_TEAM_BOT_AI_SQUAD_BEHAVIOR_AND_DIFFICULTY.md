@@ -2,7 +2,7 @@
 
 ## Context
 
-The current `BotAI` is a fair Solo utility controller with Explore, Engage, Reposition, Retreat, Recover and Loot. It observes hostile targets, zone and gadgets but has no team identity, role, shared plan, Crown carrier support or ally assistance. This stage turns four bots per side into believable squads without cheating.
+The latest checkpoint gives `BotBrain`/`OfflineMatchController` basic role-aware Bastion intents (contest, escort, defend and collapse), while the shared `BotAI` remains largely a Solo utility controller. This stage turns those seams into believable four-bot squads without cheating, while preserving the tested Solo behavior.
 
 ## Objective
 
@@ -10,7 +10,7 @@ Friendly bots should make the human feel supported rather than blocked, while ri
 
 ## Current-state audit
 
-Read `BotAI`, `BotBrain`, `BotPerceptionSensor`, command adapters, movement/collision, fighter/gadget definitions and simulation tests. Measure current target selection, reaction delay, aim noise, stuck recovery, gadget use and bot-to-bot damage. Identify every place that infers hostility from `CombatFaction` or scans Unity objects rather than receiving an authority snapshot.
+Read `BotAI`, `BotBrain`, `BotPerceptionSensor`, `OfflineMatchController.TryGetBastionBotIntent`, command adapters, movement/collision, fighter/gadget definitions and simulation tests. Measure current target selection, reaction delay, aim noise, stuck recovery, gadget use, bot-to-bot damage and the new intent distribution. Identify every place that infers hostility from `CombatFaction`, scans Unity objects or makes a destination-only decision rather than consuming an authority/team snapshot. Add multi-seed squad metrics before tuning.
 
 ## Preserve
 

@@ -1,11 +1,11 @@
 # BattleRaja Unity Project Context
 
-**Planning snapshot:** 2026-08-31 12:15 IST
-**Verified source:** working tree on `codex/v1-playstore-release`, based on `3bed64e82be0a84c8bf978d871ae322604b3f7ff` (`origin/main`)
+**Planning snapshot:** 2026-09-01 01:30 IST
+**Verified source:** current `codex/v1-playstore-release` continuation working tree; exact final commit is reported by the release handoff
 **Working directory:** `C:\Projects\BattleRaja`
-**Status:** Bastion Crown 4v4 offline implementation is integrated and test-green; physical Lava validation and final release gates remain open.
+**Status:** Bastion Crown 4v4 offline implementation, deterministic replay hardening and original menu-art replacement are integrated and test-green; final release gates remain open.
 
-This file is the compact orientation document for the V1 implementation agent. The implementation agent must re-run the repository and device checks because this snapshot can become stale. `PROJECT_STATUS.md`, `AGENTS.md`, and the source code remain the authority for current facts; the new prompt pack is the approved planning direction for the next implementation pass.
+This file is the compact orientation document for the V1 continuation agent. The agent must re-run repository, build and device checks because this snapshot can become stale. `PROJECT_STATUS.md`, `AGENTS.md`, and the source code remain the authority for current facts; the prompt pack is the execution contract for the next implementation pass.
 
 ## Product direction
 
@@ -22,12 +22,21 @@ The canonical rules live in `PROMPTS/03_4V4_MATCH_RULES_RESPAWN_SCORE_AND_OBJECT
 
 ## Verified repository baseline
 
-- The working tree contains the focused Bastion Crown implementation plus the user-authored prompt rewrite; it is intentionally not clean until the final commit/push gate.
-- The branch is based on `3bed64e82be0a84c8bf978d871ae322604b3f7ff` (`origin/main`); local `main` is historical and behind origin.
+The latest continuation is recorded in `Docs/QA/V1_OFFLINE_ANDROID_VALIDATION_2026-09-01.md`.
+Static validation is **0/0**, EditMode is **155/155**, PlayMode is **94/94**, the two-seed
+8,400-tick Bastion replay soak has zero divergence, and the planner coverage run records
+contest 64 / escort 64 / defend 96 / collapse 64 / Aandhi-retreat 32 intents. The exact
+APK/AAB hashes and Lava captures in that report supersede the older baseline values below.
+
+- The working tree is clean at the focused Bastion Crown implementation checkpoint; re-check before making changes.
+- The branch is at `56313096d0ad8e2e23468d004eaa77d71ed3a233` (`origin/main`); local `main` is historical and behind origin.
 - `main` is historical and behind origin; do not plan against it.
 - LFS pointer check passed.
 - Stashes exist and are user-owned; do not apply, delete or rewrite them.
-- The current working tree adds the Bastion Crown domain/application adapter, production scene identity, team HUD, objective markers, squad intent and regression coverage on top of the presentation baseline.
+- Commit `5631309` added the Bastion Crown domain/application adapter, production scene identity,
+  team HUD, objective markers and initial squad intent; the current continuation adds the
+  coherent post-tick replay envelope, deterministic hash coverage, Aandhi retreat and planner
+  metrics on top of that baseline.
 
 ## Engine and package baseline
 
@@ -82,7 +91,9 @@ The repository contains a useful, owned generated baseline:
 - `ProductionPresentationBuilder` saves a two-bone presentation rig, Animator controller/clips and particle cue prefabs.
 - `ProductionEnvironmentBuilder` saves a Bazaar environment/prefab and materials.
 - `ProductionAudioBuilder` saves deterministic PCM WAVs and mixer groups.
-- The P presentation pass adds an authored-looking entry feature image, isolated fighter previews, closer camera and warm/cool lighting.
+- `BuildEntrypoints` now references `Art/V1/BattleRaja-FeatureArt-OriginalCandidate.png`, an
+  original Bazaar Bastion shrine/fighter key-art candidate with no vehicles or racing motifs;
+  isolated fighter previews, closer camera and warm/cool lighting remain presentation-only.
 
 Those assets are editable and provenance-safe. The current implementation adds a readable Crown Spark objective view, team-coloured shrine/socket rings, carrier tint/slowdown, authored fighter portraits and a team HUD while preserving the existing provenance boundary. Generated images are not acceptable substitutes for a modeled, rigged, animated gameplay character; final authored art, mix, accessibility and human-fun review remain open.
 
@@ -98,9 +109,11 @@ Those assets are editable and provenance-safe. The current implementation adds a
 The current implementation checkpoint is:
 
 - Static validation: `0/0` reported issues.
-- EditMode: `148/148` passed, including seven pure Bastion Crown contract regressions.
+- EditMode: `155/155` passed, including Bastion replay soak, planner metrics and dead-target
+  event-identity regressions.
 - PlayMode: `94/94` passed, including canonical production composition, objective telegraphs/HUD and Crown pickup/deposit through the controller adapter.
-- Deterministic replay: the existing 1000-seed zero-divergence evidence remains Solo-only; Bastion replay overlay hashing is still a follow-up gate.
+- Deterministic replay: the Bastion v2 combined digest reproduces two 8,400-tick seeded
+  matches with zero divergence; the older 1000-seed production-bot evidence remains Solo-only.
 - Seeded Solo production-bot health: 100/100 matches in the documented 240–360 second window, with combat, bot-to-bot damage, gadget use and no stuck/protected/invalid failures.
 - These are strong local gates, not evidence that final authored presentation/performance or physical-device behavior is complete.
 
@@ -110,17 +123,16 @@ Approved physical device for evidence: Lava `ST5GDW23LB004392` (`LAVA_LXX508`, A
 
 Current candidate artifacts are temporary/debug identity, not publishable:
 
-- APK: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`, 41,438,372 bytes, SHA-256 `6EDC5C0E5D304529A6059A94F00F7AB32AB9C71A4464044D3B0D3ED5D3E2C507`.
-- AAB: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`, 37,263,881 bytes, SHA-256 `3D12A358E0F9159A2CA3749A4E53DBB712AF19B0FCCC6E6D80F96DE5944508EE`.
+- APK: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`, 41,510,440 bytes, SHA-256 `5F7438105FE450D6331CFEDEE1FAEEB87FB4F6677EB811A997A02CC8FD7C4AE9`.
+- AAB: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`, 37,335,957 bytes, SHA-256 `87C835570B62C4C3A79C156F94CB7E15C6AD31FCB50A0E8ADB0FDE6672DC4858`.
 - Package metadata: version name `1.0.0`, code `100`, min API 28, target API 36, ARM64; package ID `com.example.battleraja.m11` is temporary and debug-signed.
 
-Latest physical evidence shows a 4 KB page-size Lava environment. That is not proof of physical 16 KB compatibility. Host/AVD 16 KB smoke evidence and current API settings must be kept separate from physical proof.
-
-The 2026-08-31 rerun could not discover `ST5GDW23LB004392`; no claim is made for
-fresh Lava screenshots or for opening the installed reference apps. A local Android 16
-`BattleRaja_16K` AVD using the ANGLE renderer reached the menu, Bastion Crown briefing,
-fighter selection and live gameplay HUD. Its evidence is under
-`Builds/Local/V1GameplayTruth/AndroidQA/emulator-5556/` and is emulator-only.
+Fresh physical evidence now exists under `Builds/Local/V1GameplayTruth/Final/lava-20260901-final/`:
+the approved Lava was freshly installed and reached menu → Bastion briefing → fighter
+selection → live arena, control taps and in-match settings. A clean six-sample/30-second
+capture found no configured app crash markers. Lava reports 4 KB pages, so this is not proof
+of physical 16 KB compatibility. Host/AVD 16 KB smoke evidence and physical proof remain
+separate.
 
 ## Research and policy anchors
 
@@ -136,7 +148,7 @@ Record URLs, dates, claims and decisions in `Docs/RESEARCH_LOG.md`. Use installe
 
 ## Open release gates
 
-The current classification remains **Prototype — Android offline release candidate in progress**. Open work includes human Lava playtesting and reference-app observation, sustained normalized performance/thermal/battery/endurance, physical 16 KB proof, final authored models/textures/animation/VFX/audio mix, permanent package/signing identity, privacy/Data Safety, cultural/fun review and owner/legal Play Console material. A local ANGLE-rendered Android 16 emulator smoke passed the menu → mode → fighter → gameplay route; it is not a substitute for Lava evidence.
+The current classification remains **Prototype — Android offline release candidate in progress**. Open work includes complete human Lava comfort/fun/accessibility review across all fighters, gadgets, Aandhi, tutorial, results and rematch; sustained normalized performance/thermal/battery/endurance; physical 16 KB proof; final authored models/textures/animation/VFX/audio mix and cultural review; permanent package/signing identity; privacy/Data Safety; and owner/legal Play Console material. No public upload or owner-only release action was performed.
 
 ## Agent operating rule
 

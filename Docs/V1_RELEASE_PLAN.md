@@ -13,6 +13,39 @@ prototype until every V1 completion gate and remaining human gate passes.
 - Approved physical evidence device: Lava `ST5GDW23LB004392` (`LAVA LXX508`) only.
 - Preserve internal networking/Web seams without exposing unusable public online paths.
 
+## Checkpoint 0 - current offline V1 continuation — 2026-09-01
+
+The current working tree completes the Bastion Crown authority/replay hardening pass and
+replaces the reference-like menu hero with the original
+`Assets/BattleRaja/Art/V1/BattleRaja-FeatureArt-OriginalCandidate.png`. The exact evidence
+record is `Docs/QA/V1_OFFLINE_ANDROID_VALIDATION_2026-09-01.md`.
+
+- Static validation: **0 errors / 0 warnings**.
+- EditMode: **155/155 passed** (`Builds/Local/V1GameplayTruth/Final/editmode.xml`).
+- PlayMode: **94/94 passed** (`Builds/Local/V1GameplayTruth/Final/playmode.xml`).
+- Bastion v2 replay soak: two seeds × 8,400 ticks, zero combined-hash divergence.
+- Squad planner coverage: 32 seeds; contest 64, escort 64, defend 96, collapse 64,
+  Aandhi-retreat 32.
+- APK: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`, **41,510,440 bytes**,
+  SHA-256 `5F7438105FE450D6331CFEDEE1FAEEB87FB4F6677EB811A997A02CC8FD7C4AE9`.
+- AAB: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`, **37,335,957 bytes**,
+  SHA-256 `87C835570B62C4C3A79C156F94CB7E15C6AD31FCB50A0E8ADB0FDE6672DC4858`.
+- Release checker: passed offline manifest, target SDK 36, no network permissions, ARM64-only
+  native libraries, static 16 KB alignment and store-creative dimensions. Package identity
+  remains temporary/debug `com.example.battleraja.m11`.
+- Lava: fresh install and cold launch on `ST5GDW23LB004392`, with menu → Bastion briefing →
+  fighter choice → live opening → ability/attack/gadget taps → settings capture. A clean
+  six-sample/30-second live telemetry capture found no configured app crash markers; PSS was
+  287,530–293,678 KB, RSS 426,940–433,088 KB, graphics PSS 87,024–93,180 KB, CPU
+  111–118%, and thermal status 0. Lava reports 4 KB pages, and Unity `gfxinfo` has no
+  usable frame histogram.
+
+This closes the local technical continuation gate but not final release approval. The truthful
+classification remains **Prototype — Android offline release candidate in progress**. Final
+authored/cultural/accessibility/fun review, complete physical route, normalized endurance,
+physical 16 KB runtime, permanent identity/signing, privacy/Data Safety/IARC and Play actions
+remain open and no public publication was performed.
+
 ## Checkpoint 1 - preserve and rebaseline exact source
 
 Status: **Passed with limitations**.

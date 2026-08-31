@@ -2,7 +2,7 @@
 
 ## Context
 
-You are auditing the exact BattleRaja checkout before implementing the new offline 4v4 V1. The repository currently has a technically strong Solo Raja foundation, generated presentation assets and a temporary Android candidate. The approved physical evidence phone is Lava `ST5GDW23LB004392`; Brawl Stars and Smash Karts are installed there for observation-only reference work.
+You are auditing the exact BattleRaja checkout before continuing offline 4v4 V1 completion. At the 2026-09-01 checkpoint, the repository has a real Bastion Crown team/objective layer on top of a technically strong Solo foundation, generated/provenance-safe presentation assets and a temporary Android candidate. The approved physical evidence phone is Lava `ST5GDW23LB004392`; Brawl Stars and Smash Karts may be installed there for observation-only reference work. Reconfirm every fact because the source can advance.
 
 ## Objective
 
@@ -10,7 +10,7 @@ Produce a reproducible baseline that tells the next stages what is real, what is
 
 ## Current-state audit
 
-Re-run `git fetch --all --prune`, status/branch/HEAD/origin/log/stash/LFS checks, Unity/package checks, static validation, full EditMode/PlayMode, relevant replay/soak tests, current Android build/install and the complete offline route. Inspect source, scenes, prefabs, meshes, materials, textures, rigs, animation, VFX, audio, UI and build tooling. Capture menu, fighter selection, gameplay, Aandhi, defeat/respawn or spectator, results, rematch, tutorial, settings and lifecycle behavior. On Lava, explicitly launch `com.supercell.brawlstars` and `com.tallteam.citychase`, observe only public surfaces, and store reference notes/captures outside production assets. Use current official/first-party online sources for policy, Unity/Android APIs, accessibility, mobile performance and high-level product principles; record dates and decisions. Do not copy implementation or content.
+Re-run `git fetch --all --prune`, status/branch/HEAD/origin/log/stash/LFS checks, Unity/package checks, static validation, full EditMode/PlayMode, Bastion replay/soak coverage and the current Android build/install. Trace `BastionCrownContracts`, `BastionCrownMatch`, `OfflineMatchAuthority`, `OfflineMatchController`, `BotBrain`, `OfflineMatchHud` and `BuildEntrypoints` so the report distinguishes canonical state from legacy mirrors. Capture menu, briefing, fighter selection, gameplay, Crown pickup/deposit, Aandhi, defeat/respawn/spectator, results, rematch, tutorial, settings and lifecycle behavior. On Lava, explicitly launch `com.supercell.brawlstars` and `com.tallteam.citychase` only if the approved device is connected; observe public surfaces and store notes/captures outside production assets. Use current official/first-party online sources for policy, Unity/Android APIs, accessibility, mobile performance and high-level product principles; record dates and decisions. Do not copy implementation or content.
 
 ## Preserve
 

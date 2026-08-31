@@ -32,7 +32,9 @@ Replace primitive-looking bodies, arbitrary faceting, identical proportions/anim
 8. Create gameplay and menu portraits/crops, neutral/team outline variants, role badge hooks and a camera test scene. Validate all materials under warm Bazaar, cool Aandhi and high-contrast lighting.
 9. Produce an asset manifest with source file, authoring tool/version, license/provenance, triangle/texture/bone counts, LOD policy and known limitations.
 
-## Asset tasks — required character specifications
+## Asset tasks
+
+The following are the required character specifications for the continuation pass.
 
 ### Bijli — mobile skirmisher
 

@@ -227,12 +227,18 @@ namespace BattleRaja.Core.Domain
 
     public readonly struct GadgetHealingIntent
     {
-        public GadgetHealingIntent(int stationId, CombatEntityId targetId, int amount, int eventId = 0)
+        public GadgetHealingIntent(
+            int stationId,
+            CombatEntityId targetId,
+            int amount,
+            int eventId = 0,
+            CombatEntityId healerId = default(CombatEntityId))
         {
             StationId = stationId;
             TargetId = targetId;
             Amount = amount;
             EventId = eventId;
+            HealerId = healerId;
         }
 
         public int StationId { get; }
@@ -250,6 +256,13 @@ namespace BattleRaja.Core.Domain
         /// Assigned only after canonical validation/application succeeds.
         /// </summary>
         public int EventId { get; }
+
+        /// <summary>
+        /// Authority-owned actor that created the station. A zero ID means the
+        /// source is environmental/legacy and the target receives self-heal
+        /// credit when the Bastion adapter mirrors the event.
+        /// </summary>
+        public CombatEntityId HealerId { get; }
     }
 
     public readonly struct GadgetStationDamageResult
@@ -290,7 +303,11 @@ namespace BattleRaja.Core.Domain
         private float _healAccumulator;
         private int _health;
 
-        public GadgetStationRuntime(int stationId, Float2 position, GadgetDefinition definition)
+        public GadgetStationRuntime(
+            int stationId,
+            Float2 position,
+            GadgetDefinition definition,
+            CombatEntityId ownerId = default(CombatEntityId))
         {
             if (stationId <= 0 || definition.Kind != GadgetKind.TiffinStation || !definition.IsValid(out var reason))
             {
@@ -300,11 +317,13 @@ namespace BattleRaja.Core.Domain
             StationId = stationId;
             Position = position;
             _definition = definition;
+            OwnerId = ownerId;
             _remaining = definition.DurationSeconds;
             _health = definition.StationHealth;
         }
 
         public int StationId { get; }
+        public CombatEntityId OwnerId { get; }
         public Float2 Position { get; }
         public float RemainingSeconds => Math.Max(0f, _remaining);
         public float HealAccumulator => _healAccumulator;
@@ -336,7 +355,12 @@ namespace BattleRaja.Core.Domain
                     var snapshot = snapshots[i];
                     if (!snapshot.Alive || snapshot.CurrentHealth >= snapshot.MaxHealth ||
                         snapshot.Position.SqrMagnitudeFrom(Position) > radiusSquared) continue;
-                    healing.Add(new GadgetHealingIntent(StationId, snapshot.Id, _definition.Magnitude));
+                    healing.Add(new GadgetHealingIntent(
+                        StationId,
+                        snapshot.Id,
+                        _definition.Magnitude,
+                        0,
+                        OwnerId));
                 }
             }
 

@@ -1,19 +1,29 @@
 # BattleRaja V1 Prompt Rewrite Manifest
 
-**Prepared:** 2026-08-31 10:20 IST
-**Repository/source recorded:** `neonvarun/BattleRaja`, `3bed64e82be0a84c8bf978d871ae322604b3f7ff`
+**Prepared:** 2026-09-01 00:03 IST
+**Repository/source recorded:** `neonvarun/BattleRaja`, `56313096d0ad8e2e23468d004eaa77d71ed3a233`
 **Branch:** `codex/v1-playstore-release`
-**Purpose:** record the prompt architecture reset and the canonical execution graph for the next Luna Max Goal-mode implementation session.
+**Purpose:** record the prompt architecture reset and the continuation execution graph for the next Luna Max Goal-mode session.
+
+## Continuation update
+
+The original pack was written before the Bastion Crown runtime checkpoint. Commit
+`5631309` now implements the first offline 4v4 team/objective layer and its production
+scene adapter. This update does not replace that work: it changes the pack from a
+from-scratch 4v4 build brief into an evidence-gated continuation brief. Prompt 03 must
+audit and harden the existing contracts before extending them; prompts 04–16 must reuse
+healthy implementation/assets and spend effort on missing behavior, authored quality,
+physical-device proof and release preparation.
 
 ## Repository state recorded before the rewrite
 
-- `HEAD == origin/main` at `3bed64e82be0a84c8bf978d871ae322604b3f7ff`.
-- Worktree was clean; no user changes were discarded.
+- `HEAD == origin/main` at `56313096d0ad8e2e23468d004eaa77d71ed3a233`.
+- Worktree was clean at capture; no user changes were discarded.
 - Git LFS pointer check passed.
 - Existing stashes were left untouched.
-- Current documented automated baseline: static `0/0`, EditMode `141/141`, PlayMode `92/92`; deterministic replay/soak evidence is Solo-only.
+- Current documented automated baseline: static `0/0`, Bastion EditMode `148/148`, Bastion PlayMode `94/94` on the rerun evidence; deterministic replay/soak evidence is still Solo-only.
 - Approved device is Lava `ST5GDW23LB004392`; Oppo is not an evidence device.
-- Current APK/AAB are temporary/debug-signed and use `com.example.battleraja.m11`; neither is publishable identity proof.
+- Current APK/AAB are temporary/debug-signed and use `com.example.battleraja.m11`; neither is publishable identity proof. Current hashes are recorded in `Docs/AI/V1_EXECUTION_REBASELINE_2026-08-31.md`.
 
 ## Old prompt files removed from `PROMPTS/`
 

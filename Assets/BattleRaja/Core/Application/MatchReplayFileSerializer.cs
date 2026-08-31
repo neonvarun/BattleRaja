@@ -13,7 +13,8 @@ namespace BattleRaja.Core.Application
     /// </summary>
     public static class MatchReplayFileSerializer
     {
-        private const int FormatVersion = 1;
+        private const int LegacyFormatVersion = 1;
+        private const int FormatVersion = 2;
         private const int MaximumCollectionCount = 1_000_000;
         private static readonly byte[] Magic = Encoding.ASCII.GetBytes("BRR1");
 
@@ -80,7 +81,11 @@ namespace BattleRaja.Core.Application
                 {
                     var magic = reader.ReadBytes(Magic.Length);
                     if (!BytesEqual(Magic, magic)) throw new InvalidDataException("Replay magic is invalid.");
-                    if (reader.ReadInt32() != FormatVersion) throw new InvalidDataException("Replay format version is unsupported.");
+                    var formatVersion = reader.ReadInt32();
+                    if (formatVersion != LegacyFormatVersion && formatVersion != FormatVersion)
+                    {
+                        throw new InvalidDataException("Replay format version is unsupported.");
+                    }
 
                     var payloadLength = reader.ReadInt32();
                     if (payloadLength < 0 || payloadLength > input.Length - input.Position - 32)
@@ -105,7 +110,7 @@ namespace BattleRaja.Core.Application
                     using (var payloadStream = new MemoryStream(payload, false))
                     using (var payloadReader = new BinaryReader(payloadStream, Encoding.UTF8, true))
                     {
-                        var replay = ReadReplayPayload(payloadReader);
+                        var replay = ReadReplayPayload(payloadReader, formatVersion >= FormatVersion);
                         if (payloadStream.Position != payloadStream.Length)
                         {
                             throw new InvalidDataException("Replay payload has trailing bytes.");
@@ -149,6 +154,7 @@ namespace BattleRaja.Core.Application
             writer.Write(header.MatchSeed);
             writer.Write(header.FixedDeltaSeconds);
             writer.Write((int)header.Scenario);
+            writer.Write(header.IncludesBastionState);
 
             WriteArrayCount(writer, header.Spawns.Length);
             for (var i = 0; i < header.Spawns.Length; i++) WriteSpawn(writer, header.Spawns[i]);
@@ -171,12 +177,13 @@ namespace BattleRaja.Core.Application
             }
         }
 
-        private static MatchReplayFile ReadReplayPayload(BinaryReader reader)
+        private static MatchReplayFile ReadReplayPayload(BinaryReader reader, bool hasBastionState)
         {
             var arenaVersion = ReadString(reader);
             var matchSeed = reader.ReadUInt32();
             var fixedDeltaSeconds = reader.ReadSingle();
             var scenario = (MatchReplayScenario)reader.ReadInt32();
+            var includesBastionState = hasBastionState && reader.ReadBoolean();
 
             var spawns = new MatchSpawn[ReadArrayCount(reader)];
             for (var i = 0; i < spawns.Length; i++) spawns[i] = ReadSpawn(reader);
@@ -198,7 +205,8 @@ namespace BattleRaja.Core.Application
                 scenario,
                 participants,
                 pickups,
-                gadgetPickups);
+                gadgetPickups,
+                includesBastionState);
             var replay = new MatchReplayFile(header);
             var frameCount = ReadArrayCount(reader);
             for (var i = 0; i < frameCount; i++)

@@ -47,6 +47,43 @@ Record every material choice here. Do not silently overwrite old decisions.
   EditMode plus 94/94 PlayMode reports under `Builds/Local/V1GameplayTruth/TestResults/`.
 - **Owner:** Human project owner
 
+### ADR-079 — Capture Bastion state at a coherent post-tick replay boundary
+
+- **Date:** 2026-09-01
+- **Status:** Accepted for the V1 offline replay and diagnostics path; final long-run
+  performance and production-art review remain open.
+- **Context:** Bastion Crown is intentionally layered over the healthy Solo combat
+  authority. If replay capture observed the legacy tick before team damage, healing,
+  objective, respawn and collection intents were mirrored, the same input stream could
+  produce a hash that passed while the player-facing team state had already drifted.
+  The original team digest also omitted assist contribution maps and the Aandhi context
+  consumed by the squad planner.
+- **Options considered:** Keep replay hashes limited to the legacy authority; replace
+  the existing Solo authority wholesale; or retain the adapter and define one post-tick
+  boundary with a deterministic Bastion digest and versioned replay envelope.
+- **Decision:** `OfflineMatchController` and `DeterministicReplayExecutor` publish and
+  hash only after authority damage/healing/collection intents, Bastion mirroring,
+  objective advancement and authoritative respawns have completed. Replay format v2
+  records whether Bastion state is present while remaining able to read v1 files. The
+  combined digest includes objective timers/socket/carrier/channel, team score/tickets/
+  stats, participant respawn/protection state, sorted damage-contribution maps, event
+  ledger counts and the mirrored Aandhi state. Squad plans consume only these canonical
+  snapshots and retreat toward the authority zone when closing Aandhi makes the actor
+  unsafe; no hidden vision or client-side score mutation is introduced.
+- **Consequences:** A Bastion replay now validates the complete team/legacy boundary,
+  duplicate event delivery cannot silently double-count stats, and production bots have
+  deterministic escort, contest, defend, collapse, recovery and Aandhi-retreat intents.
+  The digest uses static ref helpers to avoid per-tick closure/delegate allocation. The
+  v2 replay path is covered by a two-seed, 8,400-tick soak in the EditMode suite; replay
+  evidence still does not prove human fun, physical 16 KB runtime compatibility or final
+  authored presentation quality.
+- **Evidence/sources:** `BastionCrownMatch.CalculateDeterministicHash`,
+  `OfflineMatchController.AdvanceSimulationTick`, `DeterministicReplayExecutor`,
+  `MatchReplayFileSerializer`, `BastionSquadPlanner`, `BastionReplaySoakTests`,
+  full EditMode 153/153 and PlayMode 94/94 reports under
+  `Builds/Local/V1GameplayTruth/ContinuationHardening/`.
+- **Owner:** Human project owner
+
 ### ADR-058 — Unify action eligibility behind the authority clock
 
 - **Date:** 2026-08-25
@@ -1842,8 +1879,9 @@ Record every material choice here. Do not silently overwrite old decisions.
   reproduce a reference game's protected layout or expression; or use BattleRaja's
   existing authored feature art and saved production prefabs with presentation-only
   isolation.
-- **Decision:** Use the owned `BattleRaja-FeatureArt-Candidate.png` as the contextual
-  menu/mode/fighter backdrop, make the offline play actions the strongest buttons, and
+- **Decision:** Use the repository-owned `BattleRaja-FeatureArt-OriginalCandidate.png` as
+  the contextual menu/mode/fighter backdrop, make the offline play actions the strongest
+  buttons, and
   render the saved Bijli, Pehel and Maya production prefabs into square card portraits.
   Each portrait owns a separate render layer/camera, keeps the near identity mesh,
   suppresses live VFX/animation noise, and never enters gameplay authority or collision.
@@ -1859,5 +1897,7 @@ Record every material choice here. Do not silently overwrite old decisions.
   `Builds/Local/Device/audits/20260831-presentation/ref-brawlstars-launch.png` and
   `ref-smashkarts-launch.png`; BattleRaja captures `39-menu-final-presentation.png`,
   `37-fighter-isolated.png` and `38-live-final-presentation.png`; the exact candidate
-  APK, static validation, full 141/141 EditMode and 92/92 PlayMode reruns.
+  APK, static validation, full 141/141 EditMode and 92/92 PlayMode reruns. The original
+  feature-art candidate is retained as historical material but is not referenced by the
+  runtime after the 2026-09-01 originality pass.
 - **Owner:** Human project owner

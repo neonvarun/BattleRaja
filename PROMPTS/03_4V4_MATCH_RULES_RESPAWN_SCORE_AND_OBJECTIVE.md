@@ -2,7 +2,7 @@
 
 ## Context
 
-The current `OfflineMatch`/`OfflineMatchAuthority` implement Solo phases, last-survivor placement, Aandhi and combat but have no first-class teams, score, tickets, Crown state or respawn. This stage owns the authoritative rules for `BR_BastionCrown_V1` and must keep the simulation pure and deterministic.
+The latest checkpoint adds `BastionCrownContracts` and `BastionCrownMatch` for explicit teams, Crown state, score, tickets, respawn and results, while `OfflineMatchAuthority` still owns the legacy combat/runtime mirror. This stage owns the continuation audit and hardening of `BR_BastionCrown_V1`; do not duplicate or replace healthy work without evidence, and keep the simulation pure and deterministic.
 
 ## Objective
 
@@ -10,7 +10,7 @@ Implement a fair, readable and replayable four-versus-four match that feels comp
 
 ## Current-state audit
 
-Read `OfflineMatch.cs`, `OfflineMatchAuthority.cs`, `OfflineMatchController.cs`, combat-group/faction code, projectile/gadget resolution, replay events, spawn configuration and all related tests. Trace how damage, elimination, placement, Aandhi and result snapshots are currently emitted. List compatibility hazards before changing `CombatFaction` or any constructor used by Solo tests.
+Read `BastionCrownContracts.cs`, `BastionCrownMatch.cs`, `OfflineMatch.cs`, `OfflineMatchAuthority.cs`, `OfflineMatchController.cs`, combat-group/faction code, projectile/gadget resolution, replay events, spawn configuration and all related tests. Trace the exact order in which legacy damage becomes team damage, defeat, Crown drop, respawn, score and result snapshots. Test for mirror drift, duplicate event IDs, deposit interruption, socket rotation, team wipe, overtime, Aandhi, healing and rematch. List compatibility hazards before changing `CombatFaction` or any constructor used by Solo tests.
 
 ## Preserve
 

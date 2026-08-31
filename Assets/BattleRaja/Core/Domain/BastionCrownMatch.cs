@@ -13,14 +13,20 @@ namespace BattleRaja.Core.Domain
     {
         public const int ParticipantCount = 8;
         public const int TeamSize = 4;
+        private const ulong HashOffsetBasis = 14695981039346656037UL;
+        private const ulong HashPrime = 1099511628211UL;
 
         private readonly ModeDefinition _definition;
         private readonly uint _seed;
         private readonly ParticipantState[] _participants = new ParticipantState[ParticipantCount];
+        private readonly BastionParticipantSnapshot[] _plannerSnapshots = new BastionParticipantSnapshot[ParticipantCount];
         private readonly Dictionary<CombatEntityId, int> _participantIndices = new Dictionary<CombatEntityId, int>(ParticipantCount);
         private readonly Dictionary<CombatEntityId, Dictionary<CombatEntityId, int>> _damageContributions =
             new Dictionary<CombatEntityId, Dictionary<CombatEntityId, int>>(ParticipantCount);
         private readonly HashSet<int> _processedDamageEvents = new HashSet<int>();
+        private readonly HashSet<int> _processedHealingEvents = new HashSet<int>();
+        private readonly HashSet<int> _processedGadgetEvents = new HashSet<int>();
+        private readonly HashSet<int> _processedAbilityEvents = new HashSet<int>();
         private readonly TeamState _raja = new TeamState(BastionTeamId.Raja, ModeDefinition.BastionCrown.Respawn.StartingTickets);
         private readonly TeamState _rival = new TeamState(BastionTeamId.Rival, ModeDefinition.BastionCrown.Respawn.StartingTickets);
         private readonly List<CombatEntityId> _respawnedActors = new List<CombatEntityId>(TeamSize);
@@ -44,6 +50,10 @@ namespace BattleRaja.Core.Domain
         private bool _ended;
         private BastionTeamId _winner;
         private BastionResultSummary _result;
+        private AandhiState _aandhiState;
+        private Float2 _aandhiZoneCenter;
+        private float _aandhiZoneRadius;
+        private float _aandhiWarningRemaining;
 
         public BastionCrownMatch(uint seed)
             : this(ModeDefinition.BastionCrown, seed)
@@ -70,6 +80,177 @@ namespace BattleRaja.Core.Domain
         public BastionTeamId Winner => _winner;
         public BastionResultSummary Result => _result;
         public CrownSparkSnapshot Crown => CreateCrownSnapshot();
+        public AandhiState AandhiState => _aandhiState;
+        public Float2 AandhiZoneCenter => _aandhiZoneCenter;
+        public float AandhiZoneRadius => _aandhiZoneRadius;
+        public float AandhiWarningRemainingSeconds => _aandhiWarningRemaining;
+
+        /// <summary>
+        /// Computes a stable post-tick digest for the complete Bastion state.
+        /// The digest deliberately includes objective, team, respawn and
+        /// per-actor counters so a replay cannot pass while the legacy combat
+        /// mirror has silently drifted from the team authority.
+        /// </summary>
+        public ulong CalculateDeterministicHash(int simulationTick = -1)
+        {
+            unchecked
+            {
+                var hash = HashOffsetBasis;
+
+                HashInt(ref hash, simulationTick >= 0 ? simulationTick : _lastTick);
+                HashText(ref hash, _definition.ModeId);
+                HashInt(ref hash, (int)_seed);
+                HashFloat(ref hash, _elapsedSeconds);
+                HashFloat(ref hash, _overtimeElapsed);
+                HashBool(ref hash, _started);
+                HashBool(ref hash, _overtime);
+                HashBool(ref hash, _ended);
+                HashInt(ref hash, (int)_winner);
+                HashInt(ref hash, (int)_aandhiState);
+                HashFloat(ref hash, _aandhiZoneCenter.X);
+                HashFloat(ref hash, _aandhiZoneCenter.Y);
+                HashFloat(ref hash, _aandhiZoneRadius);
+                HashFloat(ref hash, _aandhiWarningRemaining);
+
+                HashInt(ref hash, _crownSocketIndex);
+                HashFloat(ref hash, _crownPosition.X);
+                HashFloat(ref hash, _crownPosition.Y);
+                HashId(ref hash, _crownCarrier);
+                HashBool(ref hash, _crownDropped);
+                HashFloat(ref hash, _crownPickupProgress);
+                HashId(ref hash, _crownPickupActor);
+                HashFloat(ref hash, _crownDropLockRemaining);
+                HashFloat(ref hash, _crownDropRemaining);
+                HashFloat(ref hash, _crownRotationRemaining);
+                HashId(ref hash, _depositChannelActor);
+                HashFloat(ref hash, _depositChannelProgress);
+
+                HashTeam(ref hash, _raja);
+                HashTeam(ref hash, _rival);
+                HashInt(ref hash, _processedDamageEvents.Count);
+                HashInt(ref hash, _processedHealingEvents.Count);
+                HashInt(ref hash, _processedGadgetEvents.Count);
+                HashInt(ref hash, _processedAbilityEvents.Count);
+                // Damage contribution maps influence future assist awards. Walk
+                // canonical actor IDs rather than dictionary enumeration so the
+                // digest remains stable across runtime implementations.
+                for (var targetIndex = 0; targetIndex < _participants.Length; targetIndex++)
+                {
+                    var targetState = _participants[targetIndex];
+                    if (targetState == null) continue;
+                    HashId(ref hash, targetState.Member.ActorId);
+                    if (!_damageContributions.TryGetValue(targetState.Member.ActorId, out var contributions))
+                    {
+                        HashInt(ref hash, 0);
+                        continue;
+                    }
+
+                    var contributionCount = 0;
+                    for (var sourceIndex = 0; sourceIndex < _participants.Length; sourceIndex++)
+                    {
+                        var sourceState = _participants[sourceIndex];
+                        if (sourceState == null || !contributions.TryGetValue(sourceState.Member.ActorId, out var amount)) continue;
+                        contributionCount++;
+                    }
+
+                    HashInt(ref hash, contributionCount);
+                    for (var sourceIndex = 0; sourceIndex < _participants.Length; sourceIndex++)
+                    {
+                        var sourceState = _participants[sourceIndex];
+                        if (sourceState == null || !contributions.TryGetValue(sourceState.Member.ActorId, out var amount)) continue;
+                        HashId(ref hash, sourceState.Member.ActorId);
+                        HashInt(ref hash, amount);
+                    }
+                }
+                for (var i = 0; i < _participants.Length; i++)
+                {
+                    var participant = _participants[i];
+                    if (participant == null)
+                    {
+                        HashBool(ref hash, false);
+                        continue;
+                    }
+
+                    HashBool(ref hash, true);
+                    HashId(ref hash, participant.Member.ActorId);
+                    HashInt(ref hash, (int)participant.Member.TeamId);
+                    HashInt(ref hash, (int)participant.Member.Role);
+                    HashBool(ref hash, participant.Member.IsHuman);
+                    HashFloat(ref hash, participant.Position.X);
+                    HashFloat(ref hash, participant.Position.Y);
+                    HashFloat(ref hash, participant.SpawnPosition.X);
+                    HashFloat(ref hash, participant.SpawnPosition.Y);
+                    HashInt(ref hash, participant.CurrentHealth);
+                    HashInt(ref hash, participant.MaxHealth);
+                    HashBool(ref hash, participant.Alive);
+                    HashBool(ref hash, participant.Spectating);
+                    HashBool(ref hash, participant.RespawnPending);
+                    HashFloat(ref hash, participant.SpectatorRemaining);
+                    HashFloat(ref hash, participant.RespawnRemaining);
+                    HashBool(ref hash, participant.SpawnProtected);
+                    HashFloat(ref hash, participant.SpawnProtectionRemaining);
+                    HashInt(ref hash, participant.Eliminations);
+                    HashInt(ref hash, participant.Deaths);
+                    HashInt(ref hash, participant.Assists);
+                    HashInt(ref hash, participant.DamageDealt);
+                    HashInt(ref hash, participant.HealingDone);
+                    HashInt(ref hash, participant.GadgetUses);
+                    HashInt(ref hash, participant.AbilityUses);
+                    HashFloat(ref hash, participant.ObjectiveSeconds);
+                    HashFloat(ref hash, participant.SurvivalSeconds);
+                }
+
+                return hash;
+            }
+        }
+
+        private static void HashInt(ref ulong hash, int value)
+        {
+            unchecked
+            {
+                hash ^= (ulong)(byte)value;
+                hash *= HashPrime;
+                hash ^= (ulong)(byte)(value >> 8);
+                hash *= HashPrime;
+                hash ^= (ulong)(byte)(value >> 16);
+                hash *= HashPrime;
+                hash ^= (ulong)(byte)(value >> 24);
+                hash *= HashPrime;
+            }
+        }
+
+        private static void HashBool(ref ulong hash, bool value) => HashInt(ref hash, value ? 1 : 0);
+
+        private static void HashFloat(ref ulong hash, float value) => HashInt(ref hash, (int)(value * 1000f));
+
+        private static void HashId(ref ulong hash, CombatEntityId id) => HashInt(ref hash, id.Value);
+
+        private static void HashText(ref ulong hash, string value)
+        {
+            value = value ?? string.Empty;
+            HashInt(ref hash, value.Length);
+            for (var i = 0; i < value.Length; i++) HashInt(ref hash, value[i]);
+        }
+
+        private static void HashTeam(ref ulong hash, TeamState team)
+        {
+            HashInt(ref hash, (int)team.TeamId);
+            HashInt(ref hash, team.Score);
+            HashInt(ref hash, team.Deposits);
+            HashInt(ref hash, team.KOs);
+            HashInt(ref hash, team.Assists);
+            HashInt(ref hash, team.CrownPickups);
+            HashInt(ref hash, team.Deaths);
+            HashInt(ref hash, team.DamageDealt);
+            HashInt(ref hash, team.HealingDone);
+            HashInt(ref hash, team.GadgetUses);
+            HashInt(ref hash, team.AbilityUses);
+            HashInt(ref hash, team.Tickets.Maximum);
+            HashInt(ref hash, team.Tickets.Remaining);
+            HashInt(ref hash, team.Tickets.Spent);
+            HashFloat(ref hash, team.ObjectiveSeconds);
+            HashInt(ref hash, team.OvertimeDeposits);
+        }
 
         public void Start(IReadOnlyList<BastionCrownSlot> slots)
         {
@@ -79,6 +260,9 @@ namespace BattleRaja.Core.Domain
             _participantIndices.Clear();
             _damageContributions.Clear();
             _processedDamageEvents.Clear();
+            _processedHealingEvents.Clear();
+            _processedGadgetEvents.Clear();
+            _processedAbilityEvents.Clear();
             for (var i = 0; i < ParticipantCount; i++)
             {
                 var slot = slots[i];
@@ -108,7 +292,37 @@ namespace BattleRaja.Core.Domain
             _ended = false;
             _winner = BastionTeamId.None;
             _result = default(BastionResultSummary);
+            _aandhiState = AandhiState.Stable;
+            _aandhiZoneCenter = Float2.Zero;
+            _aandhiZoneRadius = 0f;
+            _aandhiWarningRemaining = 0f;
             _started = true;
+        }
+
+        /// <summary>
+        /// Mirrors the legacy authority's canonical Aandhi telemetry into the
+        /// team planner. The zone remains advisory for scoring, but it is part
+        /// of the deterministic squad decision and digest.
+        /// </summary>
+        public bool SyncAandhi(
+            Float2 zoneCenter,
+            float zoneRadius,
+            AandhiState state,
+            float warningRemainingSeconds = 0f)
+        {
+            if (!_started || !zoneCenter.IsFinite || zoneRadius < 0f ||
+                float.IsNaN(zoneRadius) || float.IsInfinity(zoneRadius) ||
+                warningRemainingSeconds < 0f ||
+                float.IsNaN(warningRemainingSeconds) || float.IsInfinity(warningRemainingSeconds))
+            {
+                return false;
+            }
+
+            _aandhiZoneCenter = zoneCenter;
+            _aandhiZoneRadius = zoneRadius;
+            _aandhiState = state;
+            _aandhiWarningRemaining = warningRemainingSeconds;
+            return true;
         }
 
         public BastionTeamId GetTeam(CombatEntityId actorId)
@@ -139,6 +353,94 @@ namespace BattleRaja.Core.Domain
             return snapshots;
         }
 
+        /// <summary>
+        /// Returns the deterministic squad assignment for one actor. The
+        /// planner consumes only canonical team/objective snapshots; it never
+        /// reads Unity transforms, hidden targets or presentation state.
+        /// </summary>
+        public bool TryGetSquadIntent(CombatEntityId actorId, out BastionSquadIntent intent)
+        {
+            if (!_started || !TryGetParticipantState(actorId, out var participant) || !participant.Alive)
+            {
+                intent = default(BastionSquadIntent);
+                return false;
+            }
+
+            for (var i = 0; i < ParticipantCount; i++) _plannerSnapshots[i] = _participants[i].ToSnapshot();
+            intent = BastionSquadPlanner.Plan(
+                participant.Member,
+                participant.Position,
+                _plannerSnapshots,
+                CreateCrownSnapshot(),
+                _raja.ToScore(),
+                _rival.ToScore(),
+                _raja.Tickets,
+                _rival.Tickets,
+                _definition,
+                _overtime,
+                _aandhiZoneCenter,
+                _aandhiZoneRadius,
+                _aandhiState);
+            return true;
+        }
+
+        /// <summary>
+        /// Records an authority-resolved heal exactly once. The source actor
+        /// receives healing credit; environmental/self heals credit the target.
+        /// </summary>
+        public bool NotifyHealing(
+            CombatEntityId healerId,
+            CombatEntityId targetId,
+            int amountApplied,
+            int eventId = 0)
+        {
+            if (!_started || amountApplied <= 0 || !TryGetParticipantState(targetId, out var target) || !target.Alive)
+            {
+                return false;
+            }
+
+            if (eventId != 0 && !_processedHealingEvents.Add(eventId)) return false;
+            var credited = TryGetParticipantState(healerId, out var healer) && healer.Alive
+                ? healer
+                : target;
+            credited.HealingDone = SaturatingAdd(credited.HealingDone, amountApplied);
+            GetTeamState(credited.Member.TeamId).HealingDone =
+                SaturatingAdd(GetTeamState(credited.Member.TeamId).HealingDone, amountApplied);
+            return true;
+        }
+
+        /// <summary>Records one accepted gadget use without trusting a view-side
+        /// counter. Re-delivery of the same authority event is ignored.</summary>
+        public bool RecordGadgetUse(CombatEntityId actorId, int eventId = 0)
+        {
+            if (!_started || !TryGetParticipantState(actorId, out var participant) || !participant.Alive)
+            {
+                return false;
+            }
+
+            if (eventId != 0 && !_processedGadgetEvents.Add(eventId)) return false;
+            participant.GadgetUses = SaturatingAdd(participant.GadgetUses, 1);
+            var team = GetTeamState(participant.Member.TeamId);
+            team.GadgetUses = SaturatingAdd(team.GadgetUses, 1);
+            return true;
+        }
+
+        /// <summary>Records one accepted fighter ability use. Re-delivery of the
+        /// same authority event is ignored.</summary>
+        public bool RecordAbilityUse(CombatEntityId actorId, int eventId = 0)
+        {
+            if (!_started || !TryGetParticipantState(actorId, out var participant) || !participant.Alive)
+            {
+                return false;
+            }
+
+            if (eventId != 0 && !_processedAbilityEvents.Add(eventId)) return false;
+            participant.AbilityUses = SaturatingAdd(participant.AbilityUses, 1);
+            var team = GetTeamState(participant.Member.TeamId);
+            team.AbilityUses = SaturatingAdd(team.AbilityUses, 1);
+            return true;
+        }
+
         public bool TryGetParticipant(CombatEntityId actorId, out BastionParticipantSnapshot snapshot)
         {
             if (_participantIndices.TryGetValue(actorId, out var index) && _participants[index] != null)
@@ -161,7 +463,9 @@ namespace BattleRaja.Core.Domain
         public bool SetHealth(CombatEntityId actorId, int currentHealth)
         {
             if (!TryGetParticipantState(actorId, out var participant)) return false;
-            participant.CurrentHealth = Math.Max(0, Math.Min(participant.MaxHealth, currentHealth));
+            participant.CurrentHealth = !participant.Alive
+                ? 0
+                : Math.Max(0, Math.Min(participant.MaxHealth, currentHealth));
             return true;
         }
 
@@ -242,8 +546,13 @@ namespace BattleRaja.Core.Domain
             int eventId = 0)
         {
             if (!_started || amountApplied <= 0 || !TryGetParticipantState(targetId, out var target)) return false;
+            // A resolved event may mark a live target defeated, but an already
+            // dead target can never accept another event, even when a caller
+            // incorrectly repeats it with a new identity. Reject before
+            // recording the event identity so a rejected delivery cannot block
+            // a later authoritative delivery that reuses that identity.
+            if (!target.Alive || target.CurrentHealth <= 0) return false;
             if (eventId != 0 && !_processedDamageEvents.Add(eventId)) return false;
-            if (!target.Alive && !targetDefeated) return false;
             RecordCombatDamage(instigatorId, targetId, amountApplied, targetDefeated, eventIdAlreadyRecorded: eventId != 0);
             if (TryGetParticipantState(instigatorId, out var attacker)) attacker.SpawnProtected = false;
             if (targetDefeated && target.Alive) Defeat(target, instigatorId, eventId);
@@ -365,6 +674,8 @@ namespace BattleRaja.Core.Domain
             participant.Alive = true;
             participant.Spectating = false;
             participant.RespawnPending = false;
+            participant.SpectatorRemaining = 0f;
+            participant.RespawnRemaining = 0f;
             participant.CurrentHealth = participant.MaxHealth;
             participant.Position = participant.SpawnPosition;
             participant.SpawnProtected = _definition.Respawn.SpawnProtectionSeconds > 0f;
@@ -465,6 +776,8 @@ namespace BattleRaja.Core.Domain
                 participant.RespawnPending = false;
                 participant.Alive = true;
                 participant.Spectating = false;
+                participant.SpectatorRemaining = 0f;
+                participant.RespawnRemaining = 0f;
                 participant.CurrentHealth = participant.MaxHealth;
                 participant.Position = participant.SpawnPosition;
                 participant.SpawnProtected = _definition.Respawn.SpawnProtectionSeconds > 0f;
@@ -475,6 +788,8 @@ namespace BattleRaja.Core.Domain
 
         private void AdvanceCrown(float deltaSeconds)
         {
+            if (!IsLive) return;
+
             if (_crownCarrier.Value > 0)
             {
                 if (!TryGetParticipantState(_crownCarrier, out var carrier) || !carrier.Alive)
@@ -533,7 +848,14 @@ namespace BattleRaja.Core.Domain
             _depositChannelProgress = 0f;
             _crownCarrier = default(CombatEntityId);
             _crownDropped = false;
+            _crownDropLockRemaining = 0f;
+            _crownDropRemaining = 0f;
             _crownPickupProgress = 0f;
+            _crownPickupActor = default(CombatEntityId);
+            // A completed delivery always hands the next Crown to the next
+            // socket. Resetting to the same socket made repeat deposits a
+            // deterministic stalemate and contradicted the mode contract.
+            _crownSocketIndex = (_crownSocketIndex + 1) % _definition.Objective.SocketPositions.Length;
             _crownPosition = _definition.Objective.SocketPositions[_crownSocketIndex];
             _crownRotationRemaining = _definition.Objective.RotationSeconds;
             if (_overtime)
@@ -559,6 +881,8 @@ namespace BattleRaja.Core.Domain
             if (TryGetParticipantState(instigatorId, out var instigator) && instigatorId != targetId)
             {
                 instigator.DamageDealt = SaturatingAdd(instigator.DamageDealt, amountApplied);
+                GetTeamState(instigator.Member.TeamId).DamageDealt =
+                    SaturatingAdd(GetTeamState(instigator.Member.TeamId).DamageDealt, amountApplied);
                 if (!_damageContributions.TryGetValue(targetId, out var contributions))
                 {
                     contributions = new Dictionary<CombatEntityId, int>();
@@ -567,6 +891,14 @@ namespace BattleRaja.Core.Domain
 
                 contributions.TryGetValue(instigatorId, out var existing);
                 contributions[instigatorId] = SaturatingAdd(existing, amountApplied);
+            }
+
+            // Any applied combat damage breaks a shrine channel immediately.
+            // This is checked before defeat handling so a lethal hit cannot
+            // complete a deposit in the same fixed step.
+            if (_depositChannelActor == targetId && amountApplied > 0)
+            {
+                CancelDeposit(targetId);
             }
 
             if (targetDefeated && TryGetParticipantState(targetId, out var target) && target.Alive)
@@ -581,6 +913,8 @@ namespace BattleRaja.Core.Domain
             participant.Alive = false;
             participant.CurrentHealth = 0;
             participant.Deaths = SaturatingAdd(participant.Deaths, 1);
+            GetTeamState(participant.Member.TeamId).Deaths =
+                SaturatingAdd(GetTeamState(participant.Member.TeamId).Deaths, 1);
             participant.Spectating = true;
             participant.SpectatorRemaining = _definition.Respawn.SpectatorSeconds;
             participant.RespawnRemaining = _definition.Respawn.RespawnSeconds;
@@ -838,6 +1172,8 @@ namespace BattleRaja.Core.Domain
             public int Assists;
             public int DamageDealt;
             public int HealingDone;
+            public int GadgetUses;
+            public int AbilityUses;
             public float ObjectiveSeconds;
             public float SurvivalSeconds;
 
@@ -857,7 +1193,9 @@ namespace BattleRaja.Core.Domain
                 Assists,
                 DamageDealt,
                 HealingDone,
-                ObjectiveSeconds);
+                ObjectiveSeconds,
+                GadgetUses,
+                AbilityUses);
         }
 
         private sealed class TeamState
@@ -874,6 +1212,11 @@ namespace BattleRaja.Core.Domain
             public int KOs;
             public int Assists;
             public int CrownPickups;
+            public int Deaths;
+            public int DamageDealt;
+            public int HealingDone;
+            public int GadgetUses;
+            public int AbilityUses;
             public int OvertimeDeposits;
             public float ObjectiveSeconds;
             public TeamTicketPool Tickets;
@@ -885,6 +1228,11 @@ namespace BattleRaja.Core.Domain
                 KOs = 0;
                 Assists = 0;
                 CrownPickups = 0;
+                Deaths = 0;
+                DamageDealt = 0;
+                HealingDone = 0;
+                GadgetUses = 0;
+                AbilityUses = 0;
                 OvertimeDeposits = 0;
                 ObjectiveSeconds = 0f;
                 Tickets = new TeamTicketPool(TeamId, Math.Max(0, tickets), Math.Max(0, tickets), 0);
@@ -892,7 +1240,20 @@ namespace BattleRaja.Core.Domain
 
             public void SpendTicket() => Tickets = Tickets.Spend();
 
-            public TeamScore ToScore() => new TeamScore(TeamId, Score, Deposits, KOs, Assists, CrownPickups, Tickets.Spent, ObjectiveSeconds);
+            public TeamScore ToScore() => new TeamScore(
+                TeamId,
+                Score,
+                Deposits,
+                KOs,
+                Assists,
+                CrownPickups,
+                Tickets.Spent,
+                ObjectiveSeconds,
+                Deaths,
+                DamageDealt,
+                HealingDone,
+                GadgetUses,
+                AbilityUses);
         }
     }
 }

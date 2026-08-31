@@ -1,5 +1,10 @@
 # Bastion Crown V1 product brief
 
+**Implementation checkpoint update:** 2026-09-01 01:30 IST, current continuation working tree.
+The contracts, production adapter, deterministic replay boundary and role-aware squad planner
+are test-green, but this brief remains a product contract, not a claim of final authored art,
+match-balance/fun approval or Play readiness.
+
 **Mode ID:** `BR_BastionCrown_V1`
 **Primary player flow:** cold launch → `PLAY OFFLINE` → Bastion Crown briefing → fighter choice → ready → match → brief spectate/result → rematch or menu.
 **Roster:** Bijli (mobile skirmisher), Pehel (frontline bruiser), Maya (trickster/control).
@@ -26,7 +31,7 @@ Bastion Crown is a short, replayable objective battle in an original bazaar-fort
 
 ## State ownership
 
-`ModeDefinition`, `TeamDefinition`, `TeamMember`, `ObjectiveDefinition`, `RespawnPolicy`, `TeamScore`, `TeamTicketPool` and `BastionResultSummary` are immutable domain contracts. `BastionCrownMatch` owns mutable participant, Crown, score, ticket, respawn, channel, overtime and result state. Unity views, UI, animation, VFX and audio mirror immutable ticks and never award score or revive actors.
+`ModeDefinition`, `TeamDefinition`, `TeamMember`, `ObjectiveDefinition`, `RespawnPolicy`, `TeamScore`, `TeamTicketPool` and `BastionResultSummary` are immutable domain contracts. `BastionCrownMatch` owns mutable participant, Crown, score, ticket, respawn, channel, overtime and result state. The Unity adapter still mirrors health/position/damage from the legacy offline combat simulation, but replay now captures a coherent post-tick boundary and the duplicate/dead-target, healing, objective, Aandhi and respawn seams are covered by the current tests. Unity views, UI, animation, VFX and audio must never award score or revive actors.
 
 ## Canonical numbers
 
@@ -45,6 +50,9 @@ Solo Raja remains in the pure domain/application and replay fixtures as a compat
 ## Acceptance evidence
 
 - Contract implementation: `Assets/BattleRaja/Core/Domain/BastionCrownContracts.cs` and `BastionCrownMatch.cs`.
-- Pure regression coverage: `Assets/BattleRaja/Tests/EditMode/BastionCrownMatchTests.cs` (included in the 148-test EditMode run).
-- Exact current audit: `Docs/AI/V1_EXECUTION_REBASELINE_2026-08-31.md`.
-- Runtime integration and device evidence are intentionally tracked separately and may not be promoted until the full route is exercised on Lava `ST5GDW23LB004392`.
+- Pure regression coverage: `Assets/BattleRaja/Tests/EditMode/BastionCrownMatchTests.cs` and
+  `BastionReplaySoakTests.cs` (included in the current 155-test EditMode run).
+- Exact current audit: `Docs/AI/V1_EXECUTION_REBASELINE_2026-08-31.md` (updated 2026-09-01).
+- Runtime integration and device evidence are tracked separately in
+  `Docs/QA/V1_OFFLINE_ANDROID_VALIDATION_2026-09-01.md`; the current bounded route is on Lava
+  `ST5GDW23LB004392`, while full comfort/fun review remains open.

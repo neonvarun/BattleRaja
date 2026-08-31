@@ -116,7 +116,8 @@ namespace BattleRaja.Core.Application
             MatchReplayScenario scenario,
             MatchReplayParticipant[] participants,
             MatchPickupDefinition[] pickups,
-            GadgetPickupDefinition[] gadgetPickups)
+            GadgetPickupDefinition[] gadgetPickups,
+            bool includesBastionState = false)
         {
             if (fixedDeltaSeconds <= 0f || float.IsNaN(fixedDeltaSeconds) || float.IsInfinity(fixedDeltaSeconds))
             {
@@ -131,6 +132,7 @@ namespace BattleRaja.Core.Application
             Participants = participants ?? Array.Empty<MatchReplayParticipant>();
             Pickups = pickups ?? Array.Empty<MatchPickupDefinition>();
             GadgetPickups = gadgetPickups ?? Array.Empty<GadgetPickupDefinition>();
+            IncludesBastionState = includesBastionState;
         }
 
         public string ArenaVersion { get; }
@@ -141,6 +143,7 @@ namespace BattleRaja.Core.Application
         public MatchReplayParticipant[] Participants { get; }
         public MatchPickupDefinition[] Pickups { get; }
         public GadgetPickupDefinition[] GadgetPickups { get; }
+        public bool IncludesBastionState { get; }
     }
 
     public readonly struct MatchReplayFrame
@@ -335,6 +338,9 @@ namespace BattleRaja.Core.Application
             }
 
             var authority = CreateAuthority(header);
+            var bastion = header.Scenario == MatchReplayScenario.BastionCrown && header.IncludesBastionState
+                ? CreateBastionMatch(header)
+                : null;
             var pehelActorIds = new List<CombatEntityId>();
             var bijliActorIds = new List<CombatEntityId>();
             for (var i = 0; i < header.Participants.Length; i++)
@@ -359,10 +365,34 @@ namespace BattleRaja.Core.Application
                     throw new InvalidOperationException($"Replay tick {frame.SimulationTick} is not contiguous at frame {frameIndex}.");
                 }
 
-                ApplyFrame(authority, frame, header.FixedDeltaSeconds, pehelActorIds, bijliActorIds);
+                ApplyFrame(authority, frame, header.FixedDeltaSeconds, pehelActorIds, bijliActorIds, bastion);
                 var tick = authority.Advance(frame.SimulationTick, header.FixedDeltaSeconds);
+                if (bastion != null)
+                {
+                    SyncBastionFromAuthority(bastion, authority, tick);
+                    ProcessBastionObjectiveInteractions(bastion, header.FixedDeltaSeconds);
+                    var bastionTick = bastion.Advance(header.FixedDeltaSeconds, frame.SimulationTick);
+                    for (var respawnIndex = 0; respawnIndex < bastionTick.RespawnedActors.Length; respawnIndex++)
+                    {
+                        var actorId = bastionTick.RespawnedActors[respawnIndex];
+                        if (bastion.TryGetParticipant(actorId, out var respawned))
+                        {
+                            authority.RespawnParticipant(actorId, respawned.Position);
+                        }
+                    }
+
+                    if (bastionTick.MatchEnded) authority.Simulation.ForceResolve();
+                }
+
                 var snapshots = authority.Simulation.GetSnapshots();
                 var hash = DeterministicReplayHasher.CalculateTickHash(authority, tick, snapshots);
+                if (bastion != null)
+                {
+                    var combined = MatchStateHashBuilder.Create();
+                    combined.CombineULong(hash);
+                    combined.CombineULong(bastion.CalculateDeterministicHash(frame.SimulationTick));
+                    hash = combined.Value;
+                }
                 actualHashes.Add(hash);
 
                 if (frameIndex < replay.TickStateSnapshots.Count &&
@@ -408,6 +438,175 @@ namespace BattleRaja.Core.Application
             }
 
             return new ReplayExecutionResult(true, 0, 0, 0, string.Empty, actualHashes, authority);
+        }
+
+        private static BastionCrownMatch CreateBastionMatch(MatchReplayHeader header)
+        {
+            if (header.Spawns.Length != BastionCrownMatch.ParticipantCount ||
+                header.Participants.Length != BastionCrownMatch.ParticipantCount)
+            {
+                throw new InvalidOperationException("Bastion replays require exactly eight participants.");
+            }
+
+            var slots = new BastionCrownSlot[BastionCrownMatch.ParticipantCount];
+            for (var i = 0; i < header.Spawns.Length; i++)
+            {
+                var spawn = header.Spawns[i];
+                var participant = FindReplayParticipant(header.Participants, spawn.Id);
+                if (participant.ActorId.Value != i + 1)
+                {
+                    throw new InvalidOperationException("Bastion replay actor IDs must be 1 through 8 in order.");
+                }
+
+                var team = participant.ActorId.Value <= BastionCrownMatch.TeamSize
+                    ? BastionTeamId.Raja
+                    : BastionTeamId.Rival;
+                var role = ResolveBastionRole(participant.FighterId, participant.ActorId.Value);
+                slots[i] = new BastionCrownSlot(
+                    new TeamMember(
+                        participant.ActorId,
+                        team,
+                        participant.FighterId,
+                        role,
+                        participant.ActorId.Value == 1),
+                    spawn.Position,
+                    spawn.MaxHealth);
+            }
+
+            var match = new BastionCrownMatch(header.MatchSeed);
+            match.Start(slots);
+            return match;
+        }
+
+        private static MatchReplayParticipant FindReplayParticipant(
+            MatchReplayParticipant[] participants,
+            CombatEntityId actorId)
+        {
+            for (var i = 0; i < participants.Length; i++)
+            {
+                if (participants[i].ActorId == actorId) return participants[i];
+            }
+
+            throw new InvalidOperationException($"Replay participant {actorId.Value} is missing.");
+        }
+
+        private static BastionRole ResolveBastionRole(ContentId fighterId, int actorId)
+        {
+            if (fighterId.Equals(FighterDefinition.Pehel.FighterId)) return BastionRole.Anchor;
+            if (fighterId.Equals(FighterDefinition.Maya.FighterId)) return BastionRole.Runner;
+            return actorId == 4 || actorId == 8 ? BastionRole.Flex : BastionRole.Skirmisher;
+        }
+
+        private static void SyncBastionFromAuthority(
+            BastionCrownMatch bastion,
+            OfflineMatchAuthority authority,
+            MatchAuthorityTick tick)
+        {
+            bastion.SyncAandhi(
+                tick.Result.ZoneCenter,
+                tick.Result.ZoneRadius,
+                tick.Result.AandhiState,
+                tick.Result.WarningRemainingSeconds);
+
+            for (var i = 0; i < tick.DamageEvents.Length; i++)
+            {
+                var damage = tick.DamageEvents[i];
+                if (damage.AmountApplied <= 0) continue;
+                bastion.NotifyCombatDamage(
+                    damage.InstigatorId,
+                    damage.TargetId,
+                    damage.AmountApplied,
+                    damage.TargetDefeated,
+                    damage.EventId);
+            }
+
+            var snapshots = authority.Simulation.GetSnapshots();
+            for (var i = 0; i < snapshots.Length; i++)
+            {
+                var snapshot = snapshots[i];
+                bastion.SetPosition(snapshot.Id, snapshot.Position);
+                bastion.SetHealth(snapshot.Id, snapshot.CurrentHealth);
+                if (!snapshot.Alive && bastion.TryGetParticipant(snapshot.Id, out var teamSnapshot) && teamSnapshot.Alive)
+                {
+                    bastion.SyncParticipant(snapshot.Id, snapshot.Position, 0, false);
+                }
+            }
+
+            for (var i = 0; i < tick.GadgetHealingIntents.Length; i++)
+            {
+                var healing = tick.GadgetHealingIntents[i];
+                var healerId = healing.HealerId.Value > 0 ? healing.HealerId : healing.TargetId;
+                bastion.NotifyHealing(healerId, healing.TargetId, healing.Amount, healing.EventId);
+            }
+
+            for (var i = 0; i < tick.PickupCollections.Length; i++)
+            {
+                var collection = tick.PickupCollections[i];
+                bastion.NotifyHealing(
+                    collection.CollectorId,
+                    collection.CollectorId,
+                    collection.HealAmount,
+                    collection.HealingEventId);
+            }
+        }
+
+        private static void ProcessBastionObjectiveInteractions(
+            BastionCrownMatch bastion,
+            float fixedDeltaSeconds)
+        {
+            if (!bastion.IsLive || fixedDeltaSeconds <= 0f) return;
+            var crown = bastion.Crown;
+            if (!crown.IsCarried)
+            {
+                var candidateId = default(CombatEntityId);
+                var candidateDistance = float.MaxValue;
+                var snapshots = bastion.GetParticipantSnapshots();
+                for (var i = 0; i < snapshots.Length; i++)
+                {
+                    var participant = snapshots[i];
+                    var distance = Float2.Distance(participant.Position, crown.Position);
+                    if (!participant.Alive || distance > bastion.Definition.Objective.ContactRadius ||
+                        distance > candidateDistance ||
+                        (Math.Abs(distance - candidateDistance) <= 0.0001f &&
+                         (candidateId.Value == 0 || participant.ActorId.Value >= candidateId.Value)))
+                    {
+                        continue;
+                    }
+
+                    candidateId = participant.ActorId;
+                    candidateDistance = distance;
+                }
+
+                if (candidateId.Value > 0)
+                {
+                    bastion.TryPickupCrown(candidateId, fixedDeltaSeconds);
+                }
+                else
+                {
+                    bastion.TryPickupCrown(new CombatEntityId(1), 0f);
+                }
+
+                return;
+            }
+
+            var carrierId = crown.CarrierId;
+            if (!bastion.TryGetParticipant(carrierId, out var carrier) || !carrier.Alive)
+            {
+                bastion.CancelDeposit(carrierId);
+                return;
+            }
+
+            var shrine = carrier.TeamId == BastionTeamId.Raja
+                ? bastion.Definition.Raja.ShrinePosition
+                : bastion.Definition.Rival.ShrinePosition;
+            if (Float2.Distance(carrier.Position, shrine) <= bastion.Definition.Objective.ContactRadius * 1.35f)
+            {
+                bastion.TryBeginDeposit(carrierId);
+            }
+            else
+            {
+                bastion.CancelDeposit(carrierId);
+            }
         }
 
         private static bool SnapshotsEqual(
@@ -483,11 +682,12 @@ namespace BattleRaja.Core.Application
             MatchReplayFrame frame,
             float fixedDeltaSeconds,
             List<CombatEntityId> pehelActorIds,
-            List<CombatEntityId> bijliActorIds)
+            List<CombatEntityId> bijliActorIds,
+            BastionCrownMatch bastion)
         {
             if (frame.CommandOrder.Length > 0)
             {
-                ApplyOrderedFrame(authority, frame, fixedDeltaSeconds);
+                ApplyOrderedFrame(authority, frame, fixedDeltaSeconds, bastion);
                 return;
             }
 
@@ -499,7 +699,8 @@ namespace BattleRaja.Core.Application
                     throw new InvalidOperationException("Gadget command ticks must match their replay frame.");
                 }
 
-                authority.TryUseGadget(command);
+                var gadgetResult = authority.TryUseGadget(command);
+                if (gadgetResult.Used) bastion?.RecordGadgetUse(command.UserId, gadgetResult.EventId);
             }
 
             // Production adapters submit gadgets, attacks and abilities while the
@@ -528,19 +729,25 @@ namespace BattleRaja.Core.Application
 
                 if (recorded.SpawnDecoy)
                 {
-                    authority.TrySpawnMayaDecoy(command.InstigatorId, command.SimulationTick, recorded.DecoyPosition);
+                    var decoy = authority.TrySpawnMayaDecoy(command.InstigatorId, command.SimulationTick, recorded.DecoyPosition);
+                    if (decoy.Active && decoy.AbilityExecutionId > 0)
+                    {
+                        bastion?.RecordAbilityUse(command.InstigatorId, decoy.AbilityExecutionId);
+                    }
                     continue;
                 }
 
                 if (command.AbilityId.Equals(FighterSpecialDefinition.PehelChargeThrow.AbilityId))
                 {
-                    authority.TryStartPehelCharge(command, recorded.Movement, recorded.Facing);
+                    var start = authority.TryStartPehelCharge(command, recorded.Movement, recorded.Facing);
+                    if (start.Accepted) bastion?.RecordAbilityUse(command.InstigatorId, start.AbilityExecutionId);
                     continue;
                 }
 
                 if (command.AbilityId.Equals(FighterDefinition.Bijli.Ability.AbilityId))
                 {
-                    authority.TryStartBijliDash(command, recorded.Movement, recorded.Facing);
+                    var start = authority.TryStartBijliDash(command, recorded.Movement, recorded.Facing);
+                    if (start.Accepted) bastion?.RecordAbilityUse(command.InstigatorId, start.AbilityExecutionId);
                     continue;
                 }
 
@@ -571,7 +778,8 @@ namespace BattleRaja.Core.Application
         private static void ApplyOrderedFrame(
             OfflineMatchAuthority authority,
             MatchReplayFrame frame,
-            float fixedDeltaSeconds)
+            float fixedDeltaSeconds,
+            BastionCrownMatch bastion)
         {
             for (var i = 0; i < frame.CommandOrder.Length; i++)
             {
@@ -615,7 +823,7 @@ namespace BattleRaja.Core.Application
                             throw new InvalidOperationException("Replay ability order index is invalid.");
                         }
 
-                        ApplyAbility(authority, frame, frame.AbilityCommands[order.Index]);
+                        ApplyAbility(authority, frame, frame.AbilityCommands[order.Index], bastion);
                         break;
                     case MatchReplayCommandKind.Gadget:
                         if (order.Index < 0 || order.Index >= frame.GadgetCommands.Length)
@@ -629,7 +837,8 @@ namespace BattleRaja.Core.Application
                             throw new InvalidOperationException("Gadget command ticks must match their replay frame.");
                         }
 
-                        authority.TryUseGadget(gadget);
+                        var gadgetResult = authority.TryUseGadget(gadget);
+                        if (gadgetResult.Used) bastion?.RecordGadgetUse(gadget.UserId, gadgetResult.EventId);
                         break;
                     case MatchReplayCommandKind.PehelChargeStep:
                         if (order.Index <= 0)
@@ -652,7 +861,8 @@ namespace BattleRaja.Core.Application
         private static void ApplyAbility(
             OfflineMatchAuthority authority,
             MatchReplayFrame frame,
-            MatchReplayAbilityCommand recorded)
+            MatchReplayAbilityCommand recorded,
+            BastionCrownMatch bastion)
         {
             var command = recorded.Command;
             if (command.SimulationTick != frame.SimulationTick)
@@ -662,19 +872,25 @@ namespace BattleRaja.Core.Application
 
             if (recorded.SpawnDecoy)
             {
-                authority.TrySpawnMayaDecoy(command.InstigatorId, command.SimulationTick, recorded.DecoyPosition);
+                var decoy = authority.TrySpawnMayaDecoy(command.InstigatorId, command.SimulationTick, recorded.DecoyPosition);
+                if (decoy.Active && decoy.AbilityExecutionId > 0)
+                {
+                    bastion?.RecordAbilityUse(command.InstigatorId, decoy.AbilityExecutionId);
+                }
                 return;
             }
 
             if (command.AbilityId.Equals(FighterSpecialDefinition.PehelChargeThrow.AbilityId))
             {
-                authority.TryStartPehelCharge(command, recorded.Movement, recorded.Facing);
+                var start = authority.TryStartPehelCharge(command, recorded.Movement, recorded.Facing);
+                if (start.Accepted) bastion?.RecordAbilityUse(command.InstigatorId, start.AbilityExecutionId);
                 return;
             }
 
             if (command.AbilityId.Equals(FighterDefinition.Bijli.Ability.AbilityId))
             {
-                authority.TryStartBijliDash(command, recorded.Movement, recorded.Facing);
+                var start = authority.TryStartBijliDash(command, recorded.Movement, recorded.Facing);
+                if (start.Accepted) bastion?.RecordAbilityUse(command.InstigatorId, start.AbilityExecutionId);
                 return;
             }
 

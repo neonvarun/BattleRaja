@@ -1,158 +1,188 @@
 # BattleRaja V1 Product Rebuild Audit
 
-**Audit date/time:** 2026-08-31 10:20 IST
-**Source audited:** `3bed64e82be0a84c8bf978d871ae322604b3f7ff`
-**Device evidence:** Lava `ST5GDW23LB004392` only
-**Classification:** Prototype — Android offline release candidate in progress
+**Audit date/time:** 2026-09-01 00:03 IST
+**Source audited:** `56313096d0ad8e2e23468d004eaa77d71ed3a233` (`origin/main`)
+**Branch:** `codex/v1-playstore-release`
+**Device scope:** approved Lava `ST5GDW23LB004392` only; latest rerun did not discover it
+**Classification:** Prototype — Bastion Crown implementation checkpoint; release work remains
 
-This is a planning audit for the next implementation agent. It is intentionally critical. A passing automated test or a generated asset is evidence of a foundation, not evidence of a player-ready product.
+This audit supersedes the pre-implementation audit at `3bed64e`. It describes what is
+actually in the latest source, what the automated evidence proves, and what a new Goal
+session must still build or verify. It is deliberately not a release claim.
+
+## Continuation evidence — 2026-09-01 01:30 IST
+
+The earlier checkpoint below is historical. The current working tree has now addressed the
+specific replay/authority and basic squad-intent gaps it listed:
+
+- static validation **0/0**, EditMode **155/155**, PlayMode **94/94**;
+- versioned Bastion replay capture with a coherent post-tick boundary, deterministic combined
+  digest and a two-seed/8,400-tick soak with zero divergence;
+- explicit dead-target event-id rejection, completed-deposit cleanup, ready-state Crown clock
+  guard and mirrored Aandhi state;
+- deterministic squad intent coverage across 32 seeds: contest 64, escort 64, defend 96,
+  collapse 64 and Aandhi-retreat 32;
+- original menu feature art at `Assets/BattleRaja/Art/V1/BattleRaja-FeatureArt-OriginalCandidate.png`
+  replacing the vehicle/racing-like historical candidate in the runtime.
+
+Fresh APK/AAB, checker, Lava route and bounded performance facts are recorded in
+`Docs/QA/V1_OFFLINE_ANDROID_VALIDATION_2026-09-01.md`. This is still a generated/presentation
+baseline and technical release candidate, not Play-ready: final authored 3D/animation/audio,
+cultural/accessibility/fun approval, complete physical route, normalized endurance, physical
+16 KB runtime, permanent identity/signing, privacy/Data Safety/IARC and Play actions remain
+open.
 
 ## Executive assessment
 
-BattleRaja has a stronger technical foundation than its current presentation suggests. The pure domain/application split, authority-owned combat, seeded replay identity, deterministic tests, offline flow and Android candidate build are valuable. The product is nevertheless still pre-alpha from a player perspective: the shipped path is Solo Raja, not the newly intended 4v4 team battle; the current bots have no squad/objective model; and the visible art, UI, feedback and audio are generated technical baselines that need authored direction and device validation.
+The latest commit is a meaningful product change, not merely a menu rename. BattleRaja now
+has a first-class offline Bastion Crown 4v4 contract, eight canonical actors, explicit teams,
+shared tickets, Crown pickup/drop/deposit, KOs/assists, protected respawn, overtime/draw
+resolution, a Unity adapter, team HUD/objective telegraphs and a player-facing offline route.
+The existing Solo authority/replay foundation remains useful.
 
-The next V1 effort must be a controlled rebuild around one original, repeatable 4v4 objective mode. It must not be a cosmetic pass over free-for-all rules, and it must not turn into an online/live-service rewrite.
+The implementation is still a technical checkpoint. The team state is mirrored alongside
+the legacy combat simulation, bot coordination is only a basic role-to-destination intent,
+and the tests cover happy paths rather than the full adversarial/timing/replay matrix. The
+current authored-looking output is a provenance-safe generated baseline, not final approved
+character, map, animation, VFX, audio or store presentation. Lava, normalized performance,
+physical 16 KB behavior, permanent identity/signing and Play/legal gates remain open.
 
 ## Evidence reviewed
 
-- `AGENTS.md`, `PROJECT_STATUS.md`, `PROJECT_CONTEXT.json`.
-- `Docs/MASTER_VISION.md`, `Docs/ARCHITECTURE.md`, `Docs/DECISIONS.md`, `Docs/ART_BIBLE.md`, `Docs/AUDIO_BIBLE.md`, `Docs/ASSET_PROVENANCE.md`.
-- `Docs/QA/CURRENT_STATE.md`, `Docs/QA/LATEST_HEAD_BASELINE.md`, replay/soak and M11 closure reports.
-- `Docs/RELEASE/V1_ANDROID_RELEASE_CHECKLIST.md`, store creative/release drafts and human-review backlog.
-- First-party domain/application/presentation/editor code, scenes, prefabs, tests and build tooling.
-- Current candidate APK/AAB and captures in `Builds/Local/Device/audits/20260831-presentation/`.
-- Controlled observation of installed `com.supercell.brawlstars` and `com.tallteam.citychase` on Lava. Observations are principles only; no extraction, decompilation, account action, traffic interception or copied content was used.
-- Official policy sources recorded on 2026-08-31: Android target API, 16 KB page size, Play Data Safety, content rating and app review preparation.
+- `AGENTS.md`, `PROJECT_STATUS.md`, `PROJECT_CONTEXT.json` and the mandatory architecture,
+  vision, culture, asset, audio, QA, performance and release documents.
+- `Assets/BattleRaja/Core/Domain/BastionCrownContracts.cs` and `BastionCrownMatch.cs`.
+- `OfflineMatchAuthority`, `OfflineMatchController`, `BotBrain`, `ProductionFlowController`,
+  `OfflineMatchHud`, `BastionCrownObjectiveView`, `BuildEntrypoints` and `BazaarBastion.unity`.
+- `BastionCrownMatchTests.cs` and the updated `VerticalSlicePlayModeTests.cs`.
+- Current XML test evidence under `Builds/Local/V1GameplayTruth/TestResults/`.
+- Candidate APK/AAB and Android 16 AVD ANGLE captures under `Builds/Local/V1GameplayTruth/AndroidQA/emulator-5556/`.
+- 2026-08-31 observation-only public entry surfaces of Brawl Stars and Smash Karts on Lava;
+  those observations remain high-level design research, not source or asset input.
+- Official Android/Play sources logged in `Docs/RESEARCH_LOG.md`; the next session must
+  recheck them before changing release settings or declarations.
+
+## Reproduced baseline
+
+| Gate | Result | Evidence and interpretation |
+|---|---:|---|
+| Repository validation | 0 errors, 0 warnings | `Tools/Validation/validate.ps1` on 2026-09-01 |
+| Bastion EditMode rerun | 148/148 | Includes seven pure `BastionCrownMatch` tests; good local rule baseline |
+| Bastion PlayMode rerun | 94/94 | Canonical composition, objective telegraphs/HUD and adapter pickup/deposit path |
+| Solo replay/soak fixture | 141/141 | Valuable compatibility evidence, not Bastion replay proof |
+| APK | 41,438,372 bytes | SHA-256 `6EDC5C0E5D304529A6059A94F00F7AB32AB9C71A4464044D3B0D3ED5D3E2C507` |
+| AAB | 37,263,881 bytes | SHA-256 `3D12A358E0F9159A2CA3749A4E53DBB712AF19B0FCCC6E6D80F96DE5944508EE` |
+| Local Android technical checks | passed | Offline manifest, ARM64-only/static 16 KB alignment and store dimensions |
+
+The non-rerun integration XMLs contain transient failures and are not promoted as current
+green evidence. Any code or asset change requires a fresh full run.
 
 ## Quality scorecard
 
-| Area | Evidence-backed status | Severity | Planning decision |
+| Area | Current evidence-backed status | Severity | Next decision |
 |---|---|---:|---|
-| Domain authority and deterministic replay | Genuinely strong Solo foundation; 141/141 EditMode, 92/92 PlayMode, replay/soak evidence | Low | Preserve and extend behind explicit team contracts |
-| Offline launch-to-results loop | Technically works for Solo; lifecycle/settings/tutorial/rematch routes exist | Medium | Keep flow, make 4v4 the player-facing default and test every transition |
-| 4v4 rules/objective/respawn | Not present as first-class domain state | Blocker | Implement before art polish is considered complete |
-| Team AI | Fair FFA utility bot only; no squad roles, shared objective or ally assistance | Blocker | Add deterministic team perception/coordination and difficulty profiles |
-| Fighter kits | Bijli, Pehel and Maya function in Solo with existing combat seams | High | Rebalance for team roles and objective pressure; preserve command/authority seams |
-| Character presentation | Saved faceted meshes, two-bone rigs and clips; readable baseline but technical/generated | Blocker | Re-author production silhouettes, materials, animation personality and camera proof |
-| Bazaar map | Saved environment and collision-compatible arena; readable baseline but sparse/greybox-like | Blocker | Build one authored flagship 4v4 combat space with lanes, cover and objective sockets |
-| Gadgets/interactables | Three vertical-slice gadgets and pickups exist mechanically | High | Reconcile with team objective, telegraph, feedback and team utility |
-| VFX/camera/feedback | Cues and zone visual exist; impact and readability are inconsistent on device | High | Build readable low-flash feedback and objective/team signals |
-| UI/UX | Runtime-built menu/HUD/settings work; visible surfaces are sparse/oversized and Solo/debug-oriented | Blocker | Replace with a coherent 4v4 mobile design system |
-| Audio | Owned deterministic WAV/mixer baseline exists | High | Author a coherent mix and validate loudness/clipping/priority on Lava |
-| Performance | Bounded telemetry exists; no normalized final-art frame/endurance proof | Blocker | Profile release art build, memory growth, thermal/battery and 16 KB compatibility |
-| Store readiness | Target API 36 and candidate artifacts exist; temporary ID/debug signing/drafts remain | Blocker | Prepare package/store/privacy materials; stop before owner-only upload/sign/legal actions |
+| Pure authority contracts | Explicit teams/objective/tickets/respawn/score/result exist; tests green | Medium | Harden ownership and edge cases; preserve Solo seams |
+| Unity integration | Canonical 1+3 versus 4, HUD, telegraphs and pickup/deposit route work in PlayMode | High | Prove no mirror drift, double events or unsafe respawn ordering |
+| Replay/determinism | Bastion v2 post-tick digest and two-seed/8,400-tick soak are green; broad network parity remains out of scope | Medium | Extend multi-seed duration and production-route replay coverage when needed |
+| Squad AI | Deterministic role/escort/defend/collapse/Aandhi-retreat planner coverage is green; full match-balance and human review remain open | High | Add production-match metrics, difficulty tuning and human fairness review |
+| Fighter kits/combat | Bijli/Pehel/Maya and gadgets have existing authority seams | High | Tune for team objective, ally support and mobile counterplay |
+| Character assets | Owned generated/faceted baseline and saved rigs/clips | High | Finish distinct modeled/rigged/animated assets; device proof |
+| Bazaar Bastion | Collision-compatible regenerated scene and readable baseline | High | Author lanes, cover, landmarks, shrines/sockets and quality tiers |
+| Crown/gadgets/VFX | Objective view and mechanics exist; feedback/boundaries incomplete | High | Test interruption/rotation and make every state readable/reduced-flash safe |
+| UI/UX | Offline Bastion menu, selection, HUD, results/rematch/settings shell exists | High | Remove prototype residue; complete safe-area/accessibility/device review |
+| Audio | Owned WAV/mixer routing exists | High | Author/mix priority, loudness, haptics and event coverage on Lava |
+| Performance | Static checks plus bounded six-sample Lava evidence; no normalized Unity frame histogram or endurance approval | Blocker | Profile final-art candidate on Lava: frame/GC/memory/thermal/battery/endurance |
+| Android/Play | API 36, ARM64 and static checks pass; temp debug identity | Blocker | Prepare accurate drafts; owner handles identity/signing/legal/upload |
 
-## What is genuinely production-quality or worth retaining
+## What is now implemented and worth retaining
 
-1. **Authority boundaries.** `OfflineMatchAuthority` centralizes canonical state and action eligibility. Presentation mirrors it instead of becoming a second rules engine.
-2. **Pure-testable core.** Domain/application code can be exercised without loading a production scene. Keep this property for teams, score, tickets, objective and respawn.
-3. **Common command path.** Human input and bots can feed the same command/authority path. Extend the command vocabulary rather than special-casing allied bots in Unity.
-4. **Determinism and identity.** Seeded randomness, replay event identity and existing long-run checks are an excellent safety net for new team rules and AI.
-5. **Existing fighter/gadget seams.** Bijli, Pehel, Maya and Umbrella Guard/Dhol Burst/Tiffin Station have useful definitions, cooldowns and authority integration.
-6. **Offline flow and lifecycle hardening.** Menu, tutorial, settings, pause, rematch and Android input-release work provide a good shell.
-7. **Owned provenance.** Current generated assets are repository-owned and do not rely on unlicensed packs. Keep provenance manifests and replace weak output deliberately.
+1. `BastionCrownContracts` keeps mode, team, role, objective, ticket, respawn, score and
+   result definitions immutable and data-shaped.
+2. `BastionCrownMatch` owns mutable team-mode state for exactly eight actors, including
+   event-id deduplication, Crown carrier/drop state, KO/assist attribution, tickets,
+   respawn protection, overtime and explicit draw results.
+3. The production route is `PLAY OFFLINE` → Bastion Crown briefing → fighter selection →
+   ready/live arena → result/rematch. `BuildEntrypoints` regenerates actor IDs 1–8 and
+   team-aware scene composition.
+4. The controller adapter preserves common combat commands and legacy Solo compatibility;
+   the new objective view is render-only and does not own score or collision.
+5. Existing offline authority, fighter/gadget definitions, lifecycle handling, provenance
+   manifests, local preferences and deterministic Solo tests remain valuable foundations.
 
-## What merely technically works
+## Confirmed or likely release-blocking gaps
 
-- A Solo match can spawn eight participants, run Aandhi, resolve placement, show results and rematch.
-- Existing bots can explore, engage, reposition, retreat, recover and loot under a fair FFA perception model.
-- The generated presentation prefab/Animator/VFX/audio builders can regenerate a consistent baseline.
-- The current APK/AAB can install and route through the documented Lava smoke path.
-- Settings have persistent local preferences and lifecycle pause handling.
+### Authority and rules
 
-These facts do not prove 4v4 combat, squad behavior, player-friendly ally targeting, objective pressure, final visual quality, sustained performance or Play submission readiness.
+- `OfflineMatchController` mirrors health/position/damage from the legacy simulation into
+  `BastionCrownMatch`. The next agent must prove a single authoritative event order for
+  damage, defeat, Crown drop, respawn, result and replay; do not assume a mirror is safe.
+- Deposit is documented as interruptible, but the pure path currently cancels on death or
+  leaving range and has no tested combat-damage interruption. Decide and implement one
+  canonical rule, then add boundary and duplicate-event tests.
+- Deposit resets the Crown to the current socket. Verify whether “after a deposit” means
+  rotate immediately or restart that socket's cadence; record the decision and test it.
+- Overtime currently compares overtime deposits only, otherwise draws. Prove that this is
+  the intended sudden-death Crown rule and that the documented tie-break order is consistent.
+- `HealingDone` is exposed in result data but has no confirmed Bastion event bridge. Either
+  wire ally healing/stat attribution or remove the promise from results with evidence.
+- `ConfirmRespawn` is present while the Unity adapter currently drives legacy respawn from
+  the tick. Prove there is no stale state, duplicate revive or accidental ninth actor.
 
-## Prototype-looking or player-facing weaknesses
+### Team AI and play quality
 
-### Gameplay/product
+- `TryGetBastionBotIntent` currently chooses a destination and a broad plan. It does not
+  yet provide a team blackboard, formation/spacing, cover selection, ally peel/heal,
+  carrier escort handoff, ticket-risk strategy, regroup timing or robust Aandhi retreat.
+- Difficulty must vary reaction, risk and coordination quality under the same information
+  model. The current autonomous-bot weapon scaling is a documented PvE policy but must be
+  reviewed for fairness and must not become hidden damage/health/cooldown/vision cheating.
+- Add deterministic multi-seed simulations with metrics for Crown time, deposits, KOs,
+  ally support, distance/spacing, gadget use, stalemates, team wipes and match duration.
 
-- The authoritative match is still Solo Raja: no `TeamId`, shared score, team tickets, objective carrier, team wipe, respawn or team result model.
-- The primary CTA and mode language do not yet promise a clear, teachable team objective.
-- A 4v4 layout cannot be achieved by changing faction colors; allies need non-hostile targeting, spacing, assist behavior and readable team signals.
-- Spectator exists as a Solo/result concept but is not defined for a defeated 4v4 fighter's respawn interval.
+### Content and presentation
 
-### AI
+- Generated/procedural meshes, textures, rigs, clips, VFX and WAVs are useful owned baseline
+  assets, but they do not yet prove final authored silhouettes, animation personality,
+  material hierarchy, audio mix or cultural/fun approval.
+- The map needs device-tested lanes, flanks, cover, landmarks, readable shrine/socket
+  affordances and quality-tier behavior while preserving authority collision.
+- Audit every Bastion screen for hidden Solo/debug vocabulary, placeholder glyphs, clipping,
+  text scale, touch targets, left-handed layout, reduced-flash/high-contrast behavior,
+  pause/resume and results/rematch clarity.
 
-- `BotAI` target selection is hostile/faction aware but does not understand roles, crown carrier priority, shrine defense, escort, regrouping, ally blocking or shared cooldown windows.
-- There is no team blackboard or deterministic coordination budget. Without one, four bots will look like independent enemies with the same color.
-- Current difficulty parameters cover reaction/aim/retreat timing but not decision quality, coordination or objective risk.
+### Device, performance and release
 
-### Characters and animation
+- Fresh Lava menu → Bastion → fighter → live/settings evidence now exists under
+  `Builds/Local/V1GameplayTruth/Final/lava-20260901-final/`; the Android 16 AVD ANGLE route remains
+  emulator-only and is not a substitute for physical 16 KB proof.
+- No normalized final-art CPU/GPU/frame histogram, GC spike, memory-growth, thermal,
+  battery or repeated-rematch endurance report exists for this checkpoint.
+- Lava's 4 KB page environment and static host alignment are not physical 16 KB runtime proof.
+- Package `com.example.battleraja.m11` is temporary/debug-signed. Permanent package ID,
+  publisher identity, signing key, privacy policy, Data Safety, IARC/content rating,
+  support URL, store copy and Play Console upload remain owner-controlled.
 
-- The Lava gameplay capture shows chunky, faceted bodies whose proportions and accessories collapse into generic shapes at camera distance.
-- The two-bone rig and state clips are useful technical scaffolding, but identical/limited motion does not supply personality, weight, anticipation or readable role language.
-- Menu previews are too small and the feature image reads as a background insertion rather than an integrated character-led presentation.
+## Required continuation order
 
-### Environment
+1. Rebaseline source, worktree, Unity, artifacts, device and policy; update this audit if
+   the repository has advanced.
+2. Harden `BastionCrownMatch`/adapter ownership and fill rule, replay, edge-case and soak tests.
+3. Implement and measure fair squad AI; tune the three fighters/gadgets only after team
+   behavior is observable.
+4. Finish original modeled/rigged/animated characters, authored Bazaar map, objective/gadget
+   visuals, VFX, UI, audio and tutorial/accessibility; keep a provenance trail.
+5. Profile the final-art candidate, then run the complete approved Lava route and capture
+   evidence for all fighters, gadgets, Aandhi, KO/respawn/spectator, results/rematch,
+   settings, lifecycle and offline behavior.
+6. Prepare technical/store/privacy drafts and a release AAB. Stop before signing, legal
+   approval, identity choice, agreement acceptance, upload or rollout.
 
-- Bazaar structures, props and ground treatment are simple and repeated. Landmarks and cover affordances are not strong enough for a team objective map.
-- Current visual dressing must never move authority collision casually. The new map must be designed around validated walkable/collision geometry, then dressed with performance-aware modular art.
+## Binary release exit condition
 
-### UI/UX
-
-- Current HUD strings such as `ALIVE`, `ZONE`, and `MATCH SPAWN SHIELD` are Solo/debug vocabulary. They do not communicate team score, tickets, crown state, ally health or objective intent.
-- Large translucent touch surfaces and runtime text make the match look like a prototype even though they are functional.
-- Menu hierarchy is sparse compared with polished mobile references: the character focal point, CTA, mode explanation and return/rematch paths need a stronger composition.
-
-### VFX/audio/game feel
-
-- Current particle cues and generated WAVs prove integration, not impact. Attacks, ability windows, carrier state, healing, tickets and team success need distinct readable layers.
-- Reduced-flash behavior and color-blind/team-color redundancy need validation with the final VFX palette.
-
-### Release/performance
-
-- The candidate is `com.example.battleraja.m11`, code 100, debug-signed and temporary. It is not a publishable identity.
-- Lava evidence is bounded telemetry; no normalized final-art frame histogram, repeated-match memory-growth, endurance or thermal proof exists.
-- The physical Lava reports 4 KB pages; this cannot certify 16 KB page compatibility.
-- Data Safety, privacy, content rating, support and permanent signing are drafts/owner gates, not completed submission evidence.
-
-## Architecture and technical debt
-
-### Must preserve
-
-- Domain/application separation, authority ownership, fixed-step rules, seeded randomness and common command contracts.
-- Solo compatibility until the 4v4 path has parity and its own regression suite.
-- Existing replay/event identities, test harnesses, build entry points and safe lifecycle behavior.
-
-### Must redesign or add
-
-- First-class team identity/relationship API separate from the legacy `CombatFaction` enum.
-- Match mode abstraction that can host Solo and Bastion Crown without leaking team state into Solo or presentation-only objects.
-- Team score, objective, tickets, respawn/spectator and result snapshots owned by authority.
-- Team-aware perception, role assignment, squad blackboard and deterministic command arbitration.
-- Data-driven map spawn/socket definitions and authored team visual overlays.
-
-### Debt to control
-
-- Runtime scene/UI construction must not become a reason to leave final screens unstructured. Add explicit screen/component contracts and safe-area tests.
-- Generated builder output must have provenance, import validation, LOD/material limits and a human-readable asset manifest.
-- Avoid global mutable singletons, runtime `Find*` in hot loops, per-frame allocation and hidden fallback logic.
-- Update `Docs/ARCHITECTURE.md`, `Docs/DECISIONS.md`, `Docs/RESEARCH_LOG.md`, balance and release docs when the new design is implemented; this planning pass does not silently rewrite those authorities.
-
-## Proposed V1 product
-
-V1 should ship one excellent offline mode, **Bastion Crown**, on one flagship Bazaar Bastion map. The mode is an original objective-combat game, not a rule-for-rule copy of Gem Grab, Brawl Ball, Knockout or Hot Zone. Full canonical numbers and tie/overtime behavior are in prompt 03.
-
-- Eight fighters: player + three allied bots versus four rival bots.
-- A neutral Crown Spark rotates among three authored sockets. A carrier takes it to the allied shrine to score; KOs and team tickets keep combat meaningful.
-- Four-minute live match, Aandhi pressure in the final minute, deterministic 30-second maximum overtime.
-- Defeated fighters briefly spectate and respawn while team tickets remain; exhausted fighters remain spectators.
-- All three fighters and all three gadgets must have objective use cases and readable team feedback.
-- `PLAY OFFLINE` goes directly to mode/fighter choice for Bastion Crown. Solo remains hidden behind a secondary route or future flag until it receives its own honest product treatment.
-
-## QA gaps that block a release claim
-
-1. No 4v4 domain/authority tests for team hostility, score, tickets, respawn, objective pickup/drop/deposit, overtime or deterministic tie breaks.
-2. No squad AI simulation metrics for ally assistance, objective contribution, role spacing or fair difficulty.
-3. No final-art visual review on Lava for all three fighters, gadgets, map, UI, VFX, audio and settings.
-4. No normalized frame-time histogram/GC/memory-growth/thermal/battery/endurance report from the final candidate.
-5. No physical ARM64 16 KB proof.
-6. No permanent package/signing identity or final owner/legal Play materials.
-
-## Required implementation order
-
-Use the files in `PROMPTS/README.md` and the master prompt in order: audit → product/mode contracts → authority/rules → team AI → fighter gameplay → character assets → map/world → gadgets/objectives → VFX/camera → UI → audio → tutorial/accessibility → performance → Lava QA → Play packaging → final regression. The order is a dependency graph, not a checklist to mark without evidence.
-
-## Binary rebuild exit condition
-
-Do not classify BattleRaja as a Play Store Release Candidate until the implementation agent can show: 4v4 player-visible gameplay from cold launch through rematch; real modeled/rigged/animated characters; an authored readable flagship map; team-aware bots; objective/ticket/respawn rules; coherent UI/audio/VFX; complete automated regression; normalized final-art Android performance; physical 16 KB evidence or a clearly documented blocker; a valid release AAB; and honest owner/legal gates. Current status remains Prototype.
+Do not classify the project as a Play Store Release Candidate until the same final-art
+source/build has: player-visible 4v4 behavior from cold launch through rematch; tested
+authority/replay/AI edge cases; distinct authored characters and map; complete gadget,
+objective, VFX, UI, audio and accessibility treatment; normalized physical-device
+performance; physical 16 KB evidence or a clearly named external blocker; valid release
+AAB checks; accurate store/privacy drafts; and no critical known defect. Until then the
+truthful classification is **Prototype — Bastion Crown implementation checkpoint**.

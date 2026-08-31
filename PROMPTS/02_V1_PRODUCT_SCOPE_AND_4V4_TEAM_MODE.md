@@ -2,7 +2,7 @@
 
 ## Context
 
-The current product documents describe Solo Raja (one human plus seven bots), while the approved V1 direction is a polished offline 4v4 team game. This stage turns that decision into one coherent product contract before authority or art work begins.
+The approved V1 direction is a polished offline 4v4 team game, and the latest checkpoint already exposes Bastion Crown in the production route. This stage audits that implementation against one coherent product contract before further authority, AI or art work continues.
 
 ## Objective
 
@@ -10,7 +10,7 @@ From a player's perspective, a fresh install must promise and enter one understa
 
 ## Current-state audit
 
-Confirm the current `ProductionFlowController`, mode enum/state machine, scene bootstrap, `BuildEntrypoints` actor slots, `OfflineMatch` definition, results model and Solo route. Identify every hard-coded assumption that actor 1 is the only player, actors 2–8 are hostile, `ALIVE` is the only top-level status, and resolution means last survivor. Check where `CombatFaction` is used so a new team model does not break Solo.
+Confirm the current `ProductionFlowController`, mode enum/state machine, scene bootstrap, `BuildEntrypoints` actor slots, `OfflineMatch`/`BastionCrownMatch` definitions, results model and Solo compatibility route. Identify any remaining hard-coded assumption that actor 1 is the only player, actors 2–8 are hostile, `ALIVE` is the only top-level status, or resolution means last survivor. Check where `CombatFaction` is used and whether the new explicit team model can drift from the legacy combat adapter or break Solo.
 
 ## Preserve
 

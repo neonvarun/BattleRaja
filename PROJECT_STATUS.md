@@ -6,6 +6,28 @@
 
 ## Current state
 
+- **Latest offline Android continuation (2026-09-01):** Bastion Crown authority/replay
+  hardening and squad-planner coverage are green: static validation **0/0**, EditMode
+  **155/155**, PlayMode **94/94**, and a two-seed/8,400-tick v2 replay soak has zero
+  combined-hash divergence. The deterministic planner emitted contest **64**, escort **64**,
+  defend **96**, collapse **64** and Aandhi-retreat **32** intents across 32 seeds. The menu
+  now references the original `Assets/BattleRaja/Art/V1/BattleRaja-FeatureArt-OriginalCandidate.png`
+  (Bazaar Bastion shrine/fighters; no vehicles or racing motifs); the older feature image is
+  retained as non-runtime historical material. The exact APK is **41,510,440 bytes**,
+  SHA-256 `5F7438105FE450D6331CFEDEE1FAEEB87FB4F6677EB811A997A02CC8FD7C4AE9`; the AAB is
+  **37,335,957 bytes**, SHA-256
+  `87C835570B62C4C3A79C156F94CB7E15C6AD31FCB50A0E8ADB0FDE6672DC4858`. The release checker
+  passes package `com.example.battleraja.m11`, version 1.0.0/100, target SDK 36, no network
+  permissions, ARM64-only libraries and static 16 KB alignment. Fresh approved-Lava
+  `ST5GDW23LB004392` evidence reaches menu → Bastion briefing → fighter choice → live arena,
+  control taps and settings; a clean six-sample/30-second live capture reports PSS
+  287,530–293,678 KB, RSS 426,940–433,088 KB, graphics PSS 87,024–93,180 KB, thermal 0 and
+  no configured app crash markers. Lava reports 4 KB pages and Unity `gfxinfo` has no usable
+  frame histogram. Full all-fighter/tutorial/gadget/results physical comfort, normalized
+  endurance, physical 16 KB runtime, final authored/cultural/accessibility/fun review,
+  permanent identity/signing, privacy/Data Safety/IARC and Play publication remain open. The
+  exact evidence index is `Docs/QA/V1_OFFLINE_ANDROID_VALIDATION_2026-09-01.md`.
+
 - **Bastion Crown V1 implementation checkpoint (2026-08-31):** The player-facing
   production route is now the original offline Bastion Crown 4v4 loop: actor 1 human
   plus actors 2–4 allied AI versus actors 5–8 rival AI. The pure domain owns canonical

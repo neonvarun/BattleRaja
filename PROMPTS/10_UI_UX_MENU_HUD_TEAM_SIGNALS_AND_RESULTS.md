@@ -2,7 +2,7 @@
 
 ## Context
 
-The current `ProductionFlowController` and `OfflineMatchHud` build a functional runtime UI with settings, safe-area anchors and lifecycle handling, but the visible menu/HUD is sparse, oversized and still uses Solo/debug vocabulary. This stage creates the coherent mobile product surface for Bastion Crown.
+The latest `ProductionFlowController` and `OfflineMatchHud` expose a Bastion Crown briefing, team HUD, objective signals, results/rematch, settings, safe-area anchors and lifecycle handling. Some Solo fallback/debug vocabulary and generated presentation may still remain. This stage audits and finishes the coherent mobile product surface for Bastion Crown.
 
 ## Objective
 
@@ -10,7 +10,7 @@ A new player should understand the mode, choose a fighter, control a match, read
 
 ## Current-state audit
 
-Inspect flow state machine, runtime-created canvas hierarchy, safe-area/CanvasScaler behavior, button hit targets, text/font assets, menu feature art, fighter previews, HUD strings, controls, results, settings persistence, pause/lifecycle and all aspect-ratio tests. Capture current menu, fighter selection, live HUD and results on Lava.
+Inspect flow state machine, runtime-created canvas hierarchy, safe-area/CanvasScaler behavior, button hit targets, text/font assets, menu feature art, fighter previews, Bastion team/objective HUD strings, controls, results, settings persistence, pause/lifecycle and all aspect-ratio tests. Identify any Solo/debug path reachable from the public Bastion flow. Capture current menu, briefing, fighter selection, live HUD, spectator/respawn and results on Lava when the approved device is connected.
 
 ## Preserve
 

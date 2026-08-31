@@ -16,6 +16,21 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
   outside the Android runtime. Final signed-bundle inspection is still required before
   Play submission.
 
+## Current local gate — 2026-09-01
+
+See the complete evidence record in `Docs/QA/V1_OFFLINE_ANDROID_VALIDATION_2026-09-01.md`.
+Static validation is **0/0**, EditMode **155/155**, PlayMode **94/94**, and the Bastion v2
+replay soak has zero divergence across two 8,400-tick seeds. The technical checker passes
+the exact APK (`41,510,440` bytes, SHA-256
+`5F7438105FE450D6331CFEDEE1FAEEB87FB4F6677EB811A997A02CC8FD7C4AE9`) and AAB (`37,335,957`
+bytes, SHA-256 `87C835570B62C4C3A79C156F94CB7E15C6AD31FCB50A0E8ADB0FDE6672DC4858`) for
+temporary package `com.example.battleraja.m11`, target SDK 36, no network permissions,
+ARM64/static 16 KB alignment and creative dimensions. Fresh approved-Lava evidence and a
+clean six-sample live telemetry capture are under
+`Builds/Local/V1GameplayTruth/Final/lava-20260901-final/`; the phone reports 4 KB pages and
+the package remains unsigned for publication. No Play upload or owner-only declaration was
+performed.
+
 ## Policy recheck baseline — 2026-08-24 (superseded by the 2026-08-30 addendum below)
 
 - Google’s target-API guidance requires new apps and updates submitted from

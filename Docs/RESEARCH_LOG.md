@@ -784,3 +784,36 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   approval remain BattleRaja owner gates.
 - **Recheck trigger/date:** Revisit if the BattleRaja entry hierarchy changes or before
   final owner approval of the store-facing presentation.
+
+### V1.0 official Android/Play recheck during Bastion replay hardening (2026-09-01)
+
+- **Question:** Do the current Android and Google Play requirements change the release
+  preparation gates after the Bastion authority/replay hardening pass?
+- **Primary sources:** [Google Play target API requirements](https://developer.android.com/google/play/requirements/target-sdk),
+  [Android 16 KB page-size guidance](https://developer.android.com/guide/practices/page-sizes),
+  [Google Play Data safety](https://support.google.com/googleplay/android-developer/answer/10787469?hl=en),
+  [Google Play user-data and privacy policy](https://support.google.com/googleplay/android-developer/answer/10144311?hl=en),
+  and [Google Play content ratings](https://support.google.com/googleplay/android-developer/answer/9898843?hl=en).
+- **Access date:** 2026-09-01 (IST).
+- **Relevant claims:** The target-API page states that from **2026-08-31** new apps and
+  updates must target Android 16/API 36 or higher for Play submission. Android's 16 KB
+  guidance says apps targeting API 35+ must support 16 KB memory pages on 64-bit devices
+  for Play compatibility, with enforcement for incompatible updates beginning **2027-02-01**;
+  static ELF/zip alignment and a genuine 16 KB runtime test remain separate checks. Play's
+  Data safety guidance requires an accurate declaration for published tracks, including
+  apps that collect no data, and requires a privacy-policy link; the user-data policy also
+  requires a privacy policy accessible in-app and in Play Console. The content-ratings page
+  still requires an accurate IARC questionnaire for every Play app.
+- **Decision impact:** Retain target API 36, ARM64/IL2CPP, static alignment and the host-GPU
+  16 KB AVD as scoped evidence only. Keep Lava's 4 KB result separate from physical 16 KB
+  proof, and keep package identity, signing, privacy URL, Data safety, IARC and Play Console
+  actions owner-controlled. No dependency or project-setting change is justified by this
+  recheck.
+- **Local evidence:** The Bastion replay v2 serializer and combined team digest are covered
+  by `BastionReplaySoakTests`; the repository release checker remains the source of truth for
+  manifest, API, ARM64, alignment and offline permission checks after the next candidate build.
+- **Uncertainty:** Google may revise dates, enforcement, declaration wording or supported
+  device guidance. Recheck immediately before final signing and any Play submission, and
+  after Unity, Android, NDK, native dependency or renderer changes.
+- **Recheck trigger/date:** Before selecting the permanent package/signing identity,
+  completing Play declarations or uploading a track; after any native or build-tool change.

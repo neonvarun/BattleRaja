@@ -1910,6 +1910,7 @@ namespace BattleRaja.Core.Application
             {
                 var station = _stations[_sortedStationIds[stationIndex]];
                 hash.CombineInt(station.StationId);
+                hash.CombineInt(station.OwnerId.Value);
                 hash.CombineFloat(station.Position.X);
                 hash.CombineFloat(station.Position.Y);
                 hash.CombineFloat(station.RemainingSeconds);
@@ -2363,7 +2364,11 @@ namespace BattleRaja.Core.Application
             else if (effect.Kind == GadgetEffectKind.TiffinStation)
             {
                 var stationId = _nextStationId++;
-                _stations[stationId] = new GadgetStationRuntime(stationId, canonicalCommand.Origin, effect.Definition);
+                _stations[stationId] = new GadgetStationRuntime(
+                    stationId,
+                    canonicalCommand.Origin,
+                    effect.Definition,
+                    command.UserId);
                 effect = new GadgetEffect(
                     effect.Kind,
                     effect.Definition,

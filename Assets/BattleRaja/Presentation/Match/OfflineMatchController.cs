@@ -136,15 +136,22 @@ namespace BattleRaja.Presentation.Match
                 _bastionCrown != null ? MatchReplayScenario.BastionCrown : MatchReplayScenario.SoloRaja,
                 participants,
                 (MatchPickupDefinition[])_replayPickupDefinitions.Clone(),
-                (GadgetPickupDefinition[])_replayGadgetPickupDefinitions.Clone());
+                (GadgetPickupDefinition[])_replayGadgetPickupDefinitions.Clone(),
+                _bastionCrown != null);
         }
 #endif
 
         public ulong CalculateDeterministicTickHash(MatchAuthorityTick tick)
         {
-            return _authority != null
-                ? _authority.CalculateDeterministicTickHash(tick, Simulation != null ? Simulation.GetSnapshots() : null)
-                : 0UL;
+            if (_authority == null) return 0UL;
+            var authorityHash = _authority.CalculateDeterministicTickHash(
+                tick,
+                Simulation != null ? Simulation.GetSnapshots() : null);
+            if (_bastionCrown == null) return authorityHash;
+            var combined = MatchStateHashBuilder.Create();
+            combined.CombineULong(authorityHash);
+            combined.CombineULong(_bastionCrown.CalculateDeterministicHash(tick.SimulationTick));
+            return combined.Value;
         }
 
         public GadgetUseResult TryUseGadget(GadgetUseCommand command)
@@ -153,7 +160,13 @@ namespace BattleRaja.Presentation.Match
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             AuthorityGadgetCommandCaptured?.Invoke(command);
 #endif
-            return _authority.TryUseGadget(command);
+            var result = _authority.TryUseGadget(command);
+            if (result.Used)
+            {
+                _bastionCrown?.RecordGadgetUse(command.UserId, result.EventId);
+            }
+
+            return result;
         }
 
         public bool TryAcquireGadget(CombatEntityId collectorId, ContentId gadgetId)
@@ -178,10 +191,10 @@ namespace BattleRaja.Presentation.Match
         }
 
         /// <summary>
-        /// Supplies a deterministic squad destination for the production bot
-        /// adapter. Combat target selection remains shared with Solo, while the
-        /// Bastion layer gives each role a clear objective: contest the Crown,
-        /// escort its carrier, defend a shrine, or collapse the enemy carrier.
+        /// Supplies the deterministic squad-blackboard assignment for the
+        /// production bot adapter. Combat targeting remains shared with Solo,
+        /// while the Bastion planner adds role, spacing, escort/intercept and
+        /// ticket-risk intent without granting hidden information.
         /// </summary>
         public bool TryGetBastionBotIntent(
             CombatEntityId actorId,
@@ -198,39 +211,10 @@ namespace BattleRaja.Presentation.Match
                 return false;
             }
 
-            var crown = _bastionCrown.Crown;
-            var destination = crown.Position;
-            if (crown.IsCarried && _bastionCrown.TryGetParticipant(crown.CarrierId, out var carrier))
-            {
-                if (carrier.TeamId == self.TeamId)
-                {
-                    destination = carrier.ActorId == actorId
-                        ? self.TeamId == BastionTeamId.Raja
-                            ? _bastionCrown.Definition.Raja.ShrinePosition
-                            : _bastionCrown.Definition.Rival.ShrinePosition
-                        : carrier.Position;
-                    plan = BastionSquadPlan.EscortCarrier;
-                }
-                else
-                {
-                    destination = carrier.Position;
-                    plan = BastionSquadPlan.CollapseTarget;
-                }
-            }
-            else if (self.Member.Role == BastionRole.Anchor)
-            {
-                destination = self.TeamId == BastionTeamId.Raja
-                    ? _bastionCrown.Definition.Raja.ShrinePosition
-                    : _bastionCrown.Definition.Rival.ShrinePosition;
-                plan = BastionSquadPlan.DefendShrine;
-            }
-            else
-            {
-                plan = BastionSquadPlan.ContestCrown;
-            }
-
-            movement = (destination - self.Position).Normalized;
-            aim = movement.SqrMagnitude > 0.000001f ? movement : Float2.Up;
+            if (!_bastionCrown.TryGetSquadIntent(actorId, out var intent)) return false;
+            movement = intent.Movement;
+            aim = intent.Aim;
+            plan = intent.Plan;
             return movement.SqrMagnitude > 0.000001f;
         }
 
@@ -298,7 +282,13 @@ namespace BattleRaja.Presentation.Match
             AuthorityAbilityCommandCaptured?.Invoke(new MatchReplayAbilityCommand(
                 command, movement, facing, false, Float2.Zero));
 #endif
-            return _authority.TryStartPehelCharge(command, movement, facing);
+            var result = _authority.TryStartPehelCharge(command, movement, facing);
+            if (result.Accepted)
+            {
+                _bastionCrown?.RecordAbilityUse(command.InstigatorId, result.AbilityExecutionId);
+            }
+
+            return result;
         }
 
         public MatchAuthorityAbilityStart TryStartBijliDash(AbilityCommand command, Float2 movement, Float2 facing)
@@ -314,7 +304,13 @@ namespace BattleRaja.Presentation.Match
             AuthorityAbilityCommandCaptured?.Invoke(new MatchReplayAbilityCommand(
                 command, movement, facing, false, Float2.Zero));
 #endif
-            return _authority.TryStartBijliDash(command, movement, facing);
+            var result = _authority.TryStartBijliDash(command, movement, facing);
+            if (result.Accepted)
+            {
+                _bastionCrown?.RecordAbilityUse(command.InstigatorId, result.AbilityExecutionId);
+            }
+
+            return result;
         }
 
         public MatchAuthorityDashState GetBijliDashState(CombatEntityId actorId)
@@ -401,7 +397,13 @@ namespace BattleRaja.Presentation.Match
                 true,
                 position));
 #endif
-            return _authority.TrySpawnMayaDecoy(ownerId, simulationTick, position);
+            var snapshot = _authority.TrySpawnMayaDecoy(ownerId, simulationTick, position);
+            if (snapshot.Active && snapshot.AbilityExecutionId > 0)
+            {
+                _bastionCrown?.RecordAbilityUse(ownerId, snapshot.AbilityExecutionId);
+            }
+
+            return snapshot;
         }
 
         public bool TryGetMayaDecoySnapshot(CombatEntityId ownerId, out MatchAuthorityDecoy snapshot)
@@ -577,7 +579,6 @@ namespace BattleRaja.Presentation.Match
             }
 
             var authorityTick = _authority.Advance(simulationTick, (float)_simulationClock.StepSeconds);
-            AuthorityTickResolved?.Invoke(authorityTick);
             var tick = authorityTick.Result;
             BastionCrownTick bastionTick = default(BastionCrownTick);
             if (_bastionCrown != null)
@@ -608,6 +609,11 @@ namespace BattleRaja.Presentation.Match
             ApplyAuthoritativeDashSteps(authorityTick);
             ApplyGadgetAuthorityIntents(authorityTick);
             ApplyAuthoritativeCollections(authorityTick);
+            // Publish only after every authority-owned subsystem (legacy
+            // combat, Bastion objective/respawn and atomic item intents) has
+            // reached its post-tick state. Replay capture and diagnostics must
+            // observe one coherent boundary rather than a pre-objective mirror.
+            AuthorityTickResolved?.Invoke(authorityTick);
             MirrorItemAvailability();
             UpdateSpectator(tick);
             if (tick.MatchEnded || (_bastionCrown != null && bastionTick.MatchEnded))
@@ -777,6 +783,12 @@ namespace BattleRaja.Presentation.Match
         private void SyncBastionFromAuthority(MatchAuthorityTick authorityTick)
         {
             if (_bastionCrown == null || Simulation == null) return;
+
+            _bastionCrown.SyncAandhi(
+                authorityTick.Result.ZoneCenter,
+                authorityTick.Result.ZoneRadius,
+                authorityTick.Result.AandhiState,
+                authorityTick.Result.WarningRemainingSeconds);
 
             for (var i = 0; i < authorityTick.DamageEvents.Length; i++)
             {
@@ -1035,6 +1047,12 @@ namespace BattleRaja.Presentation.Match
                 {
                     ApplyAuthoritativeHealth(actor);
                 }
+
+                if (_bastionCrown != null)
+                {
+                    var healerId = intent.HealerId.Value > 0 ? intent.HealerId : intent.TargetId;
+                    _bastionCrown.NotifyHealing(healerId, intent.TargetId, intent.Amount, intent.EventId);
+                }
             }
 
             if (authorityTick.ExpiredStationIds.Length == 0) return;
@@ -1076,6 +1094,11 @@ namespace BattleRaja.Presentation.Match
                 var collection = authorityTick.PickupCollections[i];
                 var actor = _actors.FirstOrDefault(binding => binding.Target.Id == collection.CollectorId);
                 if (actor != null) ApplyAuthoritativeHealth(actor);
+                _bastionCrown?.NotifyHealing(
+                    collection.CollectorId,
+                    collection.CollectorId,
+                    collection.HealAmount,
+                    collection.HealingEventId);
             }
 
             for (var i = 0; i < authorityTick.GadgetCollections.Length; i++)

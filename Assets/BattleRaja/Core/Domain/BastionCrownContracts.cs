@@ -31,6 +31,220 @@ namespace BattleRaja.Core.Domain
         RetreatFromAandhi = 6
     }
 
+    /// <summary>
+    /// Read-only assignment produced by the deterministic Bastion squad
+    /// planner. It is deliberately expressed as common movement/aim intent so
+    /// human and bot adapters share the same command boundary.
+    /// </summary>
+    public readonly struct BastionSquadIntent
+    {
+        public BastionSquadIntent(
+            BastionSquadPlan plan,
+            Float2 destination,
+            Float2 movement,
+            Float2 aim,
+            CombatEntityId focusTargetId,
+            CombatEntityId supportTargetId,
+            Float2 spacingOffset,
+            bool ticketRisk)
+        {
+            Plan = plan;
+            Destination = destination;
+            Movement = movement;
+            Aim = aim;
+            FocusTargetId = focusTargetId;
+            SupportTargetId = supportTargetId;
+            SpacingOffset = spacingOffset;
+            TicketRisk = ticketRisk;
+        }
+
+        public BastionSquadPlan Plan { get; }
+        public Float2 Destination { get; }
+        public Float2 Movement { get; }
+        public Float2 Aim { get; }
+        public CombatEntityId FocusTargetId { get; }
+        public CombatEntityId SupportTargetId { get; }
+        public Float2 SpacingOffset { get; }
+        public bool TicketRisk { get; }
+    }
+
+    /// <summary>
+    /// Pure deterministic squad blackboard. The planner uses only information
+    /// present in the Bastion snapshots, so it cannot grant bots hidden vision
+    /// or a numerical combat advantage. Tie breaks are actor-ID based.
+    /// </summary>
+    public static class BastionSquadPlanner
+    {
+        public static BastionSquadIntent Plan(
+            TeamMember member,
+            Float2 selfPosition,
+            BastionParticipantSnapshot[] participants,
+            CrownSparkSnapshot crown,
+            TeamScore rajaScore,
+            TeamScore rivalScore,
+            TeamTicketPool rajaTickets,
+            TeamTicketPool rivalTickets,
+            ModeDefinition definition,
+            bool overtime,
+            Float2 zoneCenter = default(Float2),
+            float zoneRadius = 0f,
+            AandhiState aandhiState = AandhiState.Stable)
+        {
+            var ownShrine = member.TeamId == BastionTeamId.Raja
+                ? definition.Raja.ShrinePosition
+                : definition.Rival.ShrinePosition;
+            var ownTickets = member.TeamId == BastionTeamId.Raja ? rajaTickets : rivalTickets;
+            var ownScore = member.TeamId == BastionTeamId.Raja ? rajaScore : rivalScore;
+            var enemyTeam = member.TeamId == BastionTeamId.Raja ? BastionTeamId.Rival : BastionTeamId.Raja;
+            var selfHealthFraction = 1f;
+            var ownCarrier = default(BastionParticipantSnapshot);
+            var enemyCarrier = default(BastionParticipantSnapshot);
+            var hasOwnCarrier = false;
+            var hasEnemyCarrier = false;
+            var supportTarget = default(BastionParticipantSnapshot);
+            var hasSupportTarget = false;
+            var focusTarget = default(BastionParticipantSnapshot);
+            var focusDistance = float.MaxValue;
+
+            if (participants != null)
+            {
+                for (var i = 0; i < participants.Length; i++)
+                {
+                    var participant = participants[i];
+                    if (!participant.Alive) continue;
+                    if (participant.ActorId == member.ActorId)
+                    {
+                        selfHealthFraction = participant.MaxHealth > 0
+                            ? (float)participant.CurrentHealth / participant.MaxHealth
+                            : 0f;
+                    }
+
+                    if (crown.IsCarried && participant.ActorId == crown.CarrierId)
+                    {
+                        if (participant.TeamId == member.TeamId)
+                        {
+                            ownCarrier = participant;
+                            hasOwnCarrier = true;
+                        }
+                        else
+                        {
+                            enemyCarrier = participant;
+                            hasEnemyCarrier = true;
+                        }
+                    }
+
+                    if (participant.TeamId == member.TeamId && participant.ActorId != member.ActorId)
+                    {
+                        if (!hasSupportTarget ||
+                            participant.CurrentHealth * supportTarget.MaxHealth < supportTarget.CurrentHealth * participant.MaxHealth ||
+                            (participant.CurrentHealth * supportTarget.MaxHealth == supportTarget.CurrentHealth * participant.MaxHealth &&
+                             participant.ActorId.Value < supportTarget.ActorId.Value))
+                        {
+                            supportTarget = participant;
+                            hasSupportTarget = true;
+                        }
+                    }
+
+                    if (participant.TeamId == enemyTeam)
+                    {
+                        var distanceToCrown = Float2.Distance(participant.Position, crown.Position);
+                        if (distanceToCrown < focusDistance - 0.0001f ||
+                            (Math.Abs(distanceToCrown - focusDistance) <= 0.0001f &&
+                             (focusTarget.ActorId.Value == 0 || participant.ActorId.Value < focusTarget.ActorId.Value)))
+                        {
+                            focusTarget = participant;
+                            focusDistance = distanceToCrown;
+                        }
+                    }
+                }
+            }
+
+            var plan = BastionSquadPlan.ContestCrown;
+            var destination = crown.Position;
+            if (hasOwnCarrier)
+            {
+                if (ownCarrier.ActorId == member.ActorId)
+                {
+                    destination = ownShrine;
+                    plan = BastionSquadPlan.EscortCarrier;
+                }
+                else if (member.Role == BastionRole.Anchor)
+                {
+                    destination = ownShrine;
+                    plan = BastionSquadPlan.DefendShrine;
+                }
+                else
+                {
+                    destination = ownCarrier.Position;
+                    plan = BastionSquadPlan.EscortCarrier;
+                }
+            }
+            else if (hasEnemyCarrier)
+            {
+                destination = enemyCarrier.Position;
+                plan = member.Role == BastionRole.Anchor
+                    ? BastionSquadPlan.DefendShrine
+                    : BastionSquadPlan.CollapseTarget;
+                focusTarget = enemyCarrier;
+            }
+            else if (member.Role == BastionRole.Anchor)
+            {
+                destination = ownShrine;
+                plan = BastionSquadPlan.DefendShrine;
+            }
+            else if (ownTickets.Remaining <= 2 && selfHealthFraction < 0.35f)
+            {
+                destination = ownShrine;
+                plan = BastionSquadPlan.RecoverTickets;
+            }
+            else if (member.Role == BastionRole.Runner)
+            {
+                destination = crown.Position;
+                plan = BastionSquadPlan.ContestCrown;
+            }
+
+            var movementTarget = destination;
+            var direction = (destination - selfPosition).Normalized;
+            var spacingOffset = Float2.Zero;
+            if (member.Role != BastionRole.Runner && plan != BastionSquadPlan.EscortCarrier &&
+                plan != BastionSquadPlan.CollapseTarget && direction.SqrMagnitude > 0.000001f)
+            {
+                var side = (member.ActorId.Value & 1) == 0 ? -1f : 1f;
+                spacingOffset = new Float2(-direction.Y, direction.X) * (0.65f * side);
+                movementTarget += spacingOffset;
+                direction = (movementTarget - selfPosition).Normalized;
+            }
+
+            var focusId = focusTarget.ActorId.Value > 0 ? focusTarget.ActorId : default(CombatEntityId);
+            var supportId = hasSupportTarget ? supportTarget.ActorId : default(CombatEntityId);
+            var aim = focusId.Value > 0
+                ? (focusTarget.Position - selfPosition).Normalized
+                : direction.SqrMagnitude > 0.000001f ? direction : Float2.Up;
+            var ticketRisk = ownTickets.Remaining <= 2 || (overtime && ownScore.Score < rivalScore.Score);
+            var distanceToZone = zoneRadius > 0f ? Float2.Distance(selfPosition, zoneCenter) : 0f;
+            if (zoneRadius > 0f &&
+                (distanceToZone > zoneRadius + 0.001f ||
+                 (aandhiState == AandhiState.Closing && distanceToZone > zoneRadius * 0.92f)))
+            {
+                plan = BastionSquadPlan.RetreatFromAandhi;
+                destination = zoneCenter;
+                movementTarget = destination;
+                spacingOffset = Float2.Zero;
+                direction = (destination - selfPosition).Normalized;
+            }
+
+            return new BastionSquadIntent(
+                plan,
+                movementTarget,
+                direction,
+                aim,
+                focusId,
+                supportId,
+                spacingOffset,
+                ticketRisk);
+        }
+    }
+
     public enum BastionMatchResultReason
     {
         None = 0,
@@ -236,7 +450,12 @@ namespace BattleRaja.Core.Domain
             int assists,
             int crownPickups,
             int ticketsSpent,
-            float objectiveSeconds)
+            float objectiveSeconds,
+            int deaths = 0,
+            int damageDealt = 0,
+            int healingDone = 0,
+            int gadgetUses = 0,
+            int abilityUses = 0)
         {
             TeamId = teamId;
             Score = Math.Max(0, score);
@@ -246,6 +465,11 @@ namespace BattleRaja.Core.Domain
             CrownPickups = Math.Max(0, crownPickups);
             TicketsSpent = Math.Max(0, ticketsSpent);
             ObjectiveSeconds = Math.Max(0f, objectiveSeconds);
+            Deaths = Math.Max(0, deaths);
+            DamageDealt = Math.Max(0, damageDealt);
+            HealingDone = Math.Max(0, healingDone);
+            GadgetUses = Math.Max(0, gadgetUses);
+            AbilityUses = Math.Max(0, abilityUses);
         }
 
         public BastionTeamId TeamId { get; }
@@ -256,6 +480,11 @@ namespace BattleRaja.Core.Domain
         public int CrownPickups { get; }
         public int TicketsSpent { get; }
         public float ObjectiveSeconds { get; }
+        public int Deaths { get; }
+        public int DamageDealt { get; }
+        public int HealingDone { get; }
+        public int GadgetUses { get; }
+        public int AbilityUses { get; }
     }
 
     public readonly struct ModeDefinition
@@ -343,7 +572,9 @@ namespace BattleRaja.Core.Domain
             int assists,
             int damageDealt,
             int healingDone,
-            float objectiveSeconds)
+            float objectiveSeconds,
+            int gadgetUses = 0,
+            int abilityUses = 0)
         {
             Member = member;
             Position = position;
@@ -361,6 +592,8 @@ namespace BattleRaja.Core.Domain
             DamageDealt = damageDealt;
             HealingDone = healingDone;
             ObjectiveSeconds = objectiveSeconds;
+            GadgetUses = gadgetUses;
+            AbilityUses = abilityUses;
         }
 
         public TeamMember Member { get; }
@@ -381,6 +614,8 @@ namespace BattleRaja.Core.Domain
         public int DamageDealt { get; }
         public int HealingDone { get; }
         public float ObjectiveSeconds { get; }
+        public int GadgetUses { get; }
+        public int AbilityUses { get; }
     }
 
     public readonly struct CrownSparkSnapshot

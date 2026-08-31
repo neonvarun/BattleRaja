@@ -1,17 +1,36 @@
 # BattleRaja V1 Luna Max Prompt Pack
 
-**Pack version:** 1.0
-**Prepared:** 2026-08-31 10:20 IST
-**Source snapshot used to write the pack:** `3bed64e82be0a84c8bf978d871ae322604b3f7ff`
+**Pack version:** 1.1 continuation update
+**Prepared:** 2026-09-01 00:03 IST
+**Source snapshot used to update the pack:** `56313096d0ad8e2e23468d004eaa77d71ed3a233`
 **Primary mode:** `BR_BastionCrown_V1` — **Bastion Crown**, offline 4v4
 
-This directory is the implementation specification for a fresh Luna Max Goal-mode session. It is not a claim that the mode is already implemented. Read the repository and this pack before changing code.
+This directory is the execution specification for a fresh Luna Max Goal-mode session.
+The latest source already contains a real Bastion Crown 4v4 implementation checkpoint;
+the pack now describes continuation work: audit the implementation, harden missing rules,
+complete the authored product, and prove the release gates. It is not a claim that the
+game is player-ready or Play-submittable.
+
+## Current checkpoint (must not be reimplemented blindly)
+
+At `5631309`, the source includes `BastionCrownContracts`, `BastionCrownMatch`, a Unity
+adapter, canonical actor IDs 1–8, team HUD/objective telegraphs, basic role-aware bot
+intent, a regenerated Bazaar Bastion scene, and passing local rerun evidence (148/148
+EditMode and 94/94 PlayMode). The implementation is still a hybrid between the new team
+state and the legacy combat simulation, and the following are not proven: complete squad
+coordination, damage-interrupted deposits, socket-rotation semantics, Bastion replay/soak
+determinism, final authored assets/audio, sustained physical-device performance, physical
+16 KB runtime compatibility, permanent identity/signing, and Play/legal materials.
+
+The continuation agent must preserve healthy work, reproduce the baseline, and fix or
+evidence these gaps before adding polish. If the repository has advanced beyond this
+commit, the actual current source wins and this README must be refreshed.
 
 ## Start here
 
-1. Rebaseline Git, Unity, tests, current APK/AAB and approved Lava device; preserve all user work.
+1. Rebaseline Git, Unity, tests, current APK/AAB and approved Lava device; preserve all user work. Start from the latest actual `HEAD`, not the snapshot above.
 2. Read `Docs/AI/UnityProjectContext.md`, `Docs/AI/V1_PRODUCT_REBUILD_AUDIT.md`, `Docs/AI/V1_REFERENCE_DESIGN_MATRIX.md`, `Docs/AI/PROMPT_REWRITE_MANIFEST.md`, `AGENTS.md`, `PROJECT_STATUS.md`, `Docs/MASTER_VISION.md`, `Docs/ARCHITECTURE.md`, `Docs/DECISIONS.md`, `Docs/CULTURAL_GUIDE.md` and the current release/QA docs.
-3. Execute prompts `01` through `16` in order. `99_MASTER_V1_GOAL.md` is the orchestration prompt to paste into a fresh Goal-mode session; it is not a separate stage.
+3. Execute prompts `01` through `16` in order. Each stage must first audit what the latest source already provides and then implement only missing or unsafe work. `99_MASTER_V1_GOAL.md` is the orchestration prompt to paste into a fresh Goal-mode session; it is not a separate stage.
 4. At every stage, keep a small evidence report and do not advance while a binary gate fails.
 
 ## Canonical product contract
@@ -24,7 +43,7 @@ This directory is the implementation specification for a fresh Luna Max Goal-mod
 - **Combat score:** a confirmed KO is +1. Assists are recorded but do not double-count score. First team to 15 wins; otherwise score at time expires decides.
 - **Tickets/respawn:** each team starts with 12 shared tickets. A defeated fighter has 4 seconds of spectator/respawn presentation and returns after 5 seconds if a ticket remains; the ticket is consumed on respawn. Spawn protection is 2.5 seconds or until that fighter deals damage. Exhausted fighters remain spectators; a team wipe (all four slots out with no valid pending return) ends the match, while simultaneous KOs with queued respawns do not.
 - **Fairness:** friendly fire is off, allied collision is soft, team colors/markers are redundant with shape/icon cues, and bots never receive hidden damage/vision/cooldown cheats.
-- **Tie break:** deposits → KOs → tickets remaining → sudden-death Crown score; sudden death ends on a deposit, team wipe or 30-second cap.
+- **Tie break:** at live-clock expiry compare score first, then deposits → KOs → tickets remaining; if still tied, enter overtime and use the sudden-death Crown result. Overtime ends on a deposit, team wipe or 30-second cap.
 - **Stats/rematch:** show KOs, deaths, assists, damage, healing, pickups, deposits, objective time, gadget/ability uses and tickets spent. Rematch keeps local settings/fighter choice, creates a new seed and resets all match state.
 - **Roster:** Bijli (mobile skirmisher), Pehel (frontline bruiser), Maya (trickster/control). Do not add a fourth fighter unless playtest evidence proves the three-role roster cannot produce fair teams; a fourth is not a default requirement.
 - **Content:** all three gadgets — Umbrella Guard, Dhol Burst and Tiffin Station — are mandatory and must have team/objective uses.
@@ -55,4 +74,8 @@ Use a timestamped directory under `Builds/Local/PlanningAudit/BattleRaja/` or th
 
 ## Definition of done for the pack
 
-The pack is useful only when a fresh agent can follow it without guessing what 4v4 means, what to preserve, what to build, how to test it, or when to stop. A final report must distinguish implemented evidence, unverified areas and owner-only gates. Never call the project a Play Store Release Candidate solely because the current candidate APK launches.
+The pack is useful only when a fresh agent can follow it without guessing what 4v4 means,
+what is already implemented, what to preserve, what to build, how to test it, or when to
+stop. A final report must distinguish implemented evidence, unverified areas and owner-only
+gates. Never call the project a Play Store Release Candidate solely because the current
+candidate APK launches or the legacy Solo suite is green.

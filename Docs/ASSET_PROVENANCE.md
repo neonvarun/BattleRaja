@@ -67,6 +67,19 @@ The generator is the editable source of truth for these procedural meshes. Unity
 settings and prefab references are committed as ordinary text/binary project assets after
 human review.
 
+## Menu feature art replacement — 2026-09-01
+
+`Assets/BattleRaja/Art/V1/BattleRaja-FeatureArt-OriginalCandidate.png` is a new,
+repository-owned presentation candidate generated with the built-in image-generation tool
+from an original BattleRaja brief: a portrait Bazaar Bastion fortress scene with the Crown
+Spark shrine and the Bijli, Pehel and Maya silhouettes. The prompt explicitly prohibited
+vehicles, karts, racing-track motifs, copied characters, copied arena layouts, logos, text
+and watermarks. The Unity build entry point now references this file for the menu and mode
+backdrops. The older `BattleRaja-FeatureArt-Candidate.png` is retained as historical source
+material but is not referenced by the V1 runtime or build. This is still a presentation
+candidate pending human originality, cultural-safety, accessibility, composition and
+commissioned-art review; it is not a claim of final store art.
+
 ## Directional references
 
 `Art/Concepts/key-art.png`, `champions-lineup.png`, `arena-bazaar-bastion-topdown.png`, and

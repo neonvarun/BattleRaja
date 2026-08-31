@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using BattleRaja.Core.Domain;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace BattleRaja.Tests.EditMode
 {
@@ -87,6 +88,7 @@ namespace BattleRaja.Tests.EditMode
         {
             var match = Start(5u);
             var crown = match.Crown;
+            var initialSocket = crown.SocketIndex;
             match.SetPosition(new CombatEntityId(1), crown.Position);
             Assert.That(match.TryPickupCrown(new CombatEntityId(1), 0.10f), Is.False);
             Assert.That(match.TryPickupCrown(new CombatEntityId(1), 0.15f), Is.True);
@@ -104,6 +106,137 @@ namespace BattleRaja.Tests.EditMode
             Assert.That(match.GetTeamScore(BastionTeamId.Raja).Score, Is.EqualTo(3));
             Assert.That(match.GetTeamScore(BastionTeamId.Raja).Deposits, Is.EqualTo(1));
             Assert.That(match.Crown.IsCarried, Is.False);
+            Assert.That(match.Crown.SocketIndex, Is.EqualTo((initialSocket + 1) % 3));
+        }
+
+        [Test]
+        public void DamageInterruptsDepositBeforeChannelCanComplete()
+        {
+            var match = Start(7u);
+            var carrierId = new CombatEntityId(1);
+            var attackerId = new CombatEntityId(5);
+            match.ClearSpawnProtection(carrierId);
+            match.ClearSpawnProtection(attackerId);
+            match.SetPosition(carrierId, match.Crown.Position);
+            Assert.That(match.TryPickupCrown(carrierId, 0.25f), Is.True);
+            match.SetPosition(carrierId, ModeDefinition.BastionCrown.Raja.ShrinePosition);
+            Assert.That(match.TryBeginDeposit(carrierId), Is.True);
+            match.Advance(0.50f);
+
+            var damage = match.ApplyDamage(new DamageRequest(
+                attackerId,
+                carrierId,
+                CombatFaction.Enemy,
+                1,
+                DamageType.Projectile),
+                101);
+            Assert.That(damage.Applied, Is.True);
+            Assert.That(match.Crown.ChannelActorId.Value, Is.EqualTo(0));
+            match.Advance(1.0f);
+            Assert.That(match.GetTeamScore(BastionTeamId.Raja).Deposits, Is.EqualTo(0));
+            Assert.That(match.GetTeamScore(BastionTeamId.Raja).Score, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void HealingAndActionUsageAreAttributedOnce()
+        {
+            var match = Start(9u);
+            var healer = new CombatEntityId(2);
+            var target = new CombatEntityId(1);
+            match.SetHealth(target, 50);
+            Assert.That(match.NotifyHealing(healer, target, 10, 31), Is.True);
+            Assert.That(match.NotifyHealing(healer, target, 10, 31), Is.False);
+            Assert.That(match.TryGetParticipant(healer, out var healerSnapshot), Is.True);
+            Assert.That(healerSnapshot.HealingDone, Is.EqualTo(10));
+            Assert.That(match.GetTeamScore(BastionTeamId.Raja).HealingDone, Is.EqualTo(10));
+
+            Assert.That(match.RecordGadgetUse(healer, 41), Is.True);
+            Assert.That(match.RecordGadgetUse(healer, 41), Is.False);
+            Assert.That(match.RecordAbilityUse(healer, 51), Is.True);
+            Assert.That(match.GetTeamScore(BastionTeamId.Raja).GadgetUses, Is.EqualTo(1));
+            Assert.That(match.GetTeamScore(BastionTeamId.Raja).AbilityUses, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void SquadPlannerAssignsRolesAndSpacingFromCanonicalState()
+        {
+            var match = Start(11u);
+            Assert.That(match.TryGetSquadIntent(new CombatEntityId(2), out var anchor), Is.True);
+            Assert.That(anchor.Plan, Is.EqualTo(BastionSquadPlan.DefendShrine));
+            Assert.That(match.TryGetSquadIntent(new CombatEntityId(3), out var runner), Is.True);
+            Assert.That(runner.Plan, Is.EqualTo(BastionSquadPlan.ContestCrown));
+
+            var carrierId = new CombatEntityId(3);
+            match.SetPosition(carrierId, match.Crown.Position);
+            Assert.That(match.TryPickupCrown(carrierId, 0.25f), Is.True);
+            Assert.That(match.TryGetSquadIntent(new CombatEntityId(4), out var escort), Is.True);
+            Assert.That(escort.Plan, Is.EqualTo(BastionSquadPlan.EscortCarrier));
+            Assert.That(match.TryGetParticipant(carrierId, out var carrier), Is.True);
+            Assert.That(escort.Destination, Is.EqualTo(carrier.Position));
+            Assert.That(match.TryGetSquadIntent(carrierId, out var carrierIntent), Is.True);
+            Assert.That(carrierIntent.Plan, Is.EqualTo(BastionSquadPlan.EscortCarrier));
+            Assert.That(carrierIntent.Destination, Is.EqualTo(ModeDefinition.BastionCrown.Raja.ShrinePosition));
+        }
+
+        [Test]
+        public void SquadPlannerRetreatsFromClosingAandhiWithoutChangingObjectiveState()
+        {
+            var match = Start(13u);
+            var anchorId = new CombatEntityId(2);
+            match.SetPosition(anchorId, new Float2(-10f, 0f));
+            Assert.That(match.SyncAandhi(Float2.Zero, 2f, AandhiState.Closing), Is.True);
+
+            Assert.That(match.TryGetSquadIntent(anchorId, out var intent), Is.True);
+            Assert.That(intent.Plan, Is.EqualTo(BastionSquadPlan.RetreatFromAandhi));
+            Assert.That(intent.Destination, Is.EqualTo(Float2.Zero));
+            Assert.That(intent.Movement.SqrMagnitude, Is.GreaterThan(0.1f));
+            Assert.That(match.GetTeamScore(BastionTeamId.Raja).Score, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void SquadPlannerMetricsCoverObjectiveEscortDefenseCollapseAndRetreat()
+        {
+            var counts = new int[7];
+            const int seedCount = 32;
+            for (var seed = 101u; seed < 101u + seedCount; seed++)
+            {
+                var match = Start(seed);
+                RecordPlan(match, new CombatEntityId(2), counts);
+                RecordPlan(match, new CombatEntityId(3), counts);
+                RecordPlan(match, new CombatEntityId(4), counts);
+
+                var crownPosition = match.Crown.Position;
+                match.SetPosition(new CombatEntityId(3), crownPosition);
+                Assert.That(match.TryPickupCrown(new CombatEntityId(3), 0.25f), Is.True);
+                RecordPlan(match, new CombatEntityId(2), counts);
+                RecordPlan(match, new CombatEntityId(3), counts);
+                RecordPlan(match, new CombatEntityId(4), counts);
+
+                match.DropCrown(new CombatEntityId(3));
+                match.Advance(1.26f);
+                match.SetPosition(new CombatEntityId(5), match.Crown.Position);
+                Assert.That(match.TryPickupCrown(new CombatEntityId(5), 0.25f), Is.True);
+                RecordPlan(match, new CombatEntityId(2), counts);
+                RecordPlan(match, new CombatEntityId(3), counts);
+                RecordPlan(match, new CombatEntityId(4), counts);
+
+                match.SetPosition(new CombatEntityId(4), new Float2(20f, 0f));
+                Assert.That(match.SyncAandhi(Float2.Zero, 5f, AandhiState.Closing), Is.True);
+                RecordPlan(match, new CombatEntityId(4), counts);
+            }
+
+            Debug.Log($"Bastion squad planner metrics: seeds={seedCount} contest={counts[(int)BastionSquadPlan.ContestCrown]} escort={counts[(int)BastionSquadPlan.EscortCarrier]} defend={counts[(int)BastionSquadPlan.DefendShrine]} collapse={counts[(int)BastionSquadPlan.CollapseTarget]} retreat={counts[(int)BastionSquadPlan.RetreatFromAandhi]}");
+            Assert.That(counts[(int)BastionSquadPlan.ContestCrown], Is.GreaterThan(0));
+            Assert.That(counts[(int)BastionSquadPlan.EscortCarrier], Is.GreaterThan(0));
+            Assert.That(counts[(int)BastionSquadPlan.DefendShrine], Is.GreaterThan(0));
+            Assert.That(counts[(int)BastionSquadPlan.CollapseTarget], Is.GreaterThan(0));
+            Assert.That(counts[(int)BastionSquadPlan.RetreatFromAandhi], Is.EqualTo(seedCount));
+        }
+
+        private static void RecordPlan(BastionCrownMatch match, CombatEntityId actorId, int[] counts)
+        {
+            Assert.That(match.TryGetSquadIntent(actorId, out var intent), Is.True);
+            counts[(int)intent.Plan]++;
         }
 
         [Test]
@@ -123,6 +256,24 @@ namespace BattleRaja.Tests.EditMode
             Assert.That(match.GetTeamScore(BastionTeamId.Raja).KOs, Is.EqualTo(1));
             Assert.That(match.TryGetParticipant(new CombatEntityId(1), out var assister), Is.True);
             Assert.That(assister.Assists, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void RejectedDamageAgainstDeadTargetDoesNotConsumeEventIdentity()
+        {
+            var match = Start();
+            match.ClearSpawnProtection(new CombatEntityId(1));
+            match.ClearSpawnProtection(new CombatEntityId(5));
+            var defeated = match.ApplyDamage(new DamageRequest(new CombatEntityId(1), new CombatEntityId(5), CombatFaction.Player, 100, DamageType.Projectile), 30);
+            Assert.That(defeated.TargetDefeated, Is.True);
+
+            Assert.That(match.NotifyCombatDamage(new CombatEntityId(1), new CombatEntityId(5), 5, false, 31), Is.False);
+            var respawnTick = match.Advance(5f);
+            Assert.That(Array.IndexOf(respawnTick.RespawnedActors, new CombatEntityId(5)), Is.GreaterThanOrEqualTo(0));
+            match.ClearSpawnProtection(new CombatEntityId(5));
+
+            Assert.That(match.NotifyCombatDamage(new CombatEntityId(1), new CombatEntityId(5), 5, false, 31), Is.True);
+            Assert.That(match.GetTeamScore(BastionTeamId.Raja).DamageDealt, Is.EqualTo(105));
         }
 
         [Test]

@@ -1,6 +1,6 @@
 # BattleRaja V1 current-state index
 
-Updated: 2026-08-31
+Updated: 2026-09-01
 
 ## Evidence location policy
 
@@ -18,6 +18,28 @@ presentation kit, tutorial action gates, settings surfaces and Android packaging
 tooling exist. A Play Store Release Candidate claim is not yet justified because
 physical Lava action-by-action route review, sustained performance, final identity/
 signing, accessibility, legal/privacy/cultural approval and Play Console review
+remain open.
+
+## Latest current-source evidence — 2026-09-01 — offline Android continuation
+
+The continuation record is `Docs/QA/V1_OFFLINE_ANDROID_VALIDATION_2026-09-01.md`.
+Static validation is **0/0**, EditMode is **155/155**, PlayMode is **94/94**, and the
+Bastion v2 replay soak reproduces two 8,400-tick seeds with zero combined-hash divergence.
+The planner coverage run records contest 64, escort 64, defend 96, collapse 64 and
+Aandhi-retreat 32 intents across 32 seeds. The runtime menu now uses the original
+`BattleRaja-FeatureArt-OriginalCandidate.png` shrine/fighter scene; no vehicle/racing
+motif is referenced by the V1 runtime.
+
+The exact APK is **41,510,440 bytes** (`5F7438105FE450D6331CFEDEE1FAEEB87FB4F6677EB811A997A02CC8FD7C4AE9`),
+and the AAB is **37,335,957 bytes** (`87C835570B62C4C3A79C156F94CB7E15C6AD31FCB50A0E8ADB0FDE6672DC4858`).
+The release checker passes the temporary package `com.example.battleraja.m11`, target SDK 36,
+offline permission gate, ARM64/static 16 KB checks and creative dimensions. Fresh approved-Lava
+evidence reaches menu → Bastion briefing → fighter choice → live arena → settings. The clean
+30-second live telemetry sample reports PSS 287,530–293,678 KB, RSS 426,940–433,088 KB,
+graphics PSS 87,024–93,180 KB, CPU 111–118%, thermal status 0 and no configured app crash
+markers. Lava reports 4 KB pages and Unity `gfxinfo` has no usable frame histogram. Final
+authored/cultural/accessibility/fun review, complete physical action route, normalized endurance,
+physical 16 KB runtime, permanent identity/signing, privacy/Data Safety/IARC and Play actions
 remain open.
 
 ## Latest current-source evidence — 2026-08-31 — P66 source `e603ce7`

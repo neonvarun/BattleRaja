@@ -50,7 +50,7 @@ namespace BattleRaja.Editor
         private const string DevelopmentApplicationId = "com.example.battleraja.m11";
         private const string AndroidApplicationIdEnvironmentVariable = "BATTLERAJA_ANDROID_APPLICATION_ID";
         private const string V1IconAssetPath = "Assets/BattleRaja/Art/V1/BattleRaja-AppIcon-PlayStore.png";
-        private const string V1FeatureArtAssetPath = "Assets/BattleRaja/Art/V1/BattleRaja-FeatureArt-Candidate.png";
+        private const string V1FeatureArtAssetPath = "Assets/BattleRaja/Art/V1/BattleRaja-FeatureArt-OriginalCandidate.png";
         private const string GadgetAssetFolder = "Assets/BattleRaja/Content/Gadgets";
 
         public static void CreateBootstrapScene()

@@ -1,6 +1,7 @@
 # BattleRaja V1 Reference-to-Design Matrix
 
-**Prepared:** 2026-08-31 10:20 IST
+**Prepared:** 2026-09-01 00:03 IST (continuation update)
+**Source checkpoint:** `56313096d0ad8e2e23468d004eaa77d71ed3a233`
 **Purpose:** translate high-level, publicly observable product principles into original BattleRaja decisions.
 **References:** controlled observation of installed Brawl Stars and Smash Karts on Lava, plus official/current Android and Play documentation.
 **Boundary:** references are not asset, code, terminology or trade-dress sources. No decompilation, extraction, traffic interception, purchase, account action or copied screenshot was used.
@@ -9,11 +10,17 @@
 
 The implementation agent may adopt the principle and the player benefit, but must solve it with BattleRaja's own characters, names, map geometry, colors, rules, icons, audio and motion. Every row includes an explicit anti-copy guard. If a proposed implementation resembles a reference too closely, redesign the expression while preserving the underlying usability principle.
 
+The “current problem” column was written before the Bastion Crown checkpoint and is a design
+diagnostic, not a claim that the latest source is still Solo-only. Re-audit each row against
+the actual current screen/build: the team route, objective HUD and basic telegraphs now exist,
+while authored final content, squad coordination, accessibility proof and physical-device
+evidence remain open.
+
 ## Matrix
 
 | Reference principle | Why it works | BattleRaja current problem | Original BattleRaja interpretation | Do not copy | Evidence/verification |
 |---|---|---|---|---|---|
-| One obvious primary action on the home screen | A new player knows what to do without scanning a store-like menu | Current menu works but has sparse hierarchy and a feature image that feels placed behind the UI | Make `PLAY OFFLINE` the largest action; explain `Bastion Crown 4v4` in one sentence; keep Tutorial and Settings secondary | Button shape, exact placement, typography, hero art, labels or trade dress | Lava cold launch capture plus touch route |
+| One obvious primary action on the home screen | A new player knows what to do without scanning a store-like menu | The tested menu hierarchy is clear; the historical feature image felt placed behind the UI and was replaced | Make `PLAY OFFLINE` the largest action; explain `Bastion Crown 4v4` in one sentence; keep Tutorial and Settings secondary; use an original shrine/fighter backdrop | Button shape, exact placement, typography, hero art, labels or trade dress | `Builds/Local/V1GameplayTruth/Final/lava-20260901-final/01-launch.png` plus touch route |
 | Character-led focal presentation | A single strong subject gives the product a memorable identity | Current previews are small and technical/faceted | Show one authored fighter in a controlled idle vignette, with team-neutral lighting and role tag | Any reference character, pose, costume, background or animation | Menu screenshot and 10-second idle observation |
 | Compact, glanceable fighter choice | Players can compare roles quickly | Three cards do not yet communicate role, range or objective value | Cards show silhouette portrait, role rhythm, difficulty, attack/ability/gadget summary and team-neutral outline | Card geometry, iconography, names or exact copy | Fighter-selection device route; text-size variants |
 | Team/enemy readability at gameplay scale | Fast decisions require knowing friend from foe before reading names | Current FFA actors use player/enemy hostility; allies do not exist | Use redundant team rim light, banner pennant, outline and HUD health marker; never rely on hue alone | Exact team colors, outline treatment, character shapes or marker icons | 8-fighter stills at camera distance and color/contrast settings |

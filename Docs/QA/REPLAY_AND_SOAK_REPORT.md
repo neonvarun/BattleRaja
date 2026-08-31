@@ -1,5 +1,15 @@
 # BattleRaja Replay and Soak Report
 
+## Current Bastion Crown replay result — 2026-09-01
+
+`Assets/BattleRaja/Tests/EditMode/BastionReplaySoakTests.cs` builds canonical eight-actor
+Bastion streams with fighter abilities, gadgets, Crown interactions and Aandhi context.
+Two seeds were executed for 8,400 fixed ticks each, serialized through replay envelope v2,
+and re-executed with combined legacy-plus-Bastion hash verification: **zero divergences**.
+The full current gates are **155/155 EditMode** and **94/94 PlayMode**. The exact XML/logs
+are under `Builds/Local/V1GameplayTruth/Final/`; the broader production-bot 100-match
+evidence below remains Solo-only and is not blended with this Bastion result.
+
 ## Latest durable production replay result — source `2a113e0` — 2026-08-27
 
 The development-only production bot harness now persists ordered authority inputs,

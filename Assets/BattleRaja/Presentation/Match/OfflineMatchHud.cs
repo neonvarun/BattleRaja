@@ -474,9 +474,15 @@ namespace BattleRaja.Presentation.Match
             var builder = new StringBuilder(320);
             builder.Append("BASTION CROWN RESULTS\nWINNER ").Append(winner).Append("  •  ").Append(result.Reason).Append('\n');
             builder.Append("RAJA ").Append(result.Raja.Score).Append("  DEPOSITS ").Append(result.Raja.Deposits)
-                .Append("  KOs ").Append(result.Raja.KOs).Append("  TICKETS ").Append(result.RajaTickets.Remaining).Append('\n');
+                .Append("  KOs ").Append(result.Raja.KOs).Append("  TICKETS ").Append(result.RajaTickets.Remaining)
+                .Append("  DMG ").Append(result.Raja.DamageDealt).Append("  HEAL ").Append(result.Raja.HealingDone)
+                .Append("  OBJ ").Append(result.Raja.ObjectiveSeconds.ToString("0.0")).Append("s")
+                .Append("  GAD ").Append(result.Raja.GadgetUses).Append("  ABIL ").Append(result.Raja.AbilityUses).Append('\n');
             builder.Append("RIVAL ").Append(result.Rival.Score).Append("  DEPOSITS ").Append(result.Rival.Deposits)
-                .Append("  KOs ").Append(result.Rival.KOs).Append("  TICKETS ").Append(result.RivalTickets.Remaining).Append('\n');
+                .Append("  KOs ").Append(result.Rival.KOs).Append("  TICKETS ").Append(result.RivalTickets.Remaining)
+                .Append("  DMG ").Append(result.Rival.DamageDealt).Append("  HEAL ").Append(result.Rival.HealingDone)
+                .Append("  OBJ ").Append(result.Rival.ObjectiveSeconds.ToString("0.0")).Append("s")
+                .Append("  GAD ").Append(result.Rival.GadgetUses).Append("  ABIL ").Append(result.Rival.AbilityUses).Append('\n');
             if (!compact && participants != null)
             {
                 for (var i = 0; i < participants.Length; i++)
