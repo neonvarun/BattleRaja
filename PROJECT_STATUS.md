@@ -22,7 +22,8 @@
 
 - **Strict production-bot rerun (2026-09-02):** The same current tree was exercised in a
   fresh Unity process with the 100-match release assertions. The rerun passed **94/94**;
-  all **100/100** matches terminated, **92/100** were combat-positive, **64/100** reached
+  all **100/100** matches terminated, **91/100** landed in the 240–360 second window,
+  **92/100** were combat-positive, **64/100** reached
   at least three combat eliminations, **3** were Aandhi-only, and **100/100** had bot-to-bot
   damaging pairs. The report is
   `Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260901-220113865-9101.json`

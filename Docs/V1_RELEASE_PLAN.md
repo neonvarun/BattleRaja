@@ -55,7 +55,8 @@ The same current source was exercised again in a fresh Unity process after the t
 authority/safety patch. The strict release assertions passed **94/94**. Report:
 `Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260901-220113865-9101.json`
 (SHA-256 `D44275C62CDF18ADDD9581020088FAB39685279E0AD896CE8F799C20DA867E73`). It records
-100/100 terminal matches, **92/100** combat-positive, **64/100** with at least three
+100/100 terminal matches, **91/100** in the 240–360 s window, **92/100** combat-positive,
+**64/100** with at least three
 combat eliminations, **3** Aandhi-only, **100/100** bot-to-bot damaging pairs, zero
 protected/invalid samples, 17,714 accepted attacks, 8,293 projectile hits, 12,281/15,110
 accepted abilities, 560 effective abilities and 248/293 successful gadget uses. Duration

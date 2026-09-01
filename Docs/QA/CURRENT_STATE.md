@@ -37,7 +37,7 @@ results/rematch comfort remains open.
 The superseding continuation record is `Docs/QA/V1_OFFLINE_ANDROID_VALIDATION_2026-09-02.md`.
 Static validation is **0/0**, EditMode is **159/159**, PlayMode is **94/94**, and the
 selected strict production-bot rerun is **94/94**. Its 100-match report records
-**92/100** combat-positive, **64/100** with at least three combat eliminations,
+**91/100** in the 240–360 second window, **92/100** combat-positive, **64/100** with at least three combat eliminations,
 **3** Aandhi-only resolutions, **100/100** bot-to-bot damaging pairs, and zero
 protected-warmup or invalid-position samples. The v2 replay soak remains two 8,400-tick
 seeds with zero combined-hash divergence; squad planner coverage remains contest 64,

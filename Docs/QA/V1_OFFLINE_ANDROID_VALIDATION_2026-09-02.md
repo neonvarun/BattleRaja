@@ -78,9 +78,9 @@ Report: `Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260901-220113
 (SHA-256 `D44275C62CDF18ADDD9581020088FAB39685279E0AD896CE8F799C20DA867E73`).
 
 - 100/100 completed; duration **109.765–273.022 s**, average **237.891 s**.
-- **92/100** were combat-positive; **64/100** had at least three combat eliminations;
-  **3** were Aandhi-only. The report exposes the pacing window rather than treating
-  terminal completion as sufficient.
+- **91/100** landed in the 240–360 s target window; **92/100** were combat-positive;
+  **64/100** had at least three combat eliminations; **3** were Aandhi-only. The report
+  exposes the pacing window rather than treating terminal completion as sufficient.
 - **100/100** contained a bot-to-bot damaging pair; protected-warmup damage **0**;
   invalid-position samples **0**.
 - Attacks **17,714/17,714** accepted; projectile hits **8,293**; abilities
