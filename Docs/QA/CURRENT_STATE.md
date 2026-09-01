@@ -32,20 +32,49 @@ the authoritative elimination and Victory tutorial cards. The scene remains a le
 MovementLab/Solo tutorial layout rather than a dedicated 4v4 Bastion tutorial, and full
 results/rematch comfort remains open.
 
-## Latest current-source evidence — 2026-09-02 — tutorial-authority continuation
+The final visual-fix continuation regenerated the three production fighter prefabs with
+camera-facing Bijli/Pehel/Maya identity accents (including the Maya mask), then rebuilt
+the exact APK/AAB. The current APK is **41,516,076 bytes** (SHA-256
+`6050E1A6EC329F27BC14A1118FB166D278293237B4BC6CBA716B7B700D9FD6FF`) and the AAB is
+**37,341,603 bytes** (SHA-256
+`A2F440649987A8FA04398B629F956AC44267AA1D33FEF571C3264B97051CCB4C`). The current
+approved-Lava route is under
+`Builds/Local/V1GameplayTruth/Next/lava-release-final-20260902/` and reaches the live
+Bastion match, authoritative results and rematch on the installed APK. This is still a
+generated V1 presentation baseline, not commissioned final art.
+
+The current development harness follow-up adds schema-v2 telemetry projected from the
+canonical Bastion authority. The strict 100-match run remains **94/94** with 100/100
+terminal matches and now records team score/deposits/KOs, Crown timing and socket
+rotations, objective time, tickets/respawns, healing, gadget/ability use, overtime
+stalemates, squad communication and alive-ally spacing. Aggregate values are **524/472**
+score, **123/88** deposits, **155/208** KOs, **376** tickets spent/respawns, **7** overtime
+stalemates, **238** socket rotations, **179,431** squad signals and **8,436,824** spacing
+samples. The fresh physical route under
+`Builds/Local/V1GameplayTruth/Next/lava-exact-20260902/` reaches Aandhi, combat, results
+and rematch; no Crown deposit or explicit spectator transition was observed in the two
+sampled matches, so the human/device gate remains open.
+
+The superseded post-telemetry source rebuild is retained in the QA report for provenance.
+The final visual-fix checker again passes the temporary package/target/ARM64/static-
+alignment gates; final signing and identity are not selected.
+
+## Latest current-source evidence — 2026-09-02 — canonical telemetry continuation
 
 The superseding continuation record is `Docs/QA/V1_OFFLINE_ANDROID_VALIDATION_2026-09-02.md`.
 Static validation is **0/0**, EditMode is **159/159**, PlayMode is **94/94**, and the
-selected strict production-bot rerun is **94/94**. Its 100-match report records
-**91/100** in the 240–360 second window, **92/100** combat-positive, **64/100** with at least three combat eliminations,
-**3** Aandhi-only resolutions, **100/100** bot-to-bot damaging pairs, and zero
-protected-warmup or invalid-position samples. The v2 replay soak remains two 8,400-tick
-seeds with zero combined-hash divergence; squad planner coverage remains contest 64,
-escort 64, defend 96, collapse 64 and Aandhi-retreat 32. A preceding fresh process
-completed 100/100 but landed at 89/100 combat-positive; no source changed between runs,
-so this pacing variance is retained as an open risk.
+latest strict production-bot rerun is **94/94**. Its schema-v2 100-match report records
+**92/100** in the 240–360 second window, **91/100** combat-positive, **61/100** with at
+least three combat eliminations, **4** Aandhi-only resolutions, **100/100** bot-to-bot
+damaging pairs, and zero protected-warmup or invalid-position samples. Canonical team
+telemetry records **524/472** score, **123/88** deposits, **155/208** KOs, **376** shared
+tickets spent/respawns, **7** overtime stalemates and **238** socket rotations. The v2
+replay soak remains two 8,400-tick seeds with zero combined-hash divergence; squad planner
+coverage remains contest 64, escort 64, defend 96, collapse 64 and Aandhi-retreat 32.
+A preceding fresh process completed 100/100 but landed at 89/100 combat-positive; no
+source changed between runs, so this pacing variance is retained as an open risk.
 
-The latest tutorial-authority APK is **41,520,532 bytes**
+The preceding tutorial-authority APK is **41,520,532 bytes**
 (`56F3BAB99E304A15548D8073BA6B41EDDCBDE17A2C7476D923B06094D5A9649E`), and the AAB is
 **37,346,030 bytes**
 (`19E2E7CCFFD7B2CBA993DE3608D8D62F4A351425AA76D0085138C1DF6DD96BCA`). The release
@@ -59,6 +88,13 @@ raw capture reports PSS **60,858–252,074 KB**, RSS **176,511–390,924 KB**, g
 markers. Lava reports 4 KB pages and Unity `gfxinfo` has no usable frame histogram. The
 full Bastion tutorial, commissioned art, normalized endurance, physical 16 KB runtime,
 permanent identity/signing, privacy/Data safety/IARC and Play owner gates remain open.
+
+The final source-hygiene APK/AAB are the current artifacts: APK **41,516,076 bytes**
+(`6050E1A6EC329F27BC14A1118FB166D278293237B4BC6CBA716B7B700D9FD6FF`) and AAB
+**37,341,603 bytes**
+(`A2F440649987A8FA04398B629F956AC44267AA1D33FEF571C3264B97051CCB4C`). Exact
+post-regeneration gates are EditMode **159/159** and PlayMode **94/94**; physical
+route evidence is under `Builds/Local/V1GameplayTruth/Next/lava-release-final-20260902/`.
 
 ## Previous current-source evidence — 2026-09-01 — offline Android continuation
 

@@ -2000,3 +2000,35 @@ Record every material choice here. Do not silently overwrite old decisions.
   `Next/production-bot-100-tutorial-authority-rerun.xml` (94/94), and
   `batch-20260901-220113865-9101.json` (92/100 combat-positive).
 - **Owner:** Human project owner
+
+### ADR-082 - Project canonical Bastion telemetry into the offline bot report
+
+- **Date:** 2026-09-02
+- **Status:** Accepted for the V1 offline evidence baseline; balance, physical comfort and
+  final-art review remain open.
+- **Context:** The production harness previously reported legacy combat and bot counters,
+  while the authoritative Bastion layer already owned score, Crown deposits/pickups,
+  objective time, tickets, healing, respawn/spectator state and terminal reason. A green
+  harness report therefore did not make those team-objective outcomes auditable.
+- **Options considered:** Keep the legacy-only report; duplicate mutable counters in the
+  harness; or project the canonical `BastionCrownMatch` snapshots and team scores at each
+  resolved tick into a development-only JSON record.
+- **Decision:** `ProductionBotMatchHarness` now records a schema-versioned canonical
+  Bastion projection: team score/deposits/KOs/assists/damage/healing, Crown pickups and
+  timing, objective seconds, ticket maximum/remaining/spent, gadget/ability use, winner /
+  result reason / overtime, socket rotations, respawns, team-wipe transitions, peak
+  spectators, bounded-lag squad metrics and measured alive-ally spacing. Per-participant
+  team, role and authority lifecycle fields are included. Transition counters are derived
+  from the same post-tick snapshots consumed by the HUD/replay path; they never affect
+  simulation state.
+- **Consequences:** Multi-seed evidence can now distinguish combat pressure from objective
+  contribution and ticket/respawn behavior. The current 100-match rerun records 123/88
+  deposits, 155/208 KOs, 376 respawns, 7 overtime stalemate results, 238 socket rotations,
+  179,431 squad signals and 8,436,824 ally-spacing samples. Zero team-wipe transitions in
+  this sample is retained as a real result, not synthesized coverage. This remains a
+  diagnostic projection, not a substitute for physical Crown-deposit or spectator review.
+- **Evidence/sources:** `ProductionBotMatchHarness.cs`,
+  `ProductionBotHarnessPlayModeTests.cs`, `BastionCrownMatch.WasOvertime`, schema-v2 report
+  `Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260901-224046635-9101.json`,
+  and `Next/production-bot-100-telemetry.xml`.
+- **Owner:** Human project owner

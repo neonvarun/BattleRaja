@@ -80,6 +80,11 @@ namespace BattleRaja.Core.Domain
         public bool IsStarted => _started;
         public bool IsEnded => _ended;
         public bool IsOvertime => _overtime && !_ended;
+        /// <summary>Whether the terminal state was reached after the live clock
+        /// entered overtime. Unlike <see cref="IsOvertime"/>, this remains true
+        /// after resolution so diagnostics and results can report the path that
+        /// actually resolved the match.</summary>
+        public bool WasOvertime => _overtime;
         public bool IsLive => _started && !_ended && ((_elapsedSeconds >= _definition.ReadySeconds && _elapsedSeconds < _definition.ReadySeconds + _definition.LiveSeconds) || _overtime);
         public float ElapsedSeconds => _elapsedSeconds;
         public BastionTeamId Winner => _winner;

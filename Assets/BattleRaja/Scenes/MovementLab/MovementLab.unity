@@ -447,6 +447,7 @@ MonoBehaviour:
   simulationTickRate: 30
   authorityDrivenMovement: 0
   autoStart: 1
+  tutorialMode: 0
 --- !u!1 &176053637
 GameObject:
   m_ObjectHideFlags: 0

@@ -18,6 +18,113 @@ accessibility comfort, cultural fit, signing or legal approval.
 - Current entry art and production fighter prefabs are repository-owned and editable.
   They remain a generated V1 presentation baseline, not commissioned final art.
 
+## Canonical Bastion telemetry follow-up — 2026-09-02
+
+The development-only production harness now emits schema-v2 JSON from the canonical
+`BastionCrownMatch` state. The projection includes team score/deposits/KOs/assists,
+Crown pickups and first-event timing, objective seconds, ticket pools, damage/healing,
+gadget/ability use, winner/reason/overtime, socket rotations, respawn and team-wipe
+transitions, peak spectators, squad-blackboard counters and measured alive-ally spacing.
+Each participant also carries the authority team, role, lifecycle and objective counters.
+The projection is report-only and does not mutate simulation state.
+
+The current strict run is `Next/production-bot-100-telemetry.xml` (**94/94 passed**, SHA-256
+`A51EADF828A27B5E2D5BA90DEDEC8A215E76713850965BF02223D9412F3D9A59`) with log SHA-256
+`EA805C25A84DD1E4BECFDF356A99435DC2208EBC81BE366E3AF1531C189A58CC`. Its schema-v2
+batch report is `Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260901-224046635-9101.json`
+(SHA-256 `55049198B0E93D5A037055CEA4A3687F54F083FE39DFF6D5778410FBC9D48DEA`):
+
+- 100/100 matches completed; duration **136.867–273.022 s**, average **239.132 s**;
+  **92/100** landed in the 240–360 s window, **91/100** were combat-positive and
+  **61/100** reached at least three combat eliminations. Four were Aandhi-only.
+- Bot-to-bot damaging pairs were present in **100/100**; protected-warmup damage and
+  invalid-position samples were both **0**. Aggregate team score was **524/472** from
+  **123/88** Crown deposits and **155/208** KOs. Crown pickups were **152/200**.
+- The authority spent **376** shared tickets and produced **376** respawns; peak
+  simultaneous spectators was **2**. No team-wipe transition occurred in this sample.
+  Seven matches entered overtime and were classified as clock/overtime stalemates;
+  **84/100** recorded a first deposit. Crown socket rotations totaled **238**.
+- Canonical objective time was **2,858.7/18,806.2 s** (Raja/Rival); healing was
+  **26,547/22,159**; gadget uses **153/101**; ability uses **5,446/8,341**.
+  Squad signals totaled **179,431**, support assignments **296,654**, escort handoffs
+  **149**, retreat signals **73,960**, and maximum signal age was **4 ticks**.
+  Alive-ally spacing contributed **8,436,824** samples (aggregate per-match mean
+  **4.60 m**, observed range **0–25.30 m**).
+- Maximum bot decision time was **0.371 ms**; maximum outside participants remained **7**
+  with **135,612** outside-participant ticks. These are retained tuning signals, not
+  hidden or converted into pass/fail claims.
+
+The first serialized replay from this run is
+`Builds/Local/V1GameplayTruth/ProductionBotReports/Replays/match-9101-20260901-224048351.brr`
+with SHA-256 `D0BE5FD5A31F8D256B022C6FCE2176975C46C369C6308872DC007646E0808EDE`.
+
+## Superseded exact artifact rebuild after telemetry — 2026-09-02
+
+The non-development APK and release-shaped AAB were rebuilt after the telemetry source
+change from the same Unity `6000.5.6f1` project. The composed technical checker passed
+repository validation, offline manifest, target SDK, ARM64 payload, static 16 KB ELF
+alignment and store-creative dimensions:
+
+| Artifact | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk` | 41,516,072 | `33AFA202C521632B4662764340574471F982DF189BC1C5D5F724757BA8680B6E` |
+| `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab` | 37,341,598 | `3EAE3460F8106AFDD8CD46B10E8DC20F373D66F0BD8731E38F3B0B2CCA48DDF2` |
+
+Build log: `Builds/M11/Logs/android-build.log` (SHA-256
+`4181E16C71D4EBD5CBBE168AE99CB8D358DE2E96768500A96744511DE0CB5497`). The checker
+reported package `com.example.battleraja.m11`, version `1.0.0`/100, min SDK 28, target
+SDK 36, only VIBRATE plus the dynamic receiver permission, seven ARM64 native libraries,
+no other native ABIs and static `0x4000` LOAD alignment. This remains a debug-signed
+temporary identity; it is not a publishable artifact.
+
+## Superseded exact artifact rebuild after camera-facing identity fix — 2026-09-02
+
+The generated fighter prefabs were rebuilt after moving the Bijli, Pehel and Maya
+identity accents onto the gameplay camera-facing side (including the Maya mask). The
+non-development APK and release-shaped AAB were then rebuilt from the same Unity
+`6000.5.6f1` project. The composed technical checker again passed repository
+validation, offline manifest, target SDK, ARM64 payload, static 16 KB ELF alignment
+and store-creative dimensions:
+
+| Artifact | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk` | 41,516,080 | `E81A035BE7AAF50D5ED1A994C60B68A2765B92CBDC2228528957713BB62702A0` |
+| `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab` | 37,341,603 | `DFD0C4516BBC44907E30F16BAAC4D0C373BE81AEC6B3C43DF4FF3C3510972276` |
+
+The final build log is `Builds/M11/Logs/android-build.log` (SHA-256
+`2C818B39FB2D8CDF7603D7752A4AC57CECA8738233B2259DC2C301A2D8292341`). The installed
+Lava package hash matched the APK exactly
+(`e81a035be7aaf50d5ed1a994c60b68a2765b92cbdc2228528957713bb62702a0`); package
+`com.example.battleraja.m11` remained version `1.0.0`/100, min SDK 28, target SDK 36.
+The candidate is still debug-signed with a temporary package identity and is not a
+publishable artifact.
+
+The post-regeneration gates are **159/159 EditMode** (`Next/editmode-final-visualfix.xml`,
+SHA-256 `17483B1D96DC466517352B22F574A306CBB2466C738D90938244F5D2328F9B3B`) and
+**94/94 PlayMode** (`Next/playmode-final-visualfix.xml`, SHA-256
+`B839085E347BE24062787235D5E9EF2DAA47E0705E414FE5C9672B6D6851339E`). The controlled
+prefab regeneration log is `Next/rebuild-presentation-camera-facing-3.log` (SHA-256
+`7A02732C731A1527BC2E38A22109C8534E2348C76FAA8B3EC5F74E8C4EDA7440`).
+
+## Exact artifact rebuild after final source hygiene — 2026-09-02
+
+The generated prefab YAML was normalized to remove two non-semantic trailing-space
+records, then the non-development APK and release-shaped AAB were rebuilt once more from
+the checked-in source. This is the current artifact pair; the composed technical checker
+again passed repository validation, offline manifest, target SDK, ARM64 payload, static
+16 KB ELF alignment and store-creative dimensions:
+
+| Artifact | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk` | 41,516,076 | `6050E1A6EC329F27BC14A1118FB166D278293237B4BC6CBA716B7B700D9FD6FF` |
+| `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab` | 37,341,603 | `A2F440649987A8FA04398B629F956AC44267AA1D33FEF571C3264B97051CCB4C` |
+
+The final build log is `Builds/M11/Logs/android-build.log` (SHA-256
+`A4921F6CCBE1111DB954BB7587987E7515AAD717B9EFF7E4426845A1C3B728AD`). The installed
+Lava package hash matched the APK exactly; package `com.example.battleraja.m11` remained
+version `1.0.0`/100, min SDK 28, target SDK 36. The candidate is still debug-signed
+with a temporary package identity and is not a publishable artifact.
+
 ## Tutorial authority and safety follow-up — 2026-09-02
 
 The tutorial scene now exercises the same authoritative movement, damage, collection and
@@ -59,8 +166,8 @@ performance, physical 16 KB runtime compatibility or Play readiness.
 | Gate | Evidence | Result |
 | --- | --- | --- |
 | Static repository validation | `Tools/Validation/validate.ps1` | **0 errors / 0 warnings** |
-| EditMode | `Builds/Local/V1GameplayTruth/Next/editmode-final.xml` | **159/159 passed** |
-| PlayMode | `Builds/Local/V1GameplayTruth/Next/playmode-final.xml` | **94/94 passed** |
+| EditMode | `Builds/Local/V1GameplayTruth/Next/editmode-final-visualfix.xml` | **159/159 passed** |
+| PlayMode | `Builds/Local/V1GameplayTruth/Next/playmode-final-visualfix.xml` | **94/94 passed** |
 | Bastion replay soak | two seeds × 8,400 ticks; v2 serialized replay re-execution | **0 combined-hash divergences** |
 | Squad planner coverage | 32 deterministic seeds | contest **64**, escort **64**, defend **96**, collapse **64**, Aandhi-retreat **32** |
 | Production bot gate | `Next/production-bot-100-tutorial-authority-rerun.xml`; strict release assertions | **94/94 tests passed** |
@@ -102,6 +209,10 @@ No source changed between runs; the no-code-change rerun above passed at 92/100.
 variance is kept as an open balance/pacing risk and is not hidden by the selected pass.
 
 ## Android artifacts and technical checker
+
+This section preserves the immediately preceding tutorial-authority artifact for
+provenance. The current post-telemetry APK/AAB and checker are recorded in the exact
+artifact rebuild section above.
 
 The direct Unity release entry points completed successfully. The release checker
 passed package `com.example.battleraja.m11`, version `1.0.0`/100, min SDK 28, target
@@ -146,6 +257,127 @@ The exact final APK route did not complete the full action-by-action tutorial. T
 tutorial exists and is covered by automated tests, but a complete physical tutorial,
 all-fighter comfort and long-session human-fun review remain open.
 
+## Physical Bastion route refresh — approved Lava — 2026-09-02
+
+The current tutorial-authority APK was reinstalled on the approved Lava and exercised
+through a fresh Bastion route. Evidence is under
+`Builds/Local/V1GameplayTruth/Next/lava-route-20260902/`:
+
+- cold launch/menu (`00-launch.png`), Bastion briefing (`01-briefing.png`), fighter
+  choice (`02-fighter-select.png`), ready/live opening (`03-ready.png`,
+  `04-live-start.png`) and Crown approach/movement (`05-move-toward-crown.png`);
+- attack/intercept attempts and combat contact (`06-intercept-attempt.png`,
+  `07-attack-right.png`, `13-attack-hold.png`, `14-combat-contact.png`,
+  `15-attack-cluster.png`, `16-post-combat.png`);
+- Aandhi pressure (`09-live-aandhi.png`, SHA-256
+  `89D7C832E75D84C1E6FB561CE407F60C51B69D743C5343A06F955F062529BC37`), a terminal
+  results surface (`10-terminal-or-results.png`, SHA-256
+  `1F4306377F7645CBE9E1E367C7E8317738B28907E191B348B688EADE087A5722`), and a fresh
+  rematch with scores/tickets reset (`11-rematch-opening.png`, SHA-256
+  `8E3483424022E8D612309B5DB96E8D677DAB401FD08B9DF62576C94FABEDA418`);
+- a second-match terminal outside-zone/results capture (`18-outside-zone.png`,
+  SHA-256 `5A323EB25723C5843D17CA37464F83C75F4828B2DAD1FB021E30F1DCE5CF497F`).
+
+The Unity view exposes only a `unitySurfaceView` node in the Android accessibility tree,
+so the Unity controls were exercised at known rendered coordinates; this is recorded as
+a tooling limitation, not accessibility approval. The sampled results showed combat and
+ticket state, but both physical matches ended with **0 Crown deposits** and no explicit
+player spectator transition was captured. Crown deposit, respawn/spectator comfort,
+complete all-fighter interaction and human fun review therefore remain open despite the
+automated authority coverage.
+
+## Physical route on exact post-telemetry artifact — approved Lava — 2026-09-02
+
+After the artifact rebuild, the exact APK with SHA-256
+`33AFA202C521632B4662764340574471F982DF189BC1C5D5F724757BA8680B6E` was installed and
+replayed from a cleared package. The append-only evidence directory is
+`Builds/Local/V1GameplayTruth/Next/lava-exact-20260902/`. It reaches menu → Bastion
+briefing → Bijli/Pehel/Maya choice → live eight-actor arena, then shows a live Aandhi /
+Rival-carrier state (`04-live-aandhi-window.png`, SHA-256
+`5F8A6E08AF446F112A9B5C66D33345C6650E24E021A4C25FDCCC1386E742A943`), the authoritative
+results card (`05-results.png`, SHA-256
+`9C1D85EF4FCC5F7F21E79B86B5E9806C98330315862BA8E68AD32511B6120D59`) and a fresh rematch
+with scores/tickets reset and the Crown on a new socket (`06-rematch-opening.png`, SHA-256
+`4813881543D3EBABE0CB8263BE6131938B6C5A12CA44AA405F428237798E97B3`). The rematch live
+capture (`07-rematch-live.png`, SHA-256
+`D7CF3A843B70FAEFCDCAB8F82CDFD0686737A359835A35D262B9555CC8227083`) confirms the new
+match is active. The focused activity remained
+`com.example.battleraja.m11/com.unity3d.player.UnityPlayerGameActivity`.
+
+This exact-artifact route still did not physically observe a Crown deposit or explicit
+spectator transition; those steps remain open for human/device review. The Android
+accessibility dump again exposed only Unity's `unitySurfaceView`, so rendered Unity
+controls were exercised at known coordinates and this limitation is not presented as an
+accessibility pass.
+
+## Superseded physical route on the visual-fix artifact — approved Lava — 2026-09-02
+
+The final APK (`E81A035BE7AAF50D5ED1A994C60B68A2765B92CBDC2228528957713BB62702A0`)
+was freshly installed after the Maya camera-facing mask correction and replayed from a
+cleared package. Append-only evidence is under
+`Builds/Local/V1GameplayTruth/Next/lava-visualfix-final-20260902/`:
+
+- `00-launch.png` (menu) SHA-256
+  `9457B5360CBD099504980784750C4FC21D4F24D84BEE86D66A1615D3F9839A82`;
+- `01-briefing.png` (Bastion Crown briefing) SHA-256
+  `640C44BD938E1ED44B9D203804127AB6115B93F9B705C4214C275D91591A6435`;
+- `02-fighter-select.png` (Bijli/Pehel/Maya choice) SHA-256
+  `709916D26E97D1DC46537AAC260CFFDA7B0C0A40A1D3E00D3855647C609C0238`;
+- `03-ready.png` (fresh live 4v4) SHA-256
+  `05406442A202D3C4D8359B512EE9A7475BBFF838BFF843B0D7AB399F1E9368C8`;
+- `04-live-30s.png` (combat/objective HUD) SHA-256
+  `72A8E1AAB9A355C62B23D7A24FB3A0A65A7819E9AD9CBAEC7264BFD47198619B`;
+- `07-live-~4m.png` shows the authoritative results card (Rival winner by clock,
+  Raja 3 deposits 0 / Rival 5 deposits 1, tickets 10/12) with SHA-256
+  `71BFB6DF4C0479AB5D2DDA3AE1C085103985152B6A83FE2CAAA1AD9CF9A735F8`;
+- `08-rematch-live.png` shows a reset `00:05` match with scores/tickets reset and
+  the Crown carrier state, SHA-256
+  `7165821EEDA250FDC3358957B2DC0F59097071648B99C49894796B80798446A9`.
+
+The installed package hash was verified on-device against the local APK. Lava remained
+`1080x2460`, Android 14/API 34, and `getconf PAGE_SIZE` returned `4096`. The focused
+activity remained
+`com.example.battleraja.m11/com.unity3d.player.UnityPlayerGameActivity`; the captured
+logcat window contained no configured fatal markers. The Unity accessibility tree still
+exposes only `unitySurfaceView`, so rendered controls were exercised at known
+coordinates. This exact route still did not physically observe a Crown deposit or an
+explicit player spectator transition; those, long-session comfort and human-fun review
+remain open.
+
+## Physical route on the current final artifact — approved Lava — 2026-09-02
+
+The current APK (`6050E1A6EC329F27BC14A1118FB166D278293237B4BC6CBA716B7B700D9FD6FF`)
+was freshly installed after final source hygiene and replayed from a cleared package.
+Append-only evidence is under
+`Builds/Local/V1GameplayTruth/Next/lava-release-final-20260902/`:
+
+- `00-launch.png` (menu) SHA-256
+  `9457B5360CBD099504980784750C4FC21D4F24D84BEE86D66A1615D3F9839A82`;
+- `01-briefing.png` (Bastion Crown briefing) SHA-256
+  `640C44BD938E1ED44B9D203804127AB6115B93F9B705C4214C275D91591A6435`;
+- `02-fighter-select.png` (Bijli/Pehel/Maya choice) SHA-256
+  `28A08C5A159B1639276174A6253B6B5BE0DB6B1686281FA9F2461389C2E4A24B`;
+- `03-ready.png` (fresh live 4v4) SHA-256
+  `E5470E04E71B5689A7E7BA31DA60189A870164A9EA43D5EA1A2C88FA5D576B48`;
+- `04-live-30s.png` (combat/objective HUD) SHA-256
+  `ADCADA4588DCEA762AF54AC02C201413629A05EE5DEE7E8C5FCBE0F6CBB1E9CC`;
+- `05-live-3m.png` reached the authoritative results card at `04:02` (Raja 9/15,
+  Rival 1/15, Raja winner by clock, deposits 3/0, tickets 11/9) with SHA-256
+  `45AC9FAA869E28073476F684728B4448153D629F67340ADF2F2B5EB0382B0D74`;
+- `06-rematch-live.png` shows a reset `00:05` match with scores/tickets reset and
+  the new Crown carrier state, SHA-256
+  `0F720BB0BFA8443A12CF9B8B76290B0FBD415923E6938D88C44DBF236BCBACEF`.
+
+The installed package hash was verified on-device against the local APK. Lava remained
+`1080x2460`, Android 14/API 34, and `getconf PAGE_SIZE` returned `4096`. The focused
+activity remained
+`com.example.battleraja.m11/com.unity3d.player.UnityPlayerGameActivity`; the captured
+logcat window contained no configured fatal markers. The Unity accessibility tree still
+exposes only `unitySurfaceView`, so rendered controls were exercised at known
+coordinates. This current route still did not physically observe a Crown deposit or an
+explicit player spectator transition; those, long-session comfort and human-fun review
+remain open.
+
 ## Bounded performance and crash scan
 
 `Tools/Validation/capture_android_performance.ps1` captured six samples over 30 seconds
@@ -158,6 +390,16 @@ the manifest SHA-256 is `AD5F16B226D84A08D159617643E7B966216EBAC11CB3BCED5AC2411
 - Raw `top` app CPU samples: **35.7–57.1%** on Android's per-core scale.
 - Thermal status was **0** for all samples; configured fatal log markers were **0**.
 - Lava reports 4 KB pages and Unity `gfxinfo` exposed no usable frame histogram.
+
+The superseded visual-fix artifact also had a post-rematch point-in-time diagnostic of
+292,803 KB PSS, 433,044 KB RSS, 91,260 KB graphics PSS and 126% raw `top` CPU. On the
+current final artifact, the post-rematch snapshot recorded **290,132 KB PSS**,
+**429,284 KB RSS**, **89,076 KB graphics PSS**, and a raw `top` sample of **111% CPU**
+on Android's per-core scale. Thermal status was **0** with current CPU/GPU temperatures
+**38.401 C** and battery **30.0 C**; the captured logcat window again contained no
+configured fatal markers. These single-point values are retained alongside the bounded
+six-sample history and are not a substitute for a normalized FPS/GC/GPU/battery
+endurance run.
 
 This is bounded raw diagnostic evidence, not normalized FPS, GC/GPU, unplugged battery,
 thermal-endurance or physical-16-KB approval.

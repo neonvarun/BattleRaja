@@ -13,6 +13,63 @@ prototype until every V1 completion gate and remaining human gate passes.
 - Approved physical evidence device: Lava `ST5GDW23LB004392` (`LAVA LXX508`) only.
 - Preserve internal networking/Web seams without exposing unusable public online paths.
 
+## Checkpoint 0d - canonical Bastion telemetry and physical route refresh — 2026-09-02
+
+The development-only production harness now writes schema-v2 canonical Bastion telemetry
+from `BastionCrownMatch` rather than relying only on the legacy combat mirror. The exact
+strict run passed **94/94** (`Next/production-bot-100-telemetry.xml`, SHA-256
+`A51EADF828A27B5E2D5BA90DEDEC8A215E76713850965BF02223D9412F3D9A59`). The batch report is
+`Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260901-224046635-9101.json`
+(SHA-256 `55049198B0E93D5A037055CEA4A3687F54F083FE39DFF6D5778410FBC9D48DEA`). Across
+100 matches it records 100/100 terminal, 92/100 in the 240–360 s window, 91/100
+combat-positive, 61/100 with at least three combat KOs, 4 Aandhi-only, 100/100 bot-to-bot
+pairs, 524/472 score from 123/88 deposits and 155/208 KOs, 376 tickets spent/respawns,
+7 overtime stalemate results, 238 socket rotations, 179,431 squad signals, and
+8,436,824 alive-ally spacing samples. Protected-warmup damage and invalid positions remain
+zero. The first replay is
+`Builds/Local/V1GameplayTruth/ProductionBotReports/Replays/match-9101-20260901-224048351.brr`
+with SHA-256 `D0BE5FD5A31F8D256B022C6FCE2176975C46C369C6308872DC007646E0808EDE`.
+
+The superseded post-telemetry Android rebuild passed the composed technical checker:
+
+- APK `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`, 41,516,072 bytes,
+  SHA-256 `33AFA202C521632B4662764340574471F982DF189BC1C5D5F724757BA8680B6E`.
+- AAB `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`, 37,341,598 bytes,
+  SHA-256 `3EAE3460F8106AFDD8CD46B10E8DC20F373D66F0BD8731E38F3B0B2CCA48DDF2`.
+- Temporary package `com.example.battleraja.m11`, version 1.0.0/100, target SDK 36,
+  no network permissions, seven ARM64 native libraries and static 16 KB alignment.
+  The artifact remains debug-signed and not publishable.
+
+The same current APK was freshly exercised on approved Lava
+`ST5GDW23LB004392` through menu → Bastion briefing → fighter choice → live movement/
+combat → Aandhi → results → rematch → second result. Evidence is under
+`Builds/Local/V1GameplayTruth/Next/lava-route-20260902/`; selected Aandhi/results/rematch
+hashes and the UI-tree limitation are recorded in the superseding QA report. The route
+did not physically observe a Crown deposit or an explicit spectator transition, so those
+human/device gates remain open.
+
+The post-telemetry artifact route is separately preserved under
+`Builds/Local/V1GameplayTruth/Next/lava-exact-20260902/`. It reaches the same 4v4 flow,
+an Aandhi/Rival-carrier state, authoritative results and a rematch reset; selected
+screens are hashed in `Docs/QA/V1_OFFLINE_ANDROID_VALIDATION_2026-09-02.md`. No Crown
+deposit or explicit spectator transition was observed on this exact-artifact route.
+
+The final camera-facing identity-fix rebuild supersedes those artifact hashes:
+
+- APK `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`, 41,516,080 bytes,
+  SHA-256 `E81A035BE7AAF50D5ED1A994C60B68A2765B92CBDC2228528957713BB62702A0`.
+- AAB `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`, 37,341,603 bytes,
+  SHA-256 `DFD0C4516BBC44907E30F16BAAC4D0C373BE81AEC6B3C43DF4FF3C3510972276`.
+- The exact final-Lava route is under
+  `Builds/Local/V1GameplayTruth/Next/lava-visualfix-final-20260902/`; it reaches live
+  4v4, results and rematch on the installed APK. The subsequent source-hygiene rebuild
+  is the current artifact pair: APK **41,516,076 bytes** (`6050E1A6EC329F27BC14A1118FB166D278293237B4BC6CBA716B7B700D9FD6FF`) and AAB
+  **37,341,603 bytes** (`A2F440649987A8FA04398B629F956AC44267AA1D33FEF571C3264B97051CCB4C`).
+  Its exact-Lava route is under
+  `Builds/Local/V1GameplayTruth/Next/lava-release-final-20260902/` and reaches the same
+  flow. Post-regeneration EditMode and PlayMode are **159/159** and **94/94**. Neither
+  physical route observed a Crown deposit or explicit player spectator transition.
+
 ## Checkpoint 0 - exact-final balanced continuation — 2026-09-02 (superseded by 0b/0c)
 
 The current working tree supersedes the 2026-09-01 continuation record with the

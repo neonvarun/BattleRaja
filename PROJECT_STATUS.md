@@ -6,6 +6,27 @@
 
 ## Current state
 
+- **Canonical telemetry and physical-route refresh (2026-09-02):** The development-only
+  production harness now emits schema-v2 Bastion telemetry directly from the authority:
+  team score/deposits/KOs/assists, Crown timing/rotations, objective time, tickets,
+  healing, gadget/ability use, respawn/spectator/wipe transitions, overtime stalemates,
+  squad signals and measured ally spacing. The exact strict run is **94/94** with 100/100
+  terminal matches; its report records **524/472** score, **123/88** deposits, **155/208**
+  KOs, **376** tickets spent and respawns, **7** overtime stalemates, **238** socket
+  rotations, **179,431** squad signals and **8,436,824** spacing samples. A fresh approved-
+  Lava route reaches Aandhi, combat, results and rematch; both sampled physical results
+  had zero deposits and no explicit spectator transition. The exact-artifact route is
+  under `Builds/Local/V1GameplayTruth/Next/lava-exact-20260902/`; the route and limitation are
+  indexed in `Docs/QA/V1_OFFLINE_ANDROID_VALIDATION_2026-09-02.md`. The exact source was
+  rebuilt into the current final APK `6050E1A6EC329F27BC14A1118FB166D278293237B4BC6CBA716B7B700D9FD6FF`
+  (41,516,076 bytes) and AAB
+  `A2F440649987A8FA04398B629F956AC44267AA1D33FEF571C3264B97051CCB4C`
+  (37,341,603 bytes). The approved-Lava exact route is under
+  `Builds/Local/V1GameplayTruth/Next/lava-release-final-20260902/` and reaches the
+  Bastion briefing, fighter choice, live 4v4, results and rematch on the installed
+  APK. The package hash matched on-device; the temporary debug identity/checker limits
+  remain explicit. Post-regeneration EditMode is **159/159** and PlayMode **94/94**.
+
 - **Tutorial authority/safety follow-up (2026-09-02):** `TutorialArena` now uses the real
   authority-driven movement, combat, pickup and replay path. A tutorial-only safety profile
   delays outside-zone damage while lessons are visible and widens the opening gadget

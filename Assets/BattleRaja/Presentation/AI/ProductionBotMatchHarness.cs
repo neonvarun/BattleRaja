@@ -21,10 +21,22 @@ namespace BattleRaja.Presentation.AI
     {
         public int ActorId;
         public string Fighter = "Unknown";
+        public string Team;
+        public string BastionRole;
         public int Placement;
         public int DamageDealt;
         public int Eliminations;
         public int Assists;
+        public int BastionDeaths;
+        public int BastionDamageDealt;
+        public int BastionAssists;
+        public int BastionHealingDone;
+        public int BastionGadgetUses;
+        public int BastionAbilityUses;
+        public float BastionObjectiveSeconds;
+        public bool BastionAlive;
+        public bool BastionSpectating;
+        public bool BastionRespawnPending;
         public float SurvivalTimeSeconds;
         public int DecisionCount;
         public int TargetDecisionCount;
@@ -69,7 +81,59 @@ namespace BattleRaja.Presentation.AI
     {
         public uint Seed;
         public bool CompletedWithinTickBudget;
+        public bool IsBastionCrown;
         public float DurationSeconds;
+        public float BastionElapsedSeconds;
+        public string WinnerTeam;
+        public string ResultReason;
+        public bool IsDraw;
+        public bool Overtime;
+        public bool Stalemate;
+        public int RajaScore;
+        public int RivalScore;
+        public int RajaDeposits;
+        public int RivalDeposits;
+        public int RajaKOs;
+        public int RivalKOs;
+        public int RajaAssists;
+        public int RivalAssists;
+        public int RajaCrownPickups;
+        public int RivalCrownPickups;
+        public int RajaDeaths;
+        public int RivalDeaths;
+        public int RajaDamageDealt;
+        public int RivalDamageDealt;
+        public int RajaHealingDone;
+        public int RivalHealingDone;
+        public int RajaGadgetUses;
+        public int RivalGadgetUses;
+        public int RajaAbilityUses;
+        public int RivalAbilityUses;
+        public float RajaObjectiveSeconds;
+        public float RivalObjectiveSeconds;
+        public int RajaTicketsMaximum;
+        public int RivalTicketsMaximum;
+        public int RajaTicketsRemaining;
+        public int RivalTicketsRemaining;
+        public int RajaTicketsSpent;
+        public int RivalTicketsSpent;
+        public int CrownSocketRotations;
+        public float FirstCrownPickupSeconds = -1f;
+        public float FirstDepositSeconds = -1f;
+        public int RespawnCount;
+        public int TeamWipeCount;
+        public int MaxSimultaneousSpectators;
+        public float MinAllySpacingMeters = -1f;
+        public float AverageAllySpacingMeters;
+        public float MaxAllySpacingMeters;
+        public int AllySpacingSamples;
+        public int SquadSignalUpdates;
+        public int SquadPlanRefreshes;
+        public int SquadEscortAssignments;
+        public int SquadSupportAssignments;
+        public int SquadEscortHandoffs;
+        public int SquadRetreatSignals;
+        public int SquadMaxSignalAgeTicks;
         public float FirstDamageSeconds = -1f;
         public float FirstEliminationSeconds = -1f;
         public float FinalThreeSeconds = -1f;
@@ -116,7 +180,7 @@ namespace BattleRaja.Presentation.AI
     [Serializable]
     public sealed class AutonomousBotBatchReport
     {
-        public int SchemaVersion = 1;
+        public int SchemaVersion = 2;
         public string SceneName;
         public string UnityVersion;
         public uint BaseSeed;
@@ -151,6 +215,19 @@ namespace BattleRaja.Presentation.AI
         private readonly List<MatchReplayCommandOrder> _capturedCommandOrder = new List<MatchReplayCommandOrder>(24);
         private string _reportRunId;
         private float _reportPlaybackScale;
+        private readonly bool[] _previousBastionAlive = new bool[BastionCrownMatch.ParticipantCount];
+        private bool _hasPreviousBastionState;
+        private bool _previousRajaHasReturn;
+        private bool _previousRivalHasReturn;
+        private int _previousCrownSocket = -1;
+        private int _previousCrownCarrier;
+        private int _previousRajaDeposits;
+        private int _previousRivalDeposits;
+        private float _allySpacingTotal;
+        private readonly BastionParticipantSnapshot[] _bastionTelemetrySnapshots =
+            new BastionParticipantSnapshot[BastionCrownMatch.ParticipantCount];
+        private readonly bool[] _bastionTelemetryPresent =
+            new bool[BastionCrownMatch.ParticipantCount];
 
         public List<AutonomousBotMatchResult> Results { get; } = new List<AutonomousBotMatchResult>();
         public string LastReportPath { get; private set; }
@@ -261,7 +338,12 @@ namespace BattleRaja.Presentation.AI
                 brain.ConfigureForAutonomousMatch(seed);
             }
 
-            _currentResult = new AutonomousBotMatchResult { Seed = seed };
+            _currentResult = new AutonomousBotMatchResult
+            {
+                Seed = seed,
+                IsBastionCrown = _match.IsBastionCrown
+            };
+            ResetBastionTelemetry();
             _currentReplay = new MatchReplayFile(_match.CreateReplayHeader(seed));
             _captureTick = -1;
             ClearCapturedCommands();
@@ -303,6 +385,7 @@ namespace BattleRaja.Presentation.AI
             _currentResult.CompletedWithinTickBudget = _match.Simulation.IsEnded;
             _currentResult.DurationSeconds = _match.Simulation.ElapsedSeconds;
             CollectFinalState(_currentResult, actors);
+            CollectBastionFinalState(_currentResult);
             CollectComponentTelemetry(_currentResult, brains.ToArray());
             var replayPath = WriteReplay(_currentReplay, seed);
             _currentResult.ReplayFilePath = replayPath;
@@ -355,6 +438,15 @@ namespace BattleRaja.Presentation.AI
                 $"gadgetKinds={results.Sum(item => item.SuccessfulUmbrellaGuardUses)}/" +
                 $"{results.Sum(item => item.SuccessfulDholBurstUses)}/{results.Sum(item => item.SuccessfulTiffinStationUses)} " +
                 $"failedGadgets={results.Sum(item => item.FailedGadgetUses)} " +
+                $"bastionScore={results.Sum(item => item.RajaScore)}/{results.Sum(item => item.RivalScore)} " +
+                $"deposits={results.Sum(item => item.RajaDeposits)}/{results.Sum(item => item.RivalDeposits)} " +
+                $"objective={results.Sum(item => item.RajaObjectiveSeconds):0.0}/" +
+                $"{results.Sum(item => item.RivalObjectiveSeconds):0.0}s " +
+                $"ticketsSpent={results.Sum(item => item.RajaTicketsSpent)}/" +
+                $"{results.Sum(item => item.RivalTicketsSpent)} " +
+                $"respawns={results.Sum(item => item.RespawnCount)} wipes={results.Sum(item => item.TeamWipeCount)} " +
+                $"stalemates={results.Count(item => item.Stalemate)} " +
+                $"squadSignals={results.Sum(item => item.SquadSignalUpdates)} " +
                 $"targetSwitches={results.Sum(item => item.TargetSwitches)} stuckRecoveries={results.Sum(item => item.StuckRecoveries)} " +
                 $"zoneDecisions={results.Sum(item => item.ZoneSafetyDecisions)} maxStuckTicks={results.Max(item => item.MaxContinuousStuckTicks)} " +
                 $"maxOutside={results.Max(item => item.MaxOutsideParticipants)} outsideTicks={results.Sum(item => item.OutsideParticipantTicks)} " +
@@ -389,6 +481,7 @@ namespace BattleRaja.Presentation.AI
             if (_currentResult == null) return;
             CaptureReplayFrame(tick);
             var elapsed = tick.SimulationTick * FixedStepSeconds;
+            CollectBastionTelemetry(elapsed);
             var snapshots = _match.Simulation.GetSnapshots();
             var collisionDefinition = _match.CollisionDefinition;
             for (var i = 0; i < snapshots.Length; i++)
@@ -469,6 +562,153 @@ namespace BattleRaja.Presentation.AI
 
             _currentResult.UniqueDamagingPairs = _damagingPairs.Count;
             _currentResult.BotToBotDamagingPairs = _botToBotDamagingPairs.Count;
+        }
+
+        private void ResetBastionTelemetry()
+        {
+            _hasPreviousBastionState = false;
+            _previousRajaHasReturn = false;
+            _previousRivalHasReturn = false;
+            _previousCrownSocket = -1;
+            _previousCrownCarrier = 0;
+            _previousRajaDeposits = 0;
+            _previousRivalDeposits = 0;
+            _allySpacingTotal = 0f;
+            for (var i = 0; i < _previousBastionAlive.Length; i++)
+            {
+                _previousBastionAlive[i] = false;
+                _bastionTelemetryPresent[i] = false;
+                _bastionTelemetrySnapshots[i] = default(BastionParticipantSnapshot);
+            }
+
+            var bastion = _match != null ? _match.BastionCrown : null;
+            if (bastion == null || _currentResult == null) return;
+
+            var crown = bastion.Crown;
+            var raja = bastion.GetTeamScore(BastionTeamId.Raja);
+            var rival = bastion.GetTeamScore(BastionTeamId.Rival);
+            _previousCrownSocket = crown.SocketIndex;
+            _previousCrownCarrier = crown.CarrierId.Value;
+            _previousRajaDeposits = raja.Deposits;
+            _previousRivalDeposits = rival.Deposits;
+
+            var rajaHasReturn = false;
+            var rivalHasReturn = false;
+            for (var i = 0; i < BastionCrownMatch.ParticipantCount; i++)
+            {
+                if (!bastion.TryGetParticipant(new CombatEntityId(i + 1), out var snapshot)) continue;
+                _previousBastionAlive[i] = snapshot.Alive;
+                if (snapshot.Alive || snapshot.RespawnPending)
+                {
+                    if (snapshot.TeamId == BastionTeamId.Raja) rajaHasReturn = true;
+                    else if (snapshot.TeamId == BastionTeamId.Rival) rivalHasReturn = true;
+                }
+            }
+
+            _previousRajaHasReturn = rajaHasReturn;
+            _previousRivalHasReturn = rivalHasReturn;
+            _hasPreviousBastionState = true;
+        }
+
+        /// <summary>
+        /// Copies canonical Bastion state into the development-only report and
+        /// derives transition metrics from consecutive authoritative ticks. The
+        /// projection never feeds back into gameplay and intentionally uses the
+        /// same snapshots exposed to the HUD/replay layer.
+        /// </summary>
+        private void CollectBastionTelemetry(float elapsedSeconds)
+        {
+            var bastion = _match != null ? _match.BastionCrown : null;
+            if (bastion == null || _currentResult == null) return;
+
+            var crown = bastion.Crown;
+            var raja = bastion.GetTeamScore(BastionTeamId.Raja);
+            var rival = bastion.GetTeamScore(BastionTeamId.Rival);
+            if (_hasPreviousBastionState)
+            {
+                if (crown.SocketIndex != _previousCrownSocket) _currentResult.CrownSocketRotations++;
+                if (_previousCrownCarrier == 0 && crown.IsCarried && _currentResult.FirstCrownPickupSeconds < 0f)
+                {
+                    _currentResult.FirstCrownPickupSeconds = elapsedSeconds;
+                }
+
+                if ((raja.Deposits > _previousRajaDeposits || rival.Deposits > _previousRivalDeposits) &&
+                    _currentResult.FirstDepositSeconds < 0f)
+                {
+                    _currentResult.FirstDepositSeconds = elapsedSeconds;
+                }
+            }
+
+            var spectatorCount = 0;
+            var rajaHasReturn = false;
+            var rivalHasReturn = false;
+            for (var i = 0; i < BastionCrownMatch.ParticipantCount; i++)
+            {
+                _bastionTelemetryPresent[i] = bastion.TryGetParticipant(
+                    new CombatEntityId(i + 1), out var snapshot);
+                if (!_bastionTelemetryPresent[i]) continue;
+                _bastionTelemetrySnapshots[i] = snapshot;
+                if (_hasPreviousBastionState && !_previousBastionAlive[i] && snapshot.Alive)
+                {
+                    _currentResult.RespawnCount++;
+                }
+
+                _previousBastionAlive[i] = snapshot.Alive;
+                if (snapshot.Spectating) spectatorCount++;
+                if (snapshot.Alive || snapshot.RespawnPending)
+                {
+                    if (snapshot.TeamId == BastionTeamId.Raja) rajaHasReturn = true;
+                    else if (snapshot.TeamId == BastionTeamId.Rival) rivalHasReturn = true;
+                }
+            }
+
+            _currentResult.MaxSimultaneousSpectators = Math.Max(
+                _currentResult.MaxSimultaneousSpectators,
+                spectatorCount);
+            if (_hasPreviousBastionState)
+            {
+                if (_previousRajaHasReturn && !rajaHasReturn) _currentResult.TeamWipeCount++;
+                if (_previousRivalHasReturn && !rivalHasReturn) _currentResult.TeamWipeCount++;
+            }
+
+            for (var teamStart = 0; teamStart < BastionCrownMatch.ParticipantCount; teamStart += BastionCrownMatch.TeamSize)
+            {
+                for (var i = teamStart; i < teamStart + BastionCrownMatch.TeamSize; i++)
+                {
+                    if (!_bastionTelemetryPresent[i] || !_bastionTelemetrySnapshots[i].Alive) continue;
+                    for (var j = i + 1; j < teamStart + BastionCrownMatch.TeamSize; j++)
+                    {
+                        if (!_bastionTelemetryPresent[j] || !_bastionTelemetrySnapshots[j].Alive) continue;
+                        var spacing = Float2.Distance(
+                            _bastionTelemetrySnapshots[i].Position,
+                            _bastionTelemetrySnapshots[j].Position);
+                        _allySpacingTotal += spacing;
+                        _currentResult.AllySpacingSamples++;
+                        if (_currentResult.MinAllySpacingMeters < 0f ||
+                            spacing < _currentResult.MinAllySpacingMeters)
+                        {
+                            _currentResult.MinAllySpacingMeters = spacing;
+                        }
+
+                        _currentResult.MaxAllySpacingMeters = Math.Max(
+                            _currentResult.MaxAllySpacingMeters,
+                            spacing);
+                    }
+                }
+            }
+
+            if (_currentResult.AllySpacingSamples > 0)
+            {
+                _currentResult.AverageAllySpacingMeters =
+                    _allySpacingTotal / _currentResult.AllySpacingSamples;
+            }
+
+            _previousRajaHasReturn = rajaHasReturn;
+            _previousRivalHasReturn = rivalHasReturn;
+            _previousCrownSocket = crown.SocketIndex;
+            _previousCrownCarrier = crown.CarrierId.Value;
+            _previousRajaDeposits = raja.Deposits;
+            _previousRivalDeposits = rival.Deposits;
         }
 
         private void CaptureMovementCommand(MovementCommand command)
@@ -576,6 +816,87 @@ namespace BattleRaja.Presentation.AI
                         ? projectileHits
                         : 0
                 });
+            }
+        }
+
+        private static void CollectBastionFinalState(AutonomousBotMatchResult result)
+        {
+            var controller = FindAnyObjectByType<OfflineMatchController>();
+            var bastion = controller != null ? controller.BastionCrown : null;
+            if (bastion == null) return;
+
+            var raja = bastion.GetTeamScore(BastionTeamId.Raja);
+            var rival = bastion.GetTeamScore(BastionTeamId.Rival);
+            var rajaTickets = bastion.GetTickets(BastionTeamId.Raja);
+            var rivalTickets = bastion.GetTickets(BastionTeamId.Rival);
+            var summary = bastion.Result;
+            result.IsBastionCrown = true;
+            result.BastionElapsedSeconds = bastion.ElapsedSeconds;
+            result.WinnerTeam = !bastion.IsEnded
+                ? "Unresolved"
+                : summary.IsDraw ? "Draw" : summary.Winner.ToString();
+            result.ResultReason = bastion.IsEnded ? summary.Reason.ToString() : "TickBudgetExceeded";
+            result.IsDraw = bastion.IsEnded && summary.IsDraw;
+            result.Overtime = bastion.WasOvertime;
+            // A stalemate is deliberately narrow: a clock/overtime-cap draw is
+            // counted, while a normal clock winner is not mislabeled.
+            result.Stalemate = bastion.IsEnded &&
+                (summary.IsDraw || summary.Reason == BastionMatchResultReason.OvertimeCap);
+
+            result.RajaScore = raja.Score;
+            result.RivalScore = rival.Score;
+            result.RajaDeposits = raja.Deposits;
+            result.RivalDeposits = rival.Deposits;
+            result.RajaKOs = raja.KOs;
+            result.RivalKOs = rival.KOs;
+            result.RajaAssists = raja.Assists;
+            result.RivalAssists = rival.Assists;
+            result.RajaCrownPickups = raja.CrownPickups;
+            result.RivalCrownPickups = rival.CrownPickups;
+            result.RajaDeaths = raja.Deaths;
+            result.RivalDeaths = rival.Deaths;
+            result.RajaDamageDealt = raja.DamageDealt;
+            result.RivalDamageDealt = rival.DamageDealt;
+            result.RajaHealingDone = raja.HealingDone;
+            result.RivalHealingDone = rival.HealingDone;
+            result.RajaGadgetUses = raja.GadgetUses;
+            result.RivalGadgetUses = rival.GadgetUses;
+            result.RajaAbilityUses = raja.AbilityUses;
+            result.RivalAbilityUses = rival.AbilityUses;
+            result.RajaObjectiveSeconds = raja.ObjectiveSeconds;
+            result.RivalObjectiveSeconds = rival.ObjectiveSeconds;
+            result.RajaTicketsMaximum = rajaTickets.Maximum;
+            result.RivalTicketsMaximum = rivalTickets.Maximum;
+            result.RajaTicketsRemaining = rajaTickets.Remaining;
+            result.RivalTicketsRemaining = rivalTickets.Remaining;
+            result.RajaTicketsSpent = rajaTickets.Spent;
+            result.RivalTicketsSpent = rivalTickets.Spent;
+
+            var squad = bastion.SquadMetrics;
+            result.SquadSignalUpdates = squad.SignalUpdates;
+            result.SquadPlanRefreshes = squad.PlanRefreshes;
+            result.SquadEscortAssignments = squad.EscortAssignments;
+            result.SquadSupportAssignments = squad.SupportAssignments;
+            result.SquadEscortHandoffs = squad.EscortHandoffs;
+            result.SquadRetreatSignals = squad.RetreatSignals;
+            result.SquadMaxSignalAgeTicks = squad.MaxSignalAgeTicks;
+
+            for (var i = 0; i < BastionCrownMatch.ParticipantCount; i++)
+            {
+                if (!bastion.TryGetParticipant(new CombatEntityId(i + 1), out var snapshot)) continue;
+                var participant = FindParticipant(result, snapshot.ActorId.Value);
+                participant.Team = snapshot.TeamId.ToString();
+                participant.BastionRole = snapshot.Member.Role.ToString();
+                participant.BastionDeaths = snapshot.Deaths;
+                participant.BastionDamageDealt = snapshot.DamageDealt;
+                participant.BastionAssists = snapshot.Assists;
+                participant.BastionHealingDone = snapshot.HealingDone;
+                participant.BastionGadgetUses = snapshot.GadgetUses;
+                participant.BastionAbilityUses = snapshot.AbilityUses;
+                participant.BastionObjectiveSeconds = snapshot.ObjectiveSeconds;
+                participant.BastionAlive = snapshot.Alive;
+                participant.BastionSpectating = snapshot.Spectating;
+                participant.BastionRespawnPending = snapshot.RespawnPending;
             }
         }
 

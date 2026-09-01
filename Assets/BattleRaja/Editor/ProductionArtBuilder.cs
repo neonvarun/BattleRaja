@@ -639,7 +639,10 @@ namespace BattleRaja.Editor
             var root = CreateRoot("BijliProductionModel");
             AddPart(root, "Body", meshes["BijliTorso"], materials["BijliCyan"], new Vector3(0f, 0.72f, 0f), Vector3.one, Quaternion.identity);
             AddPart(root, "Head", meshes["Head"], materials["BijliGold"], new Vector3(0f, 1.55f, 0f), Vector3.one * 0.92f, Quaternion.identity);
-            AddPart(root, "Visor", meshes["VisorPlate"], materials["Ink"], new Vector3(0f, 1.56f, 0.31f), new Vector3(1f, 0.8f, 0.65f), Quaternion.identity);
+            // The gameplay camera sits on the -Z presentation side. Keep the
+            // identity accents there so the live silhouette reads as a fighter
+            // rather than an unmarked rounded body from the normal play angle.
+            AddPart(root, "Visor", meshes["VisorPlate"], materials["Ink"], new Vector3(0f, 1.56f, -0.31f), new Vector3(1f, 0.8f, 0.65f), Quaternion.identity);
             AddPart(root, "CrestLeft", meshes["Fin"], materials["BijliGold"], new Vector3(-0.17f, 1.94f, 0f), Vector3.one * 0.6f, Quaternion.Euler(0f, 0f, -22f));
             AddPart(root, "CrestRight", meshes["Fin"], materials["BijliGold"], new Vector3(0.17f, 1.94f, 0f), Vector3.one * 0.6f, Quaternion.Euler(0f, 0f, 22f));
             AddPart(root, "ShoulderLeft", meshes["ShoulderOrb"], materials["BijliCyan"], new Vector3(-0.51f, 1.05f, 0f), Vector3.one * 0.8f, Quaternion.identity);
@@ -648,8 +651,8 @@ namespace BattleRaja.Editor
             AddPart(root, "ArmGuardRight", meshes["ArmGuard"], materials["BijliGold"], new Vector3(0.58f, 0.68f, 0.02f), new Vector3(0.8f, 1.1f, 0.8f), Quaternion.Euler(0f, 0f, -18f));
             AddPart(root, "BootLeft", meshes["BootSculpt"], materials["Ink"], new Vector3(-0.22f, 0.12f, 0.06f), new Vector3(1.2f, 1.2f, 1.5f), Quaternion.identity);
             AddPart(root, "BootRight", meshes["BootSculpt"], materials["Ink"], new Vector3(0.22f, 0.12f, 0.06f), new Vector3(1.2f, 1.2f, 1.5f), Quaternion.identity);
-            AddPart(root, "BoltTab", meshes["BoltBadge"], materials["Crystal"], new Vector3(0f, 0.86f, 0.33f), new Vector3(0.72f, 0.82f, 0.72f), Quaternion.identity);
-            AddPart(root, "EnergyCore", meshes["Gem"], materials["BijliGold"], new Vector3(0f, 1.10f, 0.28f), Vector3.one * 0.34f, Quaternion.identity);
+            AddPart(root, "BoltTab", meshes["BoltBadge"], materials["Crystal"], new Vector3(0f, 0.86f, -0.33f), new Vector3(0.72f, 0.82f, 0.72f), Quaternion.identity);
+            AddPart(root, "EnergyCore", meshes["Gem"], materials["BijliGold"], new Vector3(0f, 1.10f, -0.28f), Vector3.one * 0.34f, Quaternion.identity);
             SavePrefab(root, BijliPrefabPath);
         }
 
@@ -658,16 +661,16 @@ namespace BattleRaja.Editor
             var root = CreateRoot("PehelProductionModel");
             AddPart(root, "Body", meshes["PehelTorso"], materials["PehelClay"], new Vector3(0f, 0.70f, 0f), Vector3.one, Quaternion.identity);
             AddPart(root, "Head", meshes["Head"], materials["PehelCream"], new Vector3(0f, 1.48f, 0f), Vector3.one * 1.03f, Quaternion.identity);
-            AddPart(root, "Brow", meshes["SashPlate"], materials["Ink"], new Vector3(0f, 1.60f, 0.30f), new Vector3(0.72f, 0.5f, 0.5f), Quaternion.identity);
-            AddPart(root, "Visor", meshes["VisorPlate"], materials["PehelClay"], new Vector3(0f, 1.48f, 0.34f), new Vector3(1.1f, 0.4f, 0.7f), Quaternion.identity);
+            AddPart(root, "Brow", meshes["SashPlate"], materials["Ink"], new Vector3(0f, 1.60f, -0.30f), new Vector3(0.72f, 0.5f, 0.5f), Quaternion.identity);
+            AddPart(root, "Visor", meshes["VisorPlate"], materials["PehelClay"], new Vector3(0f, 1.48f, -0.34f), new Vector3(1.1f, 0.4f, 0.7f), Quaternion.identity);
             AddPart(root, "ShoulderLeft", meshes["ShoulderOrb"], materials["PehelCream"], new Vector3(-0.58f, 1.03f, 0f), Vector3.one * 1.05f, Quaternion.identity);
             AddPart(root, "ShoulderRight", meshes["ShoulderOrb"], materials["PehelCream"], new Vector3(0.58f, 1.03f, 0f), Vector3.one * 1.05f, Quaternion.identity);
             AddPart(root, "Belt", meshes["Ring"], materials["PehelCream"], new Vector3(0f, 0.74f, 0f), new Vector3(1.15f, 1f, 0.88f), Quaternion.identity);
-            AddPart(root, "Buckle", meshes["Gem"], materials["PehelCream"], new Vector3(0f, 0.72f, 0.36f), Vector3.one * 0.7f, Quaternion.identity);
+            AddPart(root, "Buckle", meshes["Gem"], materials["PehelCream"], new Vector3(0f, 0.72f, -0.36f), Vector3.one * 0.7f, Quaternion.identity);
             AddPart(root, "GauntletLeft", meshes["ArmGuard"], materials["PehelClay"], new Vector3(-0.67f, 0.58f, 0f), Vector3.one * 0.8f, Quaternion.Euler(0f, 0f, 20f));
             AddPart(root, "GauntletRight", meshes["ArmGuard"], materials["PehelClay"], new Vector3(0.67f, 0.58f, 0f), Vector3.one * 0.8f, Quaternion.Euler(0f, 0f, -20f));
             AddPart(root, "Sash", meshes["SashPlate"], materials["PehelCream"], new Vector3(0f, 1.00f, -0.34f), new Vector3(1.2f, 0.9f, 0.9f), Quaternion.Euler(0f, 0f, -18f));
-            AddPart(root, "ChestMedallion", meshes["Gem"], materials["PehelCream"], new Vector3(0f, 1.02f, 0.28f), Vector3.one * 0.38f, Quaternion.identity);
+            AddPart(root, "ChestMedallion", meshes["Gem"], materials["PehelCream"], new Vector3(0f, 1.02f, -0.28f), Vector3.one * 0.38f, Quaternion.identity);
             AddPart(root, "BootLeft", meshes["BootSculpt"], materials["Ink"], new Vector3(-0.26f, 0.11f, 0.04f), new Vector3(1.5f, 1.4f, 1.7f), Quaternion.identity);
             AddPart(root, "BootRight", meshes["BootSculpt"], materials["Ink"], new Vector3(0.26f, 0.11f, 0.04f), new Vector3(1.5f, 1.4f, 1.7f), Quaternion.identity);
             SavePrefab(root, PehelPrefabPath);
@@ -679,13 +682,13 @@ namespace BattleRaja.Editor
             AddPart(root, "Cloak", meshes["MayaCloak"], materials["MayaViolet"], new Vector3(0f, 0.72f, 0f), Vector3.one, Quaternion.identity);
             AddPart(root, "Head", meshes["Head"], materials["MayaMint"], new Vector3(0f, 1.52f, 0f), Vector3.one * 0.95f, Quaternion.identity);
             AddPart(root, "Hood", meshes["MayaCloak"], materials["MayaViolet"], new Vector3(0f, 1.54f, -0.03f), new Vector3(0.65f, 0.62f, 0.62f), Quaternion.identity);
-            AddPart(root, "Mask", meshes["MaskPlate"], materials["MayaRose"], new Vector3(0f, 1.48f, 0.30f), new Vector3(0.9f, 0.75f, 0.65f), Quaternion.identity);
-            AddPart(root, "ScarfLeft", meshes["ScarfRibbon"], materials["MayaRose"], new Vector3(-0.28f, 1.05f, 0.10f), new Vector3(0.75f, 1.1f, 0.65f), Quaternion.Euler(0f, 0f, 16f));
-            AddPart(root, "ScarfRight", meshes["ScarfRibbon"], materials["MayaRose"], new Vector3(0.28f, 1.05f, 0.10f), new Vector3(0.75f, 1.1f, 0.65f), Quaternion.Euler(0f, 0f, -16f));
-            AddPart(root, "CloakTrim", meshes["SashPlate"], materials["MayaMint"], new Vector3(0f, 0.52f, 0.18f), new Vector3(1.3f, 0.5f, 0.75f), Quaternion.identity);
-            AddPart(root, "CharmLeft", meshes["Gem"], materials["MayaMint"], new Vector3(-0.48f, 0.75f, 0.2f), Vector3.one * 0.55f, Quaternion.identity);
-            AddPart(root, "CharmRight", meshes["Gem"], materials["MayaMint"], new Vector3(0.48f, 0.75f, 0.2f), Vector3.one * 0.55f, Quaternion.identity);
-            AddPart(root, "ShardCore", meshes["Gem"], materials["MayaMint"], new Vector3(0f, 1.02f, 0.25f), Vector3.one * 0.34f, Quaternion.Euler(0f, 15f, 0f));
+            AddPart(root, "Mask", meshes["MaskPlate"], materials["MayaRose"], new Vector3(0f, 1.48f, -0.30f), new Vector3(0.9f, 0.75f, 0.65f), Quaternion.identity);
+            AddPart(root, "ScarfLeft", meshes["ScarfRibbon"], materials["MayaRose"], new Vector3(-0.28f, 1.05f, -0.10f), new Vector3(0.75f, 1.1f, 0.65f), Quaternion.Euler(0f, 0f, 16f));
+            AddPart(root, "ScarfRight", meshes["ScarfRibbon"], materials["MayaRose"], new Vector3(0.28f, 1.05f, -0.10f), new Vector3(0.75f, 1.1f, 0.65f), Quaternion.Euler(0f, 0f, -16f));
+            AddPart(root, "CloakTrim", meshes["SashPlate"], materials["MayaMint"], new Vector3(0f, 0.52f, -0.18f), new Vector3(1.3f, 0.5f, 0.75f), Quaternion.identity);
+            AddPart(root, "CharmLeft", meshes["Gem"], materials["MayaMint"], new Vector3(-0.48f, 0.75f, -0.2f), Vector3.one * 0.55f, Quaternion.identity);
+            AddPart(root, "CharmRight", meshes["Gem"], materials["MayaMint"], new Vector3(0.48f, 0.75f, -0.2f), Vector3.one * 0.55f, Quaternion.identity);
+            AddPart(root, "ShardCore", meshes["Gem"], materials["MayaMint"], new Vector3(0f, 1.02f, -0.25f), Vector3.one * 0.34f, Quaternion.Euler(0f, 15f, 0f));
             AddPart(root, "BootLeft", meshes["BootSculpt"], materials["Ink"], new Vector3(-0.2f, 0.1f, 0.02f), new Vector3(1.2f, 1.2f, 1.55f), Quaternion.identity);
             AddPart(root, "BootRight", meshes["BootSculpt"], materials["Ink"], new Vector3(0.2f, 0.1f, 0.02f), new Vector3(1.2f, 1.2f, 1.55f), Quaternion.identity);
             SavePrefab(root, MayaPrefabPath);
