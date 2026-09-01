@@ -1951,3 +1951,52 @@ Record every material choice here. Do not silently overwrite old decisions.
   `BazaarBastion.unity` and report
   `Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260901-070002238-9101.json`.
 - **Owner:** Human project owner
+
+### ADR-080 - Keep the tutorial on the authoritative path with a bounded safety profile
+
+- **Date:** 2026-09-02
+- **Status:** Accepted for the V1 offline onboarding route; full Bastion tutorial content,
+  human comfort and final balance review remain open.
+- **Context:** The authored tutorial scene was inherited from the earlier MovementLab
+  Solo foundation. Its local combat path could show a projectile hit without advancing the
+  authoritative KO lesson, and normal Aandhi timing could end the walkthrough while a
+  player was reading a card. The gadget pickup also needed to remain forgiving on a
+  portrait touch screen.
+- **Options considered:** Keep local tutorial combat and special-case the overlay; replace
+  the scene with a separate scripted fake; or keep the real scene and route it through
+  authority with safety behavior scoped only to tutorial mode.
+- **Decision:** `TutorialArena` uses the same authority-driven movement, damage, collection
+  and replay path as production. `OfflineMatchController.tutorialMode` delays outside-zone
+  damage to keep the Aandhi warning visible during onboarding and expands only the tutorial
+  gadget collection radius to 3 m. Production Solo/Bastion scenes retain their authored
+  cadence and 1.3 m collection radius. Bots remain disabled in the legacy training layout;
+  this does not advertise the scene as a replacement for the 4v4 Bastion match.
+- **Consequences:** A real physical attack can now unlock the authoritative elimination
+  lesson, pre-collected Tiffin state is reconciled when the gadget lesson begins, and a
+  reader cannot be removed by the outside zone during the card flow. The tutorial remains
+  a legacy MovementLab/Solo layout, so a dedicated Bastion Crown tutorial and complete
+  physical victory/rematch comfort route are still owner-review items.
+- **Evidence/sources:** `OfflineMatchController.cs`, `BuildEntrypoints.cs`,
+  `TutorialArena.unity`, full 159/159 EditMode and 94/94 PlayMode reruns, and approved-Lava
+  captures under `Builds/Local/V1GameplayTruth/Next/lava-tutorial-20260902/` including the
+  authoritative `73-elimination-authority.png` and `74-victory-authority.png` states.
+- **Owner:** Human project owner
+
+### ADR-081 - Keep strict bot pacing variance visible across fresh processes
+
+- **Date:** 2026-09-02
+- **Status:** Accepted for evidence reporting; balance tuning remains open.
+- **Context:** Two fresh Unity-process 100-match runs on the same current source both
+  completed all matches, but one landed at 89/100 combat-positive and failed the strict
+  assertion while the immediate rerun landed at 92/100 and passed. Hiding the miss or
+  lowering the threshold would overstate repeatability.
+- **Decision:** Keep the strict 90% combat-positive assertion unchanged, report both the
+  failed and passing run, and treat the passing rerun as the selected evidence only with
+  process variance called out. Do not tune the game or test solely to erase one miss.
+- **Consequences:** Current technical gates remain auditable, while pacing/balance and
+  longer repeated-sample confidence remain open before any Play Store claim.
+- **Evidence/sources:**
+  `Next/production-bot-100-tutorial-authority.xml` (89/100 assertion miss),
+  `Next/production-bot-100-tutorial-authority-rerun.xml` (94/94), and
+  `batch-20260901-220113865-9101.json` (92/100 combat-positive).
+- **Owner:** Human project owner

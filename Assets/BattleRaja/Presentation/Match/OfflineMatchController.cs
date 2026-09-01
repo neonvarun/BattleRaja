@@ -28,6 +28,8 @@ namespace BattleRaja.Presentation.Match
         [SerializeField] private int simulationTickRate = 30;
         [SerializeField] private bool authorityDrivenMovement;
         [SerializeField] private bool autoStart = true;
+        [Header("Tutorial safety")]
+        [SerializeField] private bool tutorialMode;
 
         private readonly List<MatchActorBinding> _actors = new List<MatchActorBinding>(8);
         private OfflineMatchAuthority _authority;
@@ -83,6 +85,7 @@ namespace BattleRaja.Presentation.Match
         public MatchParticipantSnapshot[] Results { get; private set; }
         public int SimulationTick => _simulationClock != null ? _simulationClock.Tick : 0;
         public bool IsMatchStarted => _authority != null && Simulation != null;
+        public bool IsTutorialMode => tutorialMode;
         public float SimulationStepSeconds => _simulationClock != null ? (float)_simulationClock.StepSeconds : 1f / Mathf.Max(1, simulationTickRate);
         public double SimulationInterpolationAlpha => _simulationClock != null ? _simulationClock.InterpolationAlpha : 0d;
         public bool AuthorityDrivenMovement => authorityDrivenMovement;
@@ -649,7 +652,12 @@ namespace BattleRaja.Presentation.Match
             _replaySpawns = spawns.ToArray();
             _bastionCrown = null;
             var definition = useBastionCrown ? OfflineMatchDefinition.BastionCrown : OfflineMatchDefinition.SoloRaja;
-            _authority = new OfflineMatchAuthority(definition, outsideDamageTickSeconds);
+            // Keep the Aandhi warning and zone state visible during onboarding, but do not
+            // let a player die while they are reading a lesson card. The safety cadence is
+            // scoped to the authored tutorial scene; production Solo/Bastion matches keep
+            // their configured outside-damage cadence.
+            var effectiveOutsideDamageTickSeconds = tutorialMode ? 1000f : outsideDamageTickSeconds;
+            _authority = new OfflineMatchAuthority(definition, effectiveOutsideDamageTickSeconds);
             var pickupDefinitions = new List<MatchPickupDefinition>(pickups != null ? pickups.Length : 0);
             if (pickups != null)
             {
@@ -679,7 +687,11 @@ namespace BattleRaja.Presentation.Match
                             i,
                             pickup.GadgetId,
                             new Float2(pickup.transform.position.x, pickup.transform.position.z),
-                            1.3f));
+                            // The tutorial pickup is deliberately placed on the
+                            // player's opening lane. Give that lesson a forgiving
+                            // authority radius so an earlier movement exercise
+                            // cannot strand the player just outside the item.
+                            tutorialMode ? 3f : 1.3f));
                     }
                 }
             }

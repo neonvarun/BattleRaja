@@ -13,7 +13,7 @@ prototype until every V1 completion gate and remaining human gate passes.
 - Approved physical evidence device: Lava `ST5GDW23LB004392` (`LAVA LXX508`) only.
 - Preserve internal networking/Web seams without exposing unusable public online paths.
 
-## Checkpoint 0 - exact-final balanced continuation — 2026-09-02
+## Checkpoint 0 - exact-final balanced continuation — 2026-09-02 (superseded by 0b/0c)
 
 The current working tree supersedes the 2026-09-01 continuation record with the
 authority/squad blackboard hardening, deterministic post-respawn team placement and
@@ -23,9 +23,10 @@ fair production pacing. The exact evidence record is
 - Static validation: **0 errors / 0 warnings**.
 - EditMode: **159/159 passed** (`Builds/Local/V1GameplayTruth/Next/editmode-final.xml`).
 - PlayMode: **94/94 passed** (`Builds/Local/V1GameplayTruth/Next/playmode-final.xml`).
-- Strict production-bot gate: **94/94 tests passed**; 100/100 terminal matches, 93/100
-  in the 240–360 s window, 93/100 combat-positive, 61/100 with ≥3 combat eliminations,
-  3 Aandhi-only, 100/100 bot-to-bot damaging pairs, and zero protected/invalid samples.
+- Strict production-bot gate at this checkpoint: **94/94 tests passed**; the earlier
+  selected report recorded 100/100 terminal matches, 93/100 in the 240–360 s window,
+  93/100 combat-positive and 61/100 with ≥3 combat eliminations. The superseding 0c
+  rerun records 92/100 combat-positive and is the current selected evidence.
 - Bastion v2 replay soak: two seeds × 8,400 ticks, zero combined-hash divergence; planner
   coverage remains contest 64, escort 64, defend 96, collapse 64 and Aandhi-retreat 32.
 - APK: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`, **41,514,464 bytes**,
@@ -47,6 +48,50 @@ progress**. Final commissioned art/cultural/accessibility/fun review, complete t
 physical route, normalized endurance, physical 16 KB runtime, permanent identity/signing,
 privacy/Data safety/IARC and Play Console actions remain open; no public publication was
 performed.
+
+## Checkpoint 0c - strict production-bot rerun — 2026-09-02
+
+The same current source was exercised again in a fresh Unity process after the tutorial
+authority/safety patch. The strict release assertions passed **94/94**. Report:
+`Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260901-220113865-9101.json`
+(SHA-256 `D44275C62CDF18ADDD9581020088FAB39685279E0AD896CE8F799C20DA867E73`). It records
+100/100 terminal matches, **92/100** combat-positive, **64/100** with at least three
+combat eliminations, **3** Aandhi-only, **100/100** bot-to-bot damaging pairs, zero
+protected/invalid samples, 17,714 accepted attacks, 8,293 projectile hits, 12,281/15,110
+accepted abilities, 560 effective abilities and 248/293 successful gadget uses. Duration
+was **109.765–273.022 s** (average **237.891 s**). The first fresh process completed
+100/100 but missed the combat-positive assertion at 89/100; because no source changed,
+the difference is retained as pacing variance and an open tuning risk.
+
+## Checkpoint 0b - tutorial authority and safety follow-up — 2026-09-02
+
+The tutorial scene now uses the real authority-driven movement, combat, pickup and replay
+path. Its scoped `tutorialMode` delays outside-zone damage while lessons are visible and
+widens only the opening gadget collection radius; production Solo/Bastion cadence and
+pickup rules are unchanged. The authored layout remains the legacy MovementLab/Solo
+training arena with bots disabled, so this follow-up does not claim a dedicated Bastion
+Crown tutorial.
+
+- Static validation: **0 errors / 0 warnings**.
+- EditMode: **159/159 passed** (`Builds/Local/V1GameplayTruth/Next/editmode-tutorial-authority.xml`).
+- PlayMode: **94/94 passed** (`Builds/Local/V1GameplayTruth/Next/playmode-tutorial-authority.xml`).
+- APK: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`, **41,520,532 bytes**,
+  SHA-256 `56F3BAB99E304A15548D8073BA6B41EDDCBDE17A2C7476D923B06094D5A9649E`.
+- AAB: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`, **37,346,030 bytes**,
+  SHA-256 `19E2E7CCFFD7B2CBA993DE3608D8D62F4A351425AA76D0085138C1DF6DD96BCA`.
+- Checker: temporary package `com.example.battleraja.m11`, target SDK 36, no network
+  permissions, ARM64-only native libraries, static 16 KB alignment and creative dimensions
+  all passed. Final identity/signing remains intentionally unset.
+- Lava `ST5GDW23LB004392`: exact APK route reached the Movement, Aim, Basic Attack,
+  Ability, Gadget/Tiffin, Aandhi, Elimination and Victory tutorial cards. The target defeat
+  is visible in `Builds/Local/V1GameplayTruth/Next/lava-tutorial-20260902/73-elimination-authority.png`;
+  the final Victory card is visible in `74-victory-authority.png`. No configured fatal
+  markers were present in the sampled logcat window.
+
+The truthful classification remains **Prototype — Android offline release candidate in
+progress**. Full Bastion tutorial content, physical results/rematch comfort, final authored
+art/cultural/fun review, normalized endurance, physical 16 KB runtime, permanent identity/
+signing, privacy/Data Safety/IARC and Play Console actions remain open.
 
 ## Checkpoint 0a - previous offline V1 continuation — 2026-09-01
 

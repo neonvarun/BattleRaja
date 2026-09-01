@@ -20,31 +20,45 @@ physical Lava action-by-action route review, sustained performance, final identi
 signing, accessibility, legal/privacy/cultural approval and Play Console review
 remain open.
 
-## Latest current-source evidence — 2026-09-02 — exact-final offline Android continuation
+The latest continuation additionally hardens `TutorialArena` to use the authoritative
+movement/combat/pickup path, with a tutorial-only outside-zone safety cadence and forgiving
+opening gadget radius. The exact candidate APK is **41,520,532 bytes** (SHA-256
+`56F3BAB99E304A15548D8073BA6B41EDDCBDE17A2C7476D923B06094D5A9649E`) and the matching AAB
+is **37,346,030 bytes** (SHA-256
+`19E2E7CCFFD7B2CBA993DE3608D8D62F4A351425AA76D0085138C1DF6DD96BCA`). Post-change static
+validation is **0/0**, EditMode **159/159** and PlayMode **94/94**. Fresh approved-Lava
+evidence is under `Builds/Local/V1GameplayTruth/Next/lava-tutorial-20260902/` and reaches
+the authoritative elimination and Victory tutorial cards. The scene remains a legacy
+MovementLab/Solo tutorial layout rather than a dedicated 4v4 Bastion tutorial, and full
+results/rematch comfort remains open.
+
+## Latest current-source evidence — 2026-09-02 — tutorial-authority continuation
 
 The superseding continuation record is `Docs/QA/V1_OFFLINE_ANDROID_VALIDATION_2026-09-02.md`.
 Static validation is **0/0**, EditMode is **159/159**, PlayMode is **94/94**, and the
-strict production-bot run is **94/94**. Its 100-match report records **93/100** in the
-240–360 second target window, **93/100** combat-positive, **61/100** with at least three
-combat eliminations, **3** Aandhi-only resolutions, **100/100** bot-to-bot damaging pairs,
-and zero protected-warmup or invalid-position samples. The v2 replay soak remains two
-8,400-tick seeds with zero combined-hash divergence; squad planner coverage remains
-contest 64, escort 64, defend 96, collapse 64 and Aandhi-retreat 32.
+selected strict production-bot rerun is **94/94**. Its 100-match report records
+**92/100** combat-positive, **64/100** with at least three combat eliminations,
+**3** Aandhi-only resolutions, **100/100** bot-to-bot damaging pairs, and zero
+protected-warmup or invalid-position samples. The v2 replay soak remains two 8,400-tick
+seeds with zero combined-hash divergence; squad planner coverage remains contest 64,
+escort 64, defend 96, collapse 64 and Aandhi-retreat 32. A preceding fresh process
+completed 100/100 but landed at 89/100 combat-positive; no source changed between runs,
+so this pacing variance is retained as an open risk.
 
-The exact APK is **41,514,464 bytes** (`7243A7A324E43FC2C2A274DDF1B27C89166E5E9CF5F39C981D650355F696E9B6`),
-and the AAB is **37,339,995 bytes**
-(`ABC16E0F7B499690BA41ECC9CBAB5D243C35E85783B6051E5E1982B51ACE8D48`). The release
+The latest tutorial-authority APK is **41,520,532 bytes**
+(`56F3BAB99E304A15548D8073BA6B41EDDCBDE17A2C7476D923B06094D5A9649E`), and the AAB is
+**37,346,030 bytes**
+(`19E2E7CCFFD7B2CBA993DE3608D8D62F4A351425AA76D0085138C1DF6DD96BCA`). The release
 checker passes temporary package `com.example.battleraja.m11`, target SDK 36, no network
 permissions, ARM64-only native libraries, static 16 KB alignment and store dimensions.
-Fresh exact-final approved-Lava evidence is under
-`Builds/Local/V1GameplayTruth/Final/lava-20260901-balanced/` and reaches menu → Bastion
-briefing → fighter choice → live arena → action/settings → results → rematch and airplane
-mode toggle. The 30-second raw capture reports PSS **60,858–252,074 KB**, RSS
-**176,511–390,924 KB**, graphics PSS **10,455–77,512 KB**, top CPU **35.7–57.1%**,
-thermal **0** and no configured fatal markers. Lava reports 4 KB pages and Unity `gfxinfo`
-has no usable frame histogram. The full tutorial action route, commissioned art, normalized
-endurance, physical 16 KB runtime, permanent identity/signing, privacy/Data safety/IARC
-and Play owner gates remain open.
+Fresh approved-Lava tutorial evidence is under
+`Builds/Local/V1GameplayTruth/Next/lava-tutorial-20260902/`; exact-final match evidence
+remains under `Builds/Local/V1GameplayTruth/Final/lava-20260901-balanced/`. The 30-second
+raw capture reports PSS **60,858–252,074 KB**, RSS **176,511–390,924 KB**, graphics PSS
+**10,455–77,512 KB**, top CPU **35.7–57.1%**, thermal **0** and no configured fatal
+markers. Lava reports 4 KB pages and Unity `gfxinfo` has no usable frame histogram. The
+full Bastion tutorial, commissioned art, normalized endurance, physical 16 KB runtime,
+permanent identity/signing, privacy/Data safety/IARC and Play owner gates remain open.
 
 ## Previous current-source evidence — 2026-09-01 — offline Android continuation
 

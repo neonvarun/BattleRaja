@@ -118,3 +118,13 @@ Record every fighter, weapon, gadget, Aandhi or match-rule balance change with:
 - **Follow-up**: the remaining 7/100 outside-participant rate, 45 failed gadget attempts,
   151,085 outside-participant ticks and human feel review stay visible as tuning work;
   automated pacing evidence is not a substitute for a physical fun/balance gate.
+
+### Strict fresh-process rerun — 2026-09-02
+
+The same current source was exercised again in a fresh Unity process with the strict
+100-match assertions. The rerun passed **94/94** and recorded 100/100 terminal matches,
+**92/100** combat-positive, **64/100** with at least three combat eliminations, **3**
+Aandhi-only resolutions and **100/100** bot-to-bot damaging pairs. An immediately
+preceding no-code-change process completed 100/100 but landed at 89/100 combat-positive
+and failed that assertion; both results remain visible as pacing variance rather than
+being tuned away.

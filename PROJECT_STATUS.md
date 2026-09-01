@@ -6,6 +6,33 @@
 
 ## Current state
 
+- **Tutorial authority/safety follow-up (2026-09-02):** `TutorialArena` now uses the real
+  authority-driven movement, combat, pickup and replay path. A tutorial-only safety profile
+  delays outside-zone damage while lessons are visible and widens the opening gadget
+  collection radius; production Solo/Bastion rules are unchanged. The exact candidate APK
+  is **41,520,532 bytes**, SHA-256
+  `56F3BAB99E304A15548D8073BA6B41EDDCBDE17A2C7476D923B06094D5A9649E`; the AAB is
+  **37,346,030 bytes**, SHA-256
+  `19E2E7CCFFD7B2CBA993DE3608D8D62F4A351425AA76D0085138C1DF6DD96BCA`. Static validation
+  is **0/0**, EditMode **159/159** and PlayMode **94/94**. Approved-Lava evidence under
+  `Builds/Local/V1GameplayTruth/Next/lava-tutorial-20260902/` reaches the authoritative
+  elimination and Victory cards. The authored scene remains the legacy MovementLab/Solo
+  layout with bots disabled, not a dedicated Bastion Crown tutorial; complete physical
+  results/rematch comfort remains open.
+
+- **Strict production-bot rerun (2026-09-02):** The same current tree was exercised in a
+  fresh Unity process with the 100-match release assertions. The rerun passed **94/94**;
+  all **100/100** matches terminated, **92/100** were combat-positive, **64/100** reached
+  at least three combat eliminations, **3** were Aandhi-only, and **100/100** had bot-to-bot
+  damaging pairs. The report is
+  `Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260901-220113865-9101.json`
+  (SHA-256 `D44275C62CDF18ADDD9581020088FAB39685279E0AD896CE8F799C20DA867E73`), with
+  `Next/production-bot-100-tutorial-authority-rerun.xml` (SHA-256
+  `05933EF19F9F7B0E963560F8F158E5B45802D4F77E715DF249D8AC5C3E34048C`). An immediately
+  preceding fresh run missed the combat-positive assertion at **89/100** while still
+  completing 100/100; the no-code-change rerun passed at 92/100, so pacing variance stays
+  visible as an open tuning risk rather than being hidden behind one green run.
+
 - **Latest offline Android continuation (2026-09-02; evidence captured 2026-09-01):**
   The working tree now includes the bounded-lag squad blackboard, deterministic support/
   escort handoffs, same-tick command-phase freeze, unique team placements after respawn,

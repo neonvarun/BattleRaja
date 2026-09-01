@@ -445,8 +445,9 @@ MonoBehaviour:
   outsideDamageTickSeconds: 1
   botWeaponDamageMultiplier: 0.5
   simulationTickRate: 30
-  authorityDrivenMovement: 0
+  authorityDrivenMovement: 1
   autoStart: 1
+  tutorialMode: 1
 --- !u!1 &176053637
 GameObject:
   m_ObjectHideFlags: 0

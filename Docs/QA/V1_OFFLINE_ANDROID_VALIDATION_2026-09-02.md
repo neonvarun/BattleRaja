@@ -18,6 +18,42 @@ accessibility comfort, cultural fit, signing or legal approval.
 - Current entry art and production fighter prefabs are repository-owned and editable.
   They remain a generated V1 presentation baseline, not commissioned final art.
 
+## Tutorial authority and safety follow-up — 2026-09-02
+
+The tutorial scene now exercises the same authoritative movement, damage, collection and
+replay path as production. `tutorialMode` is enabled only on `TutorialArena`: it keeps the
+Aandhi warning/zone preview visible while delaying outside-zone damage, and widens the
+tutorial gadget pickup radius to 3 m. Production Solo/Bastion scenes remain unchanged.
+The layout is still the legacy MovementLab/Solo training arena with bots disabled; this is
+an onboarding hardening pass, not a claim that it is a dedicated 4v4 Bastion tutorial.
+
+The post-change gates are **159/159 EditMode** (`Next/editmode-tutorial-authority.xml`),
+**94/94 PlayMode** (`Next/playmode-tutorial-authority.xml`) and static validation **0/0**.
+The rebuilt technical candidate passed the same checker:
+
+| Artifact | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk` | 41,520,532 | `56F3BAB99E304A15548D8073BA6B41EDDCBDE17A2C7476D923B06094D5A9649E` |
+| `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab` | 37,346,030 | `19E2E7CCFFD7B2CBA993DE3608D8D62F4A351425AA76D0085138C1DF6DD96BCA` |
+
+Approved-Lava evidence from that exact APK is under
+`Builds/Local/V1GameplayTruth/Next/lava-tutorial-20260902/`. The route reached the real
+Movement, Aim, Basic Attack, Ability, Gadget (Tiffin use), Aandhi, Elimination and Victory
+cards; `73-elimination-authority.png` shows the target defeated and `74-victory-authority.png`
+shows the final lesson waiting on results. Selected hashes are `67-tutorial-authority.png`
+`0BE45D7DAEA6B9F1BF61A0BB8A1C3A7AC7360B570E6184BBFFEE29E33478A546`,
+`70-gadget-used-authority.png`
+`69A2D5B00E40BAEE125C6EC76DE7FD569D493E2392F9586A322ABDF45365FB72`,
+`73-elimination-authority.png`
+`5A260BDDE2D899E40FF355AC23BC858EA570EF994FAD17A0FACFDAE8FF6068DB` and
+`74-victory-authority.png`
+`41451CD9DA388468067C3BBC97777C26944094FC6DBB1685359090E6057F8CB0`.
+
+The top-resumed activity remained `com.example.battleraja.m11/com.unity3d.player.UnityPlayerGameActivity`;
+the sampled logcat window contained no configured fatal markers. This route does not prove
+the full Bastion Crown tutorial layout, final results/rematch comfort, normalized
+performance, physical 16 KB runtime compatibility or Play readiness.
+
 ## Automated gates
 
 | Gate | Evidence | Result |
@@ -27,7 +63,7 @@ accessibility comfort, cultural fit, signing or legal approval.
 | PlayMode | `Builds/Local/V1GameplayTruth/Next/playmode-final.xml` | **94/94 passed** |
 | Bastion replay soak | two seeds × 8,400 ticks; v2 serialized replay re-execution | **0 combined-hash divergences** |
 | Squad planner coverage | 32 deterministic seeds | contest **64**, escort **64**, defend **96**, collapse **64**, Aandhi-retreat **32** |
-| Production bot gate | `Next/production-bot-100-final.xml`; strict release assertions | **94/94 tests passed** |
+| Production bot gate | `Next/production-bot-100-tutorial-authority-rerun.xml`; strict release assertions | **94/94 tests passed** |
 | Diff hygiene | `git diff --check` | Passed |
 
 The authority now exposes a bounded-lag squad blackboard. It snapshots all eight
@@ -38,26 +74,32 @@ after respawns, so terminal results contain unique placements.
 
 ## Strict 100-match production-bot evidence
 
-Report: `Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260901-070002238-9101.json`
-(SHA-256 `7F7DB5C5822B93F23D6E8C81C9798DC6F00C27C75D60F4DE4FCB61E7B93186EB`).
+Report: `Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260901-220113865-9101.json`
+(SHA-256 `D44275C62CDF18ADDD9581020088FAB39685279E0AD896CE8F799C20DA867E73`).
 
-- 100/100 completed; duration **146.202–273.022 s**, average **242.050 s**.
-- **93/100** landed in the 240–360 s target window; **93/100** had combat KOs;
-  **61/100** had at least three combat eliminations; **3** were Aandhi-only.
+- 100/100 completed; duration **109.765–273.022 s**, average **237.891 s**.
+- **92/100** were combat-positive; **64/100** had at least three combat eliminations;
+  **3** were Aandhi-only. The report exposes the pacing window rather than treating
+  terminal completion as sufficient.
 - **100/100** contained a bot-to-bot damaging pair; protected-warmup damage **0**;
   invalid-position samples **0**.
-- Attacks **17,757/17,757** accepted; projectile hits **8,554**; abilities
-  **12,711/15,787** accepted; effective abilities **623**.
-- Gadgets **257/302** successful attempts, with all three gadget kinds exercised;
+- Attacks **17,714/17,714** accepted; projectile hits **8,293**; abilities
+  **12,281/15,110** accepted; effective abilities **560**.
+- Gadgets **248/293** successful attempts, with all three gadget kinds exercised;
   failed gadget uses **45**.
-- Maximum decision time **11.243 ms**; maximum outside participants **7** and
-  outside-participant ticks **151,085** are retained as tuning evidence, not hidden.
+- Maximum decision time **0.265 ms**; maximum outside participants **7** and
+  outside-participant ticks **103,557** are retained as tuning evidence, not hidden.
 - Production bot weapon damage is equal to the human definition (`1.0x`), and the
   shared production/validation cadence is bounded at `15x`; neither is a combat-power
   advantage over a human.
 
 The first serialized replay contains 7,290 frames and has SHA-256
-`66A90DAD16F6C3069C098ED5727078879D135D8A46FAB55ECE2132FA9DF8ECE3`.
+`88E2A0A4147A7E36A543802AA12D33EA4E9EF574CE371A6B9FBC0D6B56998E4B`.
+
+An immediately preceding fresh-process run completed all 100 matches but failed the
+combat-positive assertion at 89/100 (`Next/production-bot-100-tutorial-authority.xml`).
+No source changed between runs; the no-code-change rerun above passed at 92/100. This
+variance is kept as an open balance/pacing risk and is not hidden by the selected pass.
 
 ## Android artifacts and technical checker
 

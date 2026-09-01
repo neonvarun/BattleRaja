@@ -279,6 +279,7 @@ namespace BattleRaja.Editor
             SetObjectReference(matchController, "damageResolver", damageResolver);
             SetObjectReference(matchController, "cameraController", cameraController);
             SetObjectReference(matchHud, "match", matchController);
+            SetBool(matchController, "tutorialMode", true);
 
             SetObjectReference(agent, "tuningAsset", tuningAsset);
             SetObjectReference(agent, "inputAdapter", inputAdapter);
@@ -594,6 +595,15 @@ namespace BattleRaja.Editor
                 var existingArena = GameObject.Find("TutorialArena");
                 if (existingArena != null && existingArena.GetComponentInChildren<TutorialOverlay>(true) != null)
                 {
+                    var existingMatchController = existingArena.GetComponentInChildren<OfflineMatchController>(true);
+                    if (existingMatchController != null)
+                    {
+                        // Keep onboarding on the same authority-driven path as production
+                        // so tutorial damage, movement and pickups exercise the real rules.
+                        SetBool(existingMatchController, "authorityDrivenMovement", true);
+                        SetBool(existingMatchController, "tutorialMode", true);
+                    }
+
                     if (ConfigureTutorialEliminationTarget(existingArena.transform))
                     {
                         EditorSceneManager.MarkSceneDirty(existingTutorial);
@@ -618,6 +628,13 @@ namespace BattleRaja.Editor
             if (arena == null) throw new BuildFailedException("MovementLab root was not found while creating Tutorial Arena.");
             arena.name = "TutorialArena";
             ConfigureTutorialEliminationTarget(arena.transform);
+
+            var tutorialMatchController = arena.GetComponentInChildren<OfflineMatchController>(true);
+            if (tutorialMatchController != null)
+            {
+                SetBool(tutorialMatchController, "authorityDrivenMovement", true);
+                SetBool(tutorialMatchController, "tutorialMode", true);
+            }
 
             foreach (var brain in arena.GetComponentsInChildren<BotBrain>(true))
             {
