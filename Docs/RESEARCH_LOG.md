@@ -845,3 +845,25 @@ Research current primary sources before selecting technical versions, APIs, SDKs
 - **Uncertainty:** Google may revise dates, enforcement, declaration wording or supported
   device guidance. Recheck immediately before final signing or any Play submission, and
   after any Unity, Android, NDK, native dependency or renderer change.
+
+### V1.0 official-source refresh and Tavily availability check — 2026-09-02
+
+- **Question:** Does the official Android/Play guidance still support the candidate's
+  target API, static 16 KB checks and owner-controlled declaration plan?
+- **Primary sources refreshed today:** [Google Play target API requirements](https://developer.android.com/google/play/requirements/target-sdk),
+  [Android 16 KB page-size guidance](https://developer.android.com/guide/practices/page-sizes),
+  [Google Play Data safety](https://support.google.com/googleplay/android-developer/answer/10787469?hl=en),
+  [Google Play User Data policy](https://support.google.com/googleplay/android-developer/answer/10144311?hl=en),
+  and [Google Play content ratings](https://support.google.com/googleplay/android-developer/answer/9898843?hl=en).
+- **Access date:** 2026-09-02 (IST).
+- **Claims refreshed:** The target-API page currently states Android 16/API 36 for new
+  apps and updates from 2026-08-31. The 16 KB page states API 35+ apps must support 16 KB
+  memory pages on 64-bit Play devices and separates static alignment from genuine runtime
+  behavior. Data safety and a privacy-policy link remain required for published tracks,
+  including no-data apps; an accurate IARC questionnaire remains required for every Play app.
+- **Tavily check:** The configured Tavily connector was invoked for the same official-source
+  query but returned a reauthentication-required response, so no Tavily result is represented
+  as evidence. The official pages above are the authoritative refresh used for this record.
+- **Decision impact:** Keep target API 36, ARM64/static alignment checks and offline
+  permissions as-is. Do not claim physical 16 KB compatibility, final identity/signing,
+  privacy/Data safety/IARC completion or Play readiness until the owner-controlled gates pass.
