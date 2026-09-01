@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using BattleRaja.Core.Domain;
 using NUnit.Framework;
 
@@ -225,6 +226,22 @@ namespace BattleRaja.Tests.EditMode
             var snapshots = simulation.GetSnapshots();
             Assert.That(snapshots[2].Placement, Is.EqualTo(1));
             Assert.That(snapshots[2].DamageDealt, Is.EqualTo(10));
+        }
+
+        [Test]
+        public void TeamModeFinalRankingReassignsUniquePlacementsAfterRespawn()
+        {
+            var simulation = new OfflineMatchSimulation(OfflineMatchDefinition.BastionCrown);
+            simulation.Start(CreateSpawns());
+
+            Assert.That(simulation.SyncHealth(new CombatEntityId(1), 0), Is.True);
+            Assert.That(simulation.Respawn(new CombatEntityId(1), new Float2(-8f, 0f)), Is.True);
+            Assert.That(simulation.SyncHealth(new CombatEntityId(1), 0), Is.True);
+
+            simulation.ForceResolve();
+            var snapshots = simulation.GetSnapshots();
+            Assert.That(snapshots.All(snapshot => snapshot.Placement > 0), Is.True);
+            Assert.That(snapshots.Select(snapshot => snapshot.Placement).Distinct().Count(), Is.EqualTo(8));
         }
 
         [Test]

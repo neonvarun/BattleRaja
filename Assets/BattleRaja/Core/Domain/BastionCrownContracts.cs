@@ -66,6 +66,325 @@ namespace BattleRaja.Core.Domain
         public CombatEntityId SupportTargetId { get; }
         public Float2 SpacingOffset { get; }
         public bool TicketRisk { get; }
+
+        /// <summary>
+        /// Returns the same immutable intent while assigning one deterministic
+        /// teammate to support. The destination is intentionally expressed as a
+        /// normal movement target so the presentation adapter still submits the
+        /// same canonical movement command as every other actor.
+        /// </summary>
+        public BastionSquadIntent WithSupportTarget(
+            CombatEntityId supportTargetId,
+            Float2 destination,
+            Float2 movement,
+            Float2 aim)
+        {
+            return new BastionSquadIntent(
+                Plan,
+                destination,
+                movement,
+                aim,
+                FocusTargetId,
+                supportTargetId,
+                SpacingOffset,
+                TicketRisk);
+        }
+    }
+
+    /// <summary>
+    /// Small diagnostic surface for the shared squad blackboard. These counters
+    /// are derived from canonical state and never grant a combat advantage.
+    /// </summary>
+    public readonly struct BastionSquadMetrics
+    {
+        public BastionSquadMetrics(
+            int signalUpdates,
+            int planRefreshes,
+            int escortAssignments,
+            int supportAssignments,
+            int escortHandoffs,
+            int retreatSignals,
+            int maxSignalAgeTicks)
+        {
+            SignalUpdates = Math.Max(0, signalUpdates);
+            PlanRefreshes = Math.Max(0, planRefreshes);
+            EscortAssignments = Math.Max(0, escortAssignments);
+            SupportAssignments = Math.Max(0, supportAssignments);
+            EscortHandoffs = Math.Max(0, escortHandoffs);
+            RetreatSignals = Math.Max(0, retreatSignals);
+            MaxSignalAgeTicks = Math.Max(0, maxSignalAgeTicks);
+        }
+
+        public int SignalUpdates { get; }
+        public int PlanRefreshes { get; }
+        public int EscortAssignments { get; }
+        public int SupportAssignments { get; }
+        public int EscortHandoffs { get; }
+        public int RetreatSignals { get; }
+        public int MaxSignalAgeTicks { get; }
+    }
+
+    /// <summary>
+    /// Shared deterministic squad blackboard for one Bastion match. The board
+    /// deliberately samples canonical state at a bounded cadence so all members
+    /// of a team act on the same information with a small, explicit communication
+    /// delay. No Unity objects, random calls or allocations occur while preparing
+    /// a plan.
+    /// </summary>
+    public sealed class BastionSquadBlackboard
+    {
+        public const int DefaultCommunicationDelayTicks = 4;
+
+        private readonly BastionParticipantSnapshot[] _signalParticipants =
+            new BastionParticipantSnapshot[BastionCrownMatch.ParticipantCount];
+        private readonly BastionSquadIntent[] _intents =
+            new BastionSquadIntent[BastionCrownMatch.ParticipantCount];
+
+        private CrownSparkSnapshot _signalCrown;
+        private TeamScore _signalRajaScore;
+        private TeamScore _signalRivalScore;
+        private TeamTicketPool _signalRajaTickets;
+        private TeamTicketPool _signalRivalTickets;
+        private ModeDefinition _signalDefinition;
+        private bool _signalOvertime;
+        private Float2 _signalZoneCenter;
+        private float _signalZoneRadius;
+        private AandhiState _signalAandhiState;
+        private int _signalParticipantCount;
+        private int _lastSignalTick = int.MinValue;
+        private int _lastPreparedTick = int.MinValue;
+        private bool _hasSignal;
+        private CombatEntityId _lastRajaCarrier;
+        private CombatEntityId _lastRivalCarrier;
+        private BastionSquadMetrics _metrics;
+
+        public BastionSquadMetrics Metrics => _metrics;
+        public int LastSignalTick => _lastSignalTick;
+        public int LastPreparedTick => _lastPreparedTick;
+
+        public void Reset()
+        {
+            _signalParticipantCount = 0;
+            _lastSignalTick = int.MinValue;
+            _lastPreparedTick = int.MinValue;
+            _hasSignal = false;
+            _signalCrown = default(CrownSparkSnapshot);
+            _lastRajaCarrier = default(CombatEntityId);
+            _lastRivalCarrier = default(CombatEntityId);
+            _metrics = default(BastionSquadMetrics);
+            for (var i = 0; i < _intents.Length; i++) _intents[i] = default(BastionSquadIntent);
+        }
+
+        public void Prepare(
+            int simulationTick,
+            BastionParticipantSnapshot[] participants,
+            CrownSparkSnapshot crown,
+            TeamScore rajaScore,
+            TeamScore rivalScore,
+            TeamTicketPool rajaTickets,
+            TeamTicketPool rivalTickets,
+            ModeDefinition definition,
+            bool overtime,
+            Float2 zoneCenter,
+            float zoneRadius,
+            AandhiState aandhiState,
+            bool forceSignal = false)
+        {
+            if (participants == null || participants.Length == 0) return;
+
+            var signalAge = _hasSignal && simulationTick >= _lastSignalTick
+                ? simulationTick - _lastSignalTick
+                : 0;
+            var metrics = _metrics;
+            metrics = new BastionSquadMetrics(
+                metrics.SignalUpdates,
+                metrics.PlanRefreshes,
+                metrics.EscortAssignments,
+                metrics.SupportAssignments,
+                metrics.EscortHandoffs,
+                metrics.RetreatSignals,
+                Math.Max(metrics.MaxSignalAgeTicks, signalAge));
+            _metrics = metrics;
+
+            var signalDue = forceSignal || !_hasSignal || simulationTick < _lastSignalTick ||
+                simulationTick - _lastSignalTick >= DefaultCommunicationDelayTicks;
+            if (!signalDue)
+            {
+                return;
+            }
+
+            _signalParticipantCount = Math.Min(_signalParticipants.Length, participants.Length);
+            for (var i = 0; i < _signalParticipantCount; i++)
+            {
+                _signalParticipants[i] = participants[i];
+            }
+
+            _signalCrown = crown;
+            _signalRajaScore = rajaScore;
+            _signalRivalScore = rivalScore;
+            _signalRajaTickets = rajaTickets;
+            _signalRivalTickets = rivalTickets;
+            _signalDefinition = definition;
+            _signalOvertime = overtime;
+            _signalZoneCenter = zoneCenter;
+            _signalZoneRadius = zoneRadius;
+            _signalAandhiState = aandhiState;
+            _hasSignal = true;
+            _lastSignalTick = simulationTick;
+
+            // A forced signal is used by pure-domain callers after an
+            // authoritative mutation that occurred without a controller
+            // tick. Rebuild the same-tick plan in that case instead of
+            // returning the previous snapshot.
+            if (_lastPreparedTick == simulationTick && !forceSignal) return;
+
+            var rajaEscortAssignments = 0;
+            var rivalEscortAssignments = 0;
+            var retreatSignals = 0;
+            for (var i = 0; i < _signalParticipantCount; i++)
+            {
+                var participant = _signalParticipants[i];
+                if (!participant.Alive)
+                {
+                    _intents[i] = default(BastionSquadIntent);
+                    continue;
+                }
+
+                var rajaScoreSnapshot = _signalRajaScore;
+                var rivalScoreSnapshot = _signalRivalScore;
+                var intent = BastionSquadPlanner.Plan(
+                    participant.Member,
+                    participant.Position,
+                    _signalParticipants,
+                    _signalCrown,
+                    rajaScoreSnapshot,
+                    rivalScoreSnapshot,
+                    _signalRajaTickets,
+                    _signalRivalTickets,
+                    _signalDefinition,
+                    _signalOvertime,
+                    _signalZoneCenter,
+                    _signalZoneRadius,
+                    _signalAandhiState);
+                _intents[i] = intent;
+                if (intent.Plan == BastionSquadPlan.EscortCarrier)
+                {
+                    if (participant.TeamId == BastionTeamId.Raja) rajaEscortAssignments++;
+                    else if (participant.TeamId == BastionTeamId.Rival) rivalEscortAssignments++;
+                }
+
+                if (intent.Plan == BastionSquadPlan.RetreatFromAandhi) retreatSignals++;
+            }
+
+            var supportAssignments = AssignSupportTarget(BastionTeamId.Raja);
+            supportAssignments += AssignSupportTarget(BastionTeamId.Rival);
+            var escortHandoffs = 0;
+            if (_signalCrown.IsCarried)
+            {
+                var carrierTeam = FindTeam(_signalCrown.CarrierId);
+                if (carrierTeam == BastionTeamId.Raja)
+                {
+                    if (_lastRajaCarrier.Value != 0 && _lastRajaCarrier != _signalCrown.CarrierId) escortHandoffs++;
+                    _lastRajaCarrier = _signalCrown.CarrierId;
+                }
+                else if (carrierTeam == BastionTeamId.Rival)
+                {
+                    if (_lastRivalCarrier.Value != 0 && _lastRivalCarrier != _signalCrown.CarrierId) escortHandoffs++;
+                    _lastRivalCarrier = _signalCrown.CarrierId;
+                }
+            }
+
+            _lastPreparedTick = simulationTick;
+            _metrics = new BastionSquadMetrics(
+                _metrics.SignalUpdates + 1,
+                _metrics.PlanRefreshes + 1,
+                _metrics.EscortAssignments + rajaEscortAssignments + rivalEscortAssignments,
+                _metrics.SupportAssignments + supportAssignments,
+                _metrics.EscortHandoffs + escortHandoffs,
+                _metrics.RetreatSignals + retreatSignals,
+                _metrics.MaxSignalAgeTicks);
+        }
+
+        public bool TryGetIntent(CombatEntityId actorId, out BastionSquadIntent intent)
+        {
+            for (var i = 0; i < _signalParticipantCount; i++)
+            {
+                if (_signalParticipants[i].ActorId != actorId) continue;
+                intent = _intents[i];
+                return _hasSignal && _signalParticipants[i].Alive;
+            }
+
+            intent = default(BastionSquadIntent);
+            return false;
+        }
+
+        private int AssignSupportTarget(BastionTeamId teamId)
+        {
+            var targetIndex = -1;
+            var targetHealthFraction = 1.01f;
+            for (var i = 0; i < _signalParticipantCount; i++)
+            {
+                var candidate = _signalParticipants[i];
+                if (!candidate.Alive || candidate.TeamId != teamId || candidate.MaxHealth <= 0) continue;
+                var fraction = (float)candidate.CurrentHealth / candidate.MaxHealth;
+                if (fraction >= 0.75f) continue;
+                if (fraction < targetHealthFraction - 0.0001f ||
+                    (Math.Abs(fraction - targetHealthFraction) <= 0.0001f &&
+                     (targetIndex < 0 || candidate.ActorId.Value < _signalParticipants[targetIndex].ActorId.Value)))
+                {
+                    targetHealthFraction = fraction;
+                    targetIndex = i;
+                }
+            }
+
+            if (targetIndex < 0) return 0;
+            var supporterIndex = FindSupporterIndex(teamId, _signalParticipants[targetIndex].ActorId);
+            if (supporterIndex < 0) return 0;
+
+            var supporter = _signalParticipants[supporterIndex];
+            var target = _signalParticipants[targetIndex];
+            var direction = (target.Position - supporter.Position).Normalized;
+            if (direction.SqrMagnitude <= 0.000001f) direction = Float2.Up;
+            _intents[supporterIndex] = _intents[supporterIndex].WithSupportTarget(
+                target.ActorId,
+                target.Position,
+                direction,
+                direction);
+            return 1;
+        }
+
+        private int FindSupporterIndex(BastionTeamId teamId, CombatEntityId targetId)
+        {
+            var bestIndex = -1;
+            var bestPriority = int.MaxValue;
+            for (var i = 0; i < _signalParticipantCount; i++)
+            {
+                var candidate = _signalParticipants[i];
+                if (!candidate.Alive || candidate.TeamId != teamId || candidate.ActorId == targetId) continue;
+                var priority = candidate.Member.Role == BastionRole.Anchor ? 0
+                    : candidate.Member.Role == BastionRole.Flex ? 1
+                    : candidate.Member.Role == BastionRole.Skirmisher ? 2
+                    : 3;
+                if (priority < bestPriority ||
+                    (priority == bestPriority && (bestIndex < 0 || candidate.ActorId.Value < _signalParticipants[bestIndex].ActorId.Value)))
+                {
+                    bestPriority = priority;
+                    bestIndex = i;
+                }
+            }
+
+            return bestIndex;
+        }
+
+        private BastionTeamId FindTeam(CombatEntityId actorId)
+        {
+            for (var i = 0; i < _signalParticipantCount; i++)
+            {
+                if (_signalParticipants[i].ActorId == actorId) return _signalParticipants[i].TeamId;
+            }
+
+            return BastionTeamId.None;
+        }
     }
 
     /// <summary>

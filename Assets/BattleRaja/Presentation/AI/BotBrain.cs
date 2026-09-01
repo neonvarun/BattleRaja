@@ -116,6 +116,14 @@ namespace BattleRaja.Presentation.AI
             health = health != null ? health : GetComponent<CombatHealth>();
             gadgetUser = gadgetUser != null ? gadgetUser : GetComponent<GadgetUser>();
             matchController = matchController != null ? matchController : FindAnyObjectByType<OfflineMatchController>();
+            // Bastion's coordinated squad needs a readable but meaningful
+            // firefight cadence. Production and the deterministic validation
+            // harness use the same bounded 15x cadence so target pressure can
+            // produce combat KOs without granting a damage advantage.
+            if (matchController != null && matchController.IsBastionCrown)
+            {
+                attackCadenceMultiplier = 15f;
+            }
             SelectActiveAbilityController();
             var autonomousWeaponDefinition = _hasAutonomousWeaponDefinition
                 ? _autonomousWeaponDefinition

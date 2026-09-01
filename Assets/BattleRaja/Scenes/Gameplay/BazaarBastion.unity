@@ -535,7 +535,7 @@ MonoBehaviour:
   preferredRange: 5.5
   decisionIntervalSeconds: 0.16
   stuckTimeoutSeconds: 0.7
-  attackCadenceMultiplier: 25
+  attackCadenceMultiplier: 15
   movementAgent: {fileID: 0}
   attackController: {fileID: 0}
   fighterController: {fileID: 243717763}
@@ -1867,7 +1867,7 @@ MonoBehaviour:
   preferredRange: 5.5
   decisionIntervalSeconds: 0.16
   stuckTimeoutSeconds: 0.7
-  attackCadenceMultiplier: 25
+  attackCadenceMultiplier: 15
   movementAgent: {fileID: 0}
   attackController: {fileID: 0}
   fighterController: {fileID: 392919031}
@@ -2538,7 +2538,7 @@ MonoBehaviour:
   preferredRange: 5.5
   decisionIntervalSeconds: 0.16
   stuckTimeoutSeconds: 0.7
-  attackCadenceMultiplier: 25
+  attackCadenceMultiplier: 15
   movementAgent: {fileID: 0}
   attackController: {fileID: 0}
   fighterController: {fileID: 795220295}
@@ -3283,7 +3283,7 @@ MonoBehaviour:
   preferredRange: 5.5
   decisionIntervalSeconds: 0.16
   stuckTimeoutSeconds: 0.7
-  attackCadenceMultiplier: 25
+  attackCadenceMultiplier: 15
   movementAgent: {fileID: 0}
   attackController: {fileID: 0}
   fighterController: {fileID: 989590249}
@@ -5170,7 +5170,7 @@ MonoBehaviour:
   preferredRange: 5.5
   decisionIntervalSeconds: 0.16
   stuckTimeoutSeconds: 0.7
-  attackCadenceMultiplier: 25
+  attackCadenceMultiplier: 15
   movementAgent: {fileID: 0}
   attackController: {fileID: 0}
   fighterController: {fileID: 1574973508}
@@ -5983,7 +5983,7 @@ MonoBehaviour:
   preferredRange: 5.5
   decisionIntervalSeconds: 0.16
   stuckTimeoutSeconds: 0.7
-  attackCadenceMultiplier: 25
+  attackCadenceMultiplier: 15
   movementAgent: {fileID: 0}
   attackController: {fileID: 0}
   fighterController: {fileID: 1715868723}
@@ -6278,7 +6278,7 @@ MonoBehaviour:
   pickups: []
   gadgetPickups: []
   outsideDamageTickSeconds: 1
-  botWeaponDamageMultiplier: 0.9
+  botWeaponDamageMultiplier: 1
   simulationTickRate: 30
   authorityDrivenMovement: 1
   autoStart: 1
@@ -7373,7 +7373,7 @@ MonoBehaviour:
   preferredRange: 5.5
   decisionIntervalSeconds: 0.16
   stuckTimeoutSeconds: 0.7
-  attackCadenceMultiplier: 25
+  attackCadenceMultiplier: 15
   movementAgent: {fileID: 0}
   attackController: {fileID: 0}
   fighterController: {fileID: 2058019593}

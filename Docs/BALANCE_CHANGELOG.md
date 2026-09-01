@@ -101,3 +101,20 @@ Record every fighter, weapon, gadget, Aandhi or match-rule balance change with:
   target selection or authoritative simulation.
 - **Follow-up**: Keep 50x accelerated runs classified as pacing-only diagnostics; use the
   deterministic 1x harness path for repeated command-stream evidence.
+
+## 2026-09-02 — Fair production damage and bounded squad pacing
+
+- **Bot weapon damage**: corrected the production and Bazaar Bastion scene multiplier from
+  `0.9x` to `1.0x`, equal to the human weapon definitions. This removes a production-only
+  combat-power distortion; it does not change the authoritative fighter definitions.
+- **Attack cadence**: aligned the production scene, editor build path and validation harness
+  at a bounded `15x` cadence multiplier. The multiplier is a fixed-tick pacing aid for the
+  offline release candidate, not a damage or accuracy advantage.
+- **Evidence**: strict 100-match report
+  `batch-20260901-070002238-9101.json` records 100/100 terminal matches, 93/100 in the
+  240–360 second window, 93/100 combat-positive, 61/100 with at least three combat KOs,
+  3 Aandhi-only resolutions, 100/100 bot-to-bot damaging pairs, zero protected-warmup or
+  invalid-position samples, 17,757 accepted attacks and 8,554 projectile hits.
+- **Follow-up**: the remaining 7/100 outside-participant rate, 45 failed gadget attempts,
+  151,085 outside-participant ticks and human feel review stay visible as tuning work;
+  automated pacing evidence is not a substitute for a physical fun/balance gate.

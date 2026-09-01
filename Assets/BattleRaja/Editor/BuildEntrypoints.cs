@@ -456,7 +456,7 @@ namespace BattleRaja.Editor
             SetBool(matchController, "authorityDrivenMovement", true);
             // Bots may use a conservative PvE scale, but never a damage bonus over
             // the human player's authoritative weapon definition.
-            SetFloat(matchController, "botWeaponDamageMultiplier", 0.9f);
+            SetFloat(matchController, "botWeaponDamageMultiplier", 1f);
             var bots = UnityEngine.Object.FindObjectsByType<BotBrain>()
                 .OrderBy(bot => bot.GetComponent<MovementPlayerAgent>() != null ? bot.GetComponent<MovementPlayerAgent>().ActorId : int.MaxValue)
                 .ToArray();
@@ -1164,7 +1164,7 @@ namespace BattleRaja.Editor
             SetInt(brain, "seed", 100 + botIndex);
             SetObjectReference(brain, "fighterController", fighter);
             SetFloat(brain, "aimNoise", 0.05f);
-            SetFloat(brain, "attackCadenceMultiplier", 25f);
+            SetFloat(brain, "attackCadenceMultiplier", 15f);
             SetFloat(brain, "stuckTimeoutSeconds", 0.7f);
             SetObjectReference(
                 brain,
@@ -1222,7 +1222,7 @@ namespace BattleRaja.Editor
             SetObjectReference(fighter, "movementAgent", agent);
             SetObjectReference(brain, "fighterController", fighter);
             SetFloat(brain, "aimNoise", 0.05f);
-            SetFloat(brain, "attackCadenceMultiplier", 25f);
+            SetFloat(brain, "attackCadenceMultiplier", 15f);
             SetFloat(brain, "stuckTimeoutSeconds", 0.7f);
             SetObjectReference(
                 brain,

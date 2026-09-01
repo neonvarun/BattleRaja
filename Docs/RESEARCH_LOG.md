@@ -817,3 +817,31 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   after Unity, Android, NDK, native dependency or renderer changes.
 - **Recheck trigger/date:** Before selecting the permanent package/signing identity,
   completing Play declarations or uploading a track; after any native or build-tool change.
+
+### V1.0 official Android/Play requirements recheck — exact-final handoff (2026-09-02)
+
+- **Question:** Did the current Android and Google Play requirements change while the
+  exact-final ARM64 candidate was rebuilt and the Lava route was re-run?
+- **Primary sources checked today:** [Google Play target API requirements](https://developer.android.com/google/play/requirements/target-sdk),
+  [Android 16 KB page-size guidance](https://developer.android.com/guide/practices/page-sizes),
+  [Google Play Data safety](https://support.google.com/googleplay/android-developer/answer/10787469?hl=en),
+  [Google Play User Data policy](https://support.google.com/googleplay/android-developer/answer/10144311?hl=en),
+  and [Google Play content ratings](https://support.google.com/googleplay/android-developer/answer/9898843?hl=en).
+- **Access date:** 2026-09-02 (IST).
+- **Current claims verified:** New apps and updates submitted from 2026-08-31 must target
+  Android 16/API 36 or higher. Apps targeting API 35+ must support 16 KB memory pages on
+  64-bit devices for Play compatibility; static ELF/zip alignment does not prove behavior
+  on a real 16 KB runtime. Every Play-published app must complete an accurate Data safety
+  form, including apps that collect no user data, and provide a privacy-policy link. The
+  privacy policy must be accessible in-app and in Play Console. Every Play app needs an
+  accurate IARC content-rating questionnaire.
+- **Decision impact:** Keep the candidate at target API 36 with ARM64 and static alignment
+  checks, but retain Lava's 4 KB result and the host/AVD evidence as scoped diagnostics.
+  Physical 16 KB runtime, permanent identity/signing, privacy policy, Data safety, IARC and
+  Play Console actions remain owner-controlled; no dependency or project-setting change is
+  justified by this recheck.
+- **Local evidence:** `Docs/QA/V1_OFFLINE_ANDROID_VALIDATION_2026-09-02.md`, the exact
+  APK/AAB release-checker output, and the approved-Lava performance/route directory.
+- **Uncertainty:** Google may revise dates, enforcement, declaration wording or supported
+  device guidance. Recheck immediately before final signing or any Play submission, and
+  after any Unity, Android, NDK, native dependency or renderer change.

@@ -24,7 +24,7 @@ namespace BattleRaja.Presentation.Match
         // V1 bots never receive a damage bonus. A small conservative reduction is
         // allowed for the solo PvE difficulty curve, but values above human damage
         // are clamped out of the production path.
-        [Range(0.5f, 1f)] [SerializeField] private float botWeaponDamageMultiplier = 0.9f;
+        [Range(0.5f, 1f)] [SerializeField] private float botWeaponDamageMultiplier = 1f;
         [SerializeField] private int simulationTickRate = 30;
         [SerializeField] private bool authorityDrivenMovement;
         [SerializeField] private bool autoStart = true;
@@ -544,7 +544,18 @@ namespace BattleRaja.Presentation.Match
 
         private bool AdvanceSimulationTick(int simulationTick)
         {
-            SimulationTickAdvanced?.Invoke(simulationTick, (float)_simulationClock.StepSeconds);
+            // Publish one shared, bounded-lag squad signal before any bot
+            // receives its command callback. This keeps all four teammates on
+            // the same deterministic objective/escort/support assignment.
+            _bastionCrown?.BeginSquadCommandPhase(simulationTick);
+            try
+            {
+                SimulationTickAdvanced?.Invoke(simulationTick, (float)_simulationClock.StepSeconds);
+            }
+            finally
+            {
+                _bastionCrown?.EndSquadCommandPhase(simulationTick);
+            }
             for (var i = 0; i < _actors.Count; i++)
             {
                 var actor = _actors[i];

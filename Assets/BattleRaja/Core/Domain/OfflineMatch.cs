@@ -630,6 +630,20 @@ namespace BattleRaja.Core.Domain
         {
             if (_phase == MatchPhase.Resolution) return;
 
+            if (_definition.IsTeamMode)
+            {
+                // Team matches may respawn an actor more than once before the
+                // Bastion authority resolves. Legacy elimination placements are
+                // therefore only provisional; assigning the complete final table
+                // here prevents a reused placement from colliding with a living
+                // participant's timeout rank.
+                var finalRanking = new List<ParticipantState>(_participants);
+                finalRanking.Sort(CompareTeamFinalRanking);
+                for (var i = 0; i < finalRanking.Count; i++) finalRanking[i].Placement = i + 1;
+                _phase = MatchPhase.Resolution;
+                return;
+            }
+
             // Timeout results must never depend on spawn/list order. Living participants
             // are ranked by the documented deterministic rule, then receive every
             // remaining placement. Eliminated placements were already assigned by
@@ -644,6 +658,23 @@ namespace BattleRaja.Core.Domain
             for (var i = 0; i < living.Count; i++) living[i].Placement = i + 1;
 
             _phase = MatchPhase.Resolution;
+        }
+
+        private int CompareTeamFinalRanking(ParticipantState left, ParticipantState right)
+        {
+            if (left.Alive != right.Alive) return left.Alive ? -1 : 1;
+            if (left.Alive)
+            {
+                return CompareTimeoutRanking(left, right);
+            }
+
+            // Among defeated actors, longer survival wins the deterministic
+            // tiebreak, followed by combat contribution and stable actor id.
+            var survivalComparison = right.SurvivalTimeSeconds.CompareTo(left.SurvivalTimeSeconds);
+            if (survivalComparison != 0) return survivalComparison;
+            if (left.Eliminations != right.Eliminations) return right.Eliminations.CompareTo(left.Eliminations);
+            if (left.DamageDealt != right.DamageDealt) return right.DamageDealt.CompareTo(left.DamageDealt);
+            return left.Id.Value.CompareTo(right.Id.Value);
         }
 
         private int CompareTimeoutRanking(ParticipantState left, ParticipantState right)

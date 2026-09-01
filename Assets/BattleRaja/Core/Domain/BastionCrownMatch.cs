@@ -20,6 +20,7 @@ namespace BattleRaja.Core.Domain
         private readonly uint _seed;
         private readonly ParticipantState[] _participants = new ParticipantState[ParticipantCount];
         private readonly BastionParticipantSnapshot[] _plannerSnapshots = new BastionParticipantSnapshot[ParticipantCount];
+        private readonly BastionSquadBlackboard _squadBlackboard = new BastionSquadBlackboard();
         private readonly Dictionary<CombatEntityId, int> _participantIndices = new Dictionary<CombatEntityId, int>(ParticipantCount);
         private readonly Dictionary<CombatEntityId, Dictionary<CombatEntityId, int>> _damageContributions =
             new Dictionary<CombatEntityId, Dictionary<CombatEntityId, int>>(ParticipantCount);
@@ -54,6 +55,10 @@ namespace BattleRaja.Core.Domain
         private Float2 _aandhiZoneCenter;
         private float _aandhiZoneRadius;
         private float _aandhiWarningRemaining;
+        private int _squadStateRevision;
+        private int _squadPreparedStateRevision = -1;
+        private int _squadPreparationTick = int.MinValue;
+        private int _squadCommandPhaseTick = int.MinValue;
 
         public BastionCrownMatch(uint seed)
             : this(ModeDefinition.BastionCrown, seed)
@@ -84,6 +89,7 @@ namespace BattleRaja.Core.Domain
         public Float2 AandhiZoneCenter => _aandhiZoneCenter;
         public float AandhiZoneRadius => _aandhiZoneRadius;
         public float AandhiWarningRemainingSeconds => _aandhiWarningRemaining;
+        public BastionSquadMetrics SquadMetrics => _squadBlackboard.Metrics;
 
         /// <summary>
         /// Computes a stable post-tick digest for the complete Bastion state.
@@ -296,6 +302,11 @@ namespace BattleRaja.Core.Domain
             _aandhiZoneCenter = Float2.Zero;
             _aandhiZoneRadius = 0f;
             _aandhiWarningRemaining = 0f;
+            _squadBlackboard.Reset();
+            _squadStateRevision = 0;
+            _squadPreparedStateRevision = -1;
+            _squadPreparationTick = int.MinValue;
+            _squadCommandPhaseTick = int.MinValue;
             _started = true;
         }
 
@@ -322,6 +333,7 @@ namespace BattleRaja.Core.Domain
             _aandhiZoneRadius = zoneRadius;
             _aandhiState = state;
             _aandhiWarningRemaining = warningRemainingSeconds;
+            _squadStateRevision++;
             return true;
         }
 
@@ -354,6 +366,58 @@ namespace BattleRaja.Core.Domain
         }
 
         /// <summary>
+        /// Publishes one shared, bounded-lag squad signal for the current
+        /// authority tick. The Unity adapter calls this before bot command
+        /// callbacks so every teammate consumes the same plan for that tick.
+        /// </summary>
+        public void PrepareSquadIntents(int simulationTick, bool forceSignal = false)
+        {
+            if (!_started) return;
+            for (var i = 0; i < ParticipantCount; i++)
+            {
+                _plannerSnapshots[i] = _participants[i].ToSnapshot();
+            }
+
+            _squadBlackboard.Prepare(
+                simulationTick,
+                _plannerSnapshots,
+                CreateCrownSnapshot(),
+                _raja.ToScore(),
+                _rival.ToScore(),
+                _raja.Tickets,
+                _rival.Tickets,
+                _definition,
+                _overtime,
+                _aandhiZoneCenter,
+                _aandhiZoneRadius,
+                _aandhiState,
+                forceSignal);
+            _squadPreparedStateRevision = _squadStateRevision;
+            _squadPreparationTick = simulationTick;
+        }
+
+        /// <summary>
+        /// Marks the controller-owned command callback window. Authority
+        /// mutations such as gadget use may update the state revision while
+        /// bots are still consuming this tick's signal; those mutations must
+        /// not trigger a mid-tick replan for the remaining teammates.
+        /// </summary>
+        public void BeginSquadCommandPhase(int simulationTick)
+        {
+            if (!_started) return;
+            _squadCommandPhaseTick = simulationTick;
+            PrepareSquadIntents(simulationTick);
+        }
+
+        public void EndSquadCommandPhase(int simulationTick)
+        {
+            if (_squadCommandPhaseTick == simulationTick)
+            {
+                _squadCommandPhaseTick = int.MinValue;
+            }
+        }
+
+        /// <summary>
         /// Returns the deterministic squad assignment for one actor. The
         /// planner consumes only canonical team/objective snapshots; it never
         /// reads Unity transforms, hidden targets or presentation state.
@@ -366,21 +430,28 @@ namespace BattleRaja.Core.Domain
                 return false;
             }
 
-            for (var i = 0; i < ParticipantCount; i++) _plannerSnapshots[i] = _participants[i].ToSnapshot();
-            intent = BastionSquadPlanner.Plan(
-                participant.Member,
-                participant.Position,
-                _plannerSnapshots,
-                CreateCrownSnapshot(),
-                _raja.ToScore(),
-                _rival.ToScore(),
-                _raja.Tickets,
-                _rival.Tickets,
-                _definition,
-                _overtime,
-                _aandhiZoneCenter,
-                _aandhiZoneRadius,
-                _aandhiState);
+            if (!_squadBlackboard.TryGetIntent(actorId, out intent))
+            {
+                // Pure-domain callers and focused tests may ask for an intent
+                // without going through the Unity controller's pre-tick hook.
+                // Prepare the same shared board lazily rather than falling back
+                // to an actor-specific planner.
+                PrepareSquadIntents(_lastTick < 0 ? 0 : _lastTick);
+                if (!_squadBlackboard.TryGetIntent(actorId, out intent)) return false;
+            }
+            else if (_squadPreparedStateRevision != _squadStateRevision &&
+                     _squadCommandPhaseTick != _squadPreparationTick)
+            {
+                // Focused pure-domain callers can mutate state and ask for a
+                // second intent without going through the controller's
+                // pre-tick hook. Refresh the shared snapshot explicitly;
+                // runtime callbacks still retain the bounded communication
+                // cadence because the controller prepares the next tick
+                // before bots are invoked.
+                PrepareSquadIntents(_lastTick < 0 ? 0 : _lastTick, true);
+                if (!_squadBlackboard.TryGetIntent(actorId, out intent)) return false;
+            }
+
             return true;
         }
 
@@ -406,6 +477,7 @@ namespace BattleRaja.Core.Domain
             credited.HealingDone = SaturatingAdd(credited.HealingDone, amountApplied);
             GetTeamState(credited.Member.TeamId).HealingDone =
                 SaturatingAdd(GetTeamState(credited.Member.TeamId).HealingDone, amountApplied);
+            _squadStateRevision++;
             return true;
         }
 
@@ -422,6 +494,7 @@ namespace BattleRaja.Core.Domain
             participant.GadgetUses = SaturatingAdd(participant.GadgetUses, 1);
             var team = GetTeamState(participant.Member.TeamId);
             team.GadgetUses = SaturatingAdd(team.GadgetUses, 1);
+            _squadStateRevision++;
             return true;
         }
 
@@ -438,6 +511,7 @@ namespace BattleRaja.Core.Domain
             participant.AbilityUses = SaturatingAdd(participant.AbilityUses, 1);
             var team = GetTeamState(participant.Member.TeamId);
             team.AbilityUses = SaturatingAdd(team.AbilityUses, 1);
+            _squadStateRevision++;
             return true;
         }
 
@@ -457,6 +531,7 @@ namespace BattleRaja.Core.Domain
         {
             if (!position.IsFinite || !TryGetParticipantState(actorId, out var participant)) return false;
             participant.Position = position;
+            _squadStateRevision++;
             return true;
         }
 
@@ -466,6 +541,7 @@ namespace BattleRaja.Core.Domain
             participant.CurrentHealth = !participant.Alive
                 ? 0
                 : Math.Max(0, Math.Min(participant.MaxHealth, currentHealth));
+            _squadStateRevision++;
             return true;
         }
 
@@ -480,11 +556,13 @@ namespace BattleRaja.Core.Domain
             {
                 if (!participant.Alive && !participant.RespawnPending) return false;
                 participant.CurrentHealth = Math.Max(0, Math.Min(participant.MaxHealth, currentHealth));
+                _squadStateRevision++;
                 return true;
             }
 
             participant.CurrentHealth = 0;
             if (participant.Alive) Defeat(participant, default(CombatEntityId), 0);
+            _squadStateRevision++;
             return true;
         }
 
@@ -533,6 +611,7 @@ namespace BattleRaja.Core.Domain
             var defeated = target.CurrentHealth == 0;
             RecordCombatDamage(request.InstigatorId, target.Member.ActorId, applied, defeated, eventId);
             if (TryGetParticipantState(request.InstigatorId, out var attacker)) attacker.SpawnProtected = false;
+            _squadStateRevision++;
             return new DamageResult(true, applied, defeated, DamageRejectionReason.None);
         }
 
@@ -556,12 +635,17 @@ namespace BattleRaja.Core.Domain
             RecordCombatDamage(instigatorId, targetId, amountApplied, targetDefeated, eventIdAlreadyRecorded: eventId != 0);
             if (TryGetParticipantState(instigatorId, out var attacker)) attacker.SpawnProtected = false;
             if (targetDefeated && target.Alive) Defeat(target, instigatorId, eventId);
+            _squadStateRevision++;
             return true;
         }
 
         public void ClearSpawnProtection(CombatEntityId actorId)
         {
-            if (TryGetParticipantState(actorId, out var participant)) participant.SpawnProtected = false;
+            if (TryGetParticipantState(actorId, out var participant))
+            {
+                participant.SpawnProtected = false;
+                _squadStateRevision++;
+            }
         }
 
         public float GetMovementMultiplier(CombatEntityId actorId) =>
@@ -601,6 +685,7 @@ namespace BattleRaja.Core.Domain
             _crownPickupProgress = 0f;
             _crownPickupActor = default(CombatEntityId);
             GetTeamState(participant.Member.TeamId).CrownPickups++;
+            _squadStateRevision++;
             return true;
         }
 
@@ -615,6 +700,7 @@ namespace BattleRaja.Core.Domain
             if (Float2.Distance(carrier.Position, shrine) > _definition.Objective.ContactRadius * 1.35f) return false;
             if (_depositChannelActor.Value != 0 && _depositChannelActor != actorId) return false;
             _depositChannelActor = actorId;
+            _squadStateRevision++;
             return true;
         }
 
@@ -624,6 +710,7 @@ namespace BattleRaja.Core.Domain
             {
                 _depositChannelActor = default(CombatEntityId);
                 _depositChannelProgress = 0f;
+                _squadStateRevision++;
             }
         }
 
@@ -631,6 +718,7 @@ namespace BattleRaja.Core.Domain
         {
             if (_crownCarrier != actorId || !TryGetParticipantState(actorId, out var carrier)) return;
             DropCrownAt(carrier.Position);
+            _squadStateRevision++;
         }
 
         public BastionCrownTick Advance(float deltaSeconds, int simulationTick = -1)
@@ -658,6 +746,7 @@ namespace BattleRaja.Core.Domain
                 if (!_ended) CheckClock();
             }
 
+            _squadStateRevision++;
             return CreateTick(simulationTick);
         }
 
@@ -680,6 +769,7 @@ namespace BattleRaja.Core.Domain
             participant.Position = participant.SpawnPosition;
             participant.SpawnProtected = _definition.Respawn.SpawnProtectionSeconds > 0f;
             participant.SpawnProtectionRemaining = _definition.Respawn.SpawnProtectionSeconds;
+            _squadStateRevision++;
             return true;
         }
 
@@ -694,6 +784,7 @@ namespace BattleRaja.Core.Domain
             {
                 Resolve(winner, false, reason);
             }
+            _squadStateRevision++;
         }
 
         private void ValidateSlots(IReadOnlyList<BastionCrownSlot> slots)

@@ -326,7 +326,7 @@ namespace BattleRaja.Presentation.AI
             brain.ConfigureForAutonomousMatch(
                 seed,
                 attack != null ? attack.AuthorityWeaponDefinition : ProjectileWeaponDefinition.TrainingBolt);
-            brain.SetHarnessAttackCadenceMultiplier(25f);
+            brain.SetHarnessAttackCadenceMultiplier(15f);
         }
 
         private static string Summarize(IReadOnlyList<AutonomousBotMatchResult> results)

@@ -1901,3 +1901,53 @@ Record every material choice here. Do not silently overwrite old decisions.
   feature-art candidate is retained as historical material but is not referenced by the
   runtime after the 2026-09-01 originality pass.
 - **Owner:** Human project owner
+
+### ADR-078 - Use a bounded-lag squad blackboard with a frozen command phase
+
+- **Date:** 2026-09-02
+- **Status:** Accepted for the V1 offline Bastion Crown authority baseline; network
+  parity, human fun and final balance review remain open.
+- **Context:** The first role-aware bot pass computed each actor's intent directly from
+  mutable same-tick state. That made support/escort handoffs sensitive to iteration order
+  and did not provide a measurable squad communication contract.
+- **Options considered:** Keep per-bot ad-hoc reads; add a global mutable coordinator; or
+  snapshot all eight participants into a pure, deterministic blackboard at a bounded
+  cadence and freeze that snapshot while commands are produced.
+- **Decision:** `BastionSquadBlackboard` owns canonical participant snapshots, Crown/team/
+  zone context, deterministic support/peel handoffs and communication metrics. The match
+  prepares it at a fixed four-tick cadence (or on an authority revision), and
+  `OfflineMatchController` brackets bot command production with an explicit command phase.
+  Same-tick mutations cannot refresh the decision source until the phase ends.
+- **Consequences:** Squad intent is common, inspectable and reproducible for human/bot
+  commands; signal age, plan refreshes and handoffs are measurable in tests and reports.
+  This is still an offline authority seam, not a claim of network replication or optimal
+  tactics.
+- **Evidence/sources:** `BastionCrownContracts.cs`, `BastionCrownMatch.cs`,
+  `OfflineMatchController.cs`, `BastionSquadBlackboardTests.cs`, full 159/159 EditMode,
+  94/94 PlayMode and strict production-bot rerun.
+- **Owner:** Human project owner
+
+### ADR-079 - Keep production bot damage fair and pace validation with one bounded cadence
+
+- **Date:** 2026-09-02
+- **Status:** Accepted for the V1 offline release candidate; human feel and balance review
+  remain open.
+- **Context:** The previous production-only damage/cadence calibration obscured whether
+  bots were winning because of combat power or because the harness was running a different
+  controller path. The release candidate needs fair damage definitions and a repeatable
+  pacing diagnostic.
+- **Options considered:** Retain a production damage advantage; slow only validation;
+  or use the same human weapon damage for bots and the same bounded production/harness
+  cadence multiplier.
+- **Decision:** Bazaar Bastion and the validation harness use `1.0x` bot weapon damage,
+  equal to human definitions, and a shared `15x` attack-cadence multiplier for the
+  production controller. The setting is a pacing aid for the offline simulation, not a
+  hidden combat-power multiplier.
+- **Consequences:** The strict 100-match run remains combat-positive and terminal while
+  exposing a real 93/100 in-window rate, 61/100 with at least three combat eliminations,
+  100/100 bot-to-bot damaging pairs and zero protected/invalid samples. The 45 failed
+  gadget attempts and outside-participant counts remain visible for follow-up tuning.
+- **Evidence/sources:** `BotBrain.cs`, `BuildEntrypoints.cs`, `ProductionBotMatchHarness.cs`,
+  `BazaarBastion.unity` and report
+  `Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260901-070002238-9101.json`.
+- **Owner:** Human project owner

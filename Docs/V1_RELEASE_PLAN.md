@@ -13,7 +13,42 @@ prototype until every V1 completion gate and remaining human gate passes.
 - Approved physical evidence device: Lava `ST5GDW23LB004392` (`LAVA LXX508`) only.
 - Preserve internal networking/Web seams without exposing unusable public online paths.
 
-## Checkpoint 0 - current offline V1 continuation — 2026-09-01
+## Checkpoint 0 - exact-final balanced continuation — 2026-09-02
+
+The current working tree supersedes the 2026-09-01 continuation record with the
+authority/squad blackboard hardening, deterministic post-respawn team placement and
+fair production pacing. The exact evidence record is
+`Docs/QA/V1_OFFLINE_ANDROID_VALIDATION_2026-09-02.md`.
+
+- Static validation: **0 errors / 0 warnings**.
+- EditMode: **159/159 passed** (`Builds/Local/V1GameplayTruth/Next/editmode-final.xml`).
+- PlayMode: **94/94 passed** (`Builds/Local/V1GameplayTruth/Next/playmode-final.xml`).
+- Strict production-bot gate: **94/94 tests passed**; 100/100 terminal matches, 93/100
+  in the 240–360 s window, 93/100 combat-positive, 61/100 with ≥3 combat eliminations,
+  3 Aandhi-only, 100/100 bot-to-bot damaging pairs, and zero protected/invalid samples.
+- Bastion v2 replay soak: two seeds × 8,400 ticks, zero combined-hash divergence; planner
+  coverage remains contest 64, escort 64, defend 96, collapse 64 and Aandhi-retreat 32.
+- APK: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`, **41,514,464 bytes**,
+  SHA-256 `7243A7A324E43FC2C2A274DDF1B27C89166E5E9CF5F39C981D650355F696E9B6`.
+- AAB: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`, **37,339,995 bytes**,
+  SHA-256 `ABC16E0F7B499690BA41ECC9CBAB5D243C35E85783B6051E5E1982B51ACE8D48`.
+- Release checker: passed temporary package `com.example.battleraja.m11`, target SDK 36,
+  no network permissions, ARM64-only libraries, static 16 KB alignment and creative
+  dimensions. The package remains temporary/debug identity.
+- Approved Lava `ST5GDW23LB004392`: exact APK install, menu → Bastion briefing → fighter
+  choice → live arena → action/settings → results → rematch → airplane-mode toggle. The
+  six-sample/30-second raw capture reports PSS 60,858–252,074 KB, RSS 176,511–390,924 KB,
+  graphics PSS 10,455–77,512 KB, raw top CPU 35.7–57.1%, thermal 0 and no configured
+  fatal markers. Lava reports 4 KB pages; no normalized frame histogram is available.
+
+This closes the current local technical continuation gate but not final release approval.
+The truthful classification remains **Prototype — Android offline release candidate in
+progress**. Final commissioned art/cultural/accessibility/fun review, complete tutorial
+physical route, normalized endurance, physical 16 KB runtime, permanent identity/signing,
+privacy/Data safety/IARC and Play Console actions remain open; no public publication was
+performed.
+
+## Checkpoint 0a - previous offline V1 continuation — 2026-09-01
 
 The current working tree completes the Bastion Crown authority/replay hardening pass and
 replaces the reference-like menu hero with the original

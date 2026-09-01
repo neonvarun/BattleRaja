@@ -6,7 +6,31 @@
 
 ## Current state
 
-- **Latest offline Android continuation (2026-09-01):** Bastion Crown authority/replay
+- **Latest offline Android continuation (2026-09-02; evidence captured 2026-09-01):**
+  The working tree now includes the bounded-lag squad blackboard, deterministic support/
+  escort handoffs, same-tick command-phase freeze, unique team placements after respawn,
+  and fair production pacing (`1.0x` bot damage, shared `15x` cadence). Static validation
+  is **0/0**, EditMode **159/159**, PlayMode **94/94**, and the strict production-bot run
+  is **94/94** with 100/100 terminal matches. The 100-match report records **93/100** in
+  the 240–360 s target window, **93/100** combat-positive, **61/100** with at least three
+  combat eliminations, **3** Aandhi-only resolutions, **100/100** bot-to-bot damaging pairs,
+  and zero protected-warmup or invalid-position samples. The exact APK is **41,514,464
+  bytes**, SHA-256 `7243A7A324E43FC2C2A274DDF1B27C89166E5E9CF5F39C981D650355F696E9B6`; the
+  AAB is **37,339,995 bytes**, SHA-256
+  `ABC16E0F7B499690BA41ECC9CBAB5D243C35E85783B6051E5E1982B51ACE8D48`. The release
+  checker passes temporary package `com.example.battleraja.m11`, target SDK 36, no network
+  permissions, ARM64-only libraries and static 16 KB alignment. Fresh exact-final approved-
+  Lava evidence is under `Builds/Local/V1GameplayTruth/Final/lava-20260901-balanced/` and
+  reaches menu → Bastion briefing → fighter choice → live arena → actions/settings →
+  results → rematch → airplane-mode toggle. A six-sample/30-second raw capture reports
+  PSS **60,858–252,074 KB**, RSS **176,511–390,924 KB**, graphics PSS **10,455–77,512 KB**,
+  raw top CPU **35.7–57.1%**, thermal **0** and no configured fatal markers. Lava reports
+  4 KB pages and Unity `gfxinfo` has no usable frame histogram. The full tutorial action
+  route, final commissioned art, normalized endurance, physical 16 KB runtime, permanent
+  identity/signing, privacy/Data safety/IARC and Play owner gates remain open. The exact
+  evidence index is `Docs/QA/V1_OFFLINE_ANDROID_VALIDATION_2026-09-02.md`.
+
+- **Previous offline Android continuation (2026-09-01):** Bastion Crown authority/replay
   hardening and squad-planner coverage are green: static validation **0/0**, EditMode
   **155/155**, PlayMode **94/94**, and a two-seed/8,400-tick v2 replay soak has zero
   combined-hash divergence. The deterministic planner emitted contest **64**, escort **64**,

@@ -1,9 +1,11 @@
 # BattleRaja Unity Project Context
 
-**Planning snapshot:** 2026-09-01 01:30 IST
+**Planning snapshot:** 2026-09-02 00:00 IST
 **Verified source:** current `codex/v1-playstore-release` continuation working tree; exact final commit is reported by the release handoff
 **Working directory:** `C:\Projects\BattleRaja`
-**Status:** Bastion Crown 4v4 offline implementation, deterministic replay hardening and original menu-art replacement are integrated and test-green; final release gates remain open.
+**Status:** Bastion Crown 4v4 offline implementation, deterministic replay/squad hardening,
+fair production pacing and original menu-art replacement are integrated and test-green;
+final release gates remain open.
 
 This file is the compact orientation document for the V1 continuation agent. The agent must re-run repository, build and device checks because this snapshot can become stale. `PROJECT_STATUS.md`, `AGENTS.md`, and the source code remain the authority for current facts; the prompt pack is the execution contract for the next implementation pass.
 
@@ -22,21 +24,23 @@ The canonical rules live in `PROMPTS/03_4V4_MATCH_RULES_RESPAWN_SCORE_AND_OBJECT
 
 ## Verified repository baseline
 
-The latest continuation is recorded in `Docs/QA/V1_OFFLINE_ANDROID_VALIDATION_2026-09-01.md`.
-Static validation is **0/0**, EditMode is **155/155**, PlayMode is **94/94**, the two-seed
+The latest continuation is recorded in `Docs/QA/V1_OFFLINE_ANDROID_VALIDATION_2026-09-02.md`.
+Static validation is **0/0**, EditMode is **159/159**, PlayMode is **94/94**, the two-seed
 8,400-tick Bastion replay soak has zero divergence, and the planner coverage run records
-contest 64 / escort 64 / defend 96 / collapse 64 / Aandhi-retreat 32 intents. The exact
-APK/AAB hashes and Lava captures in that report supersede the older baseline values below.
+contest 64 / escort 64 / defend 96 / collapse 64 / Aandhi-retreat 32 intents. The strict
+production-bot gate is **94/94** with 100/100 terminal matches. The exact APK/AAB hashes and
+Lava captures in that report supersede the older baseline values below.
 
-- The working tree is clean at the focused Bastion Crown implementation checkpoint; re-check before making changes.
-- The branch is at `56313096d0ad8e2e23468d004eaa77d71ed3a233` (`origin/main`); local `main` is historical and behind origin.
+- The working tree contains the focused continuation changes and must be rechecked before
+  any further edits; the release handoff records the resulting commit.
+- The published baseline is `9c7e8cfdf417e4196d94bfe5e7837ba44b6959a9`; local `main` is
+  historical and behind the release branch.
 - `main` is historical and behind origin; do not plan against it.
 - LFS pointer check passed.
 - Stashes exist and are user-owned; do not apply, delete or rewrite them.
-- Commit `5631309` added the Bastion Crown domain/application adapter, production scene identity,
-  team HUD, objective markers and initial squad intent; the current continuation adds the
-  coherent post-tick replay envelope, deterministic hash coverage, Aandhi retreat and planner
-  metrics on top of that baseline.
+- The current continuation adds the bounded-lag squad blackboard, deterministic support/escort
+  handoffs, same-tick command-phase freeze, unique team placement after respawn and fair
+  production pacing on top of the Bastion Crown baseline.
 
 ## Engine and package baseline
 
