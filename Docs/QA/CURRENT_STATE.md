@@ -59,6 +59,54 @@ The superseded post-telemetry source rebuild is retained in the QA report for pr
 The final visual-fix checker again passes the temporary package/target/ARM64/static-
 alignment gates; final signing and identity are not selected.
 
+## Latest current-source evidence — 2026-09-04 — production Bastion player HUD
+
+The live Bastion route now uses one compact `PlayerStatusCard` for the human fighter.
+`BastionPlayerHud.cs` groups fighter role, health, attack/ability readiness and gadget
+feedback, and hides the legacy Solo-only `BijliHud` / `GadgetHud` cards only in Bastion.
+MovementLab keeps the legacy cards for its focused fixtures. The new PlayMode regression
+asserts the production card and suppression behavior.
+
+Fresh automated gates are EditMode **159/159** (XML SHA-256
+`04CE454016166816A88BE34E53BCAEFFDCA929786D0161F9DBCC3EC3E4527DD3`) and PlayMode
+**95/95** (XML SHA-256
+`CA5E0AC3FAC1E623612DC19874DA91429772B048A3D0B89E5DEF2E5B0B3B2054`); static
+validation remains **0 errors / 0 warnings**. The exact APK is **41,608,148 bytes**
+(`3CA0777D8B94E5381D08794BCA48BDCDE070675F4B54CB32EEFF31FE004C07F2`) and AAB is
+**37,433,660 bytes**
+(`1996369E050A8C77BE6098618BC20ACB6388CD11C2A2A54A44249780BDFE6E95`).
+
+Approved Lava `ST5GDW23LB004392` (`1080x2460`, Android 14/API 34, 4 KB pages) matches
+the local installed APK hash. Evidence under
+`Builds/Local/V1GameplayTruth/Next/lava-player-card-20260904/` includes menu, briefing,
+fighter choice, live 4v4 with the production card, results with the card hidden, and a
+fresh live-only route. The accessibility dump still exposes only `unitySurfaceView`.
+The concurrent six-sample/30-second live capture is under
+`performance-player-card-20260904/` (manifest SHA-256
+`6A4B00F6CBD8CBF2C68A10770BFE7BC7D488127A68A6D439E2E69E0B57321BFF`): PSS
+**296,836–301,395 KB**, RSS **407,992–421,284 KB**, graphics PSS **89,244–93,348 KB**,
+raw app CPU **94.2–103%**, CPU/GPU **41.03–41.657 C**, battery **81% → 81%**, thermal
+status **0**, no configured fatal markers. The live-only SurfaceFlinger file
+`surfaceflinger-latency-live-player-card-10s.txt` (SHA-256
+`81316B42C3F642188C7ACBB36C086109D7EDA5079BB474EFCBDD7DAB0B2B10D8`) contains 126
+presented frames / 125 intervals: mean **16.934 ms** (~**59.05 FPS**), p50 **16.534 ms**,
+p95 **16.585 ms**, p99 **33.097 ms**, max **33.350 ms**, one interval over 33.33 ms and
+none over 50 ms. This remains bounded device/compositor evidence, not normalized Unity
+GPU/GC profiling, ten-rematch endurance or physical 16 KB runtime proof.
+
+The clean technical release-checker log is
+`release-checker-player-card-20260904.log` (SHA-256
+`80AE8FF493B75D46083859544692A92D91715E00E32C9EBAD0B74F4D17B0A3B2`). It passed
+repository validation, target SDK 36, offline permissions, ARM64-only native libraries,
+static 16 KB ELF alignment and store-creative dimensions; the artifact remains temporary
+debug-signed and owner approval is still required for identity, privacy, rating, culture
+and Play submission.
+
+The release candidate remains **Prototype — Android offline release candidate in
+progress**: final identity/signing, full lifecycle and player-KO spectator proof,
+all-fighter/tutorial/accessibility comfort, commissioned art/audio/cultural review,
+privacy/Data Safety/IARC and Play owner gates remain open.
+
 ## Latest current-source evidence — 2026-09-04 — environment readability and portrait framing refinement
 
 The current source carries a focused presentation follow-up for the mobile readability

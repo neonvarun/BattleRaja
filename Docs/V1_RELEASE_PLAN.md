@@ -13,6 +13,52 @@ prototype until every V1 completion gate and remaining human gate passes.
 - Approved physical evidence device: Lava `ST5GDW23LB004392` (`LAVA LXX508`) only.
 - Preserve internal networking/Web seams without exposing unusable public online paths.
 
+## Checkpoint 0h - production Bastion player HUD consolidation — 2026-09-04
+
+The live Bastion Crown route now presents one compact production player card instead of
+stacking the legacy Solo diagnostics. `BastionPlayerHud` is an editable runtime adapter
+that shows the human fighter's identity/role, health, attack and ability readiness,
+gadget state and friendly feedback; it hides `BijliHud` and `GadgetHud` only for Bastion
+and keeps them available in the MovementLab fixture. A focused PlayMode test covers the
+card and suppression contract.
+
+- Fresh EditMode: **159/159 passed**, XML SHA-256
+  `04CE454016166816A88BE34E53BCAEFFDCA929786D0161F9DBCC3EC3E4527DD3`.
+- Fresh PlayMode: **95/95 passed**, XML SHA-256
+  `CA5E0AC3FAC1E623612DC19874DA91429772B048A3D0B89E5DEF2E5B0B3B2054`.
+- Static validation: **0 errors / 0 warnings**; `git diff --check` passed.
+- APK: **41,608,148 bytes**, SHA-256
+  `3CA0777D8B94E5381D08794BCA48BDCDE070675F4B54CB32EEFF31FE004C07F2`.
+- AAB: **37,433,660 bytes**, SHA-256
+  `1996369E050A8C77BE6098618BC20ACB6388CD11C2A2A54A44249780BDFE6E95`.
+- Unity build log SHA-256:
+  `C248A5CE489C78AC4552A68249ABFAE02794E1F73EB3CA9B95C7ADC03409F772`.
+- Approved Lava `ST5GDW23LB004392` route evidence is under
+  `Builds/Local/V1GameplayTruth/Next/lava-player-card-20260904/`; it visibly confirms
+  the card in live 4v4 and its removal on the results screen. The installed APK base
+  hash matches the local APK; the Unity accessibility dump remains `unitySurfaceView`
+  only.
+- Six-sample/30-second live capture manifest SHA-256:
+  `6A4B00F6CBD8CBF2C68A10770BFE7BC7D488127A68A6D439E2E69E0B57321BFF`. PSS is
+  **296,836–301,395 KB**, RSS **407,992–421,284 KB**, graphics PSS **89,244–93,348 KB**,
+  raw app CPU **94.2–103%**, CPU/GPU **41.03–41.657 C**, battery **81% → 81%**, thermal
+  **0**, no configured fatal markers.
+- Live-only SurfaceFlinger file SHA-256:
+  `81316B42C3F642188C7ACBB36C086109D7EDA5079BB474EFCBDD7DAB0B2B10D8`; 126 presented
+  frames / 125 intervals, mean **16.934 ms** (~**59.05 FPS**), p50 **16.534 ms**, p95
+  **16.585 ms**, p99 **33.097 ms**, max **33.350 ms**, one interval above 33.33 ms and
+  none over 50 ms. This remains bounded compositor evidence, not normalized GPU/GC or
+  endurance approval.
+- Clean technical checker log:
+  `Builds/Local/V1GameplayTruth/Next/release-checker-player-card-20260904.log`, SHA-256
+  `80AE8FF493B75D46083859544692A92D91715E00E32C9EBAD0B74F4D17B0A3B2`; repository,
+  target SDK 36, offline permissions, ARM64/static 16 KB and store dimensions passed.
+
+The candidate remains **Prototype — Android offline release candidate in progress**;
+commissioned final art, full tutorial/accessibility/lifecycle/spectator comfort,
+physical 16 KB runtime, normalized performance/endurance, final identity/signing and
+privacy/Data Safety/IARC/Play owner gates remain open.
+
 ## Checkpoint 0g - portrait backplate grounding — 2026-09-04
 
 The latest visual refinement keeps the tighter portrait framing while grounding the

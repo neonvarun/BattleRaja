@@ -18,6 +18,65 @@ accessibility comfort, cultural fit, signing or legal approval.
 - Current entry art and production fighter prefabs are repository-owned and editable.
   They remain a generated V1 presentation baseline, not commissioned final art.
 
+## Production Bastion player HUD consolidation — 2026-09-04
+
+The live 4v4 route now uses a single production `PlayerStatusCard` for the human fighter.
+`BastionPlayerHud.cs` groups fighter identity/role, health, attack and ability readiness,
+and gadget feedback in the portrait-safe area. Bastion suppresses the legacy Solo-only
+`BijliHud` and `GadgetHud` objects while leaving them available to MovementLab fixtures.
+The focused PlayMode regression asserts the card exists, contains the player-facing
+Bijli identity and does not stack the legacy cards.
+
+Fresh current-source gates are EditMode **159/159** (XML SHA-256
+`04CE454016166816A88BE34E53BCAEFFDCA929786D0161F9DBCC3EC3E4527DD3`) and PlayMode
+**95/95** (XML SHA-256
+`CA5E0AC3FAC1E623612DC19874DA91429772B048A3D0B89E5DEF2E5B0B3B2054`). Static
+validation is **0 errors / 0 warnings**.
+
+The exact current APK/AAB pair is:
+
+| Artifact | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk` | 41,608,148 | `3CA0777D8B94E5381D08794BCA48BDCDE070675F4B54CB32EEFF31FE004C07F2` |
+| `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab` | 37,433,660 | `1996369E050A8C77BE6098618BC20ACB6388CD11C2A2A54A44249780BDFE6E95` |
+
+The matching Unity build log is `Builds/M11/Logs/android-build.log` (SHA-256
+`C248A5CE489C78AC4552A68249ABFAE02794E1F73EB3CA9B95C7ADC03409F772`). The APK was
+installed on approved Lava `ST5GDW23LB004392`; its on-device base APK SHA-256 matched
+the local APK. Route captures are under
+`Builds/Local/V1GameplayTruth/Next/lava-player-card-20260904/`: the live capture
+`05-live-only.png` is SHA-256
+`BF4BF640E4FFADE883B03681F618719C87E43AB35F84F89A11909A11B5964454`, and the results
+capture after the bounded performance window (`04-live-after-perf.png`) is SHA-256
+`2AFBBAAF462D6DB39147028B7CDEE65FCCD1A57A8AC1E0831CA442D2BA32E992`. The route
+visibly shows the single player card in live 4v4, hides it on results, and starts a
+fresh live route again; the accessibility tree exposes only `unitySurfaceView`.
+
+The six-sample/30-second live capture is under
+`performance-player-card-20260904/` (manifest SHA-256
+`6A4B00F6CBD8CBF2C68A10770BFE7BC7D488127A68A6D439E2E69E0B57321BFF`): PSS
+**296,836–301,395 KB**, RSS **407,992–421,284 KB**, graphics PSS **89,244–93,348 KB**,
+raw app CPU **94.2–103%**, CPU/GPU **41.03–41.657 C**, battery **81% → 81%**, thermal
+status **0**, and zero configured fatal markers. The live-only SurfaceFlinger record
+`surfaceflinger-latency-live-player-card-10s.txt` (SHA-256
+`81316B42C3F642188C7ACBB36C086109D7EDA5079BB474EFCBDD7DAB0B2B10D8`) has 126 presented
+frames / 125 intervals at 16.667 ms: mean **16.934 ms** (~**59.05 FPS**), p50 **16.534 ms**,
+p95 **16.585 ms**, p99 **33.097 ms**, max **33.350 ms**, one interval over 33.33 ms and
+none over 50 ms. This is bounded compositor evidence, not normalized Unity GPU/GC,
+unplugged endurance, physical 16 KB runtime or final-art approval.
+
+The clean technical release-checker log is
+`Next/release-checker-player-card-20260904.log` (SHA-256
+`80AE8FF493B75D46083859544692A92D91715E00E32C9EBAD0B74F4D17B0A3B2`). It passed
+repository validation, target SDK 36, offline permissions, ARM64-only native libraries,
+static 16 KB ELF alignment and store-creative dimensions. The artifact remains temporary
+debug-signed and final identity, privacy, content rating, cultural and Play approvals are
+owner-controlled.
+
+The release candidate remains a temporary debug-signed package and the final package
+identity, signing, privacy/Data Safety, IARC/content rating, cultural review and Play
+submission are owner-controlled.
+
 ## Presentation grounding pass — 2026-09-04
 
 The portrait readability follow-up now also grounds the camera outside the playable

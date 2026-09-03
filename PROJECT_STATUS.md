@@ -6,6 +6,36 @@
 
 ## Current state
 
+- **Production Bastion player HUD consolidation (2026-09-04):** The live 4v4 route now
+  presents one compact `PlayerStatusCard` for the human fighter, combining fighter role,
+  health, attack/ability readiness and gadget feedback. `BastionPlayerHud` is an editable
+  runtime adapter; it suppresses the legacy Solo-only `BijliHud` and `GadgetHud` cards in
+  Bastion while preserving those fixtures for MovementLab regression coverage. A focused
+  PlayMode regression now asserts the production card and legacy-card suppression. Fresh
+  gates are EditMode **159/159** (XML SHA-256
+  `04CE454016166816A88BE34E53BCAEFFDCA929786D0161F9DBCC3EC3E4527DD3`) and PlayMode
+  **95/95** (XML SHA-256
+  `CA5E0AC3FAC1E623612DC19874DA91429772B048A3D0B89E5DEF2E5B0B3B2054`); static
+  validation is **0 errors / 0 warnings**. The exact APK is **41,608,148 bytes**
+  (`3CA0777D8B94E5381D08794BCA48BDCDE070675F4B54CB32EEFF31FE004C07F2`) and AAB is
+  **37,433,660 bytes**
+  (`1996369E050A8C77BE6098618BC20ACB6388CD11C2A2A54A44249780BDFE6E95`). Approved Lava
+  `ST5GDW23LB004392` matches the local APK hash and the route captures live 4v4 with the
+  new card, then authoritative results/rematch; captures are under
+  `Builds/Local/V1GameplayTruth/Next/lava-player-card-20260904/`. The six-sample
+  30-second live capture reports PSS **296,836–301,395 KB**, RSS **407,992–421,284 KB**,
+  graphics PSS **89,244–93,348 KB**, raw app CPU **94.2–103%**, CPU/GPU **41.03–41.657 C**,
+  battery **81% → 81%**, thermal **0** and zero configured fatal markers. A separate
+  live-only SurfaceFlinger history reports 126 presented frames / 125 intervals, mean
+  **16.934 ms** (~**59.05 FPS**), p50 **16.534 ms**, p95 **16.585 ms**, p99 **33.097 ms**,
+  max **33.350 ms**, one interval over 33.33 ms and none over 50 ms. The technical
+  release checker passed the clean worktree gate (log SHA-256
+  `80AE8FF493B75D46083859544692A92D91715E00E32C9EBAD0B74F4D17B0A3B2`) but still leaves
+  final identity/signing, physical 16 KB runtime,
+  normalized GPU/GC/endurance, full player spectator proof, commissioned art and owner
+  approvals open; classification remains **Prototype — Android offline release candidate
+  in progress**.
+
 - **Portrait backplate grounding (2026-09-04):** The exact current source now adds an
   editable tiled `BackdropBox` mesh plus an unlit `Backdrop` material below the
   collider-free Bazaar gameplay mosaic. This grounds portrait overscan without a

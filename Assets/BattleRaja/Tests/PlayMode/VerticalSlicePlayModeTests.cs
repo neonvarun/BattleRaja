@@ -113,6 +113,28 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator BastionUsesOneProductionPlayerStatusCard()
+        {
+            var card = GameObject.Find("PlayerStatusCard");
+            Assert.That(card, Is.Not.Null,
+                "Bastion Crown must expose the production player card in the live HUD.");
+            Assert.That(card.activeSelf, Is.True);
+
+            var identity = card.transform.Find("PlayerIdentity")?.GetComponent<Text>();
+            Assert.That(identity, Is.Not.Null);
+            StringAssert.Contains("BIJLI", identity.text);
+            StringAssert.DoesNotContain("DEBUG", identity.text);
+
+            var legacyFighter = GameObject.Find("BijliHud");
+            Assert.That(legacyFighter == null || !legacyFighter.activeSelf, Is.True,
+                "The legacy solo fighter card must not stack with the Bastion card.");
+            var legacyGadget = GameObject.Find("GadgetHud");
+            Assert.That(legacyGadget == null || !legacyGadget.activeSelf, Is.True,
+                "The legacy solo gadget card must not stack with the Bastion card.");
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator ProductionCrownPickupAndDepositUsesTeamAuthority()
         {
             var match = Object.FindAnyObjectByType<OfflineMatchController>();

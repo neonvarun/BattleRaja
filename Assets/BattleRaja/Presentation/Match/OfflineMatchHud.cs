@@ -519,6 +519,10 @@ namespace BattleRaja.Presentation.Match
             _statusText = CreateText(root.transform, "MatchStatus", new Vector2(0.42f, 0.94f), new Vector2(0.84f, 0.99f), 24, TextAnchor.UpperLeft);
             CreatePanel(root.transform, "MatchStatusCard", new Vector2(0.39f, 0.925f), new Vector2(0.99f, 0.995f), BattleRajaUiTheme.Surface);
             _statusText.transform.SetAsLastSibling();
+            // Bastion uses a single production player card. The legacy Solo cards
+            // remain in the MovementLab fixture, where their focused diagnostics are
+            // still useful to the regression suite.
+            root.AddComponent<BastionPlayerHud>();
             _spectatorText = CreateText(root.transform, "SpectatorStatus", new Vector2(0.42f, 0.88f), new Vector2(0.84f, 0.93f), 22, TextAnchor.UpperLeft);
             CreateButton(root.transform, "Pause", "PAUSE", new Vector2(0.86f, 0.92f), new Vector2(0.98f, 0.985f), ToggleSettings);
             CreateButton(root.transform, "Spectate", "SPECTATE", new Vector2(0.38f, 0.02f), new Vector2(0.52f, 0.085f), CycleSpectator);
