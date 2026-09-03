@@ -29,6 +29,12 @@ repository-owned. The environment rebuild log is
   `FF15744802560C6D2CFAB8E77BC11F2A3048F3F6D9C9116DC0D2FC70FF6FD4FF`.
 - PlayMode: **94/94 passed**; XML SHA-256
   `4FA8EA81AB372436B6AB7796C31024262BF2016074FEFF88A812C87899F0A4AE`.
+- Current-checkout rebaseline: EditMode **159/159** (`Next/editmode-rebaseline-20260904.xml`,
+  SHA-256 `A04D0CC0C31459C241EEF3E3B63A479A43C5EC2B4E5C6BED78D439ECE3CBF9C2`) and
+  PlayMode **94/94** (`Next/playmode-rebaseline-20260904.xml`, SHA-256
+  `E95C6AED5922793791AD7B42064EDB80D782CEEC5AC12DC10A170966D77FB287`). The rerun
+  included the two-seed × 8,400-tick Bastion replay soak and deterministic seeded soak;
+  both passed with zero divergence.
 - APK: **41,579,392 bytes**, SHA-256
   `54AF0801C2FD696DAD3224E6AD1CDDB7F15D8386094CAB8AAD68F5DFABB950E7`.
 - AAB: **37,404,926 bytes**, SHA-256
