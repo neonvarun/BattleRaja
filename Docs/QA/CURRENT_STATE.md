@@ -121,6 +121,52 @@ PSS **87,212–93,368 KB**, raw CPU **105–112%**, thermal status **0**, CPU te
 This is bounded compositor/memory evidence; GPU utilization, GC spikes and ten-rematch
 endurance remain unmeasured.
 
+## Latest current-source evidence — 2026-09-04 — portrait backplate grounding
+
+The final visual refinement adds an editable, collider-free **unlit** Bazaar backplate
+under the gameplay plaza. `ProductionEnvironmentBuilder.cs` now generates
+`Environment/Meshes/BackdropBox.asset` with tiled UVs and `Environment/Materials/Backdrop.mat`,
+then saves the updated `BazaarBastionProduction.prefab`. This fills portrait camera
+overscan with the authored woven palette without adding the full-screen lit/shadow pass
+that made the earlier mosaic experiment miss frame pacing. Gameplay authority, replay,
+AI, economy and input code remain unchanged.
+
+The exact current APK is **41,598,480 bytes** (SHA-256
+`9E5BFF2F28FC857D6E65E11A158942565E59A64AF68DA7F653C1F511060901B8`) and the matching
+AAB is **37,424,015 bytes** (SHA-256
+`91AE29A0165589FC9A5065A7B1579F991DEB54557689F62B94F227C75F1D98EA`). The build log
+SHA-256 is `A0C952E2DC0EFA60FCC9D0D3009CF5647296D77AA212F9F9E3D8E3A75B896518`; the
+environment rebuild log SHA-256 is
+`1E870405C02EA5768E0A44853B029D4A3DABED94FFFB9770ABB17DFF12C1B954`. The APK is
+installed on approved Lava `ST5GDW23LB004392`; the device base APK hash matches the
+local APK. Exact route captures are `28-final-menu.png`, `29-final-briefing.png`,
+`30-final-fighter-select.png`, `31-final-live.png`, `26-backdrop-unlit-near-results.png`
+and `27-backdrop-unlit-rematch.png` under
+`Builds/Local/V1GameplayTruth/Next/lava-camera-art-20260904/`. The route reaches
+menu → Bastion briefing → fighter selection → live 4v4, an authoritative 04:02 result
+(Rival winner; Raja 1 deposit, Rival 4 deposits), and a fresh 00:05 rematch reset.
+
+The exact current-source automated gates are EditMode **159/159** (XML SHA-256
+`FA1A2211ED4730DEF9B28CBCCECE47D8567353A69E232EA9E97E196A0113D158`) and PlayMode
+**94/94** (XML SHA-256
+`3AEB88102BB7C37BAAD6761063EB43C5C76CC910A078B093B0535DF6E2FE581B`). Static
+validation remains **0 errors / 0 warnings**; the configured two-seed × 8,400-tick
+replay/deterministic soak has zero divergence.
+
+The exact final APK's six-sample/30-second performance capture is under
+`performance-backdrop-unlit-20260904/` (manifest SHA-256
+`EF523B47ECFCE00B5517BD96972C192E83AC32E19B921D8CA589A8358B8F5E25`): PSS
+**295,058–306,074 KB**, RSS **405,692–425,404 KB**, graphics PSS **87,060–97,320 KB**,
+raw CPU **100–127%**, CPU/GPU temperature **57.938 C**, battery temperature **33 C**,
+thermal status **0**, battery **87% → 87%**, PSS change **2.40%**, and no fatal markers.
+The compositor history (`surfaceflinger-latency-backdrop-unlit-10s.txt`, SHA-256
+`F96E961687E92F139B6096805A6E93B54A16DA53D0C6EDCF1B33B58BF6661C63`) contains 127
+presented frames / 125 valid intervals at 16.667 ms: mean **16.670 ms** (~**59.99 FPS**),
+p50 **16.535 ms**, p95 **16.565 ms**, p99 **16.590 ms**, max **33.355 ms**, one
+interval over 33.33 ms and none over 50 ms. This remains bounded compositor/device
+evidence, not normalized Unity GPU/GC profiling, unplugged endurance, or a final-art
+approval.
+
 ## Latest current-source evidence — 2026-09-04 — presentation identity pass
 
 The current source refines the generated presentation baseline for mobile readability

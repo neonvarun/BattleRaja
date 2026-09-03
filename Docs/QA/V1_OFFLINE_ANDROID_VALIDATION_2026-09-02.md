@@ -18,6 +18,70 @@ accessibility comfort, cultural fit, signing or legal approval.
 - Current entry art and production fighter prefabs are repository-owned and editable.
   They remain a generated V1 presentation baseline, not commissioned final art.
 
+## Presentation grounding pass — 2026-09-04
+
+The portrait readability follow-up now also grounds the camera outside the playable
+plaza. `ProductionEnvironmentBuilder.cs` adds a collider-free, unlit woven Bazaar
+backplate below the authored `GroundMosaic`; `BackdropBox.asset` carries tiled UVs so
+the extra portrait pixels retain the same surface language without a full-screen lit
+shadow pass. The generated `Backdrop.mat` and
+`Assets/BattleRaja/Content/Prefabs/Production/BazaarBastionProduction.prefab` are
+editable release inputs. Authority, replay, AI, economy and touch-input code were
+unchanged.
+
+The controlled rebuild log is
+`Builds/Local/V1GameplayTruth/Next/environment-rebuild-backdrop-unlit-20260904.log`
+(SHA-256 `1E870405C02EA5768E0A44853B029D4A3DABED94FFFB9770ABB17DFF12C1B954`). The
+current exact non-development APK/AAB pair was rebuilt afterward:
+
+| Artifact | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk` | 41,598,480 | `9E5BFF2F28FC857D6E65E11A158942565E59A64AF68DA7F653C1F511060901B8` |
+| `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab` | 37,424,015 | `91AE29A0165589FC9A5065A7B1579F991DEB54557689F62B94F227C75F1D98EA` |
+
+`Builds/M11/Logs/android-build.log` has SHA-256
+`A0C952E2DC0EFA60FCC9D0D3009CF5647296D77AA212F9F9E3D8E3A75B896518`. The APK was
+installed on approved Lava `ST5GDW23LB004392`; its on-device base APK hash matched
+`9e5bff2f28fc857d6e65e11a158942565e59a64af68da7f653c1f511060901b8`. The exact
+current route captures are `28-final-menu.png` (SHA-256
+`9457B5360CBD099504980784750C4FC21D4F24D84BEE86D66A1615D3F9839A82`),
+`29-final-briefing.png` (`640C44BD938E1ED44B9D203804127AB6115B93F9B705C4214C275D91591A6435`),
+`30-final-fighter-select.png` (`70AE4024AE16FECAED36F9E321705035B53D358932463656F6CF0AFB0114EE79`),
+`31-final-live.png` (`F710402425871CEEA42A73E5630898B8B8AFEE71F91D2F97326344189A5645B2`),
+`26-backdrop-unlit-near-results.png` (`C6801D90B377940618516392BE271B855DFDEBE5AB330DCAF8066EABCAD997FE`) and
+`27-backdrop-unlit-rematch.png` (`504F51184CE7A223FA8D9F54817AA8ACA0BB023880F736FE3EDBD75AC2261DA9`).
+The route reached the live 4v4 Bastion Crown HUD, a 04:02 authoritative results card
+(Rival winner, Raja 1 deposit, Rival 4 deposits), and a fresh 00:05 rematch with
+scores/tickets reset and Raja carrying.
+
+The final current-source automated rerun is **159/159 EditMode** (`Next/editmode-
+backdrop-unlit-20260904.xml`, SHA-256
+`FA1A2211ED4730DEF9B28CBCCECE47D8567353A69E232EA9E97E196A0113D158`) and **94/94
+PlayMode** (`Next/playmode-backdrop-unlit-20260904.xml`, SHA-256
+`3AEB88102BB7C37BAAD6761063EB43C5C76CC910A078B093B0535DF6E2FE581B`). Their logs are
+`1400FD6D534897B0A80F000FA13393F487F00A9AAE8926EFE05C99E8CD737FB7` and
+`50C4D22557F1A1BA3CEEEB1B26263958BBA995E16469609C59A4F750AAE55197`. The two-seed
+× 8,400-tick replay/deterministic soak completed with zero divergence in this exact
+source rerun. Static validation remained 0 errors / 0 warnings.
+
+For the exact final APK, the bounded 30-second Lava capture is under
+`Next/lava-camera-art-20260904/performance-backdrop-unlit-20260904/` (manifest SHA-256
+`EF523B47ECFCE00B5517BD96972C192E83AC32E19B921D8CA589A8358B8F5E25`). It contains six
+samples with PSS **295,058–306,074 KB**, RSS **405,692–425,404 KB**, graphics PSS
+**87,060–97,320 KB**, raw app CPU **100–127%** on Android's per-core scale, CPU/GPU
+temperature **57.938 C**, battery temperature **33 C**, battery **87% → 87%**, thermal
+status **0**, PSS change **2.40%**, and no configured fatal markers. This is bounded
+device evidence, not unplugged endurance or a normalized GPU/GC budget.
+
+The matching compositor history is
+`surfaceflinger-latency-backdrop-unlit-10s.txt` (SHA-256
+`F96E961687E92F139B6096805A6E93B54A16DA53D0C6EDCF1B33B58BF6661C63`). After removing
+the tool's invalid/sentinel intervals, it contains 127 presented frames / 125
+intervals at a 16.667 ms display period: mean **16.670 ms** (estimated **59.99 FPS**),
+p50 **16.535 ms**, p95 **16.565 ms**, p99 **16.590 ms**, max **33.355 ms**, one
+interval over 33.33 ms and none over 50 ms. This is compositor-side evidence only;
+Unity GPU timing, GC slices and ten-rematch endurance remain unmeasured.
+
 ## Canonical Bastion telemetry follow-up — 2026-09-02
 
 The development-only production harness now emits schema-v2 JSON from the canonical

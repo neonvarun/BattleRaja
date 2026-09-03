@@ -6,6 +6,25 @@
 
 ## Current state
 
+- **Portrait backplate grounding (2026-09-04):** The exact current source now adds an
+  editable tiled `BackdropBox` mesh plus an unlit `Backdrop` material below the
+  collider-free Bazaar gameplay mosaic. This grounds portrait overscan without a
+  full-screen lit/shadow pass; authority, replay, AI, economy and input code are
+  unchanged. Environment rebuild log SHA-256 is
+  `1E870405C02EA5768E0A44853B029D4A3DABED94FFFB9770ABB17DFF12C1B954`. The exact APK
+  is **41,598,480 bytes** (`9E5BFF2F28FC857D6E65E11A158942565E59A64AF68DA7F653C1F511060901B8`)
+  and AAB **37,424,015 bytes**
+  (`91AE29A0165589FC9A5065A7B1579F991DEB54557689F62B94F227C75F1D98EA`); the installed
+  Lava base APK matches. Exact gates are EditMode **159/159** and PlayMode **94/94**,
+  static validation **0/0**, and two-seed × 8,400-tick replay/deterministic soak **0
+  divergence**. The exact Lava route reaches menu → briefing → fighter select → live
+  4v4 → 04:02 results → 00:05 rematch. Compositor evidence is mean **16.670 ms**
+  (~**59.99 FPS**), p95 **16.565 ms**, p99 **16.590 ms**, max **33.355 ms**; bounded
+  30-second capture PSS **295,058–306,074 KB**, raw CPU **100–127%**, thermal **0**, and
+  no fatal markers. Normalized endurance/GPU/GC profiling, physical 16 KB runtime,
+  spectator-on-player-KO proof, commissioned final art and owner approvals remain open;
+  classification stays **Prototype — Android offline release candidate in progress**.
+
 - **Environment readability and portrait framing refinement (2026-09-04):** The latest
   presentation pass replaces the earlier high-contrast environment checker treatment
   with restrained woven/banded materials and tightens `TopDownCameraController`'s

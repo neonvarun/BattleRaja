@@ -61,6 +61,13 @@ namespace BattleRaja.Editor
             root.transform.localRotation = Quaternion.identity;
             root.transform.localScale = Vector3.one;
 
+            // Keep the authored arena grounded on tall phones.  The camera sees
+            // beyond the 25.6-unit gameplay bounds during portrait framing; a
+            // quiet woven backplate gives those pixels the same Bazaar material
+            // language instead of exposing the clear-colour void around the plaza.
+            // It is render-only, collider-free and sits below every gameplay tile.
+            AddPart(root.transform, "BazaarBackplate", meshes["BackdropBox"], materials["Backdrop"],
+                new Vector3(0f, -0.12f, 0f), new Vector3(64f, 0.12f, 64f), Quaternion.identity, false);
             AddPart(root.transform, "GroundMosaic", meshes["GroundMosaic"],
                 new[] { materials["GroundBase"], materials["GroundAlt"], materials["GroundAccent"] },
                 new Vector3(0f, 0.006f, 0f), Vector3.one, Quaternion.identity, false);
@@ -220,6 +227,10 @@ namespace BattleRaja.Editor
             };
             var result = new Dictionary<string, Material>(StringComparer.Ordinal);
             foreach (var pair in colors) result[pair.Key] = CreateMaterial(pair.Key, pair.Value, textures[pair.Key]);
+            // The portrait backplate fills the camera outside the playable rim. It
+            // should add authored surface language without paying for a full-screen
+            // lit/shadowed pass on the target phone, so keep this one material unlit.
+            result["Backdrop"] = CreateUnlitMaterial("Backdrop", new Color(0.74f, 0.60f, 0.64f, 1f), textures["GroundBase"]);
             return result;
         }
 
@@ -242,11 +253,33 @@ namespace BattleRaja.Editor
             return material;
         }
 
+        private static Material CreateUnlitMaterial(string name, Color color, Texture2D texture)
+        {
+            var path = MaterialRoot + "/" + name + ".mat";
+            var material = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (material == null)
+            {
+                var shader = Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Texture") ?? Shader.Find("Standard");
+                material = new Material(shader) { name = name };
+                AssetDatabase.CreateAsset(material, path);
+            }
+
+            material.color = color;
+            if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", color);
+            if (material.HasProperty("_Color")) material.SetColor("_Color", color);
+            if (material.HasProperty("_BaseMap")) material.SetTexture("_BaseMap", texture);
+            if (material.HasProperty("_MainTex")) material.SetTexture("_MainTex", texture);
+            material.enableInstancing = true;
+            EditorUtility.SetDirty(material);
+            return material;
+        }
+
         private static Dictionary<string, Mesh> BuildMeshes()
         {
             var meshes = new Dictionary<string, Mesh>(StringComparer.Ordinal)
             {
                 ["GroundMosaic"] = CreateGroundMosaic(),
+                ["BackdropBox"] = CreateTiledBox("BackdropBox", 18f),
                 ["Box"] = CreateBox("EnvironmentBox"),
                 ["Cylinder"] = CreateCylinder("EnvironmentCylinder", 16),
                 ["TaperedColumn"] = CreateTaperedColumn("EnvironmentTaperedColumn", 14),
@@ -300,6 +333,18 @@ namespace BattleRaja.Editor
             };
             var t = new[] { 0, 2, 1, 0, 3, 2, 4, 5, 6, 4, 6, 7, 0, 1, 5, 0, 5, 4, 1, 2, 6, 1, 6, 5, 2, 3, 7, 2, 7, 6, 3, 0, 4, 3, 4, 7 };
             return CreateMesh(name, v, t, BoxUv(v.Length));
+        }
+
+        private static Mesh CreateTiledBox(string name, float tileRepeat)
+        {
+            var mesh = CreateBox(name);
+            var repeat = Mathf.Max(1f, tileRepeat);
+            mesh.uv = new[]
+            {
+                new Vector2(0f, 0f), new Vector2(repeat, 0f), new Vector2(repeat, repeat), new Vector2(0f, repeat),
+                new Vector2(0f, 0f), new Vector2(repeat, 0f), new Vector2(repeat, repeat), new Vector2(0f, repeat)
+            };
+            return mesh;
         }
 
         private static Mesh CreateCylinder(string name, int sides)

@@ -13,6 +13,43 @@ prototype until every V1 completion gate and remaining human gate passes.
 - Approved physical evidence device: Lava `ST5GDW23LB004392` (`LAVA LXX508`) only.
 - Preserve internal networking/Web seams without exposing unusable public online paths.
 
+## Checkpoint 0g - portrait backplate grounding — 2026-09-04
+
+The latest visual refinement keeps the tighter portrait framing while grounding the
+overscan outside the playable plaza. `ProductionEnvironmentBuilder` now creates an
+editable tiled `BackdropBox` mesh and an unlit `Backdrop` material beneath the
+collider-free gameplay mosaic. This preserves the Bazaar palette without the extra
+full-screen lit/shadow cost of the rejected mosaic experiment; authority, replay, AI,
+economy and input code are unchanged.
+
+- Environment rebuild log:
+  `Builds/Local/V1GameplayTruth/Next/environment-rebuild-backdrop-unlit-20260904.log`,
+  SHA-256 `1E870405C02EA5768E0A44853B029D4A3DABED94FFFB9770ABB17DFF12C1B954`.
+- Exact APK: **41,598,480 bytes**, SHA-256
+  `9E5BFF2F28FC857D6E65E11A158942565E59A64AF68DA7F653C1F511060901B8`.
+- Exact AAB: **37,424,015 bytes**, SHA-256
+  `91AE29A0165589FC9A5065A7B1579F991DEB54557689F62B94F227C75F1D98EA`.
+- Unity build log SHA-256:
+  `A0C952E2DC0EFA60FCC9D0D3009CF5647296D77AA212F9F9E3D8E3A75B896518`.
+- Exact source gates: EditMode **159/159** (SHA-256
+  `FA1A2211ED4730DEF9B28CBCCECE47D8567353A69E232EA9E97E196A0113D158`) and PlayMode
+  **94/94** (SHA-256
+  `3AEB88102BB7C37BAAD6761063EB43C5C76CC910A078B093B0535DF6E2FE581B`); static
+  validation **0/0**; two-seed × 8,400-tick replay/deterministic soak **0 divergence**.
+- Approved Lava `ST5GDW23LB004392`: exact APK installed and hash-matched. The current
+  route under `Builds/Local/V1GameplayTruth/Next/lava-camera-art-20260904/` reaches
+  menu, briefing, fighter choice, live 4v4, 04:02 results (Rival winner) and a 00:05
+  rematch reset. Final compositor evidence reports mean **16.670 ms** (~**59.99 FPS**),
+  p95 **16.565 ms**, p99 **16.590 ms**, max **33.355 ms**, one interval over 33.33 ms,
+  none over 50 ms. The six-sample/30-second capture reports PSS **295,058–306,074 KB**,
+  raw CPU **100–127%**, thermal status **0**, battery **87% → 87%**, PSS change **2.40%**
+  and no fatal markers.
+
+The candidate remains **Prototype — Android offline release candidate in progress**:
+final identity/signing, physical 16 KB runtime, normalized endurance/GPU/GC profiling,
+full action-by-action spectator/tutorial/accessibility comfort, commissioned art and
+human cultural/legal/Play approvals remain open.
+
 ## Checkpoint 0f - environment readability and portrait framing refinement — 2026-09-04
 
 This focused presentation checkpoint keeps the Bastion authority, replay determinism,
