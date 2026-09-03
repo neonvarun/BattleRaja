@@ -58,6 +58,18 @@ The clean-tree checker output is retained at
 repository validation, target SDK 36, offline permissions, ARM64-only native libraries,
 static 16 KB alignment and store creative dimensions.
 
+The current approved-Lava frame sample now has a compositor-side record:
+`surfaceflinger-latency-10s.txt` (SHA-256
+`F7D32C24480683590FFADD1736F6E796FBAA0F51EAE64AE1E3492B1F597FDCAD`) reports 127
+presented frames / 125 intervals at 16.667 ms, estimated **59.99 FPS**, p95 **16.569 ms**,
+p99 **16.585 ms**, maximum **33.357 ms**, one interval above 33.33 ms and none above
+50 ms. The concurrent 30-second Lava capture (`performance-rebaseline-20260904`,
+manifest SHA-256 `CD0DB79CF18A00DE0503C4CEA61966961B18F74CE58663B4538146CF3CFB16D4`)
+records PSS **301,862–306,949 KB**, graphics PSS **87,212–93,368 KB**, raw CPU
+**105–112%**, thermal status **0**, CPU temperature **40.847–41.489 C**, battery level
+**87% → 87%**, and zero fatal markers. The history is bounded; GPU utilization, GC
+spikes and ten-rematch endurance are not claimed.
+
 ## Checkpoint 0e - presentation identity/readability pass — 2026-09-04
 
 The production presentation source now uses restrained woven/banded material detail

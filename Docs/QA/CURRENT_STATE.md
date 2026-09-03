@@ -108,6 +108,19 @@ The clean-tree release-checker log is
 repository, target SDK 36, offline-permission, ARM64, static 16 KB and store-dimension
 checks.
 
+The current Lava compositor-side frame capture is retained at
+`Builds/Local/V1GameplayTruth/Next/lava-camera-art-20260904/surfaceflinger-latency-10s.txt`
+(SHA-256 `F7D32C24480683590FFADD1736F6E796FBAA0F51EAE64AE1E3492B1F597FDCAD`). Its
+available history contains 127 presented frames / 125 intervals at a 16.667 ms display
+period: mean **16.670 ms** (estimated **59.99 FPS**), p50 **16.534 ms**, p95 **16.569 ms**,
+p99 **16.585 ms**, maximum **33.357 ms**, one interval over 33.33 ms and none over 50 ms.
+A concurrent six-sample/30-second capture records PSS **301,862–306,949 KB**, graphics
+PSS **87,212–93,368 KB**, raw CPU **105–112%**, thermal status **0**, CPU temperature
+**40.847–41.489 C**, battery **32 C**, level **87% → 87%**, and zero fatal markers
+(manifest SHA-256 `CD0DB79CF18A00DE0503C4CEA61966961B18F74CE58663B4538146CF3CFB16D4`).
+This is bounded compositor/memory evidence; GPU utilization, GC spikes and ten-rematch
+endurance remain unmeasured.
+
 ## Latest current-source evidence — 2026-09-04 — presentation identity pass
 
 The current source refines the generated presentation baseline for mobile readability

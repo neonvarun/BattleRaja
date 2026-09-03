@@ -522,6 +522,31 @@ The final clean-tree release-checker output is retained at
 repository validation, target SDK 36, offline network-permission, ARM64-only native
 libraries, static 16 KB ELF alignment and Play creative dimensions.
 
+### Current Lava frame and memory sample
+
+The approved Lava BLAST layer
+`SurfaceView[com.example.battleraja.m11/com.unity3d.player.UnityPlayerGameActivity](BLAST)#2153`
+was cleared, observed and dumped through SurfaceFlinger while the current live match was
+running. The raw timestamp capture is
+`Builds/Local/V1GameplayTruth/Next/lava-camera-art-20260904/surfaceflinger-latency-10s.txt`,
+SHA-256 `F7D32C24480683590FFADD1736F6E796FBAA0F51EAE64AE1E3492B1F597FDCAD`. The device
+reported a **16.667 ms** display period; the available history contained **127 presented
+frames / 125 intervals**, with mean interval **16.670 ms** (estimated **59.99 FPS**),
+p50 **16.534 ms**, p95 **16.569 ms**, p99 **16.585 ms**, and maximum **33.357 ms**.
+There was one interval above 16.67 ms, one above 33.33 ms, and none above 50 ms. This
+is a compositor-side history window rather than a full-session Unity frame profiler.
+
+The concurrent six-sample/30-second raw capture is under
+`Builds/Local/V1GameplayTruth/Next/lava-camera-art-20260904/performance-rebaseline-20260904/`;
+its manifest SHA-256 is `CD0DB79CF18A00DE0503C4CEA61966961B18F74CE58663B4538146CF3CFB16D4`.
+Across the six samples: PSS **301,862–306,949 KB**, RSS **421,588–426,676 KB**, graphics
+PSS **87,212–93,368 KB**, raw app CPU **105–112%** on Android's per-core scale, current
+CPU temperature **40.847–41.489 C**, battery **32 C**, thermal status **0**, and battery
+level **87% → 87%**. The capture reported zero configured fatal markers. The roughly
+**1.7%** PSS change is bounded to 30 seconds and does not prove the ten-rematch growth
+gate. GPU utilization, managed GC allocation/spike data and a Unity frame-timing
+histogram were not exposed by this device/runtime.
+
 ## Bounded performance and crash scan
 
 `Tools/Validation/capture_android_performance.ps1` captured six samples over 30 seconds

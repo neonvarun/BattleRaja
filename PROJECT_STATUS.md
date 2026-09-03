@@ -27,8 +27,12 @@
   approved-Lava evidence is under
   `Builds/Local/V1GameplayTruth/Next/lava-camera-art-20260904/`; it reaches results at
   04:02 (Raja 4/15 with 4 Crown deposits) and a 00:04 rematch reset. The installed
-  APK hash matches. The route still has no explicit player spectator observation,
-  normalized sustained performance, physical 16 KB runtime or commissioned final art,
+  APK hash matches. A fresh SurfaceFlinger history reports estimated **59.99 FPS**,
+  p95 **16.569 ms**, p99 **16.585 ms**, maximum **33.357 ms**, and no interval above
+  50 ms; a concurrent 30-second capture reports PSS **301,862–306,949 KB**, graphics
+  PSS **87,212–93,368 KB**, raw CPU **105–112%**, thermal **0** and zero fatal markers.
+  This is bounded compositor evidence, not full-session profiling. The route still has
+  no explicit player spectator observation, ten-rematch endurance, physical 16 KB runtime or commissioned final art,
   so classification remains **Prototype — Android offline release candidate in progress**.
 
 - **Presentation identity/readability pass (2026-09-04):** The production art source
