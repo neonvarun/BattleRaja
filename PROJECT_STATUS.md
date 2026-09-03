@@ -32,9 +32,27 @@
   release checker passed the clean worktree gate (log SHA-256
   `80AE8FF493B75D46083859544692A92D91715E00E32C9EBAD0B74F4D17B0A3B2`) but still leaves
   final identity/signing, physical 16 KB runtime,
-  normalized GPU/GC/endurance, full player spectator proof, commissioned art and owner
+  normalized GPU/GC/endurance, full all-fighter/lifecycle comfort, commissioned art and owner
   approvals open; classification remains **Prototype — Android offline release candidate
   in progress**.
+
+- **Player KO → spectator → respawn proof (2026-09-04):** On the exact APK above, approved
+  Lava `ST5GDW23LB004392` was driven outside the Aandhi boundary until the player card
+  reached **5/85** (`lava-spectator-attempt-20260904/ko-watch-05.png`, SHA-256
+  `3997C4E3950FAFCB520F9310456670E680B0972821DABBD09581812D938D86AD`), then **0/85**
+  with the rendered `OUT OF ACTION • respawn or spectate an ally` state
+  (`ko-watch-06.png`, SHA-256
+  `FB543967E71126D7A9BF84063EC97A998EEC8E667DAC5044B6D0CB913DD0675C`; held in
+  `ko-watch-07.png`, SHA-256
+  `D8191EAAE9751B7199ECB5626CBAC029BB6FA451C07FE344B635DA3ABCCFE5BE`). The same
+  route returned the player at **81/85** after the Raja ticket pool decremented from 11
+  to 10 (`ko-watch-09.png`, SHA-256
+  `F1F7C5D7682CAEE1DE0F4004374095392855AA632D08A0ADE460046387B0B8B3`). This is direct
+  physical proof of the player KO/spectator/respawn loop on the current candidate. The
+  run ended with device `airplane_mode_on=0`; it supplements, rather than replaces, the
+  separately recorded airplane-mode offline launch evidence. The Unity accessibility
+  tree still exposes only `unitySurfaceView`, so this is rendered-state evidence, not an
+  accessibility approval.
 
 - **Portrait backplate grounding (2026-09-04):** The exact current source now adds an
   editable tiled `BackdropBox` mesh plus an unlit `Backdrop` material below the

@@ -77,6 +77,26 @@ The release candidate remains a temporary debug-signed package and the final pac
 identity, signing, privacy/Data Safety, IARC/content rating, cultural review and Play
 submission are owner-controlled.
 
+## Player KO → spectator → respawn proof — approved Lava — 2026-09-04
+
+The exact APK above was exercised on approved Lava `ST5GDW23LB004392` in the Bastion
+route. The player was moved beyond the shrinking Aandhi boundary until the production
+card reached **5/85** (`Builds/Local/V1GameplayTruth/Next/lava-spectator-attempt-20260904/ko-watch-05.png`,
+SHA-256 `3997C4E3950FAFCB520F9310456670E680B0972821DABBD09581812D938D86AD`), then
+**0/85** with the visible `OUT OF ACTION • respawn or spectate an ally` state
+(`ko-watch-06.png`, SHA-256
+`FB543967E71126D7A9BF84063EC97A998EEC8E667DAC5044B6D0CB913DD0675C`). A second
+held frame confirms the spectator presentation (`ko-watch-07.png`, SHA-256
+`D8191EAAE9751B7199ECB5626CBAC029BB6FA451C07FE344B635DA3ABCCFE5BE`), and the same
+route returns the player at **81/85** after Raja tickets change from 11 to 10
+(`ko-watch-09.png`, SHA-256
+`F1F7C5D7682CAEE1DE0F4004374095392855AA632D08A0ADE460046387B0B8B3`). This is
+direct physical evidence of the current-candidate player KO → spectator → respawn
+loop. The run ended with `airplane_mode_on=0`, so it supplements the separately
+recorded airplane-mode offline launch evidence; it does not claim a new airplane-mode
+route. The Unity accessibility tree still exposes only `unitySurfaceView`, making this
+rendered-state evidence rather than an accessibility approval.
+
 ## Presentation grounding pass — 2026-09-04
 
 The portrait readability follow-up now also grounds the camera outside the playable

@@ -103,9 +103,30 @@ debug-signed and owner approval is still required for identity, privacy, rating,
 and Play submission.
 
 The release candidate remains **Prototype — Android offline release candidate in
-progress**: final identity/signing, full lifecycle and player-KO spectator proof,
-all-fighter/tutorial/accessibility comfort, commissioned art/audio/cultural review,
-privacy/Data Safety/IARC and Play owner gates remain open.
+progress**: final identity/signing, full lifecycle and all-fighter/tutorial/accessibility
+comfort, commissioned art/audio/cultural review, privacy/Data Safety/IARC and Play owner
+gates remain open.
+
+## Latest physical KO/spectator/respawn evidence — 2026-09-04
+
+The exact current APK (`3CA0777D8B94E5381D08794BCA48BDCDE070675F4B54CB32EEFF31FE004C07F2`)
+was exercised on approved Lava `ST5GDW23LB004392`. The player was held outside the
+shrinking Aandhi until the production card showed **5/85** in
+`lava-spectator-attempt-20260904/ko-watch-05.png` (SHA-256
+`3997C4E3950FAFCB520F9310456670E680B0972821DABBD09581812D938D86AD`), then **0/85**
+with the visible `OUT OF ACTION • respawn or spectate an ally` state in
+`ko-watch-06.png` (SHA-256
+`FB543967E71126D7A9BF84063EC97A998EEC8E667DAC5044B6D0CB913DD0675C`) and the held
+spectator frame `ko-watch-07.png` (SHA-256
+`D8191EAAE9751B7199ECB5626CBAC029BB6FA451C07FE344B635DA3ABCCFE5BE`). The card
+returned at **81/85** after the shared Raja tickets changed from 11 to 10 in
+`ko-watch-09.png` (SHA-256
+`F1F7C5D7682CAEE1DE0F4004374095392855AA632D08A0ADE460046387B0B8B3`). This directly
+proves the current-candidate player KO → spectator → respawn loop. The run's final
+`airplane_mode_on` value was `0`; it supplements the separately recorded airplane-mode
+offline launch evidence. Unity's accessibility dump still exposes only
+`unitySurfaceView`, so this is rendered-state evidence rather than an accessibility
+approval.
 
 ## Latest current-source evidence — 2026-09-04 — environment readability and portrait framing refinement
 

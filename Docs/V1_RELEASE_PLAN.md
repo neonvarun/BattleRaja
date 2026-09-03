@@ -55,9 +55,27 @@ card and suppression contract.
   target SDK 36, offline permissions, ARM64/static 16 KB and store dimensions passed.
 
 The candidate remains **Prototype — Android offline release candidate in progress**;
-commissioned final art, full tutorial/accessibility/lifecycle/spectator comfort,
-physical 16 KB runtime, normalized performance/endurance, final identity/signing and
-privacy/Data Safety/IARC/Play owner gates remain open.
+commissioned final art, full tutorial/accessibility/lifecycle comfort, physical 16 KB
+runtime, normalized performance/endurance, final identity/signing and privacy/
+Data Safety/IARC/Play owner gates remain open.
+
+## Checkpoint 0a - physical player KO/spectator/respawn proof — 2026-09-04
+
+The exact HUD APK (`3CA0777D8B94E5381D08794BCA48BDCDE070675F4B54CB32EEFF31FE004C07F2`)
+was driven on approved Lava `ST5GDW23LB004392`. The player was held outside the
+shrinking Aandhi until the card showed **5/85** (`ko-watch-05.png`, SHA-256
+`3997C4E3950FAFCB520F9310456670E680B0972821DABBD09581812D938D86AD`), then **0/85**
+with `OUT OF ACTION • respawn or spectate an ally` visible (`ko-watch-06.png`,
+SHA-256 `FB543967E71126D7A9BF84063EC97A998EEC8E667DAC5044B6D0CB913DD0675C`; held
+in `ko-watch-07.png`, SHA-256
+`D8191EAAE9751B7199ECB5626CBAC029BB6FA451C07FE344B635DA3ABCCFE5BE`). The card
+returned at **81/85** after Raja tickets changed from 11 to 10
+(`ko-watch-09.png`, SHA-256
+`F1F7C5D7682CAEE1DE0F4004374095392855AA632D08A0ADE460046387B0B8B3`). This closes
+the missing physical player KO/spectator/respawn observation for this candidate.
+The run ended with `airplane_mode_on=0`, so the existing airplane-mode offline launch
+evidence remains the authority for that separate condition; Unity's accessibility
+tree still exposes only `unitySurfaceView`.
 
 ## Checkpoint 0g - portrait backplate grounding — 2026-09-04
 
