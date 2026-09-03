@@ -6,6 +6,26 @@
 
 ## Current state
 
+- **Environment readability and portrait framing refinement (2026-09-04):** The latest
+  presentation pass replaces the earlier high-contrast environment checker treatment
+  with restrained woven/banded materials and tightens `TopDownCameraController`'s
+  portrait framing cap multiplier from **2.8** to **2.2**. It regenerated 12 environment
+  materials, 16 environment texture assets and `BazaarBastionProduction.prefab` from
+  editable source; authority, replay, AI and economy code were unchanged. Fresh gates
+  are EditMode **159/159** (XML SHA-256
+  `FF15744802560C6D2CFAB8E77BC11F2A3048F3F6D9C9116DC0D2FC70FF6FD4FF`) and PlayMode
+  **94/94** (XML SHA-256
+  `4FA8EA81AB372436B6AB7796C31024262BF2016074FEFF88A812C87899F0A4AE`). The current
+  APK is **41,579,392 bytes** (`54AF0801C2FD696DAD3224E6AD1CDDB7F15D8386094CAB8AAD68F5DFABB950E7`)
+  and AAB **37,404,926 bytes**
+  (`CAE58A648792BB14E77767E9036C073256BA2C8C1CED86DCCD31A42BE656A2F0`). Fresh
+  approved-Lava evidence is under
+  `Builds/Local/V1GameplayTruth/Next/lava-camera-art-20260904/`; it reaches results at
+  04:02 (Raja 4/15 with 4 Crown deposits) and a 00:04 rematch reset. The installed
+  APK hash matches. The route still has no explicit player spectator observation,
+  normalized sustained performance, physical 16 KB runtime or commissioned final art,
+  so classification remains **Prototype — Android offline release candidate in progress**.
+
 - **Presentation identity/readability pass (2026-09-04):** The production art source
   now uses restrained woven/banded materials plus camera-facing eyes, jaw guards and
   role silhouette accents for Bijli, Pehel and Maya; the three prefabs and 14 texture

@@ -12,9 +12,10 @@ namespace BattleRaja.Presentation.Movement
     {
         // Keep the playable arena readable on tall phones without reducing fighters
         // to postage stamps. The old 3.5x cap showed the entire arena at once and
-        // created a large dead band around the action; this closer framing still fits
-        // the authored 25.6-unit V1 arena while giving combat more screen presence.
-        private const float PortraitFramingCapMultiplier = 2.8f;
+        // created a large dead band around the action; this closer framing still
+        // leaves the follow camera enough room for the authored 25.6-unit V1 arena
+        // while giving combat and objective telegraphs more screen presence.
+        private const float PortraitFramingCapMultiplier = 2.2f;
 
         [SerializeField] private Transform followTarget;
         [SerializeField] private CameraProjectionMode projectionMode = CameraProjectionMode.Orthographic;

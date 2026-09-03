@@ -13,6 +13,40 @@ prototype until every V1 completion gate and remaining human gate passes.
 - Approved physical evidence device: Lava `ST5GDW23LB004392` (`LAVA LXX508`) only.
 - Preserve internal networking/Web seams without exposing unusable public online paths.
 
+## Checkpoint 0f - environment readability and portrait framing refinement — 2026-09-04
+
+This focused presentation checkpoint keeps the Bastion authority, replay determinism,
+AI and economy rules unchanged. `ProductionEnvironmentBuilder` now emits restrained
+woven/banded environment detail instead of the earlier high-contrast checker treatment,
+and `TopDownCameraController` lowers the portrait framing cap multiplier from **2.8**
+to **2.2**. The source rebuild regenerated 12 environment materials, 16 environment
+texture assets and `BazaarBastionProduction.prefab`; the assets remain editable and
+repository-owned. The environment rebuild log is
+`Builds/Local/V1GameplayTruth/Next/environment-rebuild-20260904.log` (SHA-256
+`30F4DE942E01C7368DE7BB6DACDEE8E4FFDA0FC901D4FFA2DE85DF28846345E7`).
+
+- EditMode: **159/159 passed**; XML SHA-256
+  `FF15744802560C6D2CFAB8E77BC11F2A3048F3F6D9C9116DC0D2FC70FF6FD4FF`.
+- PlayMode: **94/94 passed**; XML SHA-256
+  `4FA8EA81AB372436B6AB7796C31024262BF2016074FEFF88A812C87899F0A4AE`.
+- APK: **41,579,392 bytes**, SHA-256
+  `54AF0801C2FD696DAD3224E6AD1CDDB7F15D8386094CAB8AAD68F5DFABB950E7`.
+- AAB: **37,404,926 bytes**, SHA-256
+  `CAE58A648792BB14E77767E9036C073256BA2C8C1CED86DCCD31A42BE656A2F0`.
+- Approved Lava evidence: `Builds/Local/V1GameplayTruth/Next/lava-camera-art-20260904/`.
+  The route reaches menu, briefing, fighter choice, tight-framed live 4v4, action and
+  endgame states, authoritative results at 04:02 (Raja 4/15 with 4 Crown deposits)
+  and a fresh 00:04 rematch reset. Results SHA-256 is
+  `4CD1558E905B25B9AE22590D40B573610146F6E6222D09C9BD7AA4B9E3A7B5CE`; rematch
+  SHA-256 is `1E7F87D51E6F143098C5FE8BDB4F3C063A2018B6DF356C586C7FBFE00B594334`.
+
+The installed APK hash matched on Lava `ST5GDW23LB004392` (`1080x2460`, Android 14/API
+34, 4 KB pages), and the fatal-marker scan was empty. A bounded post-rematch sample
+measured 298,676 KB PSS, 409,568 KB RSS, 91,292 KB graphics PSS, raw app CPU 2%,
+thermal status 0, CPU/GPU 42.314 C and battery 33 C; Unity `gfxinfo` exposed no usable
+frame histogram. No explicit player spectator transition, normalized sustained
+performance, physical 16 KB runtime or commissioned final-art approval is claimed.
+
 ## Checkpoint 0e - presentation identity/readability pass — 2026-09-04
 
 The production presentation source now uses restrained woven/banded material detail

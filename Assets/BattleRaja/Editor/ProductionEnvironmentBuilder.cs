@@ -165,14 +165,26 @@ namespace BattleRaja.Editor
             const int size = 64;
             var texture = new Texture2D(size, size, TextureFormat.RGBA32, false, false) { name = name };
             var pixels = new Color32[size * size];
+            var baseTone = (Color)baseColor;
+            var accentTone = (Color)accent;
             for (var y = 0; y < size; y++)
             {
                 for (var x = 0; x < size; x++)
                 {
-                    var block = ((x / 8) + (y / 8)) & 1;
-                    var stripe = ((x + y + pattern * 5) % 19) < 2;
-                    var useAccent = pattern == 0 ? block == 0 : pattern == 1 ? stripe : (block == 0) ^ stripe;
-                    pixels[y * size + x] = useAccent ? accent : baseColor;
+                    // Keep the authored Bazaar palette while replacing the hard
+                    // checkerboard with low-frequency woven bands. The old pattern
+                    // read as debug tiling from the top-down mobile camera; these
+                    // restrained highlights give floors, cloth and masonry a shared
+                    // material language without competing with gameplay telegraphs.
+                    var weave = ((x * 5 + y * 3 + pattern * 13) % 37) < 3 ? 0.13f : 0.025f;
+                    var band = ((y + pattern * 7) % 17) < 2 ? 0.08f : 0f;
+                    var diagonal = ((x * 3 + y * 2 + pattern * 11) % 43) < 3 ? 0.05f : 0f;
+                    var accentMix = Mathf.Clamp01(weave + band + diagonal);
+                    var tone = Color.Lerp(baseTone, accentTone, accentMix);
+                    var light = 0.95f + 0.05f * Mathf.Sin((x * 0.8f + y * 0.45f + pattern * 9f) * 0.16f);
+                    tone *= light;
+                    tone.a = 1f;
+                    pixels[y * size + x] = tone;
                 }
             }
             texture.SetPixels32(pixels);

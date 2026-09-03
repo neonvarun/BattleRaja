@@ -440,6 +440,72 @@ time post-rematch diagnostic measured **294,934 KB PSS**, **405,100 KB RSS**,
 usable frame histogram. These values are not a normalized FPS, GC/GPU, endurance,
 battery or physical-16-KB approval.
 
+## Presentation readability refinement — 2026-09-04
+
+This follow-up keeps the authority, replay, AI and economy source unchanged while
+addressing the remaining mobile readability concern. `ProductionEnvironmentBuilder`
+now generates restrained woven/banded environment detail in place of the earlier
+high-contrast checker treatment. `TopDownCameraController` lowers the portrait
+framing cap multiplier from **2.8** to **2.2**, keeping the 25.6-unit arena in view
+while making fighters, Crown sockets and telegraphs materially larger on the 1080x2460
+device. The regenerated source includes 12 environment materials, 16 environment
+texture assets, `BazaarBastionProduction.prefab`,
+`ProductionEnvironmentBuilder.cs` and `TopDownCameraController.cs`; all remain
+editable repository-owned assets.
+
+- Environment rebuild log: `Builds/Local/V1GameplayTruth/Next/environment-rebuild-20260904.log`,
+  SHA-256 `30F4DE942E01C7368DE7BB6DACDEE8E4FFDA0FC901D4FFA2DE85DF28846345E7`.
+- Fresh EditMode: **159/159 passed**, XML SHA-256
+  `FF15744802560C6D2CFAB8E77BC11F2A3048F3F6D9C9116DC0D2FC70FF6FD4FF`.
+- Fresh PlayMode: **94/94 passed**, XML SHA-256
+  `4FA8EA81AB372436B6AB7796C31024262BF2016074FEFF88A812C87899F0A4AE`.
+- Current Android artifacts: APK **41,579,392 bytes**, SHA-256
+  `54AF0801C2FD696DAD3224E6AD1CDDB7F15D8386094CAB8AAD68F5DFABB950E7`; AAB
+  **37,404,926 bytes**, SHA-256
+  `CAE58A648792BB14E77767E9036C073256BA2C8C1CED86DCCD31A42BE656A2F0`.
+
+Fresh approved-Lava evidence is under
+`Builds/Local/V1GameplayTruth/Next/lava-camera-art-20260904/`:
+
+- `00-launch.png` (menu), SHA-256
+  `9457B5360CBD099504980784750C4FC21D4F24D84BEE86D66A1615D3F9839A82`;
+- `01-briefing.png` (Bastion Crown briefing), SHA-256
+  `640C44BD938E1ED44B9D203804127AB6115B93F9B705C4214C275D91591A6435`;
+- `02-fighter-select.png` (Bijli/Pehel/Maya choice), SHA-256
+  `902EC747D12ED936EE2398BBA426F5242DE655846A820A156623F16B95E4600F`;
+- `03-live-tight-frame.png` (portrait live arena with the tighter camera), SHA-256
+  `DA8C559E10DA9F07006115D97195B4CD1CC96F929FFC319DF0DF626B46B5620E`;
+- `04-live-30s.png` (combat/objective HUD), SHA-256
+  `656939DE6A0CF0CEAECA8AC041EF719EE9C3D588E71CAB76A9C9C7257D435FD0`;
+- `05-action-state.png` (player action state), SHA-256
+  `E4AE0C7EA110F234886091270D3182C6D6E05E24338FF43DE41FADB8CBFFCBA7`;
+- `06-live-midmatch.png` (mid-match Crown contest), SHA-256
+  `DEF3EF37D55BBAADF94645329D7E7B617980406525DA10405663BA36078EEBA1`;
+- `07-live-late.png` (late-match Aandhi/objective state), SHA-256
+  `E0002D84CE93B311A2CB90CFFE5166B45BE7B8BE8E2A8ED57E812ECDCE1D5994`;
+- `08-live-final-window.png` (04:00 endgame window), SHA-256
+  `8ED60C08350065D597BD4BA9640902A88DD1736356DECFDA9D1B1D36591118B1`;
+- `09-results.png` (authoritative results at 04:02: Raja winner by clock, 4/15
+  score and 4 Crown deposits; Rival 0/15), SHA-256
+  `4CD1558E905B25B9AE22590D40B573610146F6E6222D09C9BD7AA4B9E3A7B5CE`;
+- `10-rematch-live.png` (fresh 00:04 rematch, scores/tickets reset and Raja carrier),
+  SHA-256 `1E7F87D51E6F143098C5FE8BDB4F3C063A2018B6DF356C586C7FBFE00B594334`.
+
+The installed package hash matched the local APK on Lava `ST5GDW23LB004392`; the
+device remained `1080x2460`, Android 14/API 34, with `getconf PAGE_SIZE` **4096**.
+The focused activity remained
+`com.example.battleraja.m11/com.unity3d.player.UnityPlayerGameActivity`, and the
+captured logcat window contained no configured fatal markers. A post-rematch point
+sample measured **298,676 KB PSS**, **409,568 KB RSS**, **91,292 KB graphics PSS** and
+raw app CPU **2%**; thermal status was **0**, current CPU/GPU were **42.314 C** and
+battery was **33 C**. Unity `gfxinfo` exposed only the surface view and no usable
+frame histogram. The accessibility dump still exposes only `unitySurfaceView`, so
+rendered controls were exercised at known coordinates. The route now explicitly
+observes results and rematch on this artifact, but still does not observe an explicit
+player spectator transition. These values are bounded diagnostics, not normalized
+FPS, GC/GPU, battery, endurance, physical-16-KB runtime or commissioned-final-art
+approval.
+
 ## Bounded performance and crash scan
 
 `Tools/Validation/capture_android_performance.ps1` captured six samples over 30 seconds

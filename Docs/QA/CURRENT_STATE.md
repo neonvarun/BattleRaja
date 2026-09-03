@@ -59,6 +59,43 @@ The superseded post-telemetry source rebuild is retained in the QA report for pr
 The final visual-fix checker again passes the temporary package/target/ARM64/static-
 alignment gates; final signing and identity are not selected.
 
+## Latest current-source evidence — 2026-09-04 — environment readability and portrait framing refinement
+
+The current source carries a focused presentation follow-up for the mobile readability
+review. `ProductionEnvironmentBuilder` now emits restrained woven/banded environment
+detail rather than a high-contrast checker treatment, and
+`TopDownCameraController` uses a **2.2** portrait framing cap multiplier so fighters,
+Crown sockets and telegraphs occupy more of the Lava screen while the full arena stays
+visible. The rebuild regenerated 12 environment materials and 16 environment texture
+assets plus `BazaarBastionProduction.prefab`; the changes are editable and do not alter
+authority, replay, AI or economy rules. Environment rebuild log SHA-256 is
+`30F4DE942E01C7368DE7BB6DACDEE8E4FFDA0FC901D4FFA2DE85DF28846345E7`.
+
+Fresh EditMode is **159/159** (XML SHA-256
+`FF15744802560C6D2CFAB8E77BC11F2A3048F3F6D9C9116DC0D2FC70FF6FD4FF`) and PlayMode is
+**94/94** (XML SHA-256
+`4FA8EA81AB372436B6AB7796C31024262BF2016074FEFF88A812C87899F0A4AE`). The current
+APK is **41,579,392 bytes** (`54AF0801C2FD696DAD3224E6AD1CDDB7F15D8386094CAB8AAD68F5DFABB950E7`)
+and the AAB is **37,404,926 bytes**
+(`CAE58A648792BB14E77767E9036C073256BA2C8C1CED86DCCD31A42BE656A2F0`).
+
+Fresh approved-Lava evidence is under
+`Builds/Local/V1GameplayTruth/Next/lava-camera-art-20260904/`: menu, Bastion briefing,
+fighter choice, tight-framed live 4v4, action/mid-match/endgame states, authoritative
+results at 04:02 (Raja 4/15 with 4 Crown deposits; Rival 0/15) and a rematch reset to
+00:04 with Raja carrying. The results/rematch captures are
+`09-results.png` (SHA-256
+`4CD1558E905B25B9AE22590D40B573610146F6E6222D09C9BD7AA4B9E3A7B5CE`) and
+`10-rematch-live.png` (SHA-256
+`1E7F87D51E6F143098C5FE8BDB4F3C063A2018B6DF356C586C7FBFE00B594334`). The installed
+APK hash matched on `ST5GDW23LB004392` (`1080x2460`, Android 14/API 34, 4 KB pages).
+The package emitted no configured fatal markers. A point sample measured **298,676 KB
+PSS**, **409,568 KB RSS**, **91,292 KB graphics PSS**, raw app CPU **2%**, thermal
+status **0**, CPU/GPU **42.314 C** and battery **33 C**; Unity `gfxinfo` still exposed
+no usable frame histogram. The accessibility tree remains `unitySurfaceView` only,
+and no explicit player spectator transition was observed. This is bounded physical
+evidence, not normalized FPS/GC/GPU/endurance or commissioned-final-art approval.
+
 ## Latest current-source evidence — 2026-09-04 — presentation identity pass
 
 The current source refines the generated presentation baseline for mobile readability
