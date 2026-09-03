@@ -95,6 +95,11 @@ status **0**, CPU/GPU **42.314 C** and battery **33 C**; Unity `gfxinfo` still e
 no usable frame histogram. The accessibility tree remains `unitySurfaceView` only,
 and no explicit player spectator transition was observed. This is bounded physical
 evidence, not normalized FPS/GC/GPU/endurance or commissioned-final-art approval.
+The clean-tree release-checker log is
+`Builds/Local/V1GameplayTruth/Next/release-checker-camera-art-20260904.log` (SHA-256
+`E8DA3A7106A0A64421DD709585B549852350088FA75199EF62F9DEBC8B83EF1F`) and passed
+repository, target SDK 36, offline-permission, ARM64, static 16 KB and store-dimension
+checks.
 
 ## Latest current-source evidence — 2026-09-04 — presentation identity pass
 

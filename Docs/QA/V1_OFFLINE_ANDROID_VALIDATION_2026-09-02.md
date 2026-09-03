@@ -490,6 +490,9 @@ Fresh approved-Lava evidence is under
   `4CD1558E905B25B9AE22590D40B573610146F6E6222D09C9BD7AA4B9E3A7B5CE`;
 - `10-rematch-live.png` (fresh 00:04 rematch, scores/tickets reset and Raja carrier),
   SHA-256 `1E7F87D51E6F143098C5FE8BDB4F3C063A2018B6DF356C586C7FBFE00B594334`.
+- `13-spectator-transition.png` (spectator-control probe; the rendered view remained
+  live, so no transition is claimed), SHA-256
+  `70BD049A8572623D15CDE5D5AF540D2875DDF68A3D869E0B705B08B9C96B9BA9`.
 
 The installed package hash matched the local APK on Lava `ST5GDW23LB004392`; the
 device remained `1080x2460`, Android 14/API 34, with `getconf PAGE_SIZE` **4096**.
@@ -505,6 +508,12 @@ observes results and rematch on this artifact, but still does not observe an exp
 player spectator transition. These values are bounded diagnostics, not normalized
 FPS, GC/GPU, battery, endurance, physical-16-KB runtime or commissioned-final-art
 approval.
+
+The final clean-tree release-checker output is retained at
+`Builds/Local/V1GameplayTruth/Next/release-checker-camera-art-20260904.log`, SHA-256
+`E8DA3A7106A0A64421DD709585B549852350088FA75199EF62F9DEBC8B83EF1F`. It passed
+repository validation, target SDK 36, offline network-permission, ARM64-only native
+libraries, static 16 KB ELF alignment and Play creative dimensions.
 
 ## Bounded performance and crash scan
 

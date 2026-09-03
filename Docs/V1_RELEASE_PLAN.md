@@ -46,6 +46,11 @@ measured 298,676 KB PSS, 409,568 KB RSS, 91,292 KB graphics PSS, raw app CPU 2%,
 thermal status 0, CPU/GPU 42.314 C and battery 33 C; Unity `gfxinfo` exposed no usable
 frame histogram. No explicit player spectator transition, normalized sustained
 performance, physical 16 KB runtime or commissioned final-art approval is claimed.
+The clean-tree checker output is retained at
+`Builds/Local/V1GameplayTruth/Next/release-checker-camera-art-20260904.log` (SHA-256
+`E8DA3A7106A0A64421DD709585B549852350088FA75199EF62F9DEBC8B83EF1F`) and passed
+repository validation, target SDK 36, offline permissions, ARM64-only native libraries,
+static 16 KB alignment and store creative dimensions.
 
 ## Checkpoint 0e - presentation identity/readability pass — 2026-09-04
 
