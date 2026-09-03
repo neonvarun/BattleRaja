@@ -846,6 +846,36 @@ Research current primary sources before selecting technical versions, APIs, SDKs
   device guidance. Recheck immediately before final signing or any Play submission, and
   after any Unity, Android, NDK, native dependency or renderer change.
 
+### V1.0 official Android/Play requirements recheck — 2026-09-04
+
+- **Question:** Does the current official guidance change the technical release gates or
+  owner-controlled Play preparation for the refreshed Android candidate?
+- **Primary sources checked today:** [Google Play target API requirements](https://developer.android.com/google/play/requirements/target-sdk),
+  [Android 16 KB page-size guidance](https://developer.android.com/guide/practices/page-sizes),
+  [Google Play Data safety](https://support.google.com/googleplay/android-developer/answer/10787469?hl=en),
+  and [Google Play content ratings](https://support.google.com/googleplay/android-developer/answer/9898843?hl=en).
+- **Access date:** 2026-09-04 (IST).
+- **Claims verified:** Starting 2026-08-31, new apps and updates submitted to Play must
+  target Android 16/API 36 or higher (with the documented platform exceptions). Apps
+  targeting API 35+ must support 16 KB memory pages on 64-bit Play devices; static ELF
+  or zip alignment is not runtime proof, and incompatible updates are scheduled for
+  enforcement from 2027-02-01. Published-track apps must complete an accurate Data
+  safety form, including no-data apps, and provide a privacy-policy link; apps
+  exclusively on internal testing are exempt from the Data safety section. Every Play
+  app needs an accurate IARC content-rating questionnaire and must update it when content
+  changes.
+- **Decision impact:** Keep target API 36, ARM64/static-alignment checks and offline
+  permissions as-is. Keep Lava's 4 KB result separate from physical 16 KB evidence, and
+  keep permanent identity/signing, privacy URL, Data safety, IARC and Play Console
+  actions owner-controlled. No dependency or project-setting change is justified by
+  this recheck.
+- **Tavily availability:** The configured Tavily connector remains reauthentication-gated
+  from the prior check; no Tavily result is represented as evidence. The official pages
+  above are the authoritative refresh for this release record.
+- **Recheck trigger/date:** Before selecting the permanent package/signing identity,
+  completing Play declarations or uploading a track, and after any Unity, Android, NDK,
+  native-dependency or renderer change.
+
 ### V1.0 official-source refresh and Tavily availability check — 2026-09-02
 
 - **Question:** Does the official Android/Play guidance still support the candidate's
