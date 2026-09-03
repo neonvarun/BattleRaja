@@ -171,14 +171,26 @@ namespace BattleRaja.Editor
             const int size = 64;
             var texture = new Texture2D(size, size, TextureFormat.RGBA32, false, false) { name = name };
             var pixels = new Color32[size * size];
+            var baseTone = (Color)baseColor;
+            var accentTone = (Color)accent;
             for (var y = 0; y < size; y++)
             {
                 for (var x = 0; x < size; x++)
                 {
-                    var checker = ((x / 8) + (y / 8)) & 1;
-                    var stripe = ((x * 2 + y + pattern * 7) % 23) < 3;
-                    var useAccent = pattern == 0 ? checker == 0 : pattern == 1 ? stripe : (checker == 0) ^ stripe;
-                    pixels[y * size + x] = useAccent ? accent : baseColor;
+                    // Keep the authored colour language, but avoid the high-contrast
+                    // checkerboard that made the fighters read like debug toys at
+                    // mobile-camera distance. These deterministic woven bands and
+                    // restrained highlights survive bilinear filtering and still give
+                    // each material a clear silhouette without requiring large textures.
+                    var weave = ((x * 3 + y * 5 + pattern * 11) % 29) < 3 ? 0.16f : 0.035f;
+                    var band = ((y + pattern * 9) % 19) < 2 ? 0.11f : 0f;
+                    var diagonal = ((x * 2 + y + pattern * 7) % 31) < 4 ? 0.08f : 0f;
+                    var accentMix = Mathf.Clamp01(weave + band + diagonal);
+                    var tone = Color.Lerp(baseTone, accentTone, accentMix);
+                    var light = 0.94f + 0.06f * Mathf.Sin((x + y * 0.7f + pattern * 13f) * 0.12f);
+                    tone *= light;
+                    tone.a = 1f;
+                    pixels[y * size + x] = tone;
                 }
             }
             texture.SetPixels32(pixels);
@@ -642,7 +654,10 @@ namespace BattleRaja.Editor
             // The gameplay camera sits on the -Z presentation side. Keep the
             // identity accents there so the live silhouette reads as a fighter
             // rather than an unmarked rounded body from the normal play angle.
-            AddPart(root, "Visor", meshes["VisorPlate"], materials["Ink"], new Vector3(0f, 1.56f, -0.31f), new Vector3(1f, 0.8f, 0.65f), Quaternion.identity);
+            AddPart(root, "Visor", meshes["VisorPlate"], materials["Ink"], new Vector3(0f, 1.56f, -0.36f), new Vector3(1.35f, 0.96f, 0.72f), Quaternion.identity);
+            AddPart(root, "EyeLeft", meshes["Gem"], materials["Crystal"], new Vector3(-0.14f, 1.60f, -0.43f), new Vector3(0.62f, 0.38f, 0.45f), Quaternion.Euler(0f, 0f, -8f));
+            AddPart(root, "EyeRight", meshes["Gem"], materials["Crystal"], new Vector3(0.14f, 1.60f, -0.43f), new Vector3(0.62f, 0.38f, 0.45f), Quaternion.Euler(0f, 0f, 8f));
+            AddPart(root, "JawGuard", meshes["MaskPlate"], materials["BijliCyan"], new Vector3(0f, 1.36f, -0.34f), new Vector3(1.05f, 0.46f, 0.58f), Quaternion.identity);
             AddPart(root, "CrestLeft", meshes["Fin"], materials["BijliGold"], new Vector3(-0.17f, 1.94f, 0f), Vector3.one * 0.6f, Quaternion.Euler(0f, 0f, -22f));
             AddPart(root, "CrestRight", meshes["Fin"], materials["BijliGold"], new Vector3(0.17f, 1.94f, 0f), Vector3.one * 0.6f, Quaternion.Euler(0f, 0f, 22f));
             AddPart(root, "ShoulderLeft", meshes["ShoulderOrb"], materials["BijliCyan"], new Vector3(-0.51f, 1.05f, 0f), Vector3.one * 0.8f, Quaternion.identity);
@@ -661,8 +676,12 @@ namespace BattleRaja.Editor
             var root = CreateRoot("PehelProductionModel");
             AddPart(root, "Body", meshes["PehelTorso"], materials["PehelClay"], new Vector3(0f, 0.70f, 0f), Vector3.one, Quaternion.identity);
             AddPart(root, "Head", meshes["Head"], materials["PehelCream"], new Vector3(0f, 1.48f, 0f), Vector3.one * 1.03f, Quaternion.identity);
-            AddPart(root, "Brow", meshes["SashPlate"], materials["Ink"], new Vector3(0f, 1.60f, -0.30f), new Vector3(0.72f, 0.5f, 0.5f), Quaternion.identity);
-            AddPart(root, "Visor", meshes["VisorPlate"], materials["PehelClay"], new Vector3(0f, 1.48f, -0.34f), new Vector3(1.1f, 0.4f, 0.7f), Quaternion.identity);
+            AddPart(root, "Brow", meshes["SashPlate"], materials["Ink"], new Vector3(0f, 1.62f, -0.32f), new Vector3(0.92f, 0.62f, 0.58f), Quaternion.identity);
+            AddPart(root, "Visor", meshes["VisorPlate"], materials["Ink"], new Vector3(0f, 1.50f, -0.38f), new Vector3(1.42f, 0.64f, 0.76f), Quaternion.identity);
+            AddPart(root, "EyeLeft", meshes["Gem"], materials["PehelCream"], new Vector3(-0.16f, 1.53f, -0.45f), new Vector3(0.58f, 0.34f, 0.40f), Quaternion.Euler(0f, 0f, -7f));
+            AddPart(root, "EyeRight", meshes["Gem"], materials["PehelCream"], new Vector3(0.16f, 1.53f, -0.45f), new Vector3(0.58f, 0.34f, 0.40f), Quaternion.Euler(0f, 0f, 7f));
+            AddPart(root, "JawGuard", meshes["SashPlate"], materials["PehelClay"], new Vector3(0f, 1.31f, -0.35f), new Vector3(1.04f, 0.42f, 0.58f), Quaternion.identity);
+            AddPart(root, "Crest", meshes["Fin"], materials["PehelCream"], new Vector3(0f, 1.95f, 0.02f), Vector3.one * 0.54f, Quaternion.identity);
             AddPart(root, "ShoulderLeft", meshes["ShoulderOrb"], materials["PehelCream"], new Vector3(-0.58f, 1.03f, 0f), Vector3.one * 1.05f, Quaternion.identity);
             AddPart(root, "ShoulderRight", meshes["ShoulderOrb"], materials["PehelCream"], new Vector3(0.58f, 1.03f, 0f), Vector3.one * 1.05f, Quaternion.identity);
             AddPart(root, "Belt", meshes["Ring"], materials["PehelCream"], new Vector3(0f, 0.74f, 0f), new Vector3(1.15f, 1f, 0.88f), Quaternion.identity);
@@ -682,7 +701,11 @@ namespace BattleRaja.Editor
             AddPart(root, "Cloak", meshes["MayaCloak"], materials["MayaViolet"], new Vector3(0f, 0.72f, 0f), Vector3.one, Quaternion.identity);
             AddPart(root, "Head", meshes["Head"], materials["MayaMint"], new Vector3(0f, 1.52f, 0f), Vector3.one * 0.95f, Quaternion.identity);
             AddPart(root, "Hood", meshes["MayaCloak"], materials["MayaViolet"], new Vector3(0f, 1.54f, -0.03f), new Vector3(0.65f, 0.62f, 0.62f), Quaternion.identity);
-            AddPart(root, "Mask", meshes["MaskPlate"], materials["MayaRose"], new Vector3(0f, 1.48f, -0.30f), new Vector3(0.9f, 0.75f, 0.65f), Quaternion.identity);
+            AddPart(root, "Mask", meshes["MaskPlate"], materials["MayaRose"], new Vector3(0f, 1.49f, -0.38f), new Vector3(1.30f, 0.94f, 0.72f), Quaternion.identity);
+            AddPart(root, "EyeLeft", meshes["Gem"], materials["MayaMint"], new Vector3(-0.14f, 1.56f, -0.45f), new Vector3(0.62f, 0.38f, 0.45f), Quaternion.Euler(0f, 0f, -10f));
+            AddPart(root, "EyeRight", meshes["Gem"], materials["MayaMint"], new Vector3(0.14f, 1.56f, -0.45f), new Vector3(0.62f, 0.38f, 0.45f), Quaternion.Euler(0f, 0f, 10f));
+            AddPart(root, "JawGuard", meshes["SashPlate"], materials["Ink"], new Vector3(0f, 1.32f, -0.35f), new Vector3(0.98f, 0.42f, 0.56f), Quaternion.identity);
+            AddPart(root, "HoodTip", meshes["Fin"], materials["MayaRose"], new Vector3(0f, 2.00f, -0.02f), Vector3.one * 0.58f, Quaternion.identity);
             AddPart(root, "ScarfLeft", meshes["ScarfRibbon"], materials["MayaRose"], new Vector3(-0.28f, 1.05f, -0.10f), new Vector3(0.75f, 1.1f, 0.65f), Quaternion.Euler(0f, 0f, 16f));
             AddPart(root, "ScarfRight", meshes["ScarfRibbon"], materials["MayaRose"], new Vector3(0.28f, 1.05f, -0.10f), new Vector3(0.75f, 1.1f, 0.65f), Quaternion.Euler(0f, 0f, -16f));
             AddPart(root, "CloakTrim", meshes["SashPlate"], materials["MayaMint"], new Vector3(0f, 0.52f, -0.18f), new Vector3(1.3f, 0.5f, 0.75f), Quaternion.identity);

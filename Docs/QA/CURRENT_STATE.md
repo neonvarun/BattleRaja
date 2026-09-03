@@ -1,6 +1,6 @@
 # BattleRaja V1 current-state index
 
-Updated: 2026-09-02
+Updated: 2026-09-04
 
 ## Evidence location policy
 
@@ -58,6 +58,36 @@ sampled matches, so the human/device gate remains open.
 The superseded post-telemetry source rebuild is retained in the QA report for provenance.
 The final visual-fix checker again passes the temporary package/target/ARM64/static-
 alignment gates; final signing and identity are not selected.
+
+## Latest current-source evidence — 2026-09-04 — presentation identity pass
+
+The current source refines the generated presentation baseline for mobile readability
+without changing the canonical Bastion authority or replay rules. `ProductionArtBuilder`
+now produces restrained woven/banded material detail and camera-facing Bijli/Pehel/Maya
+eyes, jaw guards and role accents; `ProductionPresentationBuilder` keeps those parts in
+the production rig. The pass regenerated 14 repository-owned texture assets and the
+three production fighter prefabs. Fresh EditMode is **159/159** and PlayMode is
+**94/94**. The art rebuild log SHA-256 is
+`BB6AFB79D8658CF2333DAA5AEAF94EC94AD6529B1CEFF0837FA21B49A8485699`.
+
+The current APK is **41,549,412 bytes**
+(`E5F611282763C443B271F19C9EF63069AC3825E31EBD57DC3550187D3CC945EB`) and the AAB is
+**37,374,943 bytes**
+(`0F7C72459D66816E2E2EB2C20FD18FD15DB46018C45E78C52F65E1D3A65BE967`). The technical
+checker passed the temporary package `com.example.battleraja.m11`, target SDK 36,
+offline permissions, ARM64-only libraries, static 16 KB alignment and store dimensions.
+
+Fresh approved-Lava evidence is under
+`Builds/Local/V1GameplayTruth/Next/lava-art-pass-20260904/`. The route reached menu,
+Bastion briefing, fighter choice, live 4v4, a Rival-carrier state, a Raja-carrier
+state, authoritative results at 04:02 and a rematch reset. The results card recorded
+Raja 9/15 with **2 deposits** and Rival 1/15 with 0 deposits. The installed APK hash
+matched the local APK. Lava is `1080x2460`, Android 14/API 34, and `getconf PAGE_SIZE`
+is `4096`. The Unity accessibility tree still exposes only `unitySurfaceView`; no
+explicit player spectator transition was observed. A point-in-time post-rematch sample
+reported 294,934 KB PSS, 405,100 KB RSS, 93,560 KB graphics PSS, raw app CPU 2%,
+thermal 0, CPU/GPU 41 C and battery 32 C; no normalized FPS/GC/GPU/endurance claim is
+made. The presentation remains generated and editable, not commissioned final art.
 
 ## Latest current-source evidence — 2026-09-02 — canonical telemetry continuation
 

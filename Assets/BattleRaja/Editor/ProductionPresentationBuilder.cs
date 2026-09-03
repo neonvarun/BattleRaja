@@ -520,11 +520,15 @@ namespace BattleRaja.Editor
             ReparentPart(root.transform.Find("Head"), head);
             ReparentPart(root.transform.Find("Hood"), head);
             ReparentPart(root.transform.Find("Visor"), head);
+            ReparentPart(root.transform.Find("EyeLeft"), head);
+            ReparentPart(root.transform.Find("EyeRight"), head);
+            ReparentPart(root.transform.Find("JawGuard"), head);
             ReparentPart(root.transform.Find("Mask"), head);
             ReparentPart(root.transform.Find("Brow"), head);
             ReparentPart(root.transform.Find("CrestLeft"), head);
             ReparentPart(root.transform.Find("CrestRight"), head);
             ReparentPart(root.transform.Find("Crest"), head);
+            ReparentPart(root.transform.Find("HoodTip"), head);
             ReparentPart(root.transform.Find("ShoulderLeft"), leftHand);
             ReparentPart(root.transform.Find("ShoulderRight"), rightHand);
             ReparentPart(root.transform.Find("GauntletLeft"), leftHand);

@@ -6,6 +6,21 @@
 
 ## Current state
 
+- **Presentation identity/readability pass (2026-09-04):** The production art source
+  now uses restrained woven/banded materials plus camera-facing eyes, jaw guards and
+  role silhouette accents for Bijli, Pehel and Maya; the three prefabs and 14 texture
+  assets were regenerated from editable source. Fresh post-pass gates are EditMode
+  **159/159**, PlayMode **94/94**, APK **41,549,412 bytes**
+  (`E5F611282763C443B271F19C9EF63069AC3825E31EBD57DC3550187D3CC945EB`) and AAB
+  **37,374,943 bytes**
+  (`0F7C72459D66816E2E2EB2C20FD18FD15DB46018C45E78C52F65E1D3A65BE967`). Fresh
+  approved-Lava evidence is under
+  `Builds/Local/V1GameplayTruth/Next/lava-art-pass-20260904/`; the 04:02 results card
+  recorded Raja with **2 Crown deposits** and rematch reset successfully. The route
+  still did not capture an explicit player spectator transition, normalized sustained
+  performance, physical 16 KB runtime or commissioned final art, so classification
+  remains **Prototype — Android offline release candidate in progress**.
+
 - **Canonical telemetry and physical-route refresh (2026-09-02):** The development-only
   production harness now emits schema-v2 Bastion telemetry directly from the authority:
   team score/deposits/KOs/assists, Crown timing/rotations, objective time, tickets,

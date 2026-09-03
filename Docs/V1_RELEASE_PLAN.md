@@ -13,6 +13,31 @@ prototype until every V1 completion gate and remaining human gate passes.
 - Approved physical evidence device: Lava `ST5GDW23LB004392` (`LAVA LXX508`) only.
 - Preserve internal networking/Web seams without exposing unusable public online paths.
 
+## Checkpoint 0e - presentation identity/readability pass — 2026-09-04
+
+The production presentation source now uses restrained woven/banded material detail
+and camera-facing Bijli, Pehel and Maya identity accents (eyes, jaw guards and role
+silhouette parts). The three production fighter prefabs and 14 generated texture assets
+were regenerated from editable source; authority, replay, AI and economy code was not
+changed. The art rebuild log is
+`Builds/Local/V1GameplayTruth/Next/art-rebuild-20260904.log` (SHA-256
+`BB6AFB79D8658CF2333DAA5AEAF94EC94AD6529B1CEFF0837FA21B49A8485699`).
+
+- EditMode: **159/159 passed**; PlayMode: **94/94 passed**.
+- APK: **41,549,412 bytes**, SHA-256
+  `E5F611282763C443B271F19C9EF63069AC3825E31EBD57DC3550187D3CC945EB`.
+- AAB: **37,374,943 bytes**, SHA-256
+  `0F7C72459D66816E2E2EB2C20FD18FD15DB46018C45E78C52F65E1D3A65BE967`.
+- Approved Lava evidence: `Builds/Local/V1GameplayTruth/Next/lava-art-pass-20260904/`.
+  The 04:02 results card recorded Raja 9/15 with 2 Crown deposits and the rematch
+  reset to a fresh 00:03 match on socket 3. No explicit player spectator transition was
+  observed; the Unity accessibility tree still exposes only `unitySurfaceView`.
+
+The release checker technical gates pass, but this is still a generated presentation
+baseline rather than commissioned final art. Normalized performance/endurance,
+physical 16 KB runtime, permanent identity/signing and human accessibility, cultural,
+legal/privacy and Play review gates remain open.
+
 ## Checkpoint 0d - canonical Bastion telemetry and physical route refresh — 2026-09-02
 
 The development-only production harness now writes schema-v2 canonical Bastion telemetry

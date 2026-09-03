@@ -378,6 +378,68 @@ coordinates. This current route still did not physically observe a Crown deposit
 explicit player spectator transition; those, long-session comfort and human-fun review
 remain open.
 
+## Presentation identity pass — 2026-09-04
+
+This focused continuation addresses the mobile readability review without changing
+the Bastion authority, replay, AI or economy rules. `ProductionArtBuilder` now emits
+restrained woven/banded material detail instead of a high-contrast checker pattern,
+and the Bijli, Pehel and Maya recipes add camera-facing eyes, jaw guards and role
+silhouette accents. `ProductionPresentationBuilder` reparents those identity parts
+into the production rig so animation and facing stay consistent. The pass regenerated
+the 14 repository-owned texture assets (`BijliCyan`, `BijliGold`, `Crystal`,
+`GadgetDhol`, `GadgetHighlight`, `GadgetInk`, `GadgetTiffin`, `GadgetUmbrella`,
+`Ink`, `MayaMint`, `MayaRose`, `MayaViolet`, `PehelClay`, `PehelCream`) and the three
+production fighter prefabs. These remain editable generated assets; they are not a
+commissioned final art pack.
+
+- Art rebuild log: `Builds/Local/V1GameplayTruth/Next/art-rebuild-20260904.log`,
+  SHA-256 `BB6AFB79D8658CF2333DAA5AEAF94EC94AD6529B1CEFF0837FA21B49A8485699`.
+- Fresh EditMode: **159/159 passed**, XML SHA-256
+  `15D55D73C1C70CAFA9146ABABD36778937F3F80C06084845069655E2E3F0C4EF`.
+- Fresh PlayMode: **94/94 passed**, XML SHA-256
+  `F03C2ED4756A38B6FE3512E485AB8E1F3A609DBCDCC5259EEAB84A5BDFF1287C`.
+- Fresh Android artifacts: APK **41,549,412 bytes**, SHA-256
+  `E5F611282763C443B271F19C9EF63069AC3825E31EBD57DC3550187D3CC945EB`; AAB
+  **37,374,943 bytes**, SHA-256
+  `0F7C72459D66816E2E2EB2C20FD18FD15DB46018C45E78C52F65E1D3A65BE967`.
+  The technical checker passed the temporary package, target/API, offline-permission,
+  ARM64, static-alignment and store-dimension gates before the documentation commit.
+
+Fresh approved-Lava evidence is under
+`Builds/Local/V1GameplayTruth/Next/lava-art-pass-20260904/`:
+
+- `00-launch.png` (menu), SHA-256
+  `9457B5360CBD099504980784750C4FC21D4F24D84BEE86D66A1615D3F9839A82`;
+- `01-after-play.png` (Bastion Crown briefing), SHA-256
+  `640C44BD938E1ED44B9D203804127AB6115B93F9B705C4214C275D91591A6435`;
+- `02-fighter-select-fresh.png` (Bijli/Pehel/Maya choice), SHA-256
+  `A5B6ABB0223EBCBCCEB1991BD647FB9560C881D17640AF9DB25905A9B4F8AC7B`;
+- `03-ready-fresh.png` (live 4v4 at 00:01), SHA-256
+  `671E7DD0204DC0B6F25A5BE16C1098C61B130E1EA1513F03F03BE01DAA540EE6`;
+- `04-live-art-pass.png` (combat HUD and role silhouettes at 00:25), SHA-256
+  `1EAFE12E2D742A60718A3B34E673367FCAF9ACACAB92203CF045A4728697F7F3`;
+- `05-live-late.png` (Rival carrier at 01:04), SHA-256
+  `07E49A21F2A59528FFFBFF1AE40C3BE6B7ED987984131003BF2C66D78A0BCA15`;
+- `06-live-combat.png` (Raja carrier at 02:28), SHA-256
+  `40531D2F4310A22BB078640529DA064D8703D553751AEC3BE500C14CE51B335D`;
+- `07-live-endgame.png` (authoritative results at 04:02: Raja winner by clock,
+  9/15 score, 2 deposits, 11 tickets; Rival 1/15, 0 deposits, 9 tickets), SHA-256
+  `C138991B25D5466E930E35FCFA757215F890C4821D5F674C234EB3C919A25E79`;
+- `08-rematch-live.png` (fresh 00:03 rematch, scores/tickets reset, socket 3),
+  SHA-256 `781F227A1F791A2B8665EE392F7E78BB9ABAFA406181AF605C242B3A113CA249`.
+
+The installed APK hash matched the local APK on `ST5GDW23LB004392`; the focused
+activity remained `com.example.battleraja.m11/com.unity3d.player.UnityPlayerGameActivity`.
+The route physically observed a Crown deposit in the results card and a working
+rematch. The accessibility dump still exposes only Unity's `unitySurfaceView`, so
+rendered controls were exercised at known coordinates rather than presented as an
+accessibility pass. No explicit player spectator transition was observed. A point-in-
+time post-rematch diagnostic measured **294,934 KB PSS**, **405,100 KB RSS**,
+**93,560 KB graphics PSS**, raw app CPU **2%**, thermal status **0**, current CPU/GPU
+**41 C** and battery **32 C**; Unity `gfxinfo` exposed only the surface view and no
+usable frame histogram. These values are not a normalized FPS, GC/GPU, endurance,
+battery or physical-16-KB approval.
+
 ## Bounded performance and crash scan
 
 `Tools/Validation/capture_android_performance.ps1` captured six samples over 30 seconds
