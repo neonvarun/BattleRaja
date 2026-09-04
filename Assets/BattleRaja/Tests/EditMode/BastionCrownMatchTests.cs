@@ -378,6 +378,35 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void TerminalResolutionRefundsUnconfirmedRespawnReservation()
+        {
+            var match = Start(33u);
+            match.ClearSpawnProtection(new CombatEntityId(1));
+            match.ClearSpawnProtection(new CombatEntityId(5));
+            var defeated = match.ApplyDamage(new DamageRequest(
+                new CombatEntityId(1),
+                new CombatEntityId(5),
+                CombatFaction.Player,
+                100,
+                DamageType.Projectile),
+                81);
+            Assert.That(defeated.TargetDefeated, Is.True);
+
+            var ready = match.Advance(5f);
+            Assert.That(Array.IndexOf(ready.RespawnedActors, new CombatEntityId(5)), Is.GreaterThanOrEqualTo(0));
+            Assert.That(match.GetTickets(BastionTeamId.Rival).Remaining, Is.EqualTo(11));
+
+            // Resolve before the adapter confirms the reserved handoff. The
+            // abandoned reservation must not survive into the result snapshot.
+            match.ForceResolve(BastionTeamId.Raja, BastionMatchResultReason.FirstToScore);
+            Assert.That(match.GetTickets(BastionTeamId.Rival).Remaining, Is.EqualTo(12));
+            Assert.That(match.GetTickets(BastionTeamId.Rival).Spent, Is.EqualTo(0));
+            Assert.That(match.Result.RivalTickets.Remaining, Is.EqualTo(12));
+            Assert.That(match.Result.RivalTickets.Spent, Is.EqualTo(0));
+            Assert.That(match.ConfirmRespawn(new CombatEntityId(5)), Is.False);
+        }
+
+        [Test]
         public void AuthorityDamageMirrorRejectsReadyAndTerminalDelivery()
         {
             var preLive = new BastionCrownMatch(37u);

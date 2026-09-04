@@ -1112,6 +1112,24 @@ namespace BattleRaja.Presentation.Match
                 var presentation = actor.Transform.GetComponent<FighterPresentation>();
                 if (presentation == null) continue;
 
+                // Bastion resolves one team winner in its own authority. The
+                // legacy simulation's individual placement table is only a
+                // deterministic display ranking and can put a surviving rival
+                // at #1 even when Team Raja won the Crown score. Never let that
+                // compatibility ranking drive terminal victory cues.
+                if (_bastionCrown != null)
+                {
+                    var draw = _bastionCrown.Result.IsDraw;
+                    var victory = false;
+                    if (!draw && _bastionCrown.TryGetParticipant(actor.Target.Id, out var bastionParticipant))
+                    {
+                        victory = bastionParticipant.TeamId == _bastionCrown.Result.Winner;
+                    }
+
+                    presentation.SetVictory(victory);
+                    continue;
+                }
+
                 for (var resultIndex = 0; resultIndex < Results.Length; resultIndex++)
                 {
                     var result = Results[resultIndex];

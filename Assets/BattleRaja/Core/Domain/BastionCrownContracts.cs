@@ -793,6 +793,18 @@ namespace BattleRaja.Core.Domain
                 ? this
                 : new TeamTicketPool(TeamId, Maximum, Remaining - 1, Spent + 1);
         }
+
+        /// <summary>
+        /// Releases a reservation that never crossed the authority respawn
+        /// boundary. Terminal matches use this to ensure an unconfirmed handoff
+        /// does not consume a shared ticket.
+        /// </summary>
+        public TeamTicketPool Refund()
+        {
+            return Spent <= 0
+                ? this
+                : new TeamTicketPool(TeamId, Maximum, Remaining + 1, Spent - 1);
+        }
     }
 
     public readonly struct TeamScore

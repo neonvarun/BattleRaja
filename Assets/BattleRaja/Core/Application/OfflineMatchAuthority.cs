@@ -2021,10 +2021,16 @@ namespace BattleRaja.Core.Application
                 if (!runtime.IsAvailable) continue;
                 var definition = runtime.Definition;
                 if (!TrySelectCollector(snapshots, definition.Position, definition.CollectionRadius, true, out var collector)) continue;
-                var result = runtime.TryCollect(collector.CurrentHealth, collector.MaxHealth);
+                // Collection is a two-phase authority transaction. The
+                // preview cannot consume the pickup; commit only after the
+                // canonical health simulation confirms a positive heal. This
+                // prevents a same-tick station/second-pickup race from making
+                // a pickup disappear without restoring health.
+                var result = runtime.TryPreviewCollect(collector.CurrentHealth, collector.MaxHealth);
                 if (!result.Collected) continue;
                 var appliedHeal = RequireSimulation().Heal(collector.Id, result.HealAmount);
                 if (appliedHeal <= 0) continue;
+                runtime.CommitCollection();
                 pickupCollections.Add(new MatchPickupCollectionIntent(
                     definition.PickupId,
                     collector.Id,

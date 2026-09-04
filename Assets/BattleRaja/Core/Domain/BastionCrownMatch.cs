@@ -1187,6 +1187,23 @@ namespace BattleRaja.Core.Domain
         private void Resolve(BastionTeamId winner, bool draw, BastionMatchResultReason reason)
         {
             if (_ended) return;
+
+            // A respawn ticket is reserved when Advance emits a handoff, but
+            // it is only a real respawn after ConfirmRespawn crosses the
+            // legacy-authority boundary. If the match resolves first, release
+            // every still-pending reservation before snapshotting the result.
+            // This keeps terminal ticket totals truthful and prevents a stale
+            // RespawnedActors entry from reviving a finished match.
+            for (var i = 0; i < _participants.Length; i++)
+            {
+                var participant = _participants[i];
+                if (participant == null || !participant.RespawnIssued) continue;
+                GetTeamState(participant.Member.TeamId).RefundTicket();
+                participant.RespawnIssued = false;
+                participant.RespawnPending = false;
+                participant.RespawnRemaining = 0f;
+            }
+            _respawnedActors.Clear();
             _ended = true;
             _winner = winner;
             _result = new BastionResultSummary(
@@ -1395,6 +1412,8 @@ namespace BattleRaja.Core.Domain
             }
 
             public void SpendTicket() => Tickets = Tickets.Spend();
+
+            public void RefundTicket() => Tickets = Tickets.Refund();
 
             public TeamScore ToScore() => new TeamScore(
                 TeamId,

@@ -349,12 +349,22 @@ namespace BattleRaja.Presentation.Match
             if (_resultsCuePlayed || match.Results == null) return;
             _resultsCuePlayed = true;
             var playerWon = false;
-            for (var i = 0; i < match.Results.Length; i++)
+            if (match.IsBastionCrown)
             {
-                if (match.Results[i].Id.Value == 1)
+                // Bastion's terminal result is team-owned. Legacy per-actor
+                // placements are not the source of truth for the player's
+                // victory cue when a rival happens to have the top display rank.
+                playerWon = !match.BastionResult.IsDraw && match.BastionResult.Winner == BastionTeamId.Raja;
+            }
+            else
+            {
+                for (var i = 0; i < match.Results.Length; i++)
                 {
-                    playerWon = match.Results[i].Placement == 1;
-                    break;
+                    if (match.Results[i].Id.Value == 1)
+                    {
+                        playerWon = match.Results[i].Placement == 1;
+                        break;
+                    }
                 }
             }
 

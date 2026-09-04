@@ -81,7 +81,13 @@ namespace BattleRaja.Core.Domain
         public bool IsAvailable => _respawnRemaining <= 0f;
         public float RespawnRemaining => Math.Max(0f, _respawnRemaining);
 
-        public MatchPickupCollectResult TryCollect(int currentHealth, int maxHealth)
+        /// <summary>
+        /// Validates a collection and calculates the heal without consuming the
+        /// pickup. Authority callers use this as the first half of the
+        /// collection transaction, then commit only after the canonical health
+        /// simulation reports a positive applied amount.
+        /// </summary>
+        public MatchPickupCollectResult TryPreviewCollect(int currentHealth, int maxHealth)
         {
             if (!IsAvailable || _definition.Kind != MatchPickupKind.Health || currentHealth < 0 || maxHealth <= currentHealth)
             {
@@ -89,9 +95,26 @@ namespace BattleRaja.Core.Domain
             }
 
             var healAmount = Math.Min(_definition.Value, maxHealth - currentHealth);
-            if (healAmount <= 0) return new MatchPickupCollectResult(false, 0);
-            _respawnRemaining = _definition.RespawnSeconds;
-            return new MatchPickupCollectResult(true, healAmount);
+            return healAmount > 0
+                ? new MatchPickupCollectResult(true, healAmount)
+                : new MatchPickupCollectResult(false, 0);
+        }
+
+        /// <summary>
+        /// Commits a previously previewed collection. This method is deliberately
+        /// idempotent for a consumed pickup so a retry cannot shorten or restart
+        /// an existing respawn timer.
+        /// </summary>
+        public void CommitCollection()
+        {
+            if (IsAvailable) _respawnRemaining = _definition.RespawnSeconds;
+        }
+
+        public MatchPickupCollectResult TryCollect(int currentHealth, int maxHealth)
+        {
+            var result = TryPreviewCollect(currentHealth, maxHealth);
+            if (result.Collected) CommitCollection();
+            return result;
         }
 
         public void Advance(float deltaSeconds)

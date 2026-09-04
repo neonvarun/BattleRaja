@@ -760,6 +760,46 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void HealthPickupIsNotConsumedWhenCanonicalHealHasNoRemainingCapacity()
+        {
+            var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);
+            authority.ConfigureItems(
+                new[]
+                {
+                    new MatchPickupDefinition(0, MatchPickupKind.Health, 25, 12f, Float2.Zero, 1.1f),
+                    new MatchPickupDefinition(1, MatchPickupKind.Health, 25, 12f, new Float2(0.5f, 0f), 1.1f)
+                },
+                null);
+            authority.Start(new List<MatchSpawn>
+            {
+                new MatchSpawn(new CombatEntityId(1), Float2.Zero, 100),
+                new MatchSpawn(new CombatEntityId(2), new Float2(3f, 0f), 100)
+            });
+            authority.SyncHealth(new CombatEntityId(1), 75);
+
+            var firstTick = authority.Advance(1, 1f);
+            Assert.That(firstTick.PickupCollections, Has.Length.EqualTo(1));
+            Assert.That(firstTick.PickupCollections[0].PickupId, Is.EqualTo(0));
+            Assert.That(authority.IsPickupAvailable(0), Is.False);
+            // The second pickup saw the pre-collection snapshot, but its
+            // canonical heal was correctly rejected after the first heal filled
+            // the actor. It must remain available for a later valid collection.
+            Assert.That(authority.IsPickupAvailable(1), Is.True);
+
+            for (var tick = 2; tick <= 14; tick++) authority.Advance(tick, 1f);
+            Assert.That(authority.IsPickupAvailable(1), Is.True);
+
+            // Move away from the first pickup and collect the previously
+            // preserved second pickup after a fresh health drop.
+            authority.SetPosition(new CombatEntityId(1), new Float2(1.5f, 0f));
+            authority.SyncHealth(new CombatEntityId(1), 50);
+            var thirdTick = authority.Advance(15, 1f);
+            Assert.That(thirdTick.PickupCollections, Has.Length.EqualTo(1));
+            Assert.That(thirdTick.PickupCollections[0].PickupId, Is.EqualTo(1));
+            Assert.That(authority.IsPickupAvailable(1), Is.False);
+        }
+
+        [Test]
         public void AuthorityTicksTiffinHealingAndExpiry()
         {
             var authority = new OfflineMatchAuthority(OfflineMatchDefinition.SoloRaja);

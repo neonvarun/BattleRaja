@@ -917,7 +917,12 @@ namespace BattleRaja.Tests.PlayMode
                     fighter.name + " Crown carrier marker must remain render-only");
             }
 
-            var pickups = Object.FindObjectsByType<GadgetPickup>();
+            // The player spawn is intentionally within the Tiffin collection
+            // radius, so the authority may consume that pickup before this
+            // visual-hierarchy assertion runs. Inactive does not mean missing:
+            // the saved identity and beacon must remain inspectable for the
+            // respawn/availability path as well.
+            var pickups = Object.FindObjectsByType<GadgetPickup>(FindObjectsInactive.Include);
             Assert.That(pickups, Has.Length.EqualTo(3));
             foreach (var pickup in pickups)
             {
