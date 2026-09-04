@@ -31,9 +31,11 @@ health card without changing Bastion domain rules.
   `6A16D07EBA66C7420E5F1AABD7982E27C40C6BB017FC639E2D87974B85DE60DC`.
 - Corrected AAB: **37,509,156 bytes**, SHA-256
   `337C15FF7169A97FED2F711822C5366BF731A388D954C8778A9BF33A9E4DB9DA`.
-- Technical release checker: pending its post-commit clean-tree rerun for temporary
-  package `com.example.battleraja.m11`, API `28/36`, offline permissions, ARM64/static
-  alignment and store dimensions.
+- Technical release checker: **0 errors / 0 warnings** after the clean-tree rerun for
+  temporary package `com.example.battleraja.m11`, API `28/36`, offline permissions,
+  ARM64/static alignment and store dimensions. Log:
+  `Builds/Local/V1GameplayTruth/Next/respawn-fix-20260904/release-checker.log`
+  (SHA-256 `647D3B48D0F1C9C86FA626F48E62D0AAFB1497450E4555058D70BCDED107E4E5`).
 - Approved Lava `ST5GDW23LB004392`: corrected APK installed and pulled base hash
   matched. The focused Bijli route captured the explicit `OUT OF ACTION` card at `0/85`
   and restored `85/85` after respawn; the scoped route logcat is marker-clean. The

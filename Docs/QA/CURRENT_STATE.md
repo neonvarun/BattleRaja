@@ -32,10 +32,12 @@ respawn-handoff rerun remains **164/164** (XML SHA-256
 candidate APK is 41,683,648 bytes (SHA-256
 `6A16D07EBA66C7420E5F1AABD7982E27C40C6BB017FC639E2D87974B85DE60DC`) and the AAB is
 37,509,156 bytes (SHA-256
-`337C15FF7169A97FED2F711822C5366BF731A388D954C8778A9BF33A9E4DB9DA`). The technical
-checker is pending the post-commit clean-tree rerun for temporary package
+`337C15FF7169A97FED2F711822C5366BF731A388D954C8778A9BF33A9E4DB9DA`). The post-commit
+technical checker passed **0 errors / 0 warnings** for temporary package
 `com.example.battleraja.m11`, API `28/36`, offline permissions, ARM64/static alignment
-and store dimensions.
+and store dimensions; its log is
+`Builds/Local/V1GameplayTruth/Next/respawn-fix-20260904/release-checker.log` (SHA-256
+`647D3B48D0F1C9C86FA626F48E62D0AAFB1497450E4555058D70BCDED107E4E5`).
 
 Approved Lava `ST5GDW23LB004392` installed the corrected APK and the pulled base hash
 matches. The focused route captured a terminal `BASTION CROWN RESULTS` card, Bijli at

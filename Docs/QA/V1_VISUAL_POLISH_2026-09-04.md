@@ -74,10 +74,13 @@ Built with Unity `6000.5.6f1` using the V1 release-candidate entry points:
 - AAB: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`, 37,509,156 bytes,
   SHA-256 `337C15FF7169A97FED2F711822C5366BF731A388D954C8778A9BF33A9E4DB9DA`.
 
-The technical release checker is queued for the post-commit clean-tree rerun. The
-pre-commit invocation inspected the corrected package successfully but stopped only at
-the intentional dirty-worktree guard; no package, ABI, alignment, permission or store
-dimension error was reported. No final package identity or signing decision was made.
+The post-commit technical release checker passed with **0 errors / 0 warnings**. The
+checker log is `Builds/Local/V1GameplayTruth/Next/respawn-fix-20260904/release-checker.log`
+(SHA-256 `647D3B48D0F1C9C86FA626F48E62D0AAFB1497450E4555058D70BCDED107E4E5`); it
+verified the temporary package `com.example.battleraja.m11`, version `1.0.0` / code
+`100`, min/target API `28/36`, offline permissions, seven ARM64 libraries, static ELF
+alignment checks, store dimensions and a clean worktree. No final package identity or
+signing decision was made.
 
 ## Approved Lava evidence
 

@@ -24,10 +24,12 @@ validation is **0/0**, full EditMode **164/164** and full PlayMode **99/99**. Th
 corrected APK is **41,683,648 bytes** (SHA-256
 `6A16D07EBA66C7420E5F1AABD7982E27C40C6BB017FC639E2D87974B85DE60DC`); the AAB is
 **37,509,156 bytes** (SHA-256
-`337C15FF7169A97FED2F711822C5366BF731A388D954C8778A9BF33A9E4DB9DA`). The technical
-checker is queued for its post-commit clean-tree run against temporary package
+`337C15FF7169A97FED2F711822C5366BF731A388D954C8778A9BF33A9E4DB9DA`). The post-commit
+technical checker passed **0 errors / 0 warnings** against temporary package
 `com.example.battleraja.m11`, version `1.0.0` / code `100`, API `28/36`, no network
 permissions, ARM64-only native libraries, static 16 KB alignment and store dimensions.
+Log: `Builds/Local/V1GameplayTruth/Next/respawn-fix-20260904/release-checker.log`
+(SHA-256 `647D3B48D0F1C9C86FA626F48E62D0AAFB1497450E4555058D70BCDED107E4E5`).
 
 The corrected exact APK was installed on approved Lava `ST5GDW23LB004392`; the pulled
 base hash matched. A focused Bijli route visibly reached `0/85` with
