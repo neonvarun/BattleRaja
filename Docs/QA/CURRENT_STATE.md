@@ -1,6 +1,6 @@
 # BattleRaja V1 current-state index
 
-Updated: 2026-09-04
+Updated: 2026-09-05
 
 ## Evidence location policy
 
@@ -12,6 +12,35 @@ create or depend on evidence outside this repository root.
 ## Truthful classification
 
 **Prototype — Android offline release candidate in progress.**
+
+## Latest current-source evidence — 2026-09-05 — authority boundaries and friendly squad HUD
+
+Source `feb9258` follows authority hardening in `673fd79`. Pickup effects now use a
+preview → canonical authority effect → commit boundary, terminal Bastion resolution
+refunds unconfirmed respawn reservations and clears stale handoffs, and result
+presentation receives the authoritative team winner. The player-facing Bastion HUD now
+adds a render-only strip for allied actors 2–4 with Bijli/Pehel/Maya names, role, health
+and respawn state; it is hidden with results and has no input or gameplay authority.
+
+Static validation is **0 errors / 0 warnings**. Full EditMode is **173/173** and full
+PlayMode is **100/100**. Exact reports, rebuilt artifacts, approved-Lava captures and
+the bounded performance diagnostic are indexed in
+`Docs/QA/V1_AUTHORITY_PICKUP_TERMINAL_BOUNDARIES_2026-09-05.md`.
+
+The rebuilt temporary-ID APK is **41,711,004 bytes** (SHA-256
+`98C3FFAE5865B80D4B85963FB41638DDB2AC30C7D42957D2455CA6155505FBEB`) and AAB is
+**37,536,525 bytes** (SHA-256
+`4474291CC74919F1FCD73C55CE2E44EA1C28D42C014FFF5CF3CCEFA90305611A`). The clean
+technical checker passes API 28/36, offline permissions, ARM64-only native libraries,
+static 16 KB ELF alignment and store dimensions. Approved Lava
+`ST5GDW23LB004392` runs the exact APK and reports a matching SHA-256; its runtime page
+size is 4 KB, so physical 16 KB compatibility remains unproven. The current 60-second
+capture reports PSS 283,128–291,496 KB, RSS 422,776–431,500 KB, graphics
+87,552–95,760 KB, instantaneous process CPU 88.8–121%, thermal status 0 and no frame
+histogram. The strict 100-seed bot/replay metrics remain carried from the unchanged
+authority result. Final authored content, human comfort/accessibility review, normalized
+performance/endurance, physical 16 KB proof and owner identity/signing/privacy/
+cultural/Play approvals remain open.
 
 ## Latest current-source evidence — 2026-09-04 — animation and lifecycle presentation
 

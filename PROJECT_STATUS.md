@@ -6,6 +6,30 @@
 
 ## Current state
 
+- **Authority boundaries and friendly squad HUD continuation (2026-09-05):** Source
+  `feb9258` follows `673fd79` with preview → canonical effect → commit pickup
+  collection, terminal respawn-reservation refund/cleanup and authoritative team-winner
+  presentation. `BastionPlayerHud` now exposes a render-only `FriendlySquadStrip` for
+  allied actors 2–4 with Bijli/Pehel/Maya names, role, health and respawn state. Static
+  validation is **0/0**, full EditMode is **173/173** and full PlayMode **100/100**.
+  Exact evidence is indexed in
+  `Docs/QA/V1_AUTHORITY_PICKUP_TERMINAL_BOUNDARIES_2026-09-05.md`.
+
+  The rebuilt temporary-ID APK is **41,711,004 bytes** (SHA-256
+  `98C3FFAE5865B80D4B85963FB41638DDB2AC30C7D42957D2455CA6155505FBEB`) and AAB is
+  **37,536,525 bytes** (SHA-256
+  `4474291CC74919F1FCD73C55CE2E44EA1C28D42C014FFF5CF3CCEFA90305611A`). The clean
+  technical checker passes API 28/36, offline permissions, ARM64/static 16 KB checks
+  and store dimensions. Approved Lava `ST5GDW23LB004392` runs the exact APK with a
+  matching device SHA-256 and zero scoped crash/ANR/native/LOD markers; its runtime
+  page size is 4 KB, so physical 16 KB proof remains open. The current 60-second
+  capture reports PSS 283,128–291,496 KB, RSS 422,776–431,500 KB, graphics
+  87,552–95,760 KB, instantaneous process CPU 88.8–121%, thermal status 0 and no
+  frame histogram. Final authored content, human comfort/accessibility, normalized
+  performance/endurance, identity/signing/privacy/Data safety/content/cultural review
+  and Play approvals remain owner-gated; classification stays **Prototype — Android
+  offline release candidate in progress**.
+
 - **Animation state and Bastion lifecycle presentation continuation (2026-09-04):**
   Source `abcbe04` adds saved `GadgetUse`, `CrownPickup`, `CrownCarry`,
   `CrownDeposit`, `KO`, `Respawn` and `Spectator` Animator states. `FighterPresentation`

@@ -1,5 +1,24 @@
 # BattleRaja Replay and Soak Report
 
+## Current-source continuation — 2026-09-05
+
+Source `feb9258` is presentation-only relative to the deterministic Bastion authority
+after `673fd79`: pickup preview/commit, terminal respawn-ticket refund and winner
+presentation were hardened, and the player HUD gained a render-only friendly squad
+strip. No replay schema or gameplay command changed, so the latest strict 100-seed
+Bastion report and durable replay remain the applicable simulation evidence:
+
+- `Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260904-190948261-9101.json`
+  (100/100 terminal, 96/100 in-window, 99/100 combat-positive, 100/100 bot-to-bot
+  damage, zero invalid positions and zero stuck ticks).
+- `Builds/Local/V1GameplayTruth/ProductionBotReports/Replays/match-9200-20260904-191259411.brr`.
+- Seeded replay verification: **171/171 EditMode** at
+  `Builds/Local/TestResults/editmode-production-replay-seeded-20260905.xml`.
+
+The current-source full suites are **173/173 EditMode** and **100/100 PlayMode**;
+the exact hashes and physical evidence are recorded in
+`Docs/QA/V1_AUTHORITY_PICKUP_TERMINAL_BOUNDARIES_2026-09-05.md`.
+
 ## Current Bastion Crown replay result — 2026-09-01
 
 `Assets/BattleRaja/Tests/EditMode/BastionReplaySoakTests.cs` builds canonical eight-actor

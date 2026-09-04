@@ -1,14 +1,16 @@
 # BattleRaja Unity Project Context
 
-**Planning snapshot:** 2026-09-04 21:40 IST
-**Verified source:** `codex/v1-playstore-release` at `abcbe04` (`feat: mirror Bastion lifecycle in fighter presentation`)
+**Planning snapshot:** 2026-09-05 22:00 IST
+**Verified source:** `codex/v1-playstore-release` at `feb9258` (`ui: surface friendly Bastion squad status`)
 **Working directory:** `C:\Projects\BattleRaja`
 **Status:** Bastion Crown 4v4 offline implementation, deterministic replay/squad hardening,
-fair production pacing, original menu/fighter art and saved lifecycle animation states
-are integrated and test-green; the latest animation/respawn presentation pass is covered
-by full EditMode 168/168 and PlayMode 99/99, with strict 100-match production-bot
-simulation evidence carried from the unchanged authority checkpoint. Final release gates
-remain open.
+fair production pacing, original menu/fighter art, saved lifecycle animation states,
+authoritative pickup/terminal boundaries and the friendly squad status strip are
+integrated and test-green. The latest current-source pass is covered by full EditMode
+173/173 and PlayMode 100/100, with strict 100-match production-bot simulation evidence
+carried from the unchanged authority checkpoint. Final release gates remain open; see
+`Docs/QA/V1_AUTHORITY_PICKUP_TERMINAL_BOUNDARIES_2026-09-05.md` for exact hashes and
+Lava evidence.
 
 This file is the compact orientation document for the V1 continuation agent. The agent must re-run repository, build and device checks because this snapshot can become stale. `PROJECT_STATUS.md`, `AGENTS.md`, and the source code remain the authority for current facts; the prompt pack is the execution contract for the next implementation pass.
 

@@ -2,6 +2,35 @@
 
 Research current primary sources before selecting technical versions, APIs, SDKs, policies or deployment methods.
 
+### Android/Google Play and 16 KB policy recheck — 2026-09-05
+
+- **Date checked:** 2026-09-05
+- **Question:** Do the current Android candidate's target API, native page alignment and
+  store/privacy preparation still match the official requirements visible before a V1
+  submission?
+- **Primary source:**
+  https://support.google.com/googleplay/android-developer/answer/11926878?hl=en ;
+  https://developer.android.com/google/play/requirements/target-sdk ;
+  https://developer.android.com/guide/practices/page-sizes ;
+  https://developer.android.com/games/engines/unity/unity-on-android ;
+  https://support.google.com/googleplay/android-developer/answer/10787469?hl=en-EN
+- **Relevant claim:** The current Play target-API page says new apps and updates must
+  target Android 16/API 36 from 2026-08-31, while the Android page-size guidance covers
+  16 KB devices and identifies the 2027-02-01 Play compatibility gate for API 35+
+  apps. The Unity-on-Android guidance includes Unity 6 in the supported 16 KB path.
+  Google Play's Data safety form remains required for published apps, including test
+  tracks; internal-only testing is the documented exception.
+- **Decision impact:** Keep the candidate at target API 36, retain ARM64-only native
+  packaging and the static 16 KB ELF/bundle gate, and leave privacy policy, Data safety,
+  target audience, content rating, final signing and package identity owner-gated. The
+  current technical checker passed these static gates; the approved Lava reports a 4 KB
+  runtime page size, so no universal physical 16 KB claim is made.
+- **Uncertainty:** Play policy dates, developer-account requirements and listing forms
+  are time-sensitive. Static bundle alignment does not replace runtime validation on a
+  16 KB device or owner/legal review of the final signed artifact.
+- **Recheck trigger/date:** Immediately before final signing, Play Console setup,
+  testing-track publication or any target/API/package change.
+
 ## Entry template
 
 ### Research item

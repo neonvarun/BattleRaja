@@ -54,6 +54,38 @@ Record every material choice here. Do not silently overwrite old decisions.
   `Docs/QA/V1_ANIMATION_STATE_AND_RESPAWN_PRESENTATION_2026-09-04.md`.
 - **Owner:** Human project owner
 
+### ADR-081 — Keep Bastion pickup/terminal effects authoritative and expose team state in a render-only strip
+
+- **Date:** 2026-09-05
+- **Status:** Accepted for the V1 offline production route; final human comfort and
+  authored presentation review remain open.
+- **Context:** The previous Bastion route could let a pickup be removed before the
+  canonical heal/effect was accepted, and a terminal result could leave a reserved
+  respawn ticket stranded. Separately, allies were authoritative and coordinated but
+  their health/role/respawn state was implicit in the player HUD, making the 4v4 loop
+  read like a prototype.
+- **Options considered:** Mutate pickup and respawn state directly from the scene;
+  keep the existing one-step collection path and rely on tests; or keep a two-phase
+  authority boundary and add a small presentation-only team status surface.
+- **Decision:** `OfflineMatchAuthority` previews a collection, applies the canonical
+  effect and commits removal only after acceptance. `BastionCrownMatch` refunds
+  unconfirmed respawn reservations during terminal resolution and clears stale
+  handoffs. `BastionPlayerHud` mirrors only immutable participant snapshots into
+  `FriendlySquadStrip` cards for actors 2–4, showing short fighter names, role, health
+  and respawn state; the cards are non-interactive and hidden with results. No score,
+  ticket, health, pickup, respawn, input or replay decision moves into presentation.
+- **Consequences:** Duplicate/stale pickup delivery cannot consume an item without its
+  accepted effect, terminal matches cannot strand a reserved ticket, and the player can
+  read the three allied states at a glance. The strip adds a small render-only UI
+  hierarchy and per-state-key refresh while retaining the existing pure authority seam.
+  Full EditMode 173/173 and PlayMode 100/100 cover the focused regressions and HUD;
+  strict bot/replay metrics remain carried from the unchanged simulation checkpoint.
+- **Evidence/sources:** `MatchItems.cs`, `OfflineMatchAuthority.cs`,
+  `BastionCrownContracts.cs`, `BastionCrownMatch.cs`, `BastionPlayerHud.cs`,
+  `VerticalSlicePlayModeTests.cs`, source commits `673fd79` and `feb9258`, and
+  `Docs/QA/V1_AUTHORITY_PICKUP_TERMINAL_BOUNDARIES_2026-09-05.md`.
+- **Owner:** Human project owner
+
 ### ADR-078 — Adapt Bastion Crown through a first-class offline team authority
 
 - **Date:** 2026-08-31

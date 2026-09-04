@@ -13,6 +13,43 @@ prototype until every V1 completion gate and remaining human gate passes.
 - Approved physical evidence device: Lava `ST5GDW23LB004392` (`LAVA LXX508`) only.
 - Preserve internal networking/Web seams without exposing unusable public online paths.
 
+## Checkpoint 0u - authority boundaries and friendly squad status HUD - 2026-09-05
+
+Source `feb9258` follows the authority-boundary fix in `673fd79`. Bastion pickup use is
+now previewed, applied canonically and committed only after the effect succeeds;
+terminal resolution refunds unconfirmed respawn reservations and clears stale handoffs;
+the authoritative team winner feeds the result/audio presentation. The production HUD
+adds a render-only `FriendlySquadStrip` for allied actors 2–4 with short fighter names,
+roles, health bars and respawn state. No gameplay, input, balance, replay or network
+scope changed.
+
+- Static validation: **0 errors / 0 warnings**.
+- Full EditMode: **173/173 passed**; XML SHA-256
+  `6E5E7B8E6FA38EB14AA45B5F8E07583F693767DB9439EEEF4DAE17075DA22AA7`.
+- Full PlayMode: **100/100 passed**; XML SHA-256
+  `82A41E3E057279D918581744D730D54539256F3D29816DB55EB6CF5CB77BBF44`.
+- APK: **41,711,004 bytes**, SHA-256
+  `98C3FFAE5865B80D4B85963FB41638DDB2AC30C7D42957D2455CA6155505FBEB`.
+- AAB: **37,536,525 bytes**, SHA-256
+  `4474291CC74919F1FCD73C55CE2E44EA1C28D42C014FFF5CF3CCEFA90305611A`.
+- Clean technical checker: **0 errors / 0 warnings**; log
+  `Builds/Local/V1GameplayTruth/Next/authority-ui-fix-20260905/release-checker-final.log`
+  (SHA-256 `0309EA7B520BEC08976E61F4D71C9FE208F9F1361D53031E7CCC01DB3AED0021`).
+- Approved Lava `ST5GDW23LB004392` runs the exact APK and the device SHA-256 matches the
+  local artifact. Fresh menu → briefing → fighter → live captures show the ally strip;
+  scoped logcat is marker-clean. The device reports 4 KB pages, so physical 16 KB proof
+  remains open.
+- Final exact-source route, metrics and remaining owner gates:
+  `Docs/QA/V1_AUTHORITY_PICKUP_TERMINAL_BOUNDARIES_2026-09-05.md`.
+
+The strict 100-seed Bastion bot/replay metrics remain carried from the unchanged
+authority result (100/100 terminal, 96/100 in-window, 99/100 combat-positive, 100/100
+bot-to-bot damage, zero invalid positions and zero stuck ticks). The candidate remains
+**Prototype — Android offline release candidate in progress**; commissioned final
+assets/audio, complete human comfort/accessibility review, normalized sustained
+performance, physical 16 KB runtime and owner identity/signing/privacy/content/cultural/
+Play approvals remain open.
+
 ## Checkpoint 0t - animation state and Bastion lifecycle presentation - 2026-09-04
 
 Source `abcbe04` adds a saved, editable Animator state library for `GadgetUse`, Crown
