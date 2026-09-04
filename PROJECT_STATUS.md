@@ -17,7 +17,7 @@
   **37,509,156 bytes** (SHA-256
   `337C15FF7169A97FED2F711822C5366BF731A388D954C8778A9BF33A9E4DB9DA`); the
   post-commit technical release checker passed **0/0** (log
-  `Builds/Local/V1GameplayTruth/Next/respawn-fix-20260904/release-checker.log`, SHA-256
+  `Builds/Local/V1GameplayTruth/Next/respawn-fix-20260904/release-checker-final.log`, SHA-256
   `647D3B48D0F1C9C86FA626F48E62D0AAFB1497450E4555058D70BCDED107E4E5`). Approved Lava
   `ST5GDW23LB004392` installed the corrected APK, and the pulled base hash matches.
   The focused route captured a terminal Results card, `0/85` with

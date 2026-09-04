@@ -28,7 +28,7 @@ corrected APK is **41,683,648 bytes** (SHA-256
 technical checker passed **0 errors / 0 warnings** against temporary package
 `com.example.battleraja.m11`, version `1.0.0` / code `100`, API `28/36`, no network
 permissions, ARM64-only native libraries, static 16 KB alignment and store dimensions.
-Log: `Builds/Local/V1GameplayTruth/Next/respawn-fix-20260904/release-checker.log`
+Log: `Builds/Local/V1GameplayTruth/Next/respawn-fix-20260904/release-checker-final.log`
 (SHA-256 `647D3B48D0F1C9C86FA626F48E62D0AAFB1497450E4555058D70BCDED107E4E5`).
 
 The corrected exact APK was installed on approved Lava `ST5GDW23LB004392`; the pulled

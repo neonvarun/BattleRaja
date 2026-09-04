@@ -36,7 +36,7 @@ candidate APK is 41,683,648 bytes (SHA-256
 technical checker passed **0 errors / 0 warnings** for temporary package
 `com.example.battleraja.m11`, API `28/36`, offline permissions, ARM64/static alignment
 and store dimensions; its log is
-`Builds/Local/V1GameplayTruth/Next/respawn-fix-20260904/release-checker.log` (SHA-256
+`Builds/Local/V1GameplayTruth/Next/respawn-fix-20260904/release-checker-final.log` (SHA-256
 `647D3B48D0F1C9C86FA626F48E62D0AAFB1497450E4555058D70BCDED107E4E5`).
 
 Approved Lava `ST5GDW23LB004392` installed the corrected APK and the pulled base hash
