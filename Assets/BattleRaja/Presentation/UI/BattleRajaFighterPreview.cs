@@ -192,7 +192,10 @@ namespace BattleRaja.Presentation.UI
             foreach (var lodGroup in _model.GetComponentsInChildren<LODGroup>(true))
             {
                 var lods = lodGroup.GetLODs();
-                lodGroup.ForceLOD(0);
+                // The preview disables the gameplay LODGroup below and owns the
+                // renderer visibility explicitly. Calling ForceLOD on a cloned
+                // group that Unity has already disabled emits a runtime warning
+                // on Android and adds no visual value here.
                 if (lods != null && lods.Length > 0)
                 {
                     for (var lodIndex = 0; lodIndex < lods.Length; lodIndex++)
