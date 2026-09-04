@@ -735,6 +735,79 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator BastionRespawnHandoffMirrorsConfirmedHealthAndSpectatorState()
+        {
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            var playerAgent = Object.FindObjectsByType<MovementPlayerAgent>()
+                .Single(agent => agent.AuthorityDrivenMovement && agent.ActorId == 1);
+            var attackerAgent = Object.FindObjectsByType<MovementPlayerAgent>()
+                .Single(agent => agent.AuthorityDrivenMovement && agent.ActorId == 5);
+            var player = playerAgent.GetComponent<CombatTarget>();
+            var attacker = attackerAgent.GetComponent<CombatTarget>();
+            var resolver = Object.FindAnyObjectByType<CombatDamageResolver>();
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match.IsBastionCrown, Is.True);
+            Assert.That(resolver, Is.Not.Null);
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            var previousHarnessSimulation = OfflineMatchController.SuppressAutomaticSimulationForHarness;
+            OfflineMatchController.SuppressAutomaticSimulationForHarness = true;
+#endif
+            try
+            {
+                // Move the canonical clock past warmup and explicitly clear the
+                // authored spawn shield so this is a pure defeat/respawn probe.
+                for (var i = 0; i < 120; i++) match.AdvanceHarnessSimulationTick();
+                match.ClearSpawnProtection(player.Id);
+                match.ClearSpawnProtection(attacker.Id);
+
+                var lethalTick = match.SimulationTick + 1;
+                var lethal = resolver.Resolve(
+                    player,
+                    new DamageRequest(
+                        attacker.Id,
+                        player.Id,
+                        attacker.Faction,
+                        player.Health.MaxHealth + 100,
+                        DamageType.Projectile,
+                        Float2.Up,
+                        lethalTick),
+                    allowSelfHit: false,
+                    allowFriendlyFire: false,
+                    simulationTick: lethalTick);
+                Assert.That(lethal.TargetDefeated, Is.True);
+                Assert.That(player.Health.Snapshot.IsDefeated, Is.True);
+
+                // The next canonical tick transfers the defeat into the Bastion
+                // layer and must expose the real out-of-action spectator state.
+                match.AdvanceHarnessSimulationTick();
+                Assert.That(match.BastionCrown.TryGetParticipant(player.Id, out var dead), Is.True);
+                Assert.That(dead.Alive, Is.False);
+                Assert.That(dead.Spectating, Is.True);
+                Assert.That(match.PlayerSpectating, Is.True);
+
+                // The authority adapter reserves one ticket, emits a ready actor,
+                // then confirms it. The visible health must come from that
+                // post-confirm snapshot, not the stale zero-health ready state.
+                for (var i = 0; i < 210; i++) match.AdvanceHarnessSimulationTick();
+                Assert.That(match.BastionCrown.TryGetParticipant(player.Id, out var revived), Is.True);
+                Assert.That(revived.Alive, Is.True);
+                Assert.That(revived.SpawnProtected, Is.True);
+                Assert.That(player.Health.Snapshot.CurrentHealth, Is.EqualTo(player.Health.MaxHealth));
+                Assert.That(player.Health.Snapshot.IsDefeated, Is.False);
+                Assert.That(match.PlayerSpectating, Is.False);
+            }
+            finally
+            {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                OfflineMatchController.SuppressAutomaticSimulationForHarness = previousHarnessSimulation;
+#endif
+            }
+
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator ProductionMayaDecoyRoutesLifetimeAndDamageThroughAuthority()
         {
             var match = Object.FindAnyObjectByType<OfflineMatchController>();

@@ -939,8 +939,13 @@ namespace BattleRaja.Presentation.Match
                 if (!_bastionCrown.ConfirmRespawn(actorId)) continue;
                 var actor = _actors.FirstOrDefault(binding => binding.Target.Id == actorId);
                 if (actor == null) continue;
-                actor.Agent.ApplyAuthoritativePosition(snapshot.Position);
-                actor.Health.SetAuthoritativeHealth(snapshot.CurrentHealth);
+                // `snapshot` is the ready/dead state emitted by Advance. The
+                // confirm step is the authority boundary that restores spawn
+                // position and max health, so mirror the post-confirm state
+                // rather than reapplying the stale zero-health ready snapshot.
+                if (!_bastionCrown.TryGetParticipant(actorId, out var confirmed)) continue;
+                actor.Agent.ApplyAuthoritativePosition(confirmed.Position);
+                actor.Health.SetAuthoritativeHealth(confirmed.CurrentHealth);
                 actor.Input?.ResetInputState();
             }
         }
