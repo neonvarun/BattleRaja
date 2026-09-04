@@ -13,6 +13,39 @@ prototype until every V1 completion gate and remaining human gate passes.
 - Approved physical evidence device: Lava `ST5GDW23LB004392` (`LAVA LXX508`) only.
 - Preserve internal networking/Web seams without exposing unusable public online paths.
 
+## Checkpoint 0s - local squad perception and support fairness — 2026-09-04
+
+Source `8120932` closes a fairness gap in the offline Bastion squad layer. Enemy
+carrier/focus nominations now require a 16 m local range and authored Bazaar Bastion
+line-of-sight; the common bot target selector treats the nomination as advisory. The
+support arbiter now selects one highest-priority alive teammate within 18 m, falling back
+when an Anchor is out of range, and passes only that handoff to contextual Tiffin use.
+
+- Static validation: **0 errors / 0 warnings**.
+- Full EditMode: **168/168 passed**; XML
+  `Builds/Local/TestResults/squad-support-fallback-editmode.xml` (SHA-256
+  `9E16F7BB8294CCD72BE0CCD7B6BA5E2AF6367585D0DE69A9C4FDCCCF58DFBA5E`).
+- Full PlayMode: **99/99 passed**; XML
+  `Builds/Local/TestResults/squad-support-fallback-playmode.xml` (SHA-256
+  `26D6D69B37FCF02F32FF52F5DCD52BE48E71AD1D73D5B01DD39FB82410D3DA40`).
+- Strict production-bot PlayMode: **99/99 passed**; 100/100 terminal, 90/100 in the
+  240–360 s window, 100/100 combat-positive, 100/100 bot-to-bot damage, zero invalid
+  positions and zero stuck ticks. Report:
+  `Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260904-155419012-9101.json`.
+- APK: **41,685,584 bytes**, SHA-256
+  `60CCC7F80617872C81CEF8A31810E0CEF34DBA415863EFF8FA3F3C41ABC14328`.
+- AAB: **37,511,088 bytes**, SHA-256
+  `916853FBAEFFBDF9C6ABD6A39FBE97D65C53FB64B9C6DD62E45CFEA77B08FBC2`.
+- The exact pair passes the temporary-ID technical checker for API 28/36, offline
+  permissions, ARM64-only native libraries, static 16 KB ELF alignment and store
+  dimensions. The clean-tree checker must be rerun after this documentation commit.
+- Lava `ST5GDW23LB004392` was available for a prior-revision route, but disappeared from
+  ADB after the final rebuild; exact-current-source physical installation, physical
+  16 KB runtime and normalized sustained performance remain open.
+
+Evidence and remaining gates are detailed in
+`Docs/QA/V1_SQUAD_PERCEPTION_2026-09-04.md`.
+
 ## Checkpoint 0r - Crown carrier feedback — 2026-09-04
 
 Source `22f279b` adds a render-only gold halo/diamond crest above whichever actor the

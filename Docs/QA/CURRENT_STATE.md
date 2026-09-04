@@ -13,6 +13,34 @@ create or depend on evidence outside this repository root.
 
 **Prototype — Android offline release candidate in progress.**
 
+## Latest current-source evidence — 2026-09-04 — squad perception and support fairness
+
+Source commit `8120932` bounds enemy carrier/focus nominations to a 16 m local range and
+the authored Bazaar Bastion line-of-sight contract. Focus remains an advisory hint to the
+common local target selector. The support arbiter now chooses one highest-priority alive
+teammate who is actually within 18 m, allowing a nearby fallback when the preferred Anchor
+is out of range; only that handoff reaches the Tiffin contextual-use path.
+
+Static validation is **0 errors / 0 warnings**. Full EditMode is **168/168**, full
+PlayMode **99/99**, and strict production-bot PlayMode **99/99** for 100 seeded matches.
+The batch reached **100/100** terminal matches, **90/100** in the 240–360 second window,
+**100/100** with combat eliminations and bot-to-bot damage, zero invalid positions and
+zero continuous-stuck ticks. Squad telemetry recorded 177,287 signal updates, 312,829
+support assignments, 597,792 escort assignments and 73,691 retreat signals. Evidence is
+`Docs/QA/V1_SQUAD_PERCEPTION_2026-09-04.md`.
+
+The exact temporary-ID APK is 41,685,584 bytes (SHA-256
+`60CCC7F80617872C81CEF8A31810E0CEF34DBA415863EFF8FA3F3C41ABC14328`) and AAB is
+37,511,088 bytes (SHA-256
+`916853FBAEFFBDF9C6ABD6A39FBE97D65C53FB64B9C6DD62E45CFEA77B08FBC2`). Static Android
+checks pass API 28/36, offline permissions, ARM64-only native libraries, static 16 KB
+ELF alignment and store dimensions. The approved Lava serial was available for a
+prior-revision baseline route but disappeared from ADB after this rebuild, so the exact
+current-source physical install, physical 16 KB runtime and normalized sustained
+performance remain unproven. Commissioned final art/audio, complete action/spectate
+comfort and owner identity/signing/privacy/Data Safety/IARC/cultural/Play approvals
+remain open.
+
 ## Latest current-source evidence — 2026-09-04 — Crown carrier feedback
 
 Source commit `22f279b` adds a render-only gold halo/diamond crest above the

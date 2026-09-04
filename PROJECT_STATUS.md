@@ -6,6 +6,30 @@
 
 ## Current state
 
+- **Squad perception and support fairness continuation (2026-09-04):** Source `8120932`
+  bounds enemy carrier/focus nominations to a deterministic 16 m range plus authored
+  Bazaar Bastion line-of-sight, keeps focus advisory to the common local target selector,
+  and makes the support arbiter choose the highest-priority eligible teammate within an
+  18 m range. Full EditMode is **168/168**, full PlayMode **99/99**, and strict
+  production-bot PlayMode is **99/99** across 100 seeded matches. The strict batch recorded
+  **100/100** terminal matches, **90/100** in the 240–360 second window, **100/100** with
+  combat eliminations, **100/100** with bot-to-bot damage, zero invalid positions and zero
+  continuous-stuck ticks; squad telemetry recorded 177,287 signal updates, 312,829
+  support assignments, 597,792 escort assignments and 73,691 retreat signals. Exact
+  evidence is indexed in `Docs/QA/V1_SQUAD_PERCEPTION_2026-09-04.md`.
+
+  The rebuilt temporary-ID APK is **41,685,584 bytes** (SHA-256
+  `60CCC7F80617872C81CEF8A31810E0CEF34DBA415863EFF8FA3F3C41ABC14328`) and AAB is
+  **37,511,088 bytes** (SHA-256
+  `916853FBAEFFBDF9C6ABD6A39FBE97D65C53FB64B9C6DD62E45CFEA77B08FBC2`); static Android
+  checks pass offline permissions, ARM64-only native libraries, 16 KB ELF alignment and
+  store dimensions. The approved Lava serial was present for the prior-revision baseline
+  route but disappeared from ADB after the final rebuild, so exact-current-source physical
+  installation, physical 16 KB runtime proof and normalized sustained performance remain
+  open. Commissioned final art/audio, full action/spectate comfort and owner Play/privacy
+  gates remain open; classification stays **Prototype — Android offline release candidate
+  in progress**.
+
 - **Crown carrier feedback continuation (2026-09-04):** Source `22f279b` adds a
   render-only gold halo/diamond crest above the authority-reported Crown carrier and
   hides it for eliminated/terminal actors. Full EditMode remains **164/164** (XML

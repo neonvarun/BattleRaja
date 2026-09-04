@@ -1,11 +1,13 @@
 # BattleRaja Unity Project Context
 
-**Planning snapshot:** 2026-09-02 00:00 IST
-**Verified source:** current `codex/v1-playstore-release` continuation working tree; exact final commit is reported by the release handoff
+**Planning snapshot:** 2026-09-04 21:40 IST
+**Verified source:** `codex/v1-playstore-release` at `8120932` (`fix: bound squad focus and support perception`)
 **Working directory:** `C:\Projects\BattleRaja`
 **Status:** Bastion Crown 4v4 offline implementation, deterministic replay/squad hardening,
 fair production pacing and original menu-art replacement are integrated and test-green;
-final release gates remain open.
+the latest squad perception/support fairness pass is covered by full EditMode 168/168,
+PlayMode 99/99 and strict 100-match production-bot 99/99 evidence. Final release gates
+remain open.
 
 This file is the compact orientation document for the V1 continuation agent. The agent must re-run repository, build and device checks because this snapshot can become stale. `PROJECT_STATUS.md`, `AGENTS.md`, and the source code remain the authority for current facts; the prompt pack is the execution contract for the next implementation pass.
 
@@ -24,12 +26,11 @@ The canonical rules live in `PROMPTS/03_4V4_MATCH_RULES_RESPAWN_SCORE_AND_OBJECT
 
 ## Verified repository baseline
 
-The latest continuation is recorded in `Docs/QA/V1_OFFLINE_ANDROID_VALIDATION_2026-09-02.md`.
-Static validation is **0/0**, EditMode is **159/159**, PlayMode is **94/94**, the two-seed
-8,400-tick Bastion replay soak has zero divergence, and the planner coverage run records
-contest 64 / escort 64 / defend 96 / collapse 64 / Aandhi-retreat 32 intents. The strict
-production-bot gate is **94/94** with 100/100 terminal matches. The exact APK/AAB hashes and
-Lava captures in that report supersede the older baseline values below.
+The latest continuation is recorded in `Docs/QA/V1_SQUAD_PERCEPTION_2026-09-04.md`.
+Static validation is **0/0**, EditMode is **168/168**, PlayMode is **99/99**, the
+two-seed 8,400-tick Bastion replay soak remains green, and strict production-bot PlayMode
+is **99/99** with 100/100 terminal matches. The exact APK/AAB hashes and the explicit
+prior-revision Lava limitation in that report supersede the older baseline values below.
 
 - The working tree contains the focused continuation changes and must be rechecked before
   any further edits; the release handoff records the resulting commit.
@@ -38,7 +39,8 @@ Lava captures in that report supersede the older baseline values below.
 - `main` is historical and behind origin; do not plan against it.
 - LFS pointer check passed.
 - Stashes exist and are user-owned; do not apply, delete or rewrite them.
-- The current continuation adds the bounded-lag squad blackboard, deterministic support/escort
+- The current continuation adds the bounded-lag squad blackboard, local 16 m enemy
+  perception with authored LOS, eligible 18 m support fallback, deterministic support/escort
   handoffs, same-tick command-phase freeze, unique team placement after respawn and fair
   production pacing on top of the Bastion Crown baseline.
 

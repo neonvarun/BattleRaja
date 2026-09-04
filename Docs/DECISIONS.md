@@ -2249,3 +2249,32 @@ Record every material choice here. Do not silently overwrite old decisions.
   and prefabs, source commits `775497d`/`281eeb4`, full EditMode **164/164**, full
   PlayMode **98/98**, and `Docs/QA/V1_VISUAL_POLISH_2026-09-04.md`.
 - **Owner:** Human project owner
+
+### ADR-091 - Bound squad focus to local perception and eligible support range
+
+- **Date:** 2026-09-04
+- **Status:** Accepted for the V1 deterministic squad baseline; broader AI balance,
+  physical comfort and human-fun review remain open.
+- **Context:** The Bastion planner received canonical participant snapshots, but its
+  enemy-carrier/focus selection did not enforce the observer's actual range or the
+  authored Bazaar cover layout. Its support arbiter also selected the highest-priority
+  teammate before checking range, so an out-of-range Anchor could block an in-range
+  fallback supporter. Both behaviours risked omniscient or visibly incoherent squad play.
+- **Options considered:** Keep global snapshot visibility; add a presentation-only filter;
+  or enforce one shared pure-domain perception/support contract and retain the authority
+  as the final validator.
+- **Decision:** Add `BastionSquadPerception` with a 16 m enemy range, authored
+  `BazaarBastion` line-of-sight and an 18 m ally-support range. Make focus nominations
+  advisory to the common local bot target selector, and select the highest-priority
+  supporter who is both alive and within range. Route only the arbiter-selected support
+  ID/position to the Tiffin contextual-use path; Umbrella Guard and Dhol Burst remain
+  threat-gated.
+- **Consequences:** Bots cannot receive a free target through cover or across the map,
+  and a nearby teammate can take over support when the preferred role is unavailable.
+  The policy is deterministic and testable without Unity. It intentionally does not
+  claim commissioned art, complete spectate comfort or final difficulty approval.
+- **Evidence/sources:** `BastionCrownContracts.cs`, `BotAI.cs`, `BotBrain.cs`,
+  `GadgetUser.cs`, `OfflineMatchController.cs`, `BastionSquadBlackboardTests.cs`,
+  `BotFoundationTests.cs`, source commit `8120932`, `Docs/QA/V1_SQUAD_PERCEPTION_2026-09-04.md`,
+  full EditMode **168/168**, full PlayMode **99/99** and strict production-bot **99/99**.
+- **Owner:** Human project owner
