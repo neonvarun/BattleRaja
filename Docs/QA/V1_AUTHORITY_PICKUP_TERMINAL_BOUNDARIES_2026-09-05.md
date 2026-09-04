@@ -88,7 +88,7 @@ The final APK and AAB were rebuilt after the label cleanup:
   entries and ELF load alignment `0x4000` for every native library. App icon and feature
   graphic pass `512x512` and `1024x500` technical dimensions.
 - Clean checker log:
-  `Builds/Local/V1GameplayTruth/Next/authority-ui-fix-20260905/release-checker-final.log`
+  `Builds/Local/V1GameplayTruth/Next/authority-ui-fix-20260905/release-checker-final-clean.log`
   (SHA-256 `0309EA7B520BEC08976E61F4D71C9FE208F9F1361D53031E7CCC01DB3AED0021`).
 
 The checker was run with `-RequireCleanWorktree` and passed 0 errors / 0 warnings.
@@ -154,4 +154,3 @@ battery/endurance profiling; a physical 16 KB device run; final package identity
 signing; privacy policy/Data safety, target-audience/content-rating and Play Console
 materials; and any store submission decision. No upload, publication, signing or legal
 acceptance was performed.
-
