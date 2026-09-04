@@ -906,6 +906,10 @@ namespace BattleRaja.Tests.PlayMode
                 Assert.That(badge, Is.Not.Null, fighter.name + " is missing a redundant team-shape badge");
                 Assert.That(badge.GetComponent<Collider>(), Is.Null,
                     fighter.name + " team badge must remain render-only");
+                var carrierMarker = fighter.transform.Find("CrownCarrierMarker");
+                Assert.That(carrierMarker, Is.Not.Null, fighter.name + " is missing its Crown carrier marker");
+                Assert.That(carrierMarker.GetComponentsInChildren<Collider>(true), Is.Empty,
+                    fighter.name + " Crown carrier marker must remain render-only");
             }
 
             var pickups = Object.FindObjectsByType<GadgetPickup>();

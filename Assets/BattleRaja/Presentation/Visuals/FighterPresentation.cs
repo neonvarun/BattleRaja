@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using BattleRaja.Core.Domain;
 using BattleRaja.Presentation.Combat;
+using BattleRaja.Presentation.Match;
 using BattleRaja.Presentation.Movement;
 using BattleRaja.Presentation.UI;
 using UnityEngine;
@@ -45,6 +46,7 @@ namespace BattleRaja.Presentation.Visuals
         private Material _ringMaterial;
         private Material _barMaterial;
         private Material _teamBadgeMaterial;
+        private Material _crownCarrierMaterial;
         private readonly List<GameObject> _ownedObjects = new List<GameObject>(32);
         private readonly List<Material> _ownedMaterials = new List<Material>(20);
         private readonly List<Transform> _silhouetteParts = new List<Transform>(24);
@@ -55,6 +57,7 @@ namespace BattleRaja.Presentation.Visuals
         private readonly List<Color> _productionBaseColors = new List<Color>(12);
         private Transform _ring;
         private Transform _teamBadge;
+        private Transform _crownCarrierMarker;
         private Transform _healthBar;
         private Transform _healthFill;
         private Transform _telegraph;
@@ -63,6 +66,7 @@ namespace BattleRaja.Presentation.Visuals
         private ProductionVfxCue _productionVfx;
         private BattleRajaAudioDirector _audio;
         private PlayerInputAdapter _playerInput;
+        private OfflineMatchController _match;
         private CombatTarget _target;
         private float _attackPulse;
         private float _abilityPulse;
@@ -93,6 +97,7 @@ namespace BattleRaja.Presentation.Visuals
             health = health != null ? health : GetComponent<CombatHealth>();
             movementAgent = movementAgent != null ? movementAgent : GetComponent<MovementPlayerAgent>();
             _playerInput = GetComponent<PlayerInputAdapter>();
+            _match = FindAnyObjectByType<OfflineMatchController>();
             _audio = FindAnyObjectByType<BattleRajaAudioDirector>();
             _bodyProperties = new MaterialPropertyBlock();
             _bodyBaseLocalPosition = bodyRenderer != null ? bodyRenderer.transform.localPosition : Vector3.zero;
@@ -149,6 +154,7 @@ namespace BattleRaja.Presentation.Visuals
                 ApplyProductionAnimationState();
                 ApplySilhouetteAnimation();
                 if (_teamBadge != null) _teamBadge.gameObject.SetActive(false);
+                if (_crownCarrierMarker != null) _crownCarrierMarker.gameObject.SetActive(false);
                 return;
             }
 
@@ -159,6 +165,7 @@ namespace BattleRaja.Presentation.Visuals
                 ApplySilhouetteAnimation();
                 if (_ring != null) _ring.localScale = Vector3.one * (1.0f + Mathf.Sin(Time.time * 4f) * 0.06f);
                 if (_teamBadge != null) _teamBadge.gameObject.SetActive(false);
+                if (_crownCarrierMarker != null) _crownCarrierMarker.gameObject.SetActive(false);
                 return;
             }
 
@@ -170,6 +177,7 @@ namespace BattleRaja.Presentation.Visuals
                 _teamBadge.gameObject.SetActive(!_matchOutcomeShown);
                 _teamBadge.localRotation = Quaternion.Euler(0f, Time.time * 24f, 0f);
             }
+            UpdateCrownCarrierMarker();
 
             if (_hitRemaining > 0f) CurrentAnimation = AnimationState.Hit;
             else if (_abilityPulse > 0f) CurrentAnimation = AnimationState.Ability;
@@ -401,6 +409,23 @@ namespace BattleRaja.Presentation.Visuals
             _healthFill.localPosition = new Vector3(-0.48f * (1f - ratio), 0f, 0f);
         }
 
+        private void UpdateCrownCarrierMarker()
+        {
+            if (_crownCarrierMarker == null) return;
+            if (_match == null) _match = FindAnyObjectByType<OfflineMatchController>();
+            var actorId = _target != null ? _target.Id.Value : 0;
+            var crown = _match != null && _match.IsBastionCrown
+                ? _match.BastionCrownState
+                : default(CrownSparkSnapshot);
+            var carried = actorId > 0 && crown.IsCarried && crown.CarrierId.Value == actorId;
+            _crownCarrierMarker.gameObject.SetActive(carried && !_matchOutcomeShown && !_eliminated);
+            if (!carried) return;
+
+            var pulse = 1f + Mathf.Sin(Time.unscaledTime * 7.5f) * 0.12f;
+            _crownCarrierMarker.localScale = Vector3.one * pulse;
+            _crownCarrierMarker.localRotation = Quaternion.Euler(0f, Time.unscaledTime * 40f, 0f);
+        }
+
         private void CreateReadabilityPrimitives()
         {
             _ringMaterial = CreateMaterial(_ringColor);
@@ -430,6 +455,34 @@ namespace BattleRaja.Presentation.Visuals
             badgeRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             badgeRenderer.receiveShadows = false;
             _teamBadge = badgeObject.transform;
+
+            // The carrier crest is a redundant objective signal. It is created for
+            // every actor but only enabled for the authority-reported Crown carrier;
+            // the marker is render-only and never participates in collision or input.
+            var crownMarkerObject = new GameObject("CrownCarrierMarker");
+            crownMarkerObject.transform.SetParent(transform, false);
+            crownMarkerObject.transform.localPosition = new Vector3(0f, 2.84f, 0f);
+            var crownRing = new GameObject("CrownCarrierHalo", typeof(MeshFilter), typeof(MeshRenderer));
+            crownRing.transform.SetParent(crownMarkerObject.transform, false);
+            crownRing.transform.localScale = new Vector3(0.72f, 1f, 0.72f);
+            crownRing.GetComponent<MeshFilter>().sharedMesh = PresentationMeshFactory.Ring("CrownCarrierHalo", 0.26f, 0.32f, 20);
+            _crownCarrierMaterial = CreateMaterial(new Color(1f, 0.78f, 0.16f, 1f));
+            var crownRingRenderer = crownRing.GetComponent<MeshRenderer>();
+            crownRingRenderer.sharedMaterial = _crownCarrierMaterial;
+            crownRingRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            crownRingRenderer.receiveShadows = false;
+            var crownDiamond = new GameObject("CrownCarrierDiamond", typeof(MeshFilter), typeof(MeshRenderer));
+            crownDiamond.transform.SetParent(crownMarkerObject.transform, false);
+            crownDiamond.transform.localPosition = new Vector3(0f, 0.06f, 0f);
+            crownDiamond.transform.localScale = new Vector3(0.16f, 0.24f, 0.16f);
+            crownDiamond.GetComponent<MeshFilter>().sharedMesh = PresentationMeshFactory.Diamond("CrownCarrierDiamond");
+            var crownDiamondRenderer = crownDiamond.GetComponent<MeshRenderer>();
+            crownDiamondRenderer.sharedMaterial = _crownCarrierMaterial;
+            crownDiamondRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            crownDiamondRenderer.receiveShadows = false;
+            crownMarkerObject.SetActive(false);
+            _ownedObjects.Add(crownMarkerObject);
+            _crownCarrierMarker = crownMarkerObject.transform;
 
             var barObject = new GameObject("HealthStatusBar", typeof(MeshFilter), typeof(MeshRenderer));
             barObject.transform.SetParent(transform, false);
