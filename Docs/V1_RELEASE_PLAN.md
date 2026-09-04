@@ -13,6 +13,38 @@ prototype until every V1 completion gate and remaining human gate passes.
 - Approved physical evidence device: Lava `ST5GDW23LB004392` (`LAVA LXX508`) only.
 - Preserve internal networking/Web seams without exposing unusable public online paths.
 
+## Checkpoint 0q - Crown Spark and team-shape readability — 2026-09-04
+
+Source `f39af37` adds a bounded presentation pass for the player-readability gap that
+remains in the prototype scene. The Crown receives a render-only crystal halo, core and
+four-shard accent stack that follows authoritative position/state colour. Every fighter
+receives a render-only team-shape badge (Raja diamond or rival bar), and the fighter
+selection camera uses a shallow three-quarter yaw to expose silhouette asymmetry. No
+collider, authority, replay, input or balance code changed.
+
+- Static validation: **0 errors / 0 warnings**.
+- Full EditMode: **164/164 passed**; XML SHA-256
+  `B0CFCDF832B4B69FBB77A69CE9EAC478EBCF88A99B7C5AD1D6C466BD8D9DF3FA`.
+- Full PlayMode: **99/99 passed**; XML SHA-256
+  `D769BCC87204A14D74F2A958B0EEF24D86E226F0AF40181E598FFEF932890D63`.
+- GitHub Repository validation run
+  [`33883099546`](https://github.com/neonvarun/BattleRaja/actions/runs/33883099546)
+  passed against exact source `f39af37109cdf50b8ce147276f56c8c4bc64ae16`.
+- APK: **41,681,684 bytes**, SHA-256
+  `1EF8A0306E24AC273056A90C1EB83F77102896B155E5E0444EA2BD708932666D`.
+- AAB: **37,507,191 bytes**, SHA-256
+  `2E80E09922D7DCD4B97119DBE145BFB9D7B52D1B957C3A95B90D73B9BA7B0E43`.
+- Clean-tree release checker: **0 errors / 0 warnings**; log
+  `Builds/Local/V1GameplayTruth/Next/badge-crown-20260904/release-checker.log`,
+  SHA-256 `1717D7DDADE4C2943854050FE9864CE2C82FE725B0A9A01E4C69937C03BDB088`.
+- Approved Lava `ST5GDW23LB004392` installed the exact APK and retained menu/live frames
+  for the new accent and team markers. Lava is Android 14/API 34 with 4 KB pages; this
+  is bounded visual smoke evidence, not physical 16 KB proof.
+
+This checkpoint improves readability only. Commissioned final art/rigs/animations,
+complete all-fighter action VFX/audio, spectate-camera comfort, normalized sustained
+performance, physical 16 KB runtime and owner Play approvals remain open.
+
 ## Checkpoint 0p - visual polish and menu presentation — 2026-09-04
 
 The editable production-art baseline now gives Bijli, Pehel and Maya separated faceted

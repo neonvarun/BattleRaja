@@ -6,6 +6,28 @@
 
 ## Current state
 
+- **Crown and team readability continuation (2026-09-04):** Source `f39af37` adds a
+  render-only Crown Spark accent stack (halo, core and four shards), redundant diamond/
+  bar team-shape badges above every fighter, and a shallow three-quarter portrait angle.
+  Colliders, authority, replay, input and balance are unchanged. Full EditMode is
+  **164/164** (XML SHA-256
+  `B0CFCDF832B4B69FBB77A69CE9EAC478EBCF88A99B7C5AD1D6C466BD8D9DF3FA`) and full
+  PlayMode is **99/99** (XML SHA-256
+  `D769BCC87204A14D74F2A958B0EEF24D86E226F0AF40181E598FFEF932890D63`); static
+  validation is **0/0**. GitHub Repository validation run
+  [`33883099546`](https://github.com/neonvarun/BattleRaja/actions/runs/33883099546)
+  passed against this exact source. The rebuilt APK is **41,681,684 bytes** (SHA-256
+  `1EF8A0306E24AC273056A90C1EB83F77102896B155E5E0444EA2BD708932666D`) and AAB is
+  **37,507,191 bytes** (SHA-256
+  `2E80E09922D7DCD4B97119DBE145BFB9D7B52D1B957C3A95B90D73B9BA7B0E43`); clean-tree
+  release checker is **0/0** (log
+  `Builds/Local/V1GameplayTruth/Next/badge-crown-20260904/release-checker.log`, SHA-256
+  `1717D7DDADE4C2943854050FE9864CE2C82FE725B0A9A01E4C69937C03BDB088`). Approved Lava
+  `ST5GDW23LB004392` installed the exact APK and retained menu/live readability frames;
+  Lava is 4 KB pages, so this remains bounded visual smoke evidence. Commissioned final
+  art/audio, complete action/spectate comfort, normalized sustained performance,
+  physical 16 KB runtime and owner Play approvals remain open.
+
 - **Visual polish and confirmed respawn mirror (2026-09-04):** The editable
   production-art baseline now gives Bijli, Pehel and Maya distinct faceted shoulder,
   gauntlet and leg silhouettes, and the Bazaar Bastion feature artwork fills the menu

@@ -16,6 +16,36 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
   outside the Android runtime. Final signed-bundle inspection is still required before
   Play submission.
 
+## Latest local gate — 2026-09-04 — Crown Spark and team-shape readability
+
+Source `f39af37` adds a bounded render-only readability pass: a Crown Spark halo/core/
+four-shard accent stack follows the authoritative Crown position and state colour,
+each fighter has a redundant Raja-diamond or rival-bar marker, and the portrait cards
+use a shallow three-quarter camera angle. Colliders, authority, replay, input and
+balance are unchanged.
+
+Static validation is **0/0**, full EditMode **164/164** and full PlayMode **99/99**.
+The exact APK is **41,681,684 bytes** (SHA-256
+`1EF8A0306E24AC273056A90C1EB83F77102896B155E5E0444EA2BD708932666D`); the AAB is
+**37,507,191 bytes** (SHA-256
+`2E80E09922D7DCD4B97119DBE145BFB9D7B52D1B957C3A95B90D73B9BA7B0E43`). The clean-tree
+technical checker passed **0 errors / 0 warnings** for temporary package
+`com.example.battleraja.m11`, API `28/36`, offline permissions, ARM64-only native
+libraries, static 16 KB alignment and store dimensions. Log:
+`Builds/Local/V1GameplayTruth/Next/badge-crown-20260904/release-checker.log` (SHA-256
+`1717D7DDADE4C2943854050FE9864CE2C82FE725B0A9A01E4C69937C03BDB088`). GitHub
+Repository validation run
+[`33883099546`](https://github.com/neonvarun/BattleRaja/actions/runs/33883099546)
+passed against exact source `f39af37109cdf50b8ce147276f56c8c4bc64ae16`.
+
+Approved Lava `ST5GDW23LB004392` installed the exact APK and retained menu/live visual
+frames for the Crown accent and team markers. Lava is Android 14/API 34 with 4 KB
+pages, so this remains bounded visual smoke evidence and not physical 16 KB proof.
+The candidate is still temporary debug-signed; commissioned final assets/audio,
+normalized sustained performance, full comfort/action/spectator review, physical 16 KB
+runtime and owner identity/signing/privacy/Data Safety/IARC/cultural/Play approvals
+remain required.
+
 ## Latest local gate — 2026-09-04 — visual polish and 16 KB smoke
 
 Source commits `775497d`, `281eeb4` and `4ebf65f` carry the editable faceted fighter

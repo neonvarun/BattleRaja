@@ -13,6 +13,39 @@ create or depend on evidence outside this repository root.
 
 **Prototype — Android offline release candidate in progress.**
 
+## Latest current-source evidence — 2026-09-04 — Crown Spark and team-shape readability
+
+Source commit `f39af37` adds a bounded render-only readability pass: the Bastion Crown
+follows its authoritative state with a crystal halo/core/four-shard accent stack, every
+fighter has a redundant team-shape badge (Raja diamond, rival bar), and the portrait
+camera uses a shallow three-quarter yaw. No collider, authority, replay, input or
+balance state changed.
+
+Static validation is **0 errors / 0 warnings**. Full EditMode is **164/164** (XML
+SHA-256 `B0CFCDF832B4B69FBB77A69CE9EAC478EBCF88A99B7C5AD1D6C466BD8D9DF3FA`) and
+full PlayMode is **99/99** (XML SHA-256
+`D769BCC87204A14D74F2A958B0EEF24D86E226F0AF40181E598FFEF932890D63`). GitHub
+Repository validation run
+[`33883099546`](https://github.com/neonvarun/BattleRaja/actions/runs/33883099546)
+passed against exact source `f39af37109cdf50b8ce147276f56c8c4bc64ae16`.
+
+The exact-source APK is **41,681,684 bytes** (SHA-256
+`1EF8A0306E24AC273056A90C1EB83F77102896B155E5E0444EA2BD708932666D`) and AAB is
+**37,507,191 bytes** (SHA-256
+`2E80E09922D7DCD4B97119DBE145BFB9D7B52D1B957C3A95B90D73B9BA7B0E43`). The clean-tree
+technical release checker passed **0 errors / 0 warnings** for temporary package
+`com.example.battleraja.m11`, API `28/36`, offline permissions, ARM64/static 16 KB and
+store dimensions; log
+`Builds/Local/V1GameplayTruth/Next/badge-crown-20260904/release-checker.log` has SHA-256
+`1717D7DDADE4C2943854050FE9864CE2C82FE725B0A9A01E4C69937C03BDB088`.
+
+Approved Lava `ST5GDW23LB004392` installed the exact APK and retained menu/live frames
+showing the new Crown accent and team shapes. Lava reports 4 KB pages, so this is
+bounded visual smoke evidence rather than physical 16 KB proof. The product remains a
+prototype: commissioned final assets/audio, complete all-fighter action and spectate
+comfort, normalized sustained performance, genuine physical 16 KB runtime, and owner
+identity/signing/privacy/Data Safety/IARC/cultural/Play approvals remain open.
+
 ## Latest current-source evidence — 2026-09-04 — visual polish and menu presentation
 
 Source commits `775497d` and `281eeb4` add saved faceted shoulder, gauntlet and leg

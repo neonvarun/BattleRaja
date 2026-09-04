@@ -14,6 +14,55 @@ The product remains **Prototype — Android offline release candidate in progres
 This is an editable procedural art baseline, not commissioned final art or a store-
 approved release.
 
+## Current-source continuation — Crown Spark and team-shape readability — 2026-09-04
+
+Source commit `f39af37` adds a bounded, render-only readability pass on top of the
+silhouette and respawn work above. The Bastion Crown now has an authored crystal
+accent stack (halo, core and four shards) that follows the authoritative Crown
+position and state colour. Each production fighter also receives a redundant shape
+badge above the health bar: a diamond for the Raja team and a bar for rivals. The
+fighter portrait camera uses a shallow three-quarter yaw so shoulder, gauntlet and
+cloak offsets survive the selection-card crop. No collider, authority, replay, input
+or balance state was changed; badges and Crown accents are presentation-only.
+
+- Full EditMode: **164/164 passed**; XML SHA-256
+  `B0CFCDF832B4B69FBB77A69CE9EAC478EBCF88A99B7C5AD1D6C466BD8D9DF3FA`.
+- Full PlayMode: **99/99 passed**; XML SHA-256
+  `D769BCC87204A14D74F2A958B0EEF24D86E226F0AF40181E598FFEF932890D63`.
+- Static repository validation: **0 errors / 0 warnings**.
+- GitHub Repository validation run
+  [`33883099546`](https://github.com/neonvarun/BattleRaja/actions/runs/33883099546)
+  passed against exact source `f39af37109cdf50b8ce147276f56c8c4bc64ae16`.
+
+The exact-source Android candidate was rebuilt with Unity `6000.5.6f1`:
+
+- APK: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`, 41,681,684
+  bytes, SHA-256
+  `1EF8A0306E24AC273056A90C1EB83F77102896B155E5E0444EA2BD708932666D`.
+- AAB: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`, 37,507,191
+  bytes, SHA-256
+  `2E80E09922D7DCD4B97119DBE145BFB9D7B52D1B957C3A95B90D73B9BA7B0E43`.
+- Clean-tree technical release checker: **0 errors / 0 warnings**. Log:
+  `Builds/Local/V1GameplayTruth/Next/badge-crown-20260904/release-checker.log`,
+  SHA-256 `1717D7DDADE4C2943854050FE9864CE2C82FE725B0A9A01E4C69937C03BDB088`.
+  It verifies temporary package `com.example.battleraja.m11`, version `1.0.0` /
+  code `100`, min/target API `28/36`, offline permissions, seven ARM64 libraries,
+  static 16 KB ELF alignment, store dimensions and a clean worktree.
+
+The exact APK was reinstalled on approved Lava `ST5GDW23LB004392` and reached the
+menu and a live Bastion match. `marker-menu.png` (SHA-256
+`C65B20CB5C4DC3128B3785FE39472ADD51CC194B548A1702A21A10370CD8B466`) and
+`marker-live.png` (SHA-256
+`D9185DAAE90B0560B9D8AD2059DEEB2FC1E29FE148898C9A225B3B2E2251A9D4`) are retained
+under `Builds/Local/V1GameplayTruth/Next/visual-polish-20260904/lava/respawn-fix-route/`.
+The live frame shows the Crown accent and redundant team shapes at gameplay scale;
+Lava is Android 14/API 34 with 4 KB pages, so this remains visual smoke evidence and
+not physical 16 KB proof. The scoped route logcat remains marker-clean.
+
+This continuation improves moment-to-moment readability but does not close the open
+gates for commissioned final models/rigs/animations, all-fighter action VFX/audio,
+spectate-camera comfort, normalized sustained performance or owner Play approvals.
+
 ## Source and changed assets
 
 Source commits:
