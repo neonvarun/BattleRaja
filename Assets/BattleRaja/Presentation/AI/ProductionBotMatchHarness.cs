@@ -326,7 +326,10 @@ namespace BattleRaja.Presentation.AI
             ConfigurePlayerAsBot(actors[0], referenceBrain.AutonomousWeaponAsset, seed);
 
             OfflineMatchController.SuppressAutomaticSimulationForHarness = true;
-            _match.StartMatch();
+            // Use the harness seed for the Bastion objective itself. Without
+            // this explicit handoff the controller used a wall-clock seed,
+            // making the replay header and initial Crown socket disagree.
+            _match.StartMatch(seed);
             foreach (var actor in actors)
             {
                 actor.GetComponent<BotPerceptionSensor>()?.RefreshTargets();

@@ -90,6 +90,11 @@ namespace BattleRaja.Presentation.Match
         public double SimulationInterpolationAlpha => _simulationClock != null ? _simulationClock.InterpolationAlpha : 0d;
         public bool AuthorityDrivenMovement => authorityDrivenMovement;
         public BastionCrownMatch BastionCrown => _bastionCrown;
+        /// <summary>Seed owned by the current Bastion authority. Keeping this
+        /// visible to replay capture prevents a diagnostic header from claiming
+        /// a caller-provided seed while the live objective was initialized from
+        /// an unrelated wall-clock value.</summary>
+        public uint BastionMatchSeed => _bastionCrown != null ? _bastionCrown.Seed : 0u;
         public bool IsBastionCrown => _bastionCrown != null;
         public float BastionElapsedSeconds => _bastionCrown != null ? _bastionCrown.ElapsedSeconds : 0f;
         public bool BastionOvertime => _bastionCrown != null && _bastionCrown.IsOvertime;
@@ -131,9 +136,14 @@ namespace BattleRaja.Presentation.Match
                     attack != null ? attack.AuthorityTickRate : simulationTickRate);
             }
 
+            // Bastion objective state is seeded at StartMatch. Capture the
+            // authority-owned value rather than trusting a caller to repeat
+            // the same seed, otherwise replay hashes diverge before the first
+            // Crown interaction (the initial socket is seed-derived).
+            var replaySeed = _bastionCrown != null ? _bastionCrown.Seed : matchSeed;
             return new MatchReplayHeader(
                 CollisionDefinition.CollisionVersion,
-                matchSeed,
+                replaySeed,
                 (MatchSpawn[])_replaySpawns.Clone(),
                 (float)_simulationClock.StepSeconds,
                 _bastionCrown != null ? MatchReplayScenario.BastionCrown : MatchReplayScenario.SoloRaja,
@@ -691,6 +701,17 @@ namespace BattleRaja.Presentation.Match
 
         public void StartMatch()
         {
+            StartMatch(0u);
+        }
+
+        /// <summary>
+        /// Starts one match, optionally with a caller-owned deterministic seed.
+        /// Interactive matches pass zero and receive a fresh local seed; the
+        /// production replay harness supplies its test seed so the objective
+        /// socket and replay header are the same authoritative state.
+        /// </summary>
+        public void StartMatch(uint matchSeed)
+        {
             CacheActors();
             var spawns = _actors.Select(actor => new MatchSpawn(actor.Target.Id, new Float2(actor.Transform.position.x, actor.Transform.position.z), actor.Health.MaxHealth)).ToList();
             var useBastionCrown = IsBastionCrownScene();
@@ -803,8 +824,12 @@ namespace BattleRaja.Presentation.Match
             }
             if (useBastionCrown)
             {
+                var effectiveSeed = matchSeed != 0u
+                    ? matchSeed
+                    : unchecked((uint)DateTime.UtcNow.Ticks);
+                if (effectiveSeed == 0u) effectiveSeed = 1u;
                 _bastionCrown = new BastionCrownMatch(
-                    unchecked((uint)DateTime.UtcNow.Ticks));
+                    effectiveSeed);
                 _bastionCrown.Start(bastionSlots);
             }
             _simulationClock = new FixedSimulationClock(Math.Max(1, simulationTickRate));

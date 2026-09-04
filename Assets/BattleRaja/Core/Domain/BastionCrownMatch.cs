@@ -24,10 +24,14 @@ namespace BattleRaja.Core.Domain
         private readonly Dictionary<CombatEntityId, int> _participantIndices = new Dictionary<CombatEntityId, int>(ParticipantCount);
         private readonly Dictionary<CombatEntityId, Dictionary<CombatEntityId, int>> _damageContributions =
             new Dictionary<CombatEntityId, Dictionary<CombatEntityId, int>>(ParticipantCount);
-        private readonly HashSet<int> _processedDamageEvents = new HashSet<int>();
-        private readonly HashSet<int> _processedHealingEvents = new HashSet<int>();
-        private readonly HashSet<int> _processedGadgetEvents = new HashSet<int>();
-        private readonly HashSet<int> _processedAbilityEvents = new HashSet<int>();
+        // Event identities are part of the replay/duplicate-delivery boundary.
+        // Keep them sorted so the complete ledger (not only its count) enters
+        // the deterministic digest without relying on HashSet enumeration
+        // order or allocating a temporary sorted copy on every hash.
+        private readonly SortedSet<int> _processedDamageEvents = new SortedSet<int>();
+        private readonly SortedSet<int> _processedHealingEvents = new SortedSet<int>();
+        private readonly SortedSet<int> _processedGadgetEvents = new SortedSet<int>();
+        private readonly SortedSet<int> _processedAbilityEvents = new SortedSet<int>();
         private readonly TeamState _raja = new TeamState(BastionTeamId.Raja, ModeDefinition.BastionCrown.Respawn.StartingTickets);
         private readonly TeamState _rival = new TeamState(BastionTeamId.Rival, ModeDefinition.BastionCrown.Respawn.StartingTickets);
         private readonly List<CombatEntityId> _respawnedActors = new List<CombatEntityId>(TeamSize);
@@ -138,10 +142,10 @@ namespace BattleRaja.Core.Domain
 
                 HashTeam(ref hash, _raja);
                 HashTeam(ref hash, _rival);
-                HashInt(ref hash, _processedDamageEvents.Count);
-                HashInt(ref hash, _processedHealingEvents.Count);
-                HashInt(ref hash, _processedGadgetEvents.Count);
-                HashInt(ref hash, _processedAbilityEvents.Count);
+                HashEventLedger(ref hash, _processedDamageEvents);
+                HashEventLedger(ref hash, _processedHealingEvents);
+                HashEventLedger(ref hash, _processedGadgetEvents);
+                HashEventLedger(ref hash, _processedAbilityEvents);
                 // Damage contribution maps influence future assist awards. Walk
                 // canonical actor IDs rather than dictionary enumeration so the
                 // digest remains stable across runtime implementations.
@@ -242,6 +246,13 @@ namespace BattleRaja.Core.Domain
             value = value ?? string.Empty;
             HashInt(ref hash, value.Length);
             for (var i = 0; i < value.Length; i++) HashInt(ref hash, value[i]);
+        }
+
+        private static void HashEventLedger(ref ulong hash, SortedSet<int> eventIds)
+        {
+            HashInt(ref hash, eventIds != null ? eventIds.Count : 0);
+            if (eventIds == null) return;
+            foreach (var eventId in eventIds) HashInt(ref hash, eventId);
         }
 
         private static void HashTeam(ref ulong hash, TeamState team)
@@ -546,9 +557,18 @@ namespace BattleRaja.Core.Domain
         public bool SetHealth(CombatEntityId actorId, int currentHealth)
         {
             if (!TryGetParticipantState(actorId, out var participant)) return false;
+            if (participant.Alive && currentHealth <= 0)
+            {
+                // A live participant must never be represented with zero
+                // health. The authority mirror uses SyncParticipant(false)
+                // for a confirmed defeat, which keeps that transition
+                // explicit instead of creating a transient free state.
+                return false;
+            }
+
             participant.CurrentHealth = !participant.Alive
                 ? 0
-                : Math.Max(0, Math.Min(participant.MaxHealth, currentHealth));
+                : Math.Min(participant.MaxHealth, currentHealth);
             _squadStateRevision++;
             return true;
         }
@@ -561,6 +581,7 @@ namespace BattleRaja.Core.Domain
             if (!TryGetParticipantState(actorId, out var participant) || !position.IsFinite) return false;
             if (alive)
             {
+                if (currentHealth <= 0) return false;
                 // A mirror may only refresh an already-live participant. A
                 // pending fighter must cross the explicit ConfirmRespawn
                 // handoff after the legacy authority has accepted its
@@ -646,9 +667,19 @@ namespace BattleRaja.Core.Domain
             // a later authoritative delivery that reuses that identity.
             if (!target.Alive || target.CurrentHealth <= 0) return false;
             if (eventId != 0 && !_processedDamageEvents.Add(eventId)) return false;
-            RecordCombatDamage(instigatorId, targetId, amountApplied, targetDefeated, eventIdAlreadyRecorded: eventId != 0);
+
+            // A mirror event can arrive with a stale amount when another
+            // canonical damage event was delivered earlier in the same tick.
+            // Clamp to the remaining health and derive the terminal flag from
+            // the resulting state so the team authority can never expose an
+            // alive participant at zero health or award more damage than was
+            // actually available. The event identity is still consumed only
+            // after all eligibility checks above have passed.
+            var applied = Math.Min(amountApplied, target.CurrentHealth);
+            var resolvedDefeated = targetDefeated || applied >= target.CurrentHealth;
+            RecordCombatDamage(instigatorId, targetId, applied, resolvedDefeated, eventIdAlreadyRecorded: eventId != 0);
             if (TryGetParticipantState(instigatorId, out var attacker)) attacker.SpawnProtected = false;
-            if (targetDefeated && target.Alive) Defeat(target, instigatorId, eventId);
+            if (resolvedDefeated && target.Alive) Defeat(target, instigatorId, eventId);
             _squadStateRevision++;
             return true;
         }

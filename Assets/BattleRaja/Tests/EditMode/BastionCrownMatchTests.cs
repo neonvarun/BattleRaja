@@ -158,6 +158,41 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void DeterministicHashIncludesEventLedgersWithoutDependingOnDeliveryOrder()
+        {
+            var first = Start(19u);
+            var second = Start(19u);
+            first.SetHealth(new CombatEntityId(1), 50);
+            second.SetHealth(new CombatEntityId(1), 50);
+
+            Assert.That(first.NotifyHealing(new CombatEntityId(2), new CombatEntityId(1), 10, 101), Is.True);
+            Assert.That(second.NotifyHealing(new CombatEntityId(2), new CombatEntityId(1), 10, 102), Is.True);
+            Assert.That(first.CalculateDeterministicHash(), Is.Not.EqualTo(second.CalculateDeterministicHash()),
+                "Different accepted event identities must not collapse to the same replay state hash.");
+
+            var ordered = Start(23u);
+            var reversed = Start(23u);
+            ordered.NotifyHealing(new CombatEntityId(2), new CombatEntityId(1), 10, 201);
+            ordered.NotifyHealing(new CombatEntityId(2), new CombatEntityId(1), 10, 202);
+            reversed.NotifyHealing(new CombatEntityId(2), new CombatEntityId(1), 10, 202);
+            reversed.NotifyHealing(new CombatEntityId(2), new CombatEntityId(1), 10, 201);
+            Assert.That(ordered.CalculateDeterministicHash(), Is.EqualTo(reversed.CalculateDeterministicHash()),
+                "The event ledger is a set: retransmission order must not change deterministic state.");
+        }
+
+        [Test]
+        public void LiveParticipantCannotBeMirroredWithZeroHealth()
+        {
+            var match = Start(29u);
+            var actorId = new CombatEntityId(1);
+            Assert.That(match.SetHealth(actorId, 0), Is.False);
+            Assert.That(match.SyncParticipant(actorId, new Float2(-10f, 0f), 0, true), Is.False);
+            Assert.That(match.TryGetParticipant(actorId, out var snapshot), Is.True);
+            Assert.That(snapshot.Alive, Is.True);
+            Assert.That(snapshot.CurrentHealth, Is.EqualTo(snapshot.MaxHealth));
+        }
+
+        [Test]
         public void SquadPlannerAssignsRolesAndSpacingFromCanonicalState()
         {
             var match = Start(11u);
@@ -368,6 +403,25 @@ namespace BattleRaja.Tests.EditMode
             Assert.That(match.TryGetParticipant(new CombatEntityId(5), out var terminalTarget), Is.True);
             Assert.That(terminalTarget.CurrentHealth, Is.EqualTo(100));
             Assert.That(match.GetTeamScore(BastionTeamId.Raja).DamageDealt, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void AuthorityDamageMirrorDerivesDefeatWhenHealthReachesZero()
+        {
+            var match = Start(41u);
+            var attackerId = new CombatEntityId(1);
+            var targetId = new CombatEntityId(5);
+            match.ClearSpawnProtection(attackerId);
+            match.ClearSpawnProtection(targetId);
+
+            // An inconsistent transport flag must not leave a live actor at
+            // zero health. The remaining-health boundary is authoritative for
+            // the mirror and still awards the one accepted KO.
+            Assert.That(match.NotifyCombatDamage(attackerId, targetId, 100, false, 91), Is.True);
+            Assert.That(match.TryGetParticipant(targetId, out var target), Is.True);
+            Assert.That(target.Alive, Is.False);
+            Assert.That(target.CurrentHealth, Is.EqualTo(0));
+            Assert.That(match.GetTeamScore(BastionTeamId.Raja).Score, Is.EqualTo(1));
         }
 
         [Test]
