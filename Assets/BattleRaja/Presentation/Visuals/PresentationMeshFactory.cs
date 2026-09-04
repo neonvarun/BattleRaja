@@ -39,6 +39,17 @@ namespace BattleRaja.Presentation.Visuals
             return GetOrCreate(name + sides, () => CreateDisc(name, Mathf.Clamp(sides, 8, 64)));
         }
 
+        /// <summary>
+        /// A small six-point crystal used for render-only identity markers and
+        /// objective accents.  It intentionally lives beside the emergency mesh
+        /// library rather than in the gameplay domain so it can never become a
+        /// collider or an authority anchor.
+        /// </summary>
+        public static Mesh Diamond(string name = "PresentationDiamond")
+        {
+            return GetOrCreate(name, () => CreateDiamond(name));
+        }
+
         private static Mesh GetOrCreate(string key, System.Func<Mesh> creator)
         {
             if (Cache.TryGetValue(key, out var mesh) && mesh != null) return mesh;
@@ -205,6 +216,25 @@ namespace BattleRaja.Presentation.Visuals
                 triangles[i * 3 + 2] = (i + 1) % sides + 1;
             }
             return CreateMesh(name, vertices, triangles, uvs);
+        }
+
+        private static Mesh CreateDiamond(string name)
+        {
+            var vertices = new[]
+            {
+                Vector3.up * 0.5f,
+                Vector3.right * 0.5f,
+                Vector3.forward * 0.5f,
+                Vector3.left * 0.5f,
+                Vector3.back * 0.5f,
+                Vector3.down * 0.5f
+            };
+            var triangles = new[]
+            {
+                0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1,
+                5, 2, 1, 5, 3, 2, 5, 4, 3, 5, 1, 4
+            };
+            return CreateMesh(name, vertices, triangles, BoxUv(vertices.Length));
         }
 
         private static Vector2[] BoxUv(int count)

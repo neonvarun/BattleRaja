@@ -857,6 +857,9 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator ProductionVisualKitBuildsDistinctFighterArenaAndGadgetIdentities()
         {
+            // Allow the objective view to finish creating its render-only accent
+            // stack before inspecting the production scene hierarchy.
+            yield return null;
             var arena = Object.FindAnyObjectByType<BazaarBastionScene>();
             Assert.That(arena, Is.Not.Null);
             Assert.That(arena.transform.Find("V1BastionVisuals"), Is.Not.Null);
@@ -884,6 +887,11 @@ namespace BattleRaja.Tests.PlayMode
             }
             Assert.That(arena.transform.Find("V1BastionVisuals").GetComponentsInChildren<Collider>(true), Is.Empty,
                 "The saved presentation kit must not own authoritative collision");
+            var crownAccent = arena.transform.Find("CrownSparkAccentRoot");
+            Assert.That(crownAccent, Is.Not.Null, "Crown Spark must have a readable render-only accent stack");
+            Assert.That(crownAccent.GetComponentsInChildren<Renderer>(true).Length, Is.GreaterThanOrEqualTo(6));
+            Assert.That(crownAccent.GetComponentsInChildren<Collider>(true), Is.Empty,
+                "Crown Spark presentation accents must never own gameplay collision");
             var backdrop = arena.transform.Find("V1BastionVisuals/BastionBackdrop");
             Assert.That(backdrop, Is.Not.Null);
             Assert.That(backdrop.GetComponent<LODGroup>(), Is.Not.Null, "Backdrop must expose saved near/far LOD metadata");
@@ -894,6 +902,10 @@ namespace BattleRaja.Tests.PlayMode
             {
                 Assert.That(fighter.transform.Find("FighterIdentitySilhouette"), Is.Not.Null,
                     fighter.name + " is missing its presentation silhouette");
+                var badge = fighter.transform.Find("TeamShapeBadge");
+                Assert.That(badge, Is.Not.Null, fighter.name + " is missing a redundant team-shape badge");
+                Assert.That(badge.GetComponent<Collider>(), Is.Null,
+                    fighter.name + " team badge must remain render-only");
             }
 
             var pickups = Object.FindObjectsByType<GadgetPickup>();

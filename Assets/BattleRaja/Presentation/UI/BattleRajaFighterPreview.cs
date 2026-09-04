@@ -263,7 +263,11 @@ namespace BattleRaja.Presentation.UI
             var distance = Mathf.Max(3.1f, maxDimension * 2.65f);
             // Use a friendly three-quarter portrait angle. A nearly level camera
             // makes the compact low-poly rigs read as flat tokens in a square card.
-            var direction = new Vector3(0f, 0.16f, -0.987f).normalized;
+            // A modest three-quarter yaw exposes each fighter's asymmetry (Bijli's
+            // bolt shoulder, Pehel's gauntlet profile and Maya's offset cloak) so
+            // the selection cards communicate silhouette rather than a flat front
+            // plate.  The angle stays shallow enough to keep the role read stable.
+            var direction = new Vector3(0.20f, 0.18f, -0.963f).normalized;
             _camera.transform.position = target + direction * distance;
             _camera.transform.LookAt(target, Vector3.up);
             _camera.orthographicSize = Mathf.Clamp(maxDimension * 0.38f, 0.62f, 1.12f);

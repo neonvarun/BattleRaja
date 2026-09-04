@@ -44,6 +44,7 @@ namespace BattleRaja.Presentation.Visuals
         private MaterialPropertyBlock _bodyProperties;
         private Material _ringMaterial;
         private Material _barMaterial;
+        private Material _teamBadgeMaterial;
         private readonly List<GameObject> _ownedObjects = new List<GameObject>(32);
         private readonly List<Material> _ownedMaterials = new List<Material>(20);
         private readonly List<Transform> _silhouetteParts = new List<Transform>(24);
@@ -53,6 +54,7 @@ namespace BattleRaja.Presentation.Visuals
         private readonly List<Renderer> _productionRenderers = new List<Renderer>(12);
         private readonly List<Color> _productionBaseColors = new List<Color>(12);
         private Transform _ring;
+        private Transform _teamBadge;
         private Transform _healthBar;
         private Transform _healthFill;
         private Transform _telegraph;
@@ -146,6 +148,7 @@ namespace BattleRaja.Presentation.Visuals
                 CurrentAnimation = _victory ? AnimationState.Victory : AnimationState.Defeat;
                 ApplyProductionAnimationState();
                 ApplySilhouetteAnimation();
+                if (_teamBadge != null) _teamBadge.gameObject.SetActive(false);
                 return;
             }
 
@@ -155,7 +158,17 @@ namespace BattleRaja.Presentation.Visuals
                 ApplyProductionAnimationState();
                 ApplySilhouetteAnimation();
                 if (_ring != null) _ring.localScale = Vector3.one * (1.0f + Mathf.Sin(Time.time * 4f) * 0.06f);
+                if (_teamBadge != null) _teamBadge.gameObject.SetActive(false);
                 return;
+            }
+
+            // A small shape marker keeps faction readable when colour is muted,
+            // high-contrast mode is enabled, or several fighters overlap around
+            // the Crown.  It is presentation-only and disappears with the actor.
+            if (_teamBadge != null)
+            {
+                _teamBadge.gameObject.SetActive(!_matchOutcomeShown);
+                _teamBadge.localRotation = Quaternion.Euler(0f, Time.time * 24f, 0f);
             }
 
             if (_hitRemaining > 0f) CurrentAnimation = AnimationState.Hit;
@@ -400,6 +413,23 @@ namespace BattleRaja.Presentation.Visuals
             ringObject.GetComponent<MeshFilter>().sharedMesh = PresentationMeshFactory.Ring("FighterColorRing", 0.42f, 0.5f, 24);
             ringObject.GetComponent<MeshRenderer>().sharedMaterial = _ringMaterial;
             _ring = ringObject.transform;
+
+            var badgeObject = new GameObject("TeamShapeBadge", typeof(MeshFilter), typeof(MeshRenderer));
+            badgeObject.transform.SetParent(transform, false);
+            badgeObject.transform.localPosition = new Vector3(0f, 2.46f, 0f);
+            badgeObject.transform.localScale = _target != null && _target.Faction == CombatFaction.Player
+                ? new Vector3(0.22f, 0.30f, 0.12f)
+                : new Vector3(0.30f, 0.18f, 0.12f);
+            var badgeRenderer = badgeObject.GetComponent<MeshRenderer>();
+            var playerBadge = _target != null && _target.Faction == CombatFaction.Player;
+            badgeObject.GetComponent<MeshFilter>().sharedMesh = playerBadge
+                ? PresentationMeshFactory.Diamond("RajaTeamDiamond")
+                : PresentationMeshFactory.Box("RivalTeamBar");
+            _teamBadgeMaterial = CreateMaterial(_ringColor);
+            badgeRenderer.sharedMaterial = _teamBadgeMaterial;
+            badgeRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            badgeRenderer.receiveShadows = false;
+            _teamBadge = badgeObject.transform;
 
             var barObject = new GameObject("HealthStatusBar", typeof(MeshFilter), typeof(MeshRenderer));
             barObject.transform.SetParent(transform, false);
