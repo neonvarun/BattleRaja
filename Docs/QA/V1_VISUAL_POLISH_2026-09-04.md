@@ -146,6 +146,6 @@ Play submission approvals. The prior bounded Lava route also should not be silen
 treated as proof of every KO, respawn, spectator and results transition for this exact
 art candidate.
 
-Repository validation for the preceding published tip passed as GitHub run
-`33866115182`; the visual-polish commits are published only after this evidence record
-is committed and the fast-forward remote check completes.
+Repository validation for the published documentation/art tip `ec063d2` completed
+successfully as GitHub run `33870986803` (run #96). The branch was fast-forwarded to
+`origin/main` and the worktree was clean after publication.
