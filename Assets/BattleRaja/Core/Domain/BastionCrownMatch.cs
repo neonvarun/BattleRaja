@@ -445,14 +445,16 @@ namespace BattleRaja.Core.Domain
                 if (!_squadBlackboard.TryGetIntent(actorId, out intent)) return false;
             }
             else if (_squadPreparedStateRevision != _squadStateRevision &&
-                     _squadCommandPhaseTick != _squadPreparationTick)
+                     _squadCommandPhaseTick == int.MinValue)
             {
                 // Focused pure-domain callers can mutate state and ask for a
                 // second intent without going through the controller's
                 // pre-tick hook. Refresh the shared snapshot explicitly;
-                // runtime callbacks still retain the bounded communication
-                // cadence because the controller prepares the next tick
-                // before bots are invoked.
+                // runtime callbacks retain the bounded communication cadence
+                // because the active command window must consume the one
+                // snapshot prepared at its start. A callback-side mutation is
+                // visible on the next tick, never to only the later teammates
+                // in the current callback window.
                 PrepareSquadIntents(_lastTick < 0 ? 0 : _lastTick, true);
                 if (!_squadBlackboard.TryGetIntent(actorId, out intent)) return false;
             }

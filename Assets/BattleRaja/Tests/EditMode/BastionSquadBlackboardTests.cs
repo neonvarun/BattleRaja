@@ -117,5 +117,35 @@ namespace BattleRaja.Tests.EditMode
             Assert.That(match.SquadMetrics.EscortHandoffs, Is.GreaterThan(before));
             Assert.That(match.SquadMetrics.EscortAssignments, Is.GreaterThan(0));
         }
+
+        [Test]
+        public void CommandWindowKeepsOneSharedSnapshotAfterStateMutation()
+        {
+            var match = Start();
+            match.PrepareSquadIntents(0, true);
+            var before = match.SquadMetrics;
+            Assert.That(match.TryGetSquadIntent(new CombatEntityId(3), out var prepared), Is.True);
+
+            // The controller opens the callback window before bots are asked for
+            // commands. A state mutation from one callback must not cause the
+            // next teammate to observe a force-refreshed plan at the same tick.
+            match.SetPosition(new CombatEntityId(3), new Float2(0f, 0f));
+            match.BeginSquadCommandPhase(1);
+            Assert.That(match.TryGetSquadIntent(new CombatEntityId(3), out var first), Is.True);
+            Assert.That(match.TryGetSquadIntent(new CombatEntityId(4), out var second), Is.True);
+
+            var duringWindow = match.SquadMetrics;
+            Assert.That(duringWindow.SignalUpdates, Is.EqualTo(before.SignalUpdates));
+            Assert.That(duringWindow.PlanRefreshes, Is.EqualTo(before.PlanRefreshes));
+            Assert.That(first.Movement, Is.EqualTo(prepared.Movement));
+            Assert.That(second.Plan, Is.EqualTo(BastionSquadPlan.ContestCrown));
+            match.EndSquadCommandPhase(1);
+
+            // Outside the controller-owned window, pure-domain callers may ask
+            // for a fresh plan immediately after the mutation.
+            match.SetPosition(new CombatEntityId(2), new Float2(-8f, 0f));
+            Assert.That(match.TryGetSquadIntent(new CombatEntityId(2), out _), Is.True);
+            Assert.That(match.SquadMetrics.SignalUpdates, Is.EqualTo(before.SignalUpdates + 1));
+        }
     }
 }
