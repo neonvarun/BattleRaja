@@ -1,6 +1,6 @@
 # BattleRaja Unity Project Context
 
-**Planning snapshot:** 2026-09-05 22:00 IST
+**Planning snapshot:** 2026-09-05
 **Verified source:** `codex/v1-playstore-release` at `feb9258` (`ui: surface friendly Bastion squad status`)
 **Working directory:** `C:\Projects\BattleRaja`
 **Status:** Bastion Crown 4v4 offline implementation, deterministic replay/squad hardening,
