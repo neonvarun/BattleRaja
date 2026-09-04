@@ -6,6 +6,23 @@
 
 ## Current state
 
+- **Tutorial safety and repository CI repair (2026-09-04):** The tutorial now disables
+  automatic timeout and last-participant resolution until the player advances into the
+  Victory lesson, where the authority publishes a deterministic player-first result. This
+  fixes the reproduced Results-before-lesson defect without changing Solo or Bastion.
+  The repository workflow's secret scan now uses portable POSIX ERE with explicit native
+  exit handling, and checkout runs on `actions/checkout@v5`. Source `a7ea3ce` is aligned
+  with `origin/main`; GitHub run
+  [`33836993117`](https://github.com/neonvarun/BattleRaja/actions/runs/33836993117) passed
+  every repository-validation step. Static validation is **0/0**, EditMode **160/160**,
+  PlayMode **98/98**, and the exact rebuilt APK/AAB passed the technical checker (temporary
+  package `com.example.battleraja.m11`, API `28/36`, ARM64/static alignment, offline
+  permissions and store dimensions). Approved Lava `ST5GDW23LB004392` installed the exact
+  APK and real touch reached movement, aim, attack, ability and the live gadget lesson;
+  the bounded physical run did not complete pickup, elimination, Victory and Results.
+  Evidence is indexed in
+  `Docs/QA/V1_TUTORIAL_SAFETY_AND_CI_VALIDATION_2026-09-04.md`.
+
 - **Touch-control clarity pass (2026-09-04):** The production twin-stick controls now use
   smaller, safer portrait sizing and original vector glyphs (move arrows, crosshair, bolt,
   ability burst and gadget parcel) with compact labels. `BattleRajaTouchGlyph` is a

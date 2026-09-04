@@ -897,3 +897,19 @@ Research current primary sources before selecting technical versions, APIs, SDKs
 - **Decision impact:** Keep target API 36, ARM64/static alignment checks and offline
   permissions as-is. Do not claim physical 16 KB compatibility, final identity/signing,
   privacy/Data safety/IARC completion or Play readiness until the owner-controlled gates pass.
+
+### GitHub Actions checkout runtime and repository scanner — 2026-09-04
+
+- **Question:** What current official action guidance should resolve the repository workflow
+  warning while keeping the secret scan portable on the Windows runner?
+- **Primary source checked:** [actions/checkout README and release notes](https://github.com/actions/checkout).
+- **Access date:** 2026-09-04 (IST).
+- **Claim verified:** The current checkout documentation describes the Node 24 runtime for
+  the v5 action. The repository's `git grep -E` scanner must remain POSIX ERE rather than
+  relying on a PCRE inline flag, and its documented no-match exit code must be handled
+  explicitly in PowerShell.
+- **Decision impact:** Pin `actions/checkout@v5`, use a case-insensitive POSIX pattern and
+  distinguish grep exits 0/1/>1. The final run `33836993117` passed all repository checks;
+  no Unity, Android or release-signing claim is inferred from that workflow.
+- **Recheck trigger/date:** Recheck after a checkout major-version change, GitHub runner
+  PowerShell behavior change, or any modification to the tracked-source scan.

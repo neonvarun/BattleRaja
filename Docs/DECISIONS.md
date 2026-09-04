@@ -2117,3 +2117,30 @@ Record every material choice here. Do not silently overwrite old decisions.
   `Next/release-checker-settings-polish-final-clean-20260904.log`, and approved-Lava captures under
   `Builds/Local/V1GameplayTruth/Next/settings-polish-final-20260904/`.
 - **Owner:** Human project owner
+
+### ADR-086 - Keep tutorial authority live until the Victory lesson
+
+- **Date:** 2026-09-04
+- **Status:** Accepted for the tutorial safety baseline; full physical tutorial comfort and
+  human review remain open.
+- **Context:** A fresh approved-Lava route reached `MATCH RESULTS` while the tutorial card
+  was still waiting on the gadget lesson. The tutorial had inherited Solo's automatic
+  timeout / last-participant resolution even though its guided actions were incomplete.
+- **Options considered:** Leave the inherited timeout in place; special-case only the UI;
+  or give the tutorial an explicit rule definition that keeps canonical authority live and
+  resolves only at the guided Victory transition.
+- **Decision:** Add `OfflineMatchDefinition.Tutorial` with automatic timeout and
+  last-participant resolution disabled. `TutorialOverlay` calls the authority's validated
+  `TryResolveTutorialVictory()` only after the user completes the preceding lessons and
+  advances into Victory; the player actor is then preferred for the deterministic guided
+  result. Solo and Bastion definitions remain unchanged.
+- **Consequences:** Idle tutorial sessions cannot publish Results before the final lesson,
+  while the existing Results/rematch path remains available once Victory is entered. The
+  change is covered by EditMode **160/160** and PlayMode **98/98**. The tutorial still uses
+  the existing MovementLab/Solo presentation and the full post-fix physical route remains
+  open.
+- **Evidence/sources:** `OfflineMatch.cs`, `OfflineMatchController.cs`,
+  `TutorialOverlay.cs`, `OfflineMatchTests.cs`, `TutorialArenaPlayModeTests.cs`,
+  `Docs/QA/V1_TUTORIAL_SAFETY_AND_CI_VALIDATION_2026-09-04.md`, and the exact candidate
+  checker log under `Builds/Local/V1GameplayTruth/Next/`.
+- **Owner:** Human project owner

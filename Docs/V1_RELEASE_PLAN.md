@@ -13,6 +13,42 @@ prototype until every V1 completion gate and remaining human gate passes.
 - Approved physical evidence device: Lava `ST5GDW23LB004392` (`LAVA LXX508`) only.
 - Preserve internal networking/Web seams without exposing unusable public online paths.
 
+## Checkpoint 0l - tutorial safety and repository CI repair — 2026-09-04
+
+The tutorial terminal path now has an explicit rule definition: automatic timeout and
+last-participant resolution are disabled until the player completes the guided lessons and
+advances into Victory. The authority then publishes a deterministic player-first result;
+normal Solo and Bastion definitions are unchanged. The repository validation workflow was
+also repaired after run `33816621445` failed in the secret scanner: the scan now uses
+portable POSIX ERE with explicit native exit handling, and checkout uses `actions/checkout@v5`.
+
+- Source: `a7ea3ce`; remote `main` is fast-forward aligned.
+- GitHub repository validation: run
+  [`33836993117`](https://github.com/neonvarun/BattleRaja/actions/runs/33836993117), all
+  steps **passed**.
+- Static validation: **0 errors / 0 warnings**.
+- EditMode: **160/160 passed**, XML SHA-256
+  `095E4483D76F97FC0053969C91585DFBA40B5F6841FA75DCBD5EDF5550A54D7D`.
+- PlayMode: **98/98 passed**, XML SHA-256
+  `2FF73B300915CB2198111EDDEBBAD62EB9FE5EEEECA707A4A7241D7F0F3AB808`.
+- APK: 41,680,960 bytes, SHA-256
+  `36AEBACF19F098D3F5763539CBB854C1A0BE6E4F8ADB3CC38BF6171E0856CB0D`.
+- AAB: 37,506,488 bytes, SHA-256
+  `1D26950F1C85A4F97FD7BB5E2D0938D906EF1DC03D1B7408A4BE77B6282C730A`.
+- Technical release checker: **0 errors / 0 warnings**, temporary package
+  `com.example.battleraja.m11`, API `28/36`, ARM64-only and static 16 KB checks passed.
+- Approved Lava `ST5GDW23LB004392`: exact APK installed after a package clear. Real touch
+  reached movement, aim, attack, ability and the live gadget lesson; captures are under
+  `Builds/Local/V1GameplayTruth/Next/tutorial-safety-20260904/`. The SKIP path still
+  exposes the dismissible `TUTORIAL COMPLETE 8/8` card. Full post-fix physical pickup,
+  elimination, Victory and Results comfort remains untested.
+
+The full evidence record is `Docs/QA/V1_TUTORIAL_SAFETY_AND_CI_VALIDATION_2026-09-04.md`.
+This closes a reproducible tutorial/CI defect, not the V1 product gate. Generated art/audio,
+full physical comfort/accessibility/lifecycle review, normalized performance/endurance,
+physical 16 KB runtime, permanent identity/signing, privacy/Data Safety, IARC/content
+rating, cultural review and Play Console actions remain open.
+
 ## Checkpoint 0k - settings surface clarity pass — 2026-09-04
 
 The menu and in-match pause settings now use original icon-backed tiles and accent rails,

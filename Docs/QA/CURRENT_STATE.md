@@ -13,6 +13,42 @@ create or depend on evidence outside this repository root.
 
 **Prototype — Android offline release candidate in progress.**
 
+## Latest current-source evidence — 2026-09-04 — tutorial safety and GitHub validation repair
+
+The tutorial now uses a dedicated rule definition with automatic timeout and
+last-participant resolution disabled. `TutorialOverlay` resolves through the authority only
+when the user advances into the Victory lesson, preventing Results from appearing while a
+guided lesson is still waiting. Solo and Bastion behavior is unchanged. The repository
+workflow's POSIX secret scan and Node 24-compatible checkout path are green on the final
+source commit [`a7ea3ce`](https://github.com/neonvarun/BattleRaja/commit/a7ea3ce), run
+[`33836993117`](https://github.com/neonvarun/BattleRaja/actions/runs/33836993117).
+
+Static validation is **0 errors / 0 warnings**. EditMode is **160/160** (XML SHA-256
+`095E4483D76F97FC0053969C91585DFBA40B5F6841FA75DCBD5EDF5550A54D7D`) and PlayMode is
+**98/98** (XML SHA-256
+`2FF73B300915CB2198111EDDEBBAD62EB9FE5EEEECA707A4A7241D7F0F3AB808`). The exact APK is
+**41,680,960 bytes** (SHA-256
+`36AEBACF19F098D3F5763539CBB854C1A0BE6E4F8ADB3CC38BF6171E0856CB0D`) and AAB is
+**37,506,488 bytes** (SHA-256
+`1D26950F1C85A4F97FD7BB5E2D0938D906EF1DC03D1B7408A4BE77B6282C730A`). The clean
+release-checker log is
+`Builds/Local/V1GameplayTruth/Next/release-checker-tutorial-safety-20260904.log` (SHA-256
+`B4363F769459F7E7783212C7AC5E691E140B39F4A32246C45AE18F0988A91265`).
+
+Approved Lava `ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34, `1080x2460`, reported
+4 KB pages) installed the exact APK after a package clear. Real touch reached movement,
+aim, attack, ability and the live gadget lesson; the route captures are under
+`Builds/Local/V1GameplayTruth/Next/tutorial-safety-20260904/`. The SKIP path still shows
+the dismissible `TUTORIAL COMPLETE 8/8` card. Full post-fix physical pickup, elimination,
+Victory and Results comfort was not completed in this bounded pass, so no such claim is
+made. The full evidence record is
+`Docs/QA/V1_TUTORIAL_SAFETY_AND_CI_VALIDATION_2026-09-04.md`.
+
+This closes a reproducible tutorial/CI defect, not the product gate. Generated baseline
+art/audio, full physical comfort/accessibility/lifecycle review, normalized performance /
+endurance, physical 16 KB runtime, permanent identity/signing, privacy/Data Safety,
+IARC/content rating, cultural review and Play Console actions remain open.
+
 ## Latest current-source evidence — 2026-09-04 — touch-control clarity pass
 
 The production mobile controls now use compact portrait sizing and original vector glyphs

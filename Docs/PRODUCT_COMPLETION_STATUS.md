@@ -3,6 +3,34 @@
 Updated: 2026-09-04
 Classification: **prototype**
 
+## Latest V1 tutorial safety and repository CI checkpoint — 2026-09-04
+
+The tutorial now disables automatic timeout and last-participant resolution until the
+player explicitly advances into the Victory lesson, where the authority publishes a
+validated deterministic result. This removes the reproduced Results-before-lesson defect;
+Solo and Bastion rules are unchanged. The repository validation workflow also now has a
+portable POSIX secret scan and Node 24-compatible checkout. Commit `a7ea3ce` passed GitHub
+run [`33836993117`](https://github.com/neonvarun/BattleRaja/actions/runs/33836993117).
+
+Static validation is **0/0**, EditMode **160/160** (XML SHA-256
+`095E4483D76F97FC0053969C91585DFBA40B5F6841FA75DCBD5EDF5550A54D7D`) and PlayMode
+**98/98** (XML SHA-256
+`2FF73B300915CB2198111EDDEBBAD62EB9FE5EEEECA707A4A7241D7F0F3AB808`). The exact
+temporary-ID APK is 41,680,960 bytes (SHA-256
+`36AEBACF19F098D3F5763539CBB854C1A0BE6E4F8ADB3CC38BF6171E0856CB0D`) and AAB is
+37,506,488 bytes (SHA-256
+`1D26950F1C85A4F97FD7BB5E2D0938D906EF1DC03D1B7408A4BE77B6282C730A`). The release
+checker is **0/0** and the exact candidate is installed on approved Lava
+`ST5GDW23LB004392`; post-fix real touch reached movement, aim, attack, ability and the
+live gadget lesson, while the bounded run did not complete the full physical Victory /
+Results route.
+
+This is a defect closure and evidence refresh, not Play Store release readiness. Generated
+art/audio, full physical comfort/accessibility/lifecycle review, normalized performance /
+endurance, physical 16 KB runtime, permanent identity/signing, privacy/Data Safety,
+IARC/content rating, cultural review and Play Console actions remain open; classification
+remains **prototype**.
+
 ## Latest V1 settings surface checkpoint — 2026-09-04
 
 The menu and in-match pause settings now render as original icon-backed tiles with accent

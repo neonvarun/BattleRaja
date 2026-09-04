@@ -1,5 +1,25 @@
 # Latest HEAD baseline
 
+## Tutorial safety and repository CI repair — source `a7ea3ce` — 2026-09-04
+
+The tutorial now keeps its authoritative simulation live beyond the normal idle target and
+last-participant condition. Results are published only when the player advances into the
+Victory lesson; Solo and Bastion retain their existing automatic resolution. The same
+source includes the repaired portable secret scan and Node 24-compatible checkout path.
+
+GitHub repository validation run
+[`33836993117`](https://github.com/neonvarun/BattleRaja/actions/runs/33836993117) passed
+all steps. Static validation is **0/0**, EditMode **160/160** and PlayMode **98/98**. The
+temporary-ID APK is 41,680,960 bytes (SHA-256
+`36AEBACF19F098D3F5763539CBB854C1A0BE6E4F8ADB3CC38BF6171E0856CB0D`) and the AAB is
+37,506,488 bytes (SHA-256
+`1D26950F1C85A4F97FD7BB5E2D0938D906EF1DC03D1B7408A4BE77B6282C730A`). The exact APK
+was installed on approved Lava `ST5GDW23LB004392`; real touch reached the first five
+tutorial gates and the live gadget lesson. Full post-fix physical Victory/Results comfort,
+normalized performance, physical 16 KB runtime, authored assets and owner gates remain
+open. The complete evidence record is
+`Docs/QA/V1_TUTORIAL_SAFETY_AND_CI_VALIDATION_2026-09-04.md`.
+
 ## Latest saved environment and runtime presentation refresh — documentation tip `b4b5649` (runtime/art `ac45479`) — 2026-08-29
 
 The current source adds a saved, textured and collider-free `BazaarBastionProduction.prefab`
