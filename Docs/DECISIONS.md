@@ -2193,3 +2193,33 @@ Record every material choice here. Do not silently overwrite old decisions.
   PlayMode **98/98**, and the Android candidate indexed in
   `Docs/QA/V1_CROWN_TIMER_DETERMINISM_2026-09-04.md`.
 - **Owner:** Human project owner
+
+### ADR-089 - Require explicit authority confirmation for Bastion respawns
+
+- **Date:** 2026-09-04
+- **Status:** Accepted for the V1 authoritative respawn baseline; full physical route,
+  comfort, fairness and human fun review remain open.
+- **Context:** Respawn readiness was exposed at the timer boundary without a canonical
+  acknowledgement that the application had applied the spawn. A failed adapter handoff
+  could leave the mirror and authority out of agreement, while a mirror-side alive sync
+  could revive a dead participant. Combat delivery also needed a live/terminal authority
+  gate.
+- **Options considered:** Make the adapter's success implicit; let `SyncParticipant`
+  revive whenever a respawn is ready; or make issuance and confirmation explicit with a
+  retryable authority state.
+- **Decision:** Reserve and spend the ticket once, mark `RespawnIssued`, keep the actor
+  dead/spectating until `ConfirmRespawn`, retry the same issued actor without another
+  spend, and include the issued marker in the deterministic hash. Only the validated
+  authority confirmation makes the actor live. Reject unapproved mirror revival and
+  combat damage delivered before live state or after terminal resolution. Unity
+  controller and deterministic replay runner use the order authority respawn → adapter
+  application → authority confirmation.
+- **Consequences:** Duplicate ticket spending, stale pending state and accidental mirror
+  revival are covered by deterministic regression tests. Existing combat, scoring,
+  Crown rotation, Solo rules and fighter balance are unchanged. This does not claim final
+  AI fairness, physical Bastion comfort or Play readiness.
+- **Evidence/sources:** `BastionCrownMatch.cs`, `OfflineMatchController.cs`,
+  `DeterministicReplayRunner.cs`, `BastionCrownMatchTests.cs`, source commit `0d0f875`,
+  focused **16/16**, full EditMode **164/164**, full PlayMode **98/98**, strict
+  production-bot run and `Docs/QA/V1_RESPAWN_HANDOFF_AUTHORITY_2026-09-04.md`.
+- **Owner:** Human project owner

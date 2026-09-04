@@ -6,6 +6,18 @@
 
 ## Current state
 
+- **Authoritative Bastion respawn handoff (2026-09-04):** Respawn now reserves a ticket
+  once and keeps the participant dead/spectating until the application successfully
+  confirms the authority handoff. Failed or delayed adapters are retried without a
+  second ticket spend; mirror-side revival, pre-live/terminal damage and stale pending
+  state are rejected, and the handoff marker participates in the deterministic hash.
+  Source `0d0f875` passes static validation **0/0**, focused Bastion tests **16/16**,
+  full EditMode **164/164**, full PlayMode **98/98** and the strict 100-match production
+  bot harness. Fresh APK/AAB and approved-Lava bounded menu/crash-marker evidence are
+  indexed in `Docs/QA/V1_RESPAWN_HANDOFF_AUTHORITY_2026-09-04.md`. This closes one
+  authority/respawn edge case, not final AI fairness, physical route, authored content,
+  normalized performance or owner-release gates.
+
 - **Bastion Crown timer step-size determinism (2026-09-04):** Crown rotation now carries
   overdue time through every crossed interval, so coarse authority advances and equivalent
   fixed-step replay land on the same socket/timer. Source `bad12de` passes static validation

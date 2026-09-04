@@ -13,6 +13,40 @@ prototype until every V1 completion gate and remaining human gate passes.
 - Approved physical evidence device: Lava `ST5GDW23LB004392` (`LAVA LXX508`) only.
 - Preserve internal networking/Web seams without exposing unusable public online paths.
 
+## Checkpoint 0o - authoritative Bastion respawn handoff — 2026-09-04
+
+The Bastion Crown authority now requires an explicit confirmation after a respawn has
+been issued. The ticket is reserved once, the actor stays dead/spectating while the
+adapter applies the spawn, and retry advances re-emit the same actor without a second
+spend. `SyncParticipant` cannot mirror-revive a participant, combat delivery is rejected
+before live state and after terminal resolution, and the handoff marker is included in
+the deterministic hash. Source commit: `0d0f875`.
+
+- Static validation: **0 errors / 0 warnings**.
+- Focused Bastion tests: **16/16 passed**.
+- Full EditMode: **164/164 passed**.
+- Full PlayMode: **98/98 passed**.
+- Strict production-bot PlayMode: **98/98 passed** across the 100-match harness.
+- Batch metrics: **100/100** terminal, **89/100** in the 240–360 second window,
+  **92/100** combat-positive, **100/100** with bot-to-bot damaging pairs, **0/100**
+  Aandhi-only, zero protected-warmup damage, zero invalid positions, **284** respawns
+  and **0** stuck ticks.
+- APK: **41,681,228 bytes**, SHA-256
+  `0A4E7C96531F16ABAFDB4BDFB2CD587175360210B543FADEC19BF9B06DB91108`.
+- AAB: **37,506,760 bytes**, SHA-256
+  `19E0B84A8CACB760CA18DFDD8FC7AA3B5AE9232FB7F4E52F47A22B28DA6E842E`.
+- Technical release checker: **0 errors / 0 warnings** for temporary package
+  `com.example.battleraja.m11`, API `28/36`, offline permissions, ARM64/static 16 KB
+  checks and store dimensions.
+- Approved Lava `ST5GDW23LB004392`: exact APK installed, pulled base hash matched,
+  branded menu rendered and scoped crash-marker log was clean. Lava reports 4 KB pages;
+  this bounded smoke is not physical 16 KB proof or a complete route review.
+
+The full evidence record is `Docs/QA/V1_RESPAWN_HANDOFF_AUTHORITY_2026-09-04.md`.
+This closes the authority handoff edge case only; final authored assets/audio, physical
+route and comfort, normalized performance/endurance, genuine 16 KB runtime, human
+reviews and owner Play gates remain open.
+
 ## Checkpoint 0n - Bastion Crown timer step-size determinism — 2026-09-04
 
 The Crown rotation timer now carries overdue time through every crossed interval, so a

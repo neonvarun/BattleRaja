@@ -1,5 +1,31 @@
 # Latest HEAD baseline
 
+## Authoritative Bastion respawn handoff — source `0d0f875` — 2026-09-04
+
+Respawn now has an explicit authority handoff. A ticket is reserved once when the
+respawn timer expires; the actor remains dead and spectating until the application
+successfully confirms `ConfirmRespawn`. Retry advances re-emit the same actor without a
+second ticket spend, while unapproved mirror revival and pre-live/terminal damage are
+rejected. The issued state participates in the deterministic hash.
+
+Static validation is **0/0**, focused Bastion tests are **16/16**, full EditMode is
+**164/164**, full PlayMode is **98/98**, and strict production-bot PlayMode is **98/98**.
+The exact production-bot batch was **100/100** terminal, **89/100** in the 240–360 second
+window, **92/100** combat-positive, **100/100** with bot-to-bot damaging pairs and
+**0/100** Aandhi-only. Protected-warmup damage, invalid positions and stuck ticks were
+all zero. The complete evidence record is
+`Docs/QA/V1_RESPAWN_HANDOFF_AUTHORITY_2026-09-04.md`.
+
+The exact rebuilt temporary-ID APK is 41,681,228 bytes (SHA-256
+`0A4E7C96531F16ABAFDB4BDFB2CD587175360210B543FADEC19BF9B06DB91108`) and the AAB is
+37,506,760 bytes (SHA-256
+`19E0B84A8CACB760CA18DFDD8FC7AA3B5AE9232FB7F4E52F47A22B28DA6E842E`). The technical
+checker is **0/0** for API `28/36`, offline permissions, ARM64/static alignment and store
+dimensions. The exact APK was installed on approved Lava `ST5GDW23LB004392`; a bounded
+menu/crash-marker smoke passed. Lava reports 4 KB pages, so no physical 16 KB claim is
+made. This remains an authority hardening checkpoint, not final authored presentation,
+human comfort/fun, normalized performance, or Play approval.
+
 ## Bastion Crown timer step-size determinism — source `bad12de` — 2026-09-04
 
 The Crown rotation timer now carries overdue time through every crossed interval, making a

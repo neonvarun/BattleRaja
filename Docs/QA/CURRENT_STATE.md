@@ -13,6 +13,38 @@ create or depend on evidence outside this repository root.
 
 **Prototype — Android offline release candidate in progress.**
 
+## Latest current-source evidence — 2026-09-04 — authoritative respawn handoff
+
+Source commit `0d0f875` adds an explicit authority confirmation to the Bastion Crown
+respawn handoff. A ticket is spent once when the timer expires, the actor remains dead
+and spectating until the application confirms the successful respawn, and retries emit
+the same actor without double-spending. Mirror-side revival, pre-live/terminal damage,
+and stale pending state are rejected. The issued marker participates in the deterministic
+hash; Solo rules, Crown scoring and fighter balance are unchanged.
+
+Static validation is **0 errors / 0 warnings**. Focused Bastion tests are **16/16**,
+full EditMode **164/164**, full PlayMode **98/98**, and strict production-bot PlayMode
+**98/98**. The 100-match report recorded **100/100** terminal matches, **89/100** in the
+240–360 second window, **92/100** with combat eliminations, bot-to-bot damaging pairs in
+**100/100**, **0/100** Aandhi-only resolutions, zero protected-warmup damage, zero invalid
+positions, **284** respawns, and **0** stuck ticks. Exact XML/report hashes and the
+authority regression details are in
+`Docs/QA/V1_RESPAWN_HANDOFF_AUTHORITY_2026-09-04.md`.
+
+The rebuilt temporary-ID candidate is an APK of 41,681,228 bytes (SHA-256
+`0A4E7C96531F16ABAFDB4BDFB2CD587175360210B543FADEC19BF9B06DB91108`) and an AAB of
+37,506,760 bytes (SHA-256
+`19E0B84A8CACB760CA18DFDD8FC7AA3B5AE9232FB7F4E52F47A22B28DA6E842E`). The technical
+checker is **0 errors / 0 warnings** for `com.example.battleraja.m11`, version `1.0.0`
+code `100`, API `28/36`, offline permissions, ARM64/static alignment and store
+dimensions.
+
+Approved Lava `ST5GDW23LB004392` installed the exact APK; the pulled base hash matches,
+the branded menu rendered, and the scoped logcat has zero configured fatal/ANR/SIGSEGV/
+SIGABRT markers. Lava reports 4 KB pages, and this is bounded menu evidence only—not a
+complete current-source physical route, genuine 16 KB runtime proof, normalized
+performance/endurance approval or human review.
+
 ## Latest current-source evidence — 2026-09-04 — coarse Crown timer determinism
 
 `BastionCrownMatch.AdvanceCrown` now preserves overdue time when one advance crosses
