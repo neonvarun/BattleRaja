@@ -26,7 +26,15 @@ namespace BattleRaja.Presentation.Visuals
             Ability,
             Hit,
             Knockback,
-            Eliminated,
+            /// <summary>Terminal knockout pose. Eliminated remains an alias for old callers.</summary>
+            KO,
+            Eliminated = KO,
+            GadgetUse,
+            CrownPickup,
+            CrownCarry,
+            CrownDeposit,
+            Respawn,
+            Spectator,
             Victory,
             Defeat
         }
@@ -70,11 +78,20 @@ namespace BattleRaja.Presentation.Visuals
         private CombatTarget _target;
         private float _attackPulse;
         private float _abilityPulse;
+        private float _gadgetPulse;
+        private float _crownPickupPulse;
+        private float _crownDepositPulse;
+        private float _respawnPulse;
+        private float _koHoldRemaining;
         private float _hitRemaining;
         private float _telegraphRemaining;
         private Color _baseBodyColor = Color.white;
         private Color _ringColor = new Color(0.18f, 0.78f, 1f, 1f);
         private bool _eliminated;
+        private bool _bastionAlive = true;
+        private bool _bastionSpectating;
+        private bool _crownCarrier;
+        private bool _depositChanneling;
         private bool _victory;
         private bool _matchOutcomeShown;
         private bool _silhouetteBuilt;
@@ -135,9 +152,19 @@ namespace BattleRaja.Presentation.Visuals
             var delta = Time.deltaTime;
             _attackPulse = Mathf.Max(0f, _attackPulse - delta);
             _abilityPulse = Mathf.Max(0f, _abilityPulse - delta);
+            _gadgetPulse = Mathf.Max(0f, _gadgetPulse - delta);
+            _crownPickupPulse = Mathf.Max(0f, _crownPickupPulse - delta);
+            _crownDepositPulse = Mathf.Max(0f, _crownDepositPulse - delta);
+            _respawnPulse = Mathf.Max(0f, _respawnPulse - delta);
+            _koHoldRemaining = Mathf.Max(0f, _koHoldRemaining - delta);
             _hitRemaining = Mathf.Max(0f, _hitRemaining - delta);
             _telegraphRemaining = Mathf.Max(0f, _telegraphRemaining - delta);
             UpdateHealthBar();
+
+            // Bastion lifecycle and objective state are immutable authority snapshots.
+            // Polling this cached controller keeps presentation responsive without
+            // giving render code ownership of Crown, respawn or spectator truth.
+            RefreshBastionPresentationState();
 
             if (health != null && health.Snapshot.IsDefeated && !_eliminated)
             {
@@ -160,7 +187,11 @@ namespace BattleRaja.Presentation.Visuals
 
             if (_eliminated)
             {
-                CurrentAnimation = _victory ? AnimationState.Victory : AnimationState.Eliminated;
+                CurrentAnimation = _victory
+                    ? AnimationState.Victory
+                    : _bastionSpectating && _koHoldRemaining <= 0f
+                        ? AnimationState.Spectator
+                        : AnimationState.KO;
                 ApplyProductionAnimationState();
                 ApplySilhouetteAnimation();
                 if (_ring != null) _ring.localScale = Vector3.one * (1.0f + Mathf.Sin(Time.time * 4f) * 0.06f);
@@ -182,6 +213,11 @@ namespace BattleRaja.Presentation.Visuals
             if (_hitRemaining > 0f) CurrentAnimation = AnimationState.Hit;
             else if (_abilityPulse > 0f) CurrentAnimation = AnimationState.Ability;
             else if (_attackPulse > 0f) CurrentAnimation = AnimationState.Attack;
+            else if (_gadgetPulse > 0f) CurrentAnimation = AnimationState.GadgetUse;
+            else if (_crownPickupPulse > 0f) CurrentAnimation = AnimationState.CrownPickup;
+            else if (_crownDepositPulse > 0f) CurrentAnimation = AnimationState.CrownDeposit;
+            else if (_crownCarrier) CurrentAnimation = AnimationState.CrownCarry;
+            else if (_respawnPulse > 0f) CurrentAnimation = AnimationState.Respawn;
             else if (movementAgent != null && movementAgent.Velocity.SqrMagnitude > 0.01f) CurrentAnimation = AnimationState.Locomotion;
             else if (_playerInput != null && _playerInput.IsAimHeld) CurrentAnimation = AnimationState.Aim;
             else CurrentAnimation = AnimationState.Idle;
@@ -246,6 +282,50 @@ namespace BattleRaja.Presentation.Visuals
             _audio?.PlayAbility(FighterAudioKey());
         }
 
+        /// <summary>
+        /// Starts the short, readable gadget-use pose after the authoritative
+        /// command has been accepted. The gadget effect itself remains owned by
+        /// the match authority.
+        /// </summary>
+        public void NotifyGadgetUse()
+        {
+            _gadgetPulse = 0.34f;
+        }
+
+        /// <summary>Marks a fighter as entering or leaving the spectator presentation.</summary>
+        public void NotifySpectating(bool spectating)
+        {
+            if (_bastionSpectating == spectating) return;
+            _bastionSpectating = spectating;
+            if (spectating)
+            {
+                _koHoldRemaining = 0.45f;
+                _crownCarrier = false;
+            }
+        }
+
+        /// <summary>
+        /// Rehydrates the render-only fighter after a confirmed authority respawn.
+        /// This deliberately resets presentation colour/pose only after the
+        /// controller has accepted the canonical respawn handoff.
+        /// </summary>
+        public void NotifyRespawned()
+        {
+            _eliminated = false;
+            _bastionAlive = true;
+            _bastionSpectating = false;
+            _koHoldRemaining = 0f;
+            _respawnPulse = 0.52f;
+            _hitRemaining = 0f;
+            _telegraphRemaining = 0f;
+            _flashApplied = false;
+            RestorePresentationColors();
+            if (_ringMaterial != null) _ringMaterial.color = _ringColor;
+            if (_teamBadge != null) _teamBadge.gameObject.SetActive(true);
+            CurrentAnimation = AnimationState.Respawn;
+            ApplyProductionAnimationState();
+        }
+
         private string FighterAudioKey()
         {
             if (GetComponent<PehelFighterController>() != null) return "Pehel";
@@ -284,6 +364,7 @@ namespace BattleRaja.Presentation.Visuals
         private void SetEliminated()
         {
             _eliminated = true;
+            _koHoldRemaining = 0.45f;
             CurrentAnimation = AnimationState.Eliminated;
             ApplyPresentationColor(new Color(0.22f, 0.22f, 0.25f, 1f));
 
@@ -292,6 +373,34 @@ namespace BattleRaja.Presentation.Visuals
             if (_ringMaterial != null) _ringMaterial.color = new Color(0.86f, 0.12f, 0.12f, 1f);
             _audio?.PlayElimination();
             _productionVfx?.PlayElimination();
+        }
+
+        private void RefreshBastionPresentationState()
+        {
+            if (_match == null) _match = FindAnyObjectByType<OfflineMatchController>();
+            if (_match == null || !_match.IsBastionCrown || _target == null) return;
+            if (!_match.TryGetBastionParticipant(_target.Id, out var participant)) return;
+
+            if (participant.Alive && !_bastionAlive)
+            {
+                NotifyRespawned();
+            }
+            else if (!participant.Alive && participant.Spectating && !_bastionSpectating)
+            {
+                NotifySpectating(true);
+            }
+
+            _bastionAlive = participant.Alive;
+            _bastionSpectating = participant.Spectating;
+
+            var crown = _match.BastionCrownState;
+            var actorId = _target.Id.Value;
+            var isCarrier = actorId > 0 && crown.IsCarried && crown.CarrierId.Value == actorId;
+            var isChanneling = actorId > 0 && crown.ChannelActorId.Value == actorId && crown.DepositProgress > 0f;
+            if (isCarrier && !_crownCarrier) _crownPickupPulse = 0.42f;
+            if (isChanneling && !_depositChanneling) _crownDepositPulse = 0.46f;
+            _crownCarrier = isCarrier;
+            _depositChanneling = isChanneling;
         }
 
         private void ApplyProductionAnimationState()
@@ -382,7 +491,7 @@ namespace BattleRaja.Presentation.Visuals
                         position.x += 0.05f * Mathf.Sign(sway == 0f ? 1f : sway);
                         rotation *= Quaternion.Euler(0f, 0f, -sway * 12f);
                         break;
-                    case AnimationState.Eliminated:
+                    case AnimationState.KO:
                     case AnimationState.Defeat:
                         position.y -= 0.12f;
                         rotation *= Quaternion.Euler(0f, 0f, -18f);
@@ -392,6 +501,33 @@ namespace BattleRaja.Presentation.Visuals
                         position.y += 0.10f + Mathf.Abs(sway) * 0.04f;
                         rotation *= Quaternion.Euler(0f, sway * 8f, sway * 6f);
                         scale *= 1.05f;
+                        break;
+                    case AnimationState.GadgetUse:
+                        position.z -= 0.04f;
+                        rotation *= Quaternion.Euler(0f, sway * 10f, -sway * 7f);
+                        scale *= 1.035f;
+                        break;
+                    case AnimationState.CrownPickup:
+                        position.y += 0.08f + Mathf.Abs(sway) * 0.04f;
+                        rotation *= Quaternion.Euler(0f, sway * 12f, sway * 8f);
+                        scale *= 1.06f;
+                        break;
+                    case AnimationState.CrownCarry:
+                        position.y += 0.025f;
+                        rotation *= Quaternion.Euler(0f, sway * 5f, 0f);
+                        break;
+                    case AnimationState.CrownDeposit:
+                        position.y += 0.05f + Mathf.Abs(sway) * 0.035f;
+                        rotation *= Quaternion.Euler(0f, sway * 14f, -sway * 5f);
+                        break;
+                    case AnimationState.Respawn:
+                        position.y += 0.06f + Mathf.Abs(sway) * 0.035f;
+                        scale *= 1.04f + Mathf.Abs(sway) * 0.04f;
+                        break;
+                    case AnimationState.Spectator:
+                        position.y -= 0.03f;
+                        rotation *= Quaternion.Euler(0f, sway * 4f, 0f);
+                        scale *= 0.98f;
                         break;
                 }
 

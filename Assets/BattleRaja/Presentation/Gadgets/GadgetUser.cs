@@ -215,6 +215,7 @@ namespace BattleRaja.Presentation.Gadgets
             ApplyEffect(result.Effect);
             SuccessfulUseCount++;
             RecordSuccessfulUse(command.GadgetId);
+            GetComponent<FighterPresentation>()?.NotifyGadgetUse();
             if (combatTarget.Id.Value == 1) _audio?.PlayGadget(command.GadgetId.Value);
             return true;
         }
@@ -324,6 +325,7 @@ namespace BattleRaja.Presentation.Gadgets
             ApplyEffect(result.Effect);
             SuccessfulUseCount++;
             RecordSuccessfulUse(command.GadgetId);
+            GetComponent<FighterPresentation>()?.NotifyGadgetUse();
             if (combatTarget.Id.Value == 1) _audio?.PlayGadget(command.GadgetId.Value);
             return true;
         }

@@ -796,6 +796,11 @@ namespace BattleRaja.Tests.PlayMode
                 Assert.That(player.Health.Snapshot.CurrentHealth, Is.EqualTo(player.Health.MaxHealth));
                 Assert.That(player.Health.Snapshot.IsDefeated, Is.False);
                 Assert.That(match.PlayerSpectating, Is.False);
+                var presentation = player.GetComponent<FighterPresentation>();
+                Assert.That(presentation, Is.Not.Null);
+                Assert.That(presentation.IsEliminated, Is.False,
+                    "A confirmed authority respawn must restore the render-only fighter state.");
+                Assert.That(presentation.CurrentAnimation, Is.EqualTo(FighterPresentation.AnimationState.Respawn));
             }
             finally
             {
@@ -1090,6 +1095,19 @@ namespace BattleRaja.Tests.PlayMode
                 Assert.That(animator.runtimeAnimatorController, Is.Not.Null, fighter.name + " Animator has no saved controller");
                 Assert.That(animator.parameters.Any(parameter => parameter.name == "State" && parameter.type == AnimatorControllerParameterType.Int), Is.True,
                     fighter.name + " Animator has no presentation state parameter");
+                var clipNames = animator.runtimeAnimatorController.animationClips
+                    .Where(clip => clip != null)
+                    .Select(clip => clip.name)
+                    .ToArray();
+                foreach (var requiredClip in new[]
+                         {
+                             "FighterIdle", "FighterLocomotion", "FighterAim", "FighterAttack", "FighterAbility",
+                             "FighterGadgetUse", "FighterCrownPickup", "FighterCrownCarry", "FighterCrownDeposit",
+                             "FighterKO", "FighterRespawn", "FighterSpectator", "FighterVictory", "FighterDefeat"
+                         })
+                {
+                    Assert.That(clipNames, Does.Contain(requiredClip), fighter.name + " is missing " + requiredClip);
+                }
 
                 var cue = modelRoot.GetComponent<ProductionVfxCue>();
                 Assert.That(cue, Is.Not.Null, fighter.name + " is missing its production VFX cue component");
@@ -1146,6 +1164,10 @@ namespace BattleRaja.Tests.PlayMode
             fighter.NotifyAbility();
             yield return null;
             Assert.That(fighter.CurrentAnimation, Is.EqualTo(FighterPresentation.AnimationState.Ability));
+            yield return new WaitForSeconds(0.36f);
+            fighter.NotifyGadgetUse();
+            yield return null;
+            Assert.That(fighter.CurrentAnimation, Is.EqualTo(FighterPresentation.AnimationState.GadgetUse));
 
             var activeBefore = impactPool.ActiveCount;
             impactPool.Play(fighter.transform.position, true);

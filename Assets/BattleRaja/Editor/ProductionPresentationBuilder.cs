@@ -29,7 +29,9 @@ namespace BattleRaja.Editor
 
         private static readonly string[] StateNames =
         {
-            "Idle", "Locomotion", "Aim", "Attack", "Ability", "Hit", "Knockback", "Eliminated", "Victory", "Defeat"
+            "Idle", "Locomotion", "Aim", "Attack", "Ability", "Hit", "Knockback", "KO",
+            "GadgetUse", "CrownPickup", "CrownCarry", "CrownDeposit", "Respawn", "Spectator",
+            "Victory", "Defeat"
         };
 
         private static readonly string[] VfxNames =
@@ -95,6 +97,29 @@ namespace BattleRaja.Editor
             AssetDatabase.Refresh();
             RefreshSceneReferences();
             Debug.Log("BattleRaja production fighter prefabs rebuilt with the existing Animator/VFX assets.");
+        }
+
+        /// <summary>
+        /// Rebuilds only the saved Animator state library and rebinds the existing
+        /// render-only fighter prefabs. This is the controlled path for adding a
+        /// presentation state without regenerating unrelated VFX or mesh assets.
+        /// </summary>
+        [MenuItem("BattleRaja/Rebuild V1 Animation State Library")]
+        public static void RebuildAnimationStateLibrary()
+        {
+            EnsureFolders();
+            var controller = BuildController();
+            var vfx = LoadVfxLibrary();
+            if (vfx == null) vfx = BuildVfxLibrary();
+            for (var i = 0; i < FighterPrefabPaths.Length; i++)
+            {
+                BuildFighterPrefab(FighterPrefabPaths[i], controller, vfx, i);
+            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            RefreshSceneReferences();
+            Debug.Log("BattleRaja animation state library rebuilt with Crown, gadget, KO, respawn and spectator states.");
         }
 
         public static bool HasGeneratedAssets()
@@ -267,7 +292,8 @@ namespace BattleRaja.Editor
 
         private static AnimationClip CreateAnimationClip(string stateName)
         {
-            var loops = stateName == "Idle" || stateName == "Locomotion" || stateName == "Aim";
+            var loops = stateName == "Idle" || stateName == "Locomotion" || stateName == "Aim"
+                || stateName == "CrownCarry" || stateName == "Spectator";
             var clip = new AnimationClip
             {
                 name = "Fighter" + stateName,
@@ -279,6 +305,11 @@ namespace BattleRaja.Editor
                 : stateName == "Aim" ? 0.55f
                 : stateName == "Attack" ? 0.18f
                 : stateName == "Ability" ? 0.36f
+                : stateName == "GadgetUse" ? 0.34f
+                : stateName == "CrownPickup" ? 0.42f
+                : stateName == "CrownDeposit" ? 0.46f
+                : stateName == "Respawn" ? 0.52f
+                : stateName == "KO" ? 0.55f
                 : 0.2f;
             var times = new[] { 0f, duration * 0.5f, duration };
             var hipsBase = 0.65f;
@@ -329,10 +360,47 @@ namespace BattleRaja.Editor
                     SetCurve(clip, chestPath, "m_LocalScale.y", times, new[] { 1f, 0.94f, 1f });
                     SetCurve(clip, chestPath, "m_LocalScale.z", times, new[] { 1f, 0.94f, 1f });
                     break;
-                case "Eliminated":
+                case "KO":
                 case "Defeat":
                     SetCurve(clip, "ProductionRig/Root/Hips", "m_LocalPosition.y", times, new[] { hipsBase, 0.40f, 0.40f });
                     SetCurve(clip, chestPath, "m_LocalScale.y", times, new[] { 1f, 0.72f, 0.72f });
+                    break;
+                case "GadgetUse":
+                    SetCurve(clip, leftHandPath, "m_LocalPosition.z", times, new[] { 0f, 0.18f, 0f });
+                    SetCurve(clip, rightHandPath, "m_LocalPosition.z", times, new[] { 0f, 0.22f, 0f });
+                    SetCurve(clip, chestPath, "m_LocalRotation.z", times, new[] { 0f, -0.08f, 0f });
+                    SetCurve(clip, chestPath, "m_LocalRotation.w", times, new[] { 1f, 0.997f, 1f });
+                    break;
+                case "CrownPickup":
+                    SetCurve(clip, "ProductionRig/Root/Hips", "m_LocalPosition.y", times,
+                        new[] { hipsBase, hipsBase + 0.08f, hipsBase });
+                    SetCurve(clip, chestPath, "m_LocalRotation.x", times, new[] { 0f, -0.10f, 0f });
+                    SetCurve(clip, chestPath, "m_LocalRotation.w", times, new[] { 1f, 0.995f, 1f });
+                    break;
+                case "CrownCarry":
+                    SetCurve(clip, "ProductionRig/Root/Hips", "m_LocalPosition.y", times,
+                        new[] { hipsBase - 0.01f, hipsBase + 0.02f, hipsBase - 0.01f });
+                    SetCurve(clip, chestPath, "m_LocalRotation.y", times, new[] { 0f, 0.04f, 0f });
+                    SetCurve(clip, chestPath, "m_LocalRotation.w", times, new[] { 1f, 0.999f, 1f });
+                    break;
+                case "CrownDeposit":
+                    SetCurve(clip, "ProductionRig/Root/Hips", "m_LocalPosition.y", times,
+                        new[] { hipsBase, hipsBase + 0.05f, hipsBase });
+                    SetCurve(clip, leftHandPath, "m_LocalPosition.y", times, new[] { -0.10f, 0.08f, -0.10f });
+                    SetCurve(clip, rightHandPath, "m_LocalPosition.y", times, new[] { -0.10f, 0.08f, -0.10f });
+                    break;
+                case "Respawn":
+                    SetCurve(clip, "ProductionRig/Root/Hips", "m_LocalPosition.y", times,
+                        new[] { 0.40f, hipsBase + 0.08f, hipsBase });
+                    SetCurve(clip, chestPath, "m_LocalScale.x", times, new[] { 0.82f, 1.06f, 1f });
+                    SetCurve(clip, chestPath, "m_LocalScale.y", times, new[] { 0.72f, 1.06f, 1f });
+                    SetCurve(clip, chestPath, "m_LocalScale.z", times, new[] { 0.82f, 1.06f, 1f });
+                    break;
+                case "Spectator":
+                    SetCurve(clip, "ProductionRig/Root/Hips", "m_LocalPosition.y", times,
+                        new[] { hipsBase - 0.02f, hipsBase, hipsBase - 0.02f });
+                    SetCurve(clip, chestPath, "m_LocalRotation.y", times, new[] { 0f, 0.06f, 0f });
+                    SetCurve(clip, chestPath, "m_LocalRotation.w", times, new[] { 1f, 0.998f, 1f });
                     break;
                 case "Victory":
                     SetCurve(clip, "ProductionRig/Root/Hips", "m_LocalPosition.y", times,

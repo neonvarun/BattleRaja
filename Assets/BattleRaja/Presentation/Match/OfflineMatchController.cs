@@ -972,6 +972,7 @@ namespace BattleRaja.Presentation.Match
                 actor.Agent.ApplyAuthoritativePosition(confirmed.Position);
                 actor.Health.SetAuthoritativeHealth(confirmed.CurrentHealth);
                 actor.Input?.ResetInputState();
+                actor.Transform.GetComponent<FighterPresentation>()?.NotifyRespawned();
             }
         }
 
@@ -1220,6 +1221,7 @@ namespace BattleRaja.Presentation.Match
             {
                 if (bastionPlayer.Alive)
                 {
+                    player.Transform.GetComponent<FighterPresentation>()?.NotifySpectating(false);
                     _playerSpectating = false;
                     cameraController?.SetFollowTarget(player.Transform);
                     return;
@@ -1228,6 +1230,7 @@ namespace BattleRaja.Presentation.Match
                 if (!_playerSpectating)
                 {
                     _playerSpectating = true;
+                    player.Transform.GetComponent<FighterPresentation>()?.NotifySpectating(true);
                     player.Input?.ReleasePointerFocus();
                     var nextBastion = SpectatorTargetSelector.SelectNext(Simulation.GetSnapshots(), player.Target.Id);
                     var bastionActor = _actors.FirstOrDefault(binding => binding.Target.Id == nextBastion);
@@ -1241,6 +1244,7 @@ namespace BattleRaja.Presentation.Match
             if (!_playerSpectating)
             {
                 _playerSpectating = true;
+                player.Transform.GetComponent<FighterPresentation>()?.NotifySpectating(true);
                 player.Input?.ReleasePointerFocus();
                 var next = SpectatorTargetSelector.SelectNext(Simulation.GetSnapshots(), player.Target.Id);
                 var actor = _actors.FirstOrDefault(binding => binding.Target.Id == next);
