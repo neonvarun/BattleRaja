@@ -13,6 +13,34 @@ prototype until every V1 completion gate and remaining human gate passes.
 - Approved physical evidence device: Lava `ST5GDW23LB004392` (`LAVA LXX508`) only.
 - Preserve internal networking/Web seams without exposing unusable public online paths.
 
+## Checkpoint 0n - Bastion Crown timer step-size determinism — 2026-09-04
+
+The Crown rotation timer now carries overdue time through every crossed interval, so a
+coarse authority advance and the equivalent fixed-step replay land on the same socket and
+remaining timer. Source commit: `bad12de`.
+
+- Static validation: **0 errors / 0 warnings**.
+- Focused coarse-vs-fixed Crown regression passed.
+- Full EditMode: **162/162 passed**; XML SHA-256
+  `5C172CD9B52C598277D3C00F43A276D0A08FF5DA4FCE276C2C326F9C1C3892C1`.
+- Full PlayMode: **98/98 passed**; XML SHA-256
+  `108D32758C5C0D783011FD7C4F6691684D6E0279CB9157FBB46BBCD80FACE855`.
+- APK: **41,680,452 bytes**, SHA-256
+  `E92E5994C36B35414DB44D32C082DC8992A3E413F9B67BD87FF776BF5C42DF6C`.
+- AAB: **37,505,982 bytes**, SHA-256
+  `19882B28E14DE5D9A0B73CCF7016FCA0983325C1F93C4E4BDD36D7E908FB470F`.
+- Technical release checker: **0 errors / 0 warnings**; package remains temporary
+  `com.example.battleraja.m11`, API `28/36`, offline permissions, seven ARM64 libraries
+  and static 16 KB ELF alignment.
+- Approved Lava `ST5GDW23LB004392`: exact APK installed after package clear; pulled base
+  matches. Fresh menu/crash-marker evidence is under
+  `Builds/Local/V1GameplayTruth/Next/crown-rotation-20260904/`.
+
+The full evidence record is `Docs/QA/V1_CROWN_TIMER_DETERMINISM_2026-09-04.md`. This
+closes one objective-timer edge case only; AI fairness, physical comfort, normalized
+performance/endurance, genuine 16 KB runtime, authored assets, accessibility/cultural/fun
+review and owner Play gates remain open.
+
 ## Checkpoint 0m - Bastion squad command-window determinism — 2026-09-04
 
 The authoritative squad blackboard now keeps one shared snapshot for the entire bot

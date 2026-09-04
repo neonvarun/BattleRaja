@@ -6,6 +6,14 @@
 
 ## Current state
 
+- **Bastion Crown timer step-size determinism (2026-09-04):** Crown rotation now carries
+  overdue time through every crossed interval, so coarse authority advances and equivalent
+  fixed-step replay land on the same socket/timer. Source `bad12de` passes static validation
+  **0/0**, EditMode **162/162** and PlayMode **98/98**. Fresh APK/AAB and approved-Lava
+  smoke evidence are indexed in `Docs/QA/V1_CROWN_TIMER_DETERMINISM_2026-09-04.md`.
+  This closes one objective-timer edge case, not final AI, physical-route, performance or
+  owner-release gates.
+
 - **Bastion squad command-window determinism (2026-09-04):** The shared squad blackboard
   now keeps one canonical snapshot for the full controller-owned bot callback window.
   Callback-side mutations are deferred to the next preparation tick, preventing callback

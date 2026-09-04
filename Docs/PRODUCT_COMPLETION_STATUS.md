@@ -3,6 +3,20 @@
 Updated: 2026-09-04
 Classification: **prototype**
 
+## Latest V1 Crown timer determinism checkpoint — 2026-09-04
+
+The Bastion Crown objective timer now preserves overdue time when a coarse advance crosses
+multiple socket-rotation intervals. Equivalent coarse and fixed-step authority streams land
+on the same Crown socket and timer; combat, scoring, respawn, squad cadence and Solo rules
+are unchanged. Source `bad12de` passes static validation **0/0**, EditMode **162/162** and
+PlayMode **98/98**. Fresh Android artifacts and the approved-Lava smoke are indexed in
+`Docs/QA/V1_CROWN_TIMER_DETERMINISM_2026-09-04.md`.
+
+This is a deterministic objective hardening checkpoint, not completion of physical 4v4
+comfort, AI fairness/fun, normalized performance/endurance, genuine 16 KB runtime, final
+authored assets, accessibility/cultural review, permanent identity/signing, privacy/Data
+Safety, IARC or Play Console actions.
+
 ## Latest V1 Bastion squad coordination checkpoint — 2026-09-04
 
 The authoritative squad blackboard now preserves one shared intent snapshot for each bot

@@ -1,5 +1,23 @@
 # Latest HEAD baseline
 
+## Bastion Crown timer step-size determinism — source `bad12de` — 2026-09-04
+
+The Crown rotation timer now carries overdue time through every crossed interval, making a
+coarse authority advance land on the same socket and remaining timer as equivalent
+fixed-step replay. Combat, scoring, respawn and squad-command behavior are unchanged.
+
+Static validation is **0/0**, full EditMode is **162/162** and full PlayMode is **98/98**.
+The exact rebuilt APK is 41,680,452 bytes (SHA-256
+`E92E5994C36B35414DB44D32C082DC8992A3E413F9B67BD87FF776BF5C42DF6C`) and the AAB is
+37,505,982 bytes (SHA-256
+`19882B28E14DE5D9A0B73CCF7016FCA0983325C1F93C4E4BDD36D7E908FB470F`). The technical
+release checker is **0/0** with the temporary package identity. The exact APK was installed
+on approved Lava `ST5GDW23LB004392`; bounded menu/crash-marker evidence is indexed in
+`Docs/QA/V1_CROWN_TIMER_DETERMINISM_2026-09-04.md`.
+
+This is an objective-timer hardening checkpoint, not final AI fairness, physical 4v4
+comfort, normalized performance, genuine 16 KB, authored presentation or Play readiness.
+
 ## Bastion squad command-window determinism — source `8e3563a` — 2026-09-04
 
 The shared squad blackboard now holds one snapshot for the controller-owned bot callback

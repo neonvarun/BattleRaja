@@ -13,6 +13,33 @@ create or depend on evidence outside this repository root.
 
 **Prototype — Android offline release candidate in progress.**
 
+## Latest current-source evidence — 2026-09-04 — coarse Crown timer determinism
+
+`BastionCrownMatch.AdvanceCrown` now preserves overdue time when one advance crosses
+multiple objective rotation intervals, so coarse diagnostic steps and fixed-step replays
+land on the same Crown socket and timer. Source commit is `bad12de`; combat, scoring,
+respawn, squad cadence and Solo rules are unchanged.
+
+Static validation is **0 errors / 0 warnings**. Full EditMode is **162/162** (XML SHA-256
+`5C172CD9B52C598277D3C00F43A276D0A08FF5DA4FCE276C2C326F9C1C3892C1`) and full PlayMode is
+**98/98** (XML SHA-256
+`108D32758C5C0D783011FD7C4F6691684D6E0279CB9157FBB46BBCD80FACE855`). The fresh exact
+APK is 41,680,452 bytes (SHA-256
+`E92E5994C36B35414DB44D32C082DC8992A3E413F9B67BD87FF776BF5C42DF6C`) and the AAB is
+37,505,982 bytes (SHA-256
+`19882B28E14DE5D9A0B73CCF7016FCA0983325C1F93C4E4BDD36D7E908FB470F`). The release
+checker is **0 errors / 0 warnings** with the temporary package identity.
+
+Approved Lava `ST5GDW23LB004392` installed the exact APK after clearing the package, and
+the pulled base matches the APK hash. Fresh menu and process-scoped crash-marker evidence
+are under `Builds/Local/V1GameplayTruth/Next/crown-rotation-20260904/`. This bounded smoke
+does not claim complete physical 4v4 comfort, normalized performance, genuine 16 KB runtime
+or owner approval. The evidence record is
+`Docs/QA/V1_CROWN_TIMER_DETERMINISM_2026-09-04.md`.
+
+The canonical AI/replay metrics remain carried forward; this timer fix only makes objective
+rotation step-size behavior explicit and does not establish final fairness or fun.
+
 ## Latest current-source evidence — 2026-09-04 — squad command-window determinism
 
 The Bastion squad blackboard now keeps one shared snapshot for the entire controller-owned
