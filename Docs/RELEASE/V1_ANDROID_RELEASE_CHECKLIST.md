@@ -48,8 +48,9 @@ with explicit ON/OFF state labels for all accessibility toggles. Static validati
 **37,504,322 bytes** (`74F7EDC96481EA868FF1A8F078E70D6C407126AD9A197BF2020D044F108445CC`).
 The technical checker passes package `com.example.battleraja.m11`, version `1.0.0` /
 code `100`, API `28/36`, no network permissions, ARM64-only native libraries, static
-16 KB alignment and store dimensions; log SHA-256 is
-`7F7A42F2BD60B8ADE04868174E83DB7A8F8F00CB6108ACBD1723498D7E04B0F7`.
+16 KB alignment and store dimensions; the clean-tree checker log is
+`Builds/Local/V1GameplayTruth/Next/release-checker-settings-polish-final-clean-20260904.log`
+with SHA-256 `E473003AB9CD043A637AE878B01772609EABB28A7AC7DA6F23156C7127522FF4`.
 
 The exact APK is installed on approved Lava `ST5GDW23LB004392` (`1080x2460`, Android
 14/API 34, 4 KB pages). Fresh menu/menu-settings/live/pause-settings/high-contrast

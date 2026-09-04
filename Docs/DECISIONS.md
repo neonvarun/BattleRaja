@@ -2113,7 +2113,7 @@ Record every material choice here. Do not silently overwrite old decisions.
   static mesh cost and remains generated baseline iconography pending human review.
 - **Evidence/sources:** `BattleRajaSettingsGlyph.cs`, `BattleRajaUiTheme.cs`,
   `ProductionFlowController.cs`, `OfflineMatchHud.cs`, `OfflineMatchPlayModeTests.cs`,
-  full EditMode **159/159**, PlayMode **96/96**, checker log
-  `Next/release-checker-settings-polish-20260904.log`, and approved-Lava captures under
+  full EditMode **159/159**, PlayMode **96/96**, clean-tree checker log
+  `Next/release-checker-settings-polish-final-clean-20260904.log`, and approved-Lava captures under
   `Builds/Local/V1GameplayTruth/Next/settings-polish-final-20260904/`.
 - **Owner:** Human project owner

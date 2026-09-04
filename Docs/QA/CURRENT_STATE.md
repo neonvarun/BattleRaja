@@ -64,8 +64,9 @@ Static validation is **0 errors / 0 warnings**. Fresh EditMode is **159/159** (X
 **37,504,322 bytes** (SHA-256
 `74F7EDC96481EA868FF1A8F078E70D6C407126AD9A197BF2020D044F108445CC`). The technical
 checker passes API 28/36, offline permissions, ARM64/static 16 KB alignment and store
-dimensions; checker log `Next/release-checker-settings-polish-20260904.log` has SHA-256
-`7F7A42F2BD60B8ADE04868174E83DB7A8F8F00CB6108ACBD1723498D7E04B0F7`.
+dimensions; the clean-tree checker log is
+`Next/release-checker-settings-polish-final-clean-20260904.log` (SHA-256
+`E473003AB9CD043A637AE878B01772609EABB28A7AC7DA6F23156C7127522FF4`).
 
 Approved Lava `ST5GDW23LB004392` (`1080x2460`, Android 14/API 34, 4 KB pages) has the
 exact APK installed and the pulled base hash matches. Fresh menu/menu-settings/live/

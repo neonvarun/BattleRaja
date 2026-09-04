@@ -33,8 +33,8 @@ collision are unchanged.
 - Technical release checker: 0 errors / 0 warnings; package `com.example.battleraja.m11`,
   version `1.0.0` / code `100`, API `28/36`, no network permissions, seven ARM64 native
   libraries, static 16 KB alignment and store dimensions. Log:
-  `Builds/Local/V1GameplayTruth/Next/release-checker-settings-polish-20260904.log`
-  (SHA-256 `7F7A42F2BD60B8ADE04868174E83DB7A8F8F00CB6108ACBD1723498D7E04B0F7`).
+  `Builds/Local/V1GameplayTruth/Next/release-checker-settings-polish-final-clean-20260904.log`
+  (SHA-256 `E473003AB9CD043A637AE878B01772609EABB28A7AC7DA6F23156C7127522FF4`).
 - Approved Lava `ST5GDW23LB004392`: exact APK installed and pulled base hash matches.
   Fresh menu/menu-settings/live/pause-settings/high-contrast captures are in
   `Builds/Local/V1GameplayTruth/Next/settings-polish-final-20260904/`; scoped logcat has
