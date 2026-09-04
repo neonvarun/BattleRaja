@@ -1,9 +1,9 @@
 # BattleRaja V1 Art Bible
 
 **Status:** V1 production-presentation baseline now includes saved faceted fighter meshes,
-deterministic UVs, lightweight two-bone primary skins, transform rigs, Animator
-clips/controllers and particle VFX cues; final authored art direction, cultural review and
-human feel approval remain open.
+deterministic UVs, lightweight two-bone primary skins, transform rigs, lifecycle-aware
+Animator clips/controllers and particle VFX cues; final authored art direction, cultural
+review and human feel approval remain open.
 
 ## Identity
 
@@ -39,7 +39,8 @@ The prefabs are deliberately made from saved mesh assets rather than runtime pri
 creation. Scene generation assigns all three prefabs to `FighterPresentation`; the active
 fighter controller selects which model is instantiated. The prefabs contain no colliders or
 gameplay scripts. Their `ProductionRig` hierarchy is presentation-only, and the shared
-`FighterProduction.controller` selects nine visual states from the presentation state integer.
+`FighterProduction.controller` selects sixteen visual states from the presentation state
+integer, including gadget, Crown, KO, respawn and spectator feedback.
 The primary `Body` (Bijli/Pehel) or `Cloak` (Maya) is copied into a saved
 `SkinnedMeshRenderer` with hips/chest bind poses and blended weights; accessory parts remain
 static saved render-only children. All generated meshes carry deterministic UVs so a future
@@ -121,12 +122,27 @@ mobile-performance sign-off.
 ## Animation and VFX inventory
 
 `Assets/BattleRaja/Content/Art/V1/Animation/FighterProduction.controller` contains the
-shared nine-state presentation controller. Its editable clips are saved in
-`Assets/BattleRaja/Content/Art/V1/Animation/Clips`: Idle, Locomotion, Attack, Ability, Hit,
-Knockback, Eliminated, Victory and Defeat. Each fighter prefab contains the named
+shared sixteen-state presentation controller. Its editable clips are saved in
+`Assets/BattleRaja/Content/Art/V1/Animation/Clips`: Idle, Locomotion, Aim, Attack, Ability,
+Hit, Knockback, KO, GadgetUse, CrownPickup, CrownCarry, CrownDeposit, Respawn, Spectator,
+Victory and Defeat. `Eliminated` remains a source-compatible runtime alias for `KO`. Each fighter prefab contains the named
 `ProductionRig/Root/Hips/Chest` chain with hand, head and foot joints. The primary body or
 cloak is rendered by the saved two-bone `SkinnedMeshRenderer`; accessory meshes remain
 render-only children of the rig joints.
+
+## Bastion lifecycle presentation continuation — 2026-09-04
+
+Commit `abcbe04` adds the saved lifecycle clips and mirrors immutable
+`BastionParticipantSnapshot` / `CrownSparkSnapshot` values through
+`FighterPresentation`. Accepted gadget commands pulse `GadgetUse`; Crown transitions
+select pickup, carry and deposit poses; a defeat holds `KO` before entering `Spectator`;
+and `Respawn` is selected only after the controller confirms the authority handoff. This
+is a render-only state library: no clip, rig joint or VFX cue owns score, tickets,
+health, collision, input, Crown ownership or respawn decisions. The explicit
+`BattleRaja/Rebuild V1 Production Fighter Art` path must run before a prefab composition
+rebuild so all authored accessories are reconstructed rather than stripped by an
+idempotent rig save. Full automated evidence is indexed in
+`Docs/QA/V1_ANIMATION_STATE_AND_RESPAWN_PRESENTATION_2026-09-04.md`.
 
 Saved VFX prefabs cover fighter attack/ability signatures, hit, elimination, gadget use,
 healing, shield, zone warning, zone closing, final-circle, Victory and Defeat cues. The

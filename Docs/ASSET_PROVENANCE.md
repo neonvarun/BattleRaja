@@ -37,6 +37,17 @@ small URP emission lift for mobile readability. The same pass tightens portrait 
 remain editable generated baseline assets pending commissioned art, cultural and human
 feel review.
 
+The 2026-09-04 lifecycle presentation continuation is recorded in commit `abcbe04`.
+`ProductionPresentationBuilder` saves the editable `GadgetUse`, `CrownPickup`,
+`CrownCarry`, `CrownDeposit`, `KO`, `Respawn` and `Spectator` clips alongside the
+existing combat/result library. `FighterPresentation` consumes only immutable authority
+snapshots and `OfflineMatchController` calls the respawn notification after authority
+confirmation; no animation curve or prefab component owns gameplay state. The full
+fighter prefabs were regenerated through the explicit `ProductionArtBuilder.RebuildAll`
+recipe boundary so their authored accessory hierarchy remains intact. This remains a
+repository-owned generated baseline pending commissioned animation, VFX, cultural and
+human feel review.
+
 The 2026-09-04 touch-control continuation adds the repository-owned
 `BattleRajaTouchGlyph.cs` vector graphic. It is generated at runtime from deterministic UI
 geometry for move, aim, attack, ability and gadget controls; it has no external asset or

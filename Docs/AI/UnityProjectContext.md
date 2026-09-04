@@ -1,12 +1,13 @@
 # BattleRaja Unity Project Context
 
 **Planning snapshot:** 2026-09-04 21:40 IST
-**Verified source:** `codex/v1-playstore-release` at `8120932` (`fix: bound squad focus and support perception`)
+**Verified source:** `codex/v1-playstore-release` at `abcbe04` (`feat: mirror Bastion lifecycle in fighter presentation`)
 **Working directory:** `C:\Projects\BattleRaja`
 **Status:** Bastion Crown 4v4 offline implementation, deterministic replay/squad hardening,
-fair production pacing and original menu-art replacement are integrated and test-green;
-the latest squad perception/support fairness pass is covered by full EditMode 168/168,
-PlayMode 99/99 and strict 100-match production-bot 99/99 evidence. Final release gates
+fair production pacing, original menu/fighter art and saved lifecycle animation states
+are integrated and test-green; the latest animation/respawn presentation pass is covered
+by full EditMode 168/168 and PlayMode 99/99, with strict 100-match production-bot
+simulation evidence carried from the unchanged authority checkpoint. Final release gates
 remain open.
 
 This file is the compact orientation document for the V1 continuation agent. The agent must re-run repository, build and device checks because this snapshot can become stale. `PROJECT_STATUS.md`, `AGENTS.md`, and the source code remain the authority for current facts; the prompt pack is the execution contract for the next implementation pass.
@@ -26,7 +27,8 @@ The canonical rules live in `PROMPTS/03_4V4_MATCH_RULES_RESPAWN_SCORE_AND_OBJECT
 
 ## Verified repository baseline
 
-The latest continuation is recorded in `Docs/QA/V1_SQUAD_PERCEPTION_2026-09-04.md`.
+The latest continuation is recorded in
+`Docs/QA/V1_ANIMATION_STATE_AND_RESPAWN_PRESENTATION_2026-09-04.md`.
 Static validation is **0/0**, EditMode is **168/168**, PlayMode is **99/99**, the
 two-seed 8,400-tick Bastion replay soak remains green, and strict production-bot PlayMode
 is **99/99** with 100/100 terminal matches. The exact APK/AAB hashes and the explicit
@@ -101,7 +103,7 @@ The repository contains a useful, owned generated baseline:
   original Bazaar Bastion shrine/fighter key-art candidate with no vehicles or racing motifs;
   isolated fighter previews, closer camera and warm/cool lighting remain presentation-only.
 
-Those assets are editable and provenance-safe. The current implementation adds a readable Crown Spark objective view, team-coloured shrine/socket rings, carrier tint/slowdown, authored fighter portraits and a team HUD while preserving the existing provenance boundary. Generated images are not acceptable substitutes for a modeled, rigged, animated gameplay character; final authored art, mix, accessibility and human-fun review remain open.
+Those assets are editable and provenance-safe. The current implementation adds a readable Crown Spark objective view, team-coloured shrine/socket rings, carrier tint/slowdown, authored fighter portraits and a team HUD while preserving the existing provenance boundary. The saved fighter Animator now also exposes `GadgetUse`, `CrownPickup`, `CrownCarry`, `CrownDeposit`, `KO`, `Respawn` and `Spectator`; `FighterPresentation` consumes only immutable Bastion snapshots, and the controller clears a defeated view only after confirmed authority respawn. Generated images are not acceptable substitutes for a modeled, rigged, animated gameplay character; commissioned final art, mix, accessibility and human-fun review remain open.
 
 ## Scenes and flow
 
@@ -115,9 +117,11 @@ Those assets are editable and provenance-safe. The current implementation adds a
 The current implementation checkpoint is:
 
 - Static validation: `0/0` reported issues.
-- EditMode: `155/155` passed, including Bastion replay soak, planner metrics and dead-target
-  event-identity regressions.
-- PlayMode: `94/94` passed, including canonical production composition, objective telegraphs/HUD and Crown pickup/deposit through the controller adapter.
+- EditMode: `168/168` passed, including Bastion replay soak, planner metrics, dead-target
+  event-identity regressions and the saved presentation asset contract.
+- PlayMode: `99/99` passed, including canonical production composition, objective telegraphs/HUD,
+  Crown pickup/deposit, gadget-use animation and confirmed respawn presentation through the
+  controller adapter.
 - Deterministic replay: the Bastion v2 combined digest reproduces two 8,400-tick seeded
   matches with zero divergence; the older 1000-seed production-bot evidence remains Solo-only.
 - Seeded Solo production-bot health: 100/100 matches in the documented 240–360 second window, with combat, bot-to-bot damage, gadget use and no stuck/protected/invalid failures.
@@ -129,16 +133,15 @@ Approved physical device for evidence: Lava `ST5GDW23LB004392` (`LAVA_LXX508`, A
 
 Current candidate artifacts are temporary/debug identity, not publishable:
 
-- APK: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`, 41,510,440 bytes, SHA-256 `5F7438105FE450D6331CFEDEE1FAEEB87FB4F6677EB811A997A02CC8FD7C4AE9`.
-- AAB: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`, 37,335,957 bytes, SHA-256 `87C835570B62C4C3A79C156F94CB7E15C6AD31FCB50A0E8ADB0FDE6672DC4858`.
+- APK: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk`, 41,687,756 bytes, SHA-256 `9F2E70034CFF9B0DE4A04490B084E1FCEBFD1B8C703C9B1FC5A3D8D0D692B613`.
+- AAB: `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`, 37,513,267 bytes, SHA-256 `750EB62BF1012BB54938E0402FF2E0D84B3450145180D95186AA0B4A8C84A13D`.
 - Package metadata: version name `1.0.0`, code `100`, min API 28, target API 36, ARM64; package ID `com.example.battleraja.m11` is temporary and debug-signed.
 
-Fresh physical evidence now exists under `Builds/Local/V1GameplayTruth/Final/lava-20260901-final/`:
-the approved Lava was freshly installed and reached menu → Bastion briefing → fighter
-selection → live arena, control taps and in-match settings. A clean six-sample/30-second
-capture found no configured app crash markers. Lava reports 4 KB pages, so this is not proof
-of physical 16 KB compatibility. Host/AVD 16 KB smoke evidence and physical proof remain
-separate.
+The approved Lava `ST5GDW23LB004392` is not visible in the current ADB inventory, so no
+device result is claimed for this exact source. The visible Oppo `b60e53b3` is outside the
+evidence scope and must not be used. Prior Lava captures remain historical and do not
+substitute for a current-source install, physical 16 KB runtime proof or normalized
+performance/endurance evidence.
 
 ## Research and policy anchors
 

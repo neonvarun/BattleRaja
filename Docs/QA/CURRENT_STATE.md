@@ -13,6 +13,29 @@ create or depend on evidence outside this repository root.
 
 **Prototype — Android offline release candidate in progress.**
 
+## Latest current-source evidence — 2026-09-04 — animation and lifecycle presentation
+
+Source commit `abcbe04` adds saved Animator clips/states for gadget use, Crown
+pickup/carry/deposit, KO, confirmed respawn and spectator flow. `FighterPresentation`
+mirrors immutable Bastion participant/Crown snapshots, while
+`OfflineMatchController` only clears the render-only defeat state after the authority
+respawn handoff is confirmed. The controlled art builder restored and saved the full
+Bijli, Pehel and Maya authored accessory hierarchies around the existing two-bone rig.
+
+Static validation is **0 errors / 0 warnings**. Full EditMode is **168/168** and full
+PlayMode is **99/99**. The exact test reports/logs and the animation clips are indexed in
+`Docs/QA/V1_ANIMATION_STATE_AND_RESPAWN_PRESENTATION_2026-09-04.md`.
+
+The exact temporary-ID candidate APK is 41,687,756 bytes (SHA-256
+`9F2E70034CFF9B0DE4A04490B084E1FCEBFD1B8C703C9B1FC5A3D8D0D692B613`) and AAB is
+37,513,267 bytes (SHA-256
+`750EB62BF1012BB54938E0402FF2E0D84B3450145180D95186AA0B4A8C84A13D`). The clean
+technical checker passes API 28/36, offline permissions, ARM64/static 16 KB alignment
+and store dimensions. Approved Lava `ST5GDW23LB004392` is currently not visible in
+ADB; the visible Oppo `b60e53b3` is outside the evidence scope and was not used. Thus
+current-source physical install, physical 16 KB runtime, normalized sustained
+performance and owner release approvals remain open.
+
 ## Latest current-source evidence — 2026-09-04 — squad perception and support fairness
 
 Source commit `8120932` bounds enemy carrier/focus nominations to a 16 m local range and

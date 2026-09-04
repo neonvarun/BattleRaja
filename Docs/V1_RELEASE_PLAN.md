@@ -13,7 +13,39 @@ prototype until every V1 completion gate and remaining human gate passes.
 - Approved physical evidence device: Lava `ST5GDW23LB004392` (`LAVA LXX508`) only.
 - Preserve internal networking/Web seams without exposing unusable public online paths.
 
-## Checkpoint 0s - local squad perception and support fairness — 2026-09-04
+## Checkpoint 0t - animation state and Bastion lifecycle presentation - 2026-09-04
+
+Source `abcbe04` adds a saved, editable Animator state library for `GadgetUse`, Crown
+pickup/carry/deposit, `KO`, `Respawn` and `Spectator`. The render-only presentation
+mirrors immutable Bastion participant/Crown snapshots, and the controller clears the
+visible defeat state only after the authority confirms the respawn handoff. The
+controlled production-art rebuild restored the complete authored Bijli, Pehel and Maya
+prefab hierarchies around the existing two-bone rig.
+
+- Static validation: **0 errors / 0 warnings**.
+- Full EditMode: **168/168 passed**; XML SHA-256
+  `B35DAED620E8A17BDDED6C127126723206E84F96665977321980CEB07F655E7F`.
+- Full PlayMode: **99/99 passed**; XML SHA-256
+  `6DF64D6702FB47891518CB32B16A45698133FFD30DEF8426FE0CEE8466689C7A`.
+- APK: **41,687,756 bytes**, SHA-256
+  `9F2E70034CFF9B0DE4A04490B084E1FCEBFD1B8C703C9B1FC5A3D8D0D692B613`.
+- AAB: **37,513,267 bytes**, SHA-256
+  `750EB62BF1012BB54938E0402FF2E0D84B3450145180D95186AA0B4A8C84A13D`.
+- Clean technical release checker: **0 errors / 0 warnings** for temporary package
+  `com.example.battleraja.m11`, API `28/36`, offline permissions, ARM64/static 16 KB
+  alignment and store dimensions. Log:
+  `Builds/Local/V1GameplayTruth/Next/animation-lifecycle-20260904/release-checker.log`
+  (SHA-256 `55F6658FABFFE705D9DAD093BB9213E29EFA45694196F69A5616E21865CD852E`).
+- Approved Lava `ST5GDW23LB004392` is currently absent from ADB; only the disallowed
+  Oppo `b60e53b3` is visible, and it was not used. Current-source physical install,
+  physical 16 KB runtime, normalized sustained performance, commissioned final assets
+  and owner identity/signing/privacy/Data Safety/IARC/cultural/Play approvals remain
+  open.
+
+Evidence and the complete asset list are detailed in
+`Docs/QA/V1_ANIMATION_STATE_AND_RESPAWN_PRESENTATION_2026-09-04.md`.
+
+## Checkpoint 0s - local squad perception and support fairness - 2026-09-04
 
 Source `8120932` closes a fairness gap in the offline Bastion squad layer. Enemy
 carrier/focus nominations now require a 16 m local range and authored Bazaar Bastion

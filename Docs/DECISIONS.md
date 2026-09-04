@@ -15,6 +15,45 @@ Record every material choice here. Do not silently overwrite old decisions.
 - **Evidence/sources:**
 - **Owner:**
 
+### ADR-080 — Keep Bastion lifecycle readability in a saved render-only state library
+
+- **Date:** 2026-09-04
+- **Status:** Accepted for the V1 offline presentation route; final authored animation
+  polish and human comfort review remain open.
+- **Context:** The authority and respawn handoff were correct, but the saved fighter
+  Animator exposed only generic combat states. Gadget use, Crown carriage, KO,
+  spectator and confirmed respawn therefore collapsed into visually ambiguous poses,
+  which made the team mode read like a prototype even when the underlying state was
+  correct. A previous animation-only regeneration also showed that re-saving an already
+  rigged prefab can strip source accessories if the art recipe is not reapplied.
+- **Options considered:** Drive all new poses from transient runtime transforms; add
+  states only to the controller while leaving lifecycle code implicit; or save a full
+  editable state library and mirror immutable authority snapshots through a controlled
+  presentation adapter, regenerating the full art recipe when prefab composition must
+  be rebuilt.
+- **Decision:** Add saved `GadgetUse`, `CrownPickup`, `CrownCarry`, `CrownDeposit`,
+  `KO`, `Respawn` and `Spectator` clips/states to the production Animator. Keep
+  `Eliminated` as a source-compatible enum alias for `KO`. `FighterPresentation` may
+  only consume `BastionParticipantSnapshot` and `CrownSparkSnapshot`; the controller
+  invokes `NotifyRespawned` after both legacy authority application and
+  `BastionCrownMatch.ConfirmRespawn` succeed. Use the explicit
+  `ProductionArtBuilder.RebuildAll` menu path before presentation regeneration so the
+  full authored fighter hierarchy is reconstructed rather than re-saving a stripped
+  rig. No gameplay, collider, score, ticket, replay or input authority moves into art.
+- **Consequences:** KO-to-spectator, Crown objective and respawn states are legible in
+  the saved assets and remain deterministic at the authority boundary. Generated
+  prefabs retain the complete fighter-specific accessories and two-bone rig, at the
+  cost of deliberate local-ID churn in the controlled prefab rebuild. Full EditMode
+  168/168 and PlayMode 99/99 cover the library, rig, gadget-use, KO and confirmed
+  respawn seams; strict bot/replay metrics remain carried from the simulation-only
+  checkpoint because this change does not alter domain rules.
+- **Evidence/sources:** `FighterPresentation.cs`, `GadgetUser.cs`,
+  `OfflineMatchController.cs`, `ProductionPresentationBuilder.cs`, generated clips under
+  `Content/Art/V1/Animation/Clips/`, regenerated fighter prefabs,
+  `VerticalSlicePlayModeTests.cs`, and
+  `Docs/QA/V1_ANIMATION_STATE_AND_RESPAWN_PRESENTATION_2026-09-04.md`.
+- **Owner:** Human project owner
+
 ### ADR-078 — Adapt Bastion Crown through a first-class offline team authority
 
 - **Date:** 2026-08-31

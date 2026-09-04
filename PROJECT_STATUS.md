@@ -6,6 +6,29 @@
 
 ## Current state
 
+- **Animation state and Bastion lifecycle presentation continuation (2026-09-04):**
+  Source `abcbe04` adds saved `GadgetUse`, `CrownPickup`, `CrownCarry`,
+  `CrownDeposit`, `KO`, `Respawn` and `Spectator` Animator states. `FighterPresentation`
+  now mirrors Crown/participant snapshots and the controller rehydrates render-only
+  colours, badges and pose only after confirmed authority respawn. Full authored
+  Bijli/Pehel/Maya prefab hierarchies were regenerated through the controlled art
+  builder after the animation pass; accessory meshes and the two-bone rig are intact.
+  Static validation is **0/0**, full EditMode **168/168**, full PlayMode **99/99**.
+  Exact evidence is indexed in
+  `Docs/QA/V1_ANIMATION_STATE_AND_RESPAWN_PRESENTATION_2026-09-04.md`.
+
+  The temporary-ID APK is **41,687,756 bytes** (SHA-256
+  `9F2E70034CFF9B0DE4A04490B084E1FCEBFD1B8C703C9B1FC5A3D8D0D692B613`) and AAB is
+  **37,513,267 bytes** (SHA-256
+  `750EB62BF1012BB54938E0402FF2E0D84B3450145180D95186AA0B4A8C84A13D`). The clean
+  technical release gate passes offline permissions, ARM64-only native libraries,
+  static 16 KB ELF alignment and store dimensions. The approved Lava serial
+  `ST5GDW23LB004392` is currently absent from ADB (only the disallowed Oppo
+  `b60e53b3` is visible), so no device result is claimed for this exact source.
+  Current-source physical installation, physical 16 KB runtime, normalized sustained
+  performance and owner Play/privacy/signing/cultural approvals remain open;
+  classification stays **Prototype — Android offline release candidate in progress**.
+
 - **Squad perception and support fairness continuation (2026-09-04):** Source `8120932`
   bounds enemy carrier/focus nominations to a deterministic 16 m range plus authored
   Bazaar Bastion line-of-sight, keeps focus advisory to the common local target selector,
