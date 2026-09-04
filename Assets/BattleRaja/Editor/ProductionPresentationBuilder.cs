@@ -544,6 +544,8 @@ namespace BattleRaja.Editor
             ReparentPart(root.transform.Find("MaceHead"), rightHand);
             ReparentPart(root.transform.Find("FanBladeLeft"), leftHand);
             ReparentPart(root.transform.Find("FanBladeRight"), rightHand);
+            ReparentPart(root.transform.Find("LegLeft"), leftFoot);
+            ReparentPart(root.transform.Find("LegRight"), rightFoot);
             ReparentPart(root.transform.Find("BootLeft"), leftFoot);
             ReparentPart(root.transform.Find("BootRight"), rightFoot);
             ReparentPart(root.transform.Find("KneeGuardLeft"), leftFoot);

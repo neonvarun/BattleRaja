@@ -922,6 +922,10 @@ namespace BattleRaja.Tests.PlayMode
                     fighter.name + " production silhouette must keep its readable chest armor");
                 Assert.That(meshNames, Does.Contain("LimbSegment"),
                     fighter.name + " production silhouette must keep connected limb segments");
+                Assert.That(meshNames, Does.Contain("ShoulderPlate"),
+                    fighter.name + " production silhouette must use angular shoulder armour");
+                Assert.That(meshNames, Does.Contain("LegArmor"),
+                    fighter.name + " production silhouette must keep readable lower-body armour");
                 Assert.That(meshNames, Does.Contain("KneeGuard"),
                     fighter.name + " production silhouette must keep lower-body identity detail");
                 if (modelRoot.name.StartsWith("Bijli"))

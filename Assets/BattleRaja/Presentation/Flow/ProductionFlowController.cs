@@ -559,8 +559,12 @@ namespace BattleRaja.Presentation.Flow
                 featureArtObject.transform.SetParent(_mainMenuPanel.transform, false);
                 featureArtObject.transform.SetAsFirstSibling();
                 var featureRect = featureArtObject.GetComponent<RectTransform>();
-                featureRect.anchorMin = new Vector2(0.08f, 0.47f);
-                featureRect.anchorMax = new Vector2(0.92f, 0.70f);
+                // Let the owned feature illustration carry the whole menu card.
+                // The previous narrow portrait slot left a large low-information
+                // block above the image; a full-panel envelope crop keeps the
+                // crown, stalls and fighter trio present behind the controls.
+                featureRect.anchorMin = new Vector2(0.02f, 0.02f);
+                featureRect.anchorMax = new Vector2(0.98f, 0.98f);
                 featureRect.offsetMin = Vector2.zero;
                 featureRect.offsetMax = Vector2.zero;
                 var featureImage = featureArtObject.GetComponent<RawImage>();
@@ -568,7 +572,7 @@ namespace BattleRaja.Presentation.Flow
                 featureImage.color = new Color(1f, 1f, 1f, 0.92f);
                 featureImage.raycastTarget = false;
                 var featureFitter = featureArtObject.GetComponent<AspectRatioFitter>();
-                featureFitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
+                featureFitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
                 featureFitter.aspectRatio = 1f;
                 // Keep the old vector identity alive as a fallback for fixtures or
                 // scenes that have not been rebound to the authored art texture.
@@ -670,8 +674,8 @@ namespace BattleRaja.Presentation.Flow
                 wide ? new Vector2(0.08f, 0.20f) : new Vector2(0.10f, 0.48f),
                 wide ? new Vector2(0.54f, 0.70f) : new Vector2(0.90f, 0.69f));
             SetAnchors(_mainMenuPanel.transform.Find("FeatureArt"),
-                wide ? new Vector2(0.04f, 0.10f) : new Vector2(0.08f, 0.47f),
-                wide ? new Vector2(0.56f, 0.74f) : new Vector2(0.92f, 0.70f));
+                wide ? new Vector2(0.02f, 0.02f) : new Vector2(0.02f, 0.02f),
+                wide ? new Vector2(0.98f, 0.98f) : new Vector2(0.98f, 0.98f));
 
             SetAnchors(_mainMenuPanel.transform.Find("Offline"),
                 wide ? new Vector2(0.60f, 0.52f) : new Vector2(0.28f, 0.30f),
