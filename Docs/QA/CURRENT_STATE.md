@@ -13,6 +13,38 @@ create or depend on evidence outside this repository root.
 
 **Prototype — Android offline release candidate in progress.**
 
+## Latest current-source evidence — 2026-09-04 — squad command-window determinism
+
+The Bastion squad blackboard now keeps one shared snapshot for the entire controller-owned
+bot callback window. Callback-side state mutations are deferred to the next preparation
+tick, while pure-domain callers outside a command window can still force an immediate
+refresh. This closes a deterministic coordination edge case without changing combat,
+objective scoring, respawn rules or the legacy Solo path. Source commit is `8e3563a`.
+
+Static validation is **0 errors / 0 warnings**. Full EditMode is **161/161** (XML SHA-256
+`8B4DCC3B571FC51AADC646604F5B875398861890E4A84EC2F152C4EE18DF892A`) and full PlayMode is
+**98/98** (XML SHA-256
+`B3FE89180E76435A1912733EF00750DD334A2C9770472B1F6C2E9ED72B40BEA5`). The fresh exact
+APK is 41,680,960 bytes (SHA-256
+`976EE4D767DC4BC88DB9EB3D499603515D576DF9A205E4E07BF1D87A1CBAA43A`) and the AAB is
+37,506,508 bytes (SHA-256
+`CE06B7B8C9CA9B67D8AF4796FD6360CEF4430B539BF34F379BC32D9E5F1ECF8F`). The release
+checker is **0 errors / 0 warnings**; the refreshed candidate remains temporary-ID and
+debug-signed.
+
+Approved Lava `ST5GDW23LB004392` installed the exact APK after a package clear, and the
+pulled base matches the APK hash. The fresh menu capture and process-scoped crash-marker
+log are under `Builds/Local/V1GameplayTruth/Next/squad-window-20260904/`. This bounded
+smoke does not claim a full physical 4v4 route, normalized performance, genuine 16 KB
+runtime or owner approval. The evidence record is
+`Docs/QA/V1_SQUAD_COMMAND_WINDOW_2026-09-04.md`.
+
+The canonical 100-match bot/replay metrics remain carried forward because this change only
+affects same-tick squad snapshot cadence; no new balance or fun claim is inferred. Final
+physical AI fairness, authored presentation, accessibility, performance/endurance,
+identity/signing, privacy/Data Safety, IARC, cultural review and Play Console gates remain
+open.
+
 ## Latest current-source evidence — 2026-09-04 — tutorial safety and GitHub validation repair
 
 The tutorial now uses a dedicated rule definition with automatic timeout and

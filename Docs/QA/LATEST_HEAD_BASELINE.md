@@ -1,5 +1,25 @@
 # Latest HEAD baseline
 
+## Bastion squad command-window determinism — source `8e3563a` — 2026-09-04
+
+The shared squad blackboard now holds one snapshot for the controller-owned bot callback
+window. A callback-side mutation cannot force only later teammates to replan at the same
+simulation tick; pure-domain callers outside the window still receive an immediate refresh.
+Combat, objective, respawn, replay serialization and Solo rules are unchanged.
+
+Static validation is **0/0**, full EditMode is **161/161** and full PlayMode is **98/98**.
+The exact rebuilt APK is 41,680,960 bytes (SHA-256
+`976EE4D767DC4BC88DB9EB3D499603515D576DF9A205E4E07BF1D87A1CBAA43A`) and the AAB is
+37,506,508 bytes (SHA-256
+`CE06B7B8C9CA9B67D8AF4796FD6360CEF4430B539BF34F379BC32D9E5F1ECF8F`). The release
+checker is **0/0** with the temporary package identity and debug signature. The exact APK
+was installed on approved Lava `ST5GDW23LB004392`; a fresh menu/crash-marker smoke is
+indexed in `Docs/QA/V1_SQUAD_COMMAND_WINDOW_2026-09-04.md`.
+
+This is a deterministic coordination hardening checkpoint, not final AI fairness, full
+physical Bastion comfort, normalized performance, genuine 16 KB, authored presentation or
+Play readiness.
+
 ## Tutorial safety and repository CI repair — source `a7ea3ce` — 2026-09-04
 
 The tutorial now keeps its authoritative simulation live beyond the normal idle target and

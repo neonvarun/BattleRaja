@@ -2144,3 +2144,30 @@ Record every material choice here. Do not silently overwrite old decisions.
   `Docs/QA/V1_TUTORIAL_SAFETY_AND_CI_VALIDATION_2026-09-04.md`, and the exact candidate
   checker log under `Builds/Local/V1GameplayTruth/Next/`.
 - **Owner:** Human project owner
+
+### ADR-087 - Keep one shared squad snapshot for each command window
+
+- **Date:** 2026-09-04
+- **Status:** Accepted for the V1 deterministic squad baseline; broader AI balance,
+  fairness and human fun review remain open.
+- **Context:** `BastionCrownMatch.TryGetSquadIntent` refreshed the shared blackboard
+  whenever a state revision differed from the last prepared revision. During the
+  controller-owned bot callback window, a callback-side mutation could therefore force
+  a replan for only the later teammates in the same tick, violating the shared-signal
+  contract and making replayed squad decisions dependent on callback order.
+- **Options considered:** Keep the eager refresh; rebuild a per-actor plan; or retain
+  the command-window snapshot and allow immediate refresh only for pure-domain callers
+  outside that window.
+- **Decision:** While `BeginSquadCommandPhase` is active, `TryGetSquadIntent` always
+  consumes the snapshot prepared at the start of the window. State mutations become
+  visible on the next preparation tick. When no command window is active, focused
+  pure-domain callers may still force a refresh after a mutation.
+- **Consequences:** All teammates in one authority callback window now observe one
+  deterministic plan, while the existing bounded communication cadence and outside-window
+  test ergonomics are preserved. A regression test covers both behaviors. This does not
+  claim final AI fairness or replace physical 4v4 review.
+- **Evidence/sources:** `BastionCrownMatch.cs`,
+  `BastionSquadBlackboardTests.cs`, source commit `8e3563a`, focused regression,
+  full EditMode **161/161**, full PlayMode **98/98**, and the rebuilt Android candidate
+  under `Builds/V1/Android/`.
+- **Owner:** Human project owner

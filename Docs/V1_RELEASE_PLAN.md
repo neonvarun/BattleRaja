@@ -13,6 +13,35 @@ prototype until every V1 completion gate and remaining human gate passes.
 - Approved physical evidence device: Lava `ST5GDW23LB004392` (`LAVA LXX508`) only.
 - Preserve internal networking/Web seams without exposing unusable public online paths.
 
+## Checkpoint 0m - Bastion squad command-window determinism — 2026-09-04
+
+The authoritative squad blackboard now keeps one shared snapshot for the entire bot
+callback window. Callback-side state mutations become visible on the next preparation tick,
+so callback order cannot make later teammates replan at the same simulation tick. Pure-domain
+callers outside the window retain immediate refresh behavior. Source commit: `8e3563a`.
+
+- Static validation: **0 errors / 0 warnings**.
+- Focused command-window regression passed.
+- Full EditMode: **161/161 passed**; XML SHA-256
+  `8B4DCC3B571FC51AADC646604F5B875398861890E4A84EC2F152C4EE18DF892A`.
+- Full PlayMode: **98/98 passed**; XML SHA-256
+  `B3FE89180E76435A1912733EF00750DD334A2C9770472B1F6C2E9ED72B40BEA5`.
+- APK: **41,680,960 bytes**, SHA-256
+  `976EE4D767DC4BC88DB9EB3D499603515D576DF9A205E4E07BF1D87A1CBAA43A`.
+- AAB: **37,506,508 bytes**, SHA-256
+  `CE06B7B8C9CA9B67D8AF4796FD6360CEF4430B539BF34F379BC32D9E5F1ECF8F`.
+- Technical release checker: **0 errors / 0 warnings**; package remains temporary
+  `com.example.battleraja.m11`, API `28/36`, offline permissions, seven ARM64 libraries
+  and static 16 KB ELF alignment.
+- Approved Lava `ST5GDW23LB004392`: exact APK installed after package clear; pulled base
+  matches the APK hash. Fresh menu/crash-marker evidence is under
+  `Builds/Local/V1GameplayTruth/Next/squad-window-20260904/`.
+
+The full evidence record is `Docs/QA/V1_SQUAD_COMMAND_WINDOW_2026-09-04.md`. This closes
+one deterministic coordination edge case only. AI fairness, full physical 4v4 comfort,
+normalized performance/endurance, genuine 16 KB runtime, authored presentation,
+accessibility/cultural/fun review and owner Play gates remain open.
+
 ## Checkpoint 0l - tutorial safety and repository CI repair — 2026-09-04
 
 The tutorial terminal path now has an explicit rule definition: automatic timeout and

@@ -3,6 +3,21 @@
 Updated: 2026-09-04
 Classification: **prototype**
 
+## Latest V1 Bastion squad coordination checkpoint — 2026-09-04
+
+The authoritative squad blackboard now preserves one shared intent snapshot for each bot
+callback window. Mutations during a callback are consumed on the next preparation tick,
+eliminating callback-order-dependent replanning while retaining immediate refresh for
+outside-window pure-domain callers. This is source `8e3563a`; no combat, objective,
+respawn, replay, Solo or presentation rules changed.
+
+Static validation is **0/0**, EditMode **161/161** and PlayMode **98/98**. Fresh Android
+APK/AAB artifacts and the approved-Lava install/menu smoke are indexed in
+`Docs/QA/V1_SQUAD_COMMAND_WINDOW_2026-09-04.md`. The candidate remains a prototype:
+physical AI fairness and full 4v4 route review, normalized performance/endurance, genuine
+16 KB runtime, final authored assets, accessibility/cultural/fun approval, permanent
+identity/signing, privacy/Data Safety, IARC and Play Console actions are open.
+
 ## Latest V1 tutorial safety and repository CI checkpoint — 2026-09-04
 
 The tutorial now disables automatic timeout and last-participant resolution until the

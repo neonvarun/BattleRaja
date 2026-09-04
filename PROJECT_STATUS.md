@@ -6,6 +6,16 @@
 
 ## Current state
 
+- **Bastion squad command-window determinism (2026-09-04):** The shared squad blackboard
+  now keeps one canonical snapshot for the full controller-owned bot callback window.
+  Callback-side mutations are deferred to the next preparation tick, preventing callback
+  order from changing later teammates' plans; pure-domain callers outside the window still
+  refresh immediately. Source `8e3563a` passes static validation **0/0**, full EditMode
+  **161/161** and full PlayMode **98/98**. Fresh APK/AAB builds pass the technical release
+  checker with hashes and device evidence indexed in
+  `Docs/QA/V1_SQUAD_COMMAND_WINDOW_2026-09-04.md`. This closes one authority coordination
+  edge case, not the broader AI fairness, physical route, performance or owner-release gates.
+
 - **Tutorial safety and repository CI repair (2026-09-04):** The tutorial now disables
   automatic timeout and last-participant resolution until the player advances into the
   Victory lesson, where the authority publishes a deterministic player-first result. This
