@@ -136,6 +136,33 @@ namespace BattleRaja.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator BastionShowsFriendlySquadStatusStrip()
+        {
+            var strip = GameObject.Find("FriendlySquadStrip");
+            Assert.That(strip, Is.Not.Null,
+                "Bastion Crown must expose a compact status strip for the three allied bots.");
+            Assert.That(strip.activeSelf, Is.True);
+
+            for (var actorId = 2; actorId <= 4; actorId++)
+            {
+                var card = strip.transform.Find("AllyCard" + actorId);
+                Assert.That(card, Is.Not.Null, $"Missing friendly ally card for actor {actorId}.");
+                var name = card.Find("Name")?.GetComponent<Text>();
+                var status = card.Find("Status")?.GetComponent<Text>();
+                var fill = card.Find("HealthTrack/HealthFill")?.GetComponent<Image>();
+                Assert.That(name, Is.Not.Null);
+                Assert.That(status, Is.Not.Null);
+                Assert.That(fill, Is.Not.Null);
+                StringAssert.DoesNotContain("DEBUG", name.text);
+                StringAssert.DoesNotContain("FIGHTER.", name.text);
+                Assert.That(status.text, Does.Contain("/").Or.Contain("ANCHOR").Or.Contain("RUNNER").Or.Contain("SKIRMISHER").Or.Contain("FLEX"));
+                Assert.That(fill.fillAmount, Is.GreaterThan(0f));
+            }
+
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator ProductionCrownPickupAndDepositUsesTeamAuthority()
         {
             var match = Object.FindAnyObjectByType<OfflineMatchController>();
