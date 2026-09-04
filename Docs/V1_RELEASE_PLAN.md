@@ -34,7 +34,8 @@ controls and safe-area layout intact. Source commits: `775497d`, `281eeb4`.
   alignment and store dimensions.
 - Approved Lava `ST5GDW23LB004392`: exact APK installed and pulled base hash matched;
   menu, fighter-select and live captures show the new silhouettes and full feature art;
-  scoped crash-marker log is clean. Lava reports 4 KB pages.
+  the same exact-source continuation selected Pehel and Maya and visibly deployed
+  Tiffin; scoped crash-marker logs are clean. Lava reports 4 KB pages.
 - Bounded 30-second diagnostic: settled PSS 248–259 MB, RSS 371–382 MB, graphics PSS
   75–80 MB, instantaneous CPU 39–62%, thermal status 0; no normalized FPS or
   endurance claim because `gfxinfo` exposed no usable histogram.

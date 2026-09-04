@@ -98,6 +98,35 @@ zero configured `FATAL EXCEPTION`, `ANR in`, `SIGSEGV` or `SIGABRT` markers (SHA
 `DBA4708E80E520CAE8C43DBF156B8962354ECD8492C7A78E2D8E1BA3F2B82877`). Lava reports
 4 KB pages; this is not genuine 16 KB runtime proof.
 
+### Current-source all-fighter route continuation
+
+The same installed APK was relaunched on the approved Lava and exercised through the
+real menu → Bastion Crown → fighter-selection route. The route folder is
+`Builds/Local/V1GameplayTruth/Next/visual-polish-20260904/lava/all-fighters/`.
+
+- Pehel was selected in `03-pehel-selected.png` (SHA-256
+  `0F3EE01F3A1FE298714C2E8736120B88511E7946F62B76D453261C8FD12DAD85`) and opened
+  with the `PEHEL • ANCHOR` live HUD in `04-pehel-live.png` (SHA-256
+  `062730D5C3E746B55AC29300ED4EF22C14156D93C1D995AB1DC93DD95F2595F3`). The later
+  gadget probe visibly reports `TIFFIN STATION DEPLOYED` in `07-pehel-gadget.png`
+  (SHA-256 `3548B5D1D3B0F63118E4A5225B9DFE3EB812180A1AD6E5347ABBD363CE9C476E`).
+- Maya was selected in `12-maya-selected.png` (SHA-256
+  `2CE703EC436774CDD0355A33C1E27431CF9ED0D4B417D83438F88443253BF1D2`) and opened
+  with the `MAYA • RUNNER` live HUD in `13-maya-live.png` (SHA-256
+  `73E2406A64FC7290009C37F2C5783D4BA41B922E5426CD9344251E0A32DED760`). The
+  follow-up sequence includes a live decoy/pressure frame and a visible Tiffin
+  deployment in `16-maya-gadget.png` (SHA-256
+  `FCD595B76919E5E3698C4783ACB2C0B0691FCBD4B091F22C554DE95272BDAB6A`).
+- The route logcat `route-logcat.txt` has zero configured fatal/ANR/SIGSEGV/SIGABRT
+  markers (SHA-256
+  `28BA1C10B1B5285C1ADAC803F7F695057ED5F0B833B70EACA4C9B753E034FB35`).
+
+This supplements the Bijli route and confirms current-source fighter-specific selection,
+HUD identity and a gadget-use visual on device. The Pehel attack/ability probe was
+captured after that actor had already been eliminated, so the sequence is not claimed as
+full all-fighter action or lifecycle comfort; human touch, accessibility, combat-effect
+and results/rematch review remain open.
+
 ## Bounded performance diagnostic
 
 The 30-second capture is under

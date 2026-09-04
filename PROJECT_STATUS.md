@@ -19,8 +19,10 @@
   `ST5GDW23LB004392` installed the exact APK, the pulled base hash matched, and the
   menu, fighter-select and live captures show the new silhouettes with zero scoped
   fatal/ANR/SIGSEGV/SIGABRT markers. Evidence is indexed in
-  `Docs/QA/V1_VISUAL_POLISH_2026-09-04.md`. This is a bounded readability pass, not
-  commissioned final art/audio, a complete current-source physical route, normalized
+  `Docs/QA/V1_VISUAL_POLISH_2026-09-04.md`; its route continuation also selected Pehel
+  and Maya and visibly deployed Tiffin on the same exact APK. This is a bounded
+  readability/action checkpoint, not commissioned final art/audio, a complete
+  current-source physical route, normalized
   sustained performance, genuine 16 KB runtime proof or owner release approval.
 
 - **Authoritative Bastion respawn handoff (2026-09-04):** Respawn now reserves a ticket

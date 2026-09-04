@@ -39,7 +39,9 @@ ANR, SIGSEGV or SIGABRT markers. Lava reports 4 KB pages. A bounded 30-second
 diagnostic observed settled PSS 248–259 MB, RSS 371–382 MB, graphics PSS 75–80 MB,
 instantaneous CPU 39–62% and thermal status 0, but no usable frame histogram; no
 normalized FPS, GPU, GC or endurance claim is made. Full evidence is in
-`Docs/QA/V1_VISUAL_POLISH_2026-09-04.md`.
+`Docs/QA/V1_VISUAL_POLISH_2026-09-04.md`. Its exact-source route continuation also
+selected Pehel and Maya and visibly deployed Tiffin on device; it does not claim a
+complete all-fighter action or lifecycle route.
 
 This closes a presentation readability checkpoint only. Commissioned final art/audio,
 full current-source physical lifecycle coverage, accessibility/cultural/fun review,
