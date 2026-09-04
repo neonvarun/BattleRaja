@@ -13,6 +13,25 @@ create or depend on evidence outside this repository root.
 
 **Prototype — Android offline release candidate in progress.**
 
+## Latest current-source evidence — 2026-09-05 — charged Lava comfort/evidence pass
+
+No source change. Human-operated route on the exact APK `98C3FFAE…FBEB`
+(source `493b972`): menu → Bastion briefing → fighter select (human Pehel) →
+live 4v4 → move/attack/ability/gadget probes → score RAJA 0→3 / RIVAL 0→2,
+tickets 12→11/9, `RIVAL CARRIER` → `CROWN DROPPED` → `RAJA CARRIER` → results
+at 04:02 (`WINNER TEAM RAJA • Clock`, deposits 0–0) → rematch reset → pause
+settings (all toggles ON) → HOME/resume with clock frozen at 01:28 → close →
+live resumed. Scoped logcat has zero configured fatal markers; point samples
+report mid-match PSS 288,429 KB / RSS 427,804 KB and post-rematch PSS 232,879 KB
+/ RSS 383,060 KB at thermal 0 and 38% USB battery. `gfxinfo`/SurfaceFlinger
+expose no frame rows, so no FPS claim. Player KO/respawn was not re-observed
+in this run; human ability/gadget taps showed no visible effect (known
+aim/placement edge states, not a new defect). Full record:
+`Docs/QA/V1_CHARGED_COMFORT_PASS_2026-09-05.md`; captures under
+`Builds/Local/V1GameplayTruth/Next/charged-comfort-20260905-033636/`.
+Battery 38% USB-powered is a stated caveat, and Bijli/Maya-as-human plus
+human gadget/deposit proof remain open.
+
 ## Latest current-source evidence — 2026-09-05 — authority boundaries and friendly squad HUD
 
 Source `feb9258` follows authority hardening in `673fd79`. Pickup effects now use a
