@@ -2088,3 +2088,32 @@ Record every material choice here. Do not silently overwrite old decisions.
   `Next/playmode-touch-glyph-final2-20260904.xml`, APK/AAB checker output and approved-Lava
   captures under `Builds/Local/V1GameplayTruth/Next/touch-glyph-final2/`.
 - **Owner:** Human project owner
+
+### ADR-085 - Make settings state visible without adding new interaction targets
+
+- **Date:** 2026-09-04
+- **Status:** Accepted for the V1 readability baseline; final visual and accessibility
+  review remains open.
+- **Context:** The approved-Lava pause sheet rendered the left-handed, reduced-flash and
+  high-contrast rows as plain dark rectangles with no current-state suffix, while aim
+  assist was the only row that exposed `ON/OFF`. This made an otherwise functional
+  accessibility surface read like a prototype and obscured the state cue in a paused
+  match.
+- **Options considered:** Keep text-only rows; replace the settings surface with a new
+  UI package; or add small repository-owned render-only glyphs/rails while preserving the
+  existing button hierarchy and preference callbacks.
+- **Decision:** Add `BattleRajaSettingsGlyph` and `BattleRajaUiTheme.StyleSettingsButton`.
+  Style both `ProductionFlowController` and `OfflineMatchHud` settings tiles with an
+  accent rail, an original icon and explicit `ON/OFF` suffixes. Keep all glyphs
+  raycast-disabled, leave the parent button as the only pointer target, and skip the rail
+  during contrast recolouring so the state cue survives high-contrast toggles.
+- **Consequences:** Menu and pause screenshots now communicate settings state at a glance,
+  including high-contrast mode, with no changes to local preference keys, lifecycle pause,
+  common input commands, authority, replay or collision. The added UI geometry is a small
+  static mesh cost and remains generated baseline iconography pending human review.
+- **Evidence/sources:** `BattleRajaSettingsGlyph.cs`, `BattleRajaUiTheme.cs`,
+  `ProductionFlowController.cs`, `OfflineMatchHud.cs`, `OfflineMatchPlayModeTests.cs`,
+  full EditMode **159/159**, PlayMode **96/96**, checker log
+  `Next/release-checker-settings-polish-20260904.log`, and approved-Lava captures under
+  `Builds/Local/V1GameplayTruth/Next/settings-polish-final-20260904/`.
+- **Owner:** Human project owner

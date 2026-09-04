@@ -86,6 +86,17 @@ The generator is the editable source of truth for these procedural meshes. Unity
 settings and prefab references are committed as ordinary text/binary project assets after
 human review.
 
+## Settings surface iconography — 2026-09-04
+
+`Assets/BattleRaja/Presentation/UI/BattleRajaSettingsGlyph.cs` is an original,
+repository-owned vector `MaskableGraphic` used only for the menu and in-match pause
+settings tiles. Its hand, flash, contrast, aim, haptics, slider and text-size marks are
+procedural geometry authored in source; no downloaded icon pack, emoji font, protected
+character or reference-game asset is used. The graphic is raycast-disabled and the
+existing parent `Button` remains the sole pointer target. This is editable baseline
+iconography pending human visual, cultural and accessibility review; it is not a claim of
+final commissioned UI art.
+
 ## Menu feature art replacement — 2026-09-01
 
 `Assets/BattleRaja/Art/V1/BattleRaja-FeatureArt-OriginalCandidate.png` is a new,

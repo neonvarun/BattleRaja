@@ -5,6 +5,7 @@ using BattleRaja.Presentation.Match;
 using BattleRaja.Presentation.Combat;
 using BattleRaja.Presentation.Gadgets;
 using BattleRaja.Presentation.Movement;
+using BattleRaja.Presentation.UI;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -123,6 +124,41 @@ namespace BattleRaja.Tests.PlayMode
 
             Assert.That(attack.sizeDelta.x, Is.EqualTo(expected).Within(0.1f));
             Assert.That(attack.sizeDelta.y, Is.EqualTo(expected).Within(0.1f));
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator PauseSettingsExposeStateLabelsAndOriginalGlyphs()
+        {
+            var hud = Object.FindAnyObjectByType<OfflineMatchHud>();
+            var pause = GameObject.Find("Pause")?.GetComponent<Button>();
+            Assert.That(hud, Is.Not.Null);
+            Assert.That(pause, Is.Not.Null);
+
+            pause.onClick.Invoke();
+            yield return null;
+
+            var settings = GameObject.Find("SettingsPanel");
+            Assert.That(settings, Is.Not.Null);
+            Assert.That(settings.activeSelf, Is.True);
+
+            var names = new[] { "LeftHanded", "ReducedFlashes", "HighContrast", "AimAssist" };
+            for (var i = 0; i < names.Length; i++)
+            {
+                var button = settings.transform.Find(names[i]).GetComponent<Button>();
+                var label = button.GetComponentInChildren<Text>(true);
+                var glyph = button.transform.Find("SettingsGlyph")?.GetComponent<BattleRajaSettingsGlyph>();
+                Assert.That(label, Is.Not.Null, names[i]);
+                Assert.That(label.text, Does.Match(".*(ON|OFF)$"), names[i]);
+                Assert.That(glyph, Is.Not.Null, names[i]);
+            }
+
+            var left = settings.transform.Find("LeftHanded").GetComponent<Button>();
+            var before = left.GetComponentInChildren<Text>(true).text;
+            left.onClick.Invoke();
+            Assert.That(left.GetComponentInChildren<Text>(true).text, Is.Not.EqualTo(before));
+
+            pause.onClick.Invoke();
             yield return null;
         }
 

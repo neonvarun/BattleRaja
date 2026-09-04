@@ -13,6 +13,42 @@ prototype until every V1 completion gate and remaining human gate passes.
 - Approved physical evidence device: Lava `ST5GDW23LB004392` (`LAVA LXX508`) only.
 - Preserve internal networking/Web seams without exposing unusable public online paths.
 
+## Checkpoint 0k - settings surface clarity pass — 2026-09-04
+
+The menu and in-match pause settings now use original icon-backed tiles and accent rails,
+with explicit ON/OFF state labels for all four accessibility toggles and a redundant
+high-contrast state cue. `BattleRajaSettingsGlyph` is a render-only uGUI graphic; existing
+button targets, local preference keys, lifecycle pause behavior, authority, replay and
+collision are unchanged.
+
+- Static validation: **0 errors / 0 warnings**.
+- EditMode: **159/159 passed**, XML SHA-256
+  `F8C9BF60F77873E9D906E2D0E8726946A58B8593C36CCCD845C086234A85914C`.
+- PlayMode: **96/96 passed**, XML SHA-256
+  `3BE1BA5E2EA8887C4D52DC8F11AE3FD0D64921DB3960409DE30AF9080AAAAC4B`.
+- APK: **41,678,776 bytes**, SHA-256
+  `714ACE23E8C9DA859B91B14E12F9E7E65CA277ADAAAB315F1C81B4547D195C93`.
+- AAB: **37,504,322 bytes**, SHA-256
+  `74F7EDC96481EA868FF1A8F078E70D6C407126AD9A197BF2020D044F108445CC`.
+- Technical release checker: 0 errors / 0 warnings; package `com.example.battleraja.m11`,
+  version `1.0.0` / code `100`, API `28/36`, no network permissions, seven ARM64 native
+  libraries, static 16 KB alignment and store dimensions. Log:
+  `Builds/Local/V1GameplayTruth/Next/release-checker-settings-polish-20260904.log`
+  (SHA-256 `7F7A42F2BD60B8ADE04868174E83DB7A8F8F00CB6108ACBD1723498D7E04B0F7`).
+- Approved Lava `ST5GDW23LB004392`: exact APK installed and pulled base hash matches.
+  Fresh menu/menu-settings/live/pause-settings/high-contrast captures are in
+  `Builds/Local/V1GameplayTruth/Next/settings-polish-final-20260904/`; scoped logcat has
+  zero configured fatal markers. Live six-sample/30-second bounded capture:
+  PSS **298,369–304,625 KB**, RSS **417,808–424,064 KB**, graphics PSS
+  **89,324–95,480 KB**, raw CPU **106–127%** (mean **116.3%**), battery **63% → 63%**,
+  thermal **0**. Device `gfxinfo` exposed no frame timing; no FPS claim is attached.
+
+This closes a settings-state/readability gap only. Final commissioned art/audio, full
+physical comfort/accessibility/lifecycle review, normalized GPU/GC/endurance, physical
+16 KB runtime, permanent identity/signing and owner privacy/Data Safety/IARC, cultural
+and Play approvals remain open; classification remains **Prototype — Android offline
+release candidate in progress**.
+
 ## Checkpoint 0j - touch-control clarity pass — 2026-09-04
 
 The production touch surfaces now carry original vector glyphs for move, aim, attack,

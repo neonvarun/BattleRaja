@@ -48,6 +48,38 @@ offline release candidate in progress**; final identity/signing, physical 16 KB 
 normalized GPU/GC/endurance, full tutorial/all-fighter/lifecycle/accessibility review and
 owner privacy/Data Safety/IARC/cultural/Play approvals remain open.
 
+## Latest current-source evidence — 2026-09-04 — settings surface clarity pass
+
+The menu and in-match pause settings now use original icon-backed tiles and accent rails,
+with explicit ON/OFF labels for every accessibility toggle and a redundant high-contrast
+state cue. `BattleRajaSettingsGlyph.cs` is render-only; existing uGUI targets, preference
+keys, lifecycle pause behavior and gameplay authority are unchanged.
+
+Static validation is **0 errors / 0 warnings**. Fresh EditMode is **159/159** (XML SHA-256
+`F8C9BF60F77873E9D906E2D0E8726946A58B8593C36CCCD845C086234A85914C`) and PlayMode is
+**96/96** (XML SHA-256
+`3BE1BA5E2EA8887C4D52DC8F11AE3FD0D64921DB3960409DE30AF9080AAAAC4B`). The exact APK is
+**41,678,776 bytes** (SHA-256
+`714ACE23E8C9DA859B91B14E12F9E7E65CA277ADAAAB315F1C81B4547D195C93`) and AAB is
+**37,504,322 bytes** (SHA-256
+`74F7EDC96481EA868FF1A8F078E70D6C407126AD9A197BF2020D044F108445CC`). The technical
+checker passes API 28/36, offline permissions, ARM64/static 16 KB alignment and store
+dimensions; checker log `Next/release-checker-settings-polish-20260904.log` has SHA-256
+`7F7A42F2BD60B8ADE04868174E83DB7A8F8F00CB6108ACBD1723498D7E04B0F7`.
+
+Approved Lava `ST5GDW23LB004392` (`1080x2460`, Android 14/API 34, 4 KB pages) has the
+exact APK installed and the pulled base hash matches. Fresh menu/menu-settings/live/
+pause-settings/high-contrast captures are in
+`Builds/Local/V1GameplayTruth/Next/settings-polish-final-20260904/`; the scoped logcat
+contains **0** configured fatal markers. The exact live six-sample/30-second capture in
+`Builds/Local/V1GameplayTruth/Next/performance-settings-polish-final-20260904/` reports
+PSS **298,369–304,625 KB**, RSS **417,808–424,064 KB**, graphics PSS **89,324–95,480 KB**,
+raw app CPU **106–127%** (mean **116.3%**), battery **63% → 63%**, thermal status **0**,
+and zero configured fatal markers. `gfxinfo` returned no frame timing data, so no FPS claim
+is attached. This is a UI-state and bounded device evidence pass, not final commissioned
+art/audio, normalized GPU/GC/endurance, physical 16 KB runtime, full physical comfort,
+or owner privacy/Data Safety/IARC/cultural/Play approval.
+
 ## Latest current-source evidence — 2026-09-04 — hero silhouette and portrait framing pass
 
 The refreshed presentation pass adds connected neck collars, chest plates, limb segments,

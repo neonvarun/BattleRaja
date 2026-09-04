@@ -31,7 +31,12 @@ namespace BattleRaja.Presentation.Match
         private GameObject _resultsPanel;
         private Text _resultsText;
         private GameObject _settingsPanel;
+        private Button _leftHandedButton;
+        private Button _reducedFlashesButton;
+        private Button _highContrastButton;
         private Button _aimAssistButton;
+        private Button _textDownButton;
+        private Button _textUpButton;
         private PlayerInputAdapter _playerInput;
         private BattleRajaAudioDirector _audio;
         private bool _highContrast;
@@ -537,14 +542,20 @@ namespace BattleRaja.Presentation.Match
             CreateText(_settingsPanel.transform, "SettingsTitle", new Vector2(0.08f, 0.84f), new Vector2(0.92f, 0.96f), 26, TextAnchor.MiddleCenter).text = "SETTINGS";
             CreateButton(_settingsPanel.transform, "CloseSettings", "CLOSE", new Vector2(0.52f, 0.01f), new Vector2(0.92f, 0.075f), ToggleSettings);
             CreateButton(_settingsPanel.transform, "ReturnToMenu", "RETURN TO MENU", new Vector2(0.08f, 0.01f), new Vector2(0.48f, 0.075f), ReturnToMenu);
-            CreateButton(_settingsPanel.transform, "LeftHanded", "LEFT-HANDED", new Vector2(0.08f, 0.65f), new Vector2(0.92f, 0.76f), ToggleLeftHanded);
-            CreateButton(_settingsPanel.transform, "ReducedFlashes", "REDUCED FLASHES", new Vector2(0.08f, 0.50f), new Vector2(0.92f, 0.61f), ToggleReducedFlashes);
-            CreateButton(_settingsPanel.transform, "HighContrast", "HIGH CONTRAST", new Vector2(0.08f, 0.35f), new Vector2(0.92f, 0.46f), ToggleHighContrast);
+            _leftHandedButton = CreateButton(_settingsPanel.transform, "LeftHanded", "LEFT-HANDED", new Vector2(0.08f, 0.65f), new Vector2(0.92f, 0.76f), ToggleLeftHanded);
+            _reducedFlashesButton = CreateButton(_settingsPanel.transform, "ReducedFlashes", "REDUCED FLASHES", new Vector2(0.08f, 0.50f), new Vector2(0.92f, 0.61f), ToggleReducedFlashes);
+            _highContrastButton = CreateButton(_settingsPanel.transform, "HighContrast", "HIGH CONTRAST", new Vector2(0.08f, 0.35f), new Vector2(0.92f, 0.46f), ToggleHighContrast);
             _aimAssistButton = CreateButton(_settingsPanel.transform, "AimAssist", "AIM ASSIST", new Vector2(0.08f, 0.20f), new Vector2(0.92f, 0.31f), ToggleAimAssist);
-            CreateButton(_settingsPanel.transform, "TextDown", "TEXT -", new Vector2(0.08f, 0.09f), new Vector2(0.44f, 0.18f), DecreaseTextScale);
-            CreateButton(_settingsPanel.transform, "TextUp", "TEXT +", new Vector2(0.56f, 0.09f), new Vector2(0.92f, 0.18f), IncreaseTextScale);
+            _textDownButton = CreateButton(_settingsPanel.transform, "TextDown", "TEXT -", new Vector2(0.08f, 0.09f), new Vector2(0.44f, 0.18f), DecreaseTextScale);
+            _textUpButton = CreateButton(_settingsPanel.transform, "TextUp", "TEXT +", new Vector2(0.56f, 0.09f), new Vector2(0.92f, 0.18f), IncreaseTextScale);
+            BattleRajaUiTheme.StyleSettingsButton(_leftHandedButton, BattleRajaSettingsGlyph.Kind.LeftHanded, BattleRajaUiTheme.Cyan, _leftHanded);
+            BattleRajaUiTheme.StyleSettingsButton(_reducedFlashesButton, BattleRajaSettingsGlyph.Kind.ReducedFlashes, BattleRajaUiTheme.Gold, _reducedFlashes);
+            BattleRajaUiTheme.StyleSettingsButton(_highContrastButton, BattleRajaSettingsGlyph.Kind.HighContrast, BattleRajaUiTheme.Mint, _highContrast);
+            BattleRajaUiTheme.StyleSettingsButton(_aimAssistButton, BattleRajaSettingsGlyph.Kind.AimAssist, BattleRajaUiTheme.Saffron, _aimAssist);
+            BattleRajaUiTheme.StyleSettingsButton(_textDownButton, BattleRajaSettingsGlyph.Kind.TextSize, BattleRajaUiTheme.MutedText, false);
+            BattleRajaUiTheme.StyleSettingsButton(_textUpButton, BattleRajaSettingsGlyph.Kind.TextSize, BattleRajaUiTheme.MutedText, false);
             _settingsPanel.SetActive(false);
-            RefreshAimAssistLabel();
+            RefreshSettingsLabels();
             ApplyResponsiveLayout();
         }
 
@@ -654,6 +665,7 @@ namespace BattleRaja.Presentation.Match
             PlayerPrefs.SetInt("battleraja.settings.left_handed", _leftHanded ? 1 : 0);
             PlayerPrefs.Save();
             ApplyHandedLayout();
+            RefreshSettingsLabels();
         }
 
         private void ApplyHandedLayout()
@@ -707,6 +719,7 @@ namespace BattleRaja.Presentation.Match
             PlayerPrefs.SetInt("battleraja.settings.reduced_flashes", _reducedFlashes ? 1 : 0);
             PlayerPrefs.Save();
             ApplyReducedFlashes();
+            RefreshSettingsLabels();
         }
 
         private void ApplyReducedFlashes()
@@ -735,6 +748,7 @@ namespace BattleRaja.Presentation.Match
             PlayerPrefs.SetInt("battleraja.settings.high_contrast", _highContrast ? 1 : 0);
             PlayerPrefs.Save();
             BattleRajaUiTheme.ApplyContrast(canvas != null ? canvas.transform : null, _highContrast);
+            RefreshSettingsLabels();
         }
 
         private void ToggleAimAssist()
@@ -769,6 +783,23 @@ namespace BattleRaja.Presentation.Match
             if (_aimAssistButton == null) return;
             var label = _aimAssistButton.GetComponentInChildren<Text>();
             if (label != null) label.text = _aimAssist ? "AIM ASSIST  ON" : "AIM ASSIST  OFF";
+            BattleRajaUiTheme.SetSettingsState(_aimAssistButton, _aimAssist);
+        }
+
+        private void RefreshSettingsLabels()
+        {
+            SetToggleLabel(_leftHandedButton, "LEFT-HANDED", _leftHanded);
+            SetToggleLabel(_reducedFlashesButton, "REDUCED FLASHES", _reducedFlashes);
+            SetToggleLabel(_highContrastButton, "HIGH CONTRAST", _highContrast);
+            RefreshAimAssistLabel();
+        }
+
+        private static void SetToggleLabel(Button button, string label, bool enabled)
+        {
+            if (button == null) return;
+            var text = button.GetComponentInChildren<Text>(true);
+            if (text != null) text.text = label + (enabled ? "  ON" : "  OFF");
+            BattleRajaUiTheme.SetSettingsState(button, enabled);
         }
 
         private void LoadPreferences()

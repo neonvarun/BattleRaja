@@ -103,7 +103,83 @@ namespace BattleRaja.Presentation.UI
             var label = button.GetComponentInChildren<Text>(true);
             if (label != null)
             {
-                StyleText(label, label.fontSize > 0 ? label.fontSize : 18, TextAnchor.MiddleCenter, Text, true);
+                var settingsTile = button.transform.Find("SettingsGlyph") != null;
+                StyleText(label, label.fontSize > 0 ? label.fontSize : 18,
+                    settingsTile ? TextAnchor.MiddleLeft : TextAnchor.MiddleCenter, Text, true);
+            }
+        }
+
+        /// <summary>
+        /// Styles a preference tile as a product surface rather than a plain debug
+        /// button. The icon and accent rail are render-only children, so the button
+        /// keeps a single, unambiguous pointer target and remains keyboard/switch
+        /// accessible.
+        /// </summary>
+        public static void StyleSettingsButton(
+            Button button,
+            BattleRajaSettingsGlyph.Kind kind,
+            Color accent,
+            bool enabled)
+        {
+            if (button == null) return;
+            StyleButton(button, accent, false);
+
+            var label = button.GetComponentInChildren<Text>(true);
+            if (label != null)
+            {
+                label.rectTransform.anchorMin = new Vector2(0.19f, 0.06f);
+                label.rectTransform.anchorMax = new Vector2(0.78f, 0.94f);
+                label.rectTransform.offsetMin = new Vector2(4f, 2f);
+                label.rectTransform.offsetMax = new Vector2(-4f, -2f);
+                label.alignment = TextAnchor.MiddleLeft;
+                label.fontSize = Mathf.Min(label.fontSize, 17);
+            }
+
+            var rail = button.transform.Find("SettingsAccentRail") as RectTransform;
+            if (rail == null)
+            {
+                var railObject = new GameObject("SettingsAccentRail", typeof(RectTransform), typeof(Image));
+                railObject.transform.SetParent(button.transform, false);
+                rail = railObject.GetComponent<RectTransform>();
+                rail.SetAsFirstSibling();
+            }
+
+            rail.anchorMin = new Vector2(0f, 0.10f);
+            rail.anchorMax = new Vector2(0.026f, 0.90f);
+            rail.offsetMin = Vector2.zero;
+            rail.offsetMax = Vector2.zero;
+            var railImage = rail.GetComponent<Image>();
+            railImage.color = new Color(accent.r, accent.g, accent.b, enabled ? 0.90f : 0.48f);
+            railImage.raycastTarget = false;
+
+            var glyph = button.transform.Find("SettingsGlyph")?.GetComponent<BattleRajaSettingsGlyph>();
+            if (glyph == null)
+            {
+                var glyphObject = new GameObject("SettingsGlyph", typeof(RectTransform), typeof(BattleRajaSettingsGlyph));
+                glyphObject.transform.SetParent(button.transform, false);
+                glyphObject.transform.SetAsLastSibling();
+                glyph = glyphObject.GetComponent<BattleRajaSettingsGlyph>();
+            }
+
+            var glyphRect = glyph.rectTransform;
+            glyphRect.anchorMin = new Vector2(0.045f, 0.18f);
+            glyphRect.anchorMax = new Vector2(0.16f, 0.82f);
+            glyphRect.offsetMin = Vector2.zero;
+            glyphRect.offsetMax = Vector2.zero;
+            glyph.Configure(kind, accent, enabled);
+        }
+
+        public static void SetSettingsState(Button button, bool enabled)
+        {
+            if (button == null) return;
+            var glyph = button.transform.Find("SettingsGlyph")?.GetComponent<BattleRajaSettingsGlyph>();
+            glyph?.SetEnabled(enabled);
+            var rail = button.transform.Find("SettingsAccentRail")?.GetComponent<Image>();
+            if (rail != null)
+            {
+                var color = rail.color;
+                color.a = enabled ? 0.90f : 0.48f;
+                rail.color = color;
             }
         }
 
@@ -118,6 +194,7 @@ namespace BattleRaja.Presentation.UI
             foreach (var image in root.GetComponentsInChildren<Image>(true))
             {
                 if (image == null) continue;
+                if (image.gameObject.name == "SettingsAccentRail") continue;
                 var button = image.GetComponent<Button>();
                 if (button != null)
                 {

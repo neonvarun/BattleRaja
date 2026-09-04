@@ -32,6 +32,35 @@
   **0**. SurfaceFlinger returned only the refresh interval and no frame timestamps, so no
   FPS claim is made for this pass.
 
+- **Settings surface clarity pass (2026-09-04):** The menu and in-match pause settings
+  now render as original icon-backed tiles with accent rails, explicit ON/OFF state labels
+  for every accessibility toggle, and a high-contrast state cue. `BattleRajaSettingsGlyph`
+  is a render-only uGUI graphic; the existing button targets, local preference keys,
+  lifecycle pause behavior and gameplay authority are unchanged. Fresh EditMode is
+  **159/159** (XML SHA-256
+  `F8C9BF60F77873E9D906E2D0E8726946A58B8593C36CCCD845C086234A85914C`) and PlayMode is
+  **96/96** (XML SHA-256
+  `3BE1BA5E2EA8887C4D52DC8F11AE3FD0D64921DB3960409DE30AF9080AAAAC4B`). The rebuilt
+  temporary-ID APK is **41,678,776 bytes** (SHA-256
+  `714ACE23E8C9DA859B91B14E12F9E7E65CA277ADAAAB315F1C81B4547D195C93`) and AAB is
+  **37,504,322 bytes** (SHA-256
+  `74F7EDC96481EA868FF1A8F078E70D6C407126AD9A197BF2020D044F108445CC`). The clean
+  technical checker reports 0 errors / 0 warnings for package `com.example.battleraja.m11`,
+  API 28/36, no network permissions, ARM64/static 16 KB alignment and store dimensions.
+  Approved Lava `ST5GDW23LB004392` has the exact APK installed (pulled base hash matches).
+  Fresh menu, menu-settings, live, pause-settings and high-contrast captures are under
+  `Builds/Local/V1GameplayTruth/Next/settings-polish-final-20260904/`; the final pause
+  sheet shows all four toggle states and the scoped logcat has **0** configured fatal
+  markers. The exact live 30-second six-sample capture is under
+  `Builds/Local/V1GameplayTruth/Next/performance-settings-polish-final-20260904/`:
+  PSS **298,369–304,625 KB**, RSS **417,808–424,064 KB**, graphics PSS
+  **89,324–95,480 KB**, raw app CPU **106–127%** (mean **116.3%**), battery **63% → 63%**,
+  thermal status **0**. This is bounded device evidence, not normalized GPU/GC/endurance
+  approval. The candidate remains **Prototype — Android offline release candidate in
+  progress**; commissioned art/audio, full physical comfort/accessibility/lifecycle,
+  physical 16 KB runtime, normalized endurance, permanent identity/signing and owner
+  privacy/Data Safety/IARC/cultural/Play approvals remain open.
+
 - **Hero silhouette and portrait framing pass (2026-09-04):** The saved V1 fighter
   presentation now includes connected neck collars, chest plates, limb segments, waist
   bands, knee guards and fighter-specific signature weapons (Bijli arc blade, Pehel mace,

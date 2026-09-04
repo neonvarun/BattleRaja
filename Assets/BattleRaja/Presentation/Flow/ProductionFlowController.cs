@@ -621,14 +621,26 @@ namespace BattleRaja.Presentation.Flow
             _reducedFlashesButton = CreateButton(_settingsPanel.transform, "Flashes", "REDUCED FLASHES", new Vector2(0.57f, 0.54f), new Vector2(0.87f, 0.64f), ToggleReducedFlashes);
             _highContrastButton = CreateButton(_settingsPanel.transform, "Contrast", "HIGH CONTRAST", new Vector2(0.13f, 0.42f), new Vector2(0.43f, 0.52f), ToggleHighContrast);
             _aimAssistButton = CreateButton(_settingsPanel.transform, "AimAssist", "AIM ASSIST", new Vector2(0.57f, 0.42f), new Vector2(0.87f, 0.52f), ToggleAimAssist);
-            CreateButton(_settingsPanel.transform, "MusicDown", "MUSIC -", new Vector2(0.13f, 0.30f), new Vector2(0.43f, 0.40f), DecreaseMusicVolume);
-            CreateButton(_settingsPanel.transform, "MusicUp", "MUSIC +", new Vector2(0.57f, 0.30f), new Vector2(0.87f, 0.40f), IncreaseMusicVolume);
-            CreateButton(_settingsPanel.transform, "EffectsDown", "EFFECTS -", new Vector2(0.13f, 0.18f), new Vector2(0.43f, 0.28f), DecreaseEffectsVolume);
-            CreateButton(_settingsPanel.transform, "EffectsUp", "EFFECTS +", new Vector2(0.57f, 0.18f), new Vector2(0.87f, 0.28f), IncreaseEffectsVolume);
-            CreateButton(_settingsPanel.transform, "TextDown", "TEXT -", new Vector2(0.08f, 0.06f), new Vector2(0.30f, 0.16f), DecreaseTextScale);
+            var musicDown = CreateButton(_settingsPanel.transform, "MusicDown", "MUSIC -", new Vector2(0.13f, 0.30f), new Vector2(0.43f, 0.40f), DecreaseMusicVolume);
+            var musicUp = CreateButton(_settingsPanel.transform, "MusicUp", "MUSIC +", new Vector2(0.57f, 0.30f), new Vector2(0.87f, 0.40f), IncreaseMusicVolume);
+            var effectsDown = CreateButton(_settingsPanel.transform, "EffectsDown", "EFFECTS -", new Vector2(0.13f, 0.18f), new Vector2(0.43f, 0.28f), DecreaseEffectsVolume);
+            var effectsUp = CreateButton(_settingsPanel.transform, "EffectsUp", "EFFECTS +", new Vector2(0.57f, 0.18f), new Vector2(0.87f, 0.28f), IncreaseEffectsVolume);
+            var textDown = CreateButton(_settingsPanel.transform, "TextDown", "TEXT -", new Vector2(0.08f, 0.06f), new Vector2(0.30f, 0.16f), DecreaseTextScale);
             _hapticsButton = CreateButton(_settingsPanel.transform, "Haptics", "HAPTICS", new Vector2(0.35f, 0.06f), new Vector2(0.65f, 0.16f), ToggleHaptics);
-            CreateButton(_settingsPanel.transform, "TextUp", "TEXT +", new Vector2(0.70f, 0.06f), new Vector2(0.92f, 0.16f), IncreaseTextScale);
+            var textUp = CreateButton(_settingsPanel.transform, "TextUp", "TEXT +", new Vector2(0.70f, 0.06f), new Vector2(0.92f, 0.16f), IncreaseTextScale);
             CreateButton(_settingsPanel.transform, "Close", "CLOSE", new Vector2(0.32f, 0.005f), new Vector2(0.68f, 0.055f), CloseSettings);
+
+            BattleRajaUiTheme.StyleSettingsButton(_leftHandedButton, BattleRajaSettingsGlyph.Kind.LeftHanded, BattleRajaUiTheme.Cyan, _leftHanded);
+            BattleRajaUiTheme.StyleSettingsButton(_reducedFlashesButton, BattleRajaSettingsGlyph.Kind.ReducedFlashes, BattleRajaUiTheme.Gold, _reducedFlashes);
+            BattleRajaUiTheme.StyleSettingsButton(_highContrastButton, BattleRajaSettingsGlyph.Kind.HighContrast, BattleRajaUiTheme.Mint, _highContrast);
+            BattleRajaUiTheme.StyleSettingsButton(_aimAssistButton, BattleRajaSettingsGlyph.Kind.AimAssist, BattleRajaUiTheme.Saffron, _aimAssist);
+            BattleRajaUiTheme.StyleSettingsButton(musicDown, BattleRajaSettingsGlyph.Kind.Music, BattleRajaUiTheme.Cyan, false);
+            BattleRajaUiTheme.StyleSettingsButton(musicUp, BattleRajaSettingsGlyph.Kind.Music, BattleRajaUiTheme.Cyan, false);
+            BattleRajaUiTheme.StyleSettingsButton(effectsDown, BattleRajaSettingsGlyph.Kind.Effects, BattleRajaUiTheme.Magenta, false);
+            BattleRajaUiTheme.StyleSettingsButton(effectsUp, BattleRajaSettingsGlyph.Kind.Effects, BattleRajaUiTheme.Magenta, false);
+            BattleRajaUiTheme.StyleSettingsButton(textDown, BattleRajaSettingsGlyph.Kind.TextSize, BattleRajaUiTheme.MutedText, false);
+            BattleRajaUiTheme.StyleSettingsButton(_hapticsButton, BattleRajaSettingsGlyph.Kind.Haptics, BattleRajaUiTheme.Mint, _haptics);
+            BattleRajaUiTheme.StyleSettingsButton(textUp, BattleRajaSettingsGlyph.Kind.TextSize, BattleRajaUiTheme.MutedText, false);
 
             _errorPanel = CreatePanel(_safeArea.transform, "ErrorPanel");
             _errorText = CreateText(_errorPanel.transform, "ErrorText", new Vector2(0.12f, 0.51f), new Vector2(0.88f, 0.73f), 24, TextAnchor.MiddleCenter);
@@ -809,6 +821,11 @@ namespace BattleRaja.Presentation.Flow
             SetToggleLabel(_highContrastButton, "HIGH CONTRAST", _highContrast);
             SetToggleLabel(_aimAssistButton, "AIM ASSIST", _aimAssist);
             SetToggleLabel(_hapticsButton, "HAPTICS", _haptics);
+            BattleRajaUiTheme.SetSettingsState(_leftHandedButton, _leftHanded);
+            BattleRajaUiTheme.SetSettingsState(_reducedFlashesButton, _reducedFlashes);
+            BattleRajaUiTheme.SetSettingsState(_highContrastButton, _highContrast);
+            BattleRajaUiTheme.SetSettingsState(_aimAssistButton, _aimAssist);
+            BattleRajaUiTheme.SetSettingsState(_hapticsButton, _haptics);
             _settingsSummaryText.text =
                 $"LEFT-HANDED: {(_leftHanded ? "ON" : "OFF")}    REDUCED FLASHES: {(_reducedFlashes ? "ON" : "OFF")}\n" +
                 $"HIGH CONTRAST: {(_highContrast ? "ON" : "OFF")}    AIM ASSIST: {(_aimAssist ? "ON" : "OFF")}\n" +

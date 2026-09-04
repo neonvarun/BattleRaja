@@ -3,6 +3,37 @@
 Updated: 2026-09-04
 Classification: **prototype**
 
+## Latest V1 settings surface checkpoint — 2026-09-04
+
+The menu and in-match pause settings now render as original icon-backed tiles with accent
+rails and explicit ON/OFF state labels for every accessibility toggle. The render-only
+`BattleRajaSettingsGlyph` adds no pointer target or gameplay state; local preferences,
+pause/lifecycle behavior and authority remain on the existing code paths.
+
+Static validation is **0/0**, EditMode **159/159** (XML SHA-256
+`F8C9BF60F77873E9D906E2D0E8726946A58B8593C36CCCD845C086234A85914C`) and PlayMode
+**96/96** (XML SHA-256
+`3BE1BA5E2EA8887C4D52DC8F11AE3FD0D64921DB3960409DE30AF9080AAAAC4B`). The exact APK is
+`Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk` (SHA-256
+`714ACE23E8C9DA859B91B14E12F9E7E65CA277ADAAAB315F1C81B4547D195C93`) and AAB is
+`Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab` (SHA-256
+`74F7EDC96481EA868FF1A8F078E70D6C407126AD9A197BF2020D044F108445CC`). The technical
+checker passes API 28/36, offline permissions, ARM64/static 16 KB alignment and store
+dimensions.
+
+The exact APK is installed on approved Lava `ST5GDW23LB004392`; fresh menu, menu-settings,
+live, pause-settings and high-contrast captures are under
+`Builds/Local/V1GameplayTruth/Next/settings-polish-final-20260904/`, with zero configured
+fatal markers. The exact live six-sample/30-second capture reports PSS
+**298,369–304,625 KB**, RSS **417,808–424,064 KB**, graphics PSS **89,324–95,480 KB**,
+raw app CPU **106–127%** (mean **116.3%**), battery **63% → 63%**, thermal **0**; no FPS
+claim is made because the device `gfxinfo` surface did not expose frame timing.
+
+This is a player-facing settings/readability improvement, not completion of commissioned
+art/audio, full physical comfort/accessibility/lifecycle, normalized GPU/GC/endurance,
+physical 16 KB runtime, final identity/signing, privacy/Data Safety/IARC, cultural review
+or Play submission. Classification remains **prototype**.
+
 ## Latest V1 control clarity checkpoint — 2026-09-04
 
 The production mobile controls now use compact portrait sizing and original vector glyphs for
