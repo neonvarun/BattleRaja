@@ -13,6 +13,39 @@ create or depend on evidence outside this repository root.
 
 **Prototype — Android offline release candidate in progress.**
 
+## Latest current-source evidence — 2026-09-04 — visual polish and menu presentation
+
+Source commits `775497d` and `281eeb4` add saved faceted shoulder, gauntlet and leg
+armor meshes to the Bijli, Pehel and Maya production prefabs and expand the original
+Bazaar Bastion feature artwork to fill the menu card. The changes are presentation-only;
+authority, colliders, hitboxes, replay state and input contracts are unchanged.
+
+Static validation is **0 errors / 0 warnings**. Full EditMode is **164/164** (final
+menu-layout XML SHA-256
+`5D43596B6246CFF916B83A43459728537CBADD5B8947DB33CABE37F7EBE5D5DF`) and full
+PlayMode is **98/98** (XML SHA-256
+`7F827E33249211F45469CF14596653A912286DC24B3A2ACEC885752CC5E48AD6`). The exact
+candidate APK is 41,681,892 bytes (SHA-256
+`739742F5D401F5B02F9213B71EA78EA2C41F8F66E9D78792AE3430ED84DD0A7B`) and the AAB is
+37,507,386 bytes (SHA-256
+`4BE9951BDAA517ED01F2D35472D41FA415A919063BA1A976BF1ADA5EF357DD94`). The technical
+checker is **0/0** for temporary package `com.example.battleraja.m11`, API `28/36`,
+offline permissions, ARM64/static alignment and store dimensions.
+
+Approved Lava `ST5GDW23LB004392` installed the exact APK and the pulled base hash
+matches. Fresh menu, fighter-select and live captures show the full feature art and
+the new silhouettes at gameplay scale; the scoped logcat has zero configured fatal,
+ANR, SIGSEGV or SIGABRT markers. Lava reports 4 KB pages. A bounded 30-second
+diagnostic observed settled PSS 248–259 MB, RSS 371–382 MB, graphics PSS 75–80 MB,
+instantaneous CPU 39–62% and thermal status 0, but no usable frame histogram; no
+normalized FPS, GPU, GC or endurance claim is made. Full evidence is in
+`Docs/QA/V1_VISUAL_POLISH_2026-09-04.md`.
+
+This closes a presentation readability checkpoint only. Commissioned final art/audio,
+full current-source physical lifecycle coverage, accessibility/cultural/fun review,
+normalized sustained performance, genuine 16 KB runtime, final identity/signing and
+owner Play approvals remain open.
+
 ## Latest current-source evidence — 2026-09-04 — authoritative respawn handoff
 
 Source commit `0d0f875` adds an explicit authority confirmation to the Bastion Crown

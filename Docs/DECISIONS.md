@@ -2223,3 +2223,29 @@ Record every material choice here. Do not silently overwrite old decisions.
   focused **16/16**, full EditMode **164/164**, full PlayMode **98/98**, strict
   production-bot run and `Docs/QA/V1_RESPAWN_HANDOFF_AUTHORITY_2026-09-04.md`.
 - **Owner:** Human project owner
+
+### ADR-090 - Use faceted render-only silhouette pieces for the V1 art baseline
+
+- **Date:** 2026-09-04
+- **Status:** Accepted for the editable V1 presentation baseline; commissioned final
+  art/audio and human visual review remain open.
+- **Context:** The first production prefabs read as toy-like at phone gameplay scale:
+  round shoulder/boot masses did not separate the three fighters, and the menu feature
+  artwork occupied only a short strip above a large low-information block.
+- **Options considered:** Leave the existing primitives unchanged; replace the whole
+  fighter rig; or add saved, faceted render-only pieces and improve the existing menu
+  crop without touching gameplay geometry.
+- **Decision:** Generate reusable `ShoulderPlate`, `GauntletPlate` and `LegArmor`
+  meshes, assign fighter-specific silhouette colors/scales, attach legs to the existing
+  presentation foot rig, and use an envelope crop so the original Bazaar feature art
+  fills the menu card. Keep gameplay colliders, hitboxes, authority and replay state
+  unchanged.
+- **Consequences:** Fighter identity and lower-body readability improve in the menu and
+  live scene without changing balance or deterministic simulation. The result remains a
+  procedural editable baseline and still needs commissioned art/audio, human review and
+  sustained performance validation.
+- **Evidence/sources:** `ProductionArtBuilder.cs`,
+  `ProductionPresentationBuilder.cs`, `ProductionFlowController.cs`, generated meshes
+  and prefabs, source commits `775497d`/`281eeb4`, full EditMode **164/164**, full
+  PlayMode **98/98**, and `Docs/QA/V1_VISUAL_POLISH_2026-09-04.md`.
+- **Owner:** Human project owner

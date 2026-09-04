@@ -6,6 +6,23 @@
 
 ## Current state
 
+- **Visual polish and menu presentation (2026-09-04):** The editable production-art
+  baseline now gives Bijli, Pehel and Maya distinct faceted shoulder, gauntlet and leg
+  silhouettes, and the Bazaar Bastion feature artwork fills the menu card instead of
+  leaving a low-information dead block. Source commits `775497d` and `281eeb4` pass
+  static validation **0/0**, full EditMode **164/164** and full PlayMode **98/98**.
+  The exact Android candidate is APK **41,681,892 bytes** (SHA-256
+  `739742F5D401F5B02F9213B71EA78EA2C41F8F66E9D78792AE3430ED84DD0A7B`) and AAB
+  **37,507,386 bytes** (SHA-256
+  `4BE9951BDAA517ED01F2D35472D41FA415A919063BA1A976BF1ADA5EF357DD94`); the
+  technical release checker is **0/0**. Approved Lava
+  `ST5GDW23LB004392` installed the exact APK, the pulled base hash matched, and the
+  menu, fighter-select and live captures show the new silhouettes with zero scoped
+  fatal/ANR/SIGSEGV/SIGABRT markers. Evidence is indexed in
+  `Docs/QA/V1_VISUAL_POLISH_2026-09-04.md`. This is a bounded readability pass, not
+  commissioned final art/audio, a complete current-source physical route, normalized
+  sustained performance, genuine 16 KB runtime proof or owner release approval.
+
 - **Authoritative Bastion respawn handoff (2026-09-04):** Respawn now reserves a ticket
   once and keeps the participant dead/spectating until the application successfully
   confirms the authority handoff. Failed or delayed adapters are retried without a
