@@ -16,6 +16,11 @@
   Static validation is **0/0**, full EditMode **168/168**, full PlayMode **99/99**.
   Exact evidence is indexed in
   `Docs/QA/V1_ANIMATION_STATE_AND_RESPAWN_PRESENTATION_2026-09-04.md`.
+  The fresh strict 50x production-bot pass also completed **100/100** seeded matches:
+  **87/100** in the 240–360 second window, **99/100** combat-positive, **100/100** with
+  bot-to-bot damage, zero protected-warmup damage, invalid positions and stuck ticks,
+  plus 618 respawns and successful Umbrella/Dhol/Tiffin use. The batch report is
+  `Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260904-170221495-9101.json`.
   Documentation tip `5fbecb2` also passed GitHub
   [Repository validation run #105](https://github.com/neonvarun/BattleRaja/actions/runs/33898113032)
   in 28 seconds, including the tracked-source secret scan.

@@ -47,9 +47,37 @@ in 28 seconds, including the portable whitespace/LFS and tracked-source secret c
   `94D6A0CFB518BFDC461D9688E798828455AF81BF66493B5200E949C50DD1DBE8`.
 - The PlayMode suite covers the saved clip library, full fighter rig/VFX composition,
   gadget-use state, terminal KO and the confirmed Bastion respawn mirror. The
-  production-bot/replay simulation evidence remains the current `8120932` checkpoint;
-  this change is presentation-only apart from the controller's already-tested
-  respawn notification seam.
+  deterministic replay/soak contract remains unchanged; the fresh production-bot batch
+  below confirms the full Bastion pipeline after this presentation change.
+
+## Current-source production-bot batch
+
+For additional confidence after the presentation hooks were integrated, the full
+PlayMode suite was rerun with `BATTLERAJA_PRODUCTION_BOT_MATCHES=100`,
+`BATTLERAJA_PRODUCTION_BOT_ASSERT_RELEASE_GATES=1`,
+`BATTLERAJA_PRODUCTION_BOT_PLAYBACK_SCALE=50` and base seed `9101`. The test passed
+**99/99** and generated 100 per-match replay records plus the aggregate report
+`Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260904-170221495-9101.json`
+(2,454,741 bytes; SHA-256
+`3BC14EF496098B0C89FB543DEEF3E371A39115547557273006CAF5EAEB299491`). The NUnit
+report is `Builds/Local/TestResults/production-bot-animation-20260904.xml`
+(88,957 bytes; SHA-256
+`D9E8598A82151ED1C16E0ADBF582E94B2C316937E071A367896E5FCCC0F88E93`) and its log is
+`Builds/Local/Logs/production-bot-animation-20260904.log` (210,072 bytes; SHA-256
+`ED11E68A3F01717D18DC7AD861257D78FF01283D1ED0B6DE018C23333B541B7F`).
+
+All **100/100** matches reached a terminal result within the tick budget; **87/100**
+landed in the documented 240–360 second window (mean `234.666 s`, range
+`99.199–273.022 s`), **99/100** contained a combat elimination and **100/100** had
+bot-to-bot damaging pairs. Aandhi-only resolutions were **0/100**. Protected-warmup
+damage, invalid positions and continuous stuck ticks were all **0**. Attack telemetry
+recorded 17,919 attempts with 69 out-of-range diagnostics; ability telemetry recorded
+18,833 attempts with 4,394 rejections. Successful gadgets totaled **255**: Umbrella
+Guard **65**, Dhol Burst **90** and Tiffin Station **100**. The batch recorded **618**
+respawns, **612** combat KOs, **19** Aandhi KOs, 3,021 unique damaging pairs, 176,032
+squad signal updates, 576,585 escort assignments, 310,776 support assignments and
+84,813 retreat signals. These are fixed-tick diagnostics, not a normalized frame-rate,
+thermal or human-fun claim.
 
 ## Android candidate artifacts
 

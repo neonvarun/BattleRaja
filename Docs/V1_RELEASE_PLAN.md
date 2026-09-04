@@ -27,6 +27,13 @@ prefab hierarchies around the existing two-bone rig.
   `B35DAED620E8A17BDDED6C127126723206E84F96665977321980CEB07F655E7F`.
 - Full PlayMode: **99/99 passed**; XML SHA-256
   `6DF64D6702FB47891518CB32B16A45698133FFD30DEF8426FE0CEE8466689C7A`.
+- Strict production-bot PlayMode: **99/99 passed** with 100 seeded matches. The batch
+  reached **100/100** terminal, **87/100** in-window, **99/100** combat-positive and
+  **100/100** with bot-to-bot damage; protected-warmup damage, invalid positions and
+  continuous stuck ticks were all zero. It recorded 618 respawns and successful
+  Umbrella/Dhol/Tiffin uses. Report:
+  `Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260904-170221495-9101.json`
+  (SHA-256 `3BC14EF496098B0C89FB543DEEF3E371A39115547557273006CAF5EAEB299491`).
 - GitHub [Repository validation run #105](https://github.com/neonvarun/BattleRaja/actions/runs/33898113032)
   passed on documentation tip `5fbecb2` in **28 seconds**, including whitespace/LFS and
   tracked-source secret checks.

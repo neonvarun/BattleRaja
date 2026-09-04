@@ -25,6 +25,11 @@ Bijli, Pehel and Maya authored accessory hierarchies around the existing two-bon
 Static validation is **0 errors / 0 warnings**. Full EditMode is **168/168** and full
 PlayMode is **99/99**. The exact test reports/logs and the animation clips are indexed in
 `Docs/QA/V1_ANIMATION_STATE_AND_RESPAWN_PRESENTATION_2026-09-04.md`.
+The strict 50x production-bot rerun completed **100/100** seeded Bastion matches:
+**87/100** in the 240–360 second window, **99/100** combat-positive and **100/100** with
+bot-to-bot damage, with zero protected-warmup damage, invalid positions or stuck ticks.
+Its aggregate report is
+`Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260904-170221495-9101.json`.
 The pushed documentation tip `5fbecb2` passed GitHub
 [Repository validation run #105](https://github.com/neonvarun/BattleRaja/actions/runs/33898113032)
 in 28 seconds, including the portable tracked-source secret scan.
