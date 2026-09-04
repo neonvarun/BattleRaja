@@ -51,6 +51,31 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void TutorialKeepsAuthorityLivePastIdleTimeoutUntilExplicitVictory()
+        {
+            var definition = OfflineMatchDefinition.Tutorial;
+            Assert.That(definition.AutomaticResolution, Is.False);
+
+            var simulation = new OfflineMatchSimulation(definition);
+            simulation.Start(CreateSpawns());
+            simulation.SyncHealth(new CombatEntityId(2), 0);
+            simulation.Advance(definition.TargetDurationSeconds - 1f);
+
+            var idleTick = simulation.Advance(30f);
+
+            Assert.That(idleTick.MatchEnded, Is.False,
+                "A reader who pauses on a tutorial card must not be sent to Results by the match clock.");
+            Assert.That(simulation.IsEnded, Is.False);
+            Assert.That(simulation.Phase, Is.EqualTo(MatchPhase.FinalCircle),
+                "The tutorial keeps the real authority live rather than entering a hidden terminal phase.");
+
+            simulation.ForceResolve(new CombatEntityId(1));
+            var snapshots = simulation.GetSnapshots();
+            Assert.That(simulation.IsEnded, Is.True);
+            Assert.That(snapshots.Single(snapshot => snapshot.Id.Value == 1).Placement, Is.EqualTo(1));
+        }
+
+        [Test]
         public void AandhiWarningPrecedesClosingAndPreviewsNextRadius()
         {
             var simulation = new OfflineMatchSimulation(OfflineMatchDefinition.SoloRaja);

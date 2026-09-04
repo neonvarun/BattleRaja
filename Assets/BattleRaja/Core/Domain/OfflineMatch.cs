@@ -59,17 +59,36 @@ namespace BattleRaja.Core.Domain
             Float2 zoneCenter,
             MatchPhaseDefinition[] phases,
             OfflineMatchMode mode)
+            : this(spawnProtectionSeconds, zoneCenter, phases, mode, true)
+        {
+        }
+
+        public OfflineMatchDefinition(
+            float spawnProtectionSeconds,
+            Float2 zoneCenter,
+            MatchPhaseDefinition[] phases,
+            OfflineMatchMode mode,
+            bool automaticResolution)
         {
             SpawnProtectionSeconds = spawnProtectionSeconds;
             ZoneCenter = zoneCenter;
             Phases = phases ?? Array.Empty<MatchPhaseDefinition>();
             Mode = mode;
+            AutomaticResolution = automaticResolution;
         }
 
         public float SpawnProtectionSeconds { get; }
         public Float2 ZoneCenter { get; }
         public MatchPhaseDefinition[] Phases { get; }
         public OfflineMatchMode Mode { get; }
+        /// <summary>
+        /// Whether the simulation may resolve itself from its normal timeout or
+        /// last-participant rules. Guided tutorial sessions keep this disabled so
+        /// a slow reader cannot be dropped into Results before the final lesson;
+        /// an explicit authority-owned completion still uses <see
+        /// cref="OfflineMatchSimulation.ForceResolve"/>.
+        /// </summary>
+        public bool AutomaticResolution { get; }
         public bool IsTeamMode => Mode == OfflineMatchMode.BastionCrown;
 
         public float TargetDurationSeconds
@@ -96,6 +115,26 @@ namespace BattleRaja.Core.Domain
                 new MatchPhaseDefinition(MatchPhase.Pressure, 115f, 11f, 1, 25f),
                 new MatchPhaseDefinition(MatchPhase.FinalCircle, 78f, 5f, 2)
             });
+
+        /// <summary>
+        /// The real movement/combat rules used by the replayable onboarding arena.
+        /// It keeps the same phase and Aandhi timings as Solo Raja, but disables
+        /// automatic terminal resolution until the tutorial explicitly completes
+        /// its Victory lesson.
+        /// </summary>
+        public static OfflineMatchDefinition Tutorial => new OfflineMatchDefinition(
+            spawnProtectionSeconds: 5f,
+            zoneCenter: Float2.Zero,
+            phases: new[]
+            {
+                new MatchPhaseDefinition(MatchPhase.LoadWarmup, 3f, 14f, 0),
+                new MatchPhaseDefinition(MatchPhase.SpawnProtection, 5f, 14f, 0),
+                new MatchPhaseDefinition(MatchPhase.Opening, 105f, 14f, 0, 50f),
+                new MatchPhaseDefinition(MatchPhase.Pressure, 115f, 11f, 1, 25f),
+                new MatchPhaseDefinition(MatchPhase.FinalCircle, 78f, 5f, 2)
+            },
+            OfflineMatchMode.SoloRaja,
+            automaticResolution: false);
 
         /// <summary>
         /// The legacy zone channel used by the presentation bridge for the
@@ -253,6 +292,7 @@ namespace BattleRaja.Core.Domain
 
         public MatchPhase Phase => _phase;
         public float ElapsedSeconds => _elapsed;
+        public float TargetDurationSeconds => _definition.TargetDurationSeconds;
         public bool IsStarted => _started;
         public bool IsEnded => _phase == MatchPhase.Resolution;
         public int AliveCount
@@ -299,7 +339,7 @@ namespace BattleRaja.Core.Domain
                 _elapsed += deltaSeconds;
                 var timedOut = _elapsed >= _definition.TargetDurationSeconds;
                 if (!timedOut) UpdatePhase();
-                if (!_definition.IsTeamMode && (AliveCount <= 1 || timedOut))
+                if (!_definition.IsTeamMode && _definition.AutomaticResolution && (AliveCount <= 1 || timedOut))
                 {
                     ResolveWinner();
                 }
@@ -349,7 +389,10 @@ namespace BattleRaja.Core.Domain
                 Eliminate(participant);
             }
 
-            if (_started && !_definition.IsTeamMode && AliveCount <= 1) ResolveWinner();
+            if (_started && !_definition.IsTeamMode && _definition.AutomaticResolution && AliveCount <= 1)
+            {
+                ResolveWinner();
+            }
             return true;
         }
 
@@ -402,7 +445,10 @@ namespace BattleRaja.Core.Domain
 
                 _damageContributions.Remove(target.Id);
 
-                if (AliveCount <= 1 && !_definition.IsTeamMode) ResolveWinner();
+                if (AliveCount <= 1 && !_definition.IsTeamMode && _definition.AutomaticResolution)
+                {
+                    ResolveWinner();
+                }
             }
 
             return true;
@@ -539,8 +585,19 @@ namespace BattleRaja.Core.Domain
         /// existing terminal rules.</summary>
         public void ForceResolve()
         {
+            ForceResolve(default(CombatEntityId));
+        }
+
+        /// <summary>
+        /// Explicitly resolves a guided session with a validated preferred winner.
+        /// This is intentionally separate from automatic timeout/last-participant
+        /// rules so onboarding can hand the player a deterministic result only
+        /// after its final lesson is ready.
+        /// </summary>
+        public void ForceResolve(CombatEntityId preferredWinner)
+        {
             if (!_started || _phase == MatchPhase.Resolution) return;
-            ResolveWinner();
+            ResolveWinner(preferredWinner);
         }
 
         private void UpdatePhase()
@@ -626,7 +683,7 @@ namespace BattleRaja.Core.Domain
             return -1;
         }
 
-        private void ResolveWinner()
+        private void ResolveWinner(CombatEntityId preferredWinner = default(CombatEntityId))
         {
             if (_phase == MatchPhase.Resolution) return;
 
@@ -654,7 +711,20 @@ namespace BattleRaja.Core.Domain
                 if (_participants[i].Alive) living.Add(_participants[i]);
             }
 
-            living.Sort(CompareTimeoutRanking);
+            var preferred = preferredWinner.Value > 0 ? Find(preferredWinner) : null;
+            if (preferred != null && preferred.Alive)
+            {
+                living.Sort((left, right) =>
+                {
+                    if (left.Id == preferred.Id) return right.Id == preferred.Id ? 0 : -1;
+                    if (right.Id == preferred.Id) return 1;
+                    return CompareTimeoutRanking(left, right);
+                });
+            }
+            else
+            {
+                living.Sort(CompareTimeoutRanking);
+            }
             for (var i = 0; i < living.Count; i++) living[i].Placement = i + 1;
 
             _phase = MatchPhase.Resolution;

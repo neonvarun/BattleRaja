@@ -50,6 +50,66 @@ namespace BattleRaja.Tests.PlayMode
             Assert.That(overlay.CurrentStep, Is.EqualTo(TutorialStep.Complete));
         }
 
+        [UnityTest]
+        public IEnumerator TutorialIdleTimeoutCannotPublishResultsBeforeVictoryLesson()
+        {
+            yield return SceneManager.LoadSceneAsync("TutorialArena", LoadSceneMode.Single);
+            yield return null;
+            yield return null;
+
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match.IsTutorialMode, Is.True);
+
+            // Simulate a player reading the final card for longer than the normal
+            // Solo duration. Tutorial authority must remain live until the overlay
+            // explicitly enters its Victory lesson.
+            match.Simulation.Advance(match.Simulation.TargetDurationSeconds - 1f);
+            match.Simulation.Advance(30f);
+            yield return null;
+
+            Assert.That(match.Simulation.IsEnded, Is.False);
+            Assert.That(match.ResultsShown, Is.False);
+        }
+
+        [UnityTest]
+        public IEnumerator TutorialVictoryLessonExplicitlyPublishesPlayerResult()
+        {
+            yield return SceneManager.LoadSceneAsync("TutorialArena", LoadSceneMode.Single);
+            yield return null;
+            yield return null;
+
+            var overlay = Object.FindAnyObjectByType<TutorialOverlay>();
+            var match = Object.FindAnyObjectByType<OfflineMatchController>();
+            var actions = new[]
+            {
+                TutorialAction.Movement,
+                TutorialAction.Aim,
+                TutorialAction.BasicAttack,
+                TutorialAction.Ability,
+                TutorialAction.GadgetCollected,
+                TutorialAction.GadgetUsed,
+                TutorialAction.AandhiObserved,
+                TutorialAction.Elimination
+            };
+
+            for (var i = 0; i < actions.Length; i++)
+            {
+                Assert.That(overlay.ObserveAction(actions[i]), Is.True, actions[i].ToString());
+                overlay.Advance();
+            }
+
+            Assert.That(overlay.CurrentStep, Is.EqualTo(TutorialStep.Victory));
+            Assert.That(match.ResultsShown, Is.True,
+                "Results are released only when the user advances into the final Victory lesson.");
+            Assert.That(match.Results.Single(snapshot => snapshot.Id.Value == 1).Placement, Is.EqualTo(1));
+
+            yield return null;
+            Assert.That(overlay.CurrentStepSatisfied, Is.True);
+            overlay.Advance();
+            Assert.That(overlay.CurrentStep, Is.EqualTo(TutorialStep.Complete));
+        }
+
         private static GameObject FindSceneObject(string name)
         {
             return Object.FindObjectsByType<Transform>(FindObjectsInactive.Include)

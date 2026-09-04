@@ -155,6 +155,13 @@ namespace BattleRaja.Presentation.Flow
             // the earlier lessons are still on screen, so reconcile that already
             // authoritative inventory state when the Gadget lesson begins.
             ReconcileGadgetLessonState();
+            if (_steps.Current == TutorialStep.Victory)
+            {
+                // Tutorial authority has no idle timeout. Resolve a deterministic
+                // player result only when the user has completed the preceding
+                // elimination lesson and explicitly advances to Victory.
+                match?.TryResolveTutorialVictory();
+            }
             CaptureTelemetryBaseline();
             if (_steps.IsComplete) SaveCompletion();
             Refresh();

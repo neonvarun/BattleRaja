@@ -172,6 +172,31 @@ namespace BattleRaja.Presentation.Match
             return result;
         }
 
+        /// <summary>
+        /// Publishes the guided tutorial's deterministic result once the final
+        /// Victory lesson is reached. Tutorial authority deliberately disables
+        /// automatic timeout/last-participant resolution, so this explicit seam
+        /// is the only path that can expose Results for the training session.
+        /// </summary>
+        public bool TryResolveTutorialVictory()
+        {
+            if (!tutorialMode || _bastionCrown != null || _authority == null ||
+                Simulation == null || Simulation.IsEnded)
+            {
+                return false;
+            }
+
+            var playerId = new CombatEntityId(1);
+            if (!Simulation.TryGetSnapshot(playerId, out var player) || !player.Alive)
+            {
+                return false;
+            }
+
+            Simulation.ForceResolve(playerId);
+            PublishResults();
+            return Simulation.IsEnded && _resultsShown;
+        }
+
         public bool TryAcquireGadget(CombatEntityId collectorId, ContentId gadgetId)
         {
             return _authority != null && _authority.TryAcquireGadget(collectorId, gadgetId);
@@ -651,7 +676,9 @@ namespace BattleRaja.Presentation.Match
 
             _replaySpawns = spawns.ToArray();
             _bastionCrown = null;
-            var definition = useBastionCrown ? OfflineMatchDefinition.BastionCrown : OfflineMatchDefinition.SoloRaja;
+            var definition = useBastionCrown
+                ? OfflineMatchDefinition.BastionCrown
+                : (tutorialMode ? OfflineMatchDefinition.Tutorial : OfflineMatchDefinition.SoloRaja);
             // Keep the Aandhi warning and zone state visible during onboarding, but do not
             // let a player die while they are reading a lesson card. The safety cadence is
             // scoped to the authored tutorial scene; production Solo/Bastion matches keep
