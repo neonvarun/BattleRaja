@@ -315,6 +315,17 @@ namespace BattleRaja.Presentation.AI
         private void SimulateTick(int simulationTick, float fixedDeltaSeconds)
         {
             _simulationTick = simulationTick;
+            var squadIntent = default(BastionSquadIntent);
+            var hasBastionIntent = matchController != null && matchController.TryGetBastionBotIntent(
+                new CombatEntityId(movementAgent.ActorId),
+                out squadIntent);
+            var objectiveMovement = hasBastionIntent ? squadIntent.Movement : Float2.Zero;
+            var objectiveAim = hasBastionIntent ? squadIntent.Aim : Float2.Up;
+            if (matchController != null && matchController.IsBastionCrown)
+            {
+                _bastionPlan = hasBastionIntent ? squadIntent.Plan : BastionSquadPlan.Regroup;
+            }
+
             if (health != null && health.Snapshot.IsDefeated)
             {
                 _lastSubmittedMovement = Float2.Zero;
@@ -327,7 +338,13 @@ namespace BattleRaja.Presentation.AI
             {
                 _decisionTimer.Restart();
                 var snapshot = perception.Capture();
-                _decision = _engine.Decide(snapshot, _simulationTick, _profile, _random, stuck);
+                _decision = _engine.Decide(
+                    snapshot,
+                    _simulationTick,
+                    _profile,
+                    _random,
+                    stuck,
+                    hasBastionIntent ? squadIntent.FocusTargetId : default(CombatEntityId));
                 if (_decision.TargetId.Value != 0) TargetDecisionCount++;
                 if (_decision.State == BotDecisionState.Engage) EngageDecisionCount++;
                 if (_decision.Attack) AttackDecisionCount++;
@@ -370,22 +387,24 @@ namespace BattleRaja.Presentation.AI
             }
                 _lastStuckRecovery = _decision.StuckRecovery;
                 if (!_decision.Ability) _abilityIssued = false;
-                if (CombatEnabled) gadgetUser?.UseForContext(snapshot, _simulationTick);
+                var supportPosition = Float2.Zero;
+                if (hasBastionIntent && squadIntent.SupportTargetId.Value > 0 && matchController != null &&
+                    matchController.TryGetBastionParticipant(squadIntent.SupportTargetId, out var supportSnapshot))
+                {
+                    supportPosition = supportSnapshot.Position;
+                }
+
+                if (CombatEnabled)
+                {
+                    gadgetUser?.UseForContext(
+                        snapshot,
+                        _simulationTick,
+                        hasBastionIntent ? squadIntent.SupportTargetId : default(CombatEntityId),
+                        supportPosition);
+                }
             }
 
             var movement = _decision.Movement;
-            var objectiveAim = _decision.Aim;
-            var objectiveMovement = Float2.Zero;
-            var objectivePlan = BastionSquadPlan.Regroup;
-            var hasBastionIntent = matchController != null && matchController.TryGetBastionBotIntent(
-                new CombatEntityId(movementAgent.ActorId),
-                out objectiveMovement,
-                out objectiveAim,
-                out objectivePlan);
-            if (matchController != null && matchController.IsBastionCrown)
-            {
-                _bastionPlan = objectivePlan;
-            }
 
             if (hasBastionIntent)
             {

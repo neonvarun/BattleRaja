@@ -221,6 +221,22 @@ namespace BattleRaja.Presentation.Gadgets
 
         public bool UseForContext(BotPerceptionSnapshot snapshot, int simulationTick = -1)
         {
+            return UseForContext(snapshot, simulationTick, default(CombatEntityId), Float2.Zero);
+        }
+
+        /// <summary>
+        /// Uses a held gadget when the local sensor sees a threat or when the
+        /// Bastion squad arbiter has assigned this bot to support a nearby weak
+        /// ally. Support placement is still range-bounded and the authority
+        /// validates the final command; the extra context only makes Tiffin a
+        /// coordinated team tool instead of a selfish emergency heal.
+        /// </summary>
+        public bool UseForContext(
+            BotPerceptionSnapshot snapshot,
+            int simulationTick,
+            CombatEntityId supportTargetId,
+            Float2 supportTargetPosition)
+        {
             var visibleHostile = false;
             var nearestThreatDistance = float.MaxValue;
             var threatDirection = Float2.Zero;
@@ -240,19 +256,26 @@ namespace BattleRaja.Presentation.Gadgets
                 }
             }
 
-            if (!botControlled || !_inventory.HasGadget || !visibleHostile)
+            var hasNearbySupportTarget = supportTargetId.Value > 0 &&
+                supportTargetPosition.IsFinite &&
+                BastionSquadPerception.CanSupportAlly(snapshot.Position, supportTargetPosition);
+            var definition = GadgetCatalog.TryGet(_inventory.HeldGadget, out var found)
+                ? found
+                : default(GadgetDefinition);
+            var supportUse = hasNearbySupportTarget && definition.Kind == GadgetKind.TiffinStation;
+
+            if (!botControlled || !_inventory.HasGadget || (!visibleHostile && !supportUse))
             {
                 return false;
             }
 
-            var definition = GadgetCatalog.TryGet(_inventory.HeldGadget, out var found) ? found : default(GadgetDefinition);
             if (definition.Kind == GadgetKind.UmbrellaGuard && health != null && health.Snapshot.CurrentHealth > health.MaxHealth * 0.65f)
             {
                 return false;
             }
 
             if (definition.Kind == GadgetKind.TiffinStation && health != null &&
-                health.Snapshot.CurrentHealth >= health.MaxHealth * 0.85f)
+                health.Snapshot.CurrentHealth >= health.MaxHealth * 0.85f && !supportUse)
             {
                 return false;
             }
@@ -262,7 +285,10 @@ namespace BattleRaja.Presentation.Gadgets
                 return false;
             }
 
-            var direction = threatDirection.SqrMagnitude > 0.000001f
+            var supportDirection = (supportTargetPosition - snapshot.Position).Normalized;
+            var direction = supportUse && supportDirection.SqrMagnitude > 0.000001f
+                ? supportDirection
+                : threatDirection.SqrMagnitude > 0.000001f
                 ? threatDirection
                 : movementAgent != null ? movementAgent.AimDirection : Float2.Up;
             ContextualUseAttemptCount++;

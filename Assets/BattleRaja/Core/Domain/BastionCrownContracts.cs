@@ -32,6 +32,40 @@ namespace BattleRaja.Core.Domain
     }
 
     /// <summary>
+    /// Shared information boundary for the offline squad planner. Objective state
+    /// and allied status arrive through the bounded blackboard signal, while enemy
+    /// locations still need a local, fair perception check. Keeping this policy in
+    /// Core makes the Unity adapter and deterministic tests use the same rule.
+    /// </summary>
+    public static class BastionSquadPerception
+    {
+        // The range is intentionally shorter than the full 32 m arena. A bot may
+        // only select a rival that it could reasonably see from its current lane.
+        public const float EnemyPerceptionRange = 16f;
+        public const float AllySupportRange = 18f;
+
+        private static readonly ArenaCollisionDefinition DefaultArena = ArenaCollisionDefinition.BazaarBastion;
+
+        public static bool CanPerceiveEnemy(
+            Float2 observerPosition,
+            Float2 targetPosition,
+            ArenaCollisionDefinition arena = null)
+        {
+            if (!observerPosition.IsFinite || !targetPosition.IsFinite) return false;
+            var delta = targetPosition - observerPosition;
+            if (delta.SqrMagnitude > EnemyPerceptionRange * EnemyPerceptionRange) return false;
+            return (arena ?? DefaultArena).IsLineOfSightClear(observerPosition, targetPosition);
+        }
+
+        public static bool CanSupportAlly(Float2 supporterPosition, Float2 allyPosition)
+        {
+            if (!supporterPosition.IsFinite || !allyPosition.IsFinite) return false;
+            var delta = allyPosition - supporterPosition;
+            return delta.SqrMagnitude <= AllySupportRange * AllySupportRange;
+        }
+    }
+
+    /// <summary>
     /// Read-only assignment produced by the deterministic Bastion squad
     /// planner. It is deliberately expressed as common movement/aim intent so
     /// human and bot adapters share the same command boundary.
@@ -338,7 +372,10 @@ namespace BattleRaja.Core.Domain
             }
 
             if (targetIndex < 0) return 0;
-            var supporterIndex = FindSupporterIndex(teamId, _signalParticipants[targetIndex].ActorId);
+            var supporterIndex = FindSupporterIndex(
+                teamId,
+                _signalParticipants[targetIndex].ActorId,
+                _signalParticipants[targetIndex].Position);
             if (supporterIndex < 0) return 0;
 
             var supporter = _signalParticipants[supporterIndex];
@@ -353,14 +390,18 @@ namespace BattleRaja.Core.Domain
             return 1;
         }
 
-        private int FindSupporterIndex(BastionTeamId teamId, CombatEntityId targetId)
+        private int FindSupporterIndex(
+            BastionTeamId teamId,
+            CombatEntityId targetId,
+            Float2 targetPosition)
         {
             var bestIndex = -1;
             var bestPriority = int.MaxValue;
             for (var i = 0; i < _signalParticipantCount; i++)
             {
                 var candidate = _signalParticipants[i];
-                if (!candidate.Alive || candidate.TeamId != teamId || candidate.ActorId == targetId) continue;
+                if (!candidate.Alive || candidate.TeamId != teamId || candidate.ActorId == targetId ||
+                    !BastionSquadPerception.CanSupportAlly(candidate.Position, targetPosition)) continue;
                 var priority = candidate.Member.Role == BastionRole.Anchor ? 0
                     : candidate.Member.Role == BastionRole.Flex ? 1
                     : candidate.Member.Role == BastionRole.Skirmisher ? 2
@@ -420,8 +461,6 @@ namespace BattleRaja.Core.Domain
             var enemyCarrier = default(BastionParticipantSnapshot);
             var hasOwnCarrier = false;
             var hasEnemyCarrier = false;
-            var supportTarget = default(BastionParticipantSnapshot);
-            var hasSupportTarget = false;
             var focusTarget = default(BastionParticipantSnapshot);
             var focusDistance = float.MaxValue;
 
@@ -445,26 +484,19 @@ namespace BattleRaja.Core.Domain
                             ownCarrier = participant;
                             hasOwnCarrier = true;
                         }
-                        else
+                        else if (BastionSquadPerception.CanPerceiveEnemy(selfPosition, participant.Position))
                         {
                             enemyCarrier = participant;
                             hasEnemyCarrier = true;
                         }
                     }
 
-                    if (participant.TeamId == member.TeamId && participant.ActorId != member.ActorId)
-                    {
-                        if (!hasSupportTarget ||
-                            participant.CurrentHealth * supportTarget.MaxHealth < supportTarget.CurrentHealth * participant.MaxHealth ||
-                            (participant.CurrentHealth * supportTarget.MaxHealth == supportTarget.CurrentHealth * participant.MaxHealth &&
-                             participant.ActorId.Value < supportTarget.ActorId.Value))
-                        {
-                            supportTarget = participant;
-                            hasSupportTarget = true;
-                        }
-                    }
-
-                    if (participant.TeamId == enemyTeam)
+                    // Enemy positions are not a free global query. The shared
+                    // Crown/ticket signal may be a few ticks old, but target
+                    // selection still requires the observer's bounded range and
+                    // the authored Bazaar line-of-sight contract.
+                    if (participant.TeamId == enemyTeam &&
+                        BastionSquadPerception.CanPerceiveEnemy(selfPosition, participant.Position))
                     {
                         var distanceToCrown = Float2.Distance(participant.Position, crown.Position);
                         if (distanceToCrown < focusDistance - 0.0001f ||
@@ -535,7 +567,11 @@ namespace BattleRaja.Core.Domain
             }
 
             var focusId = focusTarget.ActorId.Value > 0 ? focusTarget.ActorId : default(CombatEntityId);
-            var supportId = hasSupportTarget ? supportTarget.ActorId : default(CombatEntityId);
+            // Support assignment is an arbiter decision made by the blackboard
+            // below, not a hint copied onto every teammate. This ensures only one
+            // deterministic supporter moves toward the weak ally and can spend a
+            // Tiffin charge for that handoff.
+            var supportId = default(CombatEntityId);
             var aim = focusId.Value > 0
                 ? (focusTarget.Position - selfPosition).Normalized
                 : direction.SqrMagnitude > 0.000001f ? direction : Float2.Up;

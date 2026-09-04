@@ -233,17 +233,42 @@ namespace BattleRaja.Presentation.Match
             movement = Float2.Zero;
             aim = Float2.Up;
             plan = BastionSquadPlan.Regroup;
+            var hasIntent = TryGetBastionBotIntent(actorId, out var intent);
+            if (!hasIntent) return false;
+            movement = intent.Movement;
+            aim = intent.Aim;
+            plan = intent.Plan;
+            return movement.SqrMagnitude > 0.000001f;
+        }
+
+        /// <summary>
+        /// Returns the complete immutable squad assignment for one actor. Bot
+        /// presentation uses the focus/support IDs as advisory command hints;
+        /// the canonical authority still validates every resulting command.
+        /// </summary>
+        public bool TryGetBastionBotIntent(CombatEntityId actorId, out BastionSquadIntent intent)
+        {
+            intent = default(BastionSquadIntent);
             if (_bastionCrown == null || !_bastionCrown.IsLive ||
                 !_bastionCrown.TryGetParticipant(actorId, out var self) || !self.Alive)
             {
                 return false;
             }
 
-            if (!_bastionCrown.TryGetSquadIntent(actorId, out var intent)) return false;
-            movement = intent.Movement;
-            aim = intent.Aim;
-            plan = intent.Plan;
-            return movement.SqrMagnitude > 0.000001f;
+            return _bastionCrown.TryGetSquadIntent(actorId, out intent);
+        }
+
+        public bool TryGetBastionParticipant(
+            CombatEntityId actorId,
+            out BastionParticipantSnapshot snapshot)
+        {
+            if (_bastionCrown != null)
+            {
+                return _bastionCrown.TryGetParticipant(actorId, out snapshot);
+            }
+
+            snapshot = default(BastionParticipantSnapshot);
+            return false;
         }
 
         public bool ApplyAuthoritativeDisplacement(GadgetDisplacementIntent displacement)

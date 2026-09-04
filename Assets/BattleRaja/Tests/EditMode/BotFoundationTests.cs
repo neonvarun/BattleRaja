@@ -29,6 +29,59 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void SquadFocusNominationOnlyBiasesAVisibleTarget()
+        {
+            var targets = new[]
+            {
+                new BotObservedTarget(new CombatEntityId(2), CombatFaction.Player, new Float2(2f, 0f), 100, true),
+                new BotObservedTarget(new CombatEntityId(3), CombatFaction.Player, new Float2(1f, 0f), 100, true)
+            };
+            var snapshot = new BotPerceptionSnapshot(
+                new CombatEntityId(10),
+                Float2.Zero,
+                100,
+                100,
+                targets,
+                -1,
+                BotZoneObservation.Unbounded,
+                CombatFaction.Enemy,
+                ProjectileWeaponDefinition.BijliElectricBolt);
+
+            var focused = new BotDecisionEngine().Decide(
+                snapshot,
+                0,
+                BotDifficultyProfile.FairDefault,
+                new SeededRandom(101),
+                false,
+                new CombatEntityId(2));
+            Assert.That(focused.TargetId.Value, Is.EqualTo(2));
+
+            var hiddenTargets = new[]
+            {
+                new BotObservedTarget(new CombatEntityId(2), CombatFaction.Player, new Float2(2f, 0f), 100, false),
+                new BotObservedTarget(new CombatEntityId(3), CombatFaction.Player, new Float2(1f, 0f), 100, true)
+            };
+            var hiddenSnapshot = new BotPerceptionSnapshot(
+                new CombatEntityId(10),
+                Float2.Zero,
+                100,
+                100,
+                hiddenTargets,
+                -1,
+                BotZoneObservation.Unbounded,
+                CombatFaction.Enemy,
+                ProjectileWeaponDefinition.BijliElectricBolt);
+            var fallback = new BotDecisionEngine().Decide(
+                hiddenSnapshot,
+                0,
+                BotDifficultyProfile.FairDefault,
+                new SeededRandom(101),
+                false,
+                new CombatEntityId(2));
+            Assert.That(fallback.TargetId.Value, Is.EqualTo(3));
+        }
+
+        [Test]
         public void RetreatUsesHealthThresholdAndMovesAway()
         {
             var target = new[]

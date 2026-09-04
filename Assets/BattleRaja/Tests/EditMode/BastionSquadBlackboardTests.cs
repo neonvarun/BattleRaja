@@ -99,6 +99,42 @@ namespace BattleRaja.Tests.EditMode
         }
 
         [Test]
+        public void SupportArbiterFallsBackToNearbyTeammateWhenAnchorIsOutOfRange()
+        {
+            var match = Start();
+            var targetId = new CombatEntityId(3);
+            match.SetHealth(targetId, 40);
+            match.SetPosition(new CombatEntityId(1), new Float2(20f, -4f));
+            match.SetPosition(new CombatEntityId(2), new Float2(20f, 0f));
+            match.PrepareSquadIntents(21, true);
+
+            Assert.That(match.TryGetSquadIntent(new CombatEntityId(4), out var fallback), Is.True);
+            Assert.That(fallback.SupportTargetId, Is.EqualTo(targetId));
+            Assert.That(fallback.Destination, Is.EqualTo(new Float2(-10f, 1.25f)));
+            Assert.That(match.SquadMetrics.SupportAssignments, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void SupportArbiterLeavesAssignmentEmptyWhenEveryTeammateIsOutOfRange()
+        {
+            var match = Start();
+            var targetId = new CombatEntityId(3);
+            match.SetHealth(targetId, 40);
+            match.SetPosition(new CombatEntityId(1), new Float2(20f, -4f));
+            match.SetPosition(new CombatEntityId(2), new Float2(20f, 0f));
+            match.SetPosition(new CombatEntityId(4), new Float2(20f, 4f));
+            match.PrepareSquadIntents(22, true);
+
+            for (var actorId = 1; actorId <= BastionCrownMatch.TeamSize; actorId++)
+            {
+                Assert.That(match.TryGetSquadIntent(new CombatEntityId(actorId), out var intent), Is.True);
+                Assert.That(intent.SupportTargetId.Value, Is.EqualTo(0));
+            }
+
+            Assert.That(match.SquadMetrics.SupportAssignments, Is.EqualTo(0));
+        }
+
+        [Test]
         public void CrownCarrierChangeProducesAnEscortHandoffMetric()
         {
             var match = Start();
@@ -146,6 +182,39 @@ namespace BattleRaja.Tests.EditMode
             match.SetPosition(new CombatEntityId(2), new Float2(-8f, 0f));
             Assert.That(match.TryGetSquadIntent(new CombatEntityId(2), out _), Is.True);
             Assert.That(match.SquadMetrics.SignalUpdates, Is.EqualTo(before.SignalUpdates + 1));
+        }
+
+        [Test]
+        public void EnemyFocusRequiresRangeAndAuthoredLineOfSight()
+        {
+            var match = Start();
+            var observerId = new CombatEntityId(4);
+            var enemyId = new CombatEntityId(5);
+
+            // The west counter obstacle sits between these positions. A canonical
+            // snapshot may contain the enemy, but the squad plan must not select a
+            // rival that the observer cannot see through the authored cover.
+            match.SetPosition(observerId, new Float2(-10f, 5f));
+            match.SetPosition(enemyId, new Float2(-6f, 5f));
+            match.PrepareSquadIntents(40, true);
+            Assert.That(match.TryGetSquadIntent(observerId, out var occluded), Is.True);
+            Assert.That(occluded.FocusTargetId.Value, Is.EqualTo(0));
+
+            // A clear lane inside the same map is selectable. Move the observer
+            // below the west counter as well so the ray does not graze its
+            // authored footprint on the way to the rival.
+            match.SetPosition(observerId, new Float2(-10f, -1f));
+            match.SetPosition(enemyId, new Float2(-6f, 2f));
+            match.PrepareSquadIntents(41, true);
+            Assert.That(match.TryGetSquadIntent(observerId, out var visible), Is.True);
+            Assert.That(visible.FocusTargetId, Is.EqualTo(enemyId));
+
+            // A rival beyond the bounded perception radius remains unknown even
+            // when no obstacle blocks the ray.
+            match.SetPosition(enemyId, new Float2(7f, 2f));
+            match.PrepareSquadIntents(42, true);
+            Assert.That(match.TryGetSquadIntent(observerId, out var distant), Is.True);
+            Assert.That(distant.FocusTargetId.Value, Is.EqualTo(0));
         }
     }
 }

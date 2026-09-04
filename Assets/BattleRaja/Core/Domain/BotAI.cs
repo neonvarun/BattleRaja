@@ -316,13 +316,30 @@ namespace BattleRaja.Core.Domain
             ISeededRandom random,
             bool stuckRecovery)
         {
+            return Decide(snapshot, simulationTick, profile, random, stuckRecovery, default(CombatEntityId));
+        }
+
+        /// <summary>
+        /// Decides from the same local perception as the legacy overload while
+        /// allowing a Bastion blackboard to nominate one visible focus target.
+        /// The nomination is advisory: it is ignored when the target is absent,
+        /// occluded or otherwise outside the sensor snapshot.
+        /// </summary>
+        public BotDecision Decide(
+            BotPerceptionSnapshot snapshot,
+            int simulationTick,
+            BotDifficultyProfile profile,
+            ISeededRandom random,
+            bool stuckRecovery,
+            CombatEntityId preferredTargetId)
+        {
             if (simulationTick < _nextDecisionTick && _lastDecision.PerceivedThreats >= 0)
             {
                 return _lastDecision;
             }
 
             _nextDecisionTick = simulationTick + profile.ReactionDelayTicks;
-            var target = SelectTarget(snapshot, profile, out var targetScore, out var threatCount);
+            var target = SelectTarget(snapshot, profile, preferredTargetId, out var targetScore, out var threatCount);
             var healthFraction = snapshot.MaxHealth > 0 ? (float)snapshot.CurrentHealth / snapshot.MaxHealth : 0f;
             BotDecision decision;
             if (stuckRecovery)
@@ -414,13 +431,20 @@ namespace BattleRaja.Core.Domain
             _lockedTargetId = default;
         }
 
-        private BotObservedTarget SelectTarget(BotPerceptionSnapshot snapshot, BotDifficultyProfile profile, out float score, out int threatCount)
+        private BotObservedTarget SelectTarget(
+            BotPerceptionSnapshot snapshot,
+            BotDifficultyProfile profile,
+            CombatEntityId preferredTargetId,
+            out float score,
+            out int threatCount)
         {
             var best = default(BotObservedTarget);
             score = 0f;
             threatCount = 0;
             var locked = default(BotObservedTarget);
             var lockedScore = 0f;
+            var preferred = default(BotObservedTarget);
+            var preferredScore = 0f;
             for (var i = 0; i < snapshot.TargetCount; i++)
             {
                 var candidate = snapshot.Targets[i];
@@ -444,6 +468,16 @@ namespace BattleRaja.Core.Domain
                     lockedScore = candidateScore;
                 }
 
+                if (candidate.Id == preferredTargetId)
+                {
+                    preferred = candidate;
+                    // A focus nomination is intentionally a bounded utility
+                    // bonus, rather than a forced target. It coordinates a
+                    // visible carrier/peel target without making bots fire
+                    // through cover or abandon a clearly better threat.
+                    preferredScore = candidateScore + 45f;
+                }
+
                 if (candidateScore > score ||
                     (MathF.Abs(candidateScore - score) < 0.0001f &&
                      (best.Id.Value == 0 || candidate.Id.Value < best.Id.Value)))
@@ -457,6 +491,12 @@ namespace BattleRaja.Core.Domain
             {
                 best = locked;
                 score = lockedScore;
+            }
+
+            if (preferred.Id.Value != 0 && preferredScore >= score * 0.90f)
+            {
+                best = preferred;
+                score = preferredScore;
             }
 
             _lockedTargetId = best.Id;
