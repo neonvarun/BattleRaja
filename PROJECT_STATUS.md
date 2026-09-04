@@ -30,6 +30,10 @@
   and Play approvals remain owner-gated; classification stays **Prototype — Android
   offline release candidate in progress**.
 
+  GitHub Repository validation run
+  [#33921850240](https://github.com/neonvarun/BattleRaja/actions/runs/33921850240)
+  completed successfully against exact source `0b0382f4b3901aafa6749a16dc47a5c9dd78ecba`.
+
 - **Animation state and Bastion lifecycle presentation continuation (2026-09-04):**
   Source `abcbe04` adds saved `GadgetUse`, `CrownPickup`, `CrownCarry`,
   `CrownDeposit`, `KO`, `Respawn` and `Spectator` Animator states. `FighterPresentation`

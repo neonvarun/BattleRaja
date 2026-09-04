@@ -42,6 +42,10 @@ authority result. Final authored content, human comfort/accessibility review, no
 performance/endurance, physical 16 KB proof and owner identity/signing/privacy/
 cultural/Play approvals remain open.
 
+GitHub Repository validation run
+[#33921850240](https://github.com/neonvarun/BattleRaja/actions/runs/33921850240)
+completed successfully against exact source `0b0382f4b3901aafa6749a16dc47a5c9dd78ecba`.
+
 ## Latest current-source evidence — 2026-09-04 — animation and lifecycle presentation
 
 Source commit `abcbe04` adds saved Animator clips/states for gadget use, Crown
