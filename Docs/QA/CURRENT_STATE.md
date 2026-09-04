@@ -13,6 +13,57 @@ create or depend on evidence outside this repository root.
 
 **Prototype — Android offline release candidate in progress.**
 
+## Latest current-source evidence — 2026-09-04 — hero silhouette and portrait framing pass
+
+The refreshed presentation pass adds connected neck collars, chest plates, limb segments,
+waist bands, knee guards and fighter-specific signature weapons to the saved Bijli, Pehel
+and Maya render-only prefabs. The meshes are authored in
+`Assets/BattleRaja/Editor/ProductionArtBuilder.cs`; the existing presentation rig remains
+the only animation parent and the prefabs still own no colliders, authority or gameplay
+state. `TopDownCameraController` now uses a **1.6** portrait framing cap multiplier so the
+Bastion plaza and fighters occupy more of the tall-phone viewport.
+
+Static validation is **0 errors / 0 warnings**. Fresh EditMode is **159/159** (XML
+SHA-256 `CAFECE2084FCB0A73980F51FB486125F2BA9EAE04C24579ADD125D377296827B`) and PlayMode
+is **95/95** (XML SHA-256
+`1D8CA1AD5C09C82880569C4D9F6AA49BF019D988267CB0E069567FC9F13AE6D9`); the earlier
+framing run is also **95/95** (XML SHA-256
+`A66ABE558015325098C24EF7486060924FC84E240C71BEC1B7800B62CEDA68A0`).
+
+The exact rebuilt APK is **41,667,212 bytes** (SHA-256
+`675945B1E3CB7C1471CE7C65C299B17A0969104C969D57EE5083F608436FFA04`) and the AAB is
+**37,492,707 bytes** (SHA-256
+`FC0A070E204F3F8C788A38E72A66C70934162382E2B7FC74CA8FB18844C72556`). The release
+checker passed target SDK 36, the offline network-permission gate, ARM64-only native
+libraries, static 16 KB ELF alignment and store-creative dimensions.
+
+Approved Lava `ST5GDW23LB004392` (`1080x2460`, Android 14/API 34, 4 KB pages) has the
+exact APK installed; the pulled installed base hash is the same
+`675945B1E3CB7C1471CE7C65C299B17A0969104C969D57EE5083F608436FFA04`. Fresh rendered
+evidence is under `Builds/Local/V1GameplayTruth/Next/hero-framing-20260904/`: menu
+(`menu.png`, SHA-256 `0F24911929B8C99AA6D9D0C4FC6B4E45F5055167E25762B1E571369501C396E6`),
+fighter select (`fighter-select.png`, SHA-256
+`7C49892FFABA807F951A8E84DF28C606EF2959E4AE6D6BB18067B14523008BA`), live 4v4
+(`live.png`, SHA-256 `92B09898FA4CBD3A1C1583A5B9F15A6DC581831C93D011EC9DA81B868AEA9E6A`)
+and rematch (`rematch.png`, SHA-256
+`B8954CF43302A56B669398AC71D91B5D5DF1AD6AC5E1349DF8A9AEECC994DA98`). The frame now
+shows the arena and role silhouettes at a larger scale; this is a visual readability
+improvement, not final commissioned art approval.
+
+A bounded six-sample/30-second live capture is under
+`Builds/Local/V1GameplayTruth/Next/performance-hero-framing-20260904/` (manifest SHA-256
+`38506BBAA2DA6BA79B5654602899B9F7BE715CE9C08263276DF29DEC83C0AC2E`). It reports PSS
+**298,267–300,427 KB**, RSS **410,240–419,944 KB**, graphics PSS **89,288–93,392 KB**,
+raw app CPU **81.8–138%**, CPU/GPU **41.993–42.987 C**, battery **74% → 74%**, thermal
+status **0** and no configured fatal markers. The SurfaceFlinger diagnostic on this run
+did not provide valid per-frame timestamps (zero-filled ring entries), so no new FPS
+claim is made here; prior bounded compositor captures remain historical diagnostics.
+
+The candidate remains **Prototype — Android offline release candidate in progress**.
+Generated presentation baseline, full all-fighter/tutorial/accessibility/lifecycle comfort,
+normalized GPU/GC/endurance, physical 16 KB runtime, permanent identity/signing and
+privacy/Data Safety/IARC/cultural/Play owner gates remain open.
+
 The offline product loop, authority/replay foundation, original procedural/vector
 presentation kit, tutorial action gates, settings surfaces and Android packaging
 tooling exist. A Play Store Release Candidate claim is not yet justified because

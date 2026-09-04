@@ -61,6 +61,24 @@ one two-bone skinned primary per fighter. This is a machine-checked quality floo
 stronger saved baseline, not approval of final commissioned models, authored skinning,
 animation, VFX direction, cultural presentation or mobile performance.
 
+## Hero silhouette and portrait framing pass — 2026-09-04
+
+The repository-owned generator now adds a connected neck collar, six-sided chest armor,
+limb transition segments, waist bands, knee guards and signature weapon silhouettes. Bijli
+gets a cyan/gold arc blade, Pehel a clay/cream mace, and Maya paired rose/mint fan blades.
+The new pieces reuse the restrained V1 palette, receive deterministic UVs, and attach to
+the existing render-only presentation rig. They never add colliders, authority state or
+input; the gameplay capsule and simulation remain unchanged. Crystal/highlight materials
+carry a low emissive lift so identity accents survive the soft Bazaar lighting on
+mid-range Android.
+
+The portrait camera cap is **1.6x** the landscape base size. This intentionally frames the
+active Bastion lane more tightly on tall phones, increasing fighter and objective
+readability while accepting that distant flanks may leave the viewport. The approved Lava
+route is the visual reference for this tradeoff. These are editable generated meshes and a
+camera/readability refinement, not a claim of commissioned sculpting, final animation,
+cultural approval or normalized performance.
+
 ## UV and lightweight skin continuation — 2026-08-29
 
 Commit `bc392fd` adds deterministic planar/cylindrical UV generation to every mesh emitted

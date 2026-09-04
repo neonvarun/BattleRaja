@@ -13,6 +13,46 @@ prototype until every V1 completion gate and remaining human gate passes.
 - Approved physical evidence device: Lava `ST5GDW23LB004392` (`LAVA LXX508`) only.
 - Preserve internal networking/Web seams without exposing unusable public online paths.
 
+## Checkpoint 0i - hero silhouette and portrait framing pass — 2026-09-04
+
+The latest visual continuation keeps the established render-only authority boundary while
+adding connected neck, chest, limb, waist and knee pieces plus signature weapon silhouettes
+to Bijli, Pehel and Maya. The meshes are generated and saved by
+`ProductionArtBuilder.cs`, attached to the existing presentation rig by
+`ProductionPresentationBuilder.cs`, and carry no colliders or gameplay state. The portrait
+camera cap is now **1.6x**, keeping the Bastion lane and fighters larger on the tall Lava
+viewport.
+
+- Static validation: **0 errors / 0 warnings**.
+- EditMode: **159/159 passed**, XML SHA-256
+  `CAFECE2084FCB0A73980F51FB486125F2BA9EAE04C24579ADD125D377296827B`.
+- PlayMode: **95/95 passed**, XML SHA-256
+  `1D8CA1AD5C09C82880569C4D9F6AA49BF019D988267CB0E069567FC9F13AE6D9`; the framing
+  follow-up also passed **95/95**, XML SHA-256
+  `A66ABE558015325098C24EF7486060924FC84E240C71BEC1B7800B62CEDA68A0`.
+- APK: **41,667,212 bytes**, SHA-256
+  `675945B1E3CB7C1471CE7C65C299B17A0969104C969D57EE5083F608436FFA04`.
+- AAB: **37,492,707 bytes**, SHA-256
+  `FC0A070E204F3F8C788A38E72A66C70934162382E2B7FC74CA8FB18844C72556`.
+- Technical release checker: passed target SDK 36, offline permissions, ARM64/static
+  16 KB alignment and store dimensions.
+- Approved Lava `ST5GDW23LB004392`: exact APK installed and pulled base hash matches;
+  device is `1080x2460`, Android 14/API 34, 4 KB pages. Fresh route captures are under
+  `Builds/Local/V1GameplayTruth/Next/hero-framing-20260904/` (menu, fighter select,
+  live 4v4, rematch). Bounded 30-second live sample under
+  `Builds/Local/V1GameplayTruth/Next/performance-hero-framing-20260904/` reports PSS
+  **298,267–300,427 KB**, RSS **410,240–419,944 KB**, graphics PSS
+  **89,288–93,392 KB**, raw app CPU **81.8–138%**, CPU/GPU **41.993–42.987 C**,
+  battery **74% → 74%**, thermal **0**, and no configured fatal markers. The
+  SurfaceFlinger ring was zero-filled for this sample, so it is not treated as an FPS
+  claim.
+
+This improves phone readability but does not close the product gate. Generated baseline
+art, full all-fighter/tutorial/accessibility/lifecycle comfort, normalized GPU/GC and
+endurance, physical 16 KB runtime, permanent identity/signing and owner privacy/
+Data Safety/IARC/cultural/Play approvals remain open. Classification stays
+**Prototype — Android offline release candidate in progress**.
+
 ## Checkpoint 0h - production Bastion player HUD consolidation — 2026-09-04
 
 The live Bastion Crown route now presents one compact production player card instead of

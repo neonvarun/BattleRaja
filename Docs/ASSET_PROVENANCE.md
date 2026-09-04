@@ -26,6 +26,17 @@ their primary MeshRenderers are disabled; the saved SkinnedMeshRenderer is the v
 presentation surface. This remains repository-owned generated art, not a claim of final
 commissioned modeling, texturing or cultural approval.
 
+The 2026-09-04 hero silhouette continuation adds the saved `LimbSegment`, `NeckCollar`,
+`ChestPlate`, `KneeGuard`, `ArcBlade`, `MaceHead`, `FanBlade` and `WeaponHandle` meshes.
+The generator composes them into the three fighter prefabs and the presentation builder
+attaches them to the existing rig joints. Bijli, Pehel and Maya therefore have distinct
+connected armor and weapon silhouettes at gameplay distance without introducing runtime
+primitive bodies, colliders or authority state. `Crystal` and `GadgetHighlight` receive a
+small URP emission lift for mobile readability. The same pass tightens portrait framing in
+`TopDownCameraController`; it changes only presentation and camera scale. These outputs
+remain editable generated baseline assets pending commissioned art, cultural and human
+feel review.
+
 The 2026-08-29 environment continuation is recorded in commit `ac45479`. The repository
 owned `Assets/BattleRaja/Editor/ProductionEnvironmentBuilder.cs` creates the saved
 `BazaarBastionProduction.prefab`, its low-detail backdrop, six environment meshes, 16

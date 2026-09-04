@@ -16,6 +16,27 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
   outside the Android runtime. Final signed-bundle inspection is still required before
   Play submission.
 
+## Latest local gate — 2026-09-04 — hero presentation continuation
+
+The current candidate adds connected render-only hero silhouette parts and tighter tall-phone
+framing. Static validation is **0/0**, EditMode **159/159**, and PlayMode **95/95**. The
+exact APK is **41,667,212 bytes** (`675945B1E3CB7C1471CE7C65C299B17A0969104C969D57EE5083F608436FFA04`);
+the AAB is **37,492,707 bytes** (`FC0A070E204F3F8C788A38E72A66C70934162382E2B7FC74CA8FB18844C72556`).
+The technical checker passes package `com.example.battleraja.m11`, version `1.0.0` /
+code `100`, API `28/36`, no network permissions, ARM64-only native libraries, static
+16 KB alignment and the supplied store dimensions.
+
+The exact APK is installed on approved Lava `ST5GDW23LB004392` (`1080x2460`, Android
+14/API 34, 4 KB pages). Fresh rendered menu, fighter-select, live Bastion and rematch
+captures are under `Builds/Local/V1GameplayTruth/Next/hero-framing-20260904/`; a bounded
+30-second live sample is under
+`Builds/Local/V1GameplayTruth/Next/performance-hero-framing-20260904/`. This sample has no
+configured fatal markers, but the SurfaceFlinger ring was zero-filled, so it is not used
+as an FPS claim. The candidate remains temporary debug-signed and not Play-ready; final
+identity/signing, physical 16 KB runtime, normalized performance/endurance, complete
+comfort/accessibility review, commissioned art/audio and owner privacy/Data Safety/IARC,
+cultural and Play approvals remain required.
+
 ## Current local gate — 2026-09-01
 
 See the complete evidence record in `Docs/QA/V1_OFFLINE_ANDROID_VALIDATION_2026-09-01.md`.

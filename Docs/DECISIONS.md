@@ -2032,3 +2032,32 @@ Record every material choice here. Do not silently overwrite old decisions.
   `Builds/Local/V1GameplayTruth/ProductionBotReports/batch-20260901-224046635-9101.json`,
   and `Next/production-bot-100-telemetry.xml`.
 - **Owner:** Human project owner
+
+### ADR-083 - Keep hero silhouette detail render-only and tighten tall-phone framing
+
+- **Date:** 2026-09-04
+- **Status:** Accepted for the V1 readability baseline; commissioned art, comfort and
+  normalized performance review remain open.
+- **Context:** The approved-Lava live frame showed the generated fighter bodies as
+  disconnected capsule-like forms and left too much portrait dead band below the Bazaar
+  plaza. Replacing the healthy authority or collision layer would have increased risk and
+  would not address the player-facing readability problem.
+- **Options considered:** Rebuild gameplay actors around a new mesh hierarchy; add runtime
+  primitives or colliders to fill the silhouette; or extend the existing saved render-only
+  generator and presentation rig with connected identity parts while tightening only the
+  portrait camera cap.
+- **Decision:** Add saved `NeckCollar`, `ChestPlate`, `LimbSegment`, `KneeGuard`,
+  `ArcBlade`, `MaceHead`, `FanBlade` and `WeaponHandle` meshes to the Bijli/Pehel/Maya
+  recipes. Reparent them to the existing presentation rig, keep colliders/authority out
+  of the prefabs, apply a small accent emission lift, and reduce the portrait framing cap
+  multiplier to `1.6`.
+- **Consequences:** The exact Lava APK now presents connected role silhouettes and
+  signature weapons at a larger gameplay scale; full EditMode (159/159) and PlayMode
+  (95/95) remain green. Distant flanks can leave the narrow viewport, and the outputs are
+  still generated baseline art rather than commissioned models. The captured SurfaceFlinger
+  ring for this run was zero-filled, so no new FPS claim is attached to the framing change.
+- **Evidence/sources:** `ProductionArtBuilder.cs`, `ProductionPresentationBuilder.cs`,
+  `TopDownCameraController.cs`, regenerated production prefabs, approved-Lava captures
+  under `Builds/Local/V1GameplayTruth/Next/hero-framing-20260904/`, full test reports and
+  the technical Android checker output for APK `675945B1...` / AAB `FC0A070E...`.
+- **Owner:** Human project owner

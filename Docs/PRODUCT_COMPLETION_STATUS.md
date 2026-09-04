@@ -1,7 +1,30 @@
 # Product completion status
 
-Updated: 2026-08-30
+Updated: 2026-09-04
 Classification: **prototype**
+
+## Latest V1 readability checkpoint — 2026-09-04
+
+The saved Bijli, Pehel and Maya presentation prefabs now include connected neck/chest/limb
+armor, waist and knee transitions, and signature arc-blade, mace and fan silhouettes. The
+portrait camera cap is `1.6x`, so the Bastion lane reads larger on the approved tall Lava
+viewport. These are still repository-owned generated render-only assets; no gameplay
+authority, collision or networking boundary changed.
+
+Static validation is **0/0**, EditMode **159/159** and PlayMode **95/95**. The exact
+temporary-ID APK is `Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk` (SHA-256
+`675945B1E3CB7C1471CE7C65C299B17A0969104C969D57EE5083F608436FFA04`) and the AAB is
+`Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab` (SHA-256
+`FC0A070E204F3F8C788A38E72A66C70934162382E2B7FC74CA8FB18844C72556`). The technical
+checker passes API 28/36, offline permissions, ARM64/static 16 KB alignment and store
+dimensions. The exact APK is installed on approved Lava `ST5GDW23LB004392`, which reports
+4 KB pages; fresh route and bounded performance evidence is under
+`Builds/Local/V1GameplayTruth/Next/hero-framing-20260904/`.
+
+This is an incremental readability improvement, not completion of commissioned final art,
+full physical all-fighter/tutorial/accessibility/lifecycle comfort, normalized GPU/GC or
+endurance, physical 16 KB runtime, final identity/signing, privacy/Data Safety/IARC,
+cultural review or Play submission. Classification remains **prototype**.
 
 ## Latest saved-environment/runtime presentation checkpoint — documentation tip `b4b5649` (runtime/art `ac45479`) — 2026-08-29
 

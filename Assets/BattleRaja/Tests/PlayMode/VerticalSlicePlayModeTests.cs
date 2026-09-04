@@ -915,6 +915,26 @@ namespace BattleRaja.Tests.PlayMode
                     .Sum(filter => filter.sharedMesh.vertexCount);
                 Assert.That(vertexCount, Is.GreaterThanOrEqualTo(260),
                     fighter.name + " production silhouette should use authored faceted mesh detail");
+                Assert.That(meshNames, Does.Contain("NeckCollar"),
+                    fighter.name + " production silhouette must keep a connected neck transition");
+                Assert.That(meshNames, Does.Contain("ChestPlate"),
+                    fighter.name + " production silhouette must keep its readable chest armor");
+                Assert.That(meshNames, Does.Contain("LimbSegment"),
+                    fighter.name + " production silhouette must keep connected limb segments");
+                Assert.That(meshNames, Does.Contain("KneeGuard"),
+                    fighter.name + " production silhouette must keep lower-body identity detail");
+                if (modelRoot.name.StartsWith("Bijli"))
+                {
+                    Assert.That(meshNames, Does.Contain("ArcBlade"), "Bijli must keep its arc-blade identity mesh");
+                }
+                else if (modelRoot.name.StartsWith("Pehel"))
+                {
+                    Assert.That(meshNames, Does.Contain("MaceHead"), "Pehel must keep its mace identity mesh");
+                }
+                else if (modelRoot.name.StartsWith("Maya"))
+                {
+                    Assert.That(meshNames, Does.Contain("FanBlade"), "Maya must keep her fan identity mesh");
+                }
 
                 var profile = modelRoot.name + ":" + string.Join(",", meshNames.OrderBy(name => name));
                 seenFighterProfiles.Add(profile);
@@ -1088,6 +1108,7 @@ namespace BattleRaja.Tests.PlayMode
 
             Assert.That(landscape, Is.EqualTo(9.5f).Within(0.0001f));
             Assert.That(portrait, Is.GreaterThan(landscape));
+            Assert.That(tallPortrait, Is.LessThanOrEqualTo(9.5f * 1.6f + 0.0001f));
             Assert.That(tallPortrait, Is.LessThan(9.5f * 3.5f + 0.0001f));
         }
 
