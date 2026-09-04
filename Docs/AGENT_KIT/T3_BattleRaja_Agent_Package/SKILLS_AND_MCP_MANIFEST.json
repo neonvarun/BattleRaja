@@ -1,0 +1,123 @@
+{
+  "schema": 1,
+  "package": "BattleRaja-T3-Agent-Kit",
+  "version": "1.0.0",
+  "repository": "neonvarun/BattleRaja",
+  "workspace": "C:\\Projects\\BattleRaja",
+  "branchHint": "main",
+  "branchPolicy": "single-main-integration-line",
+  "latestRecordedHead": "9b3e01a",
+  "requiredSkills": [
+    {
+      "id": "unity-workbench:unity-project-onboarding",
+      "plugin": "unity-workbench@openai-curated-remote",
+      "purpose": "Rebaseline the Unity project and approved toolchain"
+    },
+    {
+      "id": "unity-workbench:unity-project-health-check",
+      "plugin": "unity-workbench@openai-curated-remote",
+      "purpose": "Audit project health before changing source or assets"
+    },
+    {
+      "id": "unity-workbench:unity-feature-implementation",
+      "plugin": "unity-workbench@openai-curated-remote",
+      "purpose": "Implement focused Unity gameplay/presentation changes"
+    },
+    {
+      "id": "unity-workbench:unity-build-validation",
+      "plugin": "unity-workbench@openai-curated-remote",
+      "purpose": "Validate Unity Android builds and release gates"
+    },
+    {
+      "id": "test-android-apps:android-emulator-qa",
+      "plugin": "test-android-apps@openai-curated-remote",
+      "purpose": "Run Android smoke, route and physical-device QA"
+    },
+    {
+      "id": "test-android-apps:android-performance",
+      "plugin": "test-android-apps@openai-curated-remote",
+      "purpose": "Capture Android memory, CPU, thermal and frame evidence"
+    },
+    {
+      "id": "deep-research-work:deep-research",
+      "plugin": null,
+      "purpose": "Research current primary Android/Play requirements"
+    }
+  ],
+  "conditionalSkills": [
+    {
+      "id": "unity-workbench:unity-mcp-workflow",
+      "plugin": "unity-workbench@openai-curated-remote",
+      "when": "Unity MCP/editor automation is available"
+    },
+    {
+      "id": "unity-workbench:unity-bug-investigation",
+      "plugin": "unity-workbench@openai-curated-remote",
+      "when": "A Unity runtime/editor defect must be reproduced"
+    },
+    {
+      "id": "game-studio:game-ui-frontend",
+      "plugin": "game-studio@openai-curated-remote",
+      "when": "Designing or auditing original game UI"
+    },
+    {
+      "id": "game-studio:web-3d-asset-pipeline",
+      "plugin": "game-studio@openai-curated-remote",
+      "when": "Preparing original editable 3D assets or optimization"
+    },
+    {
+      "id": "game-studio:game-playtest",
+      "plugin": "game-studio@openai-curated-remote",
+      "when": "Running browser-game playtest tooling; not a substitute for Lava QA"
+    },
+    {
+      "id": "codex-security:security-scan",
+      "plugin": "codex-security@openai-curated-remote",
+      "when": "Reviewing a security-sensitive change or release surface"
+    }
+  ],
+  "mcpPlugins": [
+    {
+      "id": "unity-workbench@openai-curated-remote",
+      "name": "Unity Essentials",
+      "requiredFor": ["Unity audit", "feature work", "build validation", "Unity MCP"]
+    },
+    {
+      "id": "test-android-apps@openai-curated-remote",
+      "name": "Test Android Apps",
+      "requiredFor": ["ADB route QA", "Lava evidence", "Android performance"]
+    },
+    {
+      "id": "game-studio@openai-curated-remote",
+      "name": "Game Studio",
+      "requiredFor": ["Original game UI/art/asset pipeline when needed"]
+    },
+    {
+      "id": "app-69f271663a288191ac98f46bed7cb032@openai-curated-remote",
+      "name": "Tavily AI",
+      "requiredFor": ["Current web research when primary-source browsing needs Tavily"]
+    },
+    {
+      "id": "github@openai-curated-remote",
+      "name": "GitHub",
+      "requiredFor": ["Remote workflow/PR inspection when git and GitHub API are insufficient"],
+      "fallback": "git CLI plus the public GitHub Actions API"
+    }
+  ],
+  "directCapabilities": [
+    "apply_patch for tracked source/docs edits",
+    "PowerShell/ADB/Unity CLI for local validation",
+    "web__run for official primary-source research",
+    "Codex app thread/navigation tools only when the host task explicitly needs them"
+  ],
+  "environment": {
+    "unityVersion": "6000.5.6f1",
+    "approvedDeviceSerial": "ST5GDW23LB004392",
+    "approvedDeviceModel": "LAVA LXX508",
+    "androidTargetSdk": 36,
+    "androidMinSdk": 28,
+    "packageIdTemporary": "com.example.battleraja.m11",
+    "offlineOnly": true
+  },
+  "installBoundary": "This manifest declares host-level plugins and skills; the included helper validates/copies the kit but does not silently mutate a Codex account, accept terms, create credentials or install remote services."
+}
