@@ -69,13 +69,11 @@ The source was rebuilt with Unity `6000.5.6f1`, IL2CPP, ARM64, min API 28 and ta
   SHA-256 `60CCC7F80617872C81CEF8A31810E0CEF34DBA415863EFF8FA3F3C41ABC14328`.
 - AAB `Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab`, 37,511,088 bytes,
   SHA-256 `916853FBAEFFBDF9C6ABD6A39FBE97D65C53FB64B9C6DD62E45CFEA77B08FBC2`.
-- The technical checker was run against the exact pair with the temporary package
+- The clean technical checker passed against the exact pair with the temporary package
   `com.example.battleraja.m11`: offline network-permission gate, ARM64-only bundle,
-  static 16 KB ELF alignment and 512×512 / 1024×500 store dimensions all passed. The
-  pre-documentation checker log is
-  `Builds/Local/V1GameplayTruth/Next/squad-perception-release-checker.log` (SHA-256
-  `5C9249BA30828B3D79CC20B51AEB449897F9665187C6A5BEEDF31E49C4226226`); a clean-tree
-  rerun is required after this documentation commit.
+  static 16 KB ELF alignment and 512×512 / 1024×500 store dimensions all passed. Log:
+  `Builds/Local/V1GameplayTruth/Next/squad-perception-release-checker-final.log`
+  (SHA-256 `64B737C8421D7D966255448C9E694F1B640E9839C737542076B05EF4D180358E`).
 
 ## Approved Lava evidence
 
@@ -114,4 +112,3 @@ all-fighter action VFX/audio, spectate-camera comfort, normalized endurance, phy
 16 KB runtime, permanent package identity/signing, privacy/Data Safety/IARC, cultural
 review or Play publication. Truthful classification remains **Prototype — Android
 offline release candidate in progress**.
-

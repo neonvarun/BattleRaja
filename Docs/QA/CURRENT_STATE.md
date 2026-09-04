@@ -34,7 +34,9 @@ The exact temporary-ID APK is 41,685,584 bytes (SHA-256
 37,511,088 bytes (SHA-256
 `916853FBAEFFBDF9C6ABD6A39FBE97D65C53FB64B9C6DD62E45CFEA77B08FBC2`). Static Android
 checks pass API 28/36, offline permissions, ARM64-only native libraries, static 16 KB
-ELF alignment and store dimensions. The approved Lava serial was available for a
+ELF alignment and store dimensions; clean-tree checker log
+`Builds/Local/V1GameplayTruth/Next/squad-perception-release-checker-final.log` has SHA-256
+`64B737C8421D7D966255448C9E694F1B640E9839C737542076B05EF4D180358E`. The approved Lava serial was available for a
 prior-revision baseline route but disappeared from ADB after this rebuild, so the exact
 current-source physical install, physical 16 KB runtime and normalized sustained
 performance remain unproven. Commissioned final art/audio, complete action/spectate

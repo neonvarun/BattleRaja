@@ -36,9 +36,11 @@ when an Anchor is out of range, and passes only that handoff to contextual Tiffi
   `60CCC7F80617872C81CEF8A31810E0CEF34DBA415863EFF8FA3F3C41ABC14328`.
 - AAB: **37,511,088 bytes**, SHA-256
   `916853FBAEFFBDF9C6ABD6A39FBE97D65C53FB64B9C6DD62E45CFEA77B08FBC2`.
-- The exact pair passes the temporary-ID technical checker for API 28/36, offline
-  permissions, ARM64-only native libraries, static 16 KB ELF alignment and store
-  dimensions. The clean-tree checker must be rerun after this documentation commit.
+- The exact pair passes the clean-tree temporary-ID technical checker for API 28/36,
+  offline permissions, ARM64-only native libraries, static 16 KB ELF alignment and
+  store dimensions. Log:
+  `Builds/Local/V1GameplayTruth/Next/squad-perception-release-checker-final.log`
+  (SHA-256 `64B737C8421D7D966255448C9E694F1B640E9839C737542076B05EF4D180358E`).
 - Lava `ST5GDW23LB004392` was available for a prior-revision route, but disappeared from
   ADB after the final rebuild; exact-current-source physical installation, physical
   16 KB runtime and normalized sustained performance remain open.
