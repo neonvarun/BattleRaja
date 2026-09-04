@@ -17,38 +17,45 @@ create or depend on evidence outside this repository root.
 
 Source commits `775497d` and `281eeb4` add saved faceted shoulder, gauntlet and leg
 armor meshes to the Bijli, Pehel and Maya production prefabs and expand the original
-Bazaar Bastion feature artwork to fill the menu card. The changes are presentation-only;
-authority, colliders, hitboxes, replay state and input contracts are unchanged.
+Bazaar Bastion feature artwork to fill the menu card. Source `4ebf65f` then corrects the
+presentation adapter to mirror the confirmed post-respawn authority snapshot instead of
+reapplying the stale zero-health ready state; Bastion domain rules, colliders, hitboxes,
+replay state and input contracts remain unchanged.
 
 Static validation is **0 errors / 0 warnings**. Full EditMode is **164/164** (final
 menu-layout XML SHA-256
-`5D43596B6246CFF916B83A43459728537CBADD5B8947DB33CABE37F7EBE5D5DF`) and full
-PlayMode is **98/98** (XML SHA-256
-`7F827E33249211F45469CF14596653A912286DC24B3A2ACEC885752CC5E48AD6`). The exact
-candidate APK is 41,681,892 bytes (SHA-256
-`739742F5D401F5B02F9213B71EA78EA2C41F8F66E9D78792AE3430ED84DD0A7B`) and the AAB is
-37,507,386 bytes (SHA-256
-`4BE9951BDAA517ED01F2D35472D41FA415A919063BA1A976BF1ADA5EF357DD94`). The technical
-checker is **0/0** for temporary package `com.example.battleraja.m11`, API `28/36`,
-offline permissions, ARM64/static alignment and store dimensions.
+`5D43596B6246CFF916B83A43459728537CBADD5B8947DB33CABE37F7EBE5D5DF`) and the
+respawn-handoff rerun remains **164/164** (XML SHA-256
+`1F744F11D3C3A71F2A26AE16A2E4B1E88D6147226675657D9A1A0EAC2AE60C53`). Full PlayMode is
+**99/99** (XML SHA-256
+`67E02CE34AFB41222D56A8A4633392FDC9716CB8A7D40AD4D1228A34669D93B4`). The corrected
+candidate APK is 41,683,648 bytes (SHA-256
+`6A16D07EBA66C7420E5F1AABD7982E27C40C6BB017FC639E2D87974B85DE60DC`) and the AAB is
+37,509,156 bytes (SHA-256
+`337C15FF7169A97FED2F711822C5366BF731A388D954C8778A9BF33A9E4DB9DA`). The technical
+checker is pending the post-commit clean-tree rerun for temporary package
+`com.example.battleraja.m11`, API `28/36`, offline permissions, ARM64/static alignment
+and store dimensions.
 
-Approved Lava `ST5GDW23LB004392` installed the exact APK and the pulled base hash
-matches. Fresh menu, fighter-select and live captures show the full feature art and
-the new silhouettes at gameplay scale; the scoped logcat has zero configured fatal,
-ANR, SIGSEGV or SIGABRT markers. Lava reports 4 KB pages. A bounded 30-second
-diagnostic observed settled PSS 248–259 MB, RSS 371–382 MB, graphics PSS 75–80 MB,
-instantaneous CPU 39–62% and thermal status 0, but no usable frame histogram; no
-normalized FPS, GPU, GC or endurance claim is made. Full evidence is in
-`Docs/QA/V1_VISUAL_POLISH_2026-09-04.md`. Its exact-source route continuation also
-selected Pehel and Maya and visibly deployed Tiffin on device; it does not claim a
-complete all-fighter action or lifecycle route. The exact APK also launched on the local
+Approved Lava `ST5GDW23LB004392` installed the corrected APK and the pulled base hash
+matches. The focused route captured a terminal `BASTION CROWN RESULTS` card, Bijli at
+`0/85` with `OUT OF ACTION • respawn or spectate an ally`, and the same player card at
+`85/85` after the confirmed respawn. Its scoped logcat has zero configured crash,
+native, shader or managed-exception markers. Lava reports 4 KB pages. The broader
+current-source route also selected Pehel and Maya, visibly deployed Tiffin, exercised
+in-match accessibility toggles, HOME/resume and Rematch, and reset to a fresh 00:04
+match with all eight fighters. Full evidence and hashes are in
+`Docs/QA/V1_VISUAL_POLISH_2026-09-04.md`. The earlier bounded 30-second diagnostic
+observed settled PSS 248–259 MB, RSS 371–382 MB, graphics PSS 75–80 MB, instantaneous
+CPU 39–62% and thermal status 0, but no usable frame histogram; no normalized FPS,
+GPU, GC or endurance claim is made. The exact candidate also launched on the local
 `BattleRaja_16K` Android 16/API 36 AVD with `getconf PAGESIZE=16384` and zero configured
 crash/native/shader markers; this supplements but does not replace physical Lava proof.
 
-This closes a presentation readability checkpoint only. Commissioned final art/audio,
-full current-source physical lifecycle coverage, accessibility/cultural/fun review,
-normalized sustained performance, genuine 16 KB runtime, final identity/signing and
-owner Play approvals remain open.
+This closes a presentation, bounded lifecycle and respawn-mirror checkpoint only.
+Commissioned final art/audio, spectate-camera interaction comfort, complete all-fighter action coverage,
+accessibility/cultural/fun review, normalized sustained performance, genuine 16 KB
+runtime, final identity/signing and owner Play approvals remain open.
 
 ## Latest current-source evidence — 2026-09-04 — authoritative respawn handoff
 

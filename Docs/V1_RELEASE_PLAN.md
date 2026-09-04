@@ -18,33 +18,44 @@ prototype until every V1 completion gate and remaining human gate passes.
 The editable production-art baseline now gives Bijli, Pehel and Maya separated faceted
 shoulder, gauntlet and leg silhouettes. The Bazaar Bastion feature art fills the menu
 card with an envelope crop, removing the low-information dead block while keeping the
-controls and safe-area layout intact. Source commits: `775497d`, `281eeb4`.
+controls and safe-area layout intact. Source commits: `775497d`, `281eeb4`, `4ebf65f`;
+the last commit mirrors the confirmed post-respawn state into the visible actor and
+health card without changing Bastion domain rules.
 
 - Static validation: **0 errors / 0 warnings**.
 - Full EditMode: **164/164 passed**; final XML SHA-256
   `5D43596B6246CFF916B83A43459728537CBADD5B8947DB33CABE37F7EBE5D5DF`.
-- Full PlayMode: **98/98 passed**; XML SHA-256
-  `7F827E33249211F45469CF14596653A912286DC24B3A2ACEC885752CC5E48AD6`.
-- APK: **41,681,892 bytes**, SHA-256
-  `739742F5D401F5B02F9213B71EA78EA2C41F8F66E9D78792AE3430ED84DD0A7B`.
-- AAB: **37,507,386 bytes**, SHA-256
-  `4BE9951BDAA517ED01F2D35472D41FA415A919063BA1A976BF1ADA5EF357DD94`.
-- Technical release checker: **0 errors / 0 warnings** for temporary package
-  `com.example.battleraja.m11`, API `28/36`, offline permissions, ARM64/static
+- Full PlayMode: **99/99 passed** after the respawn handoff regression; XML SHA-256
+  `67E02CE34AFB41222D56A8A4633392FDC9716CB8A7D40AD4D1228A34669D93B4`.
+- Corrected APK: **41,683,648 bytes**, SHA-256
+  `6A16D07EBA66C7420E5F1AABD7982E27C40C6BB017FC639E2D87974B85DE60DC`.
+- Corrected AAB: **37,509,156 bytes**, SHA-256
+  `337C15FF7169A97FED2F711822C5366BF731A388D954C8778A9BF33A9E4DB9DA`.
+- Technical release checker: pending its post-commit clean-tree rerun for temporary
+  package `com.example.battleraja.m11`, API `28/36`, offline permissions, ARM64/static
   alignment and store dimensions.
-- Approved Lava `ST5GDW23LB004392`: exact APK installed and pulled base hash matched;
-  menu, fighter-select and live captures show the new silhouettes and full feature art;
-  the same exact-source continuation selected Pehel and Maya and visibly deployed
-  Tiffin; scoped crash-marker logs are clean. Lava reports 4 KB pages.
+- Approved Lava `ST5GDW23LB004392`: corrected APK installed and pulled base hash
+  matched. The focused Bijli route captured the explicit `OUT OF ACTION` card at `0/85`
+  and restored `85/85` after respawn; the scoped route logcat is marker-clean. The
+  broader exact-source continuation selected Pehel and Maya, visibly deployed Tiffin,
+  exercised accessibility toggles, HOME/resume and Rematch, and Lava reports 4 KB pages.
 - The exact APK also launched on the local `BattleRaja_16K` Android 16/API 36 AVD with
   `getconf PAGESIZE=16384`, ABI `x86_64,arm64-v8a` and zero configured app
   crash/native/shader markers. This is emulator evidence, not physical-device proof.
 - Bounded 30-second diagnostic: settled PSS 248–259 MB, RSS 371–382 MB, graphics PSS
   75–80 MB, instantaneous CPU 39–62%, thermal status 0; no normalized FPS or
   endurance claim because `gfxinfo` exposed no usable histogram.
+- Follow-up approved-Lava route on the same APK (Maya selection persisted) exercised
+  the in-match accessibility toggles, HOME/resume, terminal Results and the visible
+  Rematch control. `16-results.png` records `WINNER RIVAL • Clock` with Raja 6/15 and
+  Rival 11/15; `17-rematch-live.png` resets to 00:04 with Maya at 85/85 and all eight
+  fighters visible. The route logcat is marker-clean. The corrected route below adds
+  explicit out-of-action/respawn evidence; reliable attack/ability success and
+  spectate-camera comfort remain open.
 
 Evidence: `Docs/QA/V1_VISUAL_POLISH_2026-09-04.md`. This closes presentation
-readability only; commissioned final assets/audio, complete current-source route,
+readability plus a bounded current-source lifecycle/respawn route; commissioned final
+assets/audio, spectate-camera comfort, complete all-fighter action coverage,
 accessibility/cultural/fun review, sustained performance, genuine 16 KB runtime and
 owner Play gates remain open.
 

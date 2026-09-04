@@ -18,25 +18,35 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
 
 ## Latest local gate — 2026-09-04 — visual polish and 16 KB smoke
 
-Source commits `775497d`, `281eeb4` and documentation tip `730f845` carry the editable
-faceted fighter silhouettes, full-card Bazaar feature art and the current candidate
-evidence. Static validation is **0/0**, full EditMode **164/164** and full PlayMode
-**98/98**. The exact APK is **41,681,892 bytes** (SHA-256
-`739742F5D401F5B02F9213B71EA78EA2C41F8F66E9D78792AE3430ED84DD0A7B`); the AAB is
-**37,507,386 bytes** (SHA-256
-`4BE9951BDAA517ED01F2D35472D41FA415A919063BA1A976BF1ADA5EF357DD94`). The technical
-checker passes temporary package `com.example.battleraja.m11`, version `1.0.0` / code
-`100`, API `28/36`, no network permissions, ARM64-only native libraries, static 16 KB
-alignment and store dimensions.
+Source commits `775497d`, `281eeb4` and `4ebf65f` carry the editable faceted fighter
+silhouettes, full-card Bazaar feature art and the confirmed-respawn view handoff. Static
+validation is **0/0**, full EditMode **164/164** and full PlayMode **99/99**. The exact
+corrected APK is **41,683,648 bytes** (SHA-256
+`6A16D07EBA66C7420E5F1AABD7982E27C40C6BB017FC639E2D87974B85DE60DC`); the AAB is
+**37,509,156 bytes** (SHA-256
+`337C15FF7169A97FED2F711822C5366BF731A388D954C8778A9BF33A9E4DB9DA`). The technical
+checker is queued for its post-commit clean-tree run against temporary package
+`com.example.battleraja.m11`, version `1.0.0` / code `100`, API `28/36`, no network
+permissions, ARM64-only native libraries, static 16 KB alignment and store dimensions.
 
-The exact APK was installed on approved Lava `ST5GDW23LB004392`; the pulled base hash
-matched and the current-source menu, Pehel and Maya route captures have zero configured
-fatal markers. Lava reports 4 KB pages. The same APK launched on the local
+The corrected exact APK was installed on approved Lava `ST5GDW23LB004392`; the pulled
+base hash matched. A focused Bijli route visibly reached `0/85` with
+`OUT OF ACTION • respawn or spectate an ally` and then `85/85` after respawn; the route
+logcat has zero configured crash/native/shader/managed-exception markers. The broader
+current-source menu, Pehel and Maya route captures also remain marker-clean. Lava reports
+4 KB pages. The same APK launched on the local
 `BattleRaja_16K` Android 16/API 36 AVD (`sdk_gphone16k_x86_64`) with
 `getconf PAGESIZE=16384`, ABI `x86_64,arm64-v8a` and zero configured app
 crash/native/shader markers. This is emulator 16 KB evidence, not physical-device
 coverage or a final signed-package approval. The full record is
 `Docs/QA/V1_VISUAL_POLISH_2026-09-04.md`.
+
+The same exact APK subsequently completed a bounded physical lifecycle route on Lava:
+in-match accessibility toggles, HOME/resume, a terminal Results card and Rematch reset
+were observed, with all eight fighters rendered in the fresh 00:04 match. The corrected
+respawn route supplies the explicit out-of-action and restored-health frames; a full
+spectate-camera interaction, reliable attack/ability effect proof, commissioned art/audio,
+normalized performance, physical 16 KB runtime or owner release approval remain open.
 
 ## Latest local gate — 2026-09-04 — touch-control clarity continuation
 

@@ -6,27 +6,30 @@
 
 ## Current state
 
-- **Visual polish and menu presentation (2026-09-04):** The editable production-art
-  baseline now gives Bijli, Pehel and Maya distinct faceted shoulder, gauntlet and leg
-  silhouettes, and the Bazaar Bastion feature artwork fills the menu card instead of
-  leaving a low-information dead block. Source commits `775497d` and `281eeb4` pass
-  static validation **0/0**, full EditMode **164/164** and full PlayMode **98/98**.
-  The exact Android candidate is APK **41,681,892 bytes** (SHA-256
-  `739742F5D401F5B02F9213B71EA78EA2C41F8F66E9D78792AE3430ED84DD0A7B`) and AAB
-  **37,507,386 bytes** (SHA-256
-  `4BE9951BDAA517ED01F2D35472D41FA415A919063BA1A976BF1ADA5EF357DD94`); the
-  technical release checker is **0/0**. Approved Lava
-  `ST5GDW23LB004392` installed the exact APK, the pulled base hash matched, and the
-  menu, fighter-select and live captures show the new silhouettes with zero scoped
-  fatal/ANR/SIGSEGV/SIGABRT markers. Evidence is indexed in
-  `Docs/QA/V1_VISUAL_POLISH_2026-09-04.md`; its route continuation also selected Pehel
-  and Maya and visibly deployed Tiffin on the same exact APK. This is a bounded
-  readability/action checkpoint, not commissioned final art/audio, a complete
-  current-source physical route, or normalized
-  sustained performance, genuine 16 KB runtime proof or owner release approval.
-  The exact candidate also launches on the local `BattleRaja_16K` Android 16/API 36
-  AVD with `getconf PAGESIZE=16384` and zero configured app crash/native/shader markers;
-  this is emulator evidence, not physical Lava proof.
+- **Visual polish and confirmed respawn mirror (2026-09-04):** The editable
+  production-art baseline now gives Bijli, Pehel and Maya distinct faceted shoulder,
+  gauntlet and leg silhouettes, and the Bazaar Bastion feature artwork fills the menu
+  card instead of leaving a low-information dead block. Source commits `775497d`,
+  `281eeb4` and `4ebf65f` pass static validation **0/0**, full EditMode **164/164** and
+  full PlayMode **99/99**. The corrected exact Android candidate is APK **41,683,648
+  bytes** (SHA-256
+  `6A16D07EBA66C7420E5F1AABD7982E27C40C6BB017FC639E2D87974B85DE60DC`) and AAB
+  **37,509,156 bytes** (SHA-256
+  `337C15FF7169A97FED2F711822C5366BF731A388D954C8778A9BF33A9E4DB9DA`); the
+  technical release checker is pending the post-commit clean-tree rerun. Approved Lava
+  `ST5GDW23LB004392` installed the corrected APK, and the pulled base hash matches.
+  The focused route captured a terminal Results card, `0/85` with
+  `OUT OF ACTION • respawn or spectate an ally`, then `85/85` after the confirmed
+  respawn; its scoped logcat has zero configured crash/native/shader markers. The
+  broader route also exercised accessibility toggles, HOME/resume and Rematch, while
+  Pehel and Maya were selected on the same candidate and Tiffin was visibly deployed.
+  Evidence is indexed in `Docs/QA/V1_VISUAL_POLISH_2026-09-04.md`. This is a bounded
+  readability/lifecycle/respawn checkpoint, not commissioned final art/audio, complete
+  all-fighter action coverage, spectate-camera comfort, normalized sustained performance,
+  genuine physical 16 KB runtime proof or owner release approval. The exact candidate
+  also launches on the local `BattleRaja_16K` Android 16/API 36 AVD with
+  `getconf PAGESIZE=16384` and zero configured app crash/native/shader markers; this is
+  emulator evidence, not physical Lava proof.
 
 - **Authoritative Bastion respawn handoff (2026-09-04):** Respawn now reserves a ticket
   once and keeps the participant dead/spectating until the application successfully
