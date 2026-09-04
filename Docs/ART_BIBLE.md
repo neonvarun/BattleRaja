@@ -23,6 +23,8 @@ real community, political symbol or historical character.
 - Reduced-flash mode preserves the same information with shape, contrast, timing and audio.
 - Materials use a restrained palette and matte-to-satin variation; no noisy texture detail is
   required for the first readable mobile tier.
+- Touch controls use original vector glyphs (arrows, crosshair, bolt, burst and parcel) plus
+  short labels. Glyphs are render-only and must never become the input or authority layer.
 
 ## V1 editable asset pipeline
 

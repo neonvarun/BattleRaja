@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using BattleRaja.Presentation.Combat;
 
 namespace BattleRaja.Presentation.Movement
 {
@@ -27,6 +28,8 @@ namespace BattleRaja.Presentation.Movement
             {
                 knob = _rectTransform;
             }
+
+            TouchControlLabel.Ensure(transform, name == "AimStick" ? "AIM" : "MOVE");
         }
 
         private void OnDisable()

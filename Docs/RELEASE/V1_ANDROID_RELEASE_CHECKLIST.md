@@ -16,6 +16,29 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
   outside the Android runtime. Final signed-bundle inspection is still required before
   Play submission.
 
+## Latest local gate — 2026-09-04 — touch-control clarity continuation
+
+The candidate now renders original vector glyphs inside the production touch surfaces and
+uses tighter portrait sizing. Static validation is **0/0**, EditMode **159/159** and PlayMode
+**95/95**. The exact APK is **41,668,888 bytes** (`8B9D11BFDB40A75D7C301A255B71D74516BD83F7D5672730FFFFA34A635E9C71`); the
+AAB is **37,494,403 bytes** (`F877BF07F6CBBCF890DB2968B5D48CBB93FC64CCB2DC10D4CCA709679EC99BBC`). The
+technical checker passes package `com.example.battleraja.m11`, version `1.0.0` / code
+`100`, API `28/36`, no network permissions, ARM64-only native libraries, static 16 KB
+alignment and the supplied store dimensions.
+
+The exact APK is installed on approved Lava `ST5GDW23LB004392` (`1080x2460`, Android
+14/API 34, 4 KB pages) and the pulled base matches the APK SHA-256. Fresh menu/briefing/
+fighter-select/live/settings/action captures are under
+`Builds/Local/V1GameplayTruth/Next/touch-glyph-final2/`. The action probe reached the
+expected Tiffin invalid-placement edge state and process-scoped logcat had zero configured
+fatal markers. The six-sample/30-second performance capture reports PSS **296,208–302,448 KB**,
+RSS **408,496–422,188 KB**, graphics PSS **87,528–93,684 KB**, raw app CPU **97–140%**
+(mean **113.3%**), battery **69% → 69%**, thermal status **0**. SurfaceFlinger returned no
+frame timestamps and is not used for an FPS claim. The candidate remains temporary debug-signed and not Play-ready; final
+identity/signing, physical 16 KB runtime, normalized performance/endurance, complete
+comfort/accessibility review, commissioned art/audio and owner privacy/Data Safety/IARC,
+cultural and Play approvals remain required.
+
 ## Latest local gate — 2026-09-04 — hero presentation continuation
 
 The current candidate adds connected render-only hero silhouette parts and tighter tall-phone

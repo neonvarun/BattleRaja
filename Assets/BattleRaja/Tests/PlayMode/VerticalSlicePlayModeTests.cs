@@ -9,6 +9,7 @@ using BattleRaja.Presentation.Match;
 using BattleRaja.Presentation.Visuals;
 using BattleRaja.Presentation.Gadgets;
 using BattleRaja.Presentation.Movement;
+using BattleRaja.Presentation.UI;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -1093,9 +1094,22 @@ namespace BattleRaja.Tests.PlayMode
         [UnityTest]
         public IEnumerator TouchControlsExposeReadableActionLabels()
         {
-            Assert.That(GameObject.Find("AttackButton")?.GetComponentInChildren<Text>(true)?.text, Is.EqualTo("ATTACK"));
-            Assert.That(GameObject.Find("AbilityButton")?.GetComponentInChildren<Text>(true)?.text, Is.EqualTo("ABILITY"));
-            Assert.That(GameObject.Find("GadgetButton")?.GetComponentInChildren<Text>(true)?.text, Is.EqualTo("GADGET"));
+            var attack = GameObject.Find("AttackButton");
+            var ability = GameObject.Find("AbilityButton");
+            var gadget = GameObject.Find("GadgetButton");
+            var movement = GameObject.Find("MovementStick");
+            var aim = GameObject.Find("AimStick");
+            Assert.That(attack?.GetComponentInChildren<Text>(true)?.text, Is.EqualTo("ATTACK"));
+            Assert.That(ability?.GetComponentInChildren<Text>(true)?.text, Is.EqualTo("ABILITY"));
+            Assert.That(gadget?.GetComponentInChildren<Text>(true)?.text, Is.EqualTo("GADGET"));
+            Assert.That(movement?.GetComponentInChildren<Text>(true)?.text, Is.EqualTo("MOVE"));
+            Assert.That(aim?.GetComponentInChildren<Text>(true)?.text, Is.EqualTo("AIM"));
+            Assert.That(attack?.transform.Find("ControlGlyph")?.GetComponent<BattleRajaTouchGlyph>(), Is.Not.Null);
+            Assert.That(ability?.transform.Find("ControlGlyph")?.GetComponent<BattleRajaTouchGlyph>(), Is.Not.Null);
+            Assert.That(gadget?.transform.Find("ControlGlyph")?.GetComponent<BattleRajaTouchGlyph>(), Is.Not.Null);
+            Assert.That(movement?.transform.Find("ControlGlyph")?.GetComponent<BattleRajaTouchGlyph>(), Is.Not.Null);
+            Assert.That(aim?.transform.Find("ControlGlyph")?.GetComponent<BattleRajaTouchGlyph>(), Is.Not.Null);
+            Assert.That(attack?.transform.Find("ControlLabel")?.GetComponent<Text>()?.fontSize, Is.LessThanOrEqualTo(14));
             yield return null;
         }
 

@@ -669,15 +669,21 @@ namespace BattleRaja.Presentation.Match
             aim.anchorMin = _leftHanded ? new Vector2(0.17f, stickY) : new Vector2(0.83f, stickY);
             aim.anchorMax = aim.anchorMin;
 
+            var stickSize = compact ? 196f : 204f;
+            SetActionSize(movement, stickSize);
+            SetActionSize(aim, stickSize);
+            SetActionSize(movement != null ? movement.Find("Knob") as RectTransform : null, compact ? 76f : 80f);
+            SetActionSize(aim != null ? aim.Find("Knob") as RectTransform : null, compact ? 76f : 80f);
+
             var attack = GameObject.Find("AttackButton")?.GetComponent<RectTransform>();
             var ability = GameObject.Find("AbilityButton")?.GetComponent<RectTransform>();
             var gadget = GameObject.Find("GadgetButton")?.GetComponent<RectTransform>();
             SetActionAnchor(attack, new Vector2(_leftHanded ? 0.07f : 0.93f, actionY));
             SetActionAnchor(ability, new Vector2(_leftHanded ? 0.20f : 0.80f, actionY));
             SetActionAnchor(gadget, new Vector2(_leftHanded ? 0.33f : 0.67f, actionY));
-            SetActionSize(attack, compact ? 146f : 170f);
-            SetActionSize(ability, compact ? 122f : 140f);
-            SetActionSize(gadget, compact ? 106f : 120f);
+            SetActionSize(attack, compact ? 156f : 166f);
+            SetActionSize(ability, compact ? 128f : 136f);
+            SetActionSize(gadget, compact ? 108f : 114f);
             _controlsCompactLayout = compact;
             _controlsLayoutInitialized = true;
         }

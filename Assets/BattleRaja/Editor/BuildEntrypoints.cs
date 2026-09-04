@@ -1407,7 +1407,7 @@ namespace BattleRaja.Editor
             var rect = buttonObject.GetComponent<RectTransform>();
             rect.anchorMin = new Vector2(0.67f, 0.49f);
             rect.anchorMax = new Vector2(0.67f, 0.49f);
-            rect.sizeDelta = new Vector2(120f, 120f);
+            rect.sizeDelta = new Vector2(108f, 108f);
             buttonObject.GetComponent<BattleRajaTouchSurface>().Configure(new Color(0.72f, 0.32f, 0.95f, 0.30f), true);
             return buttonObject.GetComponent<GadgetUseButton>();
         }
@@ -1443,7 +1443,7 @@ namespace BattleRaja.Editor
             var rect = buttonObject.GetComponent<RectTransform>();
             rect.anchorMin = new Vector2(0.91f, 0.49f);
             rect.anchorMax = new Vector2(0.91f, 0.49f);
-            rect.sizeDelta = new Vector2(170f, 170f);
+            rect.sizeDelta = new Vector2(156f, 156f);
             buttonObject.GetComponent<BattleRajaTouchSurface>().Configure(new Color(1f, 0.36f, 0.18f, 0.28f), true);
             return buttonObject.GetComponent<AttackButton>();
         }
@@ -1455,7 +1455,7 @@ namespace BattleRaja.Editor
             var rect = buttonObject.GetComponent<RectTransform>();
             rect.anchorMin = new Vector2(0.79f, 0.49f);
             rect.anchorMax = new Vector2(0.79f, 0.49f);
-            rect.sizeDelta = new Vector2(140f, 140f);
+            rect.sizeDelta = new Vector2(128f, 128f);
             buttonObject.GetComponent<BattleRajaTouchSurface>().Configure(new Color(0.36f, 0.78f, 1f, 0.30f), true);
             return buttonObject.GetComponent<AbilityButton>();
         }
@@ -1492,7 +1492,7 @@ namespace BattleRaja.Editor
             var rect = stickObject.GetComponent<RectTransform>();
             rect.anchorMin = anchor;
             rect.anchorMax = anchor;
-            rect.sizeDelta = new Vector2(220f, 220f);
+            rect.sizeDelta = new Vector2(204f, 204f);
             stickObject.GetComponent<BattleRajaTouchSurface>().Configure(color, true);
             TouchControlLabel.Ensure(stickObject.transform, name == "MovementStick" ? "MOVE" : "AIM");
 
@@ -1501,7 +1501,7 @@ namespace BattleRaja.Editor
             var knobRect = knobObject.GetComponent<RectTransform>();
             knobRect.anchorMin = new Vector2(0.5f, 0.5f);
             knobRect.anchorMax = new Vector2(0.5f, 0.5f);
-            knobRect.sizeDelta = new Vector2(94f, 94f);
+            knobRect.sizeDelta = new Vector2(80f, 80f);
             knobObject.GetComponent<BattleRajaTouchSurface>().Configure(new Color(color.r, color.g, color.b, 0.72f), false);
 
             var stick = stickObject.GetComponent<VirtualStick>();

@@ -13,6 +13,8 @@ namespace BattleRaja.Presentation.UI
         [SerializeField] private Color accent = new Color(0.20f, 0.80f, 0.95f, 0.22f);
         [SerializeField] private bool drawRing = true;
 
+        public Color GraphicAccent => accent;
+
         public void Configure(Color color, bool ring)
         {
             accent = color;
@@ -32,9 +34,12 @@ namespace BattleRaja.Presentation.UI
             var rect = rectTransform.rect;
             var center = rect.center;
             var radius = Mathf.Min(rect.width, rect.height) * 0.47f;
-            var baseAlpha = drawRing ? Mathf.Max(0.08f, accent.a * 0.65f) : Mathf.Max(0.38f, accent.a);
+            var baseAlpha = drawRing ? Mathf.Max(0.10f, accent.a * 0.72f) : Mathf.Max(0.38f, accent.a);
             AddCircle(vertexHelper, center, radius, new Color(accent.r, accent.g, accent.b, baseAlpha), 32);
             if (!drawRing) return;
+
+            AddCircle(vertexHelper, center, radius * 0.72f,
+                new Color(accent.r, accent.g, accent.b, Mathf.Max(0.025f, accent.a * 0.15f)), 32);
 
             var outer = radius * 0.98f;
             var inner = radius * 0.88f;

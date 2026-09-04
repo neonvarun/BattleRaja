@@ -3,6 +3,33 @@
 Updated: 2026-09-04
 Classification: **prototype**
 
+## Latest V1 control clarity checkpoint — 2026-09-04
+
+The production mobile controls now use compact portrait sizing and original vector glyphs for
+move, aim, attack, ability and gadget. The new `BattleRajaTouchGlyph` is render-only and
+does not change pointer ownership, common input commands or authority.
+
+Static validation is **0/0**, EditMode **159/159** and PlayMode **95/95**. The exact APK is
+`Builds/V1/Android/BattleRaja-V1.0-release-candidate.apk` (SHA-256
+`8B9D11BFDB40A75D7C301A255B71D74516BD83F7D5672730FFFFA34A635E9C71`) and AAB is
+`Builds/V1/Android/BattleRaja-V1.0-release-candidate.aab` (SHA-256
+`F877BF07F6CBBCF890DB2968B5D48CBB93FC64CCB2DC10D4CCA709679EC99BBC`). The checker passes
+API 28/36, offline permissions, ARM64/static 16 KB alignment and store dimensions.
+
+The exact APK is installed on approved Lava `ST5GDW23LB004392` and its pulled base matches
+the APK SHA-256. Fresh rendered route captures and the action/settings probes are under
+`Builds/Local/V1GameplayTruth/Next/touch-glyph-final2/`. The action probe reached the
+expected Tiffin invalid-placement edge state; process-scoped logcat had zero configured
+fatal markers. The bounded six-sample/30-second capture reports PSS **296,208–302,448 KB**,
+RSS **408,496–422,188 KB**, graphics PSS **87,528–93,684 KB**, raw app CPU **97–140%**
+(mean **113.3%**), battery **69% → 69%**, thermal **0**. SurfaceFlinger returned no frame
+timestamps, so it is not an FPS claim.
+
+This is an incremental player-facing clarity improvement, not completion of commissioned
+final art/audio, full physical comfort/accessibility/lifecycle, normalized GPU/GC/endurance,
+physical 16 KB runtime, final identity/signing, privacy/Data Safety/IARC, cultural review or
+Play submission. Classification remains **prototype**.
+
 ## Latest V1 readability checkpoint — 2026-09-04
 
 The saved Bijli, Pehel and Maya presentation prefabs now include connected neck/chest/limb

@@ -119,7 +119,7 @@ namespace BattleRaja.Tests.PlayMode
         {
             var attack = GameObject.Find("AttackButton").GetComponent<RectTransform>();
             var compact = Screen.height > 0 && (float)Screen.width / Screen.height < 0.75f;
-            var expected = compact ? 146f : 170f;
+            var expected = compact ? 156f : 166f;
 
             Assert.That(attack.sizeDelta.x, Is.EqualTo(expected).Within(0.1f));
             Assert.That(attack.sizeDelta.y, Is.EqualTo(expected).Within(0.1f));

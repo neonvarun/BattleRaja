@@ -35,24 +35,60 @@ namespace BattleRaja.Presentation.Combat
     {
         public static void Ensure(Transform parent, string value)
         {
-            if (parent == null || parent.Find("ControlLabel") != null) return;
+            if (parent == null) return;
 
-            var labelObject = new GameObject("ControlLabel", typeof(RectTransform), typeof(Text));
-            labelObject.transform.SetParent(parent, false);
+            var labelObject = parent.Find("ControlLabel")?.gameObject;
+            if (labelObject == null)
+            {
+                labelObject = new GameObject("ControlLabel", typeof(RectTransform), typeof(Text));
+                labelObject.transform.SetParent(parent, false);
+            }
+
             var rect = (RectTransform)labelObject.transform;
-            rect.anchorMin = Vector2.zero;
-            rect.anchorMax = Vector2.one;
+            rect.anchorMin = new Vector2(0.06f, 0.02f);
+            rect.anchorMax = new Vector2(0.94f, 0.26f);
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
 
             var label = labelObject.GetComponent<Text>();
             label.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            label.fontSize = 18;
+            label.fontSize = 13;
             label.fontStyle = FontStyle.Bold;
             label.alignment = TextAnchor.MiddleCenter;
-            label.color = Color.white;
+            label.color = new Color(1f, 1f, 1f, 0.94f);
             label.raycastTarget = false;
             label.text = value ?? string.Empty;
+
+            var glyphObject = parent.Find("ControlGlyph")?.gameObject;
+            if (glyphObject == null)
+            {
+                glyphObject = new GameObject("ControlGlyph", typeof(RectTransform), typeof(BattleRajaTouchGlyph));
+                glyphObject.transform.SetParent(parent, false);
+            }
+
+            var glyphRect = (RectTransform)glyphObject.transform;
+            glyphRect.anchorMin = new Vector2(0.21f, 0.28f);
+            glyphRect.anchorMax = new Vector2(0.79f, 0.84f);
+            glyphRect.offsetMin = Vector2.zero;
+            glyphRect.offsetMax = Vector2.zero;
+            glyphObject.GetComponent<BattleRajaTouchGlyph>().Configure(
+                ResolveGlyph(value),
+                ResolveAccent(parent));
+        }
+
+        private static BattleRajaTouchGlyph.Kind ResolveGlyph(string value)
+        {
+            if (string.Equals(value, "MOVE", System.StringComparison.OrdinalIgnoreCase)) return BattleRajaTouchGlyph.Kind.Move;
+            if (string.Equals(value, "AIM", System.StringComparison.OrdinalIgnoreCase)) return BattleRajaTouchGlyph.Kind.Aim;
+            if (string.Equals(value, "ATTACK", System.StringComparison.OrdinalIgnoreCase)) return BattleRajaTouchGlyph.Kind.Attack;
+            if (string.Equals(value, "ABILITY", System.StringComparison.OrdinalIgnoreCase)) return BattleRajaTouchGlyph.Kind.Ability;
+            return BattleRajaTouchGlyph.Kind.Gadget;
+        }
+
+        private static Color ResolveAccent(Transform parent)
+        {
+            var surface = parent.GetComponent<BattleRajaTouchSurface>();
+            return surface != null ? surface.GraphicAccent : Color.white;
         }
     }
 }

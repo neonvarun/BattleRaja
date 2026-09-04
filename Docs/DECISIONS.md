@@ -2061,3 +2061,30 @@ Record every material choice here. Do not silently overwrite old decisions.
   under `Builds/Local/V1GameplayTruth/Next/hero-framing-20260904/`, full test reports and
   the technical Android checker output for APK `675945B1...` / AAB `FC0A070E...`.
 - **Owner:** Human project owner
+
+### ADR-084 - Use original vector glyphs for mobile touch discoverability
+
+- **Date:** 2026-09-04
+- **Status:** Accepted for the V1 readability baseline; authored iconography and human
+  accessibility/comfort review remain open.
+- **Context:** The exact Lava live frame showed the production touch controls as large
+  text-only circles. Labels communicated the action but made the surface read like a debug
+  prototype, especially in portrait.
+- **Options considered:** Keep labels only; add a third-party icon package; or add small
+  repository-owned vector glyphs while preserving the existing uGUI pointer components.
+- **Decision:** Add `BattleRajaTouchGlyph`, a render-only `MaskableGraphic` with distinct move,
+  aim, attack, ability and gadget geometry. Reuse the existing `TouchControlLabel` helper to
+  place the glyph above a compact label, and tighten only the generated/runtime control sizes
+  in `BuildEntrypoints` and `OfflineMatchHud`. Keep all glyphs raycast-disabled; input remains
+  on the existing parent controls and common command/authority paths.
+- **Consequences:** The approved-Lava live route now shows immediately recognizable action
+  symbols and a cleaner control rhythm. The new geometry adds a small static UI mesh cost and
+  remains an editable generated baseline, not final commissioned iconography or proof of
+  touch comfort. Full tests remain green; the SurfaceFlinger query for this pass returned only
+  the refresh interval and no frame timestamps, so no FPS claim is attached.
+- **Evidence/sources:** `BattleRajaTouchGlyph.cs`, `AttackButton.cs`,
+  `BattleRajaTouchSurface.cs`, `BuildEntrypoints.cs`, `OfflineMatchHud.cs`, final EditMode /
+  PlayMode XML `Next/editmode-touch-glyph-final2-20260904.xml` and
+  `Next/playmode-touch-glyph-final2-20260904.xml`, APK/AAB checker output and approved-Lava
+  captures under `Builds/Local/V1GameplayTruth/Next/touch-glyph-final2/`.
+- **Owner:** Human project owner

@@ -13,6 +13,37 @@ prototype until every V1 completion gate and remaining human gate passes.
 - Approved physical evidence device: Lava `ST5GDW23LB004392` (`LAVA LXX508`) only.
 - Preserve internal networking/Web seams without exposing unusable public online paths.
 
+## Checkpoint 0j - touch-control clarity pass — 2026-09-04
+
+The production touch surfaces now carry original vector glyphs for move, aim, attack,
+ability and gadget, with slightly tighter portrait sizing that preserves comfortable target
+areas. The pass is presentation-only: common input commands, authority, replay and collision
+remain unchanged.
+
+- Static validation: **0 errors / 0 warnings**.
+- EditMode: **159/159 passed**, XML SHA-256
+  `7C2A2BF9CD76422E8CA454DDF3CD6CDD1D92E888E1EB8298DC29349B87A92F8E`.
+- PlayMode: **95/95 passed**, XML SHA-256
+  `0D2A47CF1EE234545496658DFA19F3D7A76B2934B22D5A02C76A447D09AC4AFB`.
+- APK: **41,668,888 bytes**, SHA-256
+  `8B9D11BFDB40A75D7C301A255B71D74516BD83F7D5672730FFFFA34A635E9C71`.
+- AAB: **37,494,403 bytes**, SHA-256
+  `F877BF07F6CBBCF890DB2968B5D48CBB93FC64CCB2DC10D4CCA709679EC99BBC`.
+- Technical release checker: passed target SDK 36, offline permissions, ARM64/static 16 KB
+  alignment and store dimensions.
+- Approved Lava `ST5GDW23LB004392`: exact APK installed (pulled base SHA matches) and the
+  action probe reached the expected Tiffin invalid-placement edge state. Captures are in
+  `Builds/Local/V1GameplayTruth/Next/touch-glyph-final2/`; process-scoped logcat had zero
+  configured fatal markers. Six-sample, 30-second performance evidence under
+  `performance-touch-glyph-final2-20260904/` reports PSS **296,208–302,448 KB**, RSS
+  **408,496–422,188 KB**, graphics PSS **87,528–93,684 KB**, raw app CPU **97–140%** (mean
+  **113.3%**), thermal **0**, battery **69% → 69%**. SurfaceFlinger returned no frame
+  timestamps, so no FPS claim is attached.
+
+This improves control discoverability but does not close final art/audio, full physical
+comfort/accessibility/lifecycle, normalized performance/endurance, physical 16 KB runtime,
+temporary identity/signing, privacy/Data Safety/IARC, cultural review or Play approval.
+
 ## Checkpoint 0i - hero silhouette and portrait framing pass — 2026-09-04
 
 The latest visual continuation keeps the established render-only authority boundary while

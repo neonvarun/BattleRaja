@@ -6,6 +6,32 @@
 
 ## Current state
 
+- **Touch-control clarity pass (2026-09-04):** The production twin-stick controls now use
+  smaller, safer portrait sizing and original vector glyphs (move arrows, crosshair, bolt,
+  ability burst and gadget parcel) with compact labels. `BattleRajaTouchGlyph` is a
+  render-only uGUI graphic; input semantics and pointer ownership are unchanged. Fresh
+  EditMode is **159/159** (XML SHA-256
+  `7C2A2BF9CD76422E8CA454DDF3CD6CDD1D92E888E1EB8298DC29349B87A92F8E`) and PlayMode is
+  **95/95** (XML SHA-256
+  `0D2A47CF1EE234545496658DFA19F3D7A76B2934B22D5A02C76A447D09AC4AFB`). The rebuilt APK is
+  **41,668,888 bytes** (SHA-256
+  `8B9D11BFDB40A75D7C301A255B71D74516BD83F7D5672730FFFFA34A635E9C71`) and AAB is
+  **37,494,403 bytes** (SHA-256
+  `F877BF07F6CBBCF890DB2968B5D48CBB93FC64CCB2DC10D4CCA709679EC99BBC`). The technical
+  checker passes API 28/36, offline permissions, ARM64/static 16 KB alignment and store
+  dimensions. Approved Lava `ST5GDW23LB004392` has the exact APK installed; rendered route
+  captures are under `Builds/Local/V1GameplayTruth/Next/touch-glyph-final2/` (menu,
+  briefing, fighter-select, live, settings and action probe). The exact installed base
+  pulled from Lava matches the APK SHA-256. The live action probe reached the expected
+  Tiffin invalid-placement edge state; the process-scoped log contains **0** configured
+  fatal markers (log SHA-256 `3CD27C11D6A63BF6EE08862EA0828F9B7C1E51DA03A7E506F2B807C67B4D98CF`).
+  A bounded six-sample/30-second capture under
+  `Builds/Local/V1GameplayTruth/Next/performance-touch-glyph-final2-20260904/` reports PSS
+  **296,208–302,448 KB**, RSS **408,496–422,188 KB**, graphics PSS **87,528–93,684 KB**,
+  raw app CPU **97–140%** (mean **113.3%**), battery **69% → 69%**, and thermal status
+  **0**. SurfaceFlinger returned only the refresh interval and no frame timestamps, so no
+  FPS claim is made for this pass.
+
 - **Hero silhouette and portrait framing pass (2026-09-04):** The saved V1 fighter
   presentation now includes connected neck collars, chest plates, limb segments, waist
   bands, knee guards and fighter-specific signature weapons (Bijli arc blade, Pehel mace,

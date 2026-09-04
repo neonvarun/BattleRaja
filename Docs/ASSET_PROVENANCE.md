@@ -37,6 +37,14 @@ small URP emission lift for mobile readability. The same pass tightens portrait 
 remain editable generated baseline assets pending commissioned art, cultural and human
 feel review.
 
+The 2026-09-04 touch-control continuation adds the repository-owned
+`BattleRajaTouchGlyph.cs` vector graphic. It is generated at runtime from deterministic UI
+geometry for move, aim, attack, ability and gadget controls; it has no external asset or
+licence dependency and no gameplay/input authority. The companion sizing changes live in
+`BuildEntrypoints.cs` and `OfflineMatchHud.cs`. The exact APK/AAB and Lava captures are
+indexed in `Docs/QA/CURRENT_STATE.md`; this remains baseline presentation pending final
+authored iconography and human accessibility review.
+
 The 2026-08-29 environment continuation is recorded in commit `ac45479`. The repository
 owned `Assets/BattleRaja/Editor/ProductionEnvironmentBuilder.cs` creates the saved
 `BazaarBastionProduction.prefab`, its low-detail backdrop, six environment meshes, 16

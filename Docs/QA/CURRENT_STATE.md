@@ -13,6 +13,41 @@ create or depend on evidence outside this repository root.
 
 **Prototype — Android offline release candidate in progress.**
 
+## Latest current-source evidence — 2026-09-04 — touch-control clarity pass
+
+The production mobile controls now use compact portrait sizing and original vector glyphs
+inside each action/twin-stick surface: move arrows, aim crosshair, attack bolt, ability burst
+and gadget parcel. `BattleRajaTouchGlyph.cs` is a render-only uGUI graphic; input pointer
+ownership, command routing and authority are unchanged.
+
+Static validation is **0 errors / 0 warnings**. EditMode is **159/159** (XML SHA-256
+`7C2A2BF9CD76422E8CA454DDF3CD6CDD1D92E888E1EB8298DC29349B87A92F8E`) and PlayMode is
+**95/95** (XML SHA-256
+`0D2A47CF1EE234545496658DFA19F3D7A76B2934B22D5A02C76A447D09AC4AFB`). The exact APK is
+**41,668,888 bytes** (SHA-256
+`8B9D11BFDB40A75D7C301A255B71D74516BD83F7D5672730FFFFA34A635E9C71`) and AAB is
+**37,494,403 bytes** (SHA-256
+`F877BF07F6CBBCF890DB2968B5D48CBB93FC64CCB2DC10D4CCA709679EC99BBC`). The release
+checker passes API 28/36, offline permissions, ARM64/static 16 KB alignment and store
+dimensions.
+
+Approved Lava `ST5GDW23LB004392` (`1080x2460`, Android 14/API 34, 4 KB pages) has the exact
+APK installed and the pulled base matches its SHA-256. Fresh menu/briefing/fighter-select/
+live/settings/action captures are in `Builds/Local/V1GameplayTruth/Next/touch-glyph-final2/`.
+The action probe reached the expected Tiffin invalid-placement edge state; process-scoped
+logcat has **0** configured fatal markers (SHA-256
+`3CD27C11D6A63BF6EE08862EA0828F9B7C1E51DA03A7E506F2B807C67B4D98CF`). The six-sample/
+30-second capture under `Next/performance-touch-glyph-final2-20260904/` reports PSS
+**296,208–302,448 KB**, RSS **408,496–422,188 KB**, graphics PSS **87,528–93,684 KB**,
+raw app CPU **97–140%** (mean **113.3%**), battery **69% → 69%**, thermal status **0**.
+SurfaceFlinger returned no frame timestamps, so it is retained only as a limitation artifact.
+
+This is a player-facing clarity improvement, not final commissioned art/audio or proof of
+complete physical comfort/accessibility. The candidate remains **Prototype — Android
+offline release candidate in progress**; final identity/signing, physical 16 KB runtime,
+normalized GPU/GC/endurance, full tutorial/all-fighter/lifecycle/accessibility review and
+owner privacy/Data Safety/IARC/cultural/Play approvals remain open.
+
 ## Latest current-source evidence — 2026-09-04 — hero silhouette and portrait framing pass
 
 The refreshed presentation pass adds connected neck collars, chest plates, limb segments,
