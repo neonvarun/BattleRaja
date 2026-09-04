@@ -22,8 +22,11 @@
   `Docs/QA/V1_VISUAL_POLISH_2026-09-04.md`; its route continuation also selected Pehel
   and Maya and visibly deployed Tiffin on the same exact APK. This is a bounded
   readability/action checkpoint, not commissioned final art/audio, a complete
-  current-source physical route, normalized
+  current-source physical route, or normalized
   sustained performance, genuine 16 KB runtime proof or owner release approval.
+  The exact candidate also launches on the local `BattleRaja_16K` Android 16/API 36
+  AVD with `getconf PAGESIZE=16384` and zero configured app crash/native/shader markers;
+  this is emulator evidence, not physical Lava proof.
 
 - **Authoritative Bastion respawn handoff (2026-09-04):** Respawn now reserves a ticket
   once and keeps the participant dead/spectating until the application successfully

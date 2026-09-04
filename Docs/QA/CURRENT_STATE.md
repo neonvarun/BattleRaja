@@ -41,7 +41,9 @@ instantaneous CPU 39–62% and thermal status 0, but no usable frame histogram; 
 normalized FPS, GPU, GC or endurance claim is made. Full evidence is in
 `Docs/QA/V1_VISUAL_POLISH_2026-09-04.md`. Its exact-source route continuation also
 selected Pehel and Maya and visibly deployed Tiffin on device; it does not claim a
-complete all-fighter action or lifecycle route.
+complete all-fighter action or lifecycle route. The exact APK also launched on the local
+`BattleRaja_16K` Android 16/API 36 AVD with `getconf PAGESIZE=16384` and zero configured
+crash/native/shader markers; this supplements but does not replace physical Lava proof.
 
 This closes a presentation readability checkpoint only. Commissioned final art/audio,
 full current-source physical lifecycle coverage, accessibility/cultural/fun review,

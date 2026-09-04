@@ -36,6 +36,9 @@ controls and safe-area layout intact. Source commits: `775497d`, `281eeb4`.
   menu, fighter-select and live captures show the new silhouettes and full feature art;
   the same exact-source continuation selected Pehel and Maya and visibly deployed
   Tiffin; scoped crash-marker logs are clean. Lava reports 4 KB pages.
+- The exact APK also launched on the local `BattleRaja_16K` Android 16/API 36 AVD with
+  `getconf PAGESIZE=16384`, ABI `x86_64,arm64-v8a` and zero configured app
+  crash/native/shader markers. This is emulator evidence, not physical-device proof.
 - Bounded 30-second diagnostic: settled PSS 248–259 MB, RSS 371–382 MB, graphics PSS
   75–80 MB, instantaneous CPU 39–62%, thermal status 0; no normalized FPS or
   endurance claim because `gfxinfo` exposed no usable histogram.

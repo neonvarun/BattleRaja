@@ -127,6 +127,26 @@ captured after that actor had already been eliminated, so the sequence is not cl
 full all-fighter action or lifecycle comfort; human touch, accessibility, combat-effect
 and results/rematch review remain open.
 
+## Genuine 16 KB runtime smoke
+
+The exact candidate APK also installed and launched on the local
+`BattleRaja_16K` Android 16/API 36 AVD (`sdk_gphone16k_x86_64`) while the emulator's
+airplane-mode setting was enabled. `adb shell getconf PAGESIZE` returned **16384** and
+the ABI list was `x86_64,arm64-v8a`; the package dump reports version `1.0.0`, code
+`100`, minSdk `28` and targetSdk `36`.
+
+- Menu capture: `Builds/Local/V1GameplayTruth/Next/16k-visual-polish-20260904/menu-final.png`,
+  2,082,962 bytes, SHA-256
+  `7C30C7668FFA09AA528F5C4F75F7683F732D89EFF085FD87184468AFE567354E`.
+- App-scoped launch log: `.../16k-visual-polish-20260904/logcat-final.txt`, 783,564
+  bytes, SHA-256
+  `148DFECE57401813D28CDFFF56C19B6ACC72054CBC5314FD51CA300D1751E795`; configured
+  crash/native/shader markers: **0**.
+
+This is emulator evidence for the static 16 KB-compatible candidate and does not replace
+physical Lava evidence, broader device coverage, normalized performance or final human
+release approval.
+
 ## Bounded performance diagnostic
 
 The 30-second capture is under
