@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout with LFS objects
-        uses: actions/checkout@v4
+          uses: actions/checkout@v5
         with:
           lfs: true
           fetch-depth: 1
@@ -34,10 +34,18 @@ jobs:
       - name: Scan tracked source for forbidden secret assignments
         shell: pwsh
         run: |
-          $pattern = '(?i)(api[_-]?key|client[_-]?secret|access[_-]?token|private[_-]?key|password)\s*[:=]\s*[A-Za-z0-9_./+=-]{8,}'
+          # git grep uses POSIX ERE, so keep case-insensitivity in the option
+          # rather than the unsupported PCRE inline (?i) prefix. The explicit
+          # exit handling also treats git grep's normal "no matches" code (1)
+          # as a clean scan while still failing on an actual grep error.
+          $pattern = '(api[_-]?key|client[_-]?secret|access[_-]?token|private[_-]?key|password)[[:space:]]*[:=][[:space:]]*[A-Za-z0-9_./+=-]{8,}'
           $paths = @('Assets', 'Packages', 'ProjectSettings', 'Tools', '.github') | Where-Object { Test-Path -LiteralPath $_ }
-          $hits = @(git grep -n -I -E $pattern -- $paths 2>$null)
-          if ($LASTEXITCODE -eq 0 -and $hits.Count -gt 0) {
+          $hits = @(git grep -n -I -i -E $pattern -- $paths 2>$null)
+          $grepExit = $LASTEXITCODE
+          if ($grepExit -gt 1) {
+            throw "Secret scan failed with git grep exit code $grepExit."
+          }
+          if ($grepExit -eq 0 -and $hits.Count -gt 0) {
             $hits | Write-Output
             throw 'Potential secret assignment detected in tracked source.'
           }
