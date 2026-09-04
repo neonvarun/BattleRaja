@@ -307,5 +307,20 @@ namespace BattleRaja.Tests.EditMode
             Assert.That(tick.Result.IsDraw, Is.True);
             Assert.That(tick.Result.Reason, Is.EqualTo(BastionMatchResultReason.Draw));
         }
+
+        [Test]
+        public void CrownRotationPreservesOverdueTimeAcrossCoarseAdvance()
+        {
+            var coarse = Start(17u);
+            var fixedStep = Start(17u);
+
+            coarse.Advance(105f, 105);
+            for (var tick = 1; tick <= 105; tick++) fixedStep.Advance(1f, tick);
+
+            Assert.That(coarse.Crown.SocketIndex, Is.EqualTo(fixedStep.Crown.SocketIndex));
+            Assert.That(coarse.Crown.Position, Is.EqualTo(fixedStep.Crown.Position));
+            Assert.That(coarse.Crown.RotationRemaining, Is.EqualTo(fixedStep.Crown.RotationRemaining).Within(0.0001f));
+            Assert.That(coarse.CalculateDeterministicHash(), Is.EqualTo(fixedStep.CalculateDeterministicHash()));
+        }
     }
 }

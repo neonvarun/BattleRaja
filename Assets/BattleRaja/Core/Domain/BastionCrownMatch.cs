@@ -911,7 +911,15 @@ namespace BattleRaja.Core.Domain
             }
 
             _crownRotationRemaining -= deltaSeconds;
-            if (_crownRotationRemaining <= 0f) RotateCrown();
+            while (_crownRotationRemaining <= 0f)
+            {
+                // Preserve any overdue time when a caller advances by more
+                // than one rotation interval. Fixed-step replay and a coarse
+                // diagnostic step must land on the same socket and timer.
+                var overdue = _crownRotationRemaining;
+                RotateCrown();
+                _crownRotationRemaining += overdue;
+            }
         }
 
         private void AdvanceDeposit(float deltaSeconds)
