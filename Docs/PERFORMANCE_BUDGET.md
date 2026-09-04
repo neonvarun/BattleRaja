@@ -1,5 +1,21 @@
 # Android and Web Performance Budget
 
+## Latest exact art candidate bounded diagnostic — 2026-09-04
+
+The exact visual-polish APK (`739742F5D401F5B02F9213B71EA78EA2C41F8F66E9D78792AE3430ED84DD0A7B`)
+was captured on approved Lava `ST5GDW23LB004392` for 30 seconds at five-second intervals.
+Six samples showed no configured fatal markers. After startup, settled observations were
+PSS **248–259 MB**, RSS **371–382 MB**, graphics PSS **75–80 MB** and instantaneous
+process CPU **39–62%**; thermal status remained **0**. Unity's SurfaceView exposed no
+usable `dumpsys gfxinfo` frame histogram, so no normalized FPS, GC, GPU or endurance
+budget pass is claimed. The raw capture is under
+`Builds/Local/V1GameplayTruth/Next/performance-visual-polish-20260904/` and the full
+visual/device report is `Docs/QA/V1_VISUAL_POLISH_2026-09-04.md`.
+
+The same APK launched on the local `BattleRaja_16K` Android 16/API 36 AVD with
+`getconf PAGESIZE=16384`; this validates the runtime smoke path only and is not physical
+device performance evidence.
+
 ## Latest exact-candidate P63 bounded live-match refresh — P61 runtime `f80b565` — 2026-08-31
 
 The exact P61 APK from `f80b565372d7446e070cf1a37de042bd018345c4` was kept in a live Solo

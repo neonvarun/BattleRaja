@@ -16,6 +16,28 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
   outside the Android runtime. Final signed-bundle inspection is still required before
   Play submission.
 
+## Latest local gate — 2026-09-04 — visual polish and 16 KB smoke
+
+Source commits `775497d`, `281eeb4` and documentation tip `730f845` carry the editable
+faceted fighter silhouettes, full-card Bazaar feature art and the current candidate
+evidence. Static validation is **0/0**, full EditMode **164/164** and full PlayMode
+**98/98**. The exact APK is **41,681,892 bytes** (SHA-256
+`739742F5D401F5B02F9213B71EA78EA2C41F8F66E9D78792AE3430ED84DD0A7B`); the AAB is
+**37,507,386 bytes** (SHA-256
+`4BE9951BDAA517ED01F2D35472D41FA415A919063BA1A976BF1ADA5EF357DD94`). The technical
+checker passes temporary package `com.example.battleraja.m11`, version `1.0.0` / code
+`100`, API `28/36`, no network permissions, ARM64-only native libraries, static 16 KB
+alignment and store dimensions.
+
+The exact APK was installed on approved Lava `ST5GDW23LB004392`; the pulled base hash
+matched and the current-source menu, Pehel and Maya route captures have zero configured
+fatal markers. Lava reports 4 KB pages. The same APK launched on the local
+`BattleRaja_16K` Android 16/API 36 AVD (`sdk_gphone16k_x86_64`) with
+`getconf PAGESIZE=16384`, ABI `x86_64,arm64-v8a` and zero configured app
+crash/native/shader markers. This is emulator 16 KB evidence, not physical-device
+coverage or a final signed-package approval. The full record is
+`Docs/QA/V1_VISUAL_POLISH_2026-09-04.md`.
+
 ## Latest local gate — 2026-09-04 — touch-control clarity continuation
 
 The candidate now renders original vector glyphs inside the production touch surfaces and
