@@ -78,6 +78,9 @@ The full post-fix physical route through gadget collection, Aandhi, elimination,
 Victory and Results was not completed in this bounded session. No claim of physical 16 KB
 runtime compatibility, FPS, comfort or human fun approval is made. The device UI dump
 exposes Unity's `unitySurfaceView` only; app-level accessibility semantics remain open.
+The post-fix process-scoped logcat is 845 bytes, SHA-256
+`079A6E2F651D8770221CB6A91635AEF77A69283DDAB046A25F57A8F29BC46602`, with zero configured
+`FATAL EXCEPTION`, `ANR in`, `SIGSEGV` or `SIGABRT` markers.
 
 ## Carried-forward evidence
 
