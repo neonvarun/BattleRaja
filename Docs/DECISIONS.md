@@ -2171,3 +2171,25 @@ Record every material choice here. Do not silently overwrite old decisions.
   full EditMode **161/161**, full PlayMode **98/98**, and the rebuilt Android candidate
   under `Builds/V1/Android/`.
 - **Owner:** Human project owner
+
+### ADR-088 - Preserve overdue Crown rotation time across coarse steps
+
+- **Date:** 2026-09-04
+- **Status:** Accepted for the V1 deterministic objective baseline; final objective pacing,
+  AI balance and human fun review remain open.
+- **Context:** `AdvanceCrown` rotated the Crown at most once when an authority advance
+  crossed several 35-second intervals. Coarse diagnostics or a replay using a larger step
+  could therefore land on a different socket than an equivalent fixed-step stream.
+- **Options considered:** Keep the single-rotation behavior; forbid coarse advances; or
+  carry the overdue timer through every crossed interval while preserving the existing
+  socket order.
+- **Decision:** Loop through all overdue rotation intervals and retain the remainder on the
+  next socket. Pickup, deposit, drop-lock, scoring and live/overtime rules are unchanged.
+- **Consequences:** Objective state is step-size invariant for the tested coarse/fixed
+  streams, making diagnostics and replay comparisons more trustworthy. The fix does not
+  imply final Crown pacing, AI fairness or physical 4v4 acceptance.
+- **Evidence/sources:** `BastionCrownMatch.cs`,
+  `BastionCrownMatchTests.cs`, source commit `bad12de`, full EditMode **162/162**, full
+  PlayMode **98/98**, and the Android candidate indexed in
+  `Docs/QA/V1_CROWN_TIMER_DETERMINISM_2026-09-04.md`.
+- **Owner:** Human project owner
