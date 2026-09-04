@@ -16,6 +16,31 @@ start Photon, PlayFab, accounts, ads, IAP, cloud progression or Web release work
   outside the Android runtime. Final signed-bundle inspection is still required before
   Play submission.
 
+## Latest local gate — 2026-09-04 — Crown carrier feedback
+
+Source `22f279b` adds a render-only gold halo/diamond crest above the actor carrying
+the Bastion Crown according to the authority snapshot, with pulse/rotation feedback
+and hidden state for eliminated/terminal actors. No collider, authority, replay, input
+or balance state changed. Static validation is **0/0**, EditMode **164/164** and
+PlayMode **99/99**. The exact APK is **41,686,228 bytes** (SHA-256
+`845860E7F9FCE769EF92206D4E0DF5D421AFCFF4B33C64DE830EAC1E592D11F1`); the AAB is
+**37,511,733 bytes** (SHA-256
+`AA8B695E9FB119436108734165C739FB340F332949DA02BB13B01DC5A59BA175`). The clean-tree
+technical checker passed **0 errors / 0 warnings** for temporary package
+`com.example.battleraja.m11`, API `28/36`, offline permissions, ARM64-only native
+libraries, static 16 KB alignment and store dimensions. Log:
+`Builds/Local/V1GameplayTruth/Next/carrier-crest-20260904/release-checker.log`
+(SHA-256 `C5DDAEF36D85B5F43A5063A7273BC75594A7A67CCB4C25C4321C57E9B6295AA4`).
+
+Approved Lava `ST5GDW23LB004392` installed the exact APK and shows the crest above a
+rival while the HUD reads `RIVAL CARRIER`; the scoped logcat is marker-clean. Lava is
+Android 14/API 34 with 4 KB pages. A bounded 30-second diagnostic recorded PSS
+**292,339 KB**, RSS **406,468 KB**, graphics **91,396 KB**, thermal **0**, and battery
+level **1%**; Unity frame stats were empty, so no FPS/frame-pacing claim is attached.
+A charged Perfetto/profileable run, physical 16 KB runtime and owner release approvals
+remain required, along with commissioned final assets/audio and complete action/
+spectator comfort review.
+
 ## Latest local gate — 2026-09-04 — Crown Spark and team-shape readability
 
 Source `f39af37` adds a bounded render-only readability pass: a Crown Spark halo/core/

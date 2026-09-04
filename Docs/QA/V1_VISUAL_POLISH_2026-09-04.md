@@ -63,6 +63,45 @@ This continuation improves moment-to-moment readability but does not close the o
 gates for commissioned final models/rigs/animations, all-fighter action VFX/audio,
 spectate-camera comfort, normalized sustained performance or owner Play approvals.
 
+## Current-source continuation — Crown carrier crest — 2026-09-04
+
+Source commit `22f279b` adds a small gold carrier crest (halo plus diamond) above every
+fighter presentation. It is enabled only when the Bastion authority snapshot names
+that actor as the Crown carrier, pulses/rotates independently of simulation time, and
+is hidden for eliminated/terminal actors. The crest and its regression hierarchy are
+render-only; no gameplay collider, ticket, replay or input state changed.
+
+- Full EditMode: **164/164 passed**; XML SHA-256
+  `36691D7432EEF5C4F948C516E8D52BF846B4027E9E1F7EE3FACE9F07E123BAA6`.
+- Full PlayMode: **99/99 passed**; XML SHA-256
+  `220F1D2147AC51BF43C47BB6DBFA2BF20EDB98C1B0AC68A90390011D9C1A010F`.
+- Exact APK: 41,686,228 bytes, SHA-256
+  `845860E7F9FCE769EF92206D4E0DF5D421AFCFF4B33C64DE830EAC1E592D11F1`.
+- Exact AAB: 37,511,733 bytes, SHA-256
+  `AA8B695E9FB119436108734165C739FB340F332949DA02BB13B01DC5A59BA175`.
+- Clean-tree technical release checker: **0 errors / 0 warnings**. Log:
+  `Builds/Local/V1GameplayTruth/Next/carrier-crest-20260904/release-checker.log`,
+  SHA-256 `C5DDAEF36D85B5F43A5063A7273BC75594A7A67CCB4C25C4321C57E9B6295AA4`.
+  GitHub validation is recorded on the subsequent documentation tip; the source
+  commit is ready for the same repository workflow.
+
+Approved Lava `ST5GDW23LB004392` installed the exact APK. Captures under
+`Builds/Local/V1GameplayTruth/Next/carrier-crest-20260904/lava/` include `live.png`
+(SHA-256 `934BCAF73AB0AE93D2791D0C20275AEEC0DCD20B3EBD27999B950E93AB081636`) and
+`live-30s.png` (SHA-256
+`7B5590F8E3D35B6CB604AA581B5DA7EF84F606BDCB540A14A2D3805B3202EF2B`). The latter
+shows the carrier crest above the active rival cluster while the HUD reads
+`RIVAL CARRIER`; the scoped logcat is marker-clean (SHA-256
+`F1060A2BCB59A5F48003325B6838474CCED26342E940B1A4365841AD109CFD80`).
+
+A focused 30-second Lava diagnostic is retained under
+`Builds/Local/V1GameplayTruth/Next/performance-crown-20260904/lava/`: TOTAL PSS
+292,339 KB, TOTAL RSS 406,468 KB, graphics 91,396 KB, thermal status 0 and battery
+level 1 at capture. Unity's `dumpsys gfxinfo` and `framestats` contained no frame rows,
+so this is memory/thermal evidence only and does not support an FPS or frame-pacing
+claim. The battery level and missing frame timeline require a charged, profileable
+repeat with Perfetto before the performance gate can pass.
+
 ## Source and changed assets
 
 Source commits:

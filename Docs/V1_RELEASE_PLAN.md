@@ -13,6 +13,35 @@ prototype until every V1 completion gate and remaining human gate passes.
 - Approved physical evidence device: Lava `ST5GDW23LB004392` (`LAVA LXX508`) only.
 - Preserve internal networking/Web seams without exposing unusable public online paths.
 
+## Checkpoint 0r - Crown carrier feedback — 2026-09-04
+
+Source `22f279b` adds a render-only gold halo/diamond crest above whichever actor the
+Bastion authority reports as carrying the Crown. The crest pulses with unscaled time,
+disappears for eliminated/terminal actors, and has no collider or input surface. This
+is a focused objective-feedback improvement; Crown rules, tickets, replay and balance
+are unchanged.
+
+- Static validation: **0 errors / 0 warnings**.
+- Full EditMode: **164/164 passed**; XML SHA-256
+  `36691D7432EEF5C4F948C516E8D52BF846B4027E9E1F7EE3FACE9F07E123BAA6`.
+- Full PlayMode: **99/99 passed**; XML SHA-256
+  `220F1D2147AC51BF43C47BB6DBFA2BF20EDB98C1B0AC68A90390011D9C1A010F`.
+- APK: **41,686,228 bytes**, SHA-256
+  `845860E7F9FCE769EF92206D4E0DF5D421AFCFF4B33C64DE830EAC1E592D11F1`.
+- AAB: **37,511,733 bytes**, SHA-256
+  `AA8B695E9FB119436108734165C739FB340F332949DA02BB13B01DC5A59BA175`.
+- Clean-tree technical release checker: **0 errors / 0 warnings**; log
+  `Builds/Local/V1GameplayTruth/Next/carrier-crest-20260904/release-checker.log`
+  (SHA-256 `C5DDAEF36D85B5F43A5063A7273BC75594A7A67CCB4C25C4321C57E9B6295AA4`).
+- Approved Lava `ST5GDW23LB004392` shows the crest above a rival while the HUD reads
+  `RIVAL CARRIER`; exact-route logcat is marker-clean. Lava reports 4 KB pages.
+
+The accompanying 30-second Lava diagnostic recorded PSS **292,339 KB**, RSS
+**406,468 KB**, graphics **91,396 KB**, thermal status **0** and battery level **1%**;
+Unity `gfxinfo` had no frame rows, so this is memory/thermal evidence only. Charged
+Perfetto/frame-timing capture, normalized sustained performance, physical 16 KB runtime,
+commissioned final assets/audio and owner Play approvals remain open.
+
 ## Checkpoint 0q - Crown Spark and team-shape readability — 2026-09-04
 
 Source `f39af37` adds a bounded presentation pass for the player-readability gap that

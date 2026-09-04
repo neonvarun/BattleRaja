@@ -13,6 +13,32 @@ create or depend on evidence outside this repository root.
 
 **Prototype — Android offline release candidate in progress.**
 
+## Latest current-source evidence — 2026-09-04 — Crown carrier feedback
+
+Source commit `22f279b` adds a render-only gold halo/diamond crest above the
+authority-reported Crown carrier and hides it for eliminated/terminal actors. No
+collider, authority, replay, input or balance state changed.
+
+Static validation is **0 errors / 0 warnings**. Full EditMode is **164/164** (XML
+SHA-256 `36691D7432EEF5C4F948C516E8D52BF846B4027E9E1F7EE3FACE9F07E123BAA6`) and
+full PlayMode is **99/99** (XML SHA-256
+`220F1D2147AC51BF43C47BB6DBFA2BF20EDB98C1B0AC68A90390011D9C1A010F`). The exact
+APK is **41,686,228 bytes** (SHA-256
+`845860E7F9FCE769EF92206D4E0DF5D421AFCFF4B33C64DE830EAC1E592D11F1`) and AAB is
+**37,511,733 bytes** (SHA-256
+`AA8B695E9FB119436108734165C739FB340F332949DA02BB13B01DC5A59BA175`). Clean-tree
+release checker is **0/0**; log
+`Builds/Local/V1GameplayTruth/Next/carrier-crest-20260904/release-checker.log`
+has SHA-256 `C5DDAEF36D85B5F43A5063A7273BC75594A7A67CCB4C25C4321C57E9B6295AA4`.
+
+Approved Lava `ST5GDW23LB004392` shows the crest above a rival while the HUD reads
+`RIVAL CARRIER`; scoped logcat is marker-clean. The bounded 30-second diagnostic
+measured PSS **292,339 KB**, RSS **406,468 KB**, graphics **91,396 KB**, thermal
+status **0**, but battery level was **1%** and Unity `gfxinfo` contained no frame rows,
+so no FPS/frame-pacing claim is made. A charged Perfetto/profileable repeat and the
+broader physical-performance gate remain open, as do commissioned final content,
+complete action/spectate comfort, physical 16 KB runtime and owner Play approvals.
+
 ## Latest current-source evidence — 2026-09-04 — Crown Spark and team-shape readability
 
 Source commit `f39af37` adds a bounded render-only readability pass: the Bastion Crown

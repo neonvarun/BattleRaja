@@ -6,6 +6,27 @@
 
 ## Current state
 
+- **Crown carrier feedback continuation (2026-09-04):** Source `22f279b` adds a
+  render-only gold halo/diamond crest above the authority-reported Crown carrier and
+  hides it for eliminated/terminal actors. Full EditMode remains **164/164** (XML
+  SHA-256 `36691D7432EEF5C4F948C516E8D52BF846B4027E9E1F7EE3FACE9F07E123BAA6`) and
+  full PlayMode **99/99** (XML SHA-256
+  `220F1D2147AC51BF43C47BB6DBFA2BF20EDB98C1B0AC68A90390011D9C1A010F`); static
+  validation is **0/0**. The exact APK is **41,686,228 bytes** (SHA-256
+  `845860E7F9FCE769EF92206D4E0DF5D421AFCFF4B33C64DE830EAC1E592D11F1`) and AAB
+  **37,511,733 bytes** (SHA-256
+  `AA8B695E9FB119436108734165C739FB340F332949DA02BB13B01DC5A59BA175`); clean-tree
+  release checker is **0/0** (log
+  `Builds/Local/V1GameplayTruth/Next/carrier-crest-20260904/release-checker.log`,
+  SHA-256 `C5DDAEF36D85B5F43A5063A7273BC75594A7A67CCB4C25C4321C57E9B6295AA4`).
+  Approved Lava `ST5GDW23LB004392` shows the marker above a rival while the HUD reads
+  `RIVAL CARRIER`; its scoped logcat is marker-clean. A bounded 30-second diagnostic
+  measured PSS **292,339 KB**, RSS **406,468 KB**, graphics **91,396 KB**, thermal
+  status **0**, but battery level was **1%** and Unity frame stats were empty. This
+  is objective-feedback evidence, not a performance/frame-pacing pass. Commissioned
+  final art/audio, full action/spectate comfort, charged Perfetto/performance proof,
+  physical 16 KB runtime and owner Play approvals remain open.
+
 - **Crown and team readability continuation (2026-09-04):** Source `f39af37` adds a
   render-only Crown Spark accent stack (halo, core and four shards), redundant diamond/
   bar team-shape badges above every fighter, and a shallow three-quarter portrait angle.
