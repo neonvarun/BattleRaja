@@ -270,6 +270,7 @@ namespace BattleRaja.Tests.EditMode
             Assert.That(match.NotifyCombatDamage(new CombatEntityId(1), new CombatEntityId(5), 5, false, 31), Is.False);
             var respawnTick = match.Advance(5f);
             Assert.That(Array.IndexOf(respawnTick.RespawnedActors, new CombatEntityId(5)), Is.GreaterThanOrEqualTo(0));
+            Assert.That(match.ConfirmRespawn(new CombatEntityId(5)), Is.True);
             match.ClearSpawnProtection(new CombatEntityId(5));
 
             Assert.That(match.NotifyCombatDamage(new CombatEntityId(1), new CombatEntityId(5), 5, false, 31), Is.True);
@@ -290,9 +291,83 @@ namespace BattleRaja.Tests.EditMode
             var tick = match.Advance(5f);
             Assert.That(Array.IndexOf(tick.RespawnedActors, new CombatEntityId(5)), Is.GreaterThanOrEqualTo(0));
             Assert.That(match.GetTickets(BastionTeamId.Rival).Remaining, Is.EqualTo(11));
+            Assert.That(match.TryGetParticipant(new CombatEntityId(5), out var ready), Is.True);
+            Assert.That(ready.Alive, Is.False);
+            Assert.That(ready.RespawnPending, Is.True);
+            Assert.That(match.ConfirmRespawn(new CombatEntityId(5)), Is.True);
             Assert.That(match.TryGetParticipant(new CombatEntityId(5), out var respawned), Is.True);
             Assert.That(respawned.Alive, Is.True);
             Assert.That(respawned.SpawnProtected, Is.True);
+            Assert.That(match.ConfirmRespawn(new CombatEntityId(5)), Is.False);
+        }
+
+        [Test]
+        public void RespawnRequiresAuthorityConfirmationAndRetriesWithoutDoubleSpending()
+        {
+            var match = Start();
+            match.ClearSpawnProtection(new CombatEntityId(1));
+            match.ClearSpawnProtection(new CombatEntityId(5));
+            var defeated = match.ApplyDamage(new DamageRequest(
+                new CombatEntityId(1),
+                new CombatEntityId(5),
+                CombatFaction.Player,
+                100,
+                DamageType.Projectile),
+                61);
+            Assert.That(defeated.TargetDefeated, Is.True);
+
+            Assert.That(match.TryGetParticipant(new CombatEntityId(5), out var before), Is.True);
+            var rejectedPosition = new Float2(12f, 12f);
+            Assert.That(match.SyncParticipant(new CombatEntityId(5), rejectedPosition, 100, true), Is.False);
+            Assert.That(match.TryGetParticipant(new CombatEntityId(5), out var stillPending), Is.True);
+            Assert.That(stillPending.Alive, Is.False);
+            Assert.That(stillPending.Position, Is.EqualTo(before.Position));
+            Assert.That(match.ConfirmRespawn(new CombatEntityId(5)), Is.False);
+
+            var readyTick = match.Advance(5f);
+            Assert.That(Array.IndexOf(readyTick.RespawnedActors, new CombatEntityId(5)), Is.GreaterThanOrEqualTo(0));
+            Assert.That(match.GetTickets(BastionTeamId.Rival).Remaining, Is.EqualTo(11));
+            Assert.That(match.TryGetParticipant(new CombatEntityId(5), out var ready), Is.True);
+            Assert.That(ready.Alive, Is.False);
+            Assert.That(ready.RespawnRemaining, Is.EqualTo(0f));
+
+            var retryTick = match.Advance(0.1f);
+            Assert.That(Array.IndexOf(retryTick.RespawnedActors, new CombatEntityId(5)), Is.GreaterThanOrEqualTo(0));
+            Assert.That(match.GetTickets(BastionTeamId.Rival).Remaining, Is.EqualTo(11));
+            Assert.That(match.ConfirmRespawn(new CombatEntityId(5)), Is.True);
+            Assert.That(match.ConfirmRespawn(new CombatEntityId(5)), Is.False);
+
+            var postConfirmTick = match.Advance(0.1f);
+            Assert.That(Array.IndexOf(postConfirmTick.RespawnedActors, new CombatEntityId(5)), Is.LessThan(0));
+            Assert.That(match.GetTickets(BastionTeamId.Rival).Remaining, Is.EqualTo(11));
+        }
+
+        [Test]
+        public void AuthorityDamageMirrorRejectsReadyAndTerminalDelivery()
+        {
+            var preLive = new BastionCrownMatch(37u);
+            preLive.Start(CreateSlots());
+            Assert.That(preLive.NotifyCombatDamage(
+                new CombatEntityId(1),
+                new CombatEntityId(5),
+                10,
+                false,
+                71), Is.False);
+            Assert.That(preLive.TryGetParticipant(new CombatEntityId(5), out var readyTarget), Is.True);
+            Assert.That(readyTarget.CurrentHealth, Is.EqualTo(100));
+
+            var match = Start(39u);
+            match.ClearSpawnProtection(new CombatEntityId(5));
+            match.ForceResolve(BastionTeamId.Raja, BastionMatchResultReason.Clock);
+            Assert.That(match.NotifyCombatDamage(
+                new CombatEntityId(1),
+                new CombatEntityId(5),
+                10,
+                false,
+                72), Is.False);
+            Assert.That(match.TryGetParticipant(new CombatEntityId(5), out var terminalTarget), Is.True);
+            Assert.That(terminalTarget.CurrentHealth, Is.EqualTo(100));
+            Assert.That(match.GetTeamScore(BastionTeamId.Raja).DamageDealt, Is.EqualTo(0));
         }
 
         [Test]

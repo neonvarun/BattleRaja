@@ -933,6 +933,10 @@ namespace BattleRaja.Presentation.Match
                 var actorId = tick.RespawnedActors[i];
                 if (!_bastionCrown.TryGetParticipant(actorId, out var snapshot)) continue;
                 if (!_authority.RespawnParticipant(actorId, snapshot.Position)) continue;
+                // The Bastion layer reserves the ticket and exposes a ready
+                // actor first. Only publish the fighter as live after the
+                // legacy authority accepts the matching respawn.
+                if (!_bastionCrown.ConfirmRespawn(actorId)) continue;
                 var actor = _actors.FirstOrDefault(binding => binding.Target.Id == actorId);
                 if (actor == null) continue;
                 actor.Agent.ApplyAuthoritativePosition(snapshot.Position);

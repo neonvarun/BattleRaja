@@ -196,6 +196,7 @@ namespace BattleRaja.Core.Domain
                     HashBool(ref hash, participant.Alive);
                     HashBool(ref hash, participant.Spectating);
                     HashBool(ref hash, participant.RespawnPending);
+                    HashBool(ref hash, participant.RespawnIssued);
                     HashFloat(ref hash, participant.SpectatorRemaining);
                     HashFloat(ref hash, participant.RespawnRemaining);
                     HashBool(ref hash, participant.SpawnProtected);
@@ -558,15 +559,21 @@ namespace BattleRaja.Core.Domain
         public bool SyncParticipant(CombatEntityId actorId, Float2 position, int currentHealth, bool alive)
         {
             if (!TryGetParticipantState(actorId, out var participant) || !position.IsFinite) return false;
-            participant.Position = position;
             if (alive)
             {
-                if (!participant.Alive && !participant.RespawnPending) return false;
+                // A mirror may only refresh an already-live participant. A
+                // pending fighter must cross the explicit ConfirmRespawn
+                // handoff after the legacy authority has accepted its
+                // respawn; accepting an alive snapshot here would create a
+                // free revive and could desynchronise the two authorities.
+                if (!participant.Alive) return false;
+                participant.Position = position;
                 participant.CurrentHealth = Math.Max(0, Math.Min(participant.MaxHealth, currentHealth));
                 _squadStateRevision++;
                 return true;
             }
 
+            participant.Position = position;
             participant.CurrentHealth = 0;
             if (participant.Alive) Defeat(participant, default(CombatEntityId), 0);
             _squadStateRevision++;
@@ -631,7 +638,7 @@ namespace BattleRaja.Core.Domain
             bool targetDefeated,
             int eventId = 0)
         {
-            if (!_started || amountApplied <= 0 || !TryGetParticipantState(targetId, out var target)) return false;
+            if (!_started || !IsLive || amountApplied <= 0 || !TryGetParticipantState(targetId, out var target)) return false;
             // A resolved event may mark a live target defeated, but an already
             // dead target can never accept another event, even when a caller
             // incorrectly repeats it with a new identity. Reject before
@@ -757,12 +764,15 @@ namespace BattleRaja.Core.Domain
             return CreateTick(simulationTick);
         }
 
-        /// <summary>Used by the Unity adapter after it has respawned the
-        /// matching legacy simulation participant. It is intentionally limited
-        /// to a pending actor and cannot create a ninth slot.</summary>
+        /// <summary>Completes the two-step respawn handoff after the matching
+        /// legacy simulation participant has been respawned. The team layer
+        /// reserves the ticket and emits a ready actor from Advance; this
+        /// method is the only path that makes that actor live. It cannot revive
+        /// early, spend a second ticket or create a ninth slot.</summary>
         public bool ConfirmRespawn(CombatEntityId actorId)
         {
-            if (!_started || !TryGetParticipantState(actorId, out var participant) || participant.Alive || !participant.RespawnPending)
+            if (!_started || _ended || !TryGetParticipantState(actorId, out var participant) || participant.Alive ||
+                !participant.RespawnPending || !participant.RespawnIssued || participant.RespawnRemaining > 0f)
             {
                 return false;
             }
@@ -770,6 +780,7 @@ namespace BattleRaja.Core.Domain
             participant.Alive = true;
             participant.Spectating = false;
             participant.RespawnPending = false;
+            participant.RespawnIssued = false;
             participant.SpectatorRemaining = 0f;
             participant.RespawnRemaining = 0f;
             participant.CurrentHealth = participant.MaxHealth;
@@ -859,6 +870,18 @@ namespace BattleRaja.Core.Domain
 
                 if (!participant.RespawnPending) continue;
                 participant.SpectatorRemaining = Math.Max(0f, participant.SpectatorRemaining - deltaSeconds);
+
+                // Ticket reservation and legacy-authority revival are a
+                // two-step handoff. Keep emitting the ready actor until the
+                // adapter confirms the corresponding authority respawn so a
+                // transient adapter failure cannot leave the team layer
+                // permanently ahead of the legacy simulation.
+                if (participant.RespawnIssued)
+                {
+                    _respawnedActors.Add(participant.Member.ActorId);
+                    continue;
+                }
+
                 participant.RespawnRemaining -= deltaSeconds;
                 if (participant.RespawnRemaining > 0f) continue;
 
@@ -866,20 +889,14 @@ namespace BattleRaja.Core.Domain
                 if (!team.Tickets.HasTicket)
                 {
                     participant.RespawnPending = false;
+                    participant.RespawnRemaining = 0f;
                     participant.Spectating = true;
                     continue;
                 }
 
                 team.SpendTicket();
-                participant.RespawnPending = false;
-                participant.Alive = true;
-                participant.Spectating = false;
-                participant.SpectatorRemaining = 0f;
+                participant.RespawnIssued = true;
                 participant.RespawnRemaining = 0f;
-                participant.CurrentHealth = participant.MaxHealth;
-                participant.Position = participant.SpawnPosition;
-                participant.SpawnProtected = _definition.Respawn.SpawnProtectionSeconds > 0f;
-                participant.SpawnProtectionRemaining = _definition.Respawn.SpawnProtectionSeconds;
                 _respawnedActors.Add(participant.Member.ActorId);
             }
         }
@@ -1026,6 +1043,7 @@ namespace BattleRaja.Core.Domain
             participant.RespawnRemaining = _definition.Respawn.RespawnSeconds;
             var team = GetTeamState(participant.Member.TeamId);
             participant.RespawnPending = team.Tickets.HasTicket;
+            participant.RespawnIssued = false;
 
             if (_crownCarrier == participant.Member.ActorId) DropCrownAt(participant.Position);
             CancelDeposit(participant.Member.ActorId);
@@ -1269,6 +1287,7 @@ namespace BattleRaja.Core.Domain
             public bool Alive;
             public bool Spectating;
             public bool RespawnPending;
+            public bool RespawnIssued;
             public float SpectatorRemaining;
             public float RespawnRemaining;
             public bool SpawnProtected;

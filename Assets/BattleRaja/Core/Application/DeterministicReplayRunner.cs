@@ -377,7 +377,10 @@ namespace BattleRaja.Core.Application
                         var actorId = bastionTick.RespawnedActors[respawnIndex];
                         if (bastion.TryGetParticipant(actorId, out var respawned))
                         {
-                            authority.RespawnParticipant(actorId, respawned.Position);
+                            if (authority.RespawnParticipant(actorId, respawned.Position))
+                            {
+                                bastion.ConfirmRespawn(actorId);
+                            }
                         }
                     }
 
