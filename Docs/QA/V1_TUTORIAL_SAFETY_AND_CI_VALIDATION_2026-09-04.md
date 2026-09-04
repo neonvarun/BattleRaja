@@ -82,6 +82,14 @@ The post-fix process-scoped logcat is 845 bytes, SHA-256
 `079A6E2F651D8770221CB6A91635AEF77A69283DDAB046A25F57A8F29BC46602`, with zero configured
 `FATAL EXCEPTION`, `ANR in`, `SIGSEGV` or `SIGABRT` markers.
 
+A current five-sample USB-charging diagnostic is indexed at
+`Builds/Local/V1GameplayTruth/Next/performance-tutorial-safety-20260904.txt` (1,032 bytes,
+SHA-256 `58A733D7EA20E3CA1EE3A3702E1DD476F60C220FCD90BABDE2A2727729F24341`). It reports
+PSS **279,598–281,758 KB**, RSS **405,132–407,292 KB**, graphics PSS
+**80,732–82,780 KB**, raw app CPU **100–113%** (mean **107.0%**), battery **52%** and
+34.0 C. This is a bounded diagnostic; no FPS, normalized GPU/GC or endurance claim is
+attached.
+
 ## Carried-forward evidence
 
 Presentation-only tutorial and workflow changes did not alter the canonical gameplay,
