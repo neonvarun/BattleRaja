@@ -11,6 +11,10 @@ targeting and replay ownership remain in the domain/controller authority.
 
 Source commit: `abcbe04` (`feat: mirror Bastion lifecycle in fighter presentation`).
 
+The follow-up documentation tip `5fbecb2` passed GitHub
+[Repository validation run #105](https://github.com/neonvarun/BattleRaja/actions/runs/33898113032)
+in 28 seconds, including the portable whitespace/LFS and tracked-source secret checks.
+
 ## Behavioural contract
 
 - `FighterPresentation` mirrors immutable `BastionParticipantSnapshot` and

@@ -16,6 +16,9 @@
   Static validation is **0/0**, full EditMode **168/168**, full PlayMode **99/99**.
   Exact evidence is indexed in
   `Docs/QA/V1_ANIMATION_STATE_AND_RESPAWN_PRESENTATION_2026-09-04.md`.
+  Documentation tip `5fbecb2` also passed GitHub
+  [Repository validation run #105](https://github.com/neonvarun/BattleRaja/actions/runs/33898113032)
+  in 28 seconds, including the tracked-source secret scan.
 
   The temporary-ID APK is **41,687,756 bytes** (SHA-256
   `9F2E70034CFF9B0DE4A04490B084E1FCEBFD1B8C703C9B1FC5A3D8D0D692B613`) and AAB is
