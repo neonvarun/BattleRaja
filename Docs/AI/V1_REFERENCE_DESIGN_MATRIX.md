@@ -6,6 +6,19 @@
 **References:** controlled observation of installed Brawl Stars and Smash Karts on Lava, plus official/current Android and Play documentation.
 **Boundary:** references are not asset, code, terminology or trade-dress sources. No decompilation, extraction, traffic interception, purchase, account action or copied screenshot was used.
 
+## Fresh public-entry observation — 2026-09-04
+
+The installed public entry surfaces were re-opened on approved Lava
+`ST5GDW23LB004392` (`LAVA LXX508`, Android 14/API 34, 1080x2460). Brawl Stars
+(`com.supercell.brawlstars`, 69.230) remained on a landscape illustrated connection/loading
+surface; Smash Karts (`com.tallteam.citychase`, 2.15.1) remained on a landscape branded
+loading surface. No account, private screen, gameplay route, network inspection, package
+extraction or asset reuse was performed. The only translated principles are immediate
+orientation, one dominant status cue, high-contrast hierarchy and low-friction loading
+feedback. Captures and hashes are isolated under
+`Builds/Local/PlanningAudit/References/20260904/README.md`; they are planning evidence,
+not BattleRaja production assets.
+
 ## How to use this matrix
 
 The implementation agent may adopt the principle and the player benefit, but must solve it with BattleRaja's own characters, names, map geometry, colors, rules, icons, audio and motion. Every row includes an explicit anti-copy guard. If a proposed implementation resembles a reference too closely, redesign the expression while preserving the underlying usability principle.
