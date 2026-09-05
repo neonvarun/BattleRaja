@@ -13,6 +13,22 @@ create or depend on evidence outside this repository root.
 
 **Prototype — Android offline release candidate in progress.**
 
+## Latest current-source evidence — 2026-09-05 — Maya/Bijli human loops and KO re-proof
+
+No source change. Two human matches on exact APK `98C3FFAE…FBEB`: Maya full
+match (`WINNER RIVAL • Clock`, RAJA 0–7, player survived at 13 HP with rivals
+disengaging outside perception range) and Bijli match (`WINNER TEAM RAJA •
+FirstToScore` at 01:30, RAJA 15/DEPOSITS 4). Player KO → respawn re-proven
+(13/85 grapple → 85/85 return, tickets 8→6, ally `RETURN 3s` strip live).
+Test-methodology correction: `adb input tap` is too short for held-state
+combat sampling — future passes must use ≥300 ms holds; prior "no visible
+effect" notes are inconclusive, not negative. Scoped logcat zero markers;
+end-of-match PSS 284,792 KB / RSS 423,584 KB, thermal 0, battery 32% USB.
+Mid-pass device sleep + secure lockscreen required an owner unlock; related
+black captures are environmental, not an app defect. Full record:
+`Docs/QA/V1_MAYA_BIJLI_HUMAN_LOOPS_2026-09-05.md`; captures under
+`Builds/Local/V1GameplayTruth/Next/maya-human-20260905-034500/`.
+
 ## Latest current-source evidence — 2026-09-05 — charged Lava comfort/evidence pass
 
 No source change. Human-operated route on the exact APK `98C3FFAE…FBEB`
