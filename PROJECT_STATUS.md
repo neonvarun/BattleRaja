@@ -6,6 +6,14 @@
 
 ## Current state
 
+- **Attack + Tiffin proof pass (2026-09-05 late night):** No source change.
+  Human-operated two-leg hold-method route on exact APK `98C3FFAE…FBEB`:
+  three 700 ms aimed attack holds (once point-blank) and one aimed 700 ms
+  Tiffin hold on open ground. Both individual proofs stay open
+  (inconclusive, not negative); team combat stayed live and zero scoped
+  crash markers (PSS 265,823 KB / RSS 417,432 KB). Full record:
+  `Docs/QA/V1_ATTACK_TIFFIN_PROOF_PASS_2026-09-05.md`.
+
 - **Comfort hold-proof pass (2026-09-05 late):** No source change. Human-operated
   hold-method (≥300 ms) route on exact APK `98C3FFAE…FBEB`: live 4v4 as human
   Bijli → results (`WINNER RIVAL • Clock`) → rematch reset → fresh-live loop
